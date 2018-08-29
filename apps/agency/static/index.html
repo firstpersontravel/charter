@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>First Person Travel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="/static/images/favicon.png"/>
+  </head>
+  <body>
+    <div id='root'></div>
+    <script src="/static/agency/jquery.min.js"></script>
+    <script src="/static/agency/bootstrap.bundle.min.js"></script>
+    <script src="/build/agency/bundle.js"></script>
+    <script type='text/javascript'>
+    if (window.location.host.indexOf('localhost') > -1) {
+      document.write('\<script src="http://localhost:8080/webpack-dev-server.js"\>\<\/script\>');
+    }
+    </script>
+  </body>
+</html>

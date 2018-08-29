@@ -1,0 +1,27 @@
+<div class='page-panel-messages-browse pure-g'>
+  <div class='messages-list pure-u-1 pure-u-sm-1-4'>
+    <div class='pure-menu'>
+      <div class='pure-menu-heading'>{{params.title}}</div>
+      <ul class='pure-menu-list'>
+        {{#each menu as |item|}}
+          <li class="pure-menu-item {{if item.isSelected "pure-menu-selected"}}">
+            <a href='#' {{action "selectContact" item.contact}}
+                class='pure-menu-link'>
+              {{item.contactName}}
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+  <div class='messages-detail pure-u-1 pure-u-sm-3-4 scrollable'>
+    <div class='messages-detail-inner'>
+      {{#if menu.length}}
+        {{component "page-panels/messages"
+          params=messagesParams
+          playthrough=playthrough
+          participant=participant}}
+      {{/if}}
+    </div>
+  </div>
+</div>

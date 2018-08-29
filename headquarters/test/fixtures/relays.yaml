@@ -1,0 +1,113 @@
+- model: Script
+  data:
+    id: 1
+    name: script
+    title: Script
+    timezone: US/Pacific
+    isActive: true
+    isArchived: false
+    content:
+      roles:
+        - name: Actor
+        - name: Player
+        - name: StageManager
+      relays:
+        - for: Actor
+          with: Player
+          phone_in: true
+          phone_out: true
+          sms_in: true
+          sms_out: true
+        - for: Player
+          with: Actor
+          phone_in: true
+          phone_out: true
+          sms_in: true
+          sms_out: true
+          trailhead: true
+        - for: StageManager
+          admin_out: true
+
+- model: Group
+  data:
+    id: 1
+    script: 1
+    date: "2018-01-01"
+
+- model: Playthrough
+  data:
+    id: 1
+    group: 1
+    script: 1
+    departureName: T1
+    title: Let's go
+    date: "2018-01-01"
+
+# Player user
+- model: User
+  data:
+    id: 1
+    firstName: tester1
+    phoneNumber: '1111111111'
+
+# Actor user
+- model: User
+  data:
+    id: 2
+    firstName: actor2
+    phoneNumber: '2222222222'
+
+# Actor
+- model: Participant
+  data:
+    id: 1
+    playthrough: 1
+    user: 2
+    roleName: Actor
+
+# Player
+- model: Participant
+  data:
+    id: 2
+    playthrough: 1
+    user: 1
+    roleName: Player
+
+# Player relay
+- model: Relay
+  data:
+    id: 3
+    scriptName: script
+    departureName: T1
+    stage: test
+    phoneNumber: '9999999999'
+    isActive: true
+    forRoleName: Player
+    asRoleName: Player
+    withRoleName: Actor
+
+# Actor relay
+- model: Relay
+  data:
+    id: 4
+    scriptName: script
+    departureName: T1
+    stage: test
+    phoneNumber: '9999999998'
+    isActive: true
+    forRoleName: Actor
+    asRoleName: Actor
+    withRoleName: Player
+
+# Admin stage manager relay
+- model: Relay
+  data:
+    id: 5
+    scriptName: script
+    departureName: T1
+    stage: test
+    phoneNumber: '9999999997'
+    isActive: true
+    forRoleName: StageManager
+    asRoleName: StageManager
+    withRoleName: ""

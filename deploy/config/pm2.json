@@ -1,0 +1,27 @@
+{
+  "apps": [{
+    "name": "server",
+    "script": "./bin/server.js",
+    "cwd": "/home/deploy/galaxy/current/headquarters", 
+    "error_file": "/home/deploy/log/server.err.log",
+    "out_file": "/home/deploy/log/server.out.log",
+    "exec_mode": "cluster_mode",
+    "instances": 1
+  }, {
+    "name": "worker",
+    "script": "./bin/worker.js",
+    "cwd": "/home/deploy/galaxy/current/headquarters", 
+    "error_file": "/home/deploy/log/worker.err.log",
+    "out_file": "/home/deploy/log/worker.out.log",
+    "exec_mode": "cluster_mode",
+    "instances": 1
+  }, {
+    "name": "pubsub",
+    "script": "./bin/pubsub.js",
+    "cwd": "/home/deploy/galaxy/current/headquarters", 
+    "error_file": "/home/deploy/log/pubsub.err.log",
+    "out_file": "/home/deploy/log/pubsub.out.log",
+    "exec_mode": "cluster_mode",
+    "instances": 1
+  }]
+}

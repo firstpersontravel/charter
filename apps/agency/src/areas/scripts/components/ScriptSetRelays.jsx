@@ -1,0 +1,242 @@
+import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import { TextCore } from 'fptcore';
+
+import Checkbox from '../partials/Checkbox';
+import { getStage } from '../../../utils';
+
+export default class ScriptSetRelays extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.handleUpdateRelays = this.handleUpdateRelays.bind(this);
+    this.handleToggleAllActive = this.handleToggleAllActive.bind(this);
+    this.handleChangeRelayIsActive = this.handleChangeRelayIsActive.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.listCollection('relays', {
+      stage: getStage(),
+      scriptName: this.props.scriptName
+    });
+  }
+
+  handleUpdateRelays() {
+    this.props.updateRelays(this.props.scriptName);
+  }
+
+  handleToggleAllActive() {
+    const areAllActive = _.every(this.props.relays, 'isActive');
+    const newIsActive = !areAllActive;
+    this.props.relays
+      .filter(relay => relay.isActive !== newIsActive)
+      .forEach((relay) => {
+        this.props.updateInstance('relays', relay.id, {
+          isActive: newIsActive
+        });
+      });
+  }
+
+  handleChangeRelayIsActive(relayIds, e) {
+    relayIds.forEach((relayId) => {
+      this.props.updateInstance('relays', relayId, {
+        isActive: e.target.checked
+      });
+    });
+  }
+
+  relaysForSpec(relaySpec) {
+    return _.filter(this.props.relays, {
+      scriptName: this.props.scriptName,
+      forRoleName: relaySpec.for,
+      withRoleName: relaySpec.with,
+      asRoleName: relaySpec.as || relaySpec.for
+    });
+  }
+
+  renderRelay(relaySpec, departureName) {
+    const relay = _.find(this.props.relays, {
+      scriptName: this.props.scriptName,
+      departureName: departureName,
+      forRoleName: relaySpec.for,
+      withRoleName: relaySpec.with,
+      asRoleName: relaySpec.as || relaySpec.for
+    });
+    if (!relay) {
+      return <td key={departureName}>–</td>;
+    }
+    return (
+      <td key={departureName}>
+        {TextCore.formatPhone(relay.phoneNumber)}
+      </td>
+    );
+  }
+
+  renderRelaySpec(relaySpec, departureNames) {
+    const renderedRelays = departureNames.map(departureName => (
+      this.renderRelay(relaySpec, departureName)
+    ));
+    const relays = this.relaysForSpec(relaySpec);
+    const relayIds = _.map(relays, 'id');
+    const areAllActive = _.every(relays, relay => relay.isActive);
+    const areAllInactive = _.every(relays, relay => !relay.isActive);
+    const isIndeterminate = !areAllActive && !areAllInactive;
+    let smsInfo = '';
+    if (relaySpec.sms_out && relaySpec.sms_in) {
+      smsInfo = 'In/out';
+    } else if (relaySpec.sms_out) {
+      smsInfo = 'Out';
+    } else if (relaySpec.sms_in) {
+      smsInfo = 'In';
+    }
+    let phoneInfo = '';
+    if (relaySpec.phone_out && relaySpec.phone_in) {
+      phoneInfo = 'In/out';
+    } else if (relaySpec.phone_out) {
+      phoneInfo = 'Out';
+    } else if (relaySpec.phone_in) {
+      phoneInfo = 'In';
+    }
+    const activeCheckbox = relays.length ? (
+      <Checkbox
+        checked={areAllActive}
+        indeterminate={isIndeterminate}
+        onChange={_.curry(this.handleChangeRelayIsActive)(relayIds)} />
+    ) : null;
+    return (
+      <tr key={`${relaySpec.for}-${relaySpec.with}-${relaySpec.as}`}>
+        <td>{relaySpec.for}</td>
+        <td>{relaySpec.as}</td>
+        <td>{relaySpec.with}</td>
+        {renderedRelays}
+        <td>{smsInfo}</td>
+        <td>{phoneInfo}</td>
+        <td>{relaySpec.admin_out ? 'Out' : null}</td>
+        <td>{activeCheckbox}</td>
+      </tr>
+    );
+  }
+
+  renderTrailhead() {
+    const relaySpecs = this.props.script.content.relays || [];
+    const trailheadSpec = _.find(relaySpecs, { trailhead: true });
+    if (!trailheadSpec) {
+      return null;
+    }
+    const trailheads = this.relaysForSpec(trailheadSpec);
+    if (!trailheads.length) {
+      return null;
+    }
+    const trailheadDetails = trailheads.map(trailhead => (
+      <span>
+        {trailhead.departureName}:&nbsp;
+        {TextCore.formatPhone(trailhead.phoneNumber)}
+        &nbsp;
+      </span>
+    ));
+    return (
+      <h1>
+        {trailheadDetails}
+      </h1>
+    );
+  }
+
+  renderRelays() {
+    const relaySpecs = this.props.script.content.relays || [];
+    const departureNames = _.map(this.props.script.content.departures, 'name');
+
+    const renderedSpecs = relaySpecs.map(relaySpec => (
+      this.renderRelaySpec(relaySpec, departureNames)
+    ));
+
+    const departureheaders = departureNames.map(departureName => (
+      <th key={departureName}>{departureName}</th>
+    ));
+
+    return (
+      <table className="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>For</th>
+            <th>As</th>
+            <th>With</th>
+            {departureheaders}
+            <th>Sms</th>
+            <th>Phone</th>
+            <th>Admin</th>
+            <th>Active</th>
+          </tr>
+        </thead>
+        <tbody>
+          {renderedSpecs}
+        </tbody>
+      </table>
+    );
+  }
+
+  renderActions() {
+    const isDisabled = this.props.areAnyRequestsPending;
+    const relaySpecs = this.props.script.content.relays || [];
+    const areAllActive = _.every(this.props.relays, 'isActive');
+    const numDepartures = this.props.script.content.departures.length;
+    const hasRequiredRelays = _.every(relaySpecs.map(relaySpec => (
+      this.relaysForSpec(relaySpec).length >= numDepartures
+    )));
+    const assignPhoneButton = hasRequiredRelays ? null : (
+      <button
+        disabled={isDisabled}
+        className="btn btn-outline-primary"
+        onClick={this.handleUpdateRelays}>
+        Assign phone numbers
+      </button>
+    );
+    const toggleActiveButton = (
+      <button
+        disabled={isDisabled}
+        className="btn btn-outline-primary"
+        onClick={this.handleToggleAllActive}>
+        {areAllActive ? 'Deactivate all' : 'Activate all'}
+      </button>
+    );
+    return (
+      <div>
+        {assignPhoneButton}
+        &nbsp;
+        {toggleActiveButton}
+      </div>
+    );
+  }
+
+  render() {
+    if (!this.props.script) {
+      return <div>Loading</div>;
+    }
+    return (
+      <div className="row">
+        <div className="col-sm-12">
+          {this.renderTrailhead()}
+          {this.renderRelays()}
+        </div>
+        <div className="col-sm-12">
+          {this.renderActions()}
+        </div>
+      </div>
+    );
+  }
+}
+
+ScriptSetRelays.propTypes = {
+  areAnyRequestsPending: PropTypes.bool.isRequired,
+  listCollection: PropTypes.func.isRequired,
+  updateInstance: PropTypes.func.isRequired,
+  updateRelays: PropTypes.func.isRequired,
+  scriptName: PropTypes.string.isRequired,
+  script: PropTypes.object,
+  relays: PropTypes.array.isRequired
+};
+
+ScriptSetRelays.defaultProps = {
+  script: null
+};

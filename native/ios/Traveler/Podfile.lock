@@ -1,0 +1,20 @@
+PODS:
+  - Alamofire (4.7.0)
+  - GCDWebServer (3.4.2):
+    - GCDWebServer/Core (= 3.4.2)
+  - GCDWebServer/Core (3.4.2)
+  - Zip (1.1.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.7)
+  - GCDWebServer (~> 3.4.2)
+  - Zip (~> 1.1)
+
+SPEC CHECKSUMS:
+  Alamofire: 907e0a98eb68cdb7f9d1f541a563d6ac5dc77b25
+  GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
+  Zip: 8877eede3dda76bcac281225c20e71c25270774c
+
+PODFILE CHECKSUM: f8d571982adee577e43361a4f3b22ef243df36ae
+
+COCOAPODS: 1.2.0

@@ -1,0 +1,8 @@
+platform :ios, '11.0'
+use_frameworks!
+
+target 'Traveler' do
+  pod 'GCDWebServer', '~> 3.4.2'
+  pod 'Alamofire', '~> 4.7'
+  pod 'Zip', '~> 1.1'
+end

@@ -1,0 +1,166 @@
+const _ = require('lodash');
+
+const config = require('../config');
+const models = require('../models');
+
+const logger = config.logger.child({ name: 'controllers.relay' });
+
+const whitelistedNumbers = [
+  '9144844223',
+  '9178213078',
+  '4159269647',
+  '4156506792',
+  '4152798016'
+  // '4802440810'
+];
+
+const RelayController = {};
+
+/**
+ * Gabe (TravelAgent)
+ * playing Sarai        <--- Relay
+ *                           for: TravelAgent
+ *                           as: Sarai
+ *                           with: TravelerA
+ *
+ *                           Relay ----->        TravelerA
+ *                           for: TravelerA
+ *                           as: TravelerA
+ *                           with: Sarai
+ *
+ */
+RelayController.findOpposites = async (relay) => {
+  return await models.Relay.findAll({
+    where: {
+      asRoleName: relay.withRoleName,
+      isActive: true,
+      scriptName: relay.scriptName,
+      stage: config.env.STAGE,
+      departureName: relay.departureName,
+      withRoleName: relay.asRoleName
+    }
+  });
+};
+
+/**
+ * Find script for relay
+ */
+RelayController.scriptForRelay = async (relay) => {
+  return await models.Script.find({
+    where: {
+      name: relay.scriptName,
+      isActive: true,
+      isArchived: false
+    }
+  });
+};
+
+/**
+ * Find a spec for a given relay.
+ */
+RelayController.specForRelay = (script, relay) => {
+  return _.find(script.content.relays, r => (
+    r.for === relay.forRoleName &&
+    r.with === relay.withRoleName &&
+    (r.as || r.for) === relay.asRoleName
+  )) || null;
+};
+
+RelayController.findSiblings = async (relay, asRoleName, withRoleName) => {
+  return await models.Relay.findAll({
+    where: {
+      asRoleName: asRoleName,
+      isActive: true,
+      scriptName: relay.scriptName,
+      stage: config.env.STAGE,
+      departureName: relay.departureName,
+      withRoleName: withRoleName
+    }
+  });
+};
+
+RelayController.initiateCall = async (
+  relay, toParticipant, detectVoicemail
+) => {
+  // Only call if we have a twilio client
+  if (!config.getTwilioClient()) {
+    return;
+  }
+  // Needs a user and phone number.
+  const toUser = await toParticipant.getUser();
+  if (!toUser || !toUser.phoneNumber) {
+    logger.warn(`Relay ${relay.id} has no user phone number.`);
+    return;
+  }
+  // Protection in non-production from texting anyone who is not Gabe.
+  if (!config.isTesting &&
+      config.env.STAGE !== 'production' &&
+      !_.includes(whitelistedNumbers, toUser.phoneNumber)) {
+    logger.warn(`Relay ${relay.id} is not to a whitelisted number.`);
+    return;
+  }
+  const twilioHost = config.env.TWILIO_HOST;
+  const callOpts = {
+    to: `+1${toUser.phoneNumber}`,
+    from: `+1${relay.phoneNumber}`,
+    machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
+    url: (
+      `${twilioHost}/endpoints/twilio/calls/outgoing` +
+      `?trip=${toParticipant.playthroughId}&relay=${relay.id}`
+    ),
+    method: 'POST',
+    statusCallback: (
+      `${twilioHost}/endpoints/twilio/calls/status` + 
+      `?trip=${toParticipant.playthroughId}&relay=${relay.id}`
+    ),
+    statusCallbackMethod: 'POST'
+  };
+  return await config.getTwilioClient().calls.create(callOpts);
+};
+
+RelayController.sendMessage = async (relay, trip, body, mediaUrl) => {
+  // Don't do anything if a blank message.
+  if (!body && !mediaUrl) {
+    return;
+  }
+  // Figure out which role to send the message to. This won't be the same
+  // as the message's sendTo since a relay can, say, forward Sarai's messages
+  // to the TravelAgent as well.
+  const toParticipant = await models.Participant.find({
+    where: {
+      playthroughId: trip.id,
+      roleName: relay.forRoleName
+    }
+  });
+  if (!toParticipant || !toParticipant.userId) {
+    return;
+  }
+  const toUser = await toParticipant.getUser();
+  if (!toUser || !toUser.phoneNumber) {
+    return;
+  }
+  if (!config.getTwilioClient()) {
+    return;
+  }
+  if (!relay.isActive) {
+    return;
+  }
+  // Protection in non-production from texting anyone who is not Gabe.
+  if (config.env.STAGE !== 'production' &&
+      !_.includes(whitelistedNumbers, toUser.phoneNumber)) {
+    return;
+  }
+  const opts = Object.assign(
+    { to: `+1${toUser.phoneNumber}`, from: `+1${relay.phoneNumber}`},
+    body ? { body: body } : null,
+    mediaUrl ? { mediaUrl: mediaUrl } : null
+  );
+  logger.info(opts, 'Sending twilio message');
+  try {
+    await config.getTwilioClient().messages.create(opts);
+  } catch(err) {
+    throw new Error(`Error sending twilio message: ${err.message}`);
+  }
+};
+
+module.exports = RelayController;

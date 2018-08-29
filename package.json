@@ -1,0 +1,21 @@
+{
+  "name": "my-project-name",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "yarn run test_core && yarn run test_agency && yarn run test_hq",
+    "test_hq": "cd headquarters; yarn test",
+    "test_core": "cd apps/fptcore; yarn test",
+    "test_agency": "cd apps/agency; yarn test",
+    "build_travel": "cd apps/travel && ember build --env production && echo `TZ=US/Pacific date` > dist/build_timestamp.txt && rm -rf dist/dist.zip; zip -q -r dist/dist.zip dist",
+    "build_agency": "cd apps/agency; export NODE_ENV=production; webpack --colors",
+    "build": "yarn run test && yarn run build_travel && yarn run build_agency",
+    "watch_travel": "cd apps/travel; ember build --watch --env development",
+    "watch_agency": "cd apps/agency; webpack --watch",
+    "watch_agency_devserver": "cd apps/agency; webpack-dev-server",
+    "watch": "yarn run watch_travel & yarn run watch_agency & yarn run watch_agency_devserver",
+    "build_ios": "yarn run build_travel && mkdir -p native/ios/www && cp apps/travel/dist/dist.zip native/ios/www;",
+    "upload_secrets": "aws s3 sync secrets s3://fpt-tech/secrets --exclude '*.DS_Store'",
+    "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets"
+  }
+}

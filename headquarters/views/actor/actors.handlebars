@@ -1,0 +1,11 @@
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand" href="/actor">FPT Actor Interface</a>
+</nav>
+<div class="container-fluid">
+  <br/>
+  {{#each users}}
+    <a class='btn btn-block btn-outline-secondary' href='/actor/{{id}}'>
+      {{firstName}} {{lastName}}
+    </a>
+  {{/each}}
+</div>

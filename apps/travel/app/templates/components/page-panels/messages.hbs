@@ -1,0 +1,65 @@
+{{#if showHeader}}
+  <h1>You &amp; {{withName}}</h1>
+{{/if}}
+
+{{#if numEarlierMessages}}
+  <p class='earlier-messages'>
+    <button class='pure-button' {{action "showEarlier"}}>
+      Show {{numEarlierMessages}} earlier messages
+    </button>
+  </p>
+{{/if}}
+
+{{#each recentMessages as |message|}}
+  {{component
+    "page-panels/messages-item"
+    message=message
+    asParticipant=asParticipant
+    playthrough=playthrough
+    participant=participant}}
+{{/each}}
+
+{{#if isSendingMessage}}
+  <div class='messages-item messages-item-outgoing messages-item-text'>
+    <div class='msg'>Sending...</div>
+  </div>
+{{/if}}
+
+{{#if canSend}}
+  <div class='message-send'>
+    <div class='image-upload-container'></div>
+    <form enctype="multipart/form-data" class="pure-form pure-g">
+      {{#if canInitiateCalls}}
+        <a class="pure-button pure-button-primary pure-u-1-12"
+          href="{{callUrl}}">
+          <i class='fa fa-phone'></i>
+        </a>
+      {{else}}
+        <a class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled' disabled>
+          <i class='fa fa-phone'></i>
+        </a>
+      {{/if}}
+      {{#if canSendImages}}
+        <label for="image-upload" class="pure-button pure-button-primary pure-u-1-12">
+          <i class='fa fa-camera'></i>
+        </label>
+      {{else}}
+        <a class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled' disabled>
+          <i class='fa fa-camera'></i>
+        </a>
+      {{/if}}
+      {{input
+        class="pure-u-2-3"
+        value=messageInput
+        enter="sendMessage"
+        placeholder=placeholder
+        disabled=(if canSendTexts false true)}}
+      <button
+          class="pure-button pure-button-primary pure-u-1-6"
+          {{action "sendMessage"}}
+          disabled={{isSendTextDisabled}}>
+        Send
+      </button>
+    </form>
+  </div>
+{{/if}}

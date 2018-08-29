@@ -1,0 +1,24 @@
+{{page-panels
+  playthrough=playthrough
+  participant=participant
+  panels=headerPanels}}
+
+<div class='page-layout-tabs-content pure-g'>
+  <div class='page-layout-tabs-content-inner pure-u-1'>
+    {{page-panels
+      playthrough=playthrough
+      participant=participant
+      panels=tabPanels}}
+  </div>
+</div>
+
+<div class="page-layout-tabs-menu pure-menu pure-menu-horizontal">
+  <ul class="pure-menu-list">
+    {{#each visibleTabs as |tab|}}
+      {{page-layouts/tabs-item
+        tabs=this
+        tab=tab
+        action="selectTab"}}
+    {{/each}}
+  </ul>
+</div>

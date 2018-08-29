@@ -1,0 +1,23 @@
+export const COLLECTION_NAMES = {
+  'checkpoints.scene': 'scenes',
+  'geofences.center': 'waypoints',
+  'initiatives.scene': 'scenes',
+  'pages.scene': 'scenes',
+  'pages.role': 'roles',
+  'pages.route': 'routes',
+  'pages.waypoint': 'waypoints',
+  'pages.pageset': 'pagesets',
+  'pages.panels.cue': 'cues',
+  'pagesets.scene': 'scenes',
+  'pagesets.role': 'roles',
+  'relays.as': 'roles',
+  'relays.for': 'roles',
+  'relays.with': 'roles',
+  'roles.starting_page': 'pages',
+  'roles.default_layout': 'layouts',
+  'routes.from': 'waypoints',
+  'routes.to': 'waypoints',
+  'triggers.page': 'pages',
+  'triggers.scene': 'scenes',
+  'variants.variant_group': 'variant_groups'
+};

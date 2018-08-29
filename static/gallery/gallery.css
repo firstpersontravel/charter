@@ -1,0 +1,43 @@
+.navbar {
+  background: #47876e;
+  margin-bottom: 0.5em;
+}
+.navbar .navbar-brand { color: white; }
+.navbar .navbar-brand:hover { color: white; }
+
+body {
+  background-image: linear-gradient(#bcf5ee, #e8e9bd);
+  background-repeat: no-repeat;
+  background-color: #e8e9bd;
+  font-family: Raleway;
+}
+
+.gallery-row { margin-bottom: 1em; }
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('../fonts/Raleway-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('../fonts/Raleway-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('../fonts/Raleway-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('../fonts/Raleway-BoldItalic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}

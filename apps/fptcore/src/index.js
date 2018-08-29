@@ -1,0 +1,20 @@
+module.exports = {
+  Actions: require('./actions'),
+  ActionCore: require('./action'),
+  ActionParamCore: require('./action_param'),
+  ActionPhraseCore: require('./action_phrase'),
+  ActionResultCore: require('./action_result'),
+  ActionValidationCore: require('./action_validation'),
+  Errors: require('./errors'),
+  EvalCore: require('./eval'),
+  Events: require('./events'),
+  ParamValidators: require('./param_validators'),
+  ParticipantCore: require('./participant'),
+  PlaythroughCore: require('./playthrough'),
+  ScriptCore: require('./script'),
+  TextCore: require('./text'),
+  TimeCore: require('./time'),
+  TriggerCore: require('./trigger'),
+  TriggerEventCore: require('./trigger_event'),
+  WaypointCore: require('./waypoint')
+};

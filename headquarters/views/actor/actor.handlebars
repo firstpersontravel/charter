@@ -1,0 +1,172 @@
+<script type='text/javascript'>
+var clientId = Math.floor(Math.random() * 100000);
+
+function postAction($btn, data) {
+  $btn && $btn.text('Sending...');
+  $('button, a').addClass('disabled');
+  if (data.name) {
+    $.ajax({
+      type: 'post',
+      url: '/api/playthroughs/' + data.playthrough_id + '/' + data.name,
+      contentType: 'application/json',
+      data: data.params,
+      dataType: 'html',
+      success: function(response) {
+        loadNewPage();
+      },
+      error: function() {
+        $('button, a').removeClass('disabled');
+        $btn && $btn.text('Error, try again?');
+      }
+    });
+  } else {
+    loadNewPage();
+  }
+}
+
+function subscribeToFaye() {
+  var client = new Faye.Client('/pubsub');
+  var playthroughIds = "{{playthroughIds}}".split(',');
+  playthroughIds.forEach(function(playthroughId) {
+    var channel = '/{{stage}}_trip_' + playthroughId;
+    var subscription = client.subscribe(channel, function(message) {
+      console.log('msg for ' + playthroughId + ': ', message);
+      if (!message) {
+        return;
+      }
+      if (message.content && message.content.client_id === clientId) {
+        console.log('self-generated message ignored');
+        return;
+      }
+      if (message.type === 'device_state') {
+        return;
+      }
+      refresh();
+    });
+  });
+}
+
+function loadNewPage() {
+  $.ajax({
+    type: 'get',
+    url: window.location.pathname + '?is_partial=true',
+    dataType: 'html',
+    success: function(response) {
+      $('#container').html(response);
+    },
+    error: function() {
+      $('button, a').removeClass('disabled');
+    }
+  });
+}
+
+function getLocation() {
+  if (window.location.search.indexOf('nogps') > -1) {
+    return;
+  }
+  if (!navigator.geolocation) {
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(function(fix) {
+    transmitLocation(fix);
+  });
+}
+
+function transmitLocation(fix) {
+  var userId = $("#data-user-id").html();
+  if (!userId) {
+    return;
+  }
+  $.ajax({
+    type: 'put',
+    url: '/api/users/' + userId,
+    data: {
+      locationLatitude: fix.coords.latitude,
+      locationLongitude: fix.coords.longitude,
+      locationAccuracy: fix.coords.accuracy,
+      locationTimestamp: new Date(fix.timestamp).toISOString()
+    },
+    success: function(response) {
+      console.log('location updated');
+    },
+    error: function() {
+    }
+  });
+}
+
+var lastRefresh = new Date().getTime();
+var refreshInterval = 60000;
+
+function refresh() {
+  postAction(null, {});
+  getLocation();
+  lastRefresh = new Date().getTime();
+}
+
+function checkRefresh() {
+  var now = new Date().getTime();
+  // console.log(Math.ceil((refreshInterval - (now - lastRefresh)) / 1000) +
+  //   ' seconds til refresh');
+  if (now - lastRefresh > refreshInterval) {
+    postAction(null, {});
+    lastRefresh = now;
+  }
+}
+
+$(function() {
+
+  setInterval(checkRefresh, 5000);
+  getLocation();
+  subscribeToFaye();
+
+  $('#container').on('click', '#refresh', function(e) {
+    e.preventDefault();
+    // window.location.reload();
+    refresh();
+  });
+
+  $('#container').on('click', 'a[data-action]', function(e) {
+    e.preventDefault();
+    var $btn = $(this);
+    var playthroughId = $btn.attr('data-playthrough-id');
+    var actionName = $btn.attr('data-action');
+    var actionParams = JSON.parse($btn.attr('data-params'));
+    var params = Object.assign(actionParams, { client_id: clientId });
+    postAction($btn, {
+      playthrough_id: playthroughId,
+      name: actionName,
+      params: JSON.stringify(params)
+    });
+  });
+  $('#container').on('click', 'a[data-ui]', function(e) {
+    e.preventDefault();
+    var $btn = $(this);
+    var playthroughId = $btn.attr('data-playthrough-id');
+    var actionName = $btn.attr('data-ui');
+    if (actionName === 'show-pageset') {
+      var pageName = $btn.attr('data-page-name');
+      $('div[data-playthrough-id=' + playthroughId + '][data-page-name=' + pageName + ']').slideDown();
+    }
+    $btn.hide();
+  });
+});
+</script>
+
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand" href="/actor">
+    FPT Actor Interface
+  </a>
+  <ul class="navbar-nav mr-auto">
+    <li class="nav-item active">
+      <a class="nav-link" href="">
+        {{userName}}
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div style='display: none;' id='data-user-id'>{{userId}}</div>
+
+<div id='container'>
+  {{> actor}}
+</div>

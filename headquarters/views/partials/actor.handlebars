@@ -1,0 +1,13 @@
+<div class="container-fluid" style="margin-top: 0.5em;">
+  {{#each pages}}
+    {{#if pageInfo.pagesetIsActive}}
+      {{> page}}
+    {{else}}
+      {{> page_not_active}}
+    {{/if}}
+  {{else}}
+  <div class='alert alert-info'>
+    No scenes!
+  </div>
+  {{/each}}
+</div>

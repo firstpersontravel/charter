@@ -1,0 +1,23 @@
+{
+  "env": {
+    "es6": false,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "no-unused-vars": ["error", { "args": "none" }],
+    "no-console": 0
+  },
+  "globals": {
+    "it": true,
+    "describe": true,
+    "beforeEach": true,
+    "before": true,
+    "afterEach": true,
+    "module": true
+  }
+}

@@ -1,0 +1,22 @@
+<h1>Admin</h1>
+
+<p>
+  {{link-to "Return to play" "participant.page" class="pure-button"}}
+
+  <button class="pure-button" {{action "debug"}}>Toggle debug</button>
+
+  <button class="pure-button" {{action "logout"}}>Logout</button>
+</p>
+
+<p>
+  Logged in as {{model.user.email}} to playthrough #{{model.playthrough.id}} ({{model.playthrough.title}}).
+</p>
+
+<p>
+  {{#if model.user.locationTimestamp}}
+    Last location {{model.user.locationTimestamp}}:<br/>
+    {{model.user.locationLatitude}}, {{model.user.locationLongitude}}@{{model.user.locationAccuracy}}
+  {{else}}
+    No location.
+  {{/if}}
+</p>

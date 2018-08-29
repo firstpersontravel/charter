@@ -1,0 +1,140 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/react-datepicker/dist/react-datepicker";
+
+@import "../node_modules/leaflet/dist/leaflet.css";
+
+$fa-font-path: "~font-awesome/fonts";
+@import "../node_modules/font-awesome/scss/font-awesome";
+
+.bold { font-weight: bold; }
+.strikethrough { text-decoration: line-through; }
+.react-datepicker__input-container { display: block }
+
+.constrain-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wrap-text {
+  white-space: pre-wrap;
+}
+
+.faint { opacity: 0.5; }
+.btn-unstyled {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    text-align: left;
+    display: inline;
+}
+.popover {
+    max-width: 350px;
+    textarea {
+        height: 10em;
+    }
+}
+
+.nav-tabs {
+  margin-bottom: 0.5em;
+}
+
+.navbar {
+  &.navbar-development {
+    // background: linear-gradient(to bottom, #bfb 0, white 100px);
+    background: #bfb;
+  }
+  &.navbar-staging {
+    background: #ffb;
+  }
+  &.navbar-production {
+    background: #fbb;
+  }
+}
+
+.marker-grayscale {
+  filter: grayscale(100%);
+}
+
+.fixed-corner {
+  background: white;
+  z-index: 1000;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0.5em;
+}
+
+.message {
+  margin-bottom: 0.25em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  &.message-archived {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+}
+
+.upcoming-archived { opacity: 0.5; text-decoration: line-through; }
+.upcoming-unarchived {}
+
+.container-fluid {
+  margin-top: 0.5em;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.row-scene {
+  &.row-current-scene {
+    background: #eee !important;
+  }
+  margin-bottom: 0.5em;
+}
+
+.cell-page {
+  &.cell-current-page {
+    background: #666 !important;
+    color: white;
+  }
+}
+
+.leaflet-container {
+  height: 400px;
+}
+.leaflet-control-attribution {
+  display: none;
+}
+
+@media(min-width: 576px) {
+  .tab-right-float {
+    float: right;
+    margin-top: 0.5em;
+  }
+}
+@media(max-width: 575px) {
+  .leaflet-container {
+    height: 200px;
+  }
+  .breadcrumb {
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .nav-tabs .nav-link {
+    padding: 0.25rem;
+    font-size: 10pt;
+  }
+  .nav-tabs .nav-trip-item {
+    overflow: hidden;
+    max-width: 4em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .inline-xs-down {
+    display: inline;
+  }
+  .tab-right-float {
+    text-align: right;
+    margin-bottom: 0.5em;
+  }
+}
