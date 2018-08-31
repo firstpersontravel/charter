@@ -1,3 +1,0 @@
-*.m4a filter=lfs diff=lfs merge=lfs -crlf
-*.mp3 filter=lfs diff=lfs merge=lfs -crlf
-*.mp4 filter=lfs diff=lfs merge=lfs -crlf
