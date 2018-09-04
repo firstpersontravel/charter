@@ -10,8 +10,9 @@
     pip install fabric==1.14.0 termcolor boto jinja2
 
     # set up n
-    npm install -g n bower
+    npm install -g n
     n 8.11.3
+    npm install bower
 
     # install webpack
     brew install yarn --without-node
