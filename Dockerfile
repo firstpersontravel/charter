@@ -22,7 +22,7 @@ ADD docker/web/conf /etc/nginx/conf.d
 RUN echo -e 'http://dl-cdn.alpinelinux.org/alpine/edge/main\nhttp://dl-cdn.alpinelinux.org/alpine/edge/community\nhttp://dl-cdn.alpinelinux.org/alpine/edge/testing' > /etc/apk/repositories
 
 # Install node
-RUN apk add nodejs=8.11.3-r3
+RUN apk add nodejs>8.11.3
 
 RUN apk add --no-cache yarn
 
