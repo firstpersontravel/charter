@@ -35,6 +35,6 @@ export default function ScriptsIndex({ children, scripts }) {
 }
 
 ScriptsIndex.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   scripts: PropTypes.array.isRequired
 };

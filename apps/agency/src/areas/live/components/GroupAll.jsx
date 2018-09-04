@@ -12,11 +12,11 @@ export default function GroupAll({ children, params, groupStatus,
   numMessagesNeedingReply, nextUnappliedAction }) {
   // Error or loading cases should be handled by `Group`
   if (groupStatus.instance.tripIds.length === 0) {
-    return <div className="row">No trips</div>;
+    return <div>No trips</div>;
   }
   const script = _.get(groupStatus, 'instance.script');
   if (!script) {
-    return <div className="row">No script</div>;
+    return <div>No script</div>;
   }
   const roles = _(script.content.roles)
     .filter(role => role.user)

@@ -2,26 +2,26 @@
 
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.renameTable('action', 'actions');
-    await queryInterface.renameTable('group', 'groups');
-    await queryInterface.renameTable('message', 'messages');
-    await queryInterface.renameTable('participant', 'participants');
-    await queryInterface.renameTable('playthrough', 'playthroughs');
-    await queryInterface.renameTable('profile', 'profiles');
-    await queryInterface.renameTable('relay', 'relays');
-    await queryInterface.renameTable('script', 'scripts');
-    await queryInterface.renameTable('user', 'users');
+    await queryInterface.renameTable('action', 'Actions');
+    await queryInterface.renameTable('group', 'Groups');
+    await queryInterface.renameTable('message', 'Messages');
+    await queryInterface.renameTable('participant', 'Participants');
+    await queryInterface.renameTable('playthrough', 'Playthroughs');
+    await queryInterface.renameTable('profile', 'Profiles');
+    await queryInterface.renameTable('relay', 'Relays');
+    await queryInterface.renameTable('script', 'Scripts');
+    await queryInterface.renameTable('user', 'Users');
   },
 
   down: async (queryInterface) => {
-    await queryInterface.renameTable('actions', 'action');
-    await queryInterface.renameTable('groups', 'group');
-    await queryInterface.renameTable('messages', 'message');
-    await queryInterface.renameTable('participants', 'participant');
-    await queryInterface.renameTable('playthroughs', 'playthrough');
-    await queryInterface.renameTable('profiles', 'profile');
-    await queryInterface.renameTable('relays', 'relay');
-    await queryInterface.renameTable('scripts', 'script');
-    await queryInterface.renameTable('users', 'user');
+    await queryInterface.renameTable('Actions', 'action');
+    await queryInterface.renameTable('Groups', 'group');
+    await queryInterface.renameTable('Messages', 'message');
+    await queryInterface.renameTable('Participants', 'participant');
+    await queryInterface.renameTable('Playthroughs', 'playthrough');
+    await queryInterface.renameTable('Profiles', 'profile');
+    await queryInterface.renameTable('Relays', 'relay');
+    await queryInterface.renameTable('Scripts', 'script');
+    await queryInterface.renameTable('Users', 'user');
   }
 };

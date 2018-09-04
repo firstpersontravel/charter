@@ -23,5 +23,5 @@ export default class Index extends Component {
 }
 
 Index.propTypes = {
-  groupId: PropTypes.number.isRequired
+  groupId: PropTypes.number
 };

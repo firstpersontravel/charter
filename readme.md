@@ -12,7 +12,7 @@
     # set up n
     npm install -g n
     n 8.11.3
-    npm install bower
+    npm install -g bower
 
     # install webpack
     brew install yarn --without-node
@@ -70,10 +70,10 @@
 ### Migrations
 
     # Run migrations
-    dc exec server sequelize db:migrate
+    docker-compose exec server sequelize db:migrate
 
     # Create a new migration
-    dc exec server sequelize migration:generate --name add-some-fields
+    docker-compose exec server sequelize migration:generate --name add-some-fields
 
 ### Random tips
 
