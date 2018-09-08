@@ -25,3 +25,7 @@ export default class Index extends Component {
 Index.propTypes = {
   groupId: PropTypes.number
 };
+
+Index.defaultProps = {
+  groupId: null
+};

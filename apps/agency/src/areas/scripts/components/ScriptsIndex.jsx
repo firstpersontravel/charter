@@ -38,3 +38,7 @@ ScriptsIndex.propTypes = {
   children: PropTypes.node,
   scripts: PropTypes.array.isRequired
 };
+
+ScriptsIndex.defaultProps = {
+  children: null
+}

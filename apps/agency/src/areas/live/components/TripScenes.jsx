@@ -181,6 +181,7 @@ export default class TripScenes extends Component {
     const trip = this.props.trip;
     const showPastScenes = this.props.location.query.past === 'true';
     const roles = _(trip.script.content.roles)
+      .filter(role => !role.if || EvalCore.if(trip.context, role.if))
       .sortBy([sortForRole, 'name'])
       .value();
     const participants = _(roles)
