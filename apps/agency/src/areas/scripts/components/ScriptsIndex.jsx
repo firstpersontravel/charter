@@ -41,4 +41,4 @@ ScriptsIndex.propTypes = {
 
 ScriptsIndex.defaultProps = {
   children: null
-}
+};
