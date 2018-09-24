@@ -23,8 +23,13 @@ function notFoundError(message, data) {
   return apiError(404, 'NotFoundError', message, data);
 }
 
+function internalError(message, data) {
+  return apiError(500, 'InternalError', message, data);
+}
+
 module.exports = {
   badRequestError,
   notFoundError,
-  validationError
+  validationError,
+  internalError
 };

@@ -179,11 +179,9 @@ describe('apiRestRoutes', () => {
         timestamp: moment.utc(req.body.timestamp).toDate()
       });
 
-      // Assert create call made
+      // Assert save call made without fields argument
       sinon.assert.calledOnce(record.save);
-      assert.deepStrictEqual(record.save.firstCall.args, [
-        { fields: ['title', 'timestamp'] }
-      ]);
+      assert.deepStrictEqual(record.save.firstCall.args, [{}]);
     });
 
     it('does not allow creation with id', async () => {
@@ -238,6 +236,67 @@ describe('apiRestRoutes', () => {
       // Call the route
       await assertThrows(async () => {
         await apiRestRoutes.retrieveRecordRoute(Model)(req, res);
+      }, 404, 'Record not found.');
+    });
+  });
+
+  describe('#updateRecordRoute', () => {
+    it('returns a record', async () => {
+      const req = httpMocks.createRequest({
+        params: { recordId: '10' },
+        body: { title: 'def' }
+      });
+      const res = httpMocks.createResponse();
+
+      const existingRecord = Model.build({
+        id: 1,
+        title: 'abc',
+        timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
+      });
+      sandbox.stub(existingRecord, 'save').resolves(null);
+
+      sandbox.stub(Model, 'findById').resolves(existingRecord);
+
+      // Call the route
+      await apiRestRoutes.updateRecordRoute(Model)(req, res);
+
+      // Check response
+      assert.strictEqual(res.statusCode, 200);
+      assert.deepStrictEqual(JSON.parse(res._getData()), {
+        data: {
+          model: {
+            id: 1,
+            timestamp: '2018-02-04T04:05:06.000Z',
+            title: 'def'
+          }
+        }
+      });
+
+      // Assert find call made
+      sinon.assert.calledWith(Model.findById, 10);
+
+      // Assert save call made with fields argument
+      sinon.assert.calledOnce(existingRecord.save);
+      assert.deepStrictEqual(existingRecord.save.firstCall.args, [{
+        fields: ['title']
+      }]);
+
+      // assert field was updated
+      assert.strictEqual(existingRecord.title, 'def');
+    });
+
+    it('returns 404 if not found', async () => {
+      const req = httpMocks.createRequest({
+        params: { recordId: '10' },
+        body: { title: 'def' }
+      });
+      const res = httpMocks.createResponse();
+
+      sandbox.stub(Model, 'findById').resolves(null);
+
+      // Call the route
+      await assertThrows(async () => {
+        await apiRestRoutes.updateRecordRoute(Model)(req, res);
       }, 404, 'Record not found.');
     });
   });

@@ -104,6 +104,8 @@ function respondWithRecords(res, model, records) {
 
 async function updateRecord(record, fields) {
   record.set(fields);
+
+  // Validate fields
   try {
     await record.validate();
   } catch (err) {
@@ -121,7 +123,20 @@ async function updateRecord(record, fields) {
       throw err;
     }
   }
-  await record.save({ fields: Object.keys(fields) });
+  // If we're updating, only save supplied fields.
+  const isCreating = record.id === null;
+  const saveOpts = isCreating ? {} : { fields: Object.keys(fields) };
+
+  // Save fields
+  try {
+    await record.save(saveOpts);
+  } catch (err) {
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+      throw errors.validationError('Invalid foreign key.', {});      
+    } else {
+      throw errors.internalError(err.message, {});
+    }
+  }
 }
 
 async function loadRecord(model, recordId) {

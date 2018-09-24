@@ -1,6 +1,7 @@
 const assert = require('assert');
 const request = require('supertest');
 
+const models = require('../../src/models');
 const app = require('../../src/app');
 
 describe('API create', () => {
@@ -71,9 +72,12 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(201)
         .then((res) => {
+          // Test content created and returned correctly
           assert.deepStrictEqual(res.body.data.script.content, {
             roles: [{ name: 'hi' }]
           });
+          // Test created at was set
+          assert(res.body.data.script.createdAt);
         });
     });
 
@@ -100,6 +104,74 @@ describe('API create', () => {
           });
         });
     });
+  });
 
+  describe('POST /api/playthroughs', () => {
+    it('creates playthrough', async () => {
+      const script = await models.Script.create({
+        name: 'test',
+        title: 'Test',
+        timezone: 'US/Pacific',
+        version: 0,
+        content: {}
+      });
+      const group = await models.Group.create({
+        scriptId: script.id,
+        date: '2018-04-02'
+      });
+      return request(app)
+        .post('/api/playthroughs')
+        .send({
+          scriptId: script.id,
+          groupId: group.id,
+          departureName: 'T3',
+          galleryName: 'Test',
+          title: 'test',
+          date: '2018-04-02',
+          schedule: {},
+          currentSceneName: 'test',
+          values: {},
+          variantNames: '',
+          isArchived: false
+        })
+        .set('Accept', 'application/json')
+        .expect(201)
+        .then((res) => {
+          assert.deepStrictEqual(res.body.data.playthrough.values, {});
+        });        
+    });
+
+    it('fails on invalid foreign key', async () => {
+      const script = await models.Script.create({
+        name: 'test',
+        title: 'Test',
+        timezone: 'US/Pacific',
+        version: 0,
+        content: {}
+      });
+      return request(app)
+        .post('/api/playthroughs')
+        .send({
+          scriptId: script.id,
+          groupId: 1000,
+          departureName: 'T3',
+          galleryName: 'Test',
+          title: 'test',
+          date: '2018-04-02',
+          schedule: {},
+          currentSceneName: 'test',
+          values: {},
+          variantNames: '',
+          isArchived: false
+        })
+        .set('Accept', 'application/json')
+        .expect(422)
+        .then((res) => {
+          assert.deepStrictEqual(res.body, {
+            message: 'Invalid foreign key.',
+            type: 'ValidationError'
+          });
+        });        
+    });
   });
 });
