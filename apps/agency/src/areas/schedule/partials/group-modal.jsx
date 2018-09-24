@@ -46,7 +46,7 @@ export default class GroupModal extends Component {
   handleConfirm() {
     this.props.onConfirm(_.extend({}, this.state, {
       date: this.state.date.format('YYYY-MM-DD'),
-      scriptId: this.state.scriptId
+      scriptId: Number(this.state.scriptId)
     }));
   }
 
