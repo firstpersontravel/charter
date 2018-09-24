@@ -99,7 +99,7 @@ export function listCollection(collectionName, query, opts) {
   return function (dispatch) {
     const queryString = createQueryString(query);
     const url = `/api/${collectionName}${queryString}`;
-    const params = { method: 'get' };
+    const params = { method: 'GET' };
     return request(collectionName, null, 'list', url, params, dispatch)
       .then((response) => {
         if (opts && opts.clear) {
@@ -120,7 +120,7 @@ export function getInstance(collectionName, instanceId) {
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
     const url = `/api/${collectionName}/${instanceId}`;
-    const params = { method: 'get' };
+    const params = { method: 'GET' };
     return request(collectionName, instanceId, 'get', url, params, dispatch)
       .then((response) => {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
@@ -136,7 +136,7 @@ export function createInstance(collectionName, fields) {
   return function (dispatch) {
     const url = `/api/${collectionName}`;
     const params = {
-      method: 'post',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fields)
     };
@@ -159,7 +159,7 @@ export function updateInstance(collectionName, instanceId, fields) {
   return function (dispatch) {
     const url = `/api/${collectionName}/${instanceId}`;
     const params = {
-      method: 'patch',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(fields)
     };
@@ -194,7 +194,7 @@ export function refreshLiveData(playthroughIds) {
 export function postAction(playthroughId, actionName, actionParams) {
   return function (dispatch) {
     const params = {
-      method: 'post',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(actionParams)
     };
@@ -213,7 +213,7 @@ export function postAdminAction(playthroughId, actionName, actionParams,
   shouldRefresh = true) {
   return function (dispatch) {
     const params = {
-      method: 'post',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(actionParams || {})
     };
@@ -232,7 +232,7 @@ export function postAdminAction(playthroughId, actionName, actionParams,
 
 export function updateRelays(scriptName) {
   return function (dispatch) {
-    const params = { method: 'post' };
+    const params = { method: 'POST' };
     const url = `/api/admin/scripts/${scriptName}/update_relays`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
