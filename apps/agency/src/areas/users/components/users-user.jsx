@@ -175,9 +175,13 @@ export default class UsersUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            {script.title}
+            <Link to={`/agency/users?script=${script.name}`}>
+              {script.title}
+            </Link>
             &nbsp;&bull;&nbsp;
-            {profile.roleName}
+            <Link to={`/agency/users?script=${script.name}&role=${role.name}`}>
+              {role.name}
+            </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }
           </span>
           &nbsp;
@@ -219,7 +223,7 @@ export default class UsersUser extends Component {
     const isShowingArchived = !!this.props.location.query.archived_profiles;
     return _(this.props.profiles)
       .filter(profile => isShowingArchived || !profile.isArchived)
-      .sort(profile => profile.isActive)
+      .sort(profile => !profile.isActive)
       .map(profile => this.renderProfile(profile))
       .value();
   }
@@ -292,6 +296,7 @@ export default class UsersUser extends Component {
           onConfirm={this.handleUpdateUser} />
         <ProfileModal
           isOpen={!!editingProfileId}
+          scripts={this.props.scripts}
           profile={editingProfile}
           onClose={this.handleProfileModalClose}
           onConfirm={this.handleUpdateProfile} />

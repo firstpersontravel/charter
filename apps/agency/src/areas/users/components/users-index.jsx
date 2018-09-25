@@ -45,10 +45,17 @@ export default class Users extends Component {
     if (scriptName) {
       profileParams.scriptName = scriptName;
     }
-    const userProfiles = _.filter(this.props.profiles, profileParams);
+    const userProfiles = _(this.props.profiles)
+      .filter(profileParams)
+      .sortBy('isActive')
+      .reverse()
+      .value();
     const roleLinks = _.map(userProfiles, profile => (
       <span key={profile.id}>
         <Link
+          style={{
+            textDecoration: profile.isActive ? '' : 'line-through'
+          }}
           to={{
             pathname: '/agency/users',
             query: { script: profile.scriptName, role: profile.roleName }
@@ -75,12 +82,14 @@ export default class Users extends Component {
   renderHeader() {
     const roleName = this.props.location.query.role;
     const scriptName = this.props.location.query.script;
+    const script = _.find(this.props.scripts, { name: scriptName });
+    const scriptTitle = script ? script.title : scriptName;
     if (roleName && scriptName) {
       return (
         <h3>
           <Link to="/agency/users">Users</Link>
           &nbsp;›&nbsp;
-          <Link to={`/agency/users?script=${scriptName}`}>{scriptName}</Link>
+          <Link to={`/agency/users?script=${scriptName}`}>{scriptTitle}</Link>
           &nbsp;›&nbsp;
           {roleName}
         </h3>
@@ -91,7 +100,7 @@ export default class Users extends Component {
         <h3>
           <Link to="/agency/users">Users</Link>
           &nbsp;›&nbsp;
-          {scriptName}
+          {scriptTitle}
         </h3>
       );
     }
@@ -171,5 +180,6 @@ Users.propTypes = {
   createInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
-  profiles: PropTypes.array.isRequired
+  profiles: PropTypes.array.isRequired,
+  scripts: PropTypes.array.isRequired
 };

@@ -16,7 +16,7 @@ const {
 const Profile = database.define('Profile', snakeCaseColumns({
   scriptName: requiredStringField(32),
   roleName: requiredStringField(32),
-  departureName: requiredStringField(32),
+  departureName: optionalStringField(32),
   isActive: booleanField(true),
   photo: optionalStringField(255),
   phoneNumber: optionalStringField(10),

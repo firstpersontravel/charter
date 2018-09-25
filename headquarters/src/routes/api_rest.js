@@ -156,7 +156,7 @@ async function loadRecord(model, recordId) {
 
 function orderFromParam(model, sortQueryParam) {
   if (!sortQueryParam) {
-    return [];
+    return [['id', 'ASC']];
   }
   const isDescending = sortQueryParam[0] === '-';
   const paramName = sortQueryParam.substring(isDescending ? 1 : 0);
@@ -166,15 +166,43 @@ function orderFromParam(model, sortQueryParam) {
   return [[paramName, isDescending ? 'DESC' : 'ASC']];
 }
 
+function whereFromQuery(model, whereQuery) {
+  return _.mapValues(whereQuery, (value, key) => {
+    const attribute = model.attributes[key];
+    if (!attribute) {
+      throw errors.badRequestError(`Invalid query parameter: ${key}.`);
+    }
+    if (value === 'null') {
+      return null;
+    }
+    const type = attribute.type || attribute;
+    try {
+      type.validate(value);
+    } catch (err) {
+      if (err instanceof Sequelize.ValidationError) {
+        throw errors.badRequestError(
+          `Invalid value "${value}" for parameter ${key}.`
+        );
+      } else {
+        throw err;
+      }
+    }
+    return value;
+  });
+}
+
 function listCollectionRoute(model) {
   return async (req, res) => {
     const offset = Number(req.query.offset || 0);
     const count = Number(req.query.count || LIST_COUNT_DEFAULT);
     const order = orderFromParam(model, req.query.sort);
+    const whereQuery = _.omit(req.query, ['sort', 'count', 'offset']);
+    const where = whereFromQuery(model, whereQuery);
     const records = await model.findAll({
       offset: offset,
       limit: count,
-      order: order
+      order: order,
+      where: where
     });
     respondWithRecords(res, model, records);
   };

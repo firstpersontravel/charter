@@ -14,18 +14,21 @@ const sequelize = new Sequelize({
 
 const Model = sequelize.define('model', {
   title: Sequelize.STRING,
-  timestamp: { type: Sequelize.DATE }
+  timestamp: { type: Sequelize.DATE },
+  isShiny: Sequelize.BOOLEAN
 }, {
   timestamps: false
 });
 
 const sampleRecord1 = Model.build({
   id: 1,
+  isShiny: false,
   title: 'abc',
   timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
 });
 const sampleRecord2 = Model.build({
   id: 2,
+  isShiny: true,
   title: 'def',
   timestamp: moment.utc('2018-03-05T04:05:06Z').toDate()
 });
@@ -40,6 +43,9 @@ async function assertThrows(fn, status, message) {
     if (!caughtErr) {
       assert.fail('Function should have thrown an error.');
     } else {
+      if (!caughtErr.status) {
+        assert.fail(`Expected status but got "${caughtErr.message}".`);
+      }
       assert.strictEqual(caughtErr.status, status);
       assert.strictEqual(caughtErr.message, message);
     }
@@ -67,10 +73,12 @@ describe('apiRestRoutes', () => {
         data: {
           models: [{
             id: 1,
+            isShiny: false,
             timestamp: '2018-02-04T04:05:06.000Z',
             title: 'abc'
           }, {
             id: 2,
+            isShiny: true,
             timestamp: '2018-03-05T04:05:06.000Z',
             title: 'def'
           }]
@@ -81,7 +89,8 @@ describe('apiRestRoutes', () => {
       sinon.assert.calledWith(Model.findAll, {
         limit: 5,
         offset: 1,
-        order: []
+        order: [['id', 'ASC']],
+        where: {}
       });
     });
 
@@ -100,7 +109,8 @@ describe('apiRestRoutes', () => {
       sinon.assert.calledWith(Model.findAll, {
         limit: 100,
         offset: 1,
-        order: [['id', 'ASC']]
+        order: [['id', 'ASC']],
+        where: {}
       });
     });
 
@@ -119,7 +129,8 @@ describe('apiRestRoutes', () => {
       sinon.assert.calledWith(Model.findAll, {
         limit: 100,
         offset: 1,
-        order: [['title', 'DESC']]
+        order: [['title', 'DESC']],
+        where: {}
       });
     });
 
@@ -135,6 +146,72 @@ describe('apiRestRoutes', () => {
       await assertThrows(async () => {
         await apiRestRoutes.listCollectionRoute(Model)(req, res);
       }, 400, 'Invalid sort parameter: abc.');
+    });
+
+    it('returns bad request on invalid filter param', async () => {
+      const req = httpMocks.createRequest({
+        query: { offset: 1, missingField: 'abc' }
+      });
+      const res = httpMocks.createResponse();
+
+      sandbox.stub(Model, 'findAll').resolves([]);
+
+      // Call the route
+      await assertThrows(async () => {
+        await apiRestRoutes.listCollectionRoute(Model)(req, res);
+      }, 400, 'Invalid query parameter: missingField.');
+    });
+
+    it('filters by parameters', async () => {
+      const okValues = [
+        ['isShiny', 'false', 'false'],
+        ['isShiny', 'true', 'true'],
+        ['title', 'abc', 'abc'],
+        ['title', '123', '123'],
+        ['id', '123', '123'],
+        ['timestamp', '2018-02-04T04:05:06Z', '2018-02-04T04:05:06Z'],
+        ['isShiny', 'null', null]
+      ];
+      const req = httpMocks.createRequest({ query: {} });
+      const res = httpMocks.createResponse();
+
+      for (let [fieldName, queryValue, whereValue] of okValues) {
+        req.query = { [fieldName]: queryValue };
+        sandbox.stub(Model, 'findAll').resolves([]);
+
+        // Call the route
+        await apiRestRoutes.listCollectionRoute(Model)(req, res);
+
+        // Assert find call made
+        assert.deepStrictEqual(Model.findAll.firstCall.args, [{
+          limit: 100,
+          offset: 0,
+          order: [['id', 'ASC']],
+          where: { [fieldName]: whereValue }
+        }]);
+
+        sandbox.restore();
+      }
+    });
+
+    it('returns bad request on invalid query parameters', async () => {
+      const okValues = [
+        ['isShiny', '123'],
+        ['isShiny', 'abc'],
+        ['isShiny', 'fals'],
+        ['id', 'abc'],
+        ['timestamp', '2018-asd']
+      ];
+      const req = httpMocks.createRequest({ query: {} });
+      const res = httpMocks.createResponse();
+
+      for (let [fieldName, queryValue] of okValues) {
+        req.query = { [fieldName]: queryValue };
+        // Call the route
+        await assertThrows(async () => {
+          await apiRestRoutes.listCollectionRoute(Model)(req, res);
+        }, 400, `Invalid value "${queryValue}" for parameter ${fieldName}.`);
+      }
     });
   });
 
@@ -166,6 +243,7 @@ describe('apiRestRoutes', () => {
         data: {
           model: {
             id: 3,
+            isShiny: null,
             timestamp: '2018-01-01T04:05:06.000Z',
             title: 'ghi'
           }
@@ -217,6 +295,7 @@ describe('apiRestRoutes', () => {
         data: {
           model: {
             id: 1,
+            isShiny: false,
             timestamp: '2018-02-04T04:05:06.000Z',
             title: 'abc'
           }
@@ -266,6 +345,7 @@ describe('apiRestRoutes', () => {
         data: {
           model: {
             id: 1,
+            isShiny: null,
             timestamp: '2018-02-04T04:05:06.000Z',
             title: 'def'
           }

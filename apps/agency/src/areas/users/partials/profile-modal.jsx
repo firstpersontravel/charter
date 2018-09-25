@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import yaml from 'js-yaml';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -10,7 +9,6 @@ const EMAIL_REGEX = /^[\w._-]+@\w+\.\w+$/;
 export default class ProfileModal extends Component {
 
   static getDefaultState(profile) {
-    const values = profile ? _.trim(yaml.safeDump(profile.values)) : '';
     return {
       scriptName: profile ? profile.scriptName : '',
       roleName: profile ? profile.roleName : '',
@@ -19,7 +17,7 @@ export default class ProfileModal extends Component {
       phoneNumber: profile ? profile.phoneNumber : '',
       facetimeUsername: profile ? profile.facetimeUsername : '',
       skypeUsername: profile ? profile.skypeUsername : '',
-      values: values !== '{}' ? values : ''
+      values: profile ? profile.values : ''
     };
   }
 
@@ -28,6 +26,7 @@ export default class ProfileModal extends Component {
     this.state = ProfileModal.getDefaultState(props.profile);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
+    this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
   }
 
@@ -48,9 +47,7 @@ export default class ProfileModal extends Component {
   }
 
   handleConfirm() {
-    this.props.onConfirm(_.assign({}, this.state, {
-      values: yaml.safeLoad(this.state.values || '{}')
-    }));
+    this.props.onConfirm(_.assign({}, this.state));
   }
 
   handleChangeField(fieldName, event) {
@@ -59,6 +56,14 @@ export default class ProfileModal extends Component {
       value = value.replace(/\D/g, '');
     }
     this.setState({ [fieldName]: value });
+  }
+
+  handleChangeValue(valueName, event) {
+    this.setState({
+      values: Object.assign(this.state.values, {
+        [valueName]: event.target.value
+      })
+    });
   }
 
   isValid() {
@@ -76,14 +81,6 @@ export default class ProfileModal extends Component {
       !EMAIL_REGEX.test(this.state.facetimeUsername)) {
       return false;
     }
-    try {
-      const values = yaml.safeLoad(this.state.values || '{}');
-      if (!_.isPlainObject(values)) {
-        return false;
-      }
-    } catch (err) {
-      return false;
-    }
     return true;
   }
 
@@ -93,6 +90,41 @@ export default class ProfileModal extends Component {
     const isNew = !profile;
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
+
+    const scriptOptions = this.props.scripts.map(script => (
+      <option key={script.name} value={script.name}>{script.title}</option>
+    ));
+    const script = _.find(this.props.scripts, { name: this.state.scriptName });
+    const roles = script ? script.content.roles : [];
+    const departures = script ? script.content.departures : [];
+    const roleOptions = roles.map(role => (
+      <option key={role.name} value={role.name}>{role.name}</option>
+    ));
+    const departureOptions = departures.map(departure => (
+      <option key={departure.name} value={departure.name}>
+        {departure.name}
+      </option>
+    ));
+    const role = _.find(roles, { name: this.state.roleName });
+    const requiredValues = (role && role.required_values) || [];
+    const requiredValueRows = requiredValues
+      .map(requiredValue => (
+        <div className="row" key={requiredValue}>
+          <div className="form-group col-sm-12">
+            <label htmlFor={`profile_value_${requiredValue}`}>
+              {requiredValue}
+            </label>
+            <input
+              type="text"
+              id={`profile_value_${requiredValue}`}
+              className="form-control"
+              value={this.state.values[requiredValue] || ''}
+              onChange={_.curry(this.handleChangeValue)(requiredValue)}
+              placeholder={requiredValue} />
+          </div>
+        </div>
+      ));
+
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -104,34 +136,36 @@ export default class ProfileModal extends Component {
             <div className="row">
               <div className="form-group col-sm-5">
                 <label htmlFor="profile_script_name">Script</label>
-                <input
-                  type="text"
-                  id="profile_script_name"
+                <select
                   className="form-control"
-                  value={this.state.scriptName}
-                  ref={(input) => { this.firstInput = input; }}
+                  id="profile_script_name"
                   onChange={_.curry(this.handleChangeField)('scriptName')}
-                  placeholder="Script name" />
+                  value={this.state.scriptName}>
+                  <option value="">--</option>
+                  {scriptOptions}
+                </select>
               </div>
               <div className="form-group col-sm-4">
                 <label htmlFor="profile_role_name">Role</label>
-                <input
-                  type="text"
-                  id="profile_role_name"
+                <select
                   className="form-control"
-                  value={this.state.roleName}
+                  id="profile_role_name"
                   onChange={_.curry(this.handleChangeField)('roleName')}
-                  placeholder="Role" />
+                  value={this.state.roleName}>
+                  <option value="">--</option>
+                  {roleOptions}
+                </select>
               </div>
               <div className="form-group col-sm-3">
                 <label htmlFor="profile_departure_name">Departure</label>
-                <input
-                  type="text"
-                  id="profile_departure_name"
+                <select
                   className="form-control"
-                  value={this.state.departureName}
+                  id="profile_departure_name"
                   onChange={_.curry(this.handleChangeField)('departureName')}
-                  placeholder="Departure" />
+                  value={this.state.departureName}>
+                  <option value="">--</option>
+                  {departureOptions}
+                </select>
               </div>
             </div>
             <div className="row">
@@ -179,18 +213,7 @@ export default class ProfileModal extends Component {
                   placeholder="Skype username" />
               </div>
             </div>
-            <div className="row">
-              <div className="form-group col-sm-12">
-                <label htmlFor="profile_values">Values</label>
-                <textarea
-                  style={{ height: '8em' }}
-                  id="profile_values"
-                  className="form-control"
-                  value={this.state.values}
-                  onChange={_.curry(this.handleChangeField)('values')}
-                  placeholder="Values" />
-              </div>
-            </div>
+            {requiredValueRows}
           </form>
         </ModalBody>
         <ModalFooter>
@@ -212,6 +235,7 @@ export default class ProfileModal extends Component {
 
 ProfileModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
+  scripts: PropTypes.array.isRequired,
   profile: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
