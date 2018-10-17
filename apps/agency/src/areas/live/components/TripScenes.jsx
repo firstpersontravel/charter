@@ -48,11 +48,10 @@ export default class TripScenes extends Component {
   renderPlayerPage(participant, page) {
     const trip = participant.trip;
     const isCurrentPage = page.name === participant.currentPageName;
-    const isCurrentScene = page.scene === trip.currentSceneName;
     const isAckedPage = participant.acknowledgedPageName === page.name;
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const goToPageClass = isProduction() ? 'text-danger' : 'text-primary';
-    const goToPageButton = (isCurrentScene && !isCurrentPage) ? (
+    const goToPageButton = (!isCurrentPage) ? (
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <a
         style={{ marginLeft: '0.25em', cursor: 'pointer', float: 'right' }}

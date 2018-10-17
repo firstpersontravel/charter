@@ -199,6 +199,9 @@ export default class GroupMap extends Component {
         );
         const pageName = participant.currentPageName;
         const page = _.find(script.content.pages, { name: pageName });
+        if (!page) {
+          return null;
+        }
         if (page.waypoint) {
           const waypointOption = WaypointCore.optionForWaypoint(
             script.content, page.waypoint,
