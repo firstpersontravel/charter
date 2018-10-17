@@ -9,11 +9,16 @@ function autoMessage(script, context, params, applyAt) {
   var messageContent = EvalCore.templateText(context, messageData.content,
     script.timezone);
   var hasBeenRead = messageData.read === true;
+  var fromRoleName = messageData.from;
+  var toRoleName = params.to_role_name || messageData.to;
+  if (!toRoleName) {
+    return null;
+  }
   return [{
     operation: 'createMessage',
     updates: {
-      sentById: context[params.from_role_name].id,
-      sentToId: context[params.to_role_name].id,
+      sentById: context[fromRoleName].id,
+      sentToId: context[toRoleName].id,
       createdAt: applyAt,
       readAt: hasBeenRead ? applyAt : null,
       messageName: messageName,
@@ -23,12 +28,11 @@ function autoMessage(script, context, params, applyAt) {
   }];
 }
 
-autoMessage.phraseForm = ['from_role_name', 'to_role_name', 'message_name'];
+autoMessage.phraseForm = ['message_name', 'to_role_name'];
 
 autoMessage.params = {
-  from_role_name: { required: true, type: 'resource', collection: 'roles' },
-  to_role_name: { required: true, type: 'resource', collection: 'roles' },
-  message_name: { required: true, type: 'resource', collection: 'messages' }
+  message_name: { required: true, type: 'resource', collection: 'messages' },
+  to_role_name: { required: false, type: 'resource', collection: 'roles' }
 };
 
 module.exports = autoMessage;

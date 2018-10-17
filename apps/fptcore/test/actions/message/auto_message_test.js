@@ -17,15 +17,13 @@ describe('#autoMessage', () => {
         messages: [{
           name: 'MESSAGE-HELLO',
           type: 'text',
+          from: 'Ally',
+          to: 'Babbit',
           content: 'hello'
         }]
       }
     };
-    const params = {
-      message_name: 'MESSAGE-HELLO',
-      from_role_name: 'Ally',
-      to_role_name: 'Babbit'
-    };
+    const params = { message_name: 'MESSAGE-HELLO' };
     const res = autoMessage(script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
@@ -47,15 +45,13 @@ describe('#autoMessage', () => {
         messages: [{
           name: 'MESSAGE-HELLO',
           type: 'audio',
+          from: 'Ally',
+          to: 'Babbit',
           content: '{{Ally.audio_path}}'
         }]
       }
     };
-    const params = {
-      message_name: 'MESSAGE-HELLO',
-      from_role_name: 'Ally',
-      to_role_name: 'Babbit'
-    };
+    const params = { message_name: 'MESSAGE-HELLO' };
     const res = autoMessage(script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',

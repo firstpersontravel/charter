@@ -67,14 +67,9 @@ describe('ScriptCore', () => {
     it('gathers warning for missing params', () => {
       const script = {
         content: {
-          roles: [{
-            name: 'Gabe'
-          }, {
-            name: 'Tom'
-          }],
           triggers: [{
             name: 'TRIGGER-MESSAGE-GABE-TOM',
-            actions: 'auto_message Gabe Tom'
+            actions: 'auto_message'
           }]
         }
       };

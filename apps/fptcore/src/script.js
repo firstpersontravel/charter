@@ -28,6 +28,7 @@ var SCRIPT_DEPENDENCY_TREE = {
     role: 'roles',
     scene: 'scenes'
   },
+  messages: { from: 'roles', to: 'roles' },
   pagesets: { role: 'roles', scene: 'scenes' },
   relays: { for: 'roles', as: 'roles', with: 'roles' },
   roles: { starting_page: 'pages', default_layout: 'layouts' },
