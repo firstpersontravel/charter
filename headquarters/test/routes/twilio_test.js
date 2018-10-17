@@ -50,7 +50,7 @@ describe('twilioRoutes', () => {
       // Check called with correct args
       sinon.assert.calledOnce(TripActionController.applyAction);
       const expectedAction = {
-        name: 'send_message',
+        name: 'custom_message',
         params: {
           from_role_name: 'Player',
           to_role_name: 'Actor',

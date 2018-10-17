@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const autoMessage = require('../../src/actions/auto_message');
+const autoMessage = require('../../../src/actions/message/auto_message');
 
 describe('#autoMessage', () => {
 

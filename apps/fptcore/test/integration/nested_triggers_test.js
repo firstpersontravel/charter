@@ -38,7 +38,7 @@ const script = {
     }, {
       name: 'TRIGGER-GREET-2',
       event: { cue_signaled: 'CUE-GREET-REPLY' },
-      actions: ['send_message Cowboy Farmer text howdy']
+      actions: ['custom_message Cowboy Farmer text howdy']
     }, {
       name: 'TRIGGER-NAV-1',
       event: { cue_signaled: 'CUE-NAV-1' },
@@ -50,7 +50,7 @@ const script = {
       name: 'TRIGGER-NAV-2',
       event: { cue_signaled: 'CUE-NAV-2' },
       if: 'is_navigating',
-      actions: ['send_message Cowboy Farmer text geewhiz']
+      actions: ['custom_message Cowboy Farmer text geewhiz']
     }],
     pages: [{
       name: 'TRACTOR'
@@ -214,9 +214,9 @@ describe('Integration - Nested Triggers', () => {
       { cue_name: 'CUE-GREET-REPLY' },
       now
     ]);
-    // Then send_message with event 'cue CUE-GREET-REPLY'
-    assert(actionSpies.send_message);
-    assert.deepStrictEqual(actionSpies.send_message.firstCall.args, [
+    // Then custom_message with event 'cue CUE-GREET-REPLY'
+    assert(actionSpies.custom_message);
+    assert.deepStrictEqual(actionSpies.custom_message.firstCall.args, [
       script,
       Object.assign({}, context, {
         event: {

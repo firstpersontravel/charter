@@ -58,7 +58,7 @@ describe('TwilioMessageHandler', () => {
         assert.deepStrictEqual(
           TripActionController.applyAction.firstCall.args,
           [100, {
-            name: 'send_message',
+            name: 'custom_message',
             params: {
               from_role_name: 'From',
               message_content: 'incomïng mêssage',
@@ -79,7 +79,7 @@ describe('TwilioMessageHandler', () => {
         assert.deepStrictEqual(
           TripActionController.applyAction.firstCall.args,
           [100, {
-            name: 'send_message',
+            name: 'custom_message',
             params: {
               from_role_name: 'From',
               message_content: 'http://test/image.jpg',
@@ -144,7 +144,7 @@ describe('TwilioMessageHandler', () => {
         assert.deepStrictEqual(
           TripActionController.applyAction.firstCall.args,
           [4, {
-            name: 'send_message',
+            name: 'custom_message',
             params: {
               from_role_name: 'From',
               message_content: 'test',

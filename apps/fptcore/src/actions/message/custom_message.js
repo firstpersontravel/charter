@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-function sendMessage(script, context, params, applyAt) {
+function customMessage(script, context, params, applyAt) {
   var roles = script.content.roles || [];
   var sentByRole = _.find(roles, { name: params.from_role_name });
   var sentToRole = _.find(roles, { name: params.to_role_name });
@@ -24,10 +24,10 @@ function sendMessage(script, context, params, applyAt) {
   }];
 }
 
-sendMessage.phraseForm = ['from_role_name', 'to_role_name', 'message_type',
+customMessage.phraseForm = ['from_role_name', 'to_role_name', 'message_type',
   'message_content'];
 
-sendMessage.eventForParams = function(params) {
+customMessage.eventForParams = function(params) {
   return {
     type: 'message_sent',
     message: {
@@ -44,7 +44,7 @@ sendMessage.eventForParams = function(params) {
   };
 };
 
-sendMessage.params = {
+customMessage.params = {
   from_role_name: { required: true, type: 'resource', collection: 'roles' },
   to_role_name: { required: true, type: 'resource', collection: 'roles' },
   message_type: {
@@ -59,4 +59,4 @@ sendMessage.params = {
   suppress_relay_id: { required: false, type: 'number' }
 };
 
-module.exports = sendMessage;
+module.exports = customMessage;

@@ -19,8 +19,8 @@ describe('TextCore', () => {
 
     it('preserves spaces inside quoted strings', () => {
       assert.deepStrictEqual(
-        TextCore.splitWords('send_message "gabe can\'t leave now" to Bob'),
-        ['send_message', '"gabe can\'t leave now"', 'to', 'Bob']);
+        TextCore.splitWords('custom_message "gabe can\'t leave now" to Bob'),
+        ['custom_message', '"gabe can\'t leave now"', 'to', 'Bob']);
     });
   });
 });

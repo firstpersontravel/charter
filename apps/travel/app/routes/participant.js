@@ -182,7 +182,7 @@ export default Ember.Route.extend({
     sendMessage: function(asRoleName, toRoleName,
         messageType, messageContent) {
       var lastFix = this.get('location.lastFixPrivate');
-      this.makeAction('send_message', {
+      this.makeAction('custom_message', {
         from_role_name: asRoleName,
         to_role_name: toRoleName,
         message_type: messageType,

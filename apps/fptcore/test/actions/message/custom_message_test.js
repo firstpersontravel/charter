@@ -1,9 +1,9 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const sendMessage = require('../../src/actions/send_message');
+const customMessage = require('../../../src/actions/message/custom_message');
 
-describe('#sendMessage', () => {
+describe('#customMessage', () => {
 
   const now = moment.utc();
   const script = {
@@ -23,7 +23,7 @@ describe('#sendMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = sendMessage(script, context, params, now);
+    const res = customMessage(script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -57,7 +57,7 @@ describe('#sendMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = sendMessage(scriptWithActor, context, params, now);
+    const res = customMessage(scriptWithActor, context, params, now);
     assert.strictEqual(res[0].updates.isReplyNeeded, true);
   });
 
@@ -71,7 +71,7 @@ describe('#sendMessage', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const res = sendMessage(script, context, params, now);
+    const res = customMessage(script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -97,7 +97,7 @@ describe('#sendMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = sendMessage(script, context, params, now);
+    const res = customMessage(script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -126,7 +126,7 @@ describe('#sendMessage', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const event = sendMessage.eventForParams(params);
+    const event = customMessage.eventForParams(params);
     assert.deepStrictEqual(event, {
       type: 'message_sent',
       message: {

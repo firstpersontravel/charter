@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var EvalCore = require('../eval');
+var EvalCore = require('../../eval');
 
 function autoMessage(script, context, params, applyAt) {
   var messageName = params.message_name;

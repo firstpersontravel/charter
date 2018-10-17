@@ -90,7 +90,7 @@ export default class PlayerMessages extends Component {
   handleSendPendingMessage(event) {
     event.preventDefault();
     this.setState({ pendingMessage: '' });
-    this.props.postAction(this.props.params.tripId, 'send_message', {
+    this.props.postAction(this.props.params.tripId, 'custom_message', {
       from_role_name: this.getActorRoleName(),
       to_role_name: this.getUserRoleName(),
       message_type: 'text',
