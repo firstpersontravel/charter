@@ -1,5 +1,5 @@
 module.exports = {
-  auto_message: require('./message/auto_message'),
+  send_message: require('./message/send_message'),
   add_to_call: require('./call/add_to_call'),
   cue: require('./cue'),
   increment_value: require('./increment_value'),

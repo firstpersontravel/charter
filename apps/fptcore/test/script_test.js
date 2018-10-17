@@ -69,13 +69,13 @@ describe('ScriptCore', () => {
         content: {
           triggers: [{
             name: 'TRIGGER-MESSAGE-GABE-TOM',
-            actions: 'auto_message'
+            actions: 'send_message'
           }]
         }
       };
       const warnings = ScriptCore.gatherScriptWarnings(script);
       assert.deepStrictEqual(warnings, [
-        'triggers[name=TRIGGER-MESSAGE-GABE-TOM].actions (auto_message): ' +
+        'triggers[name=TRIGGER-MESSAGE-GABE-TOM].actions (send_message): ' +
         'Required param "message_name" not present.'
       ]);
     });

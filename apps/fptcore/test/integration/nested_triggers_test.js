@@ -30,7 +30,7 @@ const script = {
     }, {
       name: 'TRIGGER-SUNRISE',
       event: { cue_signaled: 'CUE-SUNRISE' },
-      actions: ['in 120m, auto_message MESSAGE-CROW']
+      actions: ['in 120m, send_message MESSAGE-CROW']
     }, {
       name: 'TRIGGER-GREET-1',
       event: { cue_signaled: 'CUE-GREET' },
@@ -173,7 +173,7 @@ describe('Integration - Nested Triggers', () => {
       }
     }]);
     assert.strictEqual(result.scheduledActions.length, 1);
-    assert.strictEqual(result.scheduledActions[0].name, 'auto_message');
+    assert.strictEqual(result.scheduledActions[0].name, 'send_message');
     assert.deepStrictEqual(result.scheduledActions[0].params, {
       message_name: 'MESSAGE-CROW'
     });

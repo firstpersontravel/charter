@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 var EvalCore = require('../../eval');
 
-function autoMessage(script, context, params, applyAt) {
+function sendMessage(script, context, params, applyAt) {
   var messageName = params.message_name;
   var messageData = _.find(script.content.messages, { name: messageName });
   var messageType = messageData.type;
@@ -28,11 +28,11 @@ function autoMessage(script, context, params, applyAt) {
   }];
 }
 
-autoMessage.phraseForm = ['message_name', 'to_role_name'];
+sendMessage.phraseForm = ['message_name', 'to_role_name'];
 
-autoMessage.params = {
+sendMessage.params = {
   message_name: { required: true, type: 'resource', collection: 'messages' },
   to_role_name: { required: false, type: 'resource', collection: 'roles' }
 };
 
-module.exports = autoMessage;
+module.exports = sendMessage;

@@ -1,9 +1,9 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const autoMessage = require('../../../src/actions/message/auto_message');
+const sendMessage = require('../../../src/actions/message/send_message');
 
-describe('#autoMessage', () => {
+describe('#sendMessage', () => {
 
   const now = moment.utc();
   const context = {
@@ -24,7 +24,7 @@ describe('#autoMessage', () => {
       }
     };
     const params = { message_name: 'MESSAGE-HELLO' };
-    const res = autoMessage(script, context, params, now);
+    const res = sendMessage(script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -52,7 +52,7 @@ describe('#autoMessage', () => {
       }
     };
     const params = { message_name: 'MESSAGE-HELLO' };
-    const res = autoMessage(script, context, params, now);
+    const res = sendMessage(script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       updates: {
