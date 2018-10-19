@@ -14,8 +14,8 @@ async function scheduleActions() {
   }
   isSchedulingActions = true;
   try {
-    // Schedule actions up to a minute ahead of time
-    const aMinuteAhead = moment.utc().clone().add(60, 'seconds');
+    // Schedule actions up to five minutes ahead of time
+    const aMinuteAhead = moment.utc().clone().add(5, 'minutes');
     await GlobalController.scheduleActions(aMinuteAhead);
     isSchedulingActions = false;
   } catch (err) {
