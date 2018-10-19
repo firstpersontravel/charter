@@ -88,7 +88,7 @@ describe('TriggerEventCore', () => {
       const trigger = { event: { call_ended: {} } };
       const event = { type: 'cue_signaled', };
       const res = TriggerEventCore
-        .doesEventFireTriggerEvent({}, trigger, event);
+        .doesEventFireTriggerEvent({}, {}, trigger, event);
       assert.strictEqual(res, false);
     });
 
@@ -99,51 +99,102 @@ describe('TriggerEventCore', () => {
       const triggerEvent = { cue_signaled: {} };
       const event = { type: 'cue_signaled' };
       const res = TriggerEventCore
-        .doesEventFireTriggerEvent({}, triggerEvent, event);
+        .doesEventFireTriggerEvent({}, {}, triggerEvent, event);
       assert.strictEqual(res, true);
 
       stub.returns(false);
       const res2 = TriggerEventCore
-        .doesEventFireTriggerEvent({}, triggerEvent, event);
+        .doesEventFireTriggerEvent({}, {}, triggerEvent, event);
       assert.strictEqual(res2, false);
     });
   });
 
+  describe('#triggerEventForEventType', () => {
+    it('returns matching event', () => {
+      const trigger = {
+        event: { thing_happened: { params: true } }
+      };
+      const eventType = 'thing_happened';
+      const res = TriggerEventCore.triggerEventForEventType(trigger, eventType);
+      assert.strictEqual(res, trigger.event);
+    });
+
+    it('skips non-matching event', () => {
+      const trigger = {
+        event: { thing_happened: { params: true } }
+      };
+      const eventType = 'other_thing_happened';
+      const res = TriggerEventCore.triggerEventForEventType(trigger, eventType);
+      assert.strictEqual(res, null);
+    });
+
+    it('goes through multiple events to return matching one', () => {
+      const trigger = {
+        event: [
+          { this_happened: { params: true } },
+          { that_happened: { params: true } },
+          { another_thing_happened: { params: true } }
+        ]
+      };
+      const eventType = 'that_happened';
+      const res = TriggerEventCore.triggerEventForEventType(trigger, eventType);
+      assert.strictEqual(res, trigger.event[1]);
+    });
+  });
+
   describe('#doesEventFireTrigger', () => {
-    it('returns result of single trigger event', () => {
+    it('detects matching case', () => {
+      const trigger = { event: { cue_signaled: {} } };
+      const event = { type: 'cue_signaled' };
       const stub = sandbox
+        .stub(TriggerEventCore, 'triggerEventForEventType')
+        .returns(trigger.event);
+      const stub2 = sandbox
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(true);
 
-      const trigger = { event: { cue_signaled: {} } };
-      const event = { type: 'cue_signaled' };
-      const res = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
+      const res = TriggerEventCore
+        .doesEventFireTrigger({}, {}, trigger, event);
       assert.strictEqual(res, true);
 
-      stub.returns(false);
-      const res2 = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res2, false);
+      sinon.assert.calledWith(stub, trigger, event.type);
+      sinon.assert.calledWith(stub2, {}, {}, trigger.event, event);
     });
 
-    it('returns result of multiple trigger events', () => {
-      const stub = sandbox
-        .stub(TriggerEventCore, 'doesEventFireTriggerEvent');
-      stub
-        .onFirstCall().returns(true)
-        .onSecondCall().returns(false);
-
-      const trigger = { event: [{ cue_signaled: {} }, { other: {} }] };
+    it('detects coarse non-matching case', () => {
+      const trigger = { event: { cue_signaled: {} } };
       const event = { type: 'cue_signaled' };
-      const res = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res, true);
+      const stub = sandbox
+        .stub(TriggerEventCore, 'triggerEventForEventType')
+        .returns(null);
+      const stub2 = sandbox
+        .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
+        .returns(false);
 
-      sinon.assert.calledWith(stub, {}, trigger.event[0], event);
-      sinon.assert.calledWith(stub, {}, trigger.event[1], event);
+      const res = TriggerEventCore
+        .doesEventFireTrigger({}, {}, trigger, event);
+      assert.strictEqual(res, false);
 
-      // Try with no positive results
-      stub.onSecondCall().returns(false);
-      const res2 = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res2, false);
+      sinon.assert.calledWith(stub, trigger, event.type);
+      sinon.assert.notCalled(stub2);
+    });
+
+    it('detects fine non-matching case', () => {
+      const trigger = { event: { cue_signaled: {} } };
+      const event = { type: 'cue_signaled' };
+      const stub = sandbox
+        .stub(TriggerEventCore, 'triggerEventForEventType')
+        .returns(trigger.event);
+      const stub2 = sandbox
+        .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
+        .returns(false);
+
+      const res = TriggerEventCore
+        .doesEventFireTrigger({}, {}, trigger, event);
+      assert.strictEqual(res, false);
+
+      sinon.assert.calledWith(stub, trigger, event.type);
+      sinon.assert.calledWith(stub2, {}, {}, trigger.event, event);
     });
   });
 
@@ -158,7 +209,7 @@ describe('TriggerEventCore', () => {
 
       sandbox
         .stub(TriggerEventCore, 'doesEventFireTrigger')
-        .callsFake(function(script, trigger, event) {
+        .callsFake(function(script, context, trigger, event) {
           return trigger.scene !== 'SCENE-3';
         });
 
@@ -177,86 +228,4 @@ describe('TriggerEventCore', () => {
       assert.deepStrictEqual(res, [script.content.triggers[1]]);
     });
   });
-
-  describe('#doesEventFireTrigger', () => {
-
-    var cueStub;
-    var messageStub;
-
-    beforeEach(() => {
-      cueStub = sandbox.stub(Events.cue_signaled, 'matchEvent');
-      messageStub = sandbox.stub(Events.message_sent, 'matchEvent');
-    });
-
-    it('does not fire if no matcher exists', () => {
-      const trigger = { event: { cue: 'cue' } };
-      const event = { type: 'abc' };
-      const res = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res, false);
-    });
-
-    it('does not fire if trigger event type does not match event', () => {
-      const trigger = { event: { cue_signaled: 'cue' } };
-      const event = { type: 'message_sent' };
-      const res = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res, false);
-      sinon.assert.notCalled(cueStub);
-      sinon.assert.notCalled(messageStub);
-    });
-
-    it('returns true if matcher returns true', () => {
-      cueStub.returns(true);
-      const trigger = { event: { cue_signaled: 'cue' } };
-      const event = { type: 'cue_signaled' };
-      const res = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res, true);
-      sinon.assert.calledWith(cueStub, {}, trigger.event.cue_signaled, event);
-    });
-
-    it('returns false if matcher returns false', () => {
-      cueStub.returns(false);
-      const trigger = { event: { cue_signaled: 'param' } };
-      const event = { type: 'cue_signaled' };
-      const res = TriggerEventCore.doesEventFireTrigger({}, trigger, event);
-      assert.strictEqual(res, false);
-      sinon.assert.calledWith(cueStub, {}, trigger.event.cue_signaled, event);
-    });
-
-    it('fires if any event matcher fires', () => {
-      cueStub.returns(true);
-      messageStub.returns(false);
-      const trigger = {
-        event: [
-          { cue_signaled: 'cue' },
-          { message_sent: 'other_param' }
-        ]
-      };
-      const event = { type: 'cue_signaled' };
-      assert.strictEqual(
-        TriggerEventCore.doesEventFireTrigger({}, trigger, event),
-        true);
-      sinon.assert.calledWith(
-        cueStub, {}, trigger.event[0].cue_signaled, event);
-      sinon.assert.notCalled(messageStub);
-    });
-
-    it('does not fire if no event matchers fire', () => {
-      cueStub.returns(false);
-      messageStub.returns(false);
-      const trigger = {
-        event: [
-          { cue: 'cue' },
-          { message_sent: 'other_param' }
-        ]
-      };
-      const event = { type: 'message_sent' };
-      assert.strictEqual(
-        TriggerEventCore.doesEventFireTrigger({}, trigger, event),
-        false);
-      sinon.assert.notCalled(cueStub);
-      sinon.assert.calledWith(
-        messageStub, {}, trigger.event[1].message_sent, event);
-    });
-  });
-
 });

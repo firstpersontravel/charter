@@ -9,30 +9,45 @@ var TriggerEventCore = {};
  * Test if a single trigger event spec is set off by an event.
  */
 TriggerEventCore.doesEventFireTriggerEvent = function(
-  script, triggerEvent, event) {
+  script, context, triggerEvent, event
+) {
   // event type should equal trigger event clause
   if (!triggerEvent[event.type]) {
     return false;
   }
   // Get matching function and calculate match.
   var spec = triggerEvent[event.type];
-  return Events[event.type].matchEvent(script, spec, event);
+  return Events[event.type].matchEvent(script, context, spec, event);
+};
+
+/**
+ * Return the first trigger event
+ */
+TriggerEventCore.triggerEventForEventType = function(trigger, eventType) {
+  var triggerEvents = _.isArray(trigger.event) ?
+    trigger.event : [trigger.event];
+  return _.find(triggerEvents, function(triggerEvent) {
+    return !!triggerEvent[eventType];
+  }) || null;
 };
 
 /**
  * Test if a trigger is set off by an event.
  */
-TriggerEventCore.doesEventFireTrigger = function(script, trigger, event) {
+TriggerEventCore.doesEventFireTrigger = function(
+  script, context, trigger, event
+) {
   // If no matcher for this event type, exit
   if (!Events[event.type]) {
     return false;
   }
-  var triggerEvents = _.isArray(trigger.event) ?
-    trigger.event : [trigger.event];
-  return _.some(_.map(triggerEvents, function(triggerEvent) {
-    return TriggerEventCore.doesEventFireTriggerEvent(
-      script, triggerEvent, event);
-  }));
+  var triggerEvent = TriggerEventCore.triggerEventForEventType(
+    trigger, event.type);
+  if (!triggerEvent) {
+    return false;
+  }
+  return TriggerEventCore.doesEventFireTriggerEvent(
+    script, context, triggerEvent, event);
 };
 
 /**
@@ -81,7 +96,7 @@ TriggerEventCore.triggersForEvent = function(script, context, event) {
       return false;
     }
     // Skip if the event doesn't match the trigger.
-    if (!TriggerEventCore.doesEventFireTrigger(script, trigger, event)) {
+    if (!TriggerEventCore.doesEventFireTrigger(script, context, trigger, event)) {
       return false;
     }
     return true;

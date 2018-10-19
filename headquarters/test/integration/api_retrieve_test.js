@@ -32,6 +32,7 @@ describe('API retrieve', () => {
                 history: {},
                 id: playthrough.id,
                 isArchived: false,
+                lastScheduledTime: null,
                 schedule: {},
                 departureName: 'T1',
                 galleryName: '',

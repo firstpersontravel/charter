@@ -65,6 +65,7 @@ describe('TripActionController', () => {
       const action = { name: 'cue', params: {} };
       await TripActionController.applyAction(playthrough.id, action);
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
+        type: 'action',
         appliedAt: null,
         createdAt: now.toDate(),
         event: null,
@@ -73,7 +74,6 @@ describe('TripActionController', () => {
         params: scheduleAction.params,
         playthroughId: 1,
         scheduledAt: inOneHour.toDate(),
-        syncedAt: now.toDate(),
         triggerName: ''
       });
     });

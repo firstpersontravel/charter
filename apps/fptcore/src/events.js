@@ -1,4 +1,7 @@
 var _ = require('lodash');
+var moment = require('moment');
+
+var TimeCore = require('./time');
 
 /**
  * Meters distance between two coordinate pairs.
@@ -26,7 +29,7 @@ Events.scene_started = {
   specParams: {
     self: { required: true, type: 'resource', collection: 'scenes' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     return spec === event.scene;
   }
 };
@@ -35,7 +38,7 @@ Events.cue_signaled ={
   specParams: {
     self: { required: true, type: 'cue_name' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     return spec === event.cue;
   }
 };
@@ -45,7 +48,7 @@ Events.geofence_entered = {
     role: { required: true, type: 'resource', collection: 'roles' },
     geofence: { required: true, type: 'resource', collection: 'geofences' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     return (
       spec.geofence === event.geofence &&
       spec.role === event.role
@@ -65,7 +68,7 @@ Events.message_sent = {
     contains: { required: false, type: 'string' },
     geofence: { required: false, type: 'resource', collection: 'geofences' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     if (spec.type && spec.type !== event.message.type) {
       return false;
     }
@@ -111,7 +114,7 @@ Events.call_answered = {
     from: { required: true, type: 'resource', collection: 'roles' },
     to: { required: true, type: 'resource', collection: 'roles' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     return spec.from === event.from && spec.to === event.to;
   }
 };
@@ -121,7 +124,7 @@ Events.call_received = {
     from: { required: true, type: 'resource', collection: 'roles' },
     to: { required: true, type: 'resource', collection: 'roles' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     return spec.from === event.from && spec.to === event.to;
   }
 };
@@ -130,7 +133,7 @@ Events.call_ended = {
   specParams: {
     role: { required: true, type: 'resource', collection: 'roles' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     return _.includes(event.roles, spec.role);
   }
 };
@@ -141,7 +144,7 @@ Events.query_responded = {
     partial: { required: false, type: 'boolean' },
     final: { required: false, type: 'boolean' }
   },
-  matchEvent: function(script, spec, event) {
+  matchEvent: function(script, context, spec, event) {
     if (spec.partial === true && event.partial === false) {
       return false;
     }
@@ -149,6 +152,39 @@ Events.query_responded = {
       return false;
     }
     return spec.query === event.query;
+  }
+};
+
+Events.time_occurred = {
+  specParams: {
+    time: { required: true, type: 'string' },
+    before: { required: false, type: 'duration' },
+    after: { required: false, type: 'duration' }
+  },
+  timeForSpec: function(script, context, spec) {
+    var offset = 0;
+    if (spec.after) {
+      offset = TimeCore.secondsForDurationShorthand(spec.after);
+    } else if (spec.before) {
+      offset = -TimeCore.secondsForDurationShorthand(spec.before);
+    }
+    return moment.utc(context.schedule[spec.time]).add(offset, 'seconds');
+  },
+  matchEvent: function(script, context, spec, event) {
+    var specTime = Events.time_occurred.timeForSpec(script, context, spec);
+    // If there is a last timestemp that was checked, ignore any triggers
+    // before that time, since those will have already been triggered.
+    if (event.last_timestamp) {
+      if (specTime.isSameOrBefore(moment.unix(event.last_timestamp))) {
+        return false;
+      }
+    }
+    // If it's after where we're checking up to, skip it... for now.
+    if (specTime.isAfter(moment.unix(event.to_timestamp))) {
+      return false;
+    }
+    // Otherwise, we're in the range!
+    return true;
   }
 };
 

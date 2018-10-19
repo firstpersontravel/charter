@@ -69,7 +69,7 @@ TimeCore.secondsForDurationShorthand = function(durationShorthand) {
   if (!num || !unit || num < 0) {
     return 0;
   }
-  var multiplier = { s: 1, m: 60 }[unit];
+  var multiplier = { s: 1, m: 60, h: 3600 }[unit];
   if (!multiplier) {
     return 0;
   }

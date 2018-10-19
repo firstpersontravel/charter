@@ -29,6 +29,7 @@ const Playthrough = database.define('Playthrough', snakeCaseColumns({
   schedule: jsonField(database, 'Playthrough', 'schedule'),
   history: jsonField(database, 'Playthrough', 'history'),
   galleryName: optionalStringField(64),
+  lastScheduledTime: datetimeField(),
   isArchived: booleanField(false)
 }));
 

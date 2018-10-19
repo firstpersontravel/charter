@@ -1,5 +1,7 @@
 var _ = require('lodash');
 
+var TimeCore = require('./time');
+
 var ParamValidators = {};
 
 ParamValidators.string = function(script, name, spec, param) {
@@ -52,6 +54,13 @@ ParamValidators.enum = function(script, name, spec, param) {
       'Enum param "' + name + '" is not one of ' +
       spec.values.map(function(s) { return '"' + s + '"'; }).join(', ') + '.'
     );
+  }
+  return null;
+};
+
+ParamValidators.duration = function(script, name, spec, param) {
+  if (TimeCore.secondsForDurationShorthand(param) === 0) {
+    return 'Duration param "' + name + '" ("' + param + '") should be a number with "h", "m", or "s".';
   }
   return null;
 };

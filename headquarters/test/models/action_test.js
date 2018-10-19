@@ -12,6 +12,7 @@ describe('Action', () => {
 
   beforeEach(() => {
     action = models.Action.build({
+      type: 'action',
       name: 'set_value',
       playthroughId: 2
     });
@@ -32,12 +33,7 @@ describe('Action', () => {
 
   it('requires a name', async () => {
     action.name = '';
-    await assertValidation(action, { name: 'must be a valid action' });
-  });
-
-  it('requires a valid name', async () => {
-    action.name = 'abc';
-    await assertValidation(action, { name: 'must be a valid action' });
+    await assertValidation(action, { name: 'must be present' });
   });
 
   it('allows valid trigger name', async () => {

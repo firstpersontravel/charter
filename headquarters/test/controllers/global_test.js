@@ -19,6 +19,7 @@ describe('GlobalController', () => {
     it('runs successfully', async () => {
       const now = moment.utc();
       const stubAction = {
+        type: 'action',
         playthroughId: 123,
         name: 'name',
         params: { param: 1 },
@@ -56,6 +57,7 @@ describe('GlobalController', () => {
     it('catches errors if run in safe mode', async () => {
       const now = moment.utc();
       const stubAction = {
+        type: 'action',
         playthroughId: 123,
         name: 'name',
         params: { param: 1 },

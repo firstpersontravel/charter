@@ -29,7 +29,6 @@ export default DS.Model.extend({
       params: params,
       triggerName: triggerName || '',
       createdAt: moment.utc(),
-      syncedAt: null,
       scheduledAt: scheduledAt || moment.utc(),
       appliedAt: null,
       failedAt: null

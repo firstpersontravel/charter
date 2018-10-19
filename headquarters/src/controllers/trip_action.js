@@ -44,12 +44,12 @@ async function scheduleAction(playthroughId, action) {
     `${action.name}.`);
   const fields = {
     playthroughId: playthroughId,
+    type: 'action',
     name: action.name,
     params: action.params,
     triggerName: action.triggerName || '',
     event: action.event || null,
     createdAt: moment.utc().toDate(),
-    syncedAt: moment.utc().toDate(),
     scheduledAt: action.scheduleAt.toDate(),
     appliedAt: null,
     failedAt: null
