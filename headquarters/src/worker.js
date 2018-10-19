@@ -1,5 +1,8 @@
 const moment = require('moment');
 
+// Import for configuration
+require('./config');
+
 const GlobalController = require('./controllers/global');
 
 let isRunningActions = false;
