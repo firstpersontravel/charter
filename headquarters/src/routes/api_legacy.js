@@ -68,6 +68,7 @@ async function getPlaythroughRoute(req, res) {
       models.Action.findAll({
         where: {
           playthroughId: req.params.id,
+          type: 'action',
           isArchived: false,
           appliedAt: null,
           failedAt: null

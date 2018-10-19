@@ -30,6 +30,11 @@ describe('Events', () => {
       const spec = { time: 'HAPPENS' };
       const res = Events.time_occurred.matchEvent({}, context, spec, event);
       assert.strictEqual(res, true);
+
+      // Test with no beginning
+      delete event.last_timestamp;
+      const res2 = Events.time_occurred.matchEvent({}, context, spec, event);
+      assert.strictEqual(res2, true);
     });
 
     it('does not fire on time already past', () => {
@@ -58,6 +63,11 @@ describe('Events', () => {
       const spec = { time: 'HAPPENS' };
       const res = Events.time_occurred.matchEvent({}, context, spec, event);
       assert.strictEqual(res, false);
+
+      // Test with no beginning
+      delete event.last_timestamp;
+      const res2 = Events.time_occurred.matchEvent({}, context, spec, event);
+      assert.strictEqual(res2, false);
     });
 
     it('parses before time', () => {

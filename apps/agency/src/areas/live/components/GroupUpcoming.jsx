@@ -61,6 +61,7 @@ function renderAction(action, trip, updateInstance, postAdminAction) {
     <tr key={action.id}>
       <td className={cellClass}>{timeShort}</td>
       <td className={cellClass}>{trip.departureName}</td>
+      <td className={cellClass}>{action.type}</td>
       <td className={cellClass}>{action.name}</td>
       <td className={cellClass}>{values}</td>
       <td>
@@ -90,6 +91,7 @@ function renderUpcomingActions(groupStatus, actions, updateInstance, postAdminAc
         <tr>
           <th>Time</th>
           <th>Dep</th>
+          <th>Type</th>
           <th>Action</th>
           <th>Params</th>
           <th />

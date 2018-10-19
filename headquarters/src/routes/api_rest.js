@@ -166,6 +166,20 @@ function orderFromParam(model, sortQueryParam) {
   return [[paramName, isDescending ? 'DESC' : 'ASC']];
 }
 
+function _validateValue(type, key, value) {
+  try {
+    type.validate(value);
+  } catch (err) {
+    if (err instanceof Sequelize.ValidationError) {
+      throw errors.badRequestError(
+        `Invalid value "${value}" for parameter ${key}.`
+      );
+    } else {
+      throw err;
+    }
+  }
+}
+
 function whereFromQuery(model, whereQuery) {
   return _.mapValues(whereQuery, (value, key) => {
     const attribute = model.attributes[key];
@@ -176,17 +190,16 @@ function whereFromQuery(model, whereQuery) {
       return null;
     }
     const type = attribute.type || attribute;
-    try {
-      type.validate(value);
-    } catch (err) {
-      if (err instanceof Sequelize.ValidationError) {
-        throw errors.badRequestError(
-          `Invalid value "${value}" for parameter ${key}.`
-        );
-      } else {
-        throw err;
-      }
+    if (_.isString(value) && value.indexOf(',') > -1) {
+      value = value.split(',');
     }
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        _validateValue(type, key, item);
+      }
+      return { [Sequelize.Op.or]: value };
+    }
+    _validateValue(type, key, value);
     return value;
   });
 }

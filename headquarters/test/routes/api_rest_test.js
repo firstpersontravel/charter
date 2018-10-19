@@ -213,6 +213,46 @@ describe('apiRestRoutes', () => {
         }, 400, `Invalid value "${queryValue}" for parameter ${fieldName}.`);
       }
     });
+
+    it('filters by multiple with comma', async () => {
+      const req = httpMocks.createRequest({
+        query: { offset: 1, title: 'x,y' }
+      });
+      const res = httpMocks.createResponse();
+
+      sandbox.stub(Model, 'findAll').resolves([]);
+
+      // Call the route
+      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+
+      // Assert find call made
+      sinon.assert.calledWith(Model.findAll, {
+        limit: 100,
+        offset: 1,
+        order: [['id', 'ASC']],
+        where: { title: { [Sequelize.Op.or]: ['x', 'y'] } }
+      });
+    });
+
+    it('filters by multiple with multiple params', async () => {
+      const req = httpMocks.createRequest({
+        query: { offset: 1, title: ['x', 'y'] }
+      });
+      const res = httpMocks.createResponse();
+
+      sandbox.stub(Model, 'findAll').resolves([]);
+
+      // Call the route
+      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+
+      // Assert find call made
+      sinon.assert.calledWith(Model.findAll, {
+        limit: 100,
+        offset: 1,
+        order: [['id', 'ASC']],
+        where: { title: { [Sequelize.Op.or]: ['x', 'y'] } }
+      });
+    });
   });
 
   describe('#createRecordRoute', () => {
