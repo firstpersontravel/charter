@@ -17,7 +17,7 @@ export default class ProfileModal extends Component {
       phoneNumber: profile ? profile.phoneNumber : '',
       facetimeUsername: profile ? profile.facetimeUsername : '',
       skypeUsername: profile ? profile.skypeUsername : '',
-      values: profile ? profile.values : ''
+      values: profile ? profile.values : {}
     };
   }
 

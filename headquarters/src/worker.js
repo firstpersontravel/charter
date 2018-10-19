@@ -5,6 +5,9 @@ require('./config');
 
 const GlobalController = require('./controllers/global');
 
+const SCHEDULE_INTERVAL = 10000;
+const RUN_INTERVAL = 1000;
+
 let isRunningActions = false;
 let isSchedulingActions = false;
 
@@ -41,8 +44,8 @@ async function runActions() {
 }
 
 function start() {
-  setInterval(runActions, 1000);
-  setInterval(scheduleActions, 60000);
+  setInterval(runActions, RUN_INTERVAL);
+  setInterval(scheduleActions, SCHEDULE_INTERVAL);
 }
 
 module.exports = {

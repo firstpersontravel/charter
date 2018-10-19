@@ -15,7 +15,6 @@ const logger = config.logger.child({ name: 'controllers.global' });
  * Schedule actions for all active playthroughs.
  */
 async function scheduleActions(upToThreshold) {
-  // Find all playthroughs.
   const playthroughs = await models.Playthrough.findAll({
     where: {
       isArchived: false,
@@ -28,6 +27,7 @@ async function scheduleActions(upToThreshold) {
     }
   });
   for (const playthrough of playthroughs) {
+    logger.info('checking playthrough', playthrough.id, 'up to', upToThreshold);
     await scheduleTripActions(playthrough.id, upToThreshold);
     await playthrough.update({ lastScheduledTime: upToThreshold.toDate() });
   }
@@ -48,11 +48,11 @@ async function scheduleTripActions(playthroughId, upToThreshold) {
     objs.script, context, event);
 
   for (let trigger of triggers) {
-    logger.info(`Scheduling trigger ${trigger.name}.`);
+    logger.info(trigger, `Scheduling trigger ${trigger.name}.`);
     const triggerEvent = fptCore.TriggerEventCore.triggerEventForEventType(
       trigger, event.type);
     const scheduleAt = fptCore.Events.time_occurred.timeForSpec(
-      objs.script, context, triggerEvent[event.type]);
+      context, triggerEvent[event.type]);
     await models.Action.create({
       playthroughId: playthroughId,
       type: 'trigger',
