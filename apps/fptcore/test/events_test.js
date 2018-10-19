@@ -69,15 +69,15 @@ describe('Events', () => {
       const context = {
         schedule: { 'HAPPENS': moment.unix(now).toISOString() }
       };
-      const spec = { time: 'HAPPENS', before: '90m' };
+      const spec = { time: 'HAPPENS', before: '90.1m' };
       const res = Events.time_occurred.matchEvent({}, context, spec, event);
       assert.strictEqual(res, true);
 
-      const spec2 = { time: 'HAPPENS', before: '30m' };
+      const spec2 = { time: 'HAPPENS', before: '30.1m' };
       const res2 = Events.time_occurred.matchEvent({}, context, spec2, event);
       assert.strictEqual(res2, false);
 
-      const spec3 = { time: 'HAPPENS', before: '150m' };
+      const spec3 = { time: 'HAPPENS', before: '150.1m' };
       const res3 = Events.time_occurred.matchEvent({}, context, spec3, event);
       assert.strictEqual(res3, false);
     });
