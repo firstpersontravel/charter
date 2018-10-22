@@ -141,6 +141,18 @@ describe('Events', () => {
       const res = Events.time_occurred.matchEvent({}, context, spec, event);
       assert.strictEqual(res, true);
     });
+
+    it('does not fire if time is absent', () => {
+      const event = {
+        type: 'time_occurred',
+        last_timestamp: twoHoursAgo,
+        to_timestamp: oneHourAgo
+      };
+      const context = { schedule: {} };
+      const spec = { time: 'HAPPENS', before: '0h' };
+      const res = Events.time_occurred.matchEvent({}, context, spec, event);
+      assert.strictEqual(res, false);
+    });
   });
 
   describe('#scene_started', () => {

@@ -168,10 +168,17 @@ Events.time_occurred = {
     } else if (spec.before) {
       offset = -TimeCore.secondsForDurationShorthand(spec.before);
     }
-    return moment.utc(context.schedule[spec.time]).add(offset, 'seconds');
+    var timestring = context.schedule[spec.time];
+    if (!timestring) {
+      return null;
+    }
+    return moment.utc(timestring).add(offset, 'seconds');
   },
   matchEvent: function(script, context, spec, event) {
     var specTime = Events.time_occurred.timeForSpec(context, spec);
+    if (!specTime) {
+      return false;
+    }
     // If there is a last timestemp that was checked, ignore any triggers
     // before that time, since those will have already been triggered.
     if (event.last_timestamp) {

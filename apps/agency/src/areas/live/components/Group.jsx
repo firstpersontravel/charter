@@ -114,8 +114,22 @@ export default class Group extends Component {
 
   loadData(playthroughIds) {
     if (!playthroughIds || !playthroughIds.length) {
+      // If we have no playthrough ids, it's probably because this group was
+      // archived, so the trips are not loaded by default. We still want to
+      // be able to view it though, so do an initial load. This triggers a prop
+      // refresh, and now that all the trip ids are present, a normal
+      // refreshLiveData will do the trick.`
+      const groupId = this.props.params.groupId;
+      this.props.getInstance('groups', groupId);
+      this.props.listCollection('playthroughs', { groupId: groupId });
       return;
     }
+    // if (this.props.groupStatus.instance) {
+    //   if (!this.props.groupStatus.instance.script) {
+    //     const scriptId = this.props.groupStatus.instance.scriptId;
+    //     this.props.getInstance('scripts', scriptId);
+    //   }
+    // }
     this.updateFayeSubscriptions(playthroughIds);
     this.props.refreshLiveData(playthroughIds);
   }
@@ -159,12 +173,16 @@ export default class Group extends Component {
   }
 
   renderTripLink(trip) {
+    const isArchivedIcon = trip.isArchived ? (
+      <i className="fa fa-archive" style={{ marginRight: '0.25em' }} />
+    ) : null;
     return (
       <li key={trip.id} className="nav-item nav-trip-item">
         <Link
           className="nav-link"
           activeClassName="active"
           to={`/agency/live/${this.props.params.groupId}/trip/${trip.id}`}>
+          {isArchivedIcon}
           {trip.departureName}
           <span className="d-none d-sm-inline"> {trip.title}</span>
           <br />
@@ -235,6 +253,8 @@ Group.propTypes = {
   params: PropTypes.object.isRequired,
   groupStatus: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
+  getInstance: PropTypes.func.isRequired,
+  listCollection: PropTypes.func.isRequired,
   refreshLiveData: PropTypes.func.isRequired
 };
 

@@ -2,6 +2,8 @@ export const COLLECTION_NAMES = {
   'checkpoints.scene': 'scenes',
   'geofences.center': 'waypoints',
   'initiatives.scene': 'scenes',
+  'messages.from': 'roles',
+  'messages.to': 'roles',
   'pages.scene': 'scenes',
   'pages.role': 'roles',
   'pages.route': 'routes',
