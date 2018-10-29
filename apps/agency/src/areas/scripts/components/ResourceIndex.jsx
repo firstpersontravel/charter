@@ -282,16 +282,19 @@ function renderActionList(scriptId, actionList, actionIf = null) {
   const renderedActionIf = actionIf ? (
     <div>if: {renderIf(actionIf)}</div>
   ) : null;
-  const renderedActionItems = actionList.map(actionItem => (
+  const actionListAsArray = _.isArray(actionList) ? actionList : [actionList];
+  const renderedActionItems = actionListAsArray.map(actionItem => (
     <li key={JSON.stringify(actionItem)}>
       {renderActions(scriptId, actionItem)}
     </li>
   ));
   return (
-    <ul>
+    <div>
       {renderedActionIf}
-      {renderedActionItems}
-    </ul>
+      <ul>
+        {renderedActionItems}
+      </ul>
+    </div>
   );
 }
 

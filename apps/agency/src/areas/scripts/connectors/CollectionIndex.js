@@ -8,7 +8,7 @@ const mapStateToProps = (state, ownProps) => {
     id: Number(ownProps.params.scriptId)
   });
   const collectionName = ownProps.params.collectionName;
-  const collection = script ? script.content[collectionName] : [];
+  const collection = _.get(script, `content.${collectionName}`) || [];
   return {
     collection: collection
   };

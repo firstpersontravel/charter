@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
+import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import { Actions } from 'fptcore';
+import { Actions, Events, TriggerEventCore } from 'fptcore';
 
 import Param from '../../common/partials/Param';
 
@@ -17,6 +18,29 @@ function renderActionParam(trip, action, paramName) {
         spec={actionParamsSpec[paramName]}
         value={action.params[paramName]} />
     </div>
+  );
+}
+
+function renderTrigger(trigger, trip, postAdminAction) {
+  const timeShort = moment
+    .utc(trigger.scheduledAt)
+    .tz(trip.script.timezone)
+    .format('ddd h:mm:ssa');
+  const cellClass = 'upcoming-unarchived';
+
+  return (
+    <tr key={trigger.id}>
+      <td className={cellClass}>{timeShort}</td>
+      <td className={cellClass}>{trip.departureName}</td>
+      <td className={cellClass}>{trigger.type}</td>
+      <td className={cellClass}>
+        <Link to={`/agency/scripts/script/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
+          {trigger.name}
+        </Link>
+      </td>
+      <td className={cellClass} />
+      <td />
+    </tr>
   );
 }
 
@@ -44,6 +68,8 @@ function renderAction(action, trip, updateInstance, postAdminAction) {
     </button>
   );
 
+  const archiveIfAction = action.type === 'action' ? archiveButton : null;
+
   const applyNowButton = (
     <button
       className="btn btn-sm btn-outline-secondary"
@@ -65,7 +91,7 @@ function renderAction(action, trip, updateInstance, postAdminAction) {
       <td className={cellClass}>{action.name}</td>
       <td className={cellClass}>{values}</td>
       <td>
-        {archiveButton}
+        {archiveIfAction}
         &nbsp;
         {applyNowButton}
       </td>
@@ -73,17 +99,61 @@ function renderAction(action, trip, updateInstance, postAdminAction) {
   );
 }
 
+function getScheduledTripTriggers(trip) {
+  const now = moment.utc();
+  const inOneHour = now.clone().add(1, 'hour');
+  const event = {
+    type: 'time_occurred',
+    last_timestamp: now.unix(),
+    to_timestamp: inOneHour
+  };
+  const triggers = TriggerEventCore.triggersForEvent(
+    trip.script, trip.context, event);
+  return triggers.map((trigger) => {
+    const triggerEvent = TriggerEventCore.triggerEventForEventType(
+      trigger, event.type);
+    const scheduledAt = Events.time_occurred.timeForSpec(
+        trip.context, triggerEvent[event.type]);
+    return {
+      id: trigger.name,
+      type: 'trigger',
+      playthroughId: trip.id,
+      scheduledAt: scheduledAt,
+      departureName: trip.departureName,
+      name: trigger.name
+    };
+  });
+}
+
+function getScheduledGroupTriggers(groupStatus) {
+  return _(groupStatus.instance.trips)
+    .map(trip => getScheduledTripTriggers(trip))
+    .flatten()
+    .value();
+}
+
 function renderUpcomingActions(groupStatus, actions, updateInstance, postAdminAction) {
   const trips = _.get(groupStatus, 'instance.trips') || [];
-  const upcomingActions = _.sortBy(actions, 'scheduledAt');
-  if (!upcomingActions.length) {
+  if (!trips.length) {
+    return (<div>No trips</div>);
+  }
+  const scheduledTriggers = getScheduledGroupTriggers(groupStatus);
+  const allUpcoming = [].concat(actions).concat(scheduledTriggers);
+  const upcomingSorted = _.sortBy(allUpcoming, 'scheduledAt');
+  if (!upcomingSorted.length) {
     return (
       <div className="alert alert-info">No upcoming actions!</div>
     );
   }
-  const renderedActions = upcomingActions.map((action) => {
+  const renderedActions = upcomingSorted.map((action) => {
     const trip = _.find(trips, { id: action.playthroughId });
-    return renderAction(action, trip, updateInstance, postAdminAction);
+    if (action.type === 'action') {
+      return renderAction(action, trip, updateInstance, postAdminAction);
+    }
+    if (action.type === 'trigger') {
+      return renderTrigger(action, trip, postAdminAction);
+    }
+    return null;
   });
   return (
     <table className="table table-sm table-striped table-responsive">

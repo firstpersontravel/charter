@@ -51,15 +51,17 @@ async function scheduleTripActions(playthroughId, upToThreshold) {
     logger.info(trigger, `Scheduling trigger ${trigger.name}.`);
     const triggerEvent = fptCore.TriggerEventCore.triggerEventForEventType(
       trigger, event.type);
-    const scheduleAt = fptCore.Events.time_occurred.timeForSpec(
+    const now = moment.utc();
+    const intendedAt = fptCore.Events.time_occurred.timeForSpec(
       context, triggerEvent[event.type]);
+    const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
     await models.Action.create({
       playthroughId: playthroughId,
       type: 'trigger',
       name: trigger.name,
       params: {},
       triggerName: '',
-      createdAt: moment.utc(),
+      createdAt: now,
       scheduledAt: scheduleAt
     });
   }
