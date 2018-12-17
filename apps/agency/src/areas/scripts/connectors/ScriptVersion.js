@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import Script from '../components/Script';
+import ScriptVersion from '../components/ScriptVersion';
 
 const mapStateToProps = (state, ownProps) => ({
   script: _.find(state.datastore.scripts, {
@@ -11,4 +11,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Script);
+export default connect(mapStateToProps, mapDispatchToProps)(ScriptVersion);

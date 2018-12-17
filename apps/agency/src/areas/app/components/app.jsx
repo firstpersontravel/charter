@@ -51,7 +51,10 @@ export default class App extends Component {
     document.title = `${getStage()} - FPT Ops`;
     this.props.listCollection('groups', { isArchived: false });
     this.props.listCollection('playthroughs', { isArchived: false });
-    this.props.listCollection('scripts', { isArchived: false });
+    this.props.listCollection('scripts', {
+      isArchived: false,
+      isActive: true
+    });
     this.props.listCollection('profiles');
     this.props.listCollection('users');
   }

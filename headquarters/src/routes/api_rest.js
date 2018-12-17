@@ -180,28 +180,38 @@ function _validateValue(type, key, value) {
   }
 }
 
+function whereValueFromQuery(model, key, value) {
+  const attribute = model.attributes[key];
+  if (!attribute) {
+    throw errors.badRequestError(`Invalid query parameter: ${key}.`);
+  }
+  if (value === 'null') {
+    return null;
+  }
+  if (value === 'true') {
+    return true;
+  }
+  if (value === 'false') {
+    return false;
+  }
+  const type = attribute.type || attribute;
+  if (_.isString(value) && value.indexOf(',') > -1) {
+    value = value.split(',');
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      _validateValue(type, key, item);
+    }
+    return { [Sequelize.Op.or]: value };
+  }
+  _validateValue(type, key, value);
+  return value;
+}
+
 function whereFromQuery(model, whereQuery) {
-  return _.mapValues(whereQuery, (value, key) => {
-    const attribute = model.attributes[key];
-    if (!attribute) {
-      throw errors.badRequestError(`Invalid query parameter: ${key}.`);
-    }
-    if (value === 'null') {
-      return null;
-    }
-    const type = attribute.type || attribute;
-    if (_.isString(value) && value.indexOf(',') > -1) {
-      value = value.split(',');
-    }
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        _validateValue(type, key, item);
-      }
-      return { [Sequelize.Op.or]: value };
-    }
-    _validateValue(type, key, value);
-    return value;
-  });
+  return _.mapValues(whereQuery, (value, key) => (
+    whereValueFromQuery(model, key, value)
+  ));
 }
 
 function listCollectionRoute(model) {

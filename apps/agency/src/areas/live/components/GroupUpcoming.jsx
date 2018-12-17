@@ -34,7 +34,7 @@ function renderTrigger(trigger, trip, postAdminAction) {
       <td className={cellClass}>{trip.departureName}</td>
       <td className={cellClass}>{trigger.type}</td>
       <td className={cellClass}>
-        <Link to={`/agency/scripts/script/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
+        <Link to={`/agency/scripts/version/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
           {trigger.name}
         </Link>
       </td>

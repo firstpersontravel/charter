@@ -6,17 +6,12 @@ export default function ScriptsIndex({ children, scripts }) {
   const scriptItems = scripts.map(script => (
     <div key={script.id}>
       <Link
-        to={`/agency/scripts/scriptset/${script.name}`}>
-        {script.title}
+        to={`/agency/scripts/version/${script.id}`}>
+        {script.title} v{script.version}
       </Link>
       &nbsp;&bull;&nbsp;
       <Link
-        to={`/agency/scripts/script/${script.id}`}>
-        v{script.version}
-      </Link>
-      &nbsp;&bull;&nbsp;
-      <Link
-        to={`/agency/scripts/scriptset/${script.name}/relays`}>
+        to={`/agency/scripts/script/${script.name}/relays`}>
         Relays
       </Link>
     </div>

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import ScriptSetIndex from '../components/ScriptSetIndex';
+import ScriptSetVersions from '../components/ScriptSetVersions';
 
 const mapStateToProps = (state, ownProps) => ({
   scriptName: ownProps.params.scriptName,
@@ -12,4 +12,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ScriptSetIndex);
+export default connect(mapStateToProps, mapDispatchToProps)(ScriptSetVersions);

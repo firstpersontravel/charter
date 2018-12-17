@@ -1,9 +1,13 @@
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import ScriptsIndex from '../components/ScriptsIndex';
 
 const mapStateToProps = (state, ownProps) => ({
-  scripts: state.datastore.scripts
+  scripts: _.filter(state.datastore.scripts, {
+    isArchived: false,
+    isActive: true
+  })
 });
 
 const mapDispatchToProps = dispatch => ({});

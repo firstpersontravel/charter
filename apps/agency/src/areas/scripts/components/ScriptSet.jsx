@@ -11,7 +11,7 @@ export default function ScriptSet({ scriptName, scripts, children }) {
         <div className="col-sm-12">
           <Link to="/agency/scripts">Scripts</Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/scripts/scriptset/${scriptName}`}>
+          <Link to={`/agency/scripts/script/${scriptName}`}>
             {scriptTitle}
           </Link>
         </div>

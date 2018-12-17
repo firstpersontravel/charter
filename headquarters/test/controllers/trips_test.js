@@ -1,5 +1,4 @@
 const assert = require('assert');
-const moment = require('moment-timezone');
 const sinon = require('sinon');
 
 const models = require('../../src/models');
@@ -16,7 +15,6 @@ describe('TripsController', () => {
   describe('#createWithDefaults', () => {
 
     it('creates a playthrough and participants', async () => {
-      const today = moment.utc().format('YYYY-MM-DD');
       const stubScript = {
         id: 2,
         timezone: 'US/Pacific',
@@ -48,7 +46,7 @@ describe('TripsController', () => {
       const stubGroup = {
         id: 1,
         scriptId: 2,
-        date: today
+        date: '2018-01-01'
       };
       sandbox.stub(models.Group, 'findById').resolves(stubGroup);
       sandbox.stub(models.Script, 'findById').resolves(stubScript);
@@ -62,12 +60,12 @@ describe('TripsController', () => {
       // Create playthrough
       assert.deepStrictEqual(
         models.Playthrough.create.firstCall.args[0], {
-          date: today,
+          date: '2018-01-01',
           currentSceneName: 'SCENE-MAIN',
           groupId: 1,
           schedule: {
-            basicIntro: `${today}T17:00:00.000Z`,
-            startAt: `${today}T15:00:00.000Z`
+            basicIntro: '2018-01-01T18:00:00.000Z',
+            startAt: '2018-01-01T16:00:00.000Z'
           },
           departureName: 'T1',
           scriptId: 2,

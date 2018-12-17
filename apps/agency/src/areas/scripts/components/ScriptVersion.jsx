@@ -10,7 +10,7 @@ function renderCollection(script, collectionName) {
     <div key={collectionName}>
       <Link
         activeClassName="bold"
-        to={`/agency/scripts/script/${script.id}/collection/${collectionName}`}>
+        to={`/agency/scripts/version/${script.id}/collection/${collectionName}`}>
         {TextCore.titleForKey(collectionName)}
       </Link>
     </div>
@@ -32,9 +32,9 @@ function renderCollections(script) {
   ));
 }
 
-export default function Script({ script, children }) {
+export default function ScriptVersion({ script, children }) {
   if (!script) {
-    return <div>Loading!</div>;
+    return <div className="container-fluid">Loading!</div>;
   }
   return (
     <div className="container-fluid">
@@ -42,11 +42,11 @@ export default function Script({ script, children }) {
         <div className="col-sm-12">
           <Link to="/agency/scripts">Scripts</Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/scripts/scriptset/${script.name}`}>
+          <Link to={`/agency/scripts/script/${script.name}`}>
             {script.title}
           </Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/scripts/script/${script.id}`}>
+          <Link to={`/agency/scripts/version/${script.id}`}>
             v{script.version}
           </Link>
         </div>
@@ -65,7 +65,7 @@ export default function Script({ script, children }) {
   );
 }
 
-Script.propTypes = {
+ScriptVersion.propTypes = {
   children: PropTypes.node,
   script: PropTypes.object
 };

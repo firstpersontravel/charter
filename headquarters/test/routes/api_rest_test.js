@@ -164,8 +164,8 @@ describe('apiRestRoutes', () => {
 
     it('filters by parameters', async () => {
       const okValues = [
-        ['isShiny', 'false', 'false'],
-        ['isShiny', 'true', 'true'],
+        ['isShiny', 'false', false],
+        ['isShiny', 'true', true],
         ['title', 'abc', 'abc'],
         ['title', '123', '123'],
         ['id', '123', '123'],
