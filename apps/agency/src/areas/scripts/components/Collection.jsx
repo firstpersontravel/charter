@@ -1,9 +1,10 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { TextCore, ScriptCore } from 'fptcore';
+import { TextCore } from 'fptcore';
+
+import { getItems } from './utils';
 
 function renderItem(script, collectionName, item, i) {
   const itemName = item.name || i;
@@ -20,13 +21,6 @@ function renderItem(script, collectionName, item, i) {
       </Link>
     </div>
   );
-}
-
-function getItems(script, collectionName) {
-  if (_.includes(ScriptCore.IMPLICIT_COLLECTION_NAMES, collectionName)) {
-    return ScriptCore.gatherImplicitResources(script)[collectionName];
-  }
-  return script.content[collectionName];
 }
 
 export default function Collection({ script, collectionName, children }) {

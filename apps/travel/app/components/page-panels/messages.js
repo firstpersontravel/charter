@@ -50,7 +50,7 @@ export default Ember.Component.extend({
     var asParticipant = this.get('asParticipant');
     var withParticipant = this.get('withParticipant');
     var allMessages = this.get('playthrough.messages');
-    var isIncomingOnly = this.get('params.incoming_only') === true;
+    var isIncomingOnly = false;
     return allMessages
       .filter(function(message) {
         var isOutgoing = (
@@ -120,12 +120,8 @@ export default Ember.Component.extend({
     'callUrl'),
 
   canSend: function() {
-    return this.get('params.can_send') !== false;
-  }.property('params'),
-
-  showHeader: function() {
-    return this.get('params.header') !== false;
-  }.property('params'),
+    return true;
+  }.property(),
 
   callUrl: function() {
     var withParticipant = this.get('withParticipant');

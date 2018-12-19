@@ -12,24 +12,104 @@ describe('TriggerEventCore', () => {
     sandbox.restore();
   });
 
+  describe('#isSceneActive', () => {
+
+    const script = {
+      content: {
+        roles: [{
+          name: 'Role'
+        }],
+        pages: [{
+          name: 'PAGE-1',
+          scene: 'SCENE-1'
+        }],
+        scenes: [{
+          name: 'SCENE-0'
+        }, {
+          name: 'SCENE-1'
+        }, {
+          name: 'SCENE-2'
+        }, {
+          name: 'GLOBAL-1',
+          global: true
+        }, {
+          name: 'COND-1',
+          global: true,
+          if: 'val'
+        }]
+      }
+    };
+
+    it('returns true for current scene', () => {
+      const context = { currentSceneName: 'SCENE-1' };
+      const res = TriggerEventCore.isSceneActive(script, context, 'SCENE-1');
+      assert.strictEqual(res, true);
+    });
+
+    it('returns true for ending scene', () => {
+      const context = {
+        Role: { currentPageName: 'PAGE-1' },
+        currentSceneName: 'SCENE-2'
+      };
+      const res = TriggerEventCore.isSceneActive(script, context, 'SCENE-1');
+      assert.strictEqual(res, true);
+    });
+
+    it('returns false for not-yet-started scene', () => {
+      const context = {
+        Role: { currentPageName: 'PAGE-1' },
+        currentSceneName: 'SCENE-0'
+      };
+      const res = TriggerEventCore.isSceneActive(script, context, 'SCENE-1');
+      assert.strictEqual(res, false);
+    });
+
+    it('returns true for global scene', () => {
+      const context = { currentSceneName: 'SCENE-2' };
+      const res = TriggerEventCore.isSceneActive(script, context, 'GLOBAL-1');
+      assert.strictEqual(res, true);
+    });
+
+    it('returns true for active conditional scene', () => {
+      const context = { currentSceneName: 'SCENE-2', val: 1 };
+      const res = TriggerEventCore.isSceneActive(script, context, 'COND-1');
+      assert.strictEqual(res, true);
+    });
+
+    it('returns false for inactive conditional scene', () => {
+      const context = { currentSceneName: 'SCENE-2', val: 0 };
+      const res = TriggerEventCore.isSceneActive(script, context, 'COND-1');
+      assert.strictEqual(res, false);
+    });
+
+    it('returns false for inactive scene', () => {
+      const context = {
+        Role: { currentPageName: 'PAGE-1' },
+        currentSceneName: 'SCENE-2'
+      };
+      const res = TriggerEventCore.isSceneActive(script, context, 'SCENE-0');
+      assert.strictEqual(res, false);
+    });
+  });
+
   describe('#isTriggerActive', () => {
     it('returns true if no filters', () => {
-      const trigger = { };
+      const trigger = {};
       const res = TriggerEventCore.isTriggerActive({}, {}, trigger);
       assert.strictEqual(res, true);
     });
 
-    it('returns true if matching scene', () => {
+    it('returns true if active scene', () => {
+      sandbox.stub(TriggerEventCore, 'isSceneActive').returns(true);
       const trigger = { scene: 'SCENE-1' };
-      const context = { currentSceneName: 'SCENE-1' };
-      const res = TriggerEventCore.isTriggerActive({}, context, trigger);
+      const res = TriggerEventCore.isTriggerActive({}, {}, trigger);
       assert.strictEqual(res, true);
     });
 
-    it('returns false if non-matching scene', () => {
+    it('returns false if inactive scene', () => {
+      sandbox.stub(TriggerEventCore, 'isSceneActive').returns(false);
       const trigger = { scene: 'SCENE-1' };
-      const context = { currentSceneName: 'SCENE-2' };
-      const res = TriggerEventCore.isTriggerActive({}, context, trigger);
+      const res = TriggerEventCore.isTriggerActive({}, {}, trigger);
       assert.strictEqual(res, false);
     });
 
@@ -80,7 +160,6 @@ describe('TriggerEventCore', () => {
       const res = TriggerEventCore.isTriggerActive({}, context, trigger);
       assert.strictEqual(res, false);
     });
-
   });
 
   describe('#doesEventFireTriggerEvent', () => {

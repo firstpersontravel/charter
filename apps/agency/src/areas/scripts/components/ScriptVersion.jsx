@@ -1,35 +1,67 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { TextCore, ScriptCore } from 'fptcore';
+import { TextCore } from 'fptcore';
+
+import { getItems } from './utils';
 
 function renderCollection(script, collectionName) {
+  const items = getItems(script, collectionName);
+  const numItems = items.length;
+  if (numItems === 0) {
+    return (
+      <div key={collectionName}>
+        {TextCore.titleForKey(collectionName)}
+      </div>
+    );
+  }
   return (
     <div key={collectionName}>
       <Link
         activeClassName="bold"
         to={`/agency/scripts/version/${script.id}/collection/${collectionName}`}>
-        {TextCore.titleForKey(collectionName)}
+        {TextCore.titleForKey(collectionName)} ({numItems})
       </Link>
     </div>
   );
 }
 
-const COLLECTION_EXCLUSIONS = ['directions'];
-
 function renderCollections(script) {
-  const collectionNames = Object.keys(script.content)
-    .filter(key => (
-      _.isArray(script.content[key]) &&
-      !_.includes(COLLECTION_EXCLUSIONS, key)
-    ))
-    .concat(ScriptCore.IMPLICIT_COLLECTION_NAMES)
-    .sort();
-  return collectionNames.map(collectionName => (
-    renderCollection(script, collectionName)
-  ));
+  return (
+    <div>
+      <div style={{ marginBottom: '0.5em' }}>
+        <h4>Core</h4>
+        {renderCollection(script, 'roles')}
+        {renderCollection(script, 'departures')}
+        {renderCollection(script, 'variants')}
+        {renderCollection(script, 'variant_groups')}
+        {renderCollection(script, 'scenes')}
+      </div>
+      <div style={{ marginBottom: '0.5em' }}>
+        <h4>Content</h4>
+        {renderCollection(script, 'layouts')}
+        {renderCollection(script, 'content_pages')}
+        {renderCollection(script, 'initiatives')}
+        {renderCollection(script, 'audio')}
+      </div>
+      <div style={{ marginBottom: '0.5em' }}>
+        <h4>Locations</h4>
+        {renderCollection(script, 'waypoints')}
+        {renderCollection(script, 'geofences')}
+        {renderCollection(script, 'routes')}
+        {renderCollection(script, 'directions')}
+      </div>
+      <div style={{ marginBottom: '0.5em' }}>
+        <h4>By Scene</h4>
+        {renderCollection(script, 'pages')}
+        {renderCollection(script, 'pagesets')}
+        {renderCollection(script, 'triggers')}
+        {renderCollection(script, 'messages')}
+        {renderCollection(script, 'cues')}
+      </div>
+    </div>
+  );
 }
 
 export default function ScriptVersion({ script, children }) {
@@ -54,7 +86,6 @@ export default function ScriptVersion({ script, children }) {
       <hr />
       <div className="row">
         <div className="col-sm-2">
-          <h3>Collections</h3>
           {renderCollections(script)}
         </div>
         <div className="col-sm-10">

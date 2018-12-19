@@ -51,12 +51,60 @@ TriggerEventCore.doesEventFireTrigger = function(
 };
 
 /**
+ * Test if a scene is active for a given context.
+ */
+TriggerEventCore.isSceneActive = function(script, context, sceneName) {
+  var scene = _.find(script.content.scenes, { name: sceneName });
+  if (!scene) {
+    return false;
+  }
+
+  // Global scenes are always active, or if they include a conditional,
+  // then evaluate that conditional to see if that scene is active.
+  if (scene.global) {
+    return !scene.if || EvalCore.if(context, scene.if);
+  }
+
+  // If it's not a global scene, then check if it's current.
+  if (context.currentSceneName === sceneName) {
+    return true;
+  }
+
+  // Past scenes that still have roles on pages are active.
+  var sceneNames = _(script.content.scenes || []).map('name').value();
+  var currentSceneIndex = sceneNames.indexOf(context.currentSceneName);
+  var pastSceneNames = sceneNames.slice(0, currentSceneIndex);
+
+  var activePastSceneNames = _(script.content.roles || [])
+    .map('name')
+    .map(function(roleName) {
+      return _.get(context, roleName + '.currentPageName');
+    })
+    .filter(Boolean)
+    .map(function(activePageName) {
+      var activePage = _.find(script.content.pages, { name: activePageName });
+      return activePage && activePage.scene;
+    })
+    .filter(function(activeSceneName) {
+      return _.includes(pastSceneNames, activeSceneName);
+    })
+    .value();
+
+  if (_.includes(activePastSceneNames, sceneName)) {
+    return true;
+  }
+
+  // Otherwise we're not global, current, or past-yet-active.
+  return false;
+};
+
+/**
  * Test if a trigger is active for a given context.
  */
 TriggerEventCore.isTriggerActive = function(script, context, trigger) {
   // Skip triggers that don't match the current scene
   if (trigger.scene) {
-    if (context.currentSceneName !== trigger.scene) {
+    if (!TriggerEventCore.isSceneActive(script, context, trigger.scene)) {
       return false;
     }
   }

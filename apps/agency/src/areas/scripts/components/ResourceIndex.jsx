@@ -9,6 +9,7 @@ import { COLLECTION_NAMES } from '../consts';
 import Param, { renderLink } from '../../common/partials/Param';
 
 const PROP_ORDERING = [
+  'section',
   'title',
   'scene',
   'page',
