@@ -304,4 +304,36 @@ describe('Integration - Nested Triggers', () => {
         suppressRelayId: null
       }]);
   });
+
+  it('applies scene start cues after start_scene event', () => {
+    const script = {
+      content: {
+        scenes: [{
+          name: 'SCENE-1'
+        }, {
+          name: 'SCENE-2'
+        }],
+        triggers: [{
+          name: 'trigger1',
+          event: { cue_signaled: 'end-of-1' },
+          scene: 'SCENE-1',
+          actions: ['start_scene SCENE-2']
+        }, {
+          name: 'trigger2',
+          event: { scene_started: 'SCENE-2' },
+          scene: 'SCENE-2',
+          actions: ['set_value val true']
+        }]
+      }
+    };
+    const context = { currentSceneName: 'SCENE-1' };
+    const event = { type: 'cue_signaled', cue: 'end-of-1' };
+    const result = ActionCore.applyEvent(script, context, event, now);
+
+    assert.deepStrictEqual(result.nextContext, {
+      currentSceneName: 'SCENE-2',
+      history: { trigger1: now.toISOString(), trigger2: now.toISOString() },
+      val: true
+    });
+  });
 });
