@@ -28,6 +28,7 @@ function renderCollection(script, collectionName) {
 }
 
 function renderCollections(script) {
+  // Don't show directions
   return (
     <div>
       <div style={{ marginBottom: '0.5em' }}>
@@ -50,7 +51,6 @@ function renderCollections(script) {
         {renderCollection(script, 'waypoints')}
         {renderCollection(script, 'geofences')}
         {renderCollection(script, 'routes')}
-        {renderCollection(script, 'directions')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>By Scene</h4>
