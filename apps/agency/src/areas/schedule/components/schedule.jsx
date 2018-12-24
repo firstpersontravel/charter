@@ -1,26 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function Schedule({ scripts, children }) {
-  if (!scripts || !scripts.length) {
-    return <div>Loading</div>;
+export default function Schedule({ scriptsStatus, children }) {
+  if (scriptsStatus.isLoading) {
+    return (
+      <div className="container-fluid">Loading...</div>
+    );
+  }
+  if (scriptsStatus.isError) {
+    return (
+      <div className="container-fluid">Error loading data.</div>
+    );
   }
   return (
     <div className="container-fluid">
-      <div className="row">
-        <div className="col-sm-12">
-          {children}
-        </div>
-      </div>
+      {children}
     </div>
   );
 }
 
 Schedule.propTypes = {
   children: PropTypes.node.isRequired,
-  scripts: PropTypes.array
-};
-
-Schedule.defaultProps = {
-  scripts: null
+  scriptsStatus: PropTypes.object.isRequired
 };

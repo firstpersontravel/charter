@@ -22,14 +22,14 @@ var SCRIPT_DEPENDENCY_TREE = {
   geofences: { center: 'waypoints' },
   initiatives: { scene: 'scenes' },
   pages: {
-    pageset: 'pagesets',
+    appearance: 'appearances',
     waypoint: 'waypoints',
     route: 'routes',
     role: 'roles',
     scene: 'scenes'
   },
   messages: { from: 'roles', to: 'roles' },
-  pagesets: { role: 'roles', scene: 'scenes' },
+  appearances: { role: 'roles' },
   relays: { for: 'roles', as: 'roles', with: 'roles' },
   roles: { starting_page: 'pages', default_layout: 'layouts' },
   routes: { from: 'waypoints', to: 'waypoints' },

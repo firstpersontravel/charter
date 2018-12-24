@@ -130,8 +130,6 @@ function renderVars(participant) {
   const user = participant.user;
   const currentPage = _.find(script.content.pages,
     { name: participant.currentPageName });
-  const currentPageset = currentPage ? _.find(script.content.pagesets,
-    { name: currentPage.pageset }) : null;
   const acknowledgedPage = _.find(script.content.pages,
     { name: participant.acknowledgedPageName });
   const acknowledgedPageAt = participant.acknowledgedPageAt;
@@ -148,10 +146,6 @@ function renderVars(participant) {
         <strong>User:</strong>
         &nbsp;
         {renderUser(user)}
-        <br />
-
-        <strong>Current pageset:</strong>
-        &nbsp;{currentPageset ? currentPageset.title : 'None'}
         <br />
 
         <strong>Current page:</strong>

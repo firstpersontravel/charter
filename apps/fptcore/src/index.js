@@ -11,6 +11,7 @@ module.exports = {
   ParamValidators: require('./param_validators'),
   ParticipantCore: require('./participant'),
   PlaythroughCore: require('./playthrough'),
+  SceneCore: require('./scene'),
   ScriptCore: require('./script'),
   TextCore: require('./text'),
   TimeCore: require('./time'),

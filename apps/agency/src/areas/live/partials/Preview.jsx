@@ -38,14 +38,14 @@ function renderPanel(participant, panel) {
   );
 }
 
-function renderPageNotActive(pageset, participant) {
+function renderPageNotActive(appearance, participant) {
   const trip = participant.trip;
-  const pagesetStart = pageset.start_ref ?
-    moment.utc(EvalCore.lookupRef(trip.context, pageset.start_ref)) :
+  const appearanceStart = appearance.start_ref ?
+    moment.utc(EvalCore.lookupRef(trip.context, appearance.start_ref)) :
     null;
-  const startLabel = pagesetStart ? ` - ${pagesetStart.clone().tz(trip.script.timezone).format('h:mma')}` : '';
+  const startLabel = appearanceStart ? ` - ${appearanceStart.clone().tz(trip.script.timezone).format('h:mma')}` : '';
   const introText = EvalCore.templateText(trip.context,
-    pageset.intro, trip.script.timezone);
+    appearance.intro, trip.script.timezone);
   return (
     <div className="card" style={{ marginBottom: '0.5em' }}>
       <div className="card-header">
@@ -53,19 +53,19 @@ function renderPageNotActive(pageset, participant) {
           {trip.departureName} {trip.title} as {participant.roleName}
         </strong>
         &nbsp;
-        {pageset.title} {startLabel}
+        {appearance.title} {startLabel}
       </div>
       <div className="card-body">
         <p className="card-text">{introText}</p>
         <button className="btn btn-block constrain-text btn-outline-secondary" disabled>
-          {pageset.disabled_message}
+          {appearance.disabled_message}
         </button>
       </div>
     </div>
   );
 }
 
-function renderPage(pageset, page, participant) {
+function renderPage(appearance, page, participant) {
   const trip = participant.trip;
   const panels = page.panels || [];
   let headerPanel = null;
@@ -106,17 +106,17 @@ export default function Preview({ participant }) {
   if (!page) {
     return null;
   }
-  const pageset = _.find(script.content.pagesets,
-    { name: page.pageset });
-  const pagesetIsActive = (
-    !pageset ||
-    !pageset.if ||
-    EvalCore.if(trip.context, pageset.if)
+  const appearance = _.find(script.content.appearances,
+    { name: page.appearance });
+  const appearanceIsActive = (
+    !appearance ||
+    !appearance.if ||
+    EvalCore.if(trip.context, appearance.if)
   );
-  if (!pagesetIsActive) {
-    return renderPageNotActive(pageset, participant);
+  if (!appearanceIsActive) {
+    return renderPageNotActive(appearance, participant);
   }
-  return renderPage(pageset, page, participant);
+  return renderPage(appearance, page, participant);
 }
 
 Preview.propTypes = {

@@ -1,9 +1,12 @@
 import { connect } from 'react-redux';
 
+import { instancesStatus } from '../../../connector-utils';
 import Schedule from '../components/schedule';
 
 const mapStateToProps = (state, ownProps) => ({
-  scripts: state.datastore.scripts
+  scriptsStatus: instancesStatus(state, 'scripts', {
+    isArchived: false
+  })
 });
 
 const mapDispatchToProps = dispatch => ({});

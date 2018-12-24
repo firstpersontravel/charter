@@ -176,6 +176,11 @@ export default class Group extends Component {
     const isArchivedIcon = trip.isArchived ? (
       <i className="fa fa-archive" style={{ marginRight: '0.25em' }} />
     ) : null;
+    const sceneTitle = trip.currentSceneName ?
+      _.get(_.find(trip.script.content.scenes, {
+        name: trip.currentSceneName
+      }), 'title') :
+      'Not started';
     return (
       <li key={trip.id} className="nav-item nav-trip-item">
         <Link
@@ -187,9 +192,7 @@ export default class Group extends Component {
           <span className="d-none d-sm-inline"> {trip.title}</span>
           <br />
           <span style={{ fontSize: '10pt' }}>
-            {(_.find(trip.script.content.scenes, {
-              name: trip.currentSceneName
-            }) || {}).title || ''}
+            {sceneTitle}
           </span>
         </Link>
       </li>

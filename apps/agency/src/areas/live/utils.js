@@ -88,7 +88,7 @@ function getActors(group) {
 
 function isActorByRoleActive(roleAndActors) {
   const pageInfo = getParticipantPageInfo(roleAndActors.actors[0]);
-  return pageInfo && pageInfo.pagesetIsActive;
+  return pageInfo && pageInfo.appearanceIsActive;
 }
 
 export function sortParticipants(group) {

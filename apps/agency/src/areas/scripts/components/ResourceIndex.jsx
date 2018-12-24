@@ -13,7 +13,7 @@ const PROP_ORDERING = [
   'title',
   'scene',
   'page',
-  'pageset',
+  'appearance',
   'role',
   'type',
   'cue',

@@ -33,23 +33,24 @@ ParticipantCore.getPageInfo = function(script, context, participant) {
   }
   var scene = _.find(script.content.scenes, { name: page.scene }) ||
     { name: 'No scene', title: 'No scene' };
-  var pageset = _.find(script.content.pagesets, { name: page.pageset }) ||
-    { name: 'No pageset', title: 'No pageset' };
+  var appearance = _.find(script.content.appearances, { name: page.appearance }) ||
+    { name: 'No appearance', title: 'No appearance' };
 
-  var pagesetIsActive = !pageset.if || EvalCore.if(context, pageset.if);
+  var appearanceIsActive = !appearance.if ||
+    EvalCore.if(context, appearance.if);
   var pageTitle = page ? page.title : participant.currentPageName;
-  var pagesetTitle = pagesetIsActive ? pageTitle : pageset.disabled_message;
-  var pagesetStart = pageset.start_ref ?
-    moment.utc(EvalCore.lookupRef(context, pageset.start_ref)) :
+  var appearanceTitle = appearanceIsActive ? pageTitle : appearance.disabled_message;
+  var appearanceStart = appearance.start_ref ?
+    moment.utc(EvalCore.lookupRef(context, appearance.start_ref)) :
     null;
   return {
     page: page,
-    pageset: pageset,
+    appearance: appearance,
     scene: scene,
-    pagesetStart: pagesetStart,
-    pagesetIsActive: pagesetIsActive,
-    statusClass: pagesetIsActive ? '' : 'faint',
-    status: pagesetTitle
+    appearanceStart: appearanceStart,
+    appearanceIsActive: appearanceIsActive,
+    statusClass: appearanceIsActive ? '' : 'faint',
+    status: appearanceTitle
   };
 };
 
@@ -59,11 +60,13 @@ ParticipantCore.getSceneSort = function(script, context, participant) {
   if (!page) {
     return 0;
   }
-  var pageset = _.find(script.content.pagesets, { name: page.pageset });
-  if (!pageset || !pageset.start_ref) {
+  var appearance = _.find(script.content.appearances, {
+    name: page.appearance
+  });
+  if (!appearance || !appearance.start_ref) {
     return 0;
   }
-  return moment.utc(EvalCore.lookupRef(context, pageset.start_ref)).unix();
+  return moment.utc(EvalCore.lookupRef(context, appearance.start_ref)).unix();
 };
 
 module.exports = ParticipantCore;

@@ -3,18 +3,18 @@
     <strong>
       {{playthrough.departureName}} {{playthrough.title}}
     </strong>
-    {{pageset.title}} {{pagesetDisabledStart}}
+    {{appearance.title}} {{appearanceDisabledStart}}
     {{#unless isFirst}}
-    <a href='' data-playthrough-id='{{playthrough.id}}' data-page-name='{{page.name}}' data-ui='show-pageset'>Show now</a>
+    <a href='' data-playthrough-id='{{playthrough.id}}' data-page-name='{{page.name}}' data-ui='show-appearance'>Show now</a>
     {{/unless}}
   </div>
   <div class="card-body" data-playthrough-id='{{playthrough.id}}' data-page-name="{{page.name}}" style="display: {{#if isFirst}}block{{else}}none{{/if}};">
     <p class='card-text'>
-      {{pagesetDisabledIntro}}
+      {{appearanceDisabledIntro}}
     </p>
     <p class='card-text'>
       <div class='alert alert-warning'>
-        {{pagesetDisabledMessage}}
+        {{appearanceDisabledMessage}}
       </div>
     </p>
   </div>

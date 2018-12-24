@@ -143,7 +143,7 @@ $(function() {
     var $btn = $(this);
     var playthroughId = $btn.attr('data-playthrough-id');
     var actionName = $btn.attr('data-ui');
-    if (actionName === 'show-pageset') {
+    if (actionName === 'show-appearance') {
       var pageName = $btn.attr('data-page-name');
       $('div[data-playthrough-id=' + playthroughId + '][data-page-name=' + pageName + ']').slideDown();
     }

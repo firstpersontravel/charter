@@ -54,15 +54,15 @@ function getPage(script, playthrough, context, participant) {
   if (!pageInfo) {
     return null;
   }
-  const pagesetSort = fptCore.ParticipantCore.getSceneSort(script, context,
+  const appearanceSort = fptCore.ParticipantCore.getSceneSort(script, context,
     participant);
-  const localSceneStart = pageInfo.pagesetStart ?
-    pageInfo.pagesetStart.clone().tz(script.timezone) :
+  const localSceneStart = pageInfo.appearanceStart ?
+    pageInfo.appearanceStart.clone().tz(script.timezone) :
     null;
-  const pagesetDisabledStart = localSceneStart ?
+  const appearanceDisabledStart = localSceneStart ?
     ('- Starts ' + localSceneStart.format('h:mma')) : '';
-  const pageset = pageInfo.pageset;
-  const introText = fptCore.EvalCore.templateText(context, pageset.intro,
+  const appearance = pageInfo.appearance;
+  const introText = fptCore.EvalCore.templateText(context, appearance.intro,
     script.timezone);
   const page = pageInfo.page;
   const directiveText = fptCore.EvalCore.templateText(context,
@@ -78,11 +78,12 @@ function getPage(script, playthrough, context, participant) {
     page: page,
     panels: panels,
     pageInfo: pageInfo,
-    pageset: pageset,
-    pagesetDisabledStart: pagesetDisabledStart,
-    pagesetDisabledIntro: introText,
-    pagesetDisabledMessage: pageset.disabled_message || 'Not ready to start',
-    sort: pagesetSort,
+    appearance: appearance,
+    appearanceDisabledStart: appearanceDisabledStart,
+    appearanceDisabledIntro: introText,
+    appearanceDisabledMessage: appearance.disabled_message ||
+      'Not ready to start',
+    sort: appearanceSort,
     directiveText: directiveText
   };
 }

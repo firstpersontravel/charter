@@ -164,7 +164,6 @@ export default class ScheduleIndex extends Component {
     const values = PlaythroughCore.getInitialValues(script, fields.variantNames);
     const schedule = PlaythroughCore.getInitialSchedule(script,
       group.date, fields.variantNames);
-    const firstSceneName = script.content.scenes[0].name;
     const playthroughFields = {
       groupId: group.id,
       scriptId: group.scriptId,
@@ -173,9 +172,10 @@ export default class ScheduleIndex extends Component {
       galleryName: _.kebabCase(fields.title),
       departureName: fields.departureName,
       variantNames: fields.variantNames.join(','),
-      currentSceneName: firstSceneName,
+      currentSceneName: '',
       values: values,
-      schedule: schedule
+      schedule: schedule,
+      lastScheduledTime: null
     };
     const participantsFields = script.content.roles.map(role => (
       this.initialFieldsForRole(script, role, fields.departureName,

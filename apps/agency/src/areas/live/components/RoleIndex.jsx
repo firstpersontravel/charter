@@ -10,19 +10,19 @@ import { EvalCore } from 'fptcore';
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 
-function getPagesetStart(player) {
+function getAppearanceStart(player) {
   const page = _.find(player.trip.script.content.pages,
     { name: player.currentPageName });
   if (!page) {
     return null;
   }
-  const pageset = _.find(player.trip.script.content.pagesets,
-    { name: page.pageset });
-  if (!pageset || !pageset.start_ref) {
+  const appearance = _.find(player.trip.script.content.appearances,
+    { name: page.appearance });
+  if (!appearance || !appearance.start_ref) {
     return null;
   }
   return moment.utc(EvalCore.lookupRef(player.trip.context,
-    pageset.start_ref));
+    appearance.start_ref));
 }
 
 function renderMap(trip, user) {
@@ -59,12 +59,12 @@ function renderParticipantCell(participant, isFirst) {
   if (!page) {
     return null;
   }
-  const pageset = _.find(trip.script.content.pagesets, {
-    name: page.pageset
+  const appearance = _.find(trip.script.content.appearances, {
+    name: page.appearance
   }) || {};
-  const pagesetIsActive = !pageset.if || EvalCore.if(trip.context, pageset.if);
+  const appearanceIsActive = !appearance.if || EvalCore.if(trip.context, appearance.if);
   const pageTitle = page ? page.title : participant.currentPageName;
-  const status = pagesetIsActive ? pageTitle : pageset.disabled_message;
+  const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
   const tripRoleUrl = `/agency/live/${trip.groupId}/trip/${trip.id}/participants/${participant.roleName}`;
 
   const renderedMap = isFirst ? renderMap(trip, participant.user) : null;
@@ -104,8 +104,8 @@ export default function RoleIndex({ user, participants }) {
     .filter('trip')
     .filter('currentPageName')
     .sortBy((player) => {
-      const pagesetStart = getPagesetStart(player);
-      return pagesetStart ? pagesetStart.unix() : 0;
+      const appearanceStart = getAppearanceStart(player);
+      return appearanceStart ? appearanceStart.unix() : 0;
     })
     .value();
   if (!participantsSorted.length) {

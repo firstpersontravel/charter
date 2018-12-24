@@ -55,7 +55,7 @@ function renderCollections(script) {
       <div style={{ marginBottom: '0.5em' }}>
         <h4>By Scene</h4>
         {renderCollection(script, 'pages')}
-        {renderCollection(script, 'pagesets')}
+        {renderCollection(script, 'appearances')}
         {renderCollection(script, 'triggers')}
         {renderCollection(script, 'messages')}
         {renderCollection(script, 'cues')}

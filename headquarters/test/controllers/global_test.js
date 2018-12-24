@@ -14,6 +14,11 @@ describe('GlobalController', () => {
     sandbox.restore();
   });
 
+  describe('#scheduleActions', () => {
+    it.skip('schedules time occurred', () => {});
+    it.skip('schedules scene start if needed', () => {});
+  });
+
   describe('#runScheduledActions', () => {
 
     it('runs successfully', async () => {

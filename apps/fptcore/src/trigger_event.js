@@ -59,10 +59,14 @@ TriggerEventCore.isSceneActive = function(script, context, sceneName) {
     return false;
   }
 
-  // Global scenes are always active, or if they include a conditional,
-  // then evaluate that conditional to see if that scene is active.
+  // If we have a conditional, return false if it's not true.
+  if (scene.if && !EvalCore.if(context, scene.if)) {
+    return false;
+  }
+
+  // If it's global, and we've passed the conditional check, then it's active.
   if (scene.global) {
-    return !scene.if || EvalCore.if(context, scene.if);
+    return true;
   }
 
   // If it's not a global scene, then check if it's current.
