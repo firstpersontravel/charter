@@ -101,7 +101,7 @@ function renderCollections(script, currentCollectionName, currentSceneName) {
       </div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>By Scene</h4>
-        {renderSceneSelector(script, currentCollectionName, currentSceneName)}
+        {renderSceneSelector(script, currentSceneName)}
         {renderCollection(script, currentCollectionName, 'pages', currentSceneName)}
         {renderCollection(script, currentCollectionName, 'triggers', currentSceneName)}
         {renderCollection(script, currentCollectionName, 'messages', currentSceneName)}
@@ -120,7 +120,7 @@ export default function ScriptVersion({ script, children, params, location }) {
   // or the scene name (if we're just browsing the collection from a link).
   let currentSceneName = location.query.scene || '';
   const currentCollectionName = params.collectionName || '';
-  if (params.collectionName && params.resourceName) {
+  if (!currentSceneName && params.collectionName && params.resourceName) {
     const items = getItems(script, params.collectionName);
     const resource = _.find(items, { name: params.resourceName });
     if (resource) {

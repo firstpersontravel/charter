@@ -8,7 +8,7 @@ import { TextCore } from 'fptcore';
 import { getItems, doesCollectionHaveScene } from './utils';
 
 function renderItem(script, collectionName, item, i) {
-  const itemName = item.title || item.name || i;
+  const itemName = item.title || item.name;
   return (
     <div
       className="constrain-text"

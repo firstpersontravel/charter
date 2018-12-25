@@ -21,7 +21,10 @@ const PROP_ORDERING = [
   'cue',
   'if',
   'event',
-  'actions'
+  'actions',
+  'for',
+  'with',
+  'as'
 ];
 
 const REVERSE_COLLECTION_NAMES = _(COLLECTION_NAMES)
