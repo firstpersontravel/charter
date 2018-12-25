@@ -467,6 +467,11 @@ function getResource(script, collectionName, resourceName) {
 
 export default function ResourceIndex({ script, collectionName, resourceName }) {
   const resource = getResource(script, collectionName, resourceName);
+  if (!resource) {
+    return (
+      <div>Not found.</div>
+    );
+  }
   const fields = renderFields(script, collectionName, resource);
   const reverseRefs = renderReverseRefs(script, collectionName, resource);
   const title = resource.title || resourceName;

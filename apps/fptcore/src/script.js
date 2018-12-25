@@ -19,6 +19,7 @@ var UNQUOTED_WORD_REGEX = /^[\w._-]+$/i;
 
 ScriptCore.SCRIPT_DEPENDENCY_TREE = {
   checkpoints: { scene: 'scenes' },
+  cues: { scene: 'scene' }, // <-- WARNING THIS ONE IS IMPLICIT
   geofences: { center: 'waypoints' },
   initiatives: { scene: 'scenes' },
   pages: {
@@ -28,7 +29,7 @@ ScriptCore.SCRIPT_DEPENDENCY_TREE = {
     role: 'roles',
     scene: 'scenes'
   },
-  messages: { from: 'roles', to: 'roles' },
+  messages: { scene: 'scenes', from: 'roles', to: 'roles' },
   appearances: { role: 'roles' },
   relays: { for: 'roles', as: 'roles', with: 'roles' },
   roles: { starting_page: 'pages', default_layout: 'layouts' },
@@ -198,7 +199,10 @@ ScriptCore.gatherActions = function(script) {
       return ScriptCore
         .gatherTriggerActions(script, trigger, '', [])
         .map(function(action) {
-          return Object.assign(action, { triggerName: trigger.name });
+          return Object.assign(action, {
+            triggerScene: trigger.scene,
+            triggerName: trigger.name
+          });
         });
     })
     .flatten()
@@ -252,7 +256,10 @@ ScriptCore.gatherImplicitResources = function(script) {
     Object.keys(action.action.params).forEach(function(paramName) {
       var paramSpec = Actions[action.action.name].params[paramName];
       if (paramSpec.type === 'cue_name') {
-        cues.push(action.action.params[paramName]);
+        cues.push({
+          name: action.action.params[paramName],
+          scene: action.triggerScene
+        });
       }
     });
   });
@@ -266,15 +273,16 @@ ScriptCore.gatherImplicitResources = function(script) {
       Object.keys(eventParamsObj).forEach(function(paramName) {
         var paramSpec = Events[eventType].specParams[paramName];
         if (paramSpec.type === 'cue_name') {
-          cues.push(eventParamsObj[paramName]);
+          cues.push({
+            name: eventParamsObj[paramName],
+            scene: trigger.scene
+          });
         }
       });
     });
   });
   return {
-    cues: _.uniq(cues).sort().map(function(name) {
-      return { name: name };
-    })
+    cues: _(cues).uniqBy('name').sortBy('name').value()
   };
 };
 

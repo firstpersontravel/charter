@@ -46,16 +46,16 @@ describe('TriggerEventCore', () => {
       assert.strictEqual(res, true);
     });
 
-    it('returns true for ending scene', () => {
+    it('returns false for ended scene with active page', () => {
       const context = {
         Role: { currentPageName: 'PAGE-1' },
         currentSceneName: 'SCENE-2'
       };
       const res = TriggerEventCore.isSceneActive(script, context, 'SCENE-1');
-      assert.strictEqual(res, true);
+      assert.strictEqual(res, false);
     });
 
-    it('returns false for not-yet-started scene', () => {
+    it('returns false for not-yet-started scene with active page', () => {
       const context = {
         Role: { currentPageName: 'PAGE-1' },
         currentSceneName: 'SCENE-0'
@@ -110,26 +110,6 @@ describe('TriggerEventCore', () => {
       sandbox.stub(TriggerEventCore, 'isSceneActive').returns(false);
       const trigger = { scene: 'SCENE-1' };
       const res = TriggerEventCore.isTriggerActive({}, {}, trigger);
-      assert.strictEqual(res, false);
-    });
-
-    it('returns true if matching page', () => {
-      const trigger = { page: 'PAGE-1' };
-      const script = {
-        content: { pages: [{ name: 'PAGE-1', role: 'User' }] }
-      };
-      const context = { User: { currentPageName: 'PAGE-1' } };
-      const res = TriggerEventCore.isTriggerActive(script, context, trigger);
-      assert.strictEqual(res, true);
-    });
-
-    it('returns false if non-matching page', () => {
-      const trigger = { page: 'PAGE-1' };
-      const script = {
-        content: { pages: [{ name: 'PAGE-1', role: 'User' }] }
-      };
-      const context = { User: { currentPageName: 'PAGE-2' } };
-      const res = TriggerEventCore.isTriggerActive(script, context, trigger);
       assert.strictEqual(res, false);
     });
 

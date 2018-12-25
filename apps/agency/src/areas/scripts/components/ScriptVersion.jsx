@@ -77,8 +77,12 @@ function renderCollections(script, currentSceneName) {
         {renderCollection(script, 'departures')}
         {renderCollection(script, 'variants')}
         {renderCollection(script, 'variant_groups')}
-        {renderCollection(script, 'appearances')}
         {renderCollection(script, 'scenes')}
+      </div>
+      <div style={{ marginBottom: '0.5em' }}>
+        <h4>Roles</h4>
+        {renderCollection(script, 'appearances')}
+        {renderCollection(script, 'relays')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>Content</h4>
@@ -113,10 +117,11 @@ export default function ScriptVersion({ script, children, params, location }) {
   // or the scene name (if we're just browsing the collection from a link).
   let currentSceneName = location.query.scene || '';
   if (params.collectionName && params.resourceName) {
-    const resource = _.find(script.content[params.collectionName], {
-      name: params.resourceName
-    });
-    currentSceneName = resource.scene;
+    const items = getItems(script, params.collectionName);
+    const resource = _.find(items, { name: params.resourceName });
+    if (resource) {
+      currentSceneName = resource.scene;
+    }
   }
   return (
     <div className="container-fluid">

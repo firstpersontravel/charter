@@ -74,31 +74,7 @@ TriggerEventCore.isSceneActive = function(script, context, sceneName) {
     return true;
   }
 
-  // Past scenes that still have roles on pages are active.
-  var sceneNames = _(script.content.scenes || []).map('name').value();
-  var currentSceneIndex = sceneNames.indexOf(context.currentSceneName);
-  var pastSceneNames = sceneNames.slice(0, currentSceneIndex);
-
-  var activePastSceneNames = _(script.content.roles || [])
-    .map('name')
-    .map(function(roleName) {
-      return _.get(context, roleName + '.currentPageName');
-    })
-    .filter(Boolean)
-    .map(function(activePageName) {
-      var activePage = _.find(script.content.pages, { name: activePageName });
-      return activePage && activePage.scene;
-    })
-    .filter(function(activeSceneName) {
-      return _.includes(pastSceneNames, activeSceneName);
-    })
-    .value();
-
-  if (_.includes(activePastSceneNames, sceneName)) {
-    return true;
-  }
-
-  // Otherwise we're not global, current, or past-yet-active.
+  // If we're not global or current, we're not active.
   return false;
 };
 
@@ -109,16 +85,6 @@ TriggerEventCore.isTriggerActive = function(script, context, trigger) {
   // Skip triggers that don't match the current scene
   if (trigger.scene) {
     if (!TriggerEventCore.isSceneActive(script, context, trigger.scene)) {
-      return false;
-    }
-  }
-  // Skip triggers that don't match current page
-  if (trigger.page) {
-    var page = _.find(script.content.pages || [], { name: trigger.page });
-    if (!context[page.role]) {
-      return false;
-    }
-    if (context[page.role].currentPageName !== trigger.page) {
       return false;
     }
   }

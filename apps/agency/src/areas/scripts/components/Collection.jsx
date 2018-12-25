@@ -31,10 +31,10 @@ export default function Collection({ script, collectionName, children, params, l
   // or the scene name (if we're just browsing the collection from a link).
   let currentSceneName = location.query.scene;
   if (params.resourceName) {
-    const resource = _.find(script.content[collectionName], {
-      name: params.resourceName
-    });
-    currentSceneName = resource.scene;
+    const resource = _.find(items, { name: params.resourceName });
+    if (resource) {
+      currentSceneName = resource.scene;
+    }
   }
 
   // Filter items by scene name
