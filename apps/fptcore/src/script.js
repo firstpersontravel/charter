@@ -17,7 +17,7 @@ var ACTION_KEYS = ['actions', 'else', 'elseifs'];
 
 var UNQUOTED_WORD_REGEX = /^[\w._-]+$/i;
 
-var SCRIPT_DEPENDENCY_TREE = {
+ScriptCore.SCRIPT_DEPENDENCY_TREE = {
   checkpoints: { scene: 'scenes' },
   geofences: { center: 'waypoints' },
   initiatives: { scene: 'scenes' },
@@ -206,7 +206,7 @@ ScriptCore.gatherActions = function(script) {
 };
 
 ScriptCore.gatherDependencyWarnings = function(script, warnings) {
-  _.each(SCRIPT_DEPENDENCY_TREE, function(relations, collectionName) {
+  _.each(ScriptCore.SCRIPT_DEPENDENCY_TREE, function(relations, collectionName) {
     var collection = script.content[collectionName] || [];
     collection.forEach(function(item, i) {
       var itemPath = collectionName + '[' +

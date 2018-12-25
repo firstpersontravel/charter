@@ -8,3 +8,8 @@ export function getItems(script, collectionName) {
   }
   return script.content[collectionName] || [];
 }
+
+export function doesCollectionHaveScene(collectionName) {
+  const collectionDeps = ScriptCore.SCRIPT_DEPENDENCY_TREE[collectionName];
+  return !!_.get(collectionDeps, 'scene');
+}

@@ -9,6 +9,7 @@ import { COLLECTION_NAMES } from '../consts';
 import Param, { renderLink } from '../../common/partials/Param';
 
 const PROP_ORDERING = [
+  'name',
   'section',
   'title',
   'scene',
@@ -424,9 +425,6 @@ function renderValue(script, collectionName, key, value) {
 }
 
 function renderField(script, collectionName, key, value) {
-  if (key === 'name') {
-    return null;
-  }
   return (
     <div key={key}>
       <strong>{key}:</strong>&nbsp;
@@ -471,9 +469,10 @@ export default function ResourceIndex({ script, collectionName, resourceName }) 
   const resource = getResource(script, collectionName, resourceName);
   const fields = renderFields(script, collectionName, resource);
   const reverseRefs = renderReverseRefs(script, collectionName, resource);
+  const title = resource.title || resourceName;
   return (
     <div>
-      <h3>{resourceName}</h3>
+      <h3>{title}</h3>
       {fields}
       <hr />
       {reverseRefs}
