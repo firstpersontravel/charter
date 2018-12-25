@@ -7,7 +7,7 @@ import { TextCore } from 'fptcore';
 
 import { getItems, doesCollectionHaveScene } from './utils';
 
-function renderCollection(script, collectionName, currentSceneName) {
+function renderCollection(script, currentCollectionName, collectionName, currentSceneName) {
   // Filter items by scene name
   let items = getItems(script, collectionName);
   if (doesCollectionHaveScene(collectionName)) {
@@ -25,6 +25,9 @@ function renderCollection(script, collectionName, currentSceneName) {
   return (
     <div key={collectionName}>
       <Link
+        // Since link activeClassName doesn't work automatically cos the
+        // query param messes it up.
+        className={currentCollectionName === collectionName ? 'bold' : ''}
         activeClassName="bold"
         to={{
           pathname: (
@@ -67,43 +70,43 @@ function renderSceneSelector(script, currentSceneName) {
   );
 }
 
-function renderCollections(script, currentSceneName) {
+function renderCollections(script, currentCollectionName, currentSceneName) {
   // Don't show directions
   return (
     <div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>Core</h4>
-        {renderCollection(script, 'roles')}
-        {renderCollection(script, 'departures')}
-        {renderCollection(script, 'variants')}
-        {renderCollection(script, 'variant_groups')}
-        {renderCollection(script, 'scenes')}
+        {renderCollection(script, currentCollectionName, 'roles')}
+        {renderCollection(script, currentCollectionName, 'departures')}
+        {renderCollection(script, currentCollectionName, 'variants')}
+        {renderCollection(script, currentCollectionName, 'variant_groups')}
+        {renderCollection(script, currentCollectionName, 'scenes')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
-        <h4>Roles</h4>
-        {renderCollection(script, 'appearances')}
-        {renderCollection(script, 'relays')}
+        <h4>By Role</h4>
+        {renderCollection(script, currentCollectionName, 'appearances')}
+        {renderCollection(script, currentCollectionName, 'relays')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>Content</h4>
-        {renderCollection(script, 'layouts')}
-        {renderCollection(script, 'content_pages')}
-        {renderCollection(script, 'audio')}
+        {renderCollection(script, currentCollectionName, 'layouts')}
+        {renderCollection(script, currentCollectionName, 'content_pages')}
+        {renderCollection(script, currentCollectionName, 'audio')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>Locations</h4>
-        {renderCollection(script, 'waypoints')}
-        {renderCollection(script, 'geofences')}
-        {renderCollection(script, 'routes')}
+        {renderCollection(script, currentCollectionName, 'waypoints')}
+        {renderCollection(script, currentCollectionName, 'geofences')}
+        {renderCollection(script, currentCollectionName, 'routes')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
         <h4>By Scene</h4>
-        {renderSceneSelector(script, currentSceneName)}
-        {renderCollection(script, 'pages', currentSceneName)}
-        {renderCollection(script, 'triggers', currentSceneName)}
-        {renderCollection(script, 'messages', currentSceneName)}
-        {renderCollection(script, 'cues', currentSceneName)}
-        {renderCollection(script, 'initiatives', currentSceneName)}
+        {renderSceneSelector(script, currentCollectionName, currentSceneName)}
+        {renderCollection(script, currentCollectionName, 'pages', currentSceneName)}
+        {renderCollection(script, currentCollectionName, 'triggers', currentSceneName)}
+        {renderCollection(script, currentCollectionName, 'messages', currentSceneName)}
+        {renderCollection(script, currentCollectionName, 'cues', currentSceneName)}
+        {renderCollection(script, currentCollectionName, 'initiatives', currentSceneName)}
       </div>
     </div>
   );
@@ -116,6 +119,7 @@ export default function ScriptVersion({ script, children, params, location }) {
   // Get current scene from either the resource (if we're looking at one)
   // or the scene name (if we're just browsing the collection from a link).
   let currentSceneName = location.query.scene || '';
+  const currentCollectionName = params.collectionName || '';
   if (params.collectionName && params.resourceName) {
     const items = getItems(script, params.collectionName);
     const resource = _.find(items, { name: params.resourceName });
@@ -141,7 +145,7 @@ export default function ScriptVersion({ script, children, params, location }) {
       <hr />
       <div className="row">
         <div className="col-sm-2">
-          {renderCollections(script, currentSceneName, params)}
+          {renderCollections(script, currentCollectionName, currentSceneName)}
         </div>
         <div className="col-sm-10">
           {children}

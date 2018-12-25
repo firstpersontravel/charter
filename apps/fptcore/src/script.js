@@ -34,7 +34,7 @@ ScriptCore.SCRIPT_DEPENDENCY_TREE = {
   relays: { for: 'roles', as: 'roles', with: 'roles' },
   roles: { starting_page: 'pages', default_layout: 'layouts' },
   routes: { from: 'waypoints', to: 'waypoints' },
-  triggers: { scene: 'scenes', page: 'pages' },
+  triggers: { scene: 'scenes' },
   variants: { variant_group: 'variant_groups' }
 };
 

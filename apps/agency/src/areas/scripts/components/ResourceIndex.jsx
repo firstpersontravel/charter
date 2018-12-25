@@ -6,6 +6,7 @@ import yaml from 'js-yaml';
 import { Actions, ActionPhraseCore, Events, ScriptCore, TextCore } from 'fptcore';
 
 import { COLLECTION_NAMES } from '../consts';
+import { getItems } from './utils';
 import Param, { renderLink } from '../../common/partials/Param';
 
 const PROP_ORDERING = [
@@ -35,7 +36,7 @@ function findReverseResources(script, reverseRelation, resourceName) {
   const resourceSubkey = reverseRelationParts.length === 3 ?
     reverseRelationParts[1] : null;
   const reverseProp = reverseRelationParts[reverseRelationParts.length - 1];
-  const reverseCollection = script.content[reverseCollectionName];
+  const reverseCollection = getItems(script, reverseCollectionName);
   // If we're looking for a subkey, do something more complicated
   if (resourceSubkey) {
     return _(reverseCollection)

@@ -1,7 +1,9 @@
 export const COLLECTION_NAMES = {
+  'cues.scene': 'scenes',
   'checkpoints.scene': 'scenes',
   'geofences.center': 'waypoints',
   'initiatives.scene': 'scenes',
+  'messages.scene': 'scenes',
   'messages.from': 'roles',
   'messages.to': 'roles',
   'pages.scene': 'scenes',
@@ -18,7 +20,6 @@ export const COLLECTION_NAMES = {
   'roles.default_layout': 'layouts',
   'routes.from': 'waypoints',
   'routes.to': 'waypoints',
-  'triggers.page': 'pages',
   'triggers.scene': 'scenes',
   'variants.variant_group': 'variant_groups'
 };

@@ -10,7 +10,9 @@ import { getItems, doesCollectionHaveScene } from './utils';
 function renderItem(script, collectionName, item, i) {
   const itemName = item.title || item.name || i;
   return (
-    <div className="constrain-text" key={itemName}>
+    <div
+      className="constrain-text"
+      key={`${collectionName}-${item.name || i}`}>
       <Link
         activeClassName="bold"
         to={
