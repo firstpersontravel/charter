@@ -50,7 +50,7 @@ async function interpretTwimlDial(tripId, relay, twimlResponse, twimlOp) {
     return hangup();
   }
   const dial = twimlResponse.dial({
-    callerId: `+1${dialRelay.phoneNumber}`,
+    callerId: `+1${dialRelay.relayPhoneNumber}`,
     timeout: 30
   });
   dial.number(`+1${dialParticipant.user.phoneNumber}`);

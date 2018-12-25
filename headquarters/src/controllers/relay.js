@@ -102,7 +102,7 @@ RelayController.initiateCall = async (
   const twilioHost = config.env.TWILIO_HOST;
   const callOpts = {
     to: `+1${toUser.phoneNumber}`,
-    from: `+1${relay.phoneNumber}`,
+    from: `+1${relay.relayPhoneNumber}`,
     machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
     url: (
       `${twilioHost}/endpoints/twilio/calls/outgoing` +
@@ -151,7 +151,7 @@ RelayController.sendMessage = async (relay, trip, body, mediaUrl) => {
     return;
   }
   const opts = Object.assign(
-    { to: `+1${toUser.phoneNumber}`, from: `+1${relay.phoneNumber}`},
+    { to: `+1${toUser.phoneNumber}`, from: `+1${relay.relayPhoneNumber}`},
     body ? { body: body } : null,
     mediaUrl ? { mediaUrl: mediaUrl } : null
   );

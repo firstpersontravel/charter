@@ -69,7 +69,7 @@ export default class ScriptSetRelays extends React.Component {
     }
     return (
       <td key={departureName}>
-        {TextCore.formatPhone(relay.phoneNumber)}
+        {TextCore.formatPhone(relay.relayPhoneNumber)}
       </td>
     );
   }
@@ -132,7 +132,7 @@ export default class ScriptSetRelays extends React.Component {
     const trailheadDetails = trailheads.map(trailhead => (
       <span>
         {trailhead.departureName}:&nbsp;
-        {TextCore.formatPhone(trailhead.phoneNumber)}
+        {TextCore.formatPhone(trailhead.relayPhoneNumber)}
         &nbsp;
       </span>
     ));

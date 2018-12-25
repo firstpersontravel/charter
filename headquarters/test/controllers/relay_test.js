@@ -91,7 +91,7 @@ describe('RelayController', () => {
 
   describe('#initiateCall', () => {
 
-    const stubRelay = { id: 3, phoneNumber: '9999999999' };
+    const stubRelay = { id: 3, relayPhoneNumber: '9999999999' };
 
     const stubParticipant = {
       playthroughId: 1,

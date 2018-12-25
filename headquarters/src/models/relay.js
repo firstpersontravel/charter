@@ -17,8 +17,9 @@ const Relay = database.define('Relay', snakeCaseColumns({
   departureName: requiredStringField(10),
   forRoleName: requiredStringField(32),
   asRoleName: requiredStringField(32),
-  withRoleName: optionalStringField(32), // can be blank if admin
-  phoneNumber: requiredStringField(10),
+  withRoleName: requiredStringField(32),
+  relayPhoneNumber: requiredStringField(10),
+  userPhoneNumber: optionalStringField(10),  // blank if for everyone
   isActive: booleanField(true)
 }));
 

@@ -97,7 +97,7 @@ async function assignRelayNumber(existingNumbers, existingRelays, forRole,
   const usedRelayFilters = getOverlappingRelayFilters(
     forRole, relaySpec, departureName);
   const usedRelays = _.filter(existingRelays, usedRelayFilters);
-  const usedNumbers = usedRelays.map(relay => `+1${relay.phoneNumber}`);
+  const usedNumbers = usedRelays.map(relay => `+1${relay.relayPhoneNumber}`);
   const unusedNumbers = _.difference(existingNumbers, usedNumbers);
   // If we have an avail number, use it.
   if (unusedNumbers.length > 0) {
@@ -127,7 +127,7 @@ async function createForScript(scriptId) {
     .filter(num => {
       // Get all relays with this number
       const relaysWithNumber = existingRelays.filter(relay => (
-        num.phoneNumber === `+1${relay.phoneNumber}`
+        num.phoneNumber === `+1${relay.relayPhoneNumber}`
       ));
       // If no relays are currently assigned this number, it's ok.
       if (!relaysWithNumber.length) {
@@ -161,7 +161,7 @@ async function createForScript(scriptId) {
           `${script.name} ${departure.name} | ` +
           `${relaySpec.for} - ${relaySpec.with} ` +
           `as ${relaySpec.as || relaySpec.for}: ` +
-          `exists as ${matchingRelays[0].phoneNumber}`);
+          `exists as ${matchingRelays[0].relayPhoneNumber}`);
         continue;
       }
 
@@ -186,7 +186,8 @@ async function createForScript(scriptId) {
         forRoleName: role.name,
         withRoleName: relaySpec.with,
         asRoleName: relaySpec.as || role.name,
-        phoneNumber: phoneNumber,
+        relayPhoneNumber: phoneNumber,
+        userPhoneNumber: '',
         isActive: true
       });
       existingRelays.push(newRelay);
@@ -223,7 +224,7 @@ async function findWithParticipantByNumber(relayNumber, userNumber) {
   const relays = await models.Relay.findAll({
     where: {
       stage: config.env.STAGE,
-      phoneNumber: relayNumber,
+      relayPhoneNumber: relayNumber,
       isActive: true
     }
   });

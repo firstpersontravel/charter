@@ -23,7 +23,7 @@ describe('TwilioCallHandler', () => {
 
     it('returns dial', async () => {
       const stubOppositeRelay = {
-        phoneNumber: '8887776666'
+        relayPhoneNumber: '8887776666'
       };
       const stubParticipant = {
         userId: 9,

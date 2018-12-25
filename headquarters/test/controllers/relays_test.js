@@ -28,7 +28,7 @@ describe('RelaysController', () => {
     it('locates relay', async () => {
       const [relay, participant] = await (
         RelaysController.findWithParticipantByNumber(
-          _.find(fixtures, { model: 'Relay' }).data.phoneNumber,
+          _.find(fixtures, { model: 'Relay' }).data.relayPhoneNumber,
           _.find(fixtures, { model: 'User' }).data.phoneNumber)
       );
       assert(relay);

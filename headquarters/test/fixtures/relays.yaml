@@ -80,11 +80,12 @@
     scriptName: script
     departureName: T1
     stage: test
-    phoneNumber: '9999999999'
     isActive: true
     forRoleName: Player
     asRoleName: Player
     withRoleName: Actor
+    relayPhoneNumber: '9999999999'
+    userPhoneNumber: ''
 
 # Actor relay
 - model: Relay
@@ -93,11 +94,12 @@
     scriptName: script
     departureName: T1
     stage: test
-    phoneNumber: '9999999998'
     isActive: true
     forRoleName: Actor
     asRoleName: Actor
     withRoleName: Player
+    relayPhoneNumber: '9999999998'
+    userPhoneNumber: ''
 
 # Admin stage manager relay
 - model: Relay
@@ -106,8 +108,9 @@
     scriptName: script
     departureName: T1
     stage: test
-    phoneNumber: '9999999997'
     isActive: true
     forRoleName: StageManager
+    withRoleName: Player
     asRoleName: StageManager
-    withRoleName: ""
+    relayPhoneNumber: '9999999997'
+    userPhoneNumber: ''
