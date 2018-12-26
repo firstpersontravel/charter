@@ -53,7 +53,9 @@ RelaysController.assignRelayPhoneNumber = async (userPhoneNumber) => {
   // Find all relays that are either global or for this user -- that's what
   // we can't overlap.
   const existingRelays = await models.Relay.findAll({
-    userPhoneNumber: { [Sequelize.Op.or]: ['', userPhoneNumber] }
+    where: {
+      userPhoneNumber: { [Sequelize.Op.or]: ['', userPhoneNumber] }
+    }
   });
   // Look through existing numbers for one that is available.
   for (const envExistingNumber of envExistingNumbers) {
@@ -80,7 +82,7 @@ RelaysController.ensureRelay = async (
     departureName: departureName,
     forRoleName: relaySpec.for,
     withRoleName: relaySpec.with,
-    asRoleName: relaySpec.as,
+    asRoleName: relaySpec.as || relaySpec.for,
     userPhoneNumber: userPhoneNumber
   };
   // Return relay if it exists
@@ -114,11 +116,10 @@ RelaysController.ensureTrailheadsForScriptName = async (scriptName) => {
   });
   // Create only trailhead relays
   const trailheadRelays = _.filter(script.content.relays, { trailhead: true });
-  for (let departureName of script.content.departures) {
+  for (let departure of script.content.departures) {
     for (let relaySpec of trailheadRelays) {
-      await (
-        RelaysController.ensureRelay(script.name, departureName, relaySpec, '')
-      );
+      await RelaysController.ensureRelay(
+        script.name, departure.name, relaySpec, '');
     }
   }
 };

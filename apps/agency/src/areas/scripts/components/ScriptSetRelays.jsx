@@ -94,7 +94,7 @@ export default class ScriptSetRelays extends React.Component {
       return <td key={departureName}>–</td>;
     }
     const relaysRendered = relays.map(relay => (
-      <div>
+      <div key={relay.id}>
         {relay.userPhoneNumber ?
           TextCore.formatPhone(relay.relayPhoneNumber) :
           'Universal'}:{' '}
@@ -147,7 +147,7 @@ export default class ScriptSetRelays extends React.Component {
       return null;
     }
     const trailheadDetails = trailheads.map(trailhead => (
-      <span>
+      <span key={trailhead.id}>
         {trailhead.departureName}:&nbsp;
         {TextCore.formatPhone(trailhead.relayPhoneNumber)}
         &nbsp;
