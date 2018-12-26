@@ -9,12 +9,7 @@ const TripResetController = require('../controllers/trip_reset');
 const TripUtil = require('../controllers/trip_util');
 
 async function updateRelaysRoute(req, res) {
-  const script = await models.Script.find({
-    where: { name: req.params.scriptName, isActive: true, isArchived: false }
-  });
-  if (script) {
-    await RelaysController.createForScript(script.id);
-  }
+  await RelaysController.ensureTrailheadsForScriptName(req.params.scriptName);
   res.json({ data: { ok: true } });
 }
 

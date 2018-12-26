@@ -6,8 +6,8 @@ const models = require('../models');
 const TripActionController = require('../controllers/trip_action');
 const TripNotifyController = require('../controllers/trip_notify');
 const RelayController = require('../controllers/relay');
-const RelayTrailheadController = require('../controllers/relay_trailhead');
 const RelaysController = require('../controllers/relays');
+const TwilioUtil = require('./twilio_util');
 
 var logger = config.logger.child({ name: 'handlers.twilio' });
 
@@ -158,9 +158,8 @@ function hangupOrVoicemail(script, voicemailPath) {
 }
 
 async function handleIncomingCall(fromNumber, toNumber) {
-  const [relay, participant] = await (
-    RelaysController.findWithParticipantByNumber(toNumber, fromNumber)
-  );
+
+  const relay = await RelaysController.findByNumber(toNumber, fromNumber);
   if (!relay) {
     // Relay not found
     logger.warn('Relay not found.');
@@ -179,14 +178,13 @@ async function handleIncomingCall(fromNumber, toNumber) {
     return hangupOrVoicemail(script, relaySpec.phone_autoreply);
   }
 
-  let tripId = participant ? participant.playthroughId : null;
-  if (!participant) {
-    // If no participant, then we need to create a new playthrough.
-    const playthrough = await (
-      RelayTrailheadController.createTrip(relay, fromNumber)
-    );
-    tripId = playthrough.id;
+  // Lookup the trip id or create one.
+  const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
+  if (!tripId) {
+    // If we couldn't create one, probably cos its not a trailhead.
+    return hangup();
   }
+
   const event = {
     type: 'call_received',
     from: relay.asRoleName,

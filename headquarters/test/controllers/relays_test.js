@@ -1,10 +1,6 @@
-const _ = require('lodash');
 const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
-const sequelizeFixtures = require('sequelize-fixtures');
+const Sequelize = require('sequelize');
 const sinon = require('sinon');
-const yaml = require('js-yaml');
 
 const models = require('../../src/models');
 const RelaysController = require('../../src/controllers/relays');
@@ -17,24 +13,49 @@ describe('RelaysController', () => {
     sandbox.restore();
   });
 
-  const fixturePath = path.join(__dirname, '../fixtures/relays.yaml');
-  const fixtures = yaml.safeLoad(fs.readFileSync(fixturePath, 'utf8'));
-
-  beforeEach(() => {
-    return sequelizeFixtures.loadFixtures(fixtures, models);
+  describe('#purchaseNumber', () => {
+    it.skip('purchases a phone number', async () => {});
   });
 
-  describe('#findWithParticipantByNumber', () => {
+  describe('#assignRelayPhoneNumber', () => {
+    it.skip('assigns number if available', async () => {});
+    it.skip('purchases number if not available', async () => {});
+  });
+
+  describe('#ensureRelay', () => {
+    it.skip('returns relay if exists', async () => {});
+    it.skip('creates relay if does not exist', async () => {});
+  });
+
+  describe('#ensureTrailheadsForScriptName', () => {
+    it.skip('ensure all trailhead relays are created', async () => {});
+  });
+
+  describe('#findByNumber', () => {
+
+    const stubRelay = {
+      relayPhoneNumber: '1234567890',
+      userPhoneNumber: '9999999999'
+    };
+
     it('locates relay', async () => {
-      const [relay, participant] = await (
-        RelaysController.findWithParticipantByNumber(
-          _.find(fixtures, { model: 'Relay' }).data.relayPhoneNumber,
-          _.find(fixtures, { model: 'User' }).data.phoneNumber)
+      // Stub relay find
+      sandbox.stub(models.Relay, 'find').resolves(stubRelay);
+
+      const result = await RelaysController.findByNumber(
+        stubRelay.relayPhoneNumber,
+        stubRelay.userPhoneNumber
       );
-      assert(relay);
-      assert.equal(relay.forRoleName, 'Player');
-      assert(participant);
-      assert.equal(participant.roleName, 'Player');
+
+      assert.strictEqual(result, stubRelay);
+      sinon.assert.calledWith(models.Relay.find, {
+        where: {
+          isActive: true,
+          relayPhoneNumber: '1234567890',
+          stage: 'test',
+          userPhoneNumber: { [Sequelize.Op.or]: ['', '9999999999'] }
+        }
+      });
     });
   });
 });

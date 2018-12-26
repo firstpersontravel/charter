@@ -1,32 +1,70 @@
 const _ = require('lodash');
+
 const config = require('../config');
 const models = require('../models');
-
 const RelayController = require('./relay');
+const RelaysController = require('./relays');
 
 const logger = config.logger.child({ name: 'controllers.trip_relays' });
 
 const TripRelaysController = {};
 
 /**
- * Get relays matching a search pattern.
+ * Get the user phone number for a relay spec -- either blank if its a
+ * trailhead, null if the user wasn't found, or a phone number.
  */
-TripRelaysController.getRelays = async (trip, filters, specType) => {
+TripRelaysController.userPhoneNumberForRelay = async (trip, relaySpec) => {
+  // If it's a trailhead, we want the same relay phone number for everyone.
+  if (relaySpec.trailhead) {
+    return '';
+  }
+  // Otherwise we want an individul relay for everyone.
+  // Find the participant and user for this trip and relay spec.
+  const participant = await models.Participant.find({
+    where: { roleName: relaySpec.for, playthroughId: trip.id },
+    include: [{ model: models.User, as: 'user' }]
+  });
+  // Can't create or find a relay for a user without a phone number, so skip
+  // this relay without creating it.
+  if (!_.get(participant, 'user.phoneNumber')) {
+    return null;
+  }
+  return participant.user.phoneNumber;
+};
+
+/**
+ * Ensure a relay exists for a given spec and script.
+ */
+TripRelaysController.ensureRelay = async (trip, scriptName, relaySpec) => {
+  const userPhoneNumber = await (
+    TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
+  );
+  if (userPhoneNumber === null) {
+    return null;
+  }
+  return await (
+    RelaysController.ensureRelay(scriptName, relaySpec, userPhoneNumber)
+  );
+};
+
+/**
+ * Get relays matching a search pattern. Create them if they don't exist.
+ */
+TripRelaysController.ensureRelays = async (trip, specFilters, specType) => {
   const script = await models.Script.findById(trip.scriptId);
-  // Find relays
-  const relays = await models.Relay.findAll({
-    where: Object.assign({
-      stage: config.env.STAGE,
-      scriptName: script.name,
-      isActive: true,
-      departureName: trip.departureName,
-    }, filters)
-  });
-  // And filter by each specFilter
-  return relays.filter((relay) => {
-    const relaySpec = RelayController.specForRelay(script, relay);
-    return relaySpec && relaySpec[specType] === true;
-  });
+
+  // Get specs that match the filters and also the type we're looking for.
+  const relaySpecs = _(script.content.relays)
+    .filter(specFilters)
+    .filter(spec => spec[specType] === true)
+    .value();
+
+  const relays = await Promise.all(relaySpecs.map(relaySpec => (
+    TripRelaysController.ensureRelay(trip, script.name, relaySpec))
+  ));
+  // Filter out null responses, since those are for users w/no phone
+  // numbers
+  return relays.filter(Boolean);
 };
 
 /**
@@ -35,9 +73,9 @@ TripRelaysController.getRelays = async (trip, filters, specType) => {
 TripRelaysController.initiateCall = async (
   trip, toRoleName, asRoleName, detectVoicemail
 ) => {
-  const relayFilters = { asRoleName: toRoleName, withRoleName: asRoleName };
+  const relayFilters = { as: toRoleName, with: asRoleName };
   const relays = await (
-    TripRelaysController.getRelays(trip, relayFilters, 'phone_out')
+    TripRelaysController.ensureRelays(trip, relayFilters, 'phone_out')
   );
   // Check for relay
   if (!relays.length) {
@@ -63,9 +101,8 @@ TripRelaysController.initiateCall = async (
 TripRelaysController.sendAdminMessage = async (
   trip, toRoleName, messageText
 ) => {
-  const adminFilters = { forRoleName: toRoleName };
   const adminRelays = await (
-    TripRelaysController.getRelays(trip, adminFilters, 'admin_out')
+    TripRelaysController.ensureRelays(trip, { for: toRoleName }, 'admin_out')
   );
   for (let relay of adminRelays) {
     const adminMessageText = `[Admin] ${messageText}`;
@@ -142,12 +179,9 @@ TripRelaysController.relayMessage = async (trip, message, suppressRelayId) => {
   const sentTo = await models.Participant.findById(message.sentToId);
 
   // Send to forward relays -- relays as the role receiving the message.
-  const forwardFilters = {
-    asRoleName: sentTo.roleName,
-    withRoleName: sentBy.roleName
-  };
+  const forwardFilters = { as: sentTo.roleName, with: sentBy.roleName };
   const forwardRelays = await (
-    TripRelaysController.getRelays(trip, forwardFilters, 'sms_out')
+    TripRelaysController.ensureRelays(trip, forwardFilters, 'sms_out')
   );
   for (let relay of forwardRelays) {
     if (relay.id === suppressRelayId) {
@@ -162,12 +196,9 @@ TripRelaysController.relayMessage = async (trip, message, suppressRelayId) => {
   // Send to inverse relays -- relays as the role sending the message. These
   // should only send if the relay is for an actor, otherwise the player
   // may get texts if they use an in-game interface to send a message.
-  const inverseFilters = {
-    asRoleName: sentBy.roleName,
-    withRoleName: sentTo.roleName
-  };
+  const inverseFilters = { as: sentBy.roleName, with: sentTo.roleName };
   const inverseRelays = await (
-    TripRelaysController.getRelays(trip, inverseFilters, 'sms_out')
+    TripRelaysController.ensureRelays(trip, inverseFilters, 'sms_out')
   );
   for (let relay of inverseRelays) {
     if (relay.id === suppressRelayId) {

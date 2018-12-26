@@ -2,6 +2,7 @@ const _ = require('lodash');
 const twilio = require('twilio');
 
 const config = require('../config');
+const RelayController = require('../controllers/relay');
 const RelaysController = require('../controllers/relays');
 const TwilioCallHandler = require('../handlers/twilio_call');
 const TwilioMessageHandler = require('../handlers/twilio_message');
@@ -26,12 +27,18 @@ async function incomingCallRoute(req, res) {
 async function incomingCallStatusRoute(req, res) {
   const fromNumber = req.body.From.replace('+1', '');
   const toNumber = req.body.To.replace('+1', '');
-  const [relay, participant] = await (
-    RelaysController.findWithParticipantByNumber(toNumber, fromNumber)
-  );
-  if (!relay || !participant) {
-    logger.warn('Status received without matching relay or participant.');
-    res.status(200).send('OK');
+
+  const relay = await RelaysController.findByNumber(toNumber, fromNumber);
+  if (!relay) {
+    logger.warn('Status received without matching relay.');
+    res.status(500).send('No relay match.');
+    return;
+  }
+
+  const participant = RelayController.lookupParticipant(relay, fromNumber);
+  if (!participant) {
+    logger.warn('Status received without matching participant.');
+    res.status(500).send('No participant match.');
     return;
   }
   if (req.body.CallStatus !== 'completed') {

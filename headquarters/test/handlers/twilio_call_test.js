@@ -174,31 +174,27 @@ describe('TwilioCallHandler', () => {
   });
 
   describe('#handleIncomingCall', () => {
-    it.skip('hangs up if relay not found', () => {
+    it.skip('hangs up if relay not found', async () => {
 
     });
 
-    it.skip('hangs up if no spec found', () => {
+    it.skip('hangs up if no spec found', async () => {
 
     });
 
-    it.skip('hangs up if phone-in disallowed and no voicemail', () => {
+    it.skip('hangs up if phone-in disallowed and no voicemail', async () => {
 
     });
 
-    it.skip('plays voicemail if phone-in disallowed and defined', () => {
+    it.skip('plays voicemail if phone-in disallowed and defined', async () => {
 
     });
 
-    it.skip('creates trip if no participant found', () => {
+    it.skip('returns gathered twiml', async () => {
 
     });
 
-    it.skip('returns gathered twiml', () => {
-
-    });
-
-    it.skip('plays voicemail if no twiml was gathered', () => {
+    it.skip('plays voicemail if no twiml was gathered', async () => {
 
     });
   });

@@ -7,6 +7,29 @@ import { TextCore } from 'fptcore';
 import Checkbox from '../partials/Checkbox';
 import { getStage } from '../../../utils';
 
+function getCapabilities(relaySpec) {
+  let smsInfo = '';
+  if (relaySpec.sms_out && relaySpec.sms_in) {
+    smsInfo = 'SMS Accept & Emit';
+  } else if (relaySpec.sms_out) {
+    smsInfo = 'SMS Emit Only';
+  } else if (relaySpec.sms_in) {
+    smsInfo = 'SMS Accept Only';
+  }
+  let phoneInfo = '';
+  if (relaySpec.phone_out && relaySpec.phone_in) {
+    phoneInfo = 'Phone Accept & Emit';
+  } else if (relaySpec.phone_out) {
+    phoneInfo = 'Phone Emit Only';
+  } else if (relaySpec.phone_in) {
+    phoneInfo = 'Phone Accept Only';
+  }
+  const adminInfo = relaySpec.admin_out ? 'Admin Emit' : null;
+  const trailhead = relaySpec.trailhead ? 'Trailhead' : null;
+  const capabilities = [smsInfo, phoneInfo, adminInfo, trailhead];
+  return capabilities.filter(Boolean).join(', ');
+}
+
 export default class ScriptSetRelays extends React.Component {
 
   constructor(props) {
@@ -57,19 +80,30 @@ export default class ScriptSetRelays extends React.Component {
   }
 
   renderRelay(relaySpec, departureName) {
-    const relay = _.find(this.props.relays, {
-      scriptName: this.props.scriptName,
-      departureName: departureName,
-      forRoleName: relaySpec.for,
-      withRoleName: relaySpec.with,
-      asRoleName: relaySpec.as || relaySpec.for
-    });
-    if (!relay) {
+    const relays = _(this.props.relays)
+      .filter({
+        scriptName: this.props.scriptName,
+        departureName: departureName,
+        forRoleName: relaySpec.for,
+        withRoleName: relaySpec.with,
+        asRoleName: relaySpec.as || relaySpec.for
+      })
+      .sortBy('userPhoneNumber')
+      .value();
+    if (!relays.length) {
       return <td key={departureName}>–</td>;
     }
+    const relaysRendered = relays.map(relay => (
+      <div>
+        {relay.userPhoneNumber ?
+          TextCore.formatPhone(relay.relayPhoneNumber) :
+          'Universal'}:{' '}
+        {TextCore.formatPhone(relay.relayPhoneNumber)}
+      </div>
+    ));
     return (
       <td key={departureName}>
-        {TextCore.formatPhone(relay.relayPhoneNumber)}
+        {relaysRendered}
       </td>
     );
   }
@@ -83,22 +117,7 @@ export default class ScriptSetRelays extends React.Component {
     const areAllActive = _.every(relays, relay => relay.isActive);
     const areAllInactive = _.every(relays, relay => !relay.isActive);
     const isIndeterminate = !areAllActive && !areAllInactive;
-    let smsInfo = '';
-    if (relaySpec.sms_out && relaySpec.sms_in) {
-      smsInfo = 'In/out';
-    } else if (relaySpec.sms_out) {
-      smsInfo = 'Out';
-    } else if (relaySpec.sms_in) {
-      smsInfo = 'In';
-    }
-    let phoneInfo = '';
-    if (relaySpec.phone_out && relaySpec.phone_in) {
-      phoneInfo = 'In/out';
-    } else if (relaySpec.phone_out) {
-      phoneInfo = 'Out';
-    } else if (relaySpec.phone_in) {
-      phoneInfo = 'In';
-    }
+    const capabilities = getCapabilities(relaySpec);
     const activeCheckbox = relays.length ? (
       <Checkbox
         checked={areAllActive}
@@ -111,9 +130,7 @@ export default class ScriptSetRelays extends React.Component {
         <td>{relaySpec.as}</td>
         <td>{relaySpec.with}</td>
         {renderedRelays}
-        <td>{smsInfo}</td>
-        <td>{phoneInfo}</td>
-        <td>{relaySpec.admin_out ? 'Out' : null}</td>
+        <td>{capabilities}</td>
         <td>{activeCheckbox}</td>
       </tr>
     );
@@ -163,9 +180,7 @@ export default class ScriptSetRelays extends React.Component {
             <th>As</th>
             <th>With</th>
             {departureheaders}
-            <th>Sms</th>
-            <th>Phone</th>
-            <th>Admin</th>
+            <th>Capabilities</th>
             <th>Active</th>
           </tr>
         </thead>

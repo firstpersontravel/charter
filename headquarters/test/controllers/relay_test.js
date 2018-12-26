@@ -13,79 +13,102 @@ describe('RelayController', () => {
     sandbox.restore();
   });
 
+  describe('#scriptForRelay', () => {
+    it('looks up active script for a script name', async () => {
+      const stubScript = { name: 'abc' };
+      const relay = { scriptName: 'abc' };
+
+      sandbox.stub(models.Script, 'find').resolves(stubScript);
+      const res = await RelayController.scriptForRelay(relay);
+      assert.strictEqual(res, stubScript);
+      sinon.assert.calledWith(models.Script.find, {
+        where: { name: 'abc', isActive: true, isArchived: false }
+      });
+    });
+  });
+
   describe('#specForRelay', () => {
-    const stubScript = {
-      content: {
-        relays: [
-          { for: 'for', with: 'with', as: 'as' },
-          { for: 'for2', with: 'with2' }
-        ]
-      }
-    };
+    const stubRelays = [
+      { for: 'for', with: 'with', as: 'as' },
+      { for: 'for2', with: 'with2' }
+    ];
+    const stubScript = { content: { relays: stubRelays } };
 
     it('finds spec with as, for and with', () => {
-      const stubRelay = {
-        forRoleName: 'for',
-        withRoleName: 'with',
-        asRoleName: 'as'
-      };
-
-      const res = RelayController.specForRelay(stubScript, stubRelay);
-
+      const res = RelayController.specForRelay(stubScript,
+        { forRoleName: 'for', withRoleName: 'with', asRoleName: 'as' });
       assert.deepStrictEqual(res, stubScript.content.relays[0]);
     });
 
     it('finds spec with for and with', () => {
-      const stubRelay = {
-        forRoleName: 'for2',
-        withRoleName: 'with2',
-        asRoleName: 'for2'
-      };
-
-      const res = RelayController.specForRelay(stubScript, stubRelay);
-
+      const res = RelayController.specForRelay(stubScript,
+        { forRoleName: 'for2', withRoleName: 'with2', asRoleName: 'for2' });
       assert.deepStrictEqual(res, stubScript.content.relays[1]);
     });
 
     it('returns null if spec not found', () => {
-      const stubRelay = {
-        forRoleName: 'with2',
-        withRoleName: 'for2',
-        asRoleName: 'for2'
-      };
-
-      const res = RelayController.specForRelay(stubScript, stubRelay);
-
+      const res = RelayController.specForRelay(stubScript,
+        { forRoleName: 'with2', withRoleName: 'for2', asRoleName: 'for2' });
       assert.strictEqual(res, null);
     });
-
   });
 
-  describe('#findOpposites', () => {
-    it('locates opposite', async () => {
-      const responseSentinel = {};
-      const findAllStub = sandbox
-        .stub(models.Relay, 'findAll')
-        .resolves([responseSentinel]);
-      const stubRelay = {
-        scriptName: 'script',
-        departureName: '1',
-        withRoleName: 'A',
-        asRoleName: 'B'
-      };
-      const res = await RelayController.findOpposites(stubRelay);
-      assert.strictEqual(res[0], responseSentinel);
-      sinon.assert.called(findAllStub);
-      assert.deepStrictEqual(findAllStub.firstCall.args, [{
+  describe('#findSiblings', () => {
+    it('looks up sibling relays', async () => {
+      const relay = { scriptName: 'script', departureName: 'dep' };
+      const stubResult = { id: 2 };
+      sandbox.stub(models.Relay, 'findAll').resolves(stubResult);
+      
+      const res = await RelayController.findSiblings(relay, 'as', 'with');
+
+      assert.strictEqual(res, stubResult);
+      sinon.assert.calledWith(models.Relay.findAll, {
         where: {
-          asRoleName: 'A',
-          isActive: true,
-          departureName: '1',
-          scriptName: 'script',
           stage: 'test',
-          withRoleName: 'B'
+          scriptName: relay.scriptName,
+          departureName: relay.departureName,
+          withRoleName: 'with',
+          asRoleName: 'as',
+          isActive: true
         }
-      }]);
+      });
+    });
+  });
+
+  describe('#lookupParticipant', () => {
+    it('looks up participant by relay and phone number', async () => {
+      const stubParticipant = { id: 1 };
+      const phoneNumber = '1234567890';
+      const relay = {
+        forRoleName: 'ForRole',
+        departureName: 'T1',
+        scriptName: 'abc'
+      };
+
+      sandbox.stub(models.Participant, 'find').resolves(stubParticipant);
+
+      const res = await RelayController.lookupParticipant(relay, phoneNumber);
+
+      assert.strictEqual(res, stubParticipant);
+
+      // Check lookup done correctly.
+      sinon.assert.calledWith(models.Participant.find, {
+        where: { roleName: relay.forRoleName },
+        include: [{
+          model: models.User,
+          as: 'user',
+          where: { phoneNumber: phoneNumber }
+        }, {
+          model: models.Playthrough,
+          as: 'playthrough',
+          where: { departureName: relay.departureName, isArchived: false },
+          include: [{
+            model: models.Script,
+            as: 'script',
+            where: { name: relay.scriptName }
+          }]
+        }]
+      });
     });
   });
 
@@ -133,6 +156,77 @@ describe('RelayController', () => {
   });
 
   describe('#sendMessage', () => {
-    it.skip('sends a message', () => {});
+
+    const whitelistedNumber = '9144844223';
+    const stubTrip = { id: 1 };
+    const stubParticipant = { user: { phoneNumber: whitelistedNumber } };
+    const stubRelay = {
+      isActive: true,
+      relayPhoneNumber: '1111111111',
+      forRoleName: 'For'
+    };
+
+    it('sends a text message', async () => {
+      sandbox.stub(models.Participant, 'find').resolves(stubParticipant);
+
+      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+
+      // Test twilio message sent
+      sinon.assert.calledOnce(config.getTwilioClient().messages.create);
+      sinon.assert.calledWith(config.getTwilioClient().messages.create, {
+        to: `+1${stubParticipant.user.phoneNumber}`,
+        from: `+1${stubRelay.relayPhoneNumber}`,
+        body: 'msg'
+      });
+
+      // Test participant was fetched with right args
+      sinon.assert.calledWith(models.Participant.find, {
+        where: { playthroughId: stubTrip.id, roleName: stubRelay.forRoleName },
+        include: [{ model: models.User, as: 'user' }]
+      });
+    });
+
+    it('sends an image message', async () => {
+      sandbox.stub(models.Participant, 'find').resolves(stubParticipant);
+
+      await RelayController.sendMessage(stubRelay, stubTrip, null, 'url');
+
+      // Test twilio message sent
+      sinon.assert.calledOnce(config.getTwilioClient().messages.create);
+      sinon.assert.calledWith(config.getTwilioClient().messages.create, {
+        to: `+1${stubParticipant.user.phoneNumber}`,
+        from: `+1${stubRelay.relayPhoneNumber}`,
+        mediaUrl: 'url'
+      });
+    });
+
+    it('prevents send for non-whitelisted number', async () => {
+      const participant = { user: { phoneNumber: '4445556666' } };
+      sandbox.stub(models.Participant, 'find').resolves(participant);
+
+      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+
+      // Test twilio message sent
+      sinon.assert.notCalled(config.getTwilioClient().messages.create);
+
+      // Test participant was fetched with right args
+      sinon.assert.calledWith(models.Participant.find, {
+        where: { playthroughId: stubTrip.id, roleName: stubRelay.forRoleName },
+        include: [{ model: models.User, as: 'user' }]
+      });
+    });
+
+    it('prevents send for inactive relay', async () => {
+      const inactiveRelay = { isActive: false };
+      sandbox.stub(models.Participant, 'find').resolves(stubParticipant);
+
+      await RelayController.sendMessage(inactiveRelay, stubTrip, 'msg', null);
+
+      // Test twilio message sent
+      sinon.assert.notCalled(config.getTwilioClient().messages.create);
+
+      // Test participant was fetched with right args
+      sinon.assert.notCalled(models.Participant.find);
+    });
   });
 });

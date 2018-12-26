@@ -17,32 +17,6 @@ const whitelistedNumbers = [
 const RelayController = {};
 
 /**
- * Gabe (TravelAgent)
- * playing Sarai        <--- Relay
- *                           for: TravelAgent
- *                           as: Sarai
- *                           with: TravelerA
- *
- *                           Relay ----->        TravelerA
- *                           for: TravelerA
- *                           as: TravelerA
- *                           with: Sarai
- *
- */
-RelayController.findOpposites = async (relay) => {
-  return await models.Relay.findAll({
-    where: {
-      asRoleName: relay.withRoleName,
-      isActive: true,
-      scriptName: relay.scriptName,
-      stage: config.env.STAGE,
-      departureName: relay.departureName,
-      withRoleName: relay.asRoleName
-    }
-  });
-};
-
-/**
  * Find script for relay
  */
 RelayController.scriptForRelay = async (relay) => {
@@ -66,19 +40,52 @@ RelayController.specForRelay = (script, relay) => {
   )) || null;
 };
 
+/**
+ * Find sibling relays with the supplied 'as' and 'with' values.
+ */
 RelayController.findSiblings = async (relay, asRoleName, withRoleName) => {
   return await models.Relay.findAll({
     where: {
-      asRoleName: asRoleName,
-      isActive: true,
-      scriptName: relay.scriptName,
       stage: config.env.STAGE,
+      scriptName: relay.scriptName,
       departureName: relay.departureName,
-      withRoleName: withRoleName
+      withRoleName: withRoleName,
+      asRoleName: asRoleName,
+      isActive: true
     }
   });
 };
 
+/**
+ * Get participant for the "for" role for this relay and a given user phone
+ * number.
+ */
+RelayController.lookupParticipant = async (relay, userNumber) => {
+  // If we found an existing matching participant with this number,
+  // then we're good -- return it -- even if this is a trailhead because
+  // that means a specific user has already been assigned.
+  return await models.Participant.find({
+    where: { roleName: relay.forRoleName },
+    include: [{
+      model: models.User,
+      as: 'user',
+      where: { phoneNumber: userNumber }
+    }, {
+      model: models.Playthrough,
+      as: 'playthrough',
+      where: { departureName: relay.departureName, isArchived: false },
+      include: [{
+        model: models.Script,
+        as: 'script',
+        where: { name: relay.scriptName }
+      }]
+    }]
+  });
+};
+
+/**
+ * Initiate a call.
+ */
 RelayController.initiateCall = async (
   relay, toParticipant, detectVoicemail
 ) => {
@@ -118,7 +125,18 @@ RelayController.initiateCall = async (
   return await config.getTwilioClient().calls.create(callOpts);
 };
 
+/**
+ * Send a message through twilio.
+ */
 RelayController.sendMessage = async (relay, trip, body, mediaUrl) => {
+  // Skip if twilio isn't active.
+  if (!config.getTwilioClient()) {
+    return;
+  }
+  // Skip inactive relays.
+  if (!relay.isActive) {
+    return;
+  }
   // Don't do anything if a blank message.
   if (!body && !mediaUrl) {
     return;
@@ -127,31 +145,20 @@ RelayController.sendMessage = async (relay, trip, body, mediaUrl) => {
   // as the message's sendTo since a relay can, say, forward Sarai's messages
   // to the TravelAgent as well.
   const toParticipant = await models.Participant.find({
-    where: {
-      playthroughId: trip.id,
-      roleName: relay.forRoleName
-    }
+    where: { playthroughId: trip.id, roleName: relay.forRoleName },
+    include: [{ model: models.User, as: 'user' }]
   });
-  if (!toParticipant || !toParticipant.userId) {
+  if (!_.get(toParticipant, 'user.phoneNumber')) {
     return;
   }
-  const toUser = await toParticipant.getUser();
-  if (!toUser || !toUser.phoneNumber) {
-    return;
-  }
-  if (!config.getTwilioClient()) {
-    return;
-  }
-  if (!relay.isActive) {
-    return;
-  }
+  const toPhoneNumber = toParticipant.user.phoneNumber;
   // Protection in non-production from texting anyone who is not Gabe.
   if (config.env.STAGE !== 'production' &&
-      !_.includes(whitelistedNumbers, toUser.phoneNumber)) {
+      !_.includes(whitelistedNumbers, toPhoneNumber)) {
     return;
   }
   const opts = Object.assign(
-    { to: `+1${toUser.phoneNumber}`, from: `+1${relay.relayPhoneNumber}`},
+    { to: `+1${toPhoneNumber}`, from: `+1${relay.relayPhoneNumber}`},
     body ? { body: body } : null,
     mediaUrl ? { mediaUrl: mediaUrl } : null
   );
