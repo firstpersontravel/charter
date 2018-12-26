@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const update = require('immutability-helper');
 
-const fptCore = require('fptcore');
+const { ActionResultCore } = require('fptcore');
 
 const MessageController = require('../controllers/message');
 const TripRelaysController = require('../controllers/trip_relays');
@@ -14,7 +14,7 @@ function applyUpdatesToInstance(instance, updates) {
   Object.keys(updates).forEach((key) => {
     if (key === 'values') {
       const values = _.cloneDeep(instance.values);
-      fptCore.ActionResultCore.autovivify(values, updates.values);
+      ActionResultCore.autovivify(values, updates.values);
       instance.values = update(values, updates.values);
     } else {
       instance[key] = update(instance[key], updates[key]);
@@ -72,19 +72,17 @@ const opFunctions = {
   updateUi: () => { /* ignore */ }
 };
 
-/**
- * Apply a op to database objects.
- */
-async function applyOp(objs, op) {
-  const opFunction = opFunctions[op.operation];
-  if (!opFunction) {
-    throw new Error(`Invalid op ${op.operation}`);
+class TripOpController {
+  /**
+   * Apply an op to database objects.
+   */
+  static async applyOp(objs, op) {
+    const opFunction = opFunctions[op.operation];
+    if (!opFunction) {
+      throw new Error(`Invalid op ${op.operation}`);
+    }
+    return await opFunction(objs, op);
   }
-  return await opFunction(objs, op);
 }
-
-const TripOpController = {
-  applyOp: applyOp
-};
 
 module.exports = TripOpController;

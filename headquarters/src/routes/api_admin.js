@@ -1,8 +1,8 @@
 const moment = require('moment');
 
-const GlobalController = require('../controllers/global');
 const models = require('../models');
 const RelaysController = require('../controllers/relays');
+const RunnerWorker = require('../workers/runner');
 const TripActionController = require('../controllers/trip_action');
 const TripNotifyController = require('../controllers/trip_notify');
 const TripResetController = require('../controllers/trip_reset');
@@ -21,7 +21,7 @@ async function notifyRoute(req, res) {
 
 async function fastForwardRoute(req, res) {
   const tripId = req.params.tripId;
-  await GlobalController.runScheduledActions(null, tripId, true);
+  await RunnerWorker.runScheduledActions(null, tripId, true);
   await TripNotifyController.notify(tripId, 'reload');
   res.json({ data: { ok: true } });
 }
@@ -34,7 +34,7 @@ async function fastForwardNextRoute(req, res) {
   });
   if (nextAction) {
     const upToThreshold = moment.utc(nextAction.scheduledAt);
-    await GlobalController.runScheduledActions(upToThreshold, tripId, true);
+    await RunnerWorker.runScheduledActions(upToThreshold, tripId, true);
     await TripNotifyController.notify(tripId, 'refresh');
   }
   res.json({ data: { ok: true } });

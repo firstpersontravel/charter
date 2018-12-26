@@ -12,7 +12,7 @@ describe('TripsController', () => {
     sandbox.restore();
   });
 
-  describe('#createWithDefaults', () => {
+  describe('#createTrip', () => {
 
     it('creates a trip and players', async () => {
       const stubScript = {
@@ -53,7 +53,7 @@ describe('TripsController', () => {
       sandbox.stub(models.Trip, 'create').resolves({ id: 3 });
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
-      await TripsController.createWithDefaults(1, 'title', 'T1', ['basic']);
+      await TripsController.createTrip(1, 'title', 'T1', ['basic']);
       sinon.assert.calledWith(models.Group.findById, 1);
       sinon.assert.calledWith(models.Script.findById, 2);
       sinon.assert.calledOnce(models.Trip.create);

@@ -33,7 +33,7 @@ async function createDummyTripForScript(script, variantNames) {
     date: today
   });
   const departureName = _.get(script, 'content.departures[0].name') || 'T1';
-  return await TripsController.createWithDefaults(
+  return await TripsController.createTrip(
     group.id, 'test', departureName, variantNames || []);
 }
 

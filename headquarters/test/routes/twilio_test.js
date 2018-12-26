@@ -211,10 +211,10 @@ describe('twilioRoutes', () => {
 
     beforeEach(() => {
       // don't interrupt
-      sandbox.stub(TwilioCallHandler, 'interruptCall').resolves();
+      sandbox.stub(TwilioCallHandler, '_interruptCall').resolves();
       // basic twiml response
       sandbox
-        .stub(TwilioCallHandler, 'triggerEventAndGatherTwiml')
+        .stub(TwilioCallHandler, '_triggerEventAndGatherTwiml')
         .resolves(twimlSentinel);
 
       // basic stub relay
@@ -234,7 +234,7 @@ describe('twilioRoutes', () => {
 
       // Assert creates proper event and sends to trigger
       assert.deepStrictEqual(
-        TwilioCallHandler.triggerEventAndGatherTwiml.firstCall.args,
+        TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
         [1, stubRelay, {
           query: 'QUERY-NAME',
           partial: false,
@@ -242,7 +242,7 @@ describe('twilioRoutes', () => {
           type: 'query_responded'
         }]);
       // Call doesn't need to be interrupted
-      sinon.assert.notCalled(TwilioCallHandler.interruptCall);
+      sinon.assert.notCalled(TwilioCallHandler._interruptCall);
 
       // Check result
       assert.strictEqual(res.statusCode, 200);
@@ -267,7 +267,7 @@ describe('twilioRoutes', () => {
 
       // Assert creates proper event and sends to trigger
       assert.deepStrictEqual(
-        TwilioCallHandler.triggerEventAndGatherTwiml.firstCall.args,
+        TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
         [1, stubRelay, {
           query: 'QUERY-NAME',
           partial: true,
@@ -275,51 +275,15 @@ describe('twilioRoutes', () => {
           type: 'query_responded'
         }]);
       // Call is interrupted
-      sinon.assert.calledOnce(TwilioCallHandler.interruptCall);
+      sinon.assert.calledOnce(TwilioCallHandler._interruptCall);
       assert.deepStrictEqual(
-        TwilioCallHandler.interruptCall.firstCall.args,
+        TwilioCallHandler._interruptCall.firstCall.args,
         ['1234', twimlSentinel]);
 
       // Check result
       const blankXml = '<?xml version="1.0" encoding="UTF-8"?><Response/>';
       assert.strictEqual(res.statusCode, 200);
       assert.strictEqual(res._getData(), blankXml);
-    });
-
-    it('handles phone response', async () => {
-      // Create dummy request
-      const req = httpMocks.createRequest({
-        query: {
-          trip: '1',
-          relay: '10',
-          query: 'QUERY-NAME',
-          type: 'phone'
-        },
-        body: {
-          SpeechResult: ' one two three Four  five six seven eight nine zero ',
-          Confidence: 0.5
-        }
-      });
-      const res = httpMocks.createResponse();
-
-      // Call the route
-      await twilioRoutes.callResponseRoute(req, res);
-
-      // Assert creates proper event and sends to trigger
-      assert.deepStrictEqual(
-        TwilioCallHandler.triggerEventAndGatherTwiml.firstCall.args,
-        [1, stubRelay, {
-          query: 'QUERY-NAME',
-          partial: false,
-          response: '1234567890',
-          type: 'query_responded'
-        }]);
-      // Call doesn't need to be interrupted
-      sinon.assert.notCalled(TwilioCallHandler.interruptCall);
-
-      // Check result
-      assert.strictEqual(res.statusCode, 200);
-      assert.strictEqual(res._getData(), twimlSentinel.toString());
     });
   });
 

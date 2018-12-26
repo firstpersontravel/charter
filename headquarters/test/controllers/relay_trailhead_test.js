@@ -128,7 +128,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Group, 'findOrCreate').resolves([mockGroup]);
       sandbox.stub(models.User, 'findOrCreate').resolves([mockUser]);
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
-      sandbox.stub(TripsController, 'createWithDefaults')
+      sandbox.stub(TripsController, 'createTrip')
         .resolves(mockTrip);
       sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(RelayTrailheadController, 'assignActors').resolves();

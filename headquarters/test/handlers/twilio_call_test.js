@@ -16,7 +16,7 @@ describe('TwilioCallHandler', () => {
     sandbox.restore();
   });
 
-  describe('#triggerEventAndGatherTwiml', () => {
+  describe('#_triggerEventAndGatherTwiml', () => {
 
     const stubRelay = { id: 100, scriptName: 'script', departureName: 'T0' };
     const stubEvent = { event: true };
@@ -49,7 +49,7 @@ describe('TwilioCallHandler', () => {
           }]
         });
       const twiml = await (
-        TwilioCallHandler.triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
+        TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
       // Assert found relays by opposite
       sinon.assert.calledOnce(RelayController.findSiblings);
@@ -86,7 +86,7 @@ describe('TwilioCallHandler', () => {
           }]
         });
       const twiml = await (
-        TwilioCallHandler.triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
+        TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
       // Assert response
       assert.strictEqual(
@@ -113,7 +113,7 @@ describe('TwilioCallHandler', () => {
           }]
         });
       const twiml = await (
-        TwilioCallHandler.triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
+        TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
       // Assert found script by role
       sinon.assert.calledOnce(RelayController.scriptForRelay);
@@ -151,7 +151,7 @@ describe('TwilioCallHandler', () => {
           }]
         });
       const twiml = await (
-        TwilioCallHandler.triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
+        TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
       // Assert found script by role
       sinon.assert.calledOnce(RelayController.scriptForRelay);
@@ -199,7 +199,7 @@ describe('TwilioCallHandler', () => {
     });
   });
 
-  describe('#interruptCall', () => {
+  describe('#_interruptCall', () => {
     it('sends interrupt to twilio', async () => {
       const twimlSentinel = new twilio.twiml.VoiceResponse();
       twimlSentinel.say({}, 'message');
@@ -210,7 +210,7 @@ describe('TwilioCallHandler', () => {
         `calls/interrupt?twiml=${twimlBase64}`
       );
 
-      await TwilioCallHandler.interruptCall('123', twimlSentinel);
+      await TwilioCallHandler._interruptCall('123', twimlSentinel);
       sinon.assert.calledWith(
         config.getTwilioClient().calls, '123');
       sinon.assert.calledWith(

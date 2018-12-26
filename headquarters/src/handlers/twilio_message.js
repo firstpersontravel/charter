@@ -5,7 +5,7 @@ const RelayController = require('../controllers/relay');
 const RelaysController = require('../controllers/relays');
 const TwilioUtil = require('./twilio_util');
 
-var logger = config.logger.child({ name: 'handlers.twilio' });
+var logger = config.logger.child({ name: 'handlers.twilio_message' });
 
 function getMessageActions(relay, body, media) {
   const actions = [];

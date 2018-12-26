@@ -14,7 +14,7 @@ describe('TripRelaysController', () => {
     sandbox.restore();
   });
 
-  describe('#userPhoneNumberForRelay', () => {
+  describe('#userNumberForRelay', () => {
 
     const trip = { id: 1 };
 
@@ -25,7 +25,7 @@ describe('TripRelaysController', () => {
       sandbox.stub(models.Player, 'find').resolves(player);
 
       const res = await (
-        TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
+        TripRelaysController.userNumberForRelay(trip, relaySpec)
       );
       assert.strictEqual(res, player.user.phoneNumber);
       sinon.assert.calledWith(models.Player.find, {
@@ -40,7 +40,7 @@ describe('TripRelaysController', () => {
       sandbox.stub(models.Player, 'find').resolves(null);
 
       const res = await (
-        TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
+        TripRelaysController.userNumberForRelay(trip, relaySpec)
       );
       assert.strictEqual(res, null);
     });
@@ -52,7 +52,7 @@ describe('TripRelaysController', () => {
       sandbox.stub(models.Player, 'find').resolves(player);
 
       const res = await (
-        TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
+        TripRelaysController.userNumberForRelay(trip, relaySpec)
       );
       assert.strictEqual(res, null);
     });
@@ -67,14 +67,14 @@ describe('TripRelaysController', () => {
 
     it('fetches relay by phone number', async () => {
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
-      sandbox.stub(TripRelaysController, 'userPhoneNumberForRelay')
+      sandbox.stub(TripRelaysController, 'userNumberForRelay')
         .resolves(phoneNum);
 
       const res = await TripRelaysController.ensureRelay(
         trip, 's', relaySpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.calledWith(TripRelaysController.userPhoneNumberForRelay,
+      sinon.assert.calledWith(TripRelaysController.userNumberForRelay,
         trip, relaySpec);
       sinon.assert.calledWith(RelaysController.ensureRelay,
         's', 'dep1', relaySpec, phoneNum);
@@ -83,27 +83,27 @@ describe('TripRelaysController', () => {
     it('fetches relay for trailhead', async () => {
       const trailheadSpec = { for: 'Role', trailhead: true };
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
-      sandbox.stub(TripRelaysController, 'userPhoneNumberForRelay');
+      sandbox.stub(TripRelaysController, 'userNumberForRelay');
 
       const res = await TripRelaysController.ensureRelay(
         trip, 's', trailheadSpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.notCalled(TripRelaysController.userPhoneNumberForRelay);
+      sinon.assert.notCalled(TripRelaysController.userNumberForRelay);
       sinon.assert.calledWith(RelaysController.ensureRelay,
         's', 'dep1', trailheadSpec, '');
     });
 
     it('returns null if no phone number found', async () => {
       sandbox.stub(RelaysController, 'ensureRelay');
-      sandbox.stub(TripRelaysController, 'userPhoneNumberForRelay')
+      sandbox.stub(TripRelaysController, 'userNumberForRelay')
         .resolves(null);
 
       const res = await TripRelaysController.ensureRelay(trip, 's', relaySpec);
 
       assert.strictEqual(res, null);
       sinon.assert.notCalled(RelaysController.ensureRelay);
-      sinon.assert.calledWith(TripRelaysController.userPhoneNumberForRelay,
+      sinon.assert.calledWith(TripRelaysController.userNumberForRelay,
         trip, relaySpec);
     });
   });
@@ -239,7 +239,7 @@ describe('TripRelaysController', () => {
     });
   });
 
-  describe('#partsForRelayMessage', () => {
+  describe('#_partsForRelayMessage', () => {
     it.skip('sends images as media', () => {});
     it.skip('sends mp3 audio as media', () => {});
     it.skip('sends text as text', () => {});

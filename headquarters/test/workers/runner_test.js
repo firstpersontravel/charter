@@ -1,14 +1,13 @@
 const moment = require('moment');
-const Promise = require('bluebird');
 const sinon = require('sinon');
 
 const models = require('../../src/models');
-const GlobalController = require('../../src/controllers/global');
+const RunnerWorker = require('../../src/workers/runner');
 const TripActionController = require('../../src/controllers/trip_action');
 
 const sandbox = sinon.sandbox.create();
 
-describe('GlobalController', () => {
+describe('RunnerWorker', () => {
 
   afterEach(() => {
     sandbox.restore();
@@ -33,12 +32,10 @@ describe('GlobalController', () => {
         update: sandbox.stub().resolves()
       };
       sandbox.stub(moment, 'utc').returns(now);
-      sandbox.stub(models.Action, 'findAll')
-        .returns(Promise.all([stubAction]));
-      sandbox.stub(TripActionController, 'applyAction')
-        .resolves();
+      sandbox.stub(models.Action, 'findAll').resolves([stubAction]);
+      sandbox.stub(TripActionController, 'applyAction').resolves();
 
-      await GlobalController.runScheduledActions();
+      await RunnerWorker.runScheduledActions();
       sinon.assert.calledWith(models.Action.findAll, {
         order: [['scheduledAt', 'ASC'], ['id', 'ASC']],
         where: { isArchived: false, appliedAt: null, failedAt: null },
@@ -48,9 +45,7 @@ describe('GlobalController', () => {
           where: { isArchived: false }
         }]
       });
-      sinon.assert.calledWith(stubAction.update, {
-        appliedAt: now
-      });
+      sinon.assert.calledWith(stubAction.update, { appliedAt: now });
       sinon.assert.calledWith(TripActionController.applyAction,
         123, {
           name: 'name',
@@ -71,12 +66,11 @@ describe('GlobalController', () => {
         update: sandbox.stub().resolves()
       };
       sandbox.stub(moment, 'utc').returns(now);
-      sandbox.stub(models.Action, 'findAll')
-        .returns(Promise.all([stubAction]));
+      sandbox.stub(models.Action, 'findAll').resolves([stubAction]);
       sandbox.stub(TripActionController, 'applyAction')
         .rejects(new Error('failed action'));
 
-      await GlobalController.runScheduledActions(null, null, true);
+      await RunnerWorker.runScheduledActions(null, null, true);
       sinon.assert.calledWith(models.Action.findAll, {
         order: [['scheduledAt', 'ASC'], ['id', 'ASC']],
         where: { isArchived: false, appliedAt: null, failedAt: null },
@@ -86,9 +80,7 @@ describe('GlobalController', () => {
           where: { isArchived: false }
         }]
       });
-      sinon.assert.calledWith(stubAction.update, {
-        failedAt: now
-      });
+      sinon.assert.calledWith(stubAction.update, { failedAt: now });
       sinon.assert.calledWith(TripActionController.applyAction,
         123, {
           name: 'name',

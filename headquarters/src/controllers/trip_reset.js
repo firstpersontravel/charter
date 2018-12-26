@@ -1,89 +1,91 @@
 const _ = require('lodash');
 
-const fptCore = require('fptcore');
+const { TripCore, PlayerCore } = require('fptcore');
 
 const TripNotifyController = require('./trip_notify');
 const models = require('../models');
 
-/**
- * Reset a trip.
- */
-async function resetTrip(script, trip, checkpoint) {
-  // Get schedule
-  const schedule = fptCore.TripCore.getInitialSchedule(
-    script, trip.date, trip.variantNames.split(','));
-  // Get values
-  const initialValues = fptCore.TripCore.getInitialValues(
-    script, trip.variantNames.split(','));
-  const preserveValueKeys = Object
-    .keys(initialValues)
-    .concat(['waypoint_options']);
-  const resetValues = _.pick(trip.values, preserveValueKeys);
-  const resetSceneName = checkpoint.scene || script.content.scenes[0].name;
-  // Update values with checkpoint
-  _.merge(resetValues, _.get(checkpoint, 'values.Global'));
-  // Update!
-  return await trip.update({
-    currentSceneName: resetSceneName,
-    schedule: schedule,
-    values: resetValues,
-    history: {}
-  });
-}
+class TripResetController {
+  /**
+   * Reset a trip.
+   */
+  static async _resetTrip(script, trip, checkpoint) {
+    // Get schedule and values
+    const variants = trip.variantNames.split(',');
+    const schedule = TripCore.getInitialSchedule(script, trip.date, variants);
+    const initialValues = TripCore.getInitialValues(script, variants);
 
-/**
- * Reset a player.
- */
-async function resetPlayer(script, trip, player, checkpoint) {
-  // Get values
-  const fields = fptCore.PlayerCore.getInitialFields(
-    script, player.roleName, trip.variantNames.split(','));
-  // Update values
-  _.merge(fields.values, _.get(checkpoint, `values.${player.roleName}`));
-  // Check starting page
-  if (_.get(checkpoint, 'pages.' + player.roleName)) {
-    fields.currentPageName = checkpoint.pages[player.roleName];
-  }
-  await player.update(fields);
-  const user = await player.getUser();
-  if (!user) {
-    return;
-  }
-  return await user.update({
-    locationLatitude: null,
-    locationLongitude: null,
-    locationAccuracy: null,
-    locationTimestamp: null
-  });
-}
+    // Preserve some hard-coded keys, but reset the others
+    const preserveValueKeys = Object
+      .keys(initialValues)
+      .concat(['waypoint_options']);
+    const resetValues = _.pick(trip.values, preserveValueKeys);
+    const resetSceneName = checkpoint.scene || script.content.scenes[0].name;
 
-/**
- * Reset a game state.
- */
-async function resetToCheckpoint(tripId, checkpointName) {
-  const trip = await models.Trip.findById(tripId);
-  const players = await (
-    models.Player.findAll({ where: { tripId: tripId } })
-  );
-  // Get script
-  const script = await trip.getScript();
-  // Load checkpoint
-  const checkpoint = _.find(script.content.checkpoints || [],
-    { name: checkpointName });
-  // Reset data
-  await resetTrip(script, trip, checkpoint);
-  for (let player of players) {
-    await resetPlayer(script, trip, player, checkpoint);
-  }
-  // Clear actions and messages
-  await models.Action.destroy({ where: { tripId: tripId }});
-  await models.Message.destroy({ where: { tripId: tripId }});
-  // Notify
-  await TripNotifyController.notify(tripId, 'reload');
-}
+    // Update values with checkpoint
+    _.merge(resetValues, _.get(checkpoint, 'values.Global'));
 
-const TripResetController = {
-  resetToCheckpoint: resetToCheckpoint
-};
+    // Update!
+    return await trip.update({
+      currentSceneName: resetSceneName,
+      schedule: schedule,
+      values: resetValues,
+      history: {}
+    });
+  }
+
+  /**
+   * Reset a player.
+   */
+  static async _resetPlayer(script, trip, player, checkpoint) {
+    // Get values
+    const variants = trip.variantNames.split(',');
+    const fields = PlayerCore.getInitialFields(script, player.roleName,
+      variants);
+    // Update values
+    _.merge(fields.values, _.get(checkpoint, `values.${player.roleName}`));
+    // Check starting page
+    if (_.get(checkpoint, 'pages.' + player.roleName)) {
+      fields.currentPageName = checkpoint.pages[player.roleName];
+    }
+
+    // Reset user location
+    await player.update(fields);
+    const user = await player.getUser();
+    if (!user) {
+      return;
+    }
+    return await user.update({
+      locationLatitude: null,
+      locationLongitude: null,
+      locationAccuracy: null,
+      locationTimestamp: null
+    });
+  }
+
+  /**
+   * Reset a game state.
+   */
+  static async resetToCheckpoint(tripId, checkpointName) {
+    const trip = await models.Trip.find({
+      where: { id: tripId },
+      include: [{ models: models.Script, as: 'script' }]
+    });
+    const players = await models.Player.findAll({ where: { tripId: tripId } });
+    // Load checkpoint
+    const checkpoint = _.find(trip.script.content.checkpoints || [],
+      { name: checkpointName });
+    // Reset data
+    await this._resetTrip(trip.script, trip, checkpoint);
+    for (let player of players) {
+      await this._resetPlayer(trip.script, trip, player, checkpoint);
+    }
+    // Clear actions and messages
+    await models.Action.destroy({ where: { tripId: tripId }});
+    await models.Message.destroy({ where: { tripId: tripId }});
+    // Notify
+    await TripNotifyController.notify(tripId, 'reload');
+  }
+}
 
 module.exports = TripResetController;

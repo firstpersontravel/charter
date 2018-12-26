@@ -3,7 +3,8 @@ const moment = require('moment');
 // Import for configuration
 require('./config');
 
-const GlobalController = require('./controllers/global');
+const RunnerWorker = require('./workers/runner');
+const SchedulerWorker = require('./workers/scheduler');
 
 const SCHEDULE_INTERVAL = 10000;
 const RUN_INTERVAL = 1000;
@@ -19,7 +20,7 @@ async function scheduleActions() {
   try {
     // Schedule actions up to five minutes ahead of time
     const aMinuteAhead = moment.utc().clone().add(5, 'minutes');
-    await GlobalController.scheduleActions(aMinuteAhead);
+    await SchedulerWorker.scheduleActions(aMinuteAhead);
     isSchedulingActions = false;
   } catch (err) {
     console.error(`Uncaught exception running scheduler: ${err.message}`);
@@ -34,7 +35,7 @@ async function runActions() {
   }
   isRunningActions = true;
   try {
-    await GlobalController.runScheduledActions(moment.utc(), null, true);
+    await RunnerWorker.runScheduledActions(moment.utc(), null, true);
     isRunningActions = false;
   } catch (err) {
     console.error(`Uncaught exception running worker: ${err.message}`);
