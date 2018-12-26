@@ -8,7 +8,8 @@
     "L",
     "swal",
     "Raven",
-    "moment"
+    "moment",
+    "Faye"
   ],
   "esversion": 6,
   "browser": true,

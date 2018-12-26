@@ -5,7 +5,7 @@ import update from 'npm:immutability-helper';
 import fptCore from 'npm:fptcore';
 
 export default Ember.Controller.extend(RealtimeMixin, {
-  channelFormat: '@env_trip_@id',
+  channelFormat: '/@env_trip_@id',
 
   debug: Ember.computed.oneWay('application.debug'),
 

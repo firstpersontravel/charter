@@ -20,34 +20,10 @@ async function notifyFaye(channel, message) {
     });
 }
 
-async function notifyPubnub(channel, message) {
-  if (!config.getPubnubClient()) {
-    return;
-  }
-  logger.info(`Sending ${message.type} to pubnub channel "${channel}".`);
-  return await new Promise((resolve) => {
-    config.getPubnubClient().publish({
-      channel: channel,
-      message: message
-    }, (status) => {
-      if (status.error) {
-        logger.error(`Failed to send ${message.type} notification to pubnub.`);
-        logger.error(status);
-        resolve();
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
 async function notify(tripId, type, content=null) {
   const channel = `${config.env.STAGE}_trip_${tripId}`;
   const message = { type: type, content: content };
-  await Promise.all([
-    notifyFaye(`/${channel}`, message),
-    notifyPubnub(channel, message)
-  ]);
+  await notifyFaye(`/${channel}`, message);
 }
 
 async function notifyUserDeviceState(tripId, user, clientId=null) {

@@ -2,23 +2,27 @@ import Ember from 'ember';
 
 export default Ember.Service.extend({
 
-  pubnubInstance: null,
+  environment: Ember.inject.service(),
 
   init: function() {
     this._super();
-    var config = Ember.getOwner(this)._lookupFactory('config:environment');
-    this.pubnubInstance = window.PUBNUB.init({
-      publish_key: config.pubnubPublishKey,
-      subscribe_key: config.pubnubSubscribeKey,
-      ssl: true
-    });
+    var host = this.get('environment.apiHost');
+    this._client = new Faye.Client(`${host}/pubsub`);
+    this._subscriptions = {};
   },
 
-  subscribe: function() {
-    return this.pubnubInstance.subscribe.apply(this, arguments);
+  subscribe: function(channel, onMessage) {
+    if (this._subscriptions[channel]) {
+      this.unsubscribe(channel);
+    }
+    this._subscriptions[channel] = this._client.subscribe(channel, onMessage);
   },
 
-  unsubscribe: function() {
-    return this.pubnubInstance.unsubscribe.apply(this, arguments);
+  unsubscribe: function(channel) {
+    if (!this._subscriptions[channel]) {
+      return;
+    }
+    this._subscriptions[channel].cancel();
+    delete this._subscriptions[channel];
   },
 });

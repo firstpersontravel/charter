@@ -45,13 +45,13 @@ module.exports = function(defaults) {
 
   app.import('bower_components/Leaflet.encoded/Polyline.encoded.js');
 
+  // Copy-pasta'd from /pubsub/faye/client.js
+  app.import('vendor/faye-client.min.js');
+
   // Javascript Load Image
   // https://github.com/blueimp/JavaScript-Load-Image
   app.import('vendor/load-image.all.min.js');
   app.import('vendor/js-canvas-to-blob.js');
-
-  // Pubnub -- to replace with local faye
-  app.import('bower_components/pubnub/web/pubnub.js');
 
   // Moment
   app.import('bower_components/moment/min/moment.min.js');

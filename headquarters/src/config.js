@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const pino = require('pino');
 const faye = require('faye');
-const PubNub = require('pubnub');
 const Sequelize = require('sequelize');
 const twilio = require('twilio');
 
@@ -72,12 +71,6 @@ function getTwilioClient() {
 }
 var twilioClient = getTwilioClient();
 
-// Configure pubnub
-const pubnubClient = new PubNub({
-  publishKey: env.PUBNUB_PUBLISH_KEY,
-  subscribeKey: env.PUBNUB_SUBSCRIBE_KEY
-});
-
 const fayePath = `${pubsubHost}/pubsub`;
 const fayeClient = new faye.Client(fayePath);
 
@@ -87,7 +80,6 @@ module.exports = {
   env: env,
   database: database,
   logger: logger,
-  getPubnubClient: () => pubnubClient,
   getFayeClient: () => fayeClient,
   getTwilioClient: () => twilioClient
 };

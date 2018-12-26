@@ -22,11 +22,6 @@ function createTestMocks() {
   sandbox.stub(config, 'getFayeClient').returns({
     publish: sandbox.stub().resolves()
   });
-  sandbox.stub(config, 'getPubnubClient').returns({
-    publish: sandbox.stub().callsFake((msg, callback) => {
-      callback({});
-    })
-  });
 }
 
 function teardownTestMocks() {

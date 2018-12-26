@@ -12,8 +12,6 @@ module.exports = function(environment) {
     baseURL: '/travel/',
     sentryDSN: SENTRY_DSNS[environment],
     locationType: 'auto',
-    pubnubPublishKey: 'pub-27f9b563-9fe3-4c86-84c4-e36426374a79',
-    pubnubSubscribeKey: 'sub-2a5e5b0c-e736-11e1-9c9d-a75126efe742',
     s3UploadParams: {
       policy: {
         expiration: '2020-08-13T03:52:42.000Z',

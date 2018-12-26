@@ -14,21 +14,15 @@ export default Ember.Service.extend({
   init: function() {
     this._super();
     this.set('queue', []);
+    this.set('online', window.navigator.onLine);
 
     var self = this;
-    this.get('pubsub').subscribe({
-      channel: "meta_connection_state", 
-      restore: true,
-      callback: function() {},
-      disconnect: function() {
-        self.set('online', false);
-      },
-      reconnect: function() {
-        self.set('online', true);
-      },
-      connect: function() {
-        self.set('online', true);
-      }
+
+    window.addEventListener('offline', e => {
+      self.set('online', false);
+    });
+    window.addEventListener('online', e => {
+      self.set('online', true);
     });
   },
 

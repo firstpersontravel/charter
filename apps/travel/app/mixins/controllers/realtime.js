@@ -13,9 +13,7 @@ export default Ember.Mixin.create({
     console.log('unsubscribe', this.get('subscribedChannel'));
     Ember.assert("Must be subscribed.", !!this.get('subscribedChannel'));
     try {
-      this.get('pubsub').unsubscribe({
-        channel: this.get('subscribedChannel')
-      });
+      this.get('pubsub').unsubscribe(this.get('subscribedChannel'));
     } catch(err) {
       console.error('error unsubscribing' + err.message);
     }
@@ -24,21 +22,9 @@ export default Ember.Mixin.create({
 
   subscribe: function(channelName) {
     Ember.assert("Must be unsubscribed.", !this.get('subscribedChannel'));
-    this.get('pubsub').subscribe({
-      channel: channelName,
-      restore: true,
-      message: this.onMessage.bind(this)
-    });
+    this.get('pubsub').subscribe(channelName, this.onMessage.bind(this));
     this.set('subscribedChannel', channelName);
   },
-
-  // publishEvent: function(eventName, eventParams) {
-  //   if(!this.get('subscribedChannel')) { return; }
-  //   PUBNUB.publish({
-  //     channel: this.get('subscribedChannel'),
-  //     message: {events: [{event: eventName, params: eventParams || {}}]}
-  //   });
-  // },
 
   onMessage: function(message) {
     // ignore realtime messages from same client
