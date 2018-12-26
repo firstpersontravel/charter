@@ -14,11 +14,6 @@ const TripRelaysController = {};
  * trailhead, null if the user wasn't found, or a phone number.
  */
 TripRelaysController.userPhoneNumberForRelay = async (trip, relaySpec) => {
-  // If it's a trailhead, we want the same relay phone number for everyone.
-  if (relaySpec.trailhead) {
-    return '';
-  }
-  // Otherwise we want an individul relay for everyone.
   // Find the participant and user for this trip and relay spec.
   const participant = await models.Participant.find({
     where: { roleName: relaySpec.for, playthroughId: trip.id },
@@ -36,14 +31,29 @@ TripRelaysController.userPhoneNumberForRelay = async (trip, relaySpec) => {
  * Ensure a relay exists for a given spec and script.
  */
 TripRelaysController.ensureRelay = async (trip, scriptName, relaySpec) => {
+  // If it's a trailhead, look for a universal relay.
+  if (relaySpec.trailhead) {
+    return await (
+      RelaysController.ensureRelay(
+        scriptName, trip.departureName, relaySpec, ''
+      )
+    );
+  }
+  // Otherwise, look up the user phone number for a relay.
   const userPhoneNumber = await (
     TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
   );
+  // If no participant was found, or the participant doesn't have a phone
+  // number, then we can't create a relay, so we have to return null.
   if (userPhoneNumber === null) {
     return null;
   }
+  // If we have a phone number, then we can ensure a relay exists for that
+  // number.
   return await (
-    RelaysController.ensureRelay(scriptName, relaySpec, userPhoneNumber)
+    RelaysController.ensureRelay(
+      scriptName, trip.departureName, relaySpec, userPhoneNumber
+    )
   );
 };
 
@@ -55,15 +65,20 @@ TripRelaysController.ensureRelays = async (trip, specFilters, specType) => {
 
   // Get specs that match the filters and also the type we're looking for.
   const relaySpecs = _(script.content.relays)
-    .filter(specFilters)
-    .filter(spec => spec[specType] === true)
+    // Relay specs do not require an 'as' entry, so fill it in when testing.
+    .filter(relaySpec => _.isMatch(
+      Object.assign({}, relaySpec, { as: relaySpec.as || relaySpec.for }),
+      specFilters
+    ))
+    .filter(relaySpec => relaySpec[specType] === true)
     .value();
 
+  // Ensure all relays exist.
   const relays = await Promise.all(relaySpecs.map(relaySpec => (
     TripRelaysController.ensureRelay(trip, script.name, relaySpec))
   ));
-  // Filter out null responses, since those are for users w/no phone
-  // numbers
+
+  // Filter out null responses returned for users w/no phone numbers.
   return relays.filter(Boolean);
 };
 

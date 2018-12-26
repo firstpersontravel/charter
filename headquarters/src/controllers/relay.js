@@ -8,9 +8,9 @@ const logger = config.logger.child({ name: 'controllers.relay' });
 const whitelistedNumbers = [
   '9144844223',
   '9178213078',
-  '4159269647',
-  '4156506792',
-  '4152798016'
+  // '4159269647',
+  // '4156506792',
+  // '4152798016'
   // '4802440810'
 ];
 

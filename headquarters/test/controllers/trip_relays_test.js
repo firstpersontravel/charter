@@ -34,18 +34,6 @@ describe('TripRelaysController', () => {
       });
     });
 
-    it('returns blank for trailhead relay', async () => {
-      const relaySpec = { for: 'ForRole', trailhead: true };
-
-      sandbox.stub(models.Participant, 'find');
-
-      const res = await (
-        TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
-      );
-      assert.strictEqual(res, '');
-      sinon.assert.notCalled(models.Participant.find);
-    });
-
     it('returns null when no participant found', async () => {
       const relaySpec = { for: 'ForRole' };
 
@@ -72,7 +60,7 @@ describe('TripRelaysController', () => {
 
   describe('#ensureRelay', () => {
 
-    const trip = { id: 1 };
+    const trip = { id: 1, departureName: 'dep1' };
     const relaySpec = { for: 'Role' };
     const phoneNum = '1234567890';
     const stubRelay = {};
@@ -82,27 +70,28 @@ describe('TripRelaysController', () => {
       sandbox.stub(TripRelaysController, 'userPhoneNumberForRelay')
         .resolves(phoneNum);
 
-      const res = await TripRelaysController.ensureRelay(trip, 's', relaySpec);
+      const res = await TripRelaysController.ensureRelay(
+        trip, 's', relaySpec);
 
       assert.strictEqual(res, stubRelay);
       sinon.assert.calledWith(TripRelaysController.userPhoneNumberForRelay,
         trip, relaySpec);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        's', relaySpec, phoneNum);
+        's', 'dep1', relaySpec, phoneNum);
     });
 
-    it('fetches relay by blank phone', async () => {
+    it('fetches relay for trailhead', async () => {
+      const trailheadSpec = { for: 'Role', trailhead: true };
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
-      sandbox.stub(TripRelaysController, 'userPhoneNumberForRelay')
-        .resolves('');
+      sandbox.stub(TripRelaysController, 'userPhoneNumberForRelay');
 
-      const res = await TripRelaysController.ensureRelay(trip, 's', relaySpec);
+      const res = await TripRelaysController.ensureRelay(
+        trip, 's', trailheadSpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.calledWith(TripRelaysController.userPhoneNumberForRelay,
-        trip, relaySpec);
+      sinon.assert.notCalled(TripRelaysController.userPhoneNumberForRelay);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        's', relaySpec, '');
+        's', 'dep1', trailheadSpec, '');
     });
 
     it('returns null if no phone number found', async () => {
@@ -156,6 +145,8 @@ describe('TripRelaysController', () => {
       // Should return list of relays
       assert.deepStrictEqual(res, [stubRelay]);
     });
+
+    it.skip('creates relay if does not exist', async () => {});
   });
 
   describe('#initiateCall', () => {

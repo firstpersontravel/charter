@@ -95,10 +95,11 @@ export default class ScriptSetRelays extends React.Component {
     }
     const relaysRendered = relays.map(relay => (
       <div key={relay.id}>
-        {relay.userPhoneNumber ?
-          TextCore.formatPhone(relay.relayPhoneNumber) :
-          'Universal'}:{' '}
         {TextCore.formatPhone(relay.relayPhoneNumber)}
+        &nbsp;for&nbsp;
+        {relay.userPhoneNumber ?
+          TextCore.formatPhone(relay.userPhoneNumber) :
+          'all'}
       </div>
     ));
     return (
