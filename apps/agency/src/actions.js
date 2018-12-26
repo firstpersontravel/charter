@@ -174,34 +174,34 @@ export function updateInstance(collectionName, instanceId, fields) {
   };
 }
 
-export function refreshLiveData(playthroughIds) {
+export function refreshLiveData(tripIds) {
   return function (dispatch) {
     dispatch(listCollection('users', { isArchived: false }));
-    dispatch(listCollection('playthroughs', { id: playthroughIds }));
+    dispatch(listCollection('trips', { id: tripIds }));
     dispatch(listCollection('participants',
-      { playthroughId: playthroughIds }));
+      { tripId: tripIds }));
     dispatch(listCollection('actions',
-      { playthroughId: playthroughIds, appliedAt: 'null' },
+      { tripId: tripIds, appliedAt: 'null' },
       { clear: true }));
     dispatch(listCollection('messages',
-      { playthroughId: playthroughIds,
+      { tripId: tripIds,
         sort: '-id',
         count: 100
       }));
   };
 }
 
-export function postAction(playthroughId, actionName, actionParams) {
+export function postAction(tripId, actionName, actionParams) {
   return function (dispatch) {
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(actionParams)
     };
-    const url = `/api/playthroughs/${playthroughId}/${actionName}`;
+    const url = `/api/trips/${tripId}/${actionName}`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
-        dispatch(refreshLiveData([playthroughId]));
+        dispatch(refreshLiveData([tripId]));
       })
       .catch((err) => {
         console.error(err.message);
@@ -209,7 +209,7 @@ export function postAction(playthroughId, actionName, actionParams) {
   };
 }
 
-export function postAdminAction(playthroughId, actionName, actionParams,
+export function postAdminAction(tripId, actionName, actionParams,
   shouldRefresh = true) {
   return function (dispatch) {
     const params = {
@@ -217,11 +217,11 @@ export function postAdminAction(playthroughId, actionName, actionParams,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(actionParams || {})
     };
-    const url = `/api/admin/playthroughs/${playthroughId}/${actionName}`;
+    const url = `/api/admin/trips/${tripId}/${actionName}`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         if (shouldRefresh === true) {
-          dispatch(refreshLiveData([playthroughId]));
+          dispatch(refreshLiveData([tripId]));
         }
       })
       .catch((err) => {
@@ -244,14 +244,14 @@ export function updateRelays(scriptName) {
   };
 }
 
-export function initializePlaythrough(fields, participantsFields) {
+export function initializeTrip(fields, participantsFields) {
   return function (dispatch) {
-    createInstance('playthroughs', fields)(dispatch)
+    createInstance('trips', fields)(dispatch)
       .then((data) => {
-        const playthroughId = data.id;
+        const tripId = data.id;
         participantsFields.forEach((participantFields) => {
           const mergedFields = _.assign({}, participantFields,
-            { playthroughId: playthroughId });
+            { tripId: tripId });
           createInstance('participants', mergedFields)(dispatch);
         });
       })

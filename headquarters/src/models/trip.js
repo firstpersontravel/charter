@@ -16,24 +16,24 @@ const {
 } = require('./fields');
 
 /**
- * Playthrough model.
+ * Trip model.
  */
-const Playthrough = database.define('Playthrough', snakeCaseColumns({
+const Trip = database.define('Trip', snakeCaseColumns({
   createdAt: Object.assign(datetimeField(), { defaultValue: NOW }),
   title: requiredStringField(255),
   date: dateField('date'),
   departureName: requiredStringField(10),
   variantNames: optionalStringField(255),
   currentSceneName: optionalStringField(64),
-  values: jsonField(database, 'Playthrough', 'values'),
-  schedule: jsonField(database, 'Playthrough', 'schedule'),
-  history: jsonField(database, 'Playthrough', 'history'),
+  values: jsonField(database, 'Trip', 'values'),
+  schedule: jsonField(database, 'Trip', 'schedule'),
+  history: jsonField(database, 'Trip', 'history'),
   galleryName: optionalStringField(64),
   lastScheduledTime: datetimeField(),
   isArchived: booleanField(false)
 }));
 
-oneToMany(Playthrough, Script);
-oneToMany(Playthrough, Group);
+oneToMany(Trip, Script);
+oneToMany(Trip, Group);
 
-module.exports = Playthrough;
+module.exports = Trip;

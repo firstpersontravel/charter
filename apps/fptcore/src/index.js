@@ -10,11 +10,11 @@ module.exports = {
   Events: require('./events'),
   ParamValidators: require('./param_validators'),
   ParticipantCore: require('./participant'),
-  PlaythroughCore: require('./playthrough'),
   SceneCore: require('./scene'),
   ScriptCore: require('./script'),
   TextCore: require('./text'),
   TimeCore: require('./time'),
+  TripCore: require('./trip'),
   TriggerCore: require('./trigger'),
   TriggerEventCore: require('./trigger_event'),
   WaypointCore: require('./waypoint')

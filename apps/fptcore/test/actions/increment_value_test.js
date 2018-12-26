@@ -37,32 +37,32 @@ describe('#incrementValue', () => {
     }]);
   });
 
-  it('increments absent playthrough value', () => {
+  it('increments absent trip value', () => {
     const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
       {},
       { value_ref: 'cabana.monkeys' }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 1 } } } }
     }]);
   });
 
-  it('increments playthrough value by 1 by default', () => {
+  it('increments trip value by 1 by default', () => {
     const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 2 } },
       { value_ref: 'cabana.monkeys' }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 3 } } } }
     }]);
   });
 
-  it('increments playthrough value by number', () => {
+  it('increments trip value by number', () => {
     const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 2 } },
       { value_ref: 'cabana.monkeys', delta: 10 }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 12 } } } }
     }]);
   });

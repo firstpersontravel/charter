@@ -17,7 +17,7 @@ describe('apiActionsRoutes', () => {
   describe('#createActionRoute', () => {
     it('applies and notifies on an action', async () => {
       const req = httpMocks.createRequest({
-        params: { playthroughId: 100, actionName: 'action_name'},
+        params: { tripId: 100, actionName: 'action_name'},
         body: { param: 'true', client_id: 123 }
       });
       const res = httpMocks.createResponse();
@@ -50,7 +50,7 @@ describe('apiActionsRoutes', () => {
   describe('#createEventRoute', () => {
     it('applies and notifies on an event', async () => {
       const req = httpMocks.createRequest({
-        params: { playthroughId: 100 },
+        params: { tripId: 100 },
         body: { type: 'cue_signaled', cue_name: 'hi', client_id: 123 }
       });
       const res = httpMocks.createResponse();

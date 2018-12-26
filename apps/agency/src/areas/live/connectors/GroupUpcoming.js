@@ -13,7 +13,7 @@ const mapStateToProps = (state, ownProps) => {
   // some time to unarchive archived actions.
   const oneHourAgo = moment.utc().subtract(1, 'hours');
   const actions = _(state.datastore.actions)
-    .filter(action => _.includes(tripIds, action.playthroughId))
+    .filter(action => _.includes(tripIds, action.tripId))
     .filter({ appliedAt: null, failedAt: null })
     .filter(action => moment.utc(action.scheduledAt).isAfter(oneHourAgo))
     .value();

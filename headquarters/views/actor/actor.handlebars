@@ -7,7 +7,7 @@ function postAction($btn, data) {
   if (data.name) {
     $.ajax({
       type: 'post',
-      url: '/api/playthroughs/' + data.playthrough_id + '/' + data.name,
+      url: '/api/trips/' + data.trip_id + '/' + data.name,
       contentType: 'application/json',
       data: data.params,
       dataType: 'html',
@@ -26,11 +26,11 @@ function postAction($btn, data) {
 
 function subscribeToFaye() {
   var client = new Faye.Client('/pubsub');
-  var playthroughIds = "{{playthroughIds}}".split(',');
-  playthroughIds.forEach(function(playthroughId) {
-    var channel = '/{{stage}}_trip_' + playthroughId;
+  var tripIds = "{{tripIds}}".split(',');
+  tripIds.forEach(function(tripId) {
+    var channel = '/{{stage}}_trip_' + tripId;
     var subscription = client.subscribe(channel, function(message) {
-      console.log('msg for ' + playthroughId + ': ', message);
+      console.log('msg for ' + tripId + ': ', message);
       if (!message) {
         return;
       }
@@ -128,12 +128,12 @@ $(function() {
   $('#container').on('click', 'a[data-action]', function(e) {
     e.preventDefault();
     var $btn = $(this);
-    var playthroughId = $btn.attr('data-playthrough-id');
+    var tripId = $btn.attr('data-trip-id');
     var actionName = $btn.attr('data-action');
     var actionParams = JSON.parse($btn.attr('data-params'));
     var params = Object.assign(actionParams, { client_id: clientId });
     postAction($btn, {
-      playthrough_id: playthroughId,
+      trip_id: tripId,
       name: actionName,
       params: JSON.stringify(params)
     });
@@ -141,11 +141,11 @@ $(function() {
   $('#container').on('click', 'a[data-ui]', function(e) {
     e.preventDefault();
     var $btn = $(this);
-    var playthroughId = $btn.attr('data-playthrough-id');
+    var tripId = $btn.attr('data-trip-id');
     var actionName = $btn.attr('data-ui');
     if (actionName === 'show-appearance') {
       var pageName = $btn.attr('data-page-name');
-      $('div[data-playthrough-id=' + playthroughId + '][data-page-name=' + pageName + ']').slideDown();
+      $('div[data-trip-id=' + tripId + '][data-page-name=' + pageName + ']').slideDown();
     }
     $btn.hide();
   });

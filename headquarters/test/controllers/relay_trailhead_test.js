@@ -15,7 +15,7 @@ const mockTrailhead = {
   scriptName: 'script',
   departureName: 'Main'
 };
-const mockPlaythrough = { id: 100 };
+const mockTrip = { id: 100 };
 const mockScript = {
   id: 10,
   name: 'script',
@@ -49,12 +49,12 @@ describe('RelayTrailheadController', () => {
     it('assigns users for actor roles only', async () => {
       sandbox.stub(RelayTrailheadController, 'assignActor').resolves();
 
-      await RelayTrailheadController.assignActors(mockScript, mockPlaythrough);
+      await RelayTrailheadController.assignActors(mockScript, mockTrip);
 
       // Test called only once with the actor
       sinon.assert.calledOnce(RelayTrailheadController.assignActor);
       sinon.assert.calledWith(RelayTrailheadController.assignActor,
-        mockScript, mockPlaythrough, mockScript.content.roles[0]);
+        mockScript, mockTrip, mockScript.content.roles[0]);
     });
   });
 
@@ -69,7 +69,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Participant, 'update').resolves();
       sandbox.stub(TripRelaysController, 'sendAdminMessage').resolves();
 
-      await RelayTrailheadController.assignActor(mockScript, mockPlaythrough,
+      await RelayTrailheadController.assignActor(mockScript, mockTrip,
         { name: 'role' });
 
       // Test assertions
@@ -84,12 +84,12 @@ describe('RelayTrailheadController', () => {
       // test update participant called
       sinon.assert.calledWith(models.Participant.update,
         { userId: 4 },
-        { where: { playthroughId: 100, roleName: 'role' } });
+        { where: { tripId: 100, roleName: 'role' } });
 
       // Test admin message sent
       sinon.assert.calledWith(
         TripRelaysController.sendAdminMessage,
-        mockPlaythrough,
+        mockTrip,
         'role',
         'New trip for Script as role: http://test/actor/4'
       );
@@ -100,7 +100,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Participant, 'update').resolves();
       sandbox.stub(TripRelaysController, 'sendAdminMessage').resolves();
 
-      await RelayTrailheadController.assignActor(mockScript, mockPlaythrough,
+      await RelayTrailheadController.assignActor(mockScript, mockTrip,
         { name: 'role' });
 
       // Test assertions
@@ -129,7 +129,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.User, 'findOrCreate').resolves([mockUser]);
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
       sandbox.stub(TripsController, 'createWithDefaults')
-        .resolves(mockPlaythrough);
+        .resolves(mockTrip);
       sandbox.stub(models.Participant, 'update').resolves();
       sandbox.stub(RelayTrailheadController, 'assignActors').resolves();
 
@@ -162,7 +162,7 @@ describe('RelayTrailheadController', () => {
         }
       });
       sinon.assert.calledWith(RelayTrailheadController.assignActors,
-        mockScript, mockPlaythrough);
+        mockScript, mockTrip);
     });
   });
 });

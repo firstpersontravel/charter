@@ -12,7 +12,7 @@ describe('Participant', () => {
 
   beforeEach(() => {
     participant = models.Participant.build({
-      playthroughId: 2,
+      tripId: 2,
       roleName: 'Role'
     });
   });
@@ -25,9 +25,9 @@ describe('Participant', () => {
     await participant.validate();
   });
 
-  it('requires a playthrough', async () => {
-    participant.playthroughId = null;
-    await assertValidation(participant, { playthroughId: 'must be present' });
+  it('requires a trip', async () => {
+    participant.tripId = null;
+    await assertValidation(participant, { tripId: 'must be present' });
   });
 
   it('requires a role', async () => {

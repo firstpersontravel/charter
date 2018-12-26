@@ -4,7 +4,7 @@ export default Ember.Controller.extend({
 
   script: Ember.inject.controller(),
   participant: Ember.inject.controller(),
-  playthrough: Ember.inject.controller(),
+  trip: Ember.inject.controller(),
   messages: Ember.inject.controller(),
 
   queryParams: ['state'],
@@ -24,7 +24,7 @@ export default Ember.Controller.extend({
 
   pageModel: function() {
     var participant = this.get('participant.model');
-    var script = participant.get('playthrough.script');
+    var script = participant.get('trip.script');
     if (!participant) {
       return null;
     }
@@ -41,7 +41,7 @@ export default Ember.Controller.extend({
   }.property('pageLayoutName'),
 
   pagePanels: function() {
-    var playthrough = this.get('playthrough.model');
+    var trip = this.get('trip.model');
     var page = this.get('pageModel');
     var pagePanels = {};
     // Assemble list of partials with panels
@@ -55,7 +55,7 @@ export default Ember.Controller.extend({
         pagePanels[outletName] = [];
       }
       partials[outletName].panels.forEach(function(panel) {
-        if (!panel.if || playthrough.evaluateIf(panel.if)) {
+        if (!panel.if || trip.evaluateIf(panel.if)) {
           pagePanels[outletName].push(panel);
         }
       }, this);
@@ -63,5 +63,5 @@ export default Ember.Controller.extend({
 
     // return resolved
     return pagePanels;
-  }.property('pageModel', 'playthrough.model.evalContext')
+  }.property('pageModel', 'trip.model.evalContext')
 });

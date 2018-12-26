@@ -71,9 +71,9 @@ async function notifyAction(tripId, action, clientId=null) {
         'failed-at': null
       },
       relationships: {
-        playthrough: {
+        trip: {
           data: {
-            type: 'playthrough',
+            type: 'trip',
             id: tripId
           }
         }

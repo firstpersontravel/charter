@@ -20,7 +20,7 @@ export default class TripSchedule extends Component {
     const oldDate = moment.utc(oldTimestamp).tz(timezone).format('YYYY-MM-DD');
     const newTimestamp = TimeCore.convertTimeShorthandToIso(
       newTimeShorthand, oldDate, timezone);
-    this.props.updateInstance('playthroughs', trip.id, {
+    this.props.updateInstance('trips', trip.id, {
       schedule: { [timeName]: newTimestamp }
     });
     this.props.postAdminAction(trip.id, 'notify', { notify_type: 'refresh' });

@@ -20,12 +20,12 @@ describe('pageGalleryRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub responses
-      const mockPlaythrough = {
+      const mockTrip = {
         id: 1,
         title: 'some people',
         script: { title: 'The Headlands Gamble' }
       };
-      sandbox.stub(models.Playthrough, 'find').resolves(mockPlaythrough);
+      sandbox.stub(models.Trip, 'find').resolves(mockTrip);
       
       const mockMessages = [{
         createdAt: '2018-01-01T00:00:00',
@@ -39,15 +39,15 @@ describe('pageGalleryRoutes', () => {
       await pageGalleryRoutes.galleryRoute(req, res);
 
       // Test search calls made correctly
-      sinon.assert.calledOnce(models.Playthrough.find);
-      assert.deepStrictEqual(models.Playthrough.find.firstCall.args, [{
+      sinon.assert.calledOnce(models.Trip.find);
+      assert.deepStrictEqual(models.Trip.find.firstCall.args, [{
         where: { galleryName: 'abc' },
         include: [{ model: models.Script, as: 'script' }]
       }]);
       sinon.assert.calledOnce(models.Message.findAll);
       assert.deepStrictEqual(models.Message.findAll.firstCall.args, [{
         where: {
-          playthroughId: 1,
+          tripId: 1,
           messageName: '',
           messageType: 'image',
           isArchived: false,
@@ -69,18 +69,18 @@ describe('pageGalleryRoutes', () => {
       });
     });
 
-    it('returns 404 if playthrough not found', async () => {
+    it('returns 404 if trip not found', async () => {
       const req = httpMocks.createRequest({ params: { alias: 1 } });
       const res = httpMocks.createResponse();
 
       // Stub response
-      sandbox.stub(models.Playthrough, 'find').resolves(null);
+      sandbox.stub(models.Trip, 'find').resolves(null);
 
       await pageGalleryRoutes.galleryRoute(req, res);
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.Playthrough.find);
-      assert.deepStrictEqual(models.Playthrough.find.firstCall.args, [{
+      sinon.assert.calledOnce(models.Trip.find);
+      assert.deepStrictEqual(models.Trip.find.firstCall.args, [{
         where: { id: 1 },
         include: [{ model: models.Script, as: 'script' }]
       }]);

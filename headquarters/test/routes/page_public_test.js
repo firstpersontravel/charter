@@ -33,7 +33,7 @@ describe('pagePublicRoutes', () => {
       // Stub response
       const mockParticipant = {
         userId: 10,
-        playthroughId: 2,
+        tripId: 2,
         roleName: 'Phone'
       };
       sandbox.stub(models.Participant, 'findById').resolves(mockParticipant);

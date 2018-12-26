@@ -6,15 +6,15 @@ export default Ember.Component.extend({
   choices: Ember.computed.oneWay('params.choices'),
 
   humanizedText: function() {
-    return this.get('playthrough').humanizeText(this.get('params.text'));
-  }.property('params.text', 'playthrough.evalContext'),
+    return this.get('trip').humanizeText(this.get('params.text'));
+  }.property('params.text', 'trip.evalContext'),
 
   items: function() {
     var currentValue = this.get('currentValue');
     return this.get('choices').map(function(choice) {
       var value;
       if (choice.value_ref) {
-        value = this.get('playthrough').lookupRef(choice.value_ref);
+        value = this.get('trip').lookupRef(choice.value_ref);
       } else {
         value = choice.value;
       }
@@ -33,15 +33,15 @@ export default Ember.Component.extend({
       }
       return {
         valueRef: valueRef,
-        text: this.get('playthrough').humanizeText(choice.text),
+        text: this.get('trip').humanizeText(choice.text),
         isSelected: value === currentValue
       };
     }, this);
-  }.property('choices', 'value', 'playthrough.evalContext'),
+  }.property('choices', 'value', 'trip.evalContext'),
 
   currentValue: function() {
-    return this.get('playthrough').lookupRef(this.get('params.value_ref'));
-  }.property('params', 'playthrough.evalContext'),
+    return this.get('trip').lookupRef(this.get('params.value_ref'));
+  }.property('params', 'trip.evalContext'),
 
   actions: {
     select: function(valueRef) {

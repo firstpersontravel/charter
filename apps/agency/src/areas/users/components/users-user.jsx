@@ -112,18 +112,18 @@ export default class UsersUser extends Component {
     );
   }
 
-  renderParticipantRole({ group, participant, playthrough }) {
+  renderParticipantRole({ group, participant, trip }) {
     return (
       <li key={participant.id}>
         <Link
-          to={`/agency/live/${playthrough.groupId}`}>
+          to={`/agency/live/${trip.groupId}`}>
           Group: {moment(group.date).format('MMM D')}
         </Link>
         {', '}
         <Link
-          to={`/agency/live/${playthrough.groupId}/all/role/${participant.roleName}/${this.props.user.id}`}>
-          Trip: {playthrough.title},
-          Departure: {playthrough.departureName}
+          to={`/agency/live/${trip.groupId}/all/role/${participant.roleName}/${this.props.user.id}`}>
+          Trip: {trip.title},
+          Departure: {trip.departureName}
         </Link>
       </li>
     );

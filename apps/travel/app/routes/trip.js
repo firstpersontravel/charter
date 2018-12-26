@@ -9,9 +9,9 @@ export default Ember.Route.extend({
 
   model: function(params) {
     var self = this;
-    return this.refreshPlaythroughData(params.playthrough_id)
+    return this.refreshTripData(params.trip_id)
       .then(function() {
-        return self.store.peekRecord('playthrough', params.playthrough_id);
+        return self.store.peekRecord('trip', params.trip_id);
       });
   },
 
@@ -27,21 +27,21 @@ export default Ember.Route.extend({
   },
 
   serialize: function(model) {
-    return {playthrough_id: model.id};
+    return {trip_id: model.id};
   },
 
-  refreshPlaythroughData: function(playthroughId) {
+  refreshTripData: function(tripId) {
     var isScriptAlreadyLoaded = !!this.store.peekAll('script').get('length');
     var shouldRefreshScript = (
       !isScriptAlreadyLoaded ||
       this.get('forceRefreshScript')
     );
     var refreshUrl = (
-      `/api/legacy/playthrough/${playthroughId}` +
+      `/api/legacy/trip/${tripId}` +
       (shouldRefreshScript ? '?script=true' : '')
     );
     this.set('forceRefreshScript', false);
-    playthroughId = playthroughId || self.context.id;
+    tripId = tripId || self.context.id;
     var self = this;
     return this.get('api')
       .getData(refreshUrl)
@@ -53,7 +53,7 @@ export default Ember.Route.extend({
         var serializer = Ember.getOwner(self).lookup('serializer:api');
         serializer.set('store', self.store);
         serializer.pushPayload(self.store, data);
-        self.controllerFor('playthrough').set('lastRefreshed', moment.utc());
+        self.controllerFor('trip').set('lastRefreshed', moment.utc());
       });
   },
 

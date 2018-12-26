@@ -9,12 +9,12 @@ const UserController = require('../controllers/user');
  * of the new action.
  */
 const createActionRoute = async (req, res) => {
-  const playthroughId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   const clientId = req.body.client_id;
   const params = _.omit(req.body, ['client_id']);
   const action = { name: req.params.actionName, params: params };
-  await TripActionController.applyAction(playthroughId, action);
-  await TripNotifyController.notifyAction(playthroughId, action, clientId);
+  await TripActionController.applyAction(tripId, action);
+  await TripNotifyController.notifyAction(tripId, action, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 };
@@ -24,11 +24,11 @@ const createActionRoute = async (req, res) => {
  * a notification to all clients listening of the new event.
  */
 const createEventRoute = async (req, res) => {
-  const playthroughId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   const clientId = req.body.client_id;
   const event = _.omit(req.body, ['client_id']);
-  await TripActionController.applyEvent(playthroughId, event);
-  await TripNotifyController.notifyEvent(playthroughId, event, clientId);
+  await TripActionController.applyEvent(tripId, event);
+  await TripNotifyController.notifyEvent(tripId, event, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 };

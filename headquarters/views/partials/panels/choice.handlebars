@@ -2,7 +2,7 @@
   {{panel.text}}
 
   {{#each choices}}
-    <a href="#" data-action='set_value' data-params='{"value_ref": "{{panel.data.value_ref}}", "new_value_ref": "\"{{value}}\""}' data-playthrough-id='{{playthrough.id}}' class="btn {{#if isChosen}}btn-primary{{else}}btn-secondary{{/if}}">
+    <a href="#" data-action='set_value' data-params='{"value_ref": "{{panel.data.value_ref}}", "new_value_ref": "\"{{value}}\""}' data-trip-id='{{trip.id}}' class="btn {{#if isChosen}}btn-primary{{else}}btn-secondary{{/if}}">
       {{choice.text}}
     </a>
   {{/each}}

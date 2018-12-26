@@ -12,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
     { roleName: ownProps.params.roleName, userId: userId });
   const participantStatuses = participants
     .map(participant => (
-      assembleParticipantStatus(state, participant.playthroughId,
+      assembleParticipantStatus(state, participant.tripId,
         participant.roleName)
     ))
     .filter(participantStatus => !_.get(participantStatus,

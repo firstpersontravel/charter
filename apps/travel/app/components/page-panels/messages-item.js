@@ -28,7 +28,7 @@ export default Ember.Component.extend({
     var type = this.get('message.messageType');
     var content = this.get('message.messageContent');
     if (type === 'image') {
-      var url = this.get('playthrough.script').urlForContentPath(content);
+      var url = this.get('trip.script').urlForContentPath(content);
       $.featherlight(url, {closeOnClick: 'anywhere'});
     }    
   },
@@ -52,9 +52,9 @@ export default Ember.Component.extend({
     var type = this.get('message.messageType');
     var content = this.get('message.messageContent');
     if (type === 'text') {
-      return this.get('playthrough').humanizeText(content);
+      return this.get('trip').humanizeText(content);
     }
-    var url = this.get('playthrough.script').urlForContentPath(content);
+    var url = this.get('trip.script').urlForContentPath(content);
     if (type === 'image') {
       return `<img src='${url}'/>`;
     } else if (type === 'audio') {

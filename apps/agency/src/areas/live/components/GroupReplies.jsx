@@ -26,7 +26,7 @@ export default function GroupReplies({ groupStatus, messagesNeedingReply, update
     .reverse()
     .slice(0, 10)
     .map((message) => {
-      const trip = _.find(trips, { id: message.playthroughId });
+      const trip = _.find(trips, { id: message.tripId });
       return renderMessage(message, trip, updateInstance);
     })
     .value();

@@ -30,7 +30,7 @@ function assembleParticipantFields(objs, participant) {
 }
 
 function assembleTripFields(objs) {
-  const trip = objs.playthrough.get({ plain: true });
+  const trip = objs.trip.get({ plain: true });
   return Object.assign(trip, {
     script: objs.script.get({ plain: true }),
     participants: _.map(objs.participants, participant => (
@@ -56,21 +56,21 @@ function createContext(objs) {
 /**
  * Apply an action and gather the results.
  */
-async function getContext(playthroughId) {
-  const objs = await getObjectsForPlaythrough(playthroughId);
+async function getContext(tripId) {
+  const objs = await getObjectsForTrip(tripId);
   return createContext(objs);
 }
 
 /**
- * Get objects needed for a playthrough.
+ * Get objects needed for a trip.
  */
-async function getObjectsForPlaythrough(playthroughId) {
-  // Get playthrough and participants first
-  const playthrough = await models.Playthrough.findById(playthroughId);
+async function getObjectsForTrip(tripId) {
+  // Get trip and participants first
+  const trip = await models.Trip.findById(tripId);
   const participants = await models.Participant.findAll({
-    where: { playthroughId: playthroughId }
+    where: { tripId: tripId }
   });
-  const script = await models.Script.findById(playthrough.scriptId);
+  const script = await models.Script.findById(trip.scriptId);
   const profiles = await models.Profile.findAll({
     where: { scriptName: script.name }
   });
@@ -80,7 +80,7 @@ async function getObjectsForPlaythrough(playthroughId) {
     }
   });
   return {
-    playthrough,
+    trip,
     participants,
     script,
     profiles,
@@ -92,8 +92,8 @@ async function getObjectsForPlaythrough(playthroughId) {
 /**
  * Expand an action phrase in context.
  */
-async function expandActionPhrase(playthroughId, actionPhrase, evaluateAt) {
-  const objs = await getObjectsForPlaythrough(playthroughId);
+async function expandActionPhrase(tripId, actionPhrase, evaluateAt) {
+  const objs = await getObjectsForTrip(tripId);
   const context = createContext(objs);
   return fptCore.ActionPhraseCore.expandActionPhrase(
     actionPhrase, evaluateAt, context);
@@ -102,7 +102,7 @@ async function expandActionPhrase(playthroughId, actionPhrase, evaluateAt) {
 const TripUtil = {
   createContext: createContext,
   expandActionPhrase: expandActionPhrase,
-  getObjectsForPlaythrough: getObjectsForPlaythrough,
+  getObjectsForTrip: getObjectsForTrip,
   getContext: getContext
 };
 

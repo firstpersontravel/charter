@@ -71,8 +71,8 @@ RelayController.lookupParticipant = async (relay, userNumber) => {
       as: 'user',
       where: { phoneNumber: userNumber }
     }, {
-      model: models.Playthrough,
-      as: 'playthrough',
+      model: models.Trip,
+      as: 'trip',
       where: { departureName: relay.departureName, isArchived: false },
       include: [{
         model: models.Script,
@@ -113,12 +113,12 @@ RelayController.initiateCall = async (
     machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
     url: (
       `${twilioHost}/endpoints/twilio/calls/outgoing` +
-      `?trip=${toParticipant.playthroughId}&relay=${relay.id}`
+      `?trip=${toParticipant.tripId}&relay=${relay.id}`
     ),
     method: 'POST',
     statusCallback: (
       `${twilioHost}/endpoints/twilio/calls/status` + 
-      `?trip=${toParticipant.playthroughId}&relay=${relay.id}`
+      `?trip=${toParticipant.tripId}&relay=${relay.id}`
     ),
     statusCallbackMethod: 'POST'
   };
@@ -145,7 +145,7 @@ RelayController.sendMessage = async (relay, trip, body, mediaUrl) => {
   // as the message's sendTo since a relay can, say, forward Sarai's messages
   // to the TravelAgent as well.
   const toParticipant = await models.Participant.find({
-    where: { playthroughId: trip.id, roleName: relay.forRoleName },
+    where: { tripId: trip.id, roleName: relay.forRoleName },
     include: [{ model: models.User, as: 'user' }]
   });
   if (!_.get(toParticipant, 'user.phoneNumber')) {

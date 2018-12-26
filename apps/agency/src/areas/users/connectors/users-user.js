@@ -15,23 +15,23 @@ const mapStateToProps = (state, ownProps) => {
   });
   const activeRoles = participants
     .map((participant) => {
-      const playthrough = _.find(state.datastore.playthroughs, {
-        id: participant.playthroughId
+      const trip = _.find(state.datastore.trips, {
+        id: participant.tripId
       });
       const group = _.find(state.datastore.groups, {
-        id: playthrough && playthrough.groupId
+        id: trip && trip.groupId
       });
       const script = _.find(state.datastore.scripts, {
-        id: playthrough && playthrough.scriptId
+        id: trip && trip.scriptId
       });
       return {
         participant: participant,
-        playthrough: playthrough,
+        trip: trip,
         group: group,
         script: script
       };
     })
-    .filter(pAndP => pAndP.playthrough && !pAndP.playthrough.isArchived);
+    .filter(pAndP => pAndP.trip && !pAndP.trip.isArchived);
 
   return {
     user: user,

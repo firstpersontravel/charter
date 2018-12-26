@@ -60,7 +60,7 @@ describe('TwilioCallHandler', () => {
       sinon.assert.calledOnce(models.Participant.find);
       assert.deepStrictEqual(
         models.Participant.find.firstCall.args, [{
-          where: { playthroughId: 1, roleName: 'ToPerson' },
+          where: { tripId: 1, roleName: 'ToPerson' },
           include: [{ model: models.User, as: 'user' }]
         }]);
       // Assert response

@@ -36,7 +36,7 @@ export default class GroupPlayers extends Component {
   handleAssignUser(roleName, trips, userId) {
     const user = _.find(this.props.users, { id: Number(userId) });
     _.each(trips, (trip) => {
-      // Find participant for each playthrough.
+      // Find participant for each trip.
       const participant = _.find(trip.participants, { roleName: roleName });
       if (!participant) {
         console.warn('Participant not found.');

@@ -44,7 +44,7 @@ export default Ember.Controller.extend({
     var startedTime = audioState.started_time;
     var elapsedMsec = moment.utc().diff(startedAt);
     var currentTime = startedTime + elapsedMsec / 1000.0;
-    var script = this.get('model.playthrough.script');
+    var script = this.get('model.trip.script');
     var path = script.urlForContentPath(audioState.path);
     this.get('audio').play(path, currentTime);
   },

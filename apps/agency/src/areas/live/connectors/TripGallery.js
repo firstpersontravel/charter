@@ -10,7 +10,7 @@ const mapStateToProps = (state, ownProps) => ({
   tripStatus: assembleTripStatus(state, ownProps.params.tripId),
   messages: _(state.datastore.messages)
     .filter({
-      playthroughId: Number(ownProps.params.tripId),
+      tripId: Number(ownProps.params.tripId),
       messageName: '',
       messageType: 'image'
     })

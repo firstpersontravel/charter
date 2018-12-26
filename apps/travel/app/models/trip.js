@@ -24,7 +24,7 @@ export default DS.Model.extend({
 
   createLocalAction: function(name, params, scheduledAt, triggerName) {
     var newAction = this.store.createRecord('action', {
-      playthrough: this,
+      trip: this,
       name: name,
       params: params,
       triggerName: triggerName || '',

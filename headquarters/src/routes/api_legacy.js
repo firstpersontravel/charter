@@ -49,25 +49,25 @@ async function getUserRoute(req, res) {
 /**
  * Legacy getter for THG app in JSONAPI format.
  */
-async function getPlaythroughRoute(req, res) {
+async function getTripRoute(req, res) {
   const includeScript = !!req.query.script;
-  const playthrough = await models.Playthrough.findById(req.params.id);
-  if (!playthrough) {
+  const trip = await models.Trip.findById(req.params.id);
+  if (!trip) {
     res.status(404).send('Not Found');
     return;
   }
-  const script = await models.Script.findById(playthrough.scriptId);
+  const script = await models.Script.findById(trip.scriptId);
   const [participants, messages, actions, profiles, users] = (
     await Promise.all([
       models.Participant.findAll({
-        where: { playthroughId: req.params.id }
+        where: { tripId: req.params.id }
       }),
       models.Message.findAll({
-        where: { playthroughId: req.params.id, isArchived: false }
+        where: { tripId: req.params.id, isArchived: false }
       }),
       models.Action.findAll({
         where: {
-          playthroughId: req.params.id,
+          tripId: req.params.id,
           type: 'action',
           isArchived: false,
           appliedAt: null,
@@ -89,7 +89,7 @@ async function getPlaythroughRoute(req, res) {
     objs.push(script);
   }
 
-  const data = jsonApiSerialize(playthrough);
+  const data = jsonApiSerialize(trip);
   data.relationships.action = actions
     .map(action => ({ id: action.id, type: 'action' }));
   data.relationships.message = messages
@@ -106,5 +106,5 @@ async function getPlaythroughRoute(req, res) {
 
 module.exports = {
   getUserRoute,
-  getPlaythroughRoute
+  getTripRoute
 };

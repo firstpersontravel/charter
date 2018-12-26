@@ -14,7 +14,7 @@ describe('Action', () => {
     action = models.Action.build({
       type: 'action',
       name: 'set_value',
-      playthroughId: 2
+      tripId: 2
     });
   });
 
@@ -26,9 +26,9 @@ describe('Action', () => {
     await action.validate();
   });
 
-  it('requires a playthrough', async () => {
-    action.playthroughId = null;
-    await assertValidation(action, { playthroughId: 'must be present' });
+  it('requires a trip', async () => {
+    action.tripId = null;
+    await assertValidation(action, { tripId: 'must be present' });
   });
 
   it('requires a name', async () => {

@@ -10,17 +10,17 @@ export default Ember.Component.extend(WindowHeightMixin, {
   selectedItemName: null,
 
   visibleItems: function() {
-    var scriptContent = this.get('playthrough.script.content');
+    var scriptContent = this.get('trip.script.content');
     var section = this.get('params.section');
     if (!scriptContent || !scriptContent.content_pages) { return []; }
     var sectionItems = scriptContent.content_pages
       .filterBy('section', section);
-    var playthrough = this.get('playthrough');
+    var trip = this.get('trip');
     return sectionItems.filter(function(item) {
       if (!item.if) { return true; }
-      return playthrough.evaluateIf(item.if);
+      return trip.evaluateIf(item.if);
     });
-  }.property('params.section', 'playthrough.evalContext'),
+  }.property('params.section', 'trip.evalContext'),
 
   menu: function() {
     var selectedItemName = this.get('selectedItemName');

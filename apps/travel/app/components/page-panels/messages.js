@@ -24,19 +24,19 @@ export default Ember.Component.extend({
   asParticipant: function() {
     var roleName = this.get('params.as') ||
       this.get('participant.model.roleName');
-    return this.get('playthrough.participants')
+    return this.get('trip.participants')
       .findBy('roleName', roleName);
   }.property('params', 'participant.roleName'),
 
   withParticipant: function() {
     var roleName = this.get('params.with');
-    var withParticipant = this.get('playthrough.participants')
+    var withParticipant = this.get('trip.participants')
       .findBy('roleName', roleName);
     if (!withParticipant) {
       throw new Error("Need a with participant for role " + roleName);
     }
     return withParticipant;
-  }.property('params', 'playthrough.participants.length'),
+  }.property('params', 'trip.participants.length'),
 
   withName: function() {
     var withParticipant = this.get('withParticipant');
@@ -49,7 +49,7 @@ export default Ember.Component.extend({
   messages: function() {
     var asParticipant = this.get('asParticipant');
     var withParticipant = this.get('withParticipant');
-    var allMessages = this.get('playthrough.messages');
+    var allMessages = this.get('trip.messages');
     var isIncomingOnly = false;
     return allMessages
       .filter(function(message) {
@@ -67,8 +67,8 @@ export default Ember.Component.extend({
           b.get('createdAt').valueOf());
       });
   }.property(
-    'params', 'playthrough.messages.length',
-    'playthrough.messages.@each.messageContent'),
+    'params', 'trip.messages.length',
+    'trip.messages.@each.messageContent'),
 
   numEarlierMessages: function() {
     var numMessages = this.get('messages.length');

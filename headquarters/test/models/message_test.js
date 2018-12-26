@@ -11,7 +11,7 @@ describe('Message', () => {
 
   beforeEach(() => {
     message = models.Message.build({
-      playthroughId: 1,
+      tripId: 1,
       sentById: 2,
       sentToId: 3,
       createdAt: '2018-10-04T03:03:03Z',
@@ -29,9 +29,9 @@ describe('Message', () => {
     await message.validate();
   });
 
-  it('requires a playthrough', async () => {
-    message.playthroughId = null;
-    await assertValidation(message, { playthroughId: 'must be present' });
+  it('requires a trip', async () => {
+    message.tripId = null;
+    await assertValidation(message, { tripId: 'must be present' });
   });
 
   it('requires a sender', async () => {

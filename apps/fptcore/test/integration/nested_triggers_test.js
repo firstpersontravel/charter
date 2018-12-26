@@ -128,7 +128,7 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.Farmer.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: {
         history: { 'TRIGGER-PICK-APPLES': { $set: now.toISOString() } } 
       }
@@ -149,7 +149,7 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.Farmer.apples, 0);
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: {
         history: { 'TRIGGER-UNLOAD-APPLES': { $set: now.toISOString() } } 
       }
@@ -167,7 +167,7 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.Farmer.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: {
         history: { 'TRIGGER-SUNRISE': { $set: now.toISOString() } } 
       }
@@ -240,12 +240,12 @@ describe('Integration - Nested Triggers', () => {
     // Test results
     assert.deepStrictEqual(result.resultOps,
       [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {
           history: { 'TRIGGER-GREET-1': { $set: now.toISOString() } } 
         }
       }, {
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {
           history: { 'TRIGGER-GREET-2': { $set: now.toISOString() } } 
         }
@@ -273,17 +273,17 @@ describe('Integration - Nested Triggers', () => {
 
     assert.deepStrictEqual(result.resultOps,
       [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {
           history: { 'TRIGGER-NAV-1': { $set: now.toISOString() } } 
         }
       }, {
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {
           values: { is_navigating: { $set: true } }
         }
       }, {
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {
           history: { 'TRIGGER-NAV-2': { $set: now.toISOString() } } 
         }

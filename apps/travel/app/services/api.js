@@ -63,9 +63,9 @@ export default Ember.Service.extend({
     });
   },
 
-  postAction: function(playthroughId, name, params) {
+  postAction: function(tripId, name, params) {
     return this.ajax(
-      `/api/playthroughs/${playthroughId}/${name}`, 'post',
+      `/api/trips/${tripId}/${name}`, 'post',
       Object.assign({ client_id: this._clientId }, params)
     );
   }

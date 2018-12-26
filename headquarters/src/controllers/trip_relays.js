@@ -16,7 +16,7 @@ const TripRelaysController = {};
 TripRelaysController.userPhoneNumberForRelay = async (trip, relaySpec) => {
   // Find the participant and user for this trip and relay spec.
   const participant = await models.Participant.find({
-    where: { roleName: relaySpec.for, playthroughId: trip.id },
+    where: { roleName: relaySpec.for, tripId: trip.id },
     include: [{ model: models.User, as: 'user' }]
   });
   // Can't create or find a relay for a user without a phone number, so skip
@@ -98,9 +98,9 @@ TripRelaysController.initiateCall = async (
     return;
   }
   const relay = relays[0];
-  // Get participant for this playthrough.
+  // Get participant for this trip.
   const participant = await models.Participant.find({
-    where: { playthroughId: trip.id, roleName: relay.forRoleName },
+    where: { tripId: trip.id, roleName: relay.forRoleName },
     include: [{ model: models.User, as: 'user' }]
   });
   if (!participant) {

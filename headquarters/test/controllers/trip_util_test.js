@@ -23,7 +23,7 @@ describe('TripUtil', () => {
             }]
           }
         }),
-        playthrough: models.Playthrough.build({
+        trip: models.Trip.build({
           currentSceneName: 'SCENE-1',
           schedule: { 'TIME-1': 'time' },
           history: { 'CUE-1': 'time' }

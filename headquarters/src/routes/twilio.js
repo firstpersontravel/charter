@@ -46,7 +46,7 @@ async function incomingCallStatusRoute(req, res) {
     res.status(200).send('OK');
     return;
   }
-  await TwilioCallHandler.handleCallEnded(relay.id, participant.playthroughId);
+  await TwilioCallHandler.handleCallEnded(relay.id, participant.tripId);
   handleTwimlResponse(res);
 }
 

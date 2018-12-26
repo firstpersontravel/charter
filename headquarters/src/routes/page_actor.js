@@ -35,20 +35,20 @@ const supportedPartials = {
   default: () => ({})
 };
 
-function getPanel(script, playthrough, context, panel) {
+function getPanel(script, trip, context, panel) {
   const panelType = supportedPartials[panel.type] ? panel.type : 'default';
   const customParams = supportedPartials[panelType](script, context, panel);
   return Object.assign(customParams, {
     type: 'panels/' + panelType,
     panel: panel,
-    playthrough: playthrough
+    trip: trip
   });
 }
 
 /**
  * Construct an object of the page
  */
-function getPage(script, playthrough, context, participant) {
+function getPage(script, trip, context, participant) {
   const pageInfo = fptCore.ParticipantCore.getPageInfo(script, context,
     participant);
   if (!pageInfo) {
@@ -69,11 +69,11 @@ function getPage(script, playthrough, context, participant) {
     page.directive, script.timezone);
   const panels = _(page.panels || [])
     .filter(panel => !panel.if || fptCore.EvalCore.if(context, panel.if))
-    .map(panel => getPanel(script, playthrough, context, panel))
+    .map(panel => getPanel(script, trip, context, panel))
     .value();
   return {
     scriptTitle: script.title,
-    playthrough: playthrough,
+    trip: trip,
     participant: participant,
     page: page,
     panels: panels,
@@ -95,8 +95,8 @@ const actorsListRoute = async (req, res) => {
   const participants = await models.Participant.findAll({
     where: { userId: { [Sequelize.Op.not]: null } },
     include: [{
-      model: models.Playthrough,
-      as: 'playthrough',
+      model: models.Trip,
+      as: 'trip',
       where: { isArchived: false },
       include: [{
         model: models.Script,
@@ -108,7 +108,7 @@ const actorsListRoute = async (req, res) => {
     }]
   });
   const actorParticipants = participants.filter(((participant) => {
-    const roles = participant.playthrough.script.content.roles;
+    const roles = participant.trip.script.content.roles;
     const role = _.find(roles, { name: participant.roleName });
     return role && role.actor;
   }));
@@ -130,17 +130,17 @@ const participantShowRoute = async (req, res) => {
     return;
   }
   const objs = await (
-    TripUtil.getObjectsForPlaythrough(participant.playthroughId)
+    TripUtil.getObjectsForTrip(participant.tripId)
   );
   const context = TripUtil.createContext(objs);
-  const page = getPage(objs.script, objs.playthrough, context, participant);
+  const page = getPage(objs.script, objs.trip, context, participant);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
     userId: '',
     userName: participant.roleName,
     pages: pages,
     stage: config.env.STAGE,
-    playthroughIds: participant.playthroughId
+    tripIds: participant.tripId
   };
   if (req.query.is_partial) {
     res.render('partials/actor', Object.assign({ layout: false }, params));
@@ -161,22 +161,22 @@ const userShowRoute = async (req, res) => {
   const participants = await models.Participant.findAll({
     where: { userId: user.id },
     include: [{
-      model: models.Playthrough,
-      as: 'playthrough',
+      model: models.Trip,
+      as: 'trip',
       where: { isArchived: false }
     }]
   });
   const participantsByDeparture = _(participants)
-    .sortBy(participant => participant.playthrough.departureName)
+    .sortBy(participant => participant.trip.departureName)
     .value();
   const objss = await Promise.map(participantsByDeparture, (participant) => (
-    TripUtil.getObjectsForPlaythrough(participant.playthroughId)
+    TripUtil.getObjectsForTrip(participant.tripId)
   ));
   const pages = _(participants)
     .map((participant, i) => {
       const objs = objss[i];
       const context = TripUtil.createContext(objs);
-      return getPage(objs.script, objs.playthrough, context, participant);
+      return getPage(objs.script, objs.trip, context, participant);
     })
     .filter(Boolean)
     .sortBy('sort')
@@ -188,7 +188,7 @@ const userShowRoute = async (req, res) => {
     userName: `${user.firstName} ${user.lastName}`,
     pages: pages,
     stage: config.env.STAGE,
-    playthroughIds: _.map(participants, 'playthroughId').join(',')
+    tripIds: _.map(participants, 'tripId').join(',')
   };
   if (req.query.is_partial) {
     res.render('partials/actor', Object.assign({ layout: false }, params));

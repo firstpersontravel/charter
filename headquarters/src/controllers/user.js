@@ -29,16 +29,16 @@ UserController.updateUserWithDeviceState = async (user, fields) => {
 };
 
 UserController.updateParticipantDeviceState = async (
-  user, playthrough, participant, oldState, clientId
+  user, trip, participant, oldState, clientId
 ) => {
-  const script = await models.Script.findById(playthrough.scriptId);
+  const script = await models.Script.findById(trip.scriptId);
   // Calculate new geofences
   const oldGeofences = fptCore.ScriptCore.geofencesInArea(
     script.content, oldState.latitude, oldState.longitude,
-    oldState.accuracy, playthrough.values.waypoint_options);
+    oldState.accuracy, trip.values.waypoint_options);
   const newGeofences = fptCore.ScriptCore.geofencesInArea(
     script.content, user.locationLatitude, user.locationLongitude,
-    user.locationAccuracy, playthrough.values.waypoint_options);
+    user.locationAccuracy, trip.values.waypoint_options);
   const enteredGeofenceNames = _.difference(
     _.map(newGeofences, 'name'),
     _.map(oldGeofences, 'name')
@@ -50,12 +50,12 @@ UserController.updateParticipantDeviceState = async (
       role: participant.roleName,
       geofence: geofenceName
     };
-    await TripActionController.applyEvent(participant.playthroughId, event);
-    await TripNotifyController.notifyEvent(playthrough.id, event, clientId);
+    await TripActionController.applyEvent(participant.tripId, event);
+    await TripNotifyController.notifyEvent(trip.id, event, clientId);
   }
   // Notify new device state
   await TripNotifyController
-    .notifyUserDeviceState(playthrough.id, user, clientId);
+    .notifyUserDeviceState(trip.id, user, clientId);
 };
 
 // Location update path
@@ -85,7 +85,7 @@ UserController.updateParticipantDeviceState = async (
 //     -> create enterGeofence events locally
 UserController.updateDeviceState = async(userId, fields, clientId=null) => {
   const user = await models.User.findById(userId);
-  const playthroughs = await models.Playthrough.findAll({
+  const trips = await models.Trip.findAll({
     where: { isArchived: false }
   });
   // Save old state
@@ -95,18 +95,18 @@ UserController.updateDeviceState = async(userId, fields, clientId=null) => {
     accuracy: user.accuracy
   };
   await UserController.updateUserWithDeviceState(user, fields);
-  for (let playthrough of playthroughs) {
+  for (let trip of trips) {
     const participant = await models.Participant.find({
       where: {
         userId: user.id,
-        playthroughId: playthrough.id,
+        tripId: trip.id,
       }
     });
     if (!participant) {
       continue;
     }
     await UserController.updateParticipantDeviceState(
-      user, playthrough, participant, oldState, clientId);
+      user, trip, participant, oldState, clientId);
   }
 };
 

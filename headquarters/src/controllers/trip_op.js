@@ -32,9 +32,9 @@ async function updateUser(objs, op) {
   return await user.save({ fields: Object.keys(op.updates) });
 }
 
-async function updatePlaythrough(objs, op) {
-  applyUpdatesToInstance(objs.playthrough, op.updates);
-  return await objs.playthrough.save({ fields: Object.keys(op.updates) });
+async function updateTrip(objs, op) {
+  applyUpdatesToInstance(objs.trip, op.updates);
+  return await objs.trip.save({ fields: Object.keys(op.updates) });
 }
 
 async function updateParticipant(objs, op) {
@@ -45,20 +45,20 @@ async function updateParticipant(objs, op) {
 
 async function createMessage(objs, op) {
   const fields = Object.assign({}, op.updates, {
-    playthroughId: objs.playthrough.id,
+    tripId: objs.trip.id,
     createdAt: op.updates.createdAt.toDate(),
     readAt: op.updates.readAt ? op.updates.readAt.toDate() : null
   });
   const message = await models.Message.create(fields);
   await MessageController.sendMessage(message);
-  await TripRelaysController.relayMessage(objs.playthrough, message,
+  await TripRelaysController.relayMessage(objs.trip, message,
     op.suppressRelayId);
   return message;
 }
 
 async function initiateCall(objs, op) {
   return await TripRelaysController.initiateCall(
-    objs.playthrough, op.toRoleName, op.asRoleName, op.detectVoicemail);
+    objs.trip, op.toRoleName, op.asRoleName, op.detectVoicemail);
 }
 
 const opFunctions = {
@@ -66,7 +66,7 @@ const opFunctions = {
   initiateCall: initiateCall,
   twiml: () => { /* ignore */ },
   updateAudio: () => { /* ignore */ },
-  updatePlaythrough: updatePlaythrough,
+  updateTrip: updateTrip,
   updateParticipant: updateParticipant,
   updateUser: updateUser,
   updateUi: () => { /* ignore */ }

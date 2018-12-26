@@ -1,9 +1,9 @@
 const assert = require('assert');
 const moment = require('moment-timezone');
 
-const PlaythroughCore = require('../src/playthrough');
+const TripCore = require('../src/trip');
 
-describe('PlaythroughCore', () => {
+describe('TripCore', () => {
   describe('#getInitialValues', () => {
     it('creates values from multiple variants', () => {
       const script = {
@@ -16,7 +16,7 @@ describe('PlaythroughCore', () => {
         }
       };
       const variantNames = ['opt1'];
-      const res = PlaythroughCore.getInitialValues(script, variantNames);
+      const res = TripCore.getInitialValues(script, variantNames);
       assert.deepEqual(res, {
         abc: 123,
         def: 456
@@ -37,7 +37,7 @@ describe('PlaythroughCore', () => {
         timezone: 'US/Pacific'
       };
       const variantNames = ['part1', 'part2'];
-      const res = PlaythroughCore.getInitialSchedule(script, '2017-11-01',
+      const res = TripCore.getInitialSchedule(script, '2017-11-01',
         variantNames);
       assert.strictEqual(
         moment.utc(res.cue1).tz('US/Pacific').format('MMM Do YYYY h:mmA z'),
@@ -63,7 +63,7 @@ describe('PlaythroughCore', () => {
         },
         timezone: 'US/Pacific'
       };
-      const res = PlaythroughCore.getInitialSchedule(script, '2017-11-04', []);
+      const res = TripCore.getInitialSchedule(script, '2017-11-04', []);
       assert.strictEqual(
         moment.utc(res.beforeDst).tz('US/Pacific').format('MMM D h:mmA z Z'),
         'Nov 4 7:00AM PDT -07:00');

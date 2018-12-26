@@ -8,7 +8,7 @@ const initialState = {
     scripts: [],
     groups: [],
     profiles: [],
-    playthroughs: [],
+    trips: [],
     users: [],
     participants: [],
     messages: [],

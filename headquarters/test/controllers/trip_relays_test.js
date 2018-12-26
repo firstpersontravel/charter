@@ -29,7 +29,7 @@ describe('TripRelaysController', () => {
       );
       assert.strictEqual(res, participant.user.phoneNumber);
       sinon.assert.calledWith(models.Participant.find, {
-        where: { roleName: 'ForRole', playthroughId: 1 },
+        where: { roleName: 'ForRole', tripId: 1 },
         include: [{ model: models.User, as: 'user' }]
       });
     });
@@ -119,7 +119,7 @@ describe('TripRelaysController', () => {
         ]
       }
     });
-    const stubTrip = models.Playthrough.build({
+    const stubTrip = models.Trip.build({
       departureName: 'T1',
     });
     const stubRelay = {
@@ -151,7 +151,7 @@ describe('TripRelaysController', () => {
 
   describe('#initiateCall', () => {
     it('initiates call to proper relay and participant', async () => {
-      const trip = await models.Playthrough.build({ id: 10 });
+      const trip = await models.Trip.build({ id: 10 });
       const stubRelay = models.Relay.build({ forRoleName: 'Player' });
       const stubParticipant = models.Participant.build();
 
@@ -168,7 +168,7 @@ describe('TripRelaysController', () => {
 
       // test participant looked for for target
       sinon.assert.calledWith(models.Participant.find, {
-        where: { playthroughId: 10, roleName: 'Player' },
+        where: { tripId: 10, roleName: 'Player' },
         include: [{ model: models.User, as: 'user' }]
       });
       // Test initiate call was called with resulting records
@@ -177,7 +177,7 @@ describe('TripRelaysController', () => {
     });
 
     it('no-op if no relays found', async () => {
-      const trip = await models.Playthrough.build({ id: 10 });
+      const trip = await models.Trip.build({ id: 10 });
 
       sandbox.stub(TripRelaysController, 'ensureRelays').resolves([]);
       sandbox.stub(models.Participant, 'find').resolves();
@@ -195,7 +195,7 @@ describe('TripRelaysController', () => {
     });
 
     it('no-op if no participant found', async () => {
-      const trip = await models.Playthrough.build({ id: 10 });
+      const trip = await models.Trip.build({ id: 10 });
       const stubRelay = models.Relay.build({ forRoleName: 'Player' });
 
       sandbox.stub(TripRelaysController, 'ensureRelays').resolves([stubRelay]);
@@ -211,7 +211,7 @@ describe('TripRelaysController', () => {
 
       // test participant looked for for target
       sinon.assert.calledWith(models.Participant.find, {
-        where: { playthroughId: 10, roleName: 'Player' },
+        where: { tripId: 10, roleName: 'Player' },
         include: [{ model: models.User, as: 'user' }]
       });
       sinon.assert.notCalled(RelayController.initiateCall);
@@ -220,7 +220,7 @@ describe('TripRelaysController', () => {
 
   describe('#sendAdminMessage', () => {
     it('sends an admin message', async () => {
-      const trip = await models.Playthrough.build();
+      const trip = await models.Trip.build();
       const stubRelay = models.Relay.build();
 
       sandbox.stub(TripRelaysController, 'ensureRelays').resolves([stubRelay]);

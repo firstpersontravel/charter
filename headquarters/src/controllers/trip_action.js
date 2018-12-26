@@ -37,13 +37,13 @@ function getResultsForTriggerAndObjs(objs, trigger, applyAt) {
 /**
  * Schedule an action.
  */
-async function scheduleAction(playthroughId, action) {
+async function scheduleAction(tripId, action) {
   logger.info(
     action.params,
     `Scheduling action ${action.scheduleAt.fromNow()}: ` + 
     `${action.name}.`);
   const fields = {
-    playthroughId: playthroughId,
+    tripId: tripId,
     type: 'action',
     name: action.name,
     params: action.params,
@@ -60,9 +60,9 @@ async function scheduleAction(playthroughId, action) {
 /**
  * Schedule actions.
  */
-async function scheduleActions(playthroughId, actions) {
+async function scheduleActions(tripId, actions) {
   for (let action of actions) {
-    await scheduleAction(playthroughId, action);
+    await scheduleAction(tripId, action);
   }
 }
 
@@ -74,15 +74,15 @@ async function applyOps(objs, ops) {
 
 async function applyResult(objs, result) {
   await applyOps(objs, result.resultOps);
-  await scheduleActions(objs.playthrough.id, result.scheduledActions);
+  await scheduleActions(objs.trip.id, result.scheduledActions);
 }
 
 /**
  * Apply an action and gather the results.
  */
-async function applyAction(playthroughId, action, applyAt) {
+async function applyAction(tripId, action, applyAt) {
   logger.info(action.params, `Applying action: ${action.name}.`);
-  const objs = await TripUtil.getObjectsForPlaythrough(playthroughId);
+  const objs = await TripUtil.getObjectsForTrip(tripId);
   const result = getResultsForActionAndObjs(objs, action, applyAt);
   await applyResult(objs, result);
   return result;
@@ -91,9 +91,9 @@ async function applyAction(playthroughId, action, applyAt) {
 /**
  * Apply an action and gather the results.
  */
-async function applyEvent(playthroughId, event, applyAt) {
+async function applyEvent(tripId, event, applyAt) {
   logger.info(event, `Applying event: ${event.type}.`);
-  const objs = await TripUtil.getObjectsForPlaythrough(playthroughId);
+  const objs = await TripUtil.getObjectsForTrip(tripId);
   const result = getResultsForEventAndObjs(objs, event, applyAt);
   await applyResult(objs, result);
   return result;
@@ -102,9 +102,9 @@ async function applyEvent(playthroughId, event, applyAt) {
 /**
  * Apply an action and gather the results.
  */
-async function applyTrigger(playthroughId, triggerName, applyAt) {
+async function applyTrigger(tripId, triggerName, applyAt) {
   logger.info(`Applying trigger: ${triggerName}.`);
-  const objs = await TripUtil.getObjectsForPlaythrough(playthroughId);
+  const objs = await TripUtil.getObjectsForTrip(tripId);
   const trigger = _.find(objs.script.content.triggers || [],
     { name: triggerName });
   if (!trigger) {

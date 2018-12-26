@@ -7,7 +7,7 @@ import PlayerMessages from '../components/PlayerMessages';
 
 const mapStateToProps = (state, ownProps) => ({
   messages: _.filter(state.datastore.messages, (message) => {
-    if (message.playthroughId !== Number(ownProps.params.tripId)) {
+    if (message.tripId !== Number(ownProps.params.tripId)) {
       return false;
     }
     const sentBy = _.find(state.datastore.participants,

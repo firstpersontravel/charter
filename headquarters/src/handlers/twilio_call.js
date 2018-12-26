@@ -32,7 +32,7 @@ async function interpretTwimlDial(tripId, relay, twimlResponse, twimlOp) {
 
   // Find the active participant
   const dialParticipant = await models.Participant.find({
-    where: { playthroughId: tripId, roleName: twimlOp.toRoleName },
+    where: { tripId: tripId, roleName: twimlOp.toRoleName },
     include: [{ model: models.User, as: 'user' }]
   });
   if (!dialParticipant) {

@@ -16,18 +16,18 @@ TwilioUtil.lookupOrCreateTripId = async (relay, userPhoneNumber) => {
     RelayController.lookupParticipant(relay, userPhoneNumber)
   );
   if (participant) {
-    return participant.playthroughId;
+    return participant.tripId;
   }
   if (relay.userPhoneNumber !== '') {
     logger.warn(`Relay ${relay.id} is not a trailhead; can't create a new trip.`);
     return null;
   }
   // If no participant, and it's a trailhead, then we need to create a new 
-  // playthrough.
-  const playthrough = await (
+  // trip.
+  const trip = await (
     RelayTrailheadController.createTrip(relay, userPhoneNumber)
   );
-  return playthrough.id;
+  return trip.id;
 };
 
 module.exports = TwilioUtil;

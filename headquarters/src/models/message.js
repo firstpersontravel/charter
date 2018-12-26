@@ -1,5 +1,5 @@
 const database = require('../config').database;
-const Playthrough = require('./playthrough');
+const Trip = require('./trip');
 const Participant = require('./participant');
 
 const {
@@ -34,7 +34,7 @@ const Message = database.define('Message', snakeCaseColumns({
   isArchived: booleanField(false)
 }));
 
-oneToMany(Message, Playthrough);
+oneToMany(Message, Trip);
 Message.belongsTo(Participant, belongsTo('sentBy'));
 Message.belongsTo(Participant, belongsTo('sentTo'));
 

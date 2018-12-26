@@ -14,22 +14,22 @@ async function updateRelaysRoute(req, res) {
 }
 
 async function notifyRoute(req, res) {
-  const tripId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   await TripNotifyController.notify(tripId, req.body.notify_type);
   res.json({ data: { ok: true } });
 }
 
 async function fastForwardRoute(req, res) {
-  const tripId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   await GlobalController.runScheduledActions(null, tripId, true);
   await TripNotifyController.notify(tripId, 'reload');
   res.json({ data: { ok: true } });
 }
 
 async function fastForwardNextRoute(req, res) {
-  const tripId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   const nextAction = await models.Action.find({
-    where: { playthroughId: tripId, appliedAt: null, failedAt: null },
+    where: { tripId: tripId, appliedAt: null, failedAt: null },
     order: [['scheduledAt', 'ASC'], ['id', 'ASC']]
   });
   if (nextAction) {
@@ -41,14 +41,14 @@ async function fastForwardNextRoute(req, res) {
 }
 
 async function resetRoute(req, res) {
-  const tripId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   const checkpointName = req.body.checkpoint_name;
   await TripResetController.resetToCheckpoint(tripId, checkpointName);
   res.json({ data: { ok: true } });
 }
 
 async function phraseRoute(req, res) {
-  const tripId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   const actionPhrase = req.body.action_phrase;
   const now = moment.utc();
   const action = await TripUtil.expandActionPhrase(tripId, actionPhrase, now);
@@ -62,7 +62,7 @@ async function phraseRoute(req, res) {
 }
 
 async function triggerRoute(req, res) {
-  const tripId = req.params.playthroughId;
+  const tripId = req.params.tripId;
   const triggerName = req.body.trigger_name;
   await TripActionController.applyTrigger(tripId, triggerName);
   await TripNotifyController.notifyTrigger(tripId, triggerName);

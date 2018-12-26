@@ -76,49 +76,49 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   directionsRoute: function() {
     if (!this.get('params.route')) { return null; }
-    return this.get('playthrough.script.content.routes')
+    return this.get('trip.script.content.routes')
       .findBy('name', this.get('params.route'));
   }.property('params'),
 
   directions: function() {
     if (!this.get('params.route')) { return null; }
-    var playthrough = this.get('playthrough');
-    var waypointOptions = playthrough.get('values.waypoint_options');
+    var trip = this.get('trip');
+    var waypointOptions = trip.get('values.waypoint_options');
     var routeName = this.get('params.route');
     return fptCore.WaypointCore.directionsForRoute(
-      this.get('playthrough.script.content'), routeName, waypointOptions);
+      this.get('trip.script.content'), routeName, waypointOptions);
   }.property('params'),
 
   toGeofence: function() {
     if (!this.get('params.geofence')) { return null; }
     var toGeofenceName = this.get('params.geofence');
-    return this.get('playthrough.script.content.geofences')
+    return this.get('trip.script.content.geofences')
       .findBy('name', toGeofenceName);
   }.property('params'),
 
   fromWaypoint: function() {
     if (!this.get('params.route')) { return null; }
-    var playthrough = this.get('playthrough');
-    var waypointOptions = playthrough.get('values.waypoint_options');
+    var trip = this.get('trip');
+    var waypointOptions = trip.get('values.waypoint_options');
     var fromWaypointName = this.get('directionsRoute').from;
     return fptCore.WaypointCore.optionForWaypoint(
-      this.get('playthrough.script.content'),
+      this.get('trip.script.content'),
       fromWaypointName, waypointOptions);
   }.property('params'),
 
   toWaypoint: function() {
-    var playthrough = this.get('playthrough');
-    var waypointOptions = playthrough.get('values.waypoint_options');
+    var trip = this.get('trip');
+    var waypointOptions = trip.get('values.waypoint_options');
     if (!this.get('params.route')) {
       if (this.get('params.waypoint')) {
         return fptCore.WaypointCore.optionForWaypoint(
-          this.get('playthrough.script.content'),
+          this.get('trip.script.content'),
           this.get('params.waypoint'), waypointOptions);
       }
     }
     var toWaypointName = this.get('directionsRoute').to;
     return fptCore.WaypointCore.optionForWaypoint(
-      this.get('playthrough.script.content'),
+      this.get('trip.script.content'),
       toWaypointName, waypointOptions);
   }.property('params'),
 

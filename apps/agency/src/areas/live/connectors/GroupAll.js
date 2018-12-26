@@ -12,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
   const messagesNeedingReply = getMessagesNeedingReply(
     state, ownProps.params.groupId);
   const nextUnappliedAction = _(state.datastore.actions)
-    .filter(action => _.includes(tripIds, action.playthroughId))
+    .filter(action => _.includes(tripIds, action.tripId))
     .filter({ isArchived: false, appliedAt: null, failedAt: null })
     .filter(action => moment.utc(action.scheduledAt).isAfter())
     .sortBy('scheduledAt')

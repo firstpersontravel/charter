@@ -3,7 +3,7 @@ module.exports = {
   Group: require('./group'),
   Message: require('./message'),
   Profile: require('./profile'),
-  Playthrough: require('./playthrough'),
+  Trip: require('./trip'),
   Participant: require('./participant'),
   Relay: require('./relay'),
   Script: require('./script'),

@@ -1,5 +1,5 @@
 const database = require('../config').database;
-const Playthrough = require('./playthrough');
+const Trip = require('./trip');
 
 const {
   booleanField,
@@ -28,6 +28,6 @@ const Action = database.define('Action', snakeCaseColumns({
   failedAt: datetimeField()
 }));
 
-oneToMany(Action, Playthrough);
+oneToMany(Action, Trip);
 
 module.exports = Action;

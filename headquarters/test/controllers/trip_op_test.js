@@ -17,16 +17,16 @@ describe('TripOpController', () => {
 
   describe('#applyOp', () => {
 
-    describe('updatePlaythrough', () => {
-      it('applies a deep value change to a playthrough', async () => {
+    describe('updateTrip', () => {
+      it('applies a deep value change to a trip', async () => {
         const objs = {
-          playthrough: {
+          trip: {
             values: { abc: 123 },
             save: sandbox.stub().resolves()
           }
         };
         const op = {
-          operation: 'updatePlaythrough',
+          operation: 'updateTrip',
           updates: {
             values: { initiatives: { game_won: { $set: true } } }
           }
@@ -34,8 +34,8 @@ describe('TripOpController', () => {
 
         await TripOpController.applyOp(objs, op);
         const newValues = { abc: 123, initiatives: { game_won: true } };
-        assert.deepStrictEqual(objs.playthrough.values, newValues);
-        sinon.assert.calledWith(objs.playthrough.save,
+        assert.deepStrictEqual(objs.trip.values, newValues);
+        sinon.assert.calledWith(objs.trip.save,
           { fields: ['values']});
       });
     });
@@ -97,7 +97,7 @@ describe('TripOpController', () => {
       it('creates a message', async () => {
         const now = moment.utc();
         const objs = {
-          playthrough: { id: 123 }
+          trip: { id: 123 }
         };
         const op = {
           operation: 'createMessage',
@@ -120,7 +120,7 @@ describe('TripOpController', () => {
           createdAt: now.toDate(),
           messageContent: 'hi there',
           messageType: 'text',
-          playthroughId: 123,
+          tripId: 123,
           readAt: null,
           sentById: 1,
           sentToId: 2
@@ -128,7 +128,7 @@ describe('TripOpController', () => {
         sinon.assert.calledWith(MessageController.sendMessage,
           fakeMessage);
         sinon.assert.calledWith(TripRelaysController.relayMessage,
-          objs.playthrough, fakeMessage, 5);
+          objs.trip, fakeMessage, 5);
       });
     });
   });

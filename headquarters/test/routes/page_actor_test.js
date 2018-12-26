@@ -22,7 +22,7 @@ describe('pageActorRoutes', () => {
       sandbox.stub(models.Participant, 'findAll').resolves([{
         roleName: 'Gabe',
         user: { id: 10 },
-        playthrough: {
+        trip: {
           script: {
             content: {
               roles: [{ name: 'Gabe', actor: true }]
@@ -38,8 +38,8 @@ describe('pageActorRoutes', () => {
       assert.deepStrictEqual(models.Participant.findAll.firstCall.args, [{
         where: { userId: { [Sequelize.Op.not]: null } },
         include: [{
-          model: models.Playthrough,
-          as: 'playthrough',
+          model: models.Trip,
+          as: 'trip',
           where: { isArchived: false },
           include: [{ model: models.Script, as: 'script' }]
         }, {

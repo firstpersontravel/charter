@@ -112,16 +112,16 @@ export default class Group extends Component {
     this.handleRefresh();
   }
 
-  loadData(playthroughIds) {
-    if (!playthroughIds || !playthroughIds.length) {
-      // If we have no playthrough ids, it's probably because this group was
+  loadData(tripIds) {
+    if (!tripIds || !tripIds.length) {
+      // If we have no trip ids, it's probably because this group was
       // archived, so the trips are not loaded by default. We still want to
       // be able to view it though, so do an initial load. This triggers a prop
       // refresh, and now that all the trip ids are present, a normal
       // refreshLiveData will do the trick.`
       const groupId = this.props.params.groupId;
       this.props.getInstance('groups', groupId);
-      this.props.listCollection('playthroughs', { groupId: groupId });
+      this.props.listCollection('trips', { groupId: groupId });
       return;
     }
     // if (this.props.groupStatus.instance) {
@@ -130,37 +130,37 @@ export default class Group extends Component {
     //     this.props.getInstance('scripts', scriptId);
     //   }
     // }
-    this.updateFayeSubscriptions(playthroughIds);
-    this.props.refreshLiveData(playthroughIds);
+    this.updateFayeSubscriptions(tripIds);
+    this.props.refreshLiveData(tripIds);
   }
 
-  updateFayeSubscriptions(playthroughIds) {
+  updateFayeSubscriptions(tripIds) {
     // Cancel unneeded subscriptions
-    const newIds = playthroughIds.map(id => id.toString());
+    const newIds = tripIds.map(id => id.toString());
     const subscribedIds = Object.keys(this.fayeSubscriptions);
-    _.difference(subscribedIds, newIds).forEach((playthroughId) => {
-      console.log(`Cancelling subscription to ${playthroughId}`);
-      this.fayeSubscriptions[playthroughId].cancel();
+    _.difference(subscribedIds, newIds).forEach((tripId) => {
+      console.log(`Cancelling subscription to ${tripId}`);
+      this.fayeSubscriptions[tripId].cancel();
     });
 
     // Subscribe to new channels
-    newIds.forEach((playthroughId) => {
+    newIds.forEach((tripId) => {
       // If already subscribed, then don't do anything
-      if (this.fayeSubscriptions[playthroughId]) {
+      if (this.fayeSubscriptions[tripId]) {
         return;
       }
       // Otherwise, subscribe
-      console.log(`Subscribing to ${playthroughId}`);
-      const channel = `/${getStage()}_trip_${playthroughId}`;
+      console.log(`Subscribing to ${tripId}`);
+      const channel = `/${getStage()}_trip_${tripId}`;
       const subscription = this.fayeClient.subscribe(channel, (message) => {
-        this.handleFayeMessage(playthroughId, message);
+        this.handleFayeMessage(tripId, message);
       });
-      this.fayeSubscriptions[playthroughId] = subscription;
+      this.fayeSubscriptions[tripId] = subscription;
     });
   }
 
-  handleFayeMessage(playthroughId, message) {
-    console.log('Got faye message', playthroughId, message);
+  handleFayeMessage(tripId, message) {
+    console.log('Got faye message', tripId, message);
     // TODO: use this data to update just the location
     if (message.type === 'device_state') {
       return;
@@ -168,7 +168,7 @@ export default class Group extends Component {
     // Reload in a second
     setTimeout(() => {
       console.log('Reloading due to incoming realtime event.');
-      this.props.refreshLiveData([playthroughId]);
+      this.props.refreshLiveData([tripId]);
     }, 1000);
   }
 

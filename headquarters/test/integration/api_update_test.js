@@ -7,10 +7,10 @@ const TestUtil = require('../util');
 
 describe('API replace', () => {
 
-  let playthrough;
+  let trip;
 
   beforeEach(async () => {
-    playthrough = await TestUtil.createDummyPlaythrough();
+    trip = await TestUtil.createDummyTrip();
   });
 
   describe('PATCH /api/participants/:id', () => {
@@ -18,7 +18,7 @@ describe('API replace', () => {
 
     beforeEach(async () => {
       participant = await models.Participant.find({
-        where: { playthroughId: playthrough.id }
+        where: { tripId: trip.id }
       });
       await participant.update({ values: { existing: true } });
     });
@@ -44,7 +44,7 @@ describe('API replace', () => {
                 acknowledgedPageAt: null,
                 acknowledgedPageName: '',
                 id: participant.id,
-                playthroughId: playthrough.id,
+                tripId: trip.id,
                 roleName: 'Dummy',
                 userId: null,
                 values: { existing: true, audio: 'playing' }

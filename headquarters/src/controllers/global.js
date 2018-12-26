@@ -12,10 +12,10 @@ const TripUtil = require('./trip_util');
 const logger = config.logger.child({ name: 'controllers.global' });
 
 /**
- * Schedule actions for all active playthroughs.
+ * Schedule actions for all active trips.
  */
 async function scheduleActions(upToThreshold) {
-  const playthroughs = await models.Playthrough.findAll({
+  const trips = await models.Trip.findAll({
     where: {
       isArchived: false,
       lastScheduledTime: {
@@ -26,10 +26,10 @@ async function scheduleActions(upToThreshold) {
       }
     }
   });
-  for (const playthrough of playthroughs) {
-    logger.info('Checking playthrough', playthrough.id, 'up to', upToThreshold);
-    await scheduleTripActions(playthrough.id, upToThreshold);
-    await playthrough.update({ lastScheduledTime: upToThreshold.toDate() });
+  for (const trip of trips) {
+    logger.info('Checking trip', trip.id, 'up to', upToThreshold);
+    await scheduleTripActions(trip.id, upToThreshold);
+    await trip.update({ lastScheduledTime: upToThreshold.toDate() });
   }
 }
 
@@ -38,7 +38,7 @@ async function scheduleActions(upToThreshold) {
  */
 function getTimeOccuranceActions(objs, context, upToThreshold) {
   const now = moment.utc();
-  const lastDate = objs.playthrough.lastScheduledTime;
+  const lastDate = objs.trip.lastScheduledTime;
   const lastTimestamp = lastDate ? moment.utc(lastDate).unix() : null;
   const toTimestamp = upToThreshold.unix();
 
@@ -64,7 +64,7 @@ function getTimeOccuranceActions(objs, context, upToThreshold) {
     const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
     // Construct schdeduled action
     return {
-      playthroughId: objs.playthrough.id,
+      tripId: objs.trip.id,
       type: 'trigger',
       name: trigger.name,
       params: {},
@@ -76,11 +76,11 @@ function getTimeOccuranceActions(objs, context, upToThreshold) {
 }
 
 /**
- * Schedule actions for a playthrough.
+ * Schedule actions for a trip.
  */
-async function scheduleTripActions(playthroughId, upToThreshold) {
-  const objs = await TripUtil.getObjectsForPlaythrough(playthroughId);
-  const playthrough = objs.playthrough;
+async function scheduleTripActions(tripId, upToThreshold) {
+  const objs = await TripUtil.getObjectsForTrip(tripId);
+  const trip = objs.trip;
   const context = TripUtil.createContext(objs);
 
   const now = moment.utc();
@@ -91,12 +91,12 @@ async function scheduleTripActions(playthroughId, upToThreshold) {
   // Add scene start event if needed -- only if we have just reset since
   // otherwise we might get into an infinite loop if the workers are backed
   // up or not running.
-  if (!playthrough.lastScheduledTime && !playthrough.currentSceneName) {
+  if (!trip.lastScheduledTime && !trip.currentSceneName) {
     const firstSceneName = fptCore.SceneCore.getStartingSceneName(
       objs.script, context);
     if (firstSceneName) {
       actions.push({
-        playthroughId: objs.playthrough.id,
+        tripId: objs.trip.id,
         type: 'action',
         name: 'start_scene',
         params: { scene_name: firstSceneName },
@@ -117,17 +117,17 @@ async function internalRunScheduledAction(action) {
   const now = moment.utc();
   const scheduledAt = moment.utc(action.scheduledAt);
   const applyAt = scheduledAt.isSameOrBefore(now) ? scheduledAt : now;
-  const playthroughId = action.playthroughId;
+  const tripId = action.tripId;
   if (action.type === 'action') {
     const scheduledAction = _.pick(action, ['name', 'params', 'event']);
-    await TripActionController.applyAction(playthroughId, scheduledAction,
+    await TripActionController.applyAction(tripId, scheduledAction,
       applyAt);
   } else if (action.type === 'trigger') {
-    await TripActionController.applyTrigger(playthroughId, action.name,
+    await TripActionController.applyTrigger(tripId, action.name,
       applyAt);
   } else if (action.type === 'event') {
     const event = Object.assign({ type: action.name }, action.params);
-    await TripActionController.applyEvent(playthroughId, event, applyAt);
+    await TripActionController.applyEvent(tripId, event, applyAt);
   }
 }
 
@@ -154,7 +154,7 @@ async function runScheduledAction(action, safe=false) {
 /**
  * Run all scheduled actions with some parameters.
  */
-async function runScheduledActions(upToThreshold=null, playthroughId=null,
+async function runScheduledActions(upToThreshold=null, tripId=null,
   safe=false) {
   const where = {
     isArchived: false,
@@ -164,15 +164,15 @@ async function runScheduledActions(upToThreshold=null, playthroughId=null,
   if (upToThreshold) {
     where.scheduledAt = { [Sequelize.Op.lte]: upToThreshold.toDate() };
   }
-  if (playthroughId) {
-    where.playthroughId = playthroughId;
+  if (tripId) {
+    where.tripId = tripId;
   }
   const actions = await models.Action.findAll({
     order: [['scheduledAt', 'ASC'], ['id', 'ASC']],
     where: where,
     include: [{
-      model: models.Playthrough,
-      as: 'playthrough',
+      model: models.Trip,
+      as: 'trip',
       where: {
         isArchived: false
       }

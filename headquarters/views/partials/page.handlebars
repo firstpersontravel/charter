@@ -1,14 +1,14 @@
-<div class="card" data-playthrough-id='{{playthrough.id}}'>
+<div class="card" data-trip-id='{{trip.id}}'>
   <div class="card-header">
     <strong>
-      {{scriptTitle}} {{playthrough.departureName}} {{playthrough.title}} as {{participant.roleName}}
+      {{scriptTitle}} {{trip.departureName}} {{trip.title}} as {{participant.roleName}}
     </strong>
     {{directiveText}}
     {{#unless isFirst}}
-    <a href='' data-playthrough-id='{{playthrough.id}}' data-page-name='{{page.name}}' data-ui='show-appearance'>Show now</a>
+    <a href='' data-trip-id='{{trip.id}}' data-page-name='{{page.name}}' data-ui='show-appearance'>Show now</a>
     {{/unless}}
   </div>
-  <div class="card-body" data-playthrough-id='{{playthrough.id}}' data-page-name="{{page.name}}" style="display: {{#if isFirst}}block{{else}}none{{/if}};">
+  <div class="card-body" data-trip-id='{{trip.id}}' data-page-name="{{page.name}}" style="display: {{#if isFirst}}block{{else}}none{{/if}};">
     {{#each panels}}
       {{> (lookup . 'type')}}
     {{/each}}

@@ -50,7 +50,7 @@ export default class App extends Component {
   componentDidMount() {
     document.title = `${getStage()} - FPT Ops`;
     this.props.listCollection('groups', { isArchived: false });
-    this.props.listCollection('playthroughs', { isArchived: false });
+    this.props.listCollection('trips', { isArchived: false });
     this.props.listCollection('scripts', {
       isArchived: false,
       isActive: true

@@ -6,10 +6,10 @@ describe('ActionResultCore', () => {
 
   describe('#tempUpdateContext', () => {
 
-    it('updates playthrough values deeply', () => {
+    it('updates trip values deeply', () => {
       const old = {};
       const ops = [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { values: { a: { b: { c: { $set: 'def' } } } } }
       }];
       const res = ActionResultCore.tempUpdateContext(old, ops);

@@ -3,7 +3,7 @@ import DS from 'ember-data';
 import RefUtils from '../utils/ref';
 
 export default DS.Model.extend({
-  playthrough: DS.belongsTo('playthrough', {async: false}),
+  trip: DS.belongsTo('trip', {async: false}),
   user: DS.belongsTo('user', {async: false}),
   roleName: DS.attr('string'),
   currentPageName: DS.attr('string'),
@@ -12,8 +12,8 @@ export default DS.Model.extend({
   values: DS.attr('obj'),
 
   role: function() {
-    return this.get('playthrough.script').getRole(this.get('roleName'));
-  }.property('playthrough'),
+    return this.get('trip.script').getRole(this.get('roleName'));
+  }.property('trip'),
 
   userProfile: function() {
     if (!this.get('user.profiles')) {
@@ -22,7 +22,7 @@ export default DS.Model.extend({
     var profiles = this.get('user.profiles')
       .filter(profile => (
         profile.get('roleName') === this.get('roleName') &&
-        profile.get('scriptName') === this.get('playthrough.script.name')
+        profile.get('scriptName') === this.get('trip.script.name')
       ));
     return profiles[0] || null;
   }.property('user.profiles'),
@@ -46,7 +46,7 @@ export default DS.Model.extend({
 
   isActor: function() {
     return this.get('role.actor') || false;
-  }.property('playthrough'),
+  }.property('trip'),
 
   firstName: function() {
     return this.get('contactName').split(' ')[0];

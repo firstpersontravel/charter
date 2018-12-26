@@ -67,7 +67,7 @@ ActionResultCore.tempUpdateContextFromResultOp = function(context, resultOp) {
       context[resultOp.roleName], resultOp.updates);
     break;
   }
-  case 'updatePlaythrough': {
+  case 'updateTrip': {
     context = Object.assign({}, context);  // Shallow clone
     context = ActionResultCore.tempUpdateObject(context, resultOp.updates);
     break;

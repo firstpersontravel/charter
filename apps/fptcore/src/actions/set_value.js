@@ -19,9 +19,9 @@ function setValue(script, context, params, applyAt) {
       updates: { values: _.set({}, participantValueRef, { $set: newValue }) }
     }];
   }
-  // Otherwise it's a playthrough value.
+  // Otherwise it's a trip value.
   return [{
-    operation: 'updatePlaythrough',
+    operation: 'updateTrip',
     updates: { values: _.set({}, params.value_ref, { $set: newValue }) }
   }];
 }

@@ -20,7 +20,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   tabs: function() {
     var tabSection = this.get('pageLayout.section');
-    var scriptContent = this.get('playthrough.script.content');
+    var scriptContent = this.get('trip.script.content');
     if (!scriptContent) {
       return [];
     }
@@ -31,10 +31,10 @@ export default Ember.Component.extend(WindowHeightMixin, {
   visibleTabs: function() {
     return this.get('tabs').filter(function(tab) {
       if (tab.visible === false) { return false; }
-      if (tab.if) { return this.get('playthrough').evaluateIf(tab.if); }
+      if (tab.if) { return this.get('trip').evaluateIf(tab.if); }
       return true;
     }, this);
-  }.property('tabs', 'playthrough.evalContext'),
+  }.property('tabs', 'trip.evalContext'),
 
   selectedTab: function() {
     var tabName = this.get('selectedTabName');

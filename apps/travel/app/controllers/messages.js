@@ -3,7 +3,7 @@ import $ from 'jquery';
 
 export default Ember.Controller.extend({
 
-  playthrough: Ember.inject.controller(),
+  trip: Ember.inject.controller(),
 
   // Messy solution until store.filter is ready.
   allMessages: function() {
@@ -12,9 +12,9 @@ export default Ember.Controller.extend({
 
   // Messy solution until store.filter is ready.
   model: function() {
-    var playthrough = this.get('playthrough.model');
-    return this.get('allMessages').filterBy('playthrough', playthrough);
-  }.property('playthrough.model', 'allMessages.@each.playthrough'),
+    var trip = this.get('trip.model');
+    return this.get('allMessages').filterBy('trip', trip);
+  }.property('trip.model', 'allMessages.@each.trip'),
 
   notifyMessage: function(message) {
     var sentBy = message.get('sentBy');
@@ -28,11 +28,11 @@ export default Ember.Controller.extend({
     // (tablet vertical is 768)
     var TABLET_WIDTH = 700;
     if ($(document).width() > TABLET_WIDTH) {
-      var playthrough = this.get('playthrough.model');
+      var trip = this.get('trip.model');
       if (message.get('messageType') === 'text') {
-        messageContent = playthrough.humanizeText(message.get('messageContent'));
+        messageContent = trip.humanizeText(message.get('messageContent'));
       } else if (message.get('messageType') === 'image') {
-        var url = playthrough.get('script').urlForContentPath(
+        var url = trip.get('script').urlForContentPath(
           message.get('messageContent'));
         messageContent = "<img src='" + url + "'>";
       }

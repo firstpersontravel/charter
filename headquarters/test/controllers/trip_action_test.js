@@ -19,15 +19,15 @@ describe('TripActionController', () => {
 
   describe('#applyAction', () => {
 
-    let playthrough;
+    let trip;
 
     beforeEach(async () => {
-      playthrough = await TestUtil.createDummyPlaythrough();
+      trip = await TestUtil.createDummyTrip();
     });
 
     it('invokes result ops', async () => {
       const resultOps = [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {
           values: { initiatives: { won_the_game: { $set: true } } }
         }
@@ -40,7 +40,7 @@ describe('TripActionController', () => {
         });
 
       const action = { name: 'cue', params: {} };
-      await TripActionController.applyAction(playthrough.id, action);
+      await TripActionController.applyAction(trip.id, action);
       sinon.assert.calledOnce(TripOpController.applyOp);
       assert.deepStrictEqual(
         TripOpController.applyOp.firstCall.args[1],
@@ -63,7 +63,7 @@ describe('TripActionController', () => {
       });
 
       const action = { name: 'cue', params: {} };
-      await TripActionController.applyAction(playthrough.id, action);
+      await TripActionController.applyAction(trip.id, action);
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
         type: 'action',
         appliedAt: null,
@@ -72,7 +72,7 @@ describe('TripActionController', () => {
         failedAt: null,
         name: 'set_value',
         params: scheduleAction.params,
-        playthroughId: 1,
+        tripId: 1,
         scheduledAt: inOneHour.toDate(),
         triggerName: ''
       });

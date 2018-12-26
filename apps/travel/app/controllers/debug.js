@@ -9,7 +9,7 @@ export default Ember.Controller.extend({
   api: Ember.inject.service(),
   
   application: Ember.inject.controller(),
-  playthrough: Ember.inject.controller(),
+  trip: Ember.inject.controller(),
 
   addressInput: '',
   isGeocoding: false,
@@ -19,15 +19,15 @@ export default Ember.Controller.extend({
   }.property('time.currentTime'),
 
   lastRefreshedLocal: function() {
-    var lastRefreshed = this.get('playthrough.lastRefreshed');
+    var lastRefreshed = this.get('trip.lastRefreshed');
     if (!lastRefreshed) { return null; }
     return lastRefreshed.clone().local().format('h:mm:ssa');
-  }.property('playthrough.lastRefreshed'),
+  }.property('trip.lastRefreshed'),
 
   waypointOptions: function() {
     return fptCore.WaypointCore.getAllWaypointOptions(
-      this.get('playthrough.model.script.content'));
-  }.property('playthrough.model'),
+      this.get('trip.model.script.content'));
+  }.property('trip.model'),
 
   setLocationToCoords: function(latitude, longitude) {
     if (this.get('location.isWatching')) {
@@ -49,14 +49,14 @@ export default Ember.Controller.extend({
   }.property(),
 
   // Messy solution until store.filter is ready.
-  playthroughActions: function() {
-    var playthrough = this.get('playthrough.model');
-    return this.get('allActions').filterBy('playthrough', playthrough);
-  }.property('playthrough.model', 'allActions.@each.playthrough'),
+  tripActions: function() {
+    var trip = this.get('trip.model');
+    return this.get('allActions').filterBy('trip', trip);
+  }.property('trip.model', 'allActions.@each.trip'),
 
   // Messy solution until store.filter is ready.
   unappliedActions: function() {
-    return this.get('playthroughActions')
+    return this.get('tripActions')
       .filterBy('appliedAt', null)
       .filterBy('failedAt', null)
       .sort(function(a, b) {
@@ -64,7 +64,7 @@ export default Ember.Controller.extend({
           a.get('scheduledAt').valueOf(),
           b.get('scheduledAt').valueOf());
       });
-  }.property('playthroughActions.@each.appliedAt'),
+  }.property('tripActions.@each.appliedAt'),
 
   numLocalUnappliedActions: function() {
     return this.get('unappliedActions').length;

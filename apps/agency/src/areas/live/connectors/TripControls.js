@@ -10,7 +10,7 @@ const mapStateToProps = (state, ownProps) => ({
   systemActionRequestError: state.requestErrors['system.action'],
   nextAction: _(state.datastore.actions)
     .filter({
-      playthroughId: Number(ownProps.params.tripId),
+      tripId: Number(ownProps.params.tripId),
       appliedAt: null,
       failedAt: null
     })

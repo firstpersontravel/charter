@@ -8,11 +8,11 @@ const TestUtil = require('../util');
 describe('API replace', () => {
 
   let group;
-  let playthrough;
+  let trip;
 
   beforeEach(async () => {
-    playthrough = await TestUtil.createDummyPlaythrough();
-    group = await playthrough.getGroup();
+    trip = await TestUtil.createDummyTrip();
+    group = await trip.getGroup();
   });
 
   describe('PUT /api/groups/:id', () => {
@@ -106,7 +106,7 @@ describe('API replace', () => {
 
     beforeEach(async () => {
       participant = await models.Participant.find({
-        where: { playthroughId: playthrough.id }
+        where: { tripId: trip.id }
       });
       await participant.update({ values: { existing: true } });
     });
@@ -129,7 +129,7 @@ describe('API replace', () => {
                 acknowledgedPageAt: null,
                 acknowledgedPageName: '',
                 id: participant.id,
-                playthroughId: playthrough.id,
+                tripId: trip.id,
                 roleName: 'newRole',
                 userId: null,
                 values: { existing: true }

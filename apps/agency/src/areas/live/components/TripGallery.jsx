@@ -71,7 +71,7 @@ export default class TripGallery extends Component {
 
   loadData(tripId) {
     this.props.listCollection('messages', {
-      playthroughId: tripId,
+      tripId: tripId,
       messageType: 'image',
       messageName: ''
     });
@@ -86,7 +86,7 @@ export default class TripGallery extends Component {
       'What would you like the new gallery name to be?',
       trip.galleryName || defaultGalleryName);
     if (newGalleryName && newGalleryName !== trip.galleryName) {
-      this.props.updateInstance('playthroughs', trip.id, {
+      this.props.updateInstance('trips', trip.id, {
         galleryName: newGalleryName
       });
     }

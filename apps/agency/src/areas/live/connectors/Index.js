@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import Index from '../components/Index';
 
 const mapStateToProps = (state, ownProps) => {
-  const playthroughs = _.sortBy(_.filter(state.datastore.playthroughs,
+  const trips = _.sortBy(_.filter(state.datastore.trips,
     { isArchived: false }), 'date');
-  return { groupId: _.get(playthroughs[0], 'groupId') };
+  return { groupId: _.get(trips[0], 'groupId') };
 };
 
 export default connect(mapStateToProps)(Index);

@@ -24,8 +24,8 @@ export default Ember.Route.extend({
           return;
         }
         var participantRoleName = participantData.roleName;
-        var playthroughId = participantData.playthroughId;
-        self.transitionTo('participant.page', playthroughId, 
+        var tripId = participantData.tripId;
+        self.transitionTo('participant.page', tripId, 
           participantRoleName);
       });
   }

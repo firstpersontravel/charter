@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { IndexLink } from 'react-router';
 
-import { TextCore, PlaythroughCore, ParticipantCore } from 'fptcore';
+import { TextCore, TripCore, ParticipantCore } from 'fptcore';
 import AreYouSure from '../../common/partials/AreYouSure';
 import TripModal from '../partials/trip-modal';
 import GroupModal from '../partials/group-modal';
@@ -17,8 +17,8 @@ export default class ScheduleIndex extends Component {
     this.state = {
       isArchivingGroup: null,
       isArchiveGroupModalOpen: false,
-      isArchivingPlaythrough: null,
-      isArchivePlaythroughModalOpen: false,
+      isArchivingTrip: null,
+      isArchiveTripModalOpen: false,
       isTripEditModalOpen: false,
       isEditingTrip: null,
       isGroupEditModalOpen: false,
@@ -43,7 +43,7 @@ export default class ScheduleIndex extends Component {
 
   componentDidMount() {
     this.props.listCollection('groups', { isArchived: false });
-    this.props.listCollection('playthroughs', { isArchived: false });
+    this.props.listCollection('trips', { isArchived: false });
   }
 
   handleArchiveGroup(group) {
@@ -64,11 +64,11 @@ export default class ScheduleIndex extends Component {
     this.props.updateInstance('groups', group.id, {
       isArchived: true
     });
-    const playthroughs = _.filter(this.props.playthroughsStatus.instances,
+    const trips = _.filter(this.props.tripsStatus.instances,
       { groupId: group.id });
 
-    playthroughs.forEach(playthrough => (
-      this.props.updateInstance('playthroughs', playthrough.id, {
+    trips.forEach(trip => (
+      this.props.updateInstance('trips', trip.id, {
         isArchived: true
       })
     ));
@@ -78,27 +78,27 @@ export default class ScheduleIndex extends Component {
     });
   }
 
-  handleArchiveTrip(playthrough) {
+  handleArchiveTrip(trip) {
     this.setState({
-      isArchivePlaythroughModalOpen: true,
-      isArchivingPlaythrough: playthrough
+      isArchiveTripModalOpen: true,
+      isArchivingTrip: trip
     });
   }
 
   handleArchiveTripToggle() {
     this.setState({
-      isArchivePlaythroughModalOpen: !this.state.isArchivePlaythroughModalOpen
+      isArchiveTripModalOpen: !this.state.isArchiveTripModalOpen
     });
   }
 
   handleArchiveTripConfirm() {
-    const playthrough = this.state.isArchivingPlaythrough;
-    this.props.updateInstance('playthroughs', playthrough.id, {
+    const trip = this.state.isArchivingTrip;
+    this.props.updateInstance('trips', trip.id, {
       isArchived: true
     });
     this.setState({
-      isArchivePlaythroughModalOpen: false,
-      isArchivingPlaythrough: null
+      isArchiveTripModalOpen: false,
+      isArchivingTrip: null
     });
   }
 
@@ -118,13 +118,13 @@ export default class ScheduleIndex extends Component {
     });
   }
 
-  handleEditTrip(playthrough) {
+  handleEditTrip(trip) {
     const group = _.find(this.props.groupsStatus.instances,
-      { id: playthrough.groupId });
-    const script = _.find(this.props.scripts, { id: playthrough.scriptId });
+      { id: trip.groupId });
+    const script = _.find(this.props.scripts, { id: trip.scriptId });
     this.setState({
       isTripEditModalOpen: true,
-      isEditingTrip: playthrough,
+      isEditingTrip: trip,
       defaultTripGroup: group,
       defaultTripScript: script,
       defaultTripScheduleName: null
@@ -161,10 +161,10 @@ export default class ScheduleIndex extends Component {
 
   handleEditTripConfirm(group, fields) {
     const script = _.find(this.props.scripts, { id: group.scriptId });
-    const values = PlaythroughCore.getInitialValues(script, fields.variantNames);
-    const schedule = PlaythroughCore.getInitialSchedule(script,
+    const values = TripCore.getInitialValues(script, fields.variantNames);
+    const schedule = TripCore.getInitialSchedule(script,
       group.date, fields.variantNames);
-    const playthroughFields = {
+    const tripFields = {
       groupId: group.id,
       scriptId: group.scriptId,
       date: group.date,
@@ -183,17 +183,17 @@ export default class ScheduleIndex extends Component {
     ));
     if (this.state.isEditingTrip) {
       // update existing trip
-      this.props.updateInstance('playthroughs', this.state.isEditingTrip.id,
-        playthroughFields);
+      this.props.updateInstance('trips', this.state.isEditingTrip.id,
+        tripFields);
       // TODO: update participants too
     } else {
       // create new trip
-      this.props.initializePlaythrough(playthroughFields, participantsFields);
+      this.props.initializeTrip(tripFields, participantsFields);
     }
     this.handleEditTripToggle();
   }
 
-  renderCellForSchedule(group, departureName, playthroughs) {
+  renderCellForSchedule(group, departureName, trips) {
     const addButton = (
       <div key={departureName} className="row">
         <div className="col-sm-9">
@@ -206,37 +206,37 @@ export default class ScheduleIndex extends Component {
         </div>
       </div>
     );
-    const playthroughElements = playthroughs
-      .filter(playthrough => playthrough.departureName === departureName)
-      .map(playthrough => (
-        <div key={playthrough.id} className="row">
+    const tripElements = trips
+      .filter(trip => trip.departureName === departureName)
+      .map(trip => (
+        <div key={trip.id} className="row">
           <div className="col-sm-4">
             <strong>{departureName}</strong>{' '}
-            <IndexLink to={`/agency/live/${playthrough.groupId}/trip/${playthrough.id}`}>
-              {playthrough.title}
+            <IndexLink to={`/agency/live/${trip.groupId}/trip/${trip.id}`}>
+              {trip.title}
             </IndexLink>
           </div>
           <div className="col-sm-4">
-            {playthrough.variantNames.split(',').filter(Boolean).map(TextCore.titleForKey).join(', ')}
+            {trip.variantNames.split(',').filter(Boolean).map(TextCore.titleForKey).join(', ')}
           </div>
           <div className="col-sm-4">
             <button
               className="btn btn-sm btn-outline-secondary"
-              onClick={() => this.handleEditTrip(playthrough)}>
+              onClick={() => this.handleEditTrip(trip)}>
               Edit
             </button>
             {' '}
             <button
               className="btn btn-sm btn-outline-secondary"
-              onClick={() => this.handleArchiveTrip(playthrough)}>
+              onClick={() => this.handleArchiveTrip(trip)}>
               Archive
             </button>
           </div>
         </div>
       ));
 
-    const cellContents = playthroughElements.length ?
-      playthroughElements : addButton;
+    const cellContents = tripElements.length ?
+      tripElements : addButton;
 
     return (
       <div key={departureName}>
@@ -245,12 +245,12 @@ export default class ScheduleIndex extends Component {
     );
   }
 
-  renderGroup(group, script, playthroughs) {
+  renderGroup(group, script, trips) {
     const dateShort = moment(group.date).format('MMM D, YYYY');
     const departureNames = _.map(script.content.departures, 'name');
     const scheduleCells = departureNames.map(departureName =>
       this.renderCellForSchedule(group, departureName,
-        _.filter(playthroughs, { departureName: departureName })));
+        _.filter(trips, { departureName: departureName })));
 
     return (
       <div key={group.id} className="row" style={{ borderBottom: '2px solid #ddd', paddingBottom: '0.5em', paddingTop: '0.5em' }}>
@@ -280,11 +280,11 @@ export default class ScheduleIndex extends Component {
 
   render() {
     if (this.props.scripts.length === 0 ||
-        this.props.playthroughsStatus.isLoading ||
+        this.props.tripsStatus.isLoading ||
         this.props.groupsStatus.isLoading) {
       return <div>Loading</div>;
     }
-    if (this.props.playthroughsStatus.isError ||
+    if (this.props.tripsStatus.isError ||
         this.props.groupsStatus.isError) {
       return <div>Error</div>;
     }
@@ -292,7 +292,7 @@ export default class ScheduleIndex extends Component {
     const groupRows = _.map(groups, group => (
       this.renderGroup(group,
         _.find(this.props.scripts, { id: group.scriptId }),
-        _.filter(this.props.playthroughsStatus.instances,
+        _.filter(this.props.tripsStatus.instances,
         { groupId: group.id }))
     ));
     return (
@@ -311,7 +311,7 @@ export default class ScheduleIndex extends Component {
           isOpen={this.state.isTripEditModalOpen}
           group={this.state.defaultTripGroup}
           script={this.state.defaultTripScript}
-          playthrough={this.state.isEditingTrip}
+          trip={this.state.isEditingTrip}
           defaultDepartureName={this.state.defaultTripScheduleName}
           onClose={this.handleEditTripToggle}
           onConfirm={this.handleEditTripConfirm} />
@@ -326,12 +326,12 @@ export default class ScheduleIndex extends Component {
           isOpen={this.state.isArchiveGroupModalOpen}
           onToggle={this.handleArchiveGroupToggle}
           onConfirm={this.handleArchiveGroupConfirm}
-          message={`Are you sure you want to archive ${_.get(this.state.isArchivingGroup, 'date')} and all playthroughs?`} />
+          message={`Are you sure you want to archive ${_.get(this.state.isArchivingGroup, 'date')} and all trips?`} />
         <AreYouSure
-          isOpen={this.state.isArchivePlaythroughModalOpen}
+          isOpen={this.state.isArchiveTripModalOpen}
           onToggle={this.handleArchiveTripToggle}
           onConfirm={this.handleArchiveTripConfirm}
-          message={`Are you sure you want to archive ${_.get(this.state.isArchivingPlaythrough, 'departureName')}: ${_.get(this.state.isArchivingPlaythrough, 'title')}?`} />
+          message={`Are you sure you want to archive ${_.get(this.state.isArchivingTrip, 'departureName')}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
       </div>
     );
   }
@@ -342,8 +342,8 @@ ScheduleIndex.propTypes = {
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   groupsStatus: PropTypes.object.isRequired,
-  playthroughsStatus: PropTypes.object.isRequired,
-  initializePlaythrough: PropTypes.func.isRequired,
+  tripsStatus: PropTypes.object.isRequired,
+  initializeTrip: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired

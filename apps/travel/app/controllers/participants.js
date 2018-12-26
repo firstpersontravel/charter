@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Controller.extend({
 
-  playthrough: Ember.inject.controller(),
+  trip: Ember.inject.controller(),
 
   // Messy solution until store.filter is ready.
   allParticipants: function() {
@@ -11,14 +11,14 @@ export default Ember.Controller.extend({
 
   // Messy solution until store.filter is ready.
   model: function() {
-    var playthrough = this.get('playthrough.model');
-    return this.get('allParticipants').filterBy('playthrough', playthrough);
-  }.property('playthrough.model', 'allParticipants.@each.playthrough'),
+    var trip = this.get('trip.model');
+    return this.get('allParticipants').filterBy('trip', trip);
+  }.property('trip.model', 'allParticipants.@each.trip'),
 
   findParticipantByRoleName: function(roleName) {
     var participant = this.get('model').findBy('roleName', roleName);
     if (!participant) {
-      throw new Error('participant not found for playthrough ' +
+      throw new Error('participant not found for trip ' +
         this.get('model.id') + ' role ' + roleName);
     }
     return participant;

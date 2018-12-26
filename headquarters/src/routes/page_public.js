@@ -13,7 +13,7 @@ const participantShortcutRoute = async (req, res) => {
   }
   res.redirect(
     `/travel/u/${participant.userId || 0}` +
-    `/p/${participant.playthroughId}` +
+    `/p/${participant.tripId}` +
     `/role/${participant.roleName}`
   );
 };

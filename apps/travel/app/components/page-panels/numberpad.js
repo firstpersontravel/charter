@@ -16,7 +16,7 @@ export default Ember.Component.extend({
       var entry = this.get('numberInput');
       if (!entry || entry === '') { return; }
       var triggered = false;
-      var value = this.get('playthrough').lookupRef(correctRef);
+      var value = this.get('trip').lookupRef(correctRef);
       if (!value || !cue) { return; }
       if (value.toString() === entry.toString()) {
         this.triggerAction({

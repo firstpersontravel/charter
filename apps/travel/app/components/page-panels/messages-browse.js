@@ -28,12 +28,12 @@ export default Ember.Component.extend(WindowHeightMixin, {
     } else {
       roleName = this.get('participant.roleName');
     }
-    return this.get('playthrough.participants').findBy('roleName', roleName);
+    return this.get('trip.participants').findBy('roleName', roleName);
   }.property('params', 'participant.roleName'),
 
   messagesWithSelf: function() {
     var asParticipant = this.get('asParticipant');
-    var messages = this.get('playthrough.messages');
+    var messages = this.get('trip.messages');
     return messages
       .filter(function(message) {
         return (
@@ -45,12 +45,12 @@ export default Ember.Component.extend(WindowHeightMixin, {
           a.get('createdAt').valueOf(),
           b.get('createdAt').valueOf());
       });
-  }.property('params', 'playthrough.messages.length'),
+  }.property('params', 'trip.messages.length'),
 
   contacts: function() {
     // Senders sorted by who wrote to you most recently, most recent first.
     var asParticipant = this.get('asParticipant');
-    var participants = this.get('playthrough.participants');
+    var participants = this.get('trip.participants');
     var addedRoleNames = asParticipant.get('values.accessible_contacts') || [];
     var accessibleContacts = addedRoleNames
       .map(function(roleName) {

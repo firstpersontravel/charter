@@ -9,28 +9,28 @@ describe('API retrieve', () => {
 
   const today = moment.utc().format('YYYY-MM-DD');
   let group;
-  let playthrough;
+  let trip;
 
   beforeEach(async () => {
-    playthrough = await TestUtil.createDummyPlaythrough();
-    group = await playthrough.getGroup();
+    trip = await TestUtil.createDummyTrip();
+    group = await trip.getGroup();
   });
 
-  describe('GET /api/playthroughs/:id', () => {
-    it('retrieves playthrough', () => {
+  describe('GET /api/trips/:id', () => {
+    it('retrieves trip', () => {
       return request(app)
-        .get(`/api/playthroughs/${playthrough.id}`)
+        .get(`/api/trips/${trip.id}`)
         .set('Accept', 'application/json')
         .then((res) => {
           assert.deepStrictEqual(res.body, {
             data: {
-              playthrough: {
-                createdAt: playthrough.createdAt.toISOString(),
+              trip: {
+                createdAt: trip.createdAt.toISOString(),
                 currentSceneName: 'SCENE-MAIN',
                 date: today,
                 groupId: group.id,
                 history: {},
-                id: playthrough.id,
+                id: trip.id,
                 isArchived: false,
                 lastScheduledTime: null,
                 schedule: {},
@@ -48,7 +48,7 @@ describe('API retrieve', () => {
 
     it('fails on missing object', () => {
       return request(app)
-        .get('/api/playthroughs/12345')
+        .get('/api/trips/12345')
         .set('Accept', 'application/json')
         .expect(404)
         .then((res) => {

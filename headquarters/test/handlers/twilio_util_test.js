@@ -16,7 +16,7 @@ describe('TwilioUtil', () => {
   describe('#lookupOrCreateTripId', () => {
 
     const phoneNumber = '2223334444';
-    const participant = { playthroughId: 100 };
+    const participant = { tripId: 100 };
 
     it('returns participant trip id if exists', async () => {
       const relay = { id: 10, userPhoneNumber: '2223334444' };
@@ -26,7 +26,7 @@ describe('TwilioUtil', () => {
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
 
       // Returns trip id of existing participant.
-      assert.strictEqual(res, participant.playthroughId);
+      assert.strictEqual(res, participant.tripId);
 
       // Looks up participant by relay and phone number.
       sinon.assert.calledWith(RelayController.lookupParticipant,

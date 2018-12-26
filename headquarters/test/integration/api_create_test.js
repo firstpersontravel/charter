@@ -106,8 +106,8 @@ describe('API create', () => {
     });
   });
 
-  describe('POST /api/playthroughs', () => {
-    it('creates playthrough', async () => {
+  describe('POST /api/trips', () => {
+    it('creates trip', async () => {
       const script = await models.Script.create({
         name: 'test',
         title: 'Test',
@@ -120,7 +120,7 @@ describe('API create', () => {
         date: '2018-04-02'
       });
       return request(app)
-        .post('/api/playthroughs')
+        .post('/api/trips')
         .send({
           scriptId: script.id,
           groupId: group.id,
@@ -137,7 +137,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(201)
         .then((res) => {
-          assert.deepStrictEqual(res.body.data.playthrough.values, {});
+          assert.deepStrictEqual(res.body.data.trip.values, {});
         });        
     });
 
@@ -150,7 +150,7 @@ describe('API create', () => {
         content: {}
       });
       return request(app)
-        .post('/api/playthroughs')
+        .post('/api/trips')
         .send({
           scriptId: script.id,
           groupId: 1000,

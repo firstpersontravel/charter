@@ -3,9 +3,9 @@ var moment = require('moment');
 
 var TimeCore = require('./time');
 
-var PlaythroughCore = {};
+var TripCore = {};
 
-PlaythroughCore.getInitialValues = function (script, variantNames) {
+TripCore.getInitialValues = function (script, variantNames) {
   var values = {};
   var variantNamesWithDefault = ['default'].concat(variantNames);
   var variants = script.content.variants || [];
@@ -19,7 +19,7 @@ PlaythroughCore.getInitialValues = function (script, variantNames) {
   return values;
 };
 
-PlaythroughCore.getInitialSchedule = function (script, date, variantNames) {
+TripCore.getInitialSchedule = function (script, date, variantNames) {
   var schedule = {};
   var variantNamesWithDefault = ['default'].concat(variantNames);
   var variants = script.content.variants || {};
@@ -37,4 +37,4 @@ PlaythroughCore.getInitialSchedule = function (script, date, variantNames) {
   return schedule;
 };
 
-module.exports = PlaythroughCore;
+module.exports = TripCore;

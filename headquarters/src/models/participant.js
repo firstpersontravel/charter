@@ -1,5 +1,5 @@
 const database = require('../config').database;
-const Playthrough = require('./playthrough');
+const Trip = require('./trip');
 const User = require('./user');
 
 const {
@@ -22,7 +22,7 @@ const Participant = database.define('Participant', snakeCaseColumns({
   values: jsonField(database, 'Participant', 'values'),
 }));
 
-oneToMany(Participant, Playthrough);
+oneToMany(Participant, Trip);
 oneToMany(Participant, User, true);
 
 module.exports = Participant;

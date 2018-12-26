@@ -74,7 +74,7 @@ async function markReplied(message) {
   const updates = { replyReceivedAt: message.createdAt };
   return await models.Message.update(updates, {
     where: {
-      playthroughId: message.playthroughId,
+      tripId: message.tripId,
       sentById: message.sentToId,
       sentToId: message.sentById,
       isReplyNeeded: true,

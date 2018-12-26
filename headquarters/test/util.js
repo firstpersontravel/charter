@@ -21,7 +21,7 @@ const dummyScriptFields = {
   }
 };
 
-async function createDummyPlaythrough() {
+async function createDummyTrip() {
   const script = await models.Script.create(dummyScriptFields);
   return createDummyTripForScript(script);
 }
@@ -38,7 +38,7 @@ async function createDummyTripForScript(script, variantNames) {
 }
 
 const TestUtil = {
-  createDummyPlaythrough: createDummyPlaythrough,
+  createDummyTrip: createDummyTrip,
   createDummyTripForScript: createDummyTripForScript
 };
 

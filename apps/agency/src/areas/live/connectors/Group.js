@@ -9,7 +9,7 @@ const mapStateToProps = (state, ownProps) => {
   const groupStatus = assembleGroupStatus(state, ownProps.params.groupId);
   const tripIds = _.get(groupStatus, 'instance.tripIds');
   const nextUnappliedAction = _(state.datastore.actions)
-    .filter(action => _.includes(tripIds, action.playthroughId))
+    .filter(action => _.includes(tripIds, action.tripId))
     .filter({ appliedAt: null, failedAt: null })
     .sortBy('scheduledAt')
     .head();

@@ -2,7 +2,7 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
   classNameBindings: [
-    ':playthrough-soundtrack',
+    ':trip-soundtrack',
     'hasAudio:active:inactive'
   ],
 

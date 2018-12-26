@@ -14,7 +14,7 @@ function renderMessages(trips, messages) {
     .map(message => (
       <Message
         key={message.id}
-        trip={_.find(trips, { id: message.playthroughId })}
+        trip={_.find(trips, { id: message.tripId })}
         message={message} />
     ));
 }

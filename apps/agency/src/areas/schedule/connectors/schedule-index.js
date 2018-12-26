@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { createInstance, listCollection, updateInstance, initializePlaythrough }
+import { createInstance, listCollection, updateInstance, initializeTrip }
   from '../../../actions';
 import { instancesStatus } from '../../../connector-utils';
 import ScheduleIndex from '../components/schedule-index';
@@ -9,7 +9,7 @@ const mapStateToProps = (state, ownProps) => {
   const groupsStatus = instancesStatus(state, 'groups', {
     isArchived: false
   });
-  const playthroughsStatus = instancesStatus(state, 'playthroughs', {
+  const tripsStatus = instancesStatus(state, 'trips', {
     isArchived: false
   });
   return {
@@ -17,12 +17,12 @@ const mapStateToProps = (state, ownProps) => {
     users: state.datastore.users,
     profiles: state.datastore.profiles,
     groupsStatus: groupsStatus,
-    playthroughsStatus: playthroughsStatus
+    tripsStatus: tripsStatus
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  initializePlaythrough: (...args) => dispatch(initializePlaythrough(...args)),
+  initializeTrip: (...args) => dispatch(initializeTrip(...args)),
   createInstance: (...args) => dispatch(createInstance(...args)),
   listCollection: (...args) => dispatch(listCollection(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args))

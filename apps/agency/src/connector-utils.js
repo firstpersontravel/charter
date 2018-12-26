@@ -37,14 +37,14 @@ export function instanceStatus(state, collectionName, query) {
 }
 
 export function assembleTripStatus(state, tripId) {
-  const playthroughStatus = instanceStatus(state, 'playthroughs',
+  const tripStatus = instanceStatus(state, 'trips',
     { id: Number(tripId) });
-  const scriptId = _.get(playthroughStatus, 'instance.scriptId');
+  const scriptId = _.get(tripStatus, 'instance.scriptId');
   const scriptStatus = instanceStatus(state, 'scripts', { id: scriptId });
   const participantsStatus = instancesStatus(state, 'participants',
-    { playthroughId: Number(tripId) });
+    { tripId: Number(tripId) });
   const users = state.datastore.users;
-  const trip = _.clone(playthroughStatus.instance);
+  const trip = _.clone(tripStatus.instance);
   const env = {
     host: `${window.location.protocol}//${window.location.hostname}`
   };
@@ -62,12 +62,12 @@ export function assembleTripStatus(state, tripId) {
   }
   const isLoading = (
     scriptStatus.isLoading ||
-    playthroughStatus.isLoading ||
+    tripStatus.isLoading ||
     participantsStatus.isLoading
   );
   const isError = (
     scriptStatus.isError ||
-    playthroughStatus.isError ||
+    tripStatus.isError ||
     participantsStatus.isError
   );
   return {
@@ -85,7 +85,7 @@ export function assembleGroupStatus(state, groupId) {
   if (group && scriptStatus.instance) {
     const departures = scriptStatus.instance.content.departures;
     const departureNames = _.map(departures, 'name');
-    const tripIds = _(state.datastore.playthroughs)
+    const tripIds = _(state.datastore.trips)
       .filter({ groupId: group.id })
       .sortBy([trip => departureNames.indexOf(trip.departureName), 'id'])
       .map('id')

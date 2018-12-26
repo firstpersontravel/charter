@@ -5,14 +5,14 @@ const models = require('../models');
 const galleryRoute = async (req, res) => {
   const alias = req.params.alias;
   const where = isNaN(Number(alias)) ? { galleryName: alias } : { id: alias };
-  const playthrough = await models.Playthrough.find({
+  const trip = await models.Trip.find({
     where: where,
     include: [{
       model: models.Script,
       as: 'script'
     }]
   });
-  if (!playthrough) {
+  if (!trip) {
     res.status(404);
     return;
   }
@@ -20,7 +20,7 @@ const galleryRoute = async (req, res) => {
   // Find messages
   const messages = await models.Message.findAll({
     where: {
-      playthroughId: playthrough.id,
+      tripId: trip.id,
       messageName: '',
       messageType: 'image',
       isArchived: false,
@@ -39,7 +39,7 @@ const galleryRoute = async (req, res) => {
   // Render
   res.render('gallery/gallery', {
     layout: 'gallery',
-    tripTitle: playthrough.script.title,
+    tripTitle: trip.script.title,
     galleryRows: galleryRows
   });
 };

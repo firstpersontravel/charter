@@ -68,53 +68,53 @@ describe('#setValue', () => {
     }]);
   });
 
-  it('sets playthrough value to number', () => {
+  it('sets trip value to number', () => {
     const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: {} },
       { value_ref: 'cabana.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 2 } } } }
     }]);
   });
 
-  it('overwrites playthrough value to number', () => {
+  it('overwrites trip value to number', () => {
     const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6 } },
       { value_ref: 'cabana.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 2 } } } }
     }]);
   });
 
-  it('overwrites playthrough value to string', () => {
+  it('overwrites trip value to string', () => {
     const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6 } },
       { value_ref: 'cabana.monkeys', new_value_ref: '"hi"' }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 'hi' } } } }
     }]);
   });
 
-  it('overwrites playthrough value to boolean', () => {
+  it('overwrites trip value to boolean', () => {
     const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6 } },
       { value_ref: 'cabana.monkeys', new_value_ref: false }, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: false } } } }
     }]);
   });
 
-  it('sets playthrough value to value of other ref', () => {
+  it('sets trip value to value of other ref', () => {
     const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6, bananas: 10 } },
       { value_ref: 'cabana.monkeys', new_value_ref: 'cabana.bananas' },
       null);
     assert.deepEqual(res, [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { cabana: { monkeys: { $set: 10 } } } }
     }]);
   });

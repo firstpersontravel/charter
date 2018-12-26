@@ -42,15 +42,15 @@ apiRouter.use('/groups', createCollectionRouter(models.Group));
 apiRouter.use('/messages', createCollectionRouter(models.Message));
 apiRouter.use('/participants', createCollectionRouter(models.Participant));
 apiRouter.use('/profiles', createCollectionRouter(models.Profile));
-apiRouter.use('/playthroughs', createCollectionRouter(models.Playthrough));
+apiRouter.use('/trips', createCollectionRouter(models.Trip));
 apiRouter.use('/relays', createCollectionRouter(models.Relay));
 apiRouter.use('/scripts', createCollectionRouter(models.Script));
 apiRouter.use('/users', createCollectionRouter(models.User));
 
 // Action routes
-apiRouter.post('/playthroughs/:playthroughId/:actionName',
+apiRouter.post('/trips/:tripId/:actionName',
   asyncRoute(apiActionsRoutes.createActionRoute));
-apiRouter.post('/playthroughs/:playthroughId/events',
+apiRouter.post('/trips/:tripId/events',
   asyncRoute(apiActionsRoutes.createEventRoute));
 apiRouter.post('/users/:userId/device_state',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
@@ -58,24 +58,24 @@ apiRouter.post('/users/:userId/device_state',
 // Admin routes
 apiRouter.post('/admin/scripts/:scriptName/update_relays',
   asyncRoute(apiAdminRoutes.updateRelaysRoute));
-apiRouter.post('/admin/playthroughs/:playthroughId/notify',
+apiRouter.post('/admin/trips/:tripId/notify',
   asyncRoute(apiAdminRoutes.notifyRoute));
-apiRouter.post('/admin/playthroughs/:playthroughId/fast_forward',
+apiRouter.post('/admin/trips/:tripId/fast_forward',
   asyncRoute(apiAdminRoutes.fastForwardRoute));
-apiRouter.post('/admin/playthroughs/:playthroughId/fast_forward_next',
+apiRouter.post('/admin/trips/:tripId/fast_forward_next',
   asyncRoute(apiAdminRoutes.fastForwardNextRoute));
-apiRouter.post('/admin/playthroughs/:playthroughId/reset',
+apiRouter.post('/admin/trips/:tripId/reset',
   asyncRoute(apiAdminRoutes.resetRoute));
-apiRouter.post('/admin/playthroughs/:playthroughId/phrase',
+apiRouter.post('/admin/trips/:tripId/phrase',
   asyncRoute(apiAdminRoutes.phraseRoute));
-apiRouter.post('/admin/playthroughs/:playthroughId/trigger',
+apiRouter.post('/admin/trips/:tripId/trigger',
   asyncRoute(apiAdminRoutes.triggerRoute));
 
 // Legacy
 apiRouter.get('/legacy/user/:id',
   asyncRoute(apiLegacyRoutes.getUserRoute));
-apiRouter.get('/legacy/playthrough/:id',
-  asyncRoute(apiLegacyRoutes.getPlaythroughRoute));
+apiRouter.get('/legacy/trip/:id',
+  asyncRoute(apiLegacyRoutes.getTripRoute));
 
 // The error handler must be before any other error middleware
 apiRouter.use(Raven.errorHandler());

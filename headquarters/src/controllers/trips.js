@@ -8,32 +8,32 @@ const TripsController = {};
  * Create an initial participant including default values.
  */
 TripsController.createParticipant = async (
-  script, playthrough, role, variantNames
+  script, trip, role, variantNames
 ) => {
   const initialFields = fptCore.ParticipantCore.getInitialFields(
     script, role.name, variantNames);
   const fields = Object.assign(initialFields, {
-    playthroughId: playthrough.id,
+    tripId: trip.id,
     userId: null,
   });
   return await models.Participant.create(fields);
 };
 
 /**
- * Create an initial playthrough including participants with default values.
+ * Create an initial trip including participants with default values.
  */
 TripsController.createWithDefaults = async (
   groupId, title, departureName, variantNames=[]
 ) => {
   const group = await models.Group.findById(groupId);
   const script = await models.Script.findById(group.scriptId);
-  const values = fptCore.PlaythroughCore
+  const values = fptCore.TripCore
     .getInitialValues(script, variantNames);
-  const schedule = fptCore.PlaythroughCore
+  const schedule = fptCore.TripCore
     .getInitialSchedule(script, group.date, variantNames);
   const scenes = script.content.scenes || [];
   const firstScene = scenes[0] || { name: '' };
-  const playthrough = await models.Playthrough.create({
+  const trip = await models.Trip.create({
     scriptId: group.scriptId,
     groupId: group.id,
     date: group.date,
@@ -47,9 +47,9 @@ TripsController.createWithDefaults = async (
   const roles = script.content.roles || [];
   for (let role of roles) {
     await TripsController.createParticipant(
-      script, playthrough, role, variantNames);
+      script, trip, role, variantNames);
   }
-  return playthrough;
+  return trip;
 };
 
 module.exports = TripsController;

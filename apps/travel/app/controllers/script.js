@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-  playthrough: Ember.inject.controller(),
-  model: Ember.computed.oneWay('playthrough.model.script')
+  trip: Ember.inject.controller(),
+  model: Ember.computed.oneWay('trip.model.script')
 });

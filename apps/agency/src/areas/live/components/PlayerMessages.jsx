@@ -52,28 +52,28 @@ export default class PlayerMessages extends Component {
       return;
     }
     const participant1 = _.find(participants, {
-      playthroughId: parseInt(params.tripId, 10),
+      tripId: parseInt(params.tripId, 10),
       roleName: params.roleName
     });
     if (params.withRoleName !== 'All') {
       // If with role name was provided, find messages sent by either
       // of the two.
       const participant2 = _.find(participants, {
-        playthroughId: parseInt(params.tripId, 10),
+        tripId: parseInt(params.tripId, 10),
         roleName: params.withRoleName
       });
       this.props.listCollection('messages', {
-        playthroughId: params.tripId,
+        tripId: params.tripId,
         sentById: [participant1.id, participant2.id]
       });
     } else {
       // Otherwise, find messages sent to or received by this guy.
       this.props.listCollection('messages', {
-        playthroughId: params.tripId,
+        tripId: params.tripId,
         sentById: [participant1.id]
       });
       this.props.listCollection('messages', {
-        playthroughId: params.tripId,
+        tripId: params.tripId,
         sentToId: [participant1.id]
       });
     }

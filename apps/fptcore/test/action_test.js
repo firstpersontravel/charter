@@ -14,7 +14,7 @@ describe('ActionCore', () => {
   var getActionStub;
   var addAction = function(script, context, params, applyAt) {
     return [{
-      operation: 'updatePlaythrough',
+      operation: 'updateTrip',
       updates: { values: { number: { $set: (context.number || 0) + 1 } } }
     }];
   };
@@ -53,7 +53,7 @@ describe('ActionCore', () => {
 
       assert.deepStrictEqual(result.nextContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { values: { number: { $set: 1 } } }
       }]);
     });
@@ -66,7 +66,7 @@ describe('ActionCore', () => {
 
       assert.deepStrictEqual(result.nextContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { values: { number: { $set: 1 } } }
       }]);
     });
@@ -79,7 +79,7 @@ describe('ActionCore', () => {
         .callsFake(function(script, context, event, applyAt) {
           return {
             nextContext: context,
-            resultOps: [{ operation: 'updatePlaythrough', updates: {} }],
+            resultOps: [{ operation: 'updateTrip', updates: {} }],
             scheduledActions: []
           };
         });
@@ -89,10 +89,10 @@ describe('ActionCore', () => {
 
       assert.deepStrictEqual(result.nextContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { values: { number: { $set: 1 } } }
       }, {
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: {}
       }]);
     });
@@ -210,7 +210,7 @@ describe('ActionCore', () => {
         history: { trigger: now.toISOString() },
       });
       assert.deepEqual(res.resultOps, [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { history: { trigger: { $set: now.toISOString() } } }
       }]);
     });
@@ -230,10 +230,10 @@ describe('ActionCore', () => {
         number: 1
       });
       assert.deepEqual(res.resultOps, [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { history: { trigger: { $set: now.toISOString() } } }
       }, {
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { values: { number: { $set: 1 } } }
       }]);
       assert.deepEqual(res.scheduledActions, []);
@@ -260,7 +260,7 @@ describe('ActionCore', () => {
         history: { trigger: now.toISOString() }
       });
       assert.deepEqual(res.resultOps, [{
-        operation: 'updatePlaythrough',
+        operation: 'updateTrip',
         updates: { history: { trigger: { $set: now.toISOString() } } }
       }]);
       assert.deepStrictEqual(res.scheduledActions, [scheduledAction]);

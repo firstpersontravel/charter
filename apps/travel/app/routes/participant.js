@@ -10,8 +10,8 @@ export default Ember.Route.extend({
   location: Ember.inject.service(),
 
   model: function(params) {
-    var playthrough = this.modelFor('playthrough');
-    var participants = playthrough.get('participants');
+    var trip = this.modelFor('trip');
+    var participants = trip.get('participants');
     return participants.findBy('roleName', params.role_name);
   },
 
@@ -88,21 +88,21 @@ export default Ember.Route.extend({
   enterGeofences: function(
       oldLatitude, oldLongitude, oldAccuracy,
       newLatitude, newLongitude, newAccuracy) {
-    var playthrough = this.modelFor('playthrough');
-    var script = playthrough.get('script');
+    var trip = this.modelFor('trip');
+    var script = trip.get('script');
     var oldGeofences = fptCore.ScriptCore.geofencesInArea(
       script.get('content'), oldLatitude, oldLongitude, oldAccuracy,
-      playthrough.get('values.waypoint_options'));
+      trip.get('values.waypoint_options'));
     var oldGeofenceNames = oldGeofences.map(g => g.name);
     var newGeofences = fptCore.ScriptCore.geofencesInArea(
       script.get('content'), newLatitude, newLongitude, newAccuracy,
-      playthrough.get('values.waypoint_options'));
+      trip.get('values.waypoint_options'));
     var newGeofenceNames = newGeofences.map(g => g.name);
     newGeofenceNames.forEach(function(geofenceName) {
       if (oldGeofenceNames.indexOf(geofenceName) > -1) {
         return;
       }
-      this.controllerFor('playthrough').applyEvent({
+      this.controllerFor('trip').applyEvent({
         type: 'geofence_entered',
         role: this.context.get('roleName'),
         geofence: geofenceName
@@ -111,16 +111,16 @@ export default Ember.Route.extend({
   },
 
   makeAction: function(name, params) {
-    var playthrough = this.context.get('playthrough');
+    var trip = this.context.get('trip');
 
     // Make local action
-    playthrough.createLocalAction(name, params, null);
-    Ember.run.next(this.controllerFor('playthrough'),
+    trip.createLocalAction(name, params, null);
+    Ember.run.next(this.controllerFor('trip'),
       'applyReadyLocalActions');
     
     var api = this.get('api');
     this.get('sync').add(function() {
-      return api.postAction(playthrough.id, name, params)
+      return api.postAction(trip.id, name, params)
         .catch(function(err) {
           if (err.readyState !== 4) {
             // network error -- re-raise exception because it might

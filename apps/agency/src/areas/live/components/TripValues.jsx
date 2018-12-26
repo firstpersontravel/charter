@@ -16,7 +16,7 @@ export default class TripValues extends Component {
   }
 
   handleValueUpdate(key, newValue) {
-    this.props.updateInstance('playthroughs', this.props.params.tripId, {
+    this.props.updateInstance('trips', this.props.params.tripId, {
       values: { [key]: newValue }
     });
     this.props.postAdminAction(this.props.params.tripId, 'notify',
@@ -28,7 +28,7 @@ export default class TripValues extends Component {
   }
 
   handleWaypointUpdate(key, event) {
-    this.props.updateInstance('playthroughs', this.props.params.tripId, {
+    this.props.updateInstance('trips', this.props.params.tripId, {
       values: {
         waypoint_options: {
           $auto: {

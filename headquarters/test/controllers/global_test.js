@@ -25,7 +25,7 @@ describe('GlobalController', () => {
       const now = moment.utc();
       const stubAction = {
         type: 'action',
-        playthroughId: 123,
+        tripId: 123,
         name: 'name',
         params: { param: 1 },
         event: { context: 3 },
@@ -43,8 +43,8 @@ describe('GlobalController', () => {
         order: [['scheduledAt', 'ASC'], ['id', 'ASC']],
         where: { isArchived: false, appliedAt: null, failedAt: null },
         include: [{
-          model: models.Playthrough,
-          as: 'playthrough',
+          model: models.Trip,
+          as: 'trip',
           where: { isArchived: false }
         }]
       });
@@ -63,7 +63,7 @@ describe('GlobalController', () => {
       const now = moment.utc();
       const stubAction = {
         type: 'action',
-        playthroughId: 123,
+        tripId: 123,
         name: 'name',
         params: { param: 1 },
         event: { context: 3 },
@@ -81,8 +81,8 @@ describe('GlobalController', () => {
         order: [['scheduledAt', 'ASC'], ['id', 'ASC']],
         where: { isArchived: false, appliedAt: null, failedAt: null },
         include: [{
-          model: models.Playthrough,
-          as: 'playthrough',
+          model: models.Trip,
+          as: 'trip',
           where: { isArchived: false }
         }]
       });

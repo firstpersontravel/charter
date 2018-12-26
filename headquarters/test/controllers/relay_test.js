@@ -99,8 +99,8 @@ describe('RelayController', () => {
           as: 'user',
           where: { phoneNumber: phoneNumber }
         }, {
-          model: models.Playthrough,
-          as: 'playthrough',
+          model: models.Trip,
+          as: 'trip',
           where: { departureName: relay.departureName, isArchived: false },
           include: [{
             model: models.Script,
@@ -117,7 +117,7 @@ describe('RelayController', () => {
     const stubRelay = { id: 3, relayPhoneNumber: '9999999999' };
 
     const stubParticipant = {
-      playthroughId: 1,
+      tripId: 1,
       getUser: async () => ({ phoneNumber: '1111111111' })
     };
 
@@ -181,7 +181,7 @@ describe('RelayController', () => {
 
       // Test participant was fetched with right args
       sinon.assert.calledWith(models.Participant.find, {
-        where: { playthroughId: stubTrip.id, roleName: stubRelay.forRoleName },
+        where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
         include: [{ model: models.User, as: 'user' }]
       });
     });
@@ -211,7 +211,7 @@ describe('RelayController', () => {
 
       // Test participant was fetched with right args
       sinon.assert.calledWith(models.Participant.find, {
-        where: { playthroughId: stubTrip.id, roleName: stubRelay.forRoleName },
+        where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
         include: [{ model: models.User, as: 'user' }]
       });
     });

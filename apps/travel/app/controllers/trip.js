@@ -49,15 +49,15 @@ export default Ember.Controller.extend(RealtimeMixin, {
   }.property(),
 
   // Messy solution until store.filter is ready.
-  playthroughActions: function() {
-    var playthrough = this.get('model');
-    return this.get('allActions').filterBy('playthrough', playthrough);
-  }.property('model', 'allActions.@each.playthrough'),
+  tripActions: function() {
+    var trip = this.get('model');
+    return this.get('allActions').filterBy('trip', trip);
+  }.property('model', 'allActions.@each.trip'),
 
   getUnappliedLocalActions: function() {
     // var utcNow = this.get('time.currentTime');
     // get actions to apply
-    var unappliedLocalActions = this.get('playthroughActions')
+    var unappliedLocalActions = this.get('tripActions')
       .filter(function(action) {
         return action.get('appliedAt') === null &&
           action.get('failedAt') === null;
@@ -83,7 +83,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
   getUiCallbacks: function() {
     var self = this;
     var selfParticipant = this.get('participant.model');
-    var selfScript = selfParticipant.get('playthrough.script');
+    var selfScript = selfParticipant.get('trip.script');
     var selfRoleName = selfParticipant.get('roleName');
     return {
       transition: function(roleName, newState) {
@@ -161,11 +161,11 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   applyAction: function(name, params, applyAt) {
     console.log('applying action', name, params);
-    var playthrough = this.get('model');
+    var trip = this.get('model');
     var action = { name: name, params: params };
-    var script = playthrough.get('script').toJSON();
+    var script = trip.get('script').toJSON();
     script.content = JSON.parse(script.content);
-    var context = playthrough.get('evalContext');
+    var context = trip.get('evalContext');
     var result = fptCore.ActionCore.applyAction(script, context, action, 
       applyAt);
     this.applyResult(result);
@@ -173,10 +173,10 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   applyEvent: function(event, applyAt) {
     console.log('applying event', event);
-    var playthrough = this.get('model');
-    var script = playthrough.get('script').toJSON();
+    var trip = this.get('model');
+    var script = trip.get('script').toJSON();
     script.content = JSON.parse(script.content);
-    var context = playthrough.get('evalContext');
+    var context = trip.get('evalContext');
     var result = fptCore.ActionCore.applyEvent(script, context, event, 
       applyAt);
     this.applyResult(result);
@@ -184,17 +184,17 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   applyTrigger: function(triggerName, applyAt) {
     console.log('applying trigger', triggerName);
-    var playthrough = this.get('model');
-    var script = playthrough.get('script').toJSON();
+    var trip = this.get('model');
+    var script = trip.get('script').toJSON();
     script.content = JSON.parse(script.content);
     var trigger = script.content.findBy('name', triggerName);
-    var context = playthrough.get('evalContext');
+    var context = trip.get('evalContext');
     var result = fptCore.ActionCore.applyTrigger(script, context, context, trigger, null, applyAt);
     this.applyResult(result);
   },
 
   applyResult: function(result) {
-    var playthrough = this.get('model');
+    var trip = this.get('model');
     var uiCallbacks = this.getUiCallbacks();
 
     // Apply results
@@ -208,7 +208,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
         var scheduleAt = moment.utc(scheduledAction.scheduleAt);
         console.log('-> scheduling ' + scheduledAction.name,
           scheduledAction.params, ' at ', scheduleAt.toString());
-        playthrough.createLocalAction(
+        trip.createLocalAction(
           scheduledAction.name, scheduledAction.params,
           scheduleAt, scheduledAction.triggerName || null);
       }, this);
@@ -249,15 +249,15 @@ export default Ember.Controller.extend(RealtimeMixin, {
         console.log('-> ' + op.roleName, JSON.stringify(op.updates));
         break;
 
-      // Update playthrough
-      case 'updatePlaythrough':
+      // Update trip
+      case 'updateTrip':
         this.updateObj(this.get('model'), op.updates);
-        console.log('-> playthrough', JSON.stringify(op.updates));
+        console.log('-> trip', JSON.stringify(op.updates));
         break;
 
       // Create a message
       case 'createMessage':
-        op.updates.playthrough = this.get('model');
+        op.updates.trip = this.get('model');
         op.updates.sentBy = participants.findBy('id',
           op.updates.sentById.toString());
         op.updates.sentTo = participants.findBy('id',

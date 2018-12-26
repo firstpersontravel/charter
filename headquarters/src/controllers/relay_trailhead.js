@@ -10,10 +10,10 @@ const TripRelaysController = require('./trip_relays');
 const RelayTrailheadController = {};
 
 /**
- * Update the participant to assign a user when starting a new playthrough
+ * Update the participant to assign a user when starting a new trip
  * for a trailhead.
  */
-RelayTrailheadController.assignActor = async (script, playthrough, role) => {
+RelayTrailheadController.assignActor = async (script, trip, role) => {
   // If we pass through here, try finding a user for this role.
   const roleProfiles = await models.Profile.findAll({
     where: {
@@ -29,7 +29,7 @@ RelayTrailheadController.assignActor = async (script, playthrough, role) => {
   const matchingProfile = roleProfiles[0];
   // Update role participant with this user
   await models.Participant.update({ userId: matchingProfile.userId }, {
-    where: { playthroughId: playthrough.id, roleName: role.name }
+    where: { tripId: trip.id, roleName: role.name }
   });
   // Send admin message
   const host = config.env.SERVER_HOST_PUBLIC;
@@ -38,14 +38,14 @@ RelayTrailheadController.assignActor = async (script, playthrough, role) => {
     `New trip for ${script.title} as ${role.name}: ${actorUrl}`
   );
   await (
-    TripRelaysController.sendAdminMessage(playthrough, role.name, castMessage)
+    TripRelaysController.sendAdminMessage(trip, role.name, castMessage)
   );
 };
 
 /**
  * Assign each user in the script by role.
  */
-RelayTrailheadController.assignActors = async (script, playthrough) => {
+RelayTrailheadController.assignActors = async (script, trip) => {
   // Find other roles that need to be assigned users
   for (const role of script.content.roles) {
     // Find other roles that need to be assigned users
@@ -53,7 +53,7 @@ RelayTrailheadController.assignActors = async (script, playthrough) => {
     if (!role.user || !role.actor) {
       continue;
     }
-    await RelayTrailheadController.assignActor(script, playthrough, role);
+    await RelayTrailheadController.assignActor(script, trip, role);
   }
 };
 
@@ -71,7 +71,7 @@ RelayTrailheadController.createTrip = async (trailheadRelay, fromNumber) => {
     }
   });
   const title = localTime.format('h:mm a z');
-  const playthrough = await TripsController.createWithDefaults(
+  const trip = await TripsController.createWithDefaults(
     group.id, title, trailheadRelay.departureName, ['default']);
 
   // Look for a user, or create if doesn't exist.
@@ -102,16 +102,16 @@ RelayTrailheadController.createTrip = async (trailheadRelay, fromNumber) => {
   // Update the trailhead participant to be assigned to trailhead user.
   await models.Participant.update({ userId: trailheadUser.id }, {
     where: {
-      playthroughId: playthrough.id,
+      tripId: trip.id,
       roleName: trailheadRelay.forRoleName
     }
   });
 
   // Update all other users
-  await RelayTrailheadController.assignActors(script, playthrough);
+  await RelayTrailheadController.assignActors(script, trip);
 
   // And return!
-  return playthrough;
+  return trip;
 };
 
 module.exports = RelayTrailheadController;

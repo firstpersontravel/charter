@@ -117,7 +117,7 @@ function getScheduledTripTriggers(trip) {
     return {
       id: trigger.name,
       type: 'trigger',
-      playthroughId: trip.id,
+      tripId: trip.id,
       scheduledAt: scheduledAt,
       departureName: trip.departureName,
       name: trigger.name
@@ -146,7 +146,7 @@ function renderUpcomingActions(groupStatus, actions, updateInstance, postAdminAc
     );
   }
   const renderedActions = upcomingSorted.map((action) => {
-    const trip = _.find(trips, { id: action.playthroughId });
+    const trip = _.find(trips, { id: action.tripId });
     if (action.type === 'action') {
       return renderAction(action, trip, updateInstance, postAdminAction);
     }

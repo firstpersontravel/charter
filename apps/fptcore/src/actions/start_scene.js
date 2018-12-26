@@ -10,7 +10,7 @@ function startScene(script, context, params, applyAt) {
   // Create updates object
   var updates = { currentSceneName: { $set: newSceneName } };
   return [{
-    operation: 'updatePlaythrough',
+    operation: 'updateTrip',
     updates: updates
   }];
 }

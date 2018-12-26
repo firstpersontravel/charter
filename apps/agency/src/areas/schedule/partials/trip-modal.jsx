@@ -8,10 +8,10 @@ import { TextCore } from 'fptcore';
 
 export default class TripModal extends Component {
 
-  static getDefaultState(script, playthrough, departureName) {
+  static getDefaultState(script, trip, departureName) {
     const defaultDepartureName = departureName || 'T1';
-    const existingVariantNames = playthrough ?
-      playthrough.variantNames.split(',').filter(Boolean) : [];
+    const existingVariantNames = trip ?
+      trip.variantNames.split(',').filter(Boolean) : [];
     const variantGroups = (script && script.content.variant_groups) || [];
     const variantNames = variantGroups.map((g, i) => (
       existingVariantNames[i] || _.get(_.filter(script.content.variants, {
@@ -19,10 +19,10 @@ export default class TripModal extends Component {
       })[0], 'name')
     ));
     return {
-      departureName: playthrough ? playthrough.departureName :
+      departureName: trip ? trip.departureName :
         defaultDepartureName,
       variantNames: variantNames,
-      title: playthrough ? playthrough.title : ''
+      title: trip ? trip.title : ''
     };
   }
 
@@ -30,7 +30,7 @@ export default class TripModal extends Component {
     super(props);
     this.state = TripModal.getDefaultState(
       props.script,
-      props.playthrough,
+      props.trip,
       props.defaultDepartureName);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
@@ -41,7 +41,7 @@ export default class TripModal extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState(TripModal.getDefaultState(
       nextProps.script,
-      nextProps.playthrough,
+      nextProps.trip,
       nextProps.defaultDepartureName));
   }
 
@@ -79,7 +79,7 @@ export default class TripModal extends Component {
   render() {
     const script = this.props.script;
     const group = this.props.group;
-    const trip = this.props.playthrough;
+    const trip = this.props.trip;
     const newTitle = group ? `New trip on ${moment(group.date).format('MMM D, YYYY')}` : 'New trip';
     const title = trip ? `Edit ${trip.title}` : newTitle;
     const isNew = !trip;
@@ -182,13 +182,13 @@ TripModal.propTypes = {
   defaultDepartureName: PropTypes.string,
   group: PropTypes.object,
   script: PropTypes.object,
-  playthrough: PropTypes.object,
+  trip: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };
 
 TripModal.defaultProps = {
-  playthrough: null,
+  trip: null,
   group: null,
   script: null,
   defaultDepartureName: null

@@ -1,7 +1,7 @@
 import DS from 'ember-data';
 
 export default DS.Model.extend({
-  playthrough: DS.belongsTo('playthrough', {async: false}),
+  trip: DS.belongsTo('trip', {async: false}),
   sentBy: DS.belongsTo('participant', {async: false}),
   sentTo: DS.belongsTo('participant', {async: false}),
   sentFromLatitude: DS.attr('number'),
@@ -17,6 +17,6 @@ export default DS.Model.extend({
   isArchived: DS.attr('boolean'),
 
   createdAtLocal: function() {
-    return this.get('createdAt').clone().tz(this.get('playthrough.timezone'));
+    return this.get('createdAt').clone().tz(this.get('trip.timezone'));
   }.property('createdAt')
 });
