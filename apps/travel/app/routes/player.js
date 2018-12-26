@@ -11,8 +11,8 @@ export default Ember.Route.extend({
 
   model: function(params) {
     var trip = this.modelFor('trip');
-    var participants = trip.get('participants');
-    return participants.findBy('roleName', params.role_name);
+    var players = trip.get('players');
+    return players.findBy('roleName', params.role_name);
   },
 
   setupController: function(controller, context) {
@@ -61,7 +61,7 @@ export default Ember.Route.extend({
     //            -> creates enterGeofence events locally
     // Web update from tablet location or debug bar
     //   - web > `location.handleFix` > `lastFixDidChange` >
-    //     `participant.updateLocation`
+    //     `player.updateLocation`
     //     -> server update_device_state
     //          -> creates enterGeofence events on server
     //             -> calls realtimeEvents.event with enterGeofence on
@@ -205,18 +205,18 @@ export default Ember.Route.extend({
     },
 
     restartAudio: function() {
-      var participant = this.context;
-      if (!participant.get('values.audio.name')) {
+      var player = this.context;
+      if (!player.get('values.audio.name')) {
         return;
       }
       this.makeAction('play_audio', {
-        role_name: participant.get('roleName'),
-        audio_name: participant.get('values.audio.name')
+        role_name: player.get('roleName'),
+        audio_name: player.get('values.audio.name')
       });
     },
 
     goToAdmin: function() {
-      this.transitionTo('participant.admin');
+      this.transitionTo('player.admin');
     }
   }
 });

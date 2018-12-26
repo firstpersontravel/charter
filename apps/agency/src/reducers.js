@@ -10,7 +10,7 @@ const initialState = {
     profiles: [],
     trips: [],
     users: [],
-    participants: [],
+    players: [],
     messages: [],
     relays: [],
     actions: []

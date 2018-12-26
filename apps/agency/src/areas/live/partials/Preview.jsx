@@ -5,14 +5,14 @@ import moment from 'moment-timezone';
 
 import { EvalCore } from 'fptcore';
 
-function renderPanel(participant, panel) {
-  if (panel.if && !EvalCore.if(participant.trip.context, panel.if)) {
+function renderPanel(player, panel) {
+  if (panel.if && !EvalCore.if(player.trip.context, panel.if)) {
     return null;
   }
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
-    const humanized = EvalCore.templateText(participant.trip.context,
-      panel.text, participant.trip.script.timezone);
+    const humanized = EvalCore.templateText(player.trip.context,
+      panel.text, player.trip.script.timezone);
     return humanized.split('\n').filter(Boolean).map(p => (
       <p key={p} style={{ marginBottom: '0.5em' }} className="card-text">
         {p}
@@ -22,8 +22,8 @@ function renderPanel(participant, panel) {
   if (panel.type === 'button' ||
       panel.type === 'numberpad') {
     const panelText = EvalCore.templateText(
-      participant.trip.context, panel.text || panel.placeholder,
-      participant.trip.script.timezone);
+      player.trip.context, panel.text || panel.placeholder,
+      player.trip.script.timezone);
     return (
       <button
         style={{ marginBottom: '0.5rem' }}
@@ -38,8 +38,8 @@ function renderPanel(participant, panel) {
   );
 }
 
-function renderPageNotActive(appearance, participant) {
-  const trip = participant.trip;
+function renderPageNotActive(appearance, player) {
+  const trip = player.trip;
   const appearanceStart = appearance.start_ref ?
     moment.utc(EvalCore.lookupRef(trip.context, appearance.start_ref)) :
     null;
@@ -50,7 +50,7 @@ function renderPageNotActive(appearance, participant) {
     <div className="card" style={{ marginBottom: '0.5em' }}>
       <div className="card-header">
         <strong>
-          {trip.departureName} {trip.title} as {participant.roleName}
+          {trip.departureName} {trip.title} as {player.roleName}
         </strong>
         &nbsp;
         {appearance.title} {startLabel}
@@ -65,8 +65,8 @@ function renderPageNotActive(appearance, participant) {
   );
 }
 
-function renderPage(appearance, page, participant) {
-  const trip = participant.trip;
+function renderPage(appearance, page, player) {
+  const trip = player.trip;
   const panels = page.panels || [];
   let headerPanel = null;
   if (page.directive) {
@@ -75,7 +75,7 @@ function renderPage(appearance, page, participant) {
     headerPanel = (
       <div className="card-header">
         <strong>
-          {trip.departureName} {trip.title} as {participant.roleName}
+          {trip.departureName} {trip.title} as {player.roleName}
         </strong>
         &nbsp;
         {headerText}
@@ -85,7 +85,7 @@ function renderPage(appearance, page, participant) {
   const panelsRendered = panels
     .map(panel => (
       <div key={`${page.name}-${panel.type}-${panel.text || ''}`}>
-        {renderPanel(participant, panel)}
+        {renderPanel(player, panel)}
       </div>
     ));
   return (
@@ -98,11 +98,11 @@ function renderPage(appearance, page, participant) {
   );
 }
 
-export default function Preview({ participant }) {
-  const trip = participant.trip;
+export default function Preview({ player }) {
+  const trip = player.trip;
   const script = trip.script;
   const page = _.find(script.content.pages,
-    { name: participant.currentPageName });
+    { name: player.currentPageName });
   if (!page) {
     return null;
   }
@@ -114,11 +114,11 @@ export default function Preview({ participant }) {
     EvalCore.if(trip.context, appearance.if)
   );
   if (!appearanceIsActive) {
-    return renderPageNotActive(appearance, participant);
+    return renderPageNotActive(appearance, player);
   }
-  return renderPage(appearance, page, participant);
+  return renderPage(appearance, page, player);
 }
 
 Preview.propTypes = {
-  participant: PropTypes.object.isRequired
+  player: PropTypes.object.isRequired
 };

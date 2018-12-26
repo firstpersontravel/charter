@@ -2,22 +2,22 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function getIframeUrl(participant) {
-  const trip = participant.trip;
-  const user = participant.user;
-  const role = _.find(participant.trip.script.content.roles,
-    { name: participant.roleName });
+function getIframeUrl(player) {
+  const trip = player.trip;
+  const user = player.user;
+  const role = _.find(player.trip.script.content.roles,
+    { name: player.roleName });
   if (role.actor) {
-    return `/actor/participant/${participant.id}?nogps=1&noack=1`;
+    return `/actor/player/${player.id}?nogps=1&noack=1`;
   }
-  return `/travel/u/${user.id}/p/${trip.id}/role/${participant.roleName}?debug=true&nogps=true&mute=true&noack=true`;
+  return `/travel/u/${user.id}/p/${trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;
 }
 
-export default function PlayerInterface({ participant }) {
-  if (!participant.currentPageName) {
+export default function PlayerInterface({ player }) {
+  if (!player.currentPageName) {
     return <div>No interface</div>;
   }
-  const iframeUrl = getIframeUrl(participant);
+  const iframeUrl = getIframeUrl(player);
   const iframeStyle = { width: '100%', height: '800px', border: 0 };
   return (
     <div>
@@ -32,5 +32,5 @@ export default function PlayerInterface({ participant }) {
 }
 
 PlayerInterface.propTypes = {
-  participant: PropTypes.object.isRequired
+  player: PropTypes.object.isRequired
 };

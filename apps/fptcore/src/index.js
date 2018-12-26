@@ -9,7 +9,7 @@ module.exports = {
   EvalCore: require('./eval'),
   Events: require('./events'),
   ParamValidators: require('./param_validators'),
-  ParticipantCore: require('./participant'),
+  PlayerCore: require('./player'),
   SceneCore: require('./scene'),
   ScriptCore: require('./script'),
   TextCore: require('./text'),

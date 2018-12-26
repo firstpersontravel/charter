@@ -35,7 +35,7 @@ describe('#resumeAudio', () => {
     const res = resumeAudio(script, context, { role_name: 'Tablet' }, now);
     assert.deepEqual(res, [
       {
-        operation: 'updateParticipant',
+        operation: 'updatePlayer',
         roleName: 'Tablet',
         updates: {
           values: {

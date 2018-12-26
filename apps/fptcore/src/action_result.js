@@ -61,7 +61,7 @@ ActionResultCore.tempUpdateObject = function(obj, updates) {
  */
 ActionResultCore.tempUpdateContextFromResultOp = function(context, resultOp) {
   switch (resultOp.operation) {
-  case 'updateParticipant': {
+  case 'updatePlayer': {
     context = Object.assign({}, context);  // Shallow clone
     context[resultOp.roleName] = ActionResultCore.tempUpdateObject(
       context[resultOp.roleName], resultOp.updates);

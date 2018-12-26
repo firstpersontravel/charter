@@ -33,7 +33,7 @@ describe('#pause_audio', () => {
     };
     const res = pauseAudio({}, context, { role_name: 'Tablet' }, applyAt);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Tablet',
       updates: {
         values: {

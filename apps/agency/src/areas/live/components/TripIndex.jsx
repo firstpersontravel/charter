@@ -30,7 +30,7 @@ export default class TripIndex extends Component {
     return (
       `/agency/live/${this.props.params.groupId}` +
       `/trip/${this.props.params.tripId}` +
-      `/participants/${primaryRole.name}`
+      `/players/${primaryRole.name}`
     );
   }
 

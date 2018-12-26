@@ -3,7 +3,7 @@ function sendToPage(script, context, params, applyAt) {
   // Create updates object
   var updates = { currentPageName: { $set: newPageName } };
   return [{
-    operation: 'updateParticipant',
+    operation: 'updatePlayer',
     roleName: params.role_name,
     updates: updates
   }];

@@ -13,37 +13,37 @@ describe('API replace', () => {
     trip = await TestUtil.createDummyTrip();
   });
 
-  describe('PATCH /api/participants/:id', () => {
-    let participant;
+  describe('PATCH /api/players/:id', () => {
+    let player;
 
     beforeEach(async () => {
-      participant = await models.Participant.find({
+      player = await models.Player.find({
         where: { tripId: trip.id }
       });
-      await participant.update({ values: { existing: true } });
+      await player.update({ values: { existing: true } });
     });
 
-    it('updates participant with immutable instructions', () => {
+    it('updates player with immutable instructions', () => {
       return request(app)
-        .patch(`/api/participants/${participant.id}`)
+        .patch(`/api/players/${player.id}`)
         .send({ values: { audio: { $set: 'playing' } } })
         .set('Accept', 'application/json')
         .expect(200)
         .then(async (res) => {
           // Test set in DB
-          await participant.reload();
-          assert.deepStrictEqual(participant.values, {
+          await player.reload();
+          assert.deepStrictEqual(player.values, {
             existing: true,
             audio: 'playing'
           });
           // Test updated in response
           assert.deepStrictEqual(res.body, {
             data: {
-              participant: {
+              player: {
                 currentPageName: 'PAGE',
                 acknowledgedPageAt: null,
                 acknowledgedPageName: '',
-                id: participant.id,
+                id: player.id,
                 tripId: trip.id,
                 roleName: 'Dummy',
                 userId: null,

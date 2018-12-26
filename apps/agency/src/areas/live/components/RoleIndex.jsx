@@ -52,10 +52,10 @@ function renderUser(user) {
   );
 }
 
-function renderParticipantCell(participant, isFirst) {
-  const trip = participant.trip;
-  const page = _.find(participant.trip.script.content.pages,
-    { name: participant.currentPageName });
+function renderPlayerCell(player, isFirst) {
+  const trip = player.trip;
+  const page = _.find(player.trip.script.content.pages,
+    { name: player.currentPageName });
   if (!page) {
     return null;
   }
@@ -63,27 +63,27 @@ function renderParticipantCell(participant, isFirst) {
     name: page.appearance
   }) || {};
   const appearanceIsActive = !appearance.if || EvalCore.if(trip.context, appearance.if);
-  const pageTitle = page ? page.title : participant.currentPageName;
+  const pageTitle = page ? page.title : player.currentPageName;
   const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
-  const tripRoleUrl = `/agency/live/${trip.groupId}/trip/${trip.id}/participants/${participant.roleName}`;
+  const tripRoleUrl = `/agency/live/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
-  const renderedMap = isFirst ? renderMap(trip, participant.user) : null;
+  const renderedMap = isFirst ? renderMap(trip, player.user) : null;
   const renderedUser = isFirst ? (
     <div>
-      <strong>User:</strong> {renderUser(participant.user)}
+      <strong>User:</strong> {renderUser(player.user)}
     </div>
   ) : null;
 
   return (
-    <div className="row" key={participant.id}>
+    <div className="row" key={player.id}>
       <div className="col-sm-6">
-        <Preview participant={participant} />
+        <Preview player={player} />
       </div>
       <div className="col-sm-6">
         {renderedMap}
         {renderedUser}
         <p>
-          <strong>Participant:</strong>
+          <strong>Player:</strong>
           {' '}
           <Link to={tripRoleUrl} activeClassName="bold">
             {trip.departureName} {status}
@@ -96,11 +96,11 @@ function renderParticipantCell(participant, isFirst) {
   );
 }
 
-export default function RoleIndex({ user, participants }) {
-  if (!participants.length) {
+export default function RoleIndex({ user, players }) {
+  if (!players.length) {
     return <div>Loading</div>;
   }
-  const participantsSorted = _(participants)
+  const playersSorted = _(players)
     .filter('trip')
     .filter('currentPageName')
     .sortBy((player) => {
@@ -108,11 +108,11 @@ export default function RoleIndex({ user, participants }) {
       return appearanceStart ? appearanceStart.unix() : 0;
     })
     .value();
-  if (!participantsSorted.length) {
-    return <div>No participants</div>;
+  if (!playersSorted.length) {
+    return <div>No players</div>;
   }
-  const renderedPlayers = participantsSorted.map((participant, i) => (
-    renderParticipantCell(participant, i === 0)
+  const renderedPlayers = playersSorted.map((player, i) => (
+    renderPlayerCell(player, i === 0)
   ));
   return (
     <div>
@@ -123,5 +123,5 @@ export default function RoleIndex({ user, participants }) {
 
 RoleIndex.propTypes = {
   user: PropTypes.object,
-  participants: PropTypes.array.isRequired
+  players: PropTypes.array.isRequired
 };

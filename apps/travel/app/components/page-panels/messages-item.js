@@ -38,9 +38,9 @@ export default Ember.Component.extend({
   }.property('message'),
 
   messageSenderClass: function() {
-    var asParticipant = this.get('asParticipant');
-    var fromParticipant = this.get('message.sentBy');
-    var fromSelf = asParticipant.id === fromParticipant.id;
+    var asPlayer = this.get('asPlayer');
+    var fromPlayer = this.get('message.sentBy');
+    var fromSelf = asPlayer.id === fromPlayer.id;
     return 'messages-item-' + (fromSelf ? 'outgoing' : 'incoming');
   }.property('message'),
 

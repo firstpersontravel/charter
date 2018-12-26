@@ -20,7 +20,7 @@ describe('#sendToPage', () => {
     const params = { role_name: 'Tablet', page_name: 'PAGE-ONE' };
     const res = sendToPage(script, context, params, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Tablet',
       updates: {
         currentPageName: { $set: 'PAGE-ONE' }
@@ -32,7 +32,7 @@ describe('#sendToPage', () => {
     const params = { role_name: 'Tablet', page_name: 'null' };
     const res = sendToPage(script, context, params, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Tablet',
       updates: {
         currentPageName: { $set: '' }

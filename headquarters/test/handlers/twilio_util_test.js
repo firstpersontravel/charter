@@ -16,20 +16,20 @@ describe('TwilioUtil', () => {
   describe('#lookupOrCreateTripId', () => {
 
     const phoneNumber = '2223334444';
-    const participant = { tripId: 100 };
+    const player = { tripId: 100 };
 
-    it('returns participant trip id if exists', async () => {
+    it('returns player trip id if exists', async () => {
       const relay = { id: 10, userPhoneNumber: '2223334444' };
-      sandbox.stub(RelayController, 'lookupParticipant').resolves(participant);
+      sandbox.stub(RelayController, 'lookupPlayer').resolves(player);
       sandbox.stub(RelayTrailheadController, 'createTrip');
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
 
-      // Returns trip id of existing participant.
-      assert.strictEqual(res, participant.tripId);
+      // Returns trip id of existing player.
+      assert.strictEqual(res, player.tripId);
 
-      // Looks up participant by relay and phone number.
-      sinon.assert.calledWith(RelayController.lookupParticipant,
+      // Looks up player by relay and phone number.
+      sinon.assert.calledWith(RelayController.lookupPlayer,
         relay, phoneNumber);
 
       // Doesn't try to create a new trip.
@@ -39,7 +39,7 @@ describe('TwilioUtil', () => {
     it('creates a trip if none exist', async () => {
       const relay = { id: 10, userPhoneNumber: '' };
       const stubTrip = { id: 2 };
-      sandbox.stub(RelayController, 'lookupParticipant').resolves(null);
+      sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
       sandbox.stub(RelayTrailheadController, 'createTrip').resolves(stubTrip);
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
@@ -55,7 +55,7 @@ describe('TwilioUtil', () => {
     it('does not create a trip for non-trailhead', async () => {
       const relay = { id: 10, userPhoneNumber: '4445556666' };
       const stubTrip = { id: 2 };
-      sandbox.stub(RelayController, 'lookupParticipant').resolves(null);
+      sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
       sandbox.stub(RelayTrailheadController, 'createTrip').resolves(stubTrip);
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);

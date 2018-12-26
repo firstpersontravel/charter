@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { listCollection, postAction, updateInstance } from '../../../actions';
-import { assembleParticipantStatus } from '../../../connector-utils';
+import { assemblePlayerStatus } from '../../../connector-utils';
 import PlayerMessages from '../components/PlayerMessages';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -10,9 +10,9 @@ const mapStateToProps = (state, ownProps) => ({
     if (message.tripId !== Number(ownProps.params.tripId)) {
       return false;
     }
-    const sentBy = _.find(state.datastore.participants,
+    const sentBy = _.find(state.datastore.players,
       { id: message.sentById });
-    const sentTo = _.find(state.datastore.participants,
+    const sentTo = _.find(state.datastore.players,
       { id: message.sentToId });
     if (ownProps.params.roleName === sentBy.roleName) {
       if (ownProps.params.withRoleName === 'All' ||
@@ -28,7 +28,7 @@ const mapStateToProps = (state, ownProps) => ({
     }
     return false;
   }),
-  participant: assembleParticipantStatus(state, ownProps.params.tripId,
+  player: assemblePlayerStatus(state, ownProps.params.tripId,
     ownProps.params.roleName).instance
 });
 

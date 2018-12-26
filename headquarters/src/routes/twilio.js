@@ -35,10 +35,10 @@ async function incomingCallStatusRoute(req, res) {
     return;
   }
 
-  const participant = RelayController.lookupParticipant(relay, fromNumber);
-  if (!participant) {
-    logger.warn('Status received without matching participant.');
-    res.status(500).send('No participant match.');
+  const player = RelayController.lookupPlayer(relay, fromNumber);
+  if (!player) {
+    logger.warn('Status received without matching player.');
+    res.status(500).send('No player match.');
     return;
   }
   if (req.body.CallStatus !== 'completed') {
@@ -46,7 +46,7 @@ async function incomingCallStatusRoute(req, res) {
     res.status(200).send('OK');
     return;
   }
-  await TwilioCallHandler.handleCallEnded(relay.id, participant.tripId);
+  await TwilioCallHandler.handleCallEnded(relay.id, player.tripId);
   handleTwimlResponse(res);
 }
 

@@ -23,8 +23,8 @@ function applyUpdatesToInstance(instance, updates) {
 }
 
 async function updateUser(objs, op) {
-  const participant = _.find(objs.participants, { roleName: op.roleName });
-  const user = _.find(objs.users, { id: participant.userId });
+  const player = _.find(objs.players, { roleName: op.roleName });
+  const user = _.find(objs.users, { id: player.userId });
   if (!user) {
     return null;
   }
@@ -37,10 +37,10 @@ async function updateTrip(objs, op) {
   return await objs.trip.save({ fields: Object.keys(op.updates) });
 }
 
-async function updateParticipant(objs, op) {
-  const participant = _.find(objs.participants, { roleName: op.roleName });
-  applyUpdatesToInstance(participant, op.updates);
-  return await participant.save({ fields: Object.keys(op.updates) });
+async function updatePlayer(objs, op) {
+  const player = _.find(objs.players, { roleName: op.roleName });
+  applyUpdatesToInstance(player, op.updates);
+  return await player.save({ fields: Object.keys(op.updates) });
 }
 
 async function createMessage(objs, op) {
@@ -67,7 +67,7 @@ const opFunctions = {
   twiml: () => { /* ignore */ },
   updateAudio: () => { /* ignore */ },
   updateTrip: updateTrip,
-  updateParticipant: updateParticipant,
+  updatePlayer: updatePlayer,
   updateUser: updateUser,
   updateUi: () => { /* ignore */ }
 };

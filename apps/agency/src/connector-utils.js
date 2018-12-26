@@ -41,7 +41,7 @@ export function assembleTripStatus(state, tripId) {
     { id: Number(tripId) });
   const scriptId = _.get(tripStatus, 'instance.scriptId');
   const scriptStatus = instanceStatus(state, 'scripts', { id: scriptId });
-  const participantsStatus = instancesStatus(state, 'participants',
+  const playersStatus = instancesStatus(state, 'players',
     { tripId: Number(tripId) });
   const users = state.datastore.users;
   const trip = _.clone(tripStatus.instance);
@@ -51,7 +51,7 @@ export function assembleTripStatus(state, tripId) {
   if (trip) {
     trip.script = scriptStatus.instance;
     const roles = _.get(scriptStatus.instance, 'content.roles') || [];
-    trip.participants = _.map(participantsStatus.instances, instance => (
+    trip.players = _.map(playersStatus.instances, instance => (
       _.assign({}, instance, {
         trip: trip,
         role: _.find(roles, { name: instance.roleName }),
@@ -63,12 +63,12 @@ export function assembleTripStatus(state, tripId) {
   const isLoading = (
     scriptStatus.isLoading ||
     tripStatus.isLoading ||
-    participantsStatus.isLoading
+    playersStatus.isLoading
   );
   const isError = (
     scriptStatus.isError ||
     tripStatus.isError ||
-    participantsStatus.isError
+    playersStatus.isError
   );
   return {
     isLoading: isLoading,
@@ -104,14 +104,14 @@ export function assembleGroupStatus(state, groupId) {
   };
 }
 
-export function assembleParticipantStatus(state, tripId, roleName) {
+export function assemblePlayerStatus(state, tripId, roleName) {
   const tripStatus = assembleTripStatus(state, tripId);
   const trip = tripStatus.instance;
-  const participants = trip ? trip.participants : [];
-  const participant = _.find(participants, { roleName: roleName });
+  const players = trip ? trip.players : [];
+  const player = _.find(players, { roleName: roleName });
   return {
     isLoading: tripStatus.isLoading,
     isError: tripStatus.isError,
-    instance: participant
+    instance: player
   };
 }

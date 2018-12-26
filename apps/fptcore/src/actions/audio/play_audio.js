@@ -7,7 +7,7 @@ function playAudio(script, context, params, applyAt) {
   }
 
   return [{
-    operation: 'updateParticipant',
+    operation: 'updatePlayer',
     roleName: params.role_name,
     updates: {
       values: {

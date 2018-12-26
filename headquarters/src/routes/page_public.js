@@ -4,21 +4,21 @@ const homeRoute = async (req, res) => {
   res.render('public/main', { layout: 'public' });
 };
 
-const participantShortcutRoute = async (req, res) => {
-  const participantId = req.params.participantId;
-  const participant = await models.Participant.findById(participantId);
-  if (!participant) {
+const playerShortcutRoute = async (req, res) => {
+  const playerId = req.params.playerId;
+  const player = await models.Player.findById(playerId);
+  if (!player) {
     res.status(404).send('Not Found');
     return;
   }
   res.redirect(
-    `/travel/u/${participant.userId || 0}` +
-    `/p/${participant.tripId}` +
-    `/role/${participant.roleName}`
+    `/travel/u/${player.userId || 0}` +
+    `/p/${player.tripId}` +
+    `/role/${player.roleName}`
   );
 };
 
 module.exports = {
   homeRoute,
-  participantShortcutRoute
+  playerShortcutRoute
 };

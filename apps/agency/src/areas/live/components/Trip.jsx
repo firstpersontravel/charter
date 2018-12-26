@@ -20,7 +20,7 @@ export default function Trip({ params, tripStatus, children }) {
     .filter(role => role.user)
     .filter(role => !role.if || EvalCore.if(trip.context, role.if))
     .filter(role => (
-      _.get(_.find(trip.participants, { roleName: role.name }),
+      _.get(_.find(trip.players, { roleName: role.name }),
         'currentPageName')
     ))
     .sortBy([sortForRole, 'name'])
@@ -29,7 +29,7 @@ export default function Trip({ params, tripStatus, children }) {
     <Link
       key={role.name}
       className="dropdown-item"
-      to={`/agency/live/${params.groupId}/trip/${params.tripId}/participants/${role.name}`}>
+      to={`/agency/live/${params.groupId}/trip/${params.tripId}/players/${role.name}`}>
       {role.name}
     </Link>
   )));
@@ -65,8 +65,8 @@ export default function Trip({ params, tripStatus, children }) {
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/participants`}>
-            Participants
+            to={`/agency/live/${params.groupId}/trip/${params.tripId}/players`}>
+            Players
           </Link>
           <div className="dropdown-menu">
             {roleLinks}

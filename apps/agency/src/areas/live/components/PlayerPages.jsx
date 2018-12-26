@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 
 import { EvalCore } from 'fptcore';
 
-function renderPage(participant, page, postAction) {
-  const trip = participant.trip;
-  const context = participant.trip.context;
+function renderPage(player, page, postAction) {
+  const trip = player.trip;
+  const context = player.trip.context;
   const cueButtons = _(page.panels)
     .filter({ type: 'button' })
     .map(panel => (
@@ -19,7 +19,7 @@ function renderPage(participant, page, postAction) {
     <ul style={{ margin: 0 }}>{cueButtons}</ul>
   ) : null;
   const title = EvalCore.templateText(context, page.title,
-    participant.trip.script.timezone);
+    player.trip.script.timezone);
   const directiveText = EvalCore.templateText(context, page.directive,
     trip.script.timezone);
   const directive = page.directive ? `: ${directiveText}` : '';
@@ -31,12 +31,12 @@ function renderPage(participant, page, postAction) {
   );
 }
 
-function renderScenePages(participant, sceneName, pages, postAction) {
-  const scene = _.find(participant.trip.script.content.scenes, {
+function renderScenePages(player, sceneName, pages, postAction) {
+  const scene = _.find(player.trip.script.content.scenes, {
     name: sceneName
   });
   const renderedPages = pages.map(page => (
-    renderPage(participant, page, postAction)
+    renderPage(player, page, postAction)
   ));
   return (
     <div key={sceneName}>
@@ -46,20 +46,20 @@ function renderScenePages(participant, sceneName, pages, postAction) {
   );
 }
 
-function renderPages(participant, postAction) {
-  const pages = _(participant.trip.script.content.pages)
-    .filter({ role: participant.roleName })
+function renderPages(player, postAction) {
+  const pages = _(player.trip.script.content.pages)
+    .filter({ role: player.roleName })
     .value();
   const sceneNames = _.uniq(_.map(pages, 'scene'));
   return sceneNames
     .map(sceneName => (
-      renderScenePages(participant, sceneName,
+      renderScenePages(player, sceneName,
         _.filter(pages, { scene: sceneName }), postAction)
     ));
 }
 
-export default function PlayerPages({ participant, postAction }) {
-  const renderedPages = renderPages(participant, postAction);
+export default function PlayerPages({ player, postAction }) {
+  const renderedPages = renderPages(player, postAction);
   return (
     <div>
       {renderedPages}
@@ -68,6 +68,6 @@ export default function PlayerPages({ participant, postAction }) {
 }
 
 PlayerPages.propTypes = {
-  participant: PropTypes.object.isRequired,
+  player: PropTypes.object.isRequired,
   postAction: PropTypes.func.isRequired
 };

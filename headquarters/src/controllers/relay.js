@@ -57,14 +57,14 @@ RelayController.findSiblings = async (relay, asRoleName, withRoleName) => {
 };
 
 /**
- * Get participant for the "for" role for this relay and a given user phone
+ * Get player for the "for" role for this relay and a given user phone
  * number.
  */
-RelayController.lookupParticipant = async (relay, userNumber) => {
-  // If we found an existing matching participant with this number,
+RelayController.lookupPlayer = async (relay, userNumber) => {
+  // If we found an existing matching player with this number,
   // then we're good -- return it -- even if this is a trailhead because
   // that means a specific user has already been assigned.
-  return await models.Participant.find({
+  return await models.Player.find({
     where: { roleName: relay.forRoleName },
     include: [{
       model: models.User,
@@ -87,14 +87,14 @@ RelayController.lookupParticipant = async (relay, userNumber) => {
  * Initiate a call.
  */
 RelayController.initiateCall = async (
-  relay, toParticipant, detectVoicemail
+  relay, toPlayer, detectVoicemail
 ) => {
   // Only call if we have a twilio client
   if (!config.getTwilioClient()) {
     return;
   }
   // Needs a user and phone number.
-  const toUser = await toParticipant.getUser();
+  const toUser = await toPlayer.getUser();
   if (!toUser || !toUser.phoneNumber) {
     logger.warn(`Relay ${relay.id} has no user phone number.`);
     return;
@@ -113,12 +113,12 @@ RelayController.initiateCall = async (
     machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
     url: (
       `${twilioHost}/endpoints/twilio/calls/outgoing` +
-      `?trip=${toParticipant.tripId}&relay=${relay.id}`
+      `?trip=${toPlayer.tripId}&relay=${relay.id}`
     ),
     method: 'POST',
     statusCallback: (
       `${twilioHost}/endpoints/twilio/calls/status` + 
-      `?trip=${toParticipant.tripId}&relay=${relay.id}`
+      `?trip=${toPlayer.tripId}&relay=${relay.id}`
     ),
     statusCallbackMethod: 'POST'
   };
@@ -144,14 +144,14 @@ RelayController.sendMessage = async (relay, trip, body, mediaUrl) => {
   // Figure out which role to send the message to. This won't be the same
   // as the message's sendTo since a relay can, say, forward Sarai's messages
   // to the TravelAgent as well.
-  const toParticipant = await models.Participant.find({
+  const toPlayer = await models.Player.find({
     where: { tripId: trip.id, roleName: relay.forRoleName },
     include: [{ model: models.User, as: 'user' }]
   });
-  if (!_.get(toParticipant, 'user.phoneNumber')) {
+  if (!_.get(toPlayer, 'user.phoneNumber')) {
     return;
   }
-  const toPhoneNumber = toParticipant.user.phoneNumber;
+  const toPhoneNumber = toPlayer.user.phoneNumber;
   // Protection in non-production from texting anyone who is not Gabe.
   if (config.env.STAGE !== 'production' &&
       !_.includes(whitelistedNumbers, toPhoneNumber)) {

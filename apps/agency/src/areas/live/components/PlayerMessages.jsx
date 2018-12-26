@@ -19,22 +19,22 @@ export default class PlayerMessages extends Component {
   }
 
   componentDidMount() {
-    this.loadData(this.props.params, this.props.participant.trip.participants);
+    this.loadData(this.props.params, this.props.player.trip.players);
   }
 
   componentWillReceiveProps(nextProps) {
-    // If we've already loaded these props and participants have already
+    // If we've already loaded these props and players have already
     // been loaded, no need to redo
     if (_.isEqual(nextProps.params, this.props.params) &&
-        this.props.participant.trip.participants.length > 0) {
+        this.props.player.trip.players.length > 0) {
       return;
     }
     this.setState({ pendingMessage: '' });
-    this.loadData(nextProps.params, nextProps.participant.trip.participants);
+    this.loadData(nextProps.params, nextProps.player.trip.players);
   }
 
   getUserRoleName() {
-    const script = this.props.participant.trip.script;
+    const script = this.props.player.trip.script;
     const role = _.find(script.content.roles,
       { name: this.props.params.roleName });
     return role.actor ? this.props.params.withRoleName :
@@ -47,40 +47,40 @@ export default class PlayerMessages extends Component {
       this.props.params.roleName : this.props.params.withRoleName;
   }
 
-  loadData(params, participants) {
-    if (participants.length === 0) {
+  loadData(params, players) {
+    if (players.length === 0) {
       return;
     }
-    const participant1 = _.find(participants, {
+    const player1 = _.find(players, {
       tripId: parseInt(params.tripId, 10),
       roleName: params.roleName
     });
     if (params.withRoleName !== 'All') {
       // If with role name was provided, find messages sent by either
       // of the two.
-      const participant2 = _.find(participants, {
+      const player2 = _.find(players, {
         tripId: parseInt(params.tripId, 10),
         roleName: params.withRoleName
       });
       this.props.listCollection('messages', {
         tripId: params.tripId,
-        sentById: [participant1.id, participant2.id]
+        sentById: [player1.id, player2.id]
       });
     } else {
       // Otherwise, find messages sent to or received by this guy.
       this.props.listCollection('messages', {
         tripId: params.tripId,
-        sentById: [participant1.id]
+        sentById: [player1.id]
       });
       this.props.listCollection('messages', {
         tripId: params.tripId,
-        sentToId: [participant1.id]
+        sentToId: [player1.id]
       });
     }
   }
 
   handleCounterpartChange(event) {
-    browserHistory.push(`/agency/live/${this.props.params.groupId}/trip/${this.props.params.tripId}/participants/${this.props.params.roleName}/messages/${event.target.value}`);
+    browserHistory.push(`/agency/live/${this.props.params.groupId}/trip/${this.props.params.tripId}/players/${this.props.params.roleName}/messages/${event.target.value}`);
   }
 
   handlePendingMessageChange(event) {
@@ -105,7 +105,7 @@ export default class PlayerMessages extends Component {
       this.props.params.withRoleName === 'All' ||
       this.state.pendingMessage === '');
 
-    const role = _.find(this.props.participant.trip.script.content.roles,
+    const role = _.find(this.props.player.trip.script.content.roles,
       { name: this.props.params.roleName });
     const channels = role.channels_with || [];
     const counterpartOptions = channels
@@ -154,7 +154,7 @@ export default class PlayerMessages extends Component {
         <Message
           key={message.id}
           updateInstance={this.props.updateInstance}
-          trip={this.props.participant.trip}
+          trip={this.props.player.trip}
           message={message} />
       ));
   }
@@ -176,6 +176,6 @@ PlayerMessages.propTypes = {
   postAction: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   messages: PropTypes.array.isRequired,
-  participant: PropTypes.object.isRequired,
+  player: PropTypes.object.isRequired,
   params: PropTypes.object.isRequired
 };

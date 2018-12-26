@@ -10,7 +10,7 @@ const TripRelaysController = require('./trip_relays');
 const RelayTrailheadController = {};
 
 /**
- * Update the participant to assign a user when starting a new trip
+ * Update the player to assign a user when starting a new trip
  * for a trailhead.
  */
 RelayTrailheadController.assignActor = async (script, trip, role) => {
@@ -27,8 +27,8 @@ RelayTrailheadController.assignActor = async (script, trip, role) => {
     return;
   }
   const matchingProfile = roleProfiles[0];
-  // Update role participant with this user
-  await models.Participant.update({ userId: matchingProfile.userId }, {
+  // Update role player with this user
+  await models.Player.update({ userId: matchingProfile.userId }, {
     where: { tripId: trip.id, roleName: role.name }
   });
   // Send admin message
@@ -99,8 +99,8 @@ RelayTrailheadController.createTrip = async (trailheadRelay, fromNumber) => {
     await trailheadProfile.update({ isActive: true });
   }
 
-  // Update the trailhead participant to be assigned to trailhead user.
-  await models.Participant.update({ userId: trailheadUser.id }, {
+  // Update the trailhead player to be assigned to trailhead user.
+  await models.Player.update({ userId: trailheadUser.id }, {
     where: {
       tripId: trip.id,
       roleName: trailheadRelay.forRoleName

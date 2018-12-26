@@ -1,8 +1,8 @@
 const assert = require('assert');
 
-const ParticipantCore = require('../src/participant');
+const PlayerCore = require('../src/player');
 
-describe('ParticipantCore', () => {
+describe('PlayerCore', () => {
 
   describe('#getInitialFields', () => {
 
@@ -25,7 +25,7 @@ describe('ParticipantCore', () => {
     };
 
     it('creates values from role', () => {
-      const res = ParticipantCore
+      const res = PlayerCore
         .getInitialFields(script, 'Sam', []);
       assert.deepEqual(res, {
         currentPageName: 'PAGE-1',
@@ -35,7 +35,7 @@ describe('ParticipantCore', () => {
     });
 
     it('creates values with overrides from template', () => {
-      const res = ParticipantCore.getInitialFields(
+      const res = PlayerCore.getInitialFields(
         script, 'Sam', ['override']);
       assert.strictEqual(res.currentPageName, 'PAGE-2');
     });

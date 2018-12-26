@@ -5,22 +5,22 @@ const models = require('../models');
 const TripsController = {};
 
 /**
- * Create an initial participant including default values.
+ * Create an initial player including default values.
  */
-TripsController.createParticipant = async (
+TripsController.createPlayer = async (
   script, trip, role, variantNames
 ) => {
-  const initialFields = fptCore.ParticipantCore.getInitialFields(
+  const initialFields = fptCore.PlayerCore.getInitialFields(
     script, role.name, variantNames);
   const fields = Object.assign(initialFields, {
     tripId: trip.id,
     userId: null,
   });
-  return await models.Participant.create(fields);
+  return await models.Player.create(fields);
 };
 
 /**
- * Create an initial trip including participants with default values.
+ * Create an initial trip including players with default values.
  */
 TripsController.createWithDefaults = async (
   groupId, title, departureName, variantNames=[]
@@ -46,7 +46,7 @@ TripsController.createWithDefaults = async (
   });
   const roles = script.content.roles || [];
   for (let role of roles) {
-    await TripsController.createParticipant(
+    await TripsController.createPlayer(
       script, trip, role, variantNames);
   }
   return trip;

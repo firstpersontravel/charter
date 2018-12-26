@@ -12,17 +12,17 @@ const {
 } = require('./fields');
 
 /**
- * Participant model.
+ * Player model.
  */
-const Participant = database.define('Participant', snakeCaseColumns({
+const Player = database.define('Player', snakeCaseColumns({
   roleName: requiredStringField(32, false),
   currentPageName: optionalStringField(64),
   acknowledgedPageName: optionalStringField(64),
   acknowledgedPageAt: datetimeField(),
-  values: jsonField(database, 'Participant', 'values'),
+  values: jsonField(database, 'Player', 'values'),
 }));
 
-oneToMany(Participant, Trip);
-oneToMany(Participant, User, true);
+oneToMany(Player, Trip);
+oneToMany(Player, User, true);
 
-module.exports = Participant;
+module.exports = Player;

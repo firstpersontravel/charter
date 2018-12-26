@@ -14,7 +14,7 @@ describe('TripsController', () => {
 
   describe('#createWithDefaults', () => {
 
-    it('creates a trip and participants', async () => {
+    it('creates a trip and players', async () => {
       const stubScript = {
         id: 2,
         timezone: 'US/Pacific',
@@ -51,7 +51,7 @@ describe('TripsController', () => {
       sandbox.stub(models.Group, 'findById').resolves(stubGroup);
       sandbox.stub(models.Script, 'findById').resolves(stubScript);
       sandbox.stub(models.Trip, 'create').resolves({ id: 3 });
-      sandbox.stub(models.Participant, 'create').resolves({ id: 4 });
+      sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
       await TripsController.createWithDefaults(1, 'title', 'T1', ['basic']);
       sinon.assert.calledWith(models.Group.findById, 1);
@@ -73,10 +73,10 @@ describe('TripsController', () => {
           title: 'title',
           values: { one: 1, two: 2 }
         });
-      // Create participant
-      sinon.assert.calledOnce(models.Participant.create);
+      // Create player
+      sinon.assert.calledOnce(models.Player.create);
       assert.deepStrictEqual(
-        models.Participant.create.firstCall.args[0], {
+        models.Player.create.firstCall.args[0], {
           currentPageName: '',
           tripId: 3,
           roleName: 'fake',

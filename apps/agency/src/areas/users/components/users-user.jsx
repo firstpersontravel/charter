@@ -25,7 +25,7 @@ export default class UsersUser extends Component {
 
   componentWillMount() {
     if (this.props.user) {
-      this.loadParticipants(this.props.user.id);
+      this.loadPlayers(this.props.user.id);
     }
   }
 
@@ -34,12 +34,12 @@ export default class UsersUser extends Component {
       return;
     }
     if (_.get(nextProps, 'user.id') !== _.get(this.props, 'user.id')) {
-      this.loadParticipants(nextProps.user.id);
+      this.loadPlayers(nextProps.user.id);
     }
   }
 
-  loadParticipants(userId) {
-    this.props.listCollection('participants', {
+  loadPlayers(userId) {
+    this.props.listCollection('players', {
       userId: userId
     });
   }
@@ -112,16 +112,16 @@ export default class UsersUser extends Component {
     );
   }
 
-  renderParticipantRole({ group, participant, trip }) {
+  renderPlayerRole({ group, player, trip }) {
     return (
-      <li key={participant.id}>
+      <li key={player.id}>
         <Link
           to={`/agency/live/${trip.groupId}`}>
           Group: {moment(group.date).format('MMM D')}
         </Link>
         {', '}
         <Link
-          to={`/agency/live/${trip.groupId}/all/role/${participant.roleName}/${this.props.user.id}`}>
+          to={`/agency/live/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
           Trip: {trip.title},
           Departure: {trip.departureName}
         </Link>
@@ -129,18 +129,18 @@ export default class UsersUser extends Component {
     );
   }
 
-  renderParticipants(profile) {
-    const participantItems = this.props.activeRoles
+  renderPlayers(profile) {
+    const playerItems = this.props.activeRoles
       .filter(role => (
         role.script &&
         role.script.name === profile.scriptName &&
-        role.participant &&
-        role.participant.roleName === profile.roleName
+        role.player &&
+        role.player.roleName === profile.roleName
       ))
-      .map(role => this.renderParticipantRole(role));
+      .map(role => this.renderPlayerRole(role));
     return (
       <ul>
-        {participantItems}
+        {playerItems}
       </ul>
     );
   }
@@ -214,7 +214,7 @@ export default class UsersUser extends Component {
         {skype}
         {facetime}
         {renderedValues}
-        {this.renderParticipants(profile)}
+        {this.renderPlayers(profile)}
       </div>
     );
   }

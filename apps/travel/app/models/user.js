@@ -17,6 +17,6 @@ export default DS.Model.extend({
   deviceLastActive: DS.attr('moment'),
   deviceTimestamp: DS.attr('moment'),
 
-  participants: DS.hasMany('participant', {async: false}),
+  players: DS.hasMany('player', {async: false}),
   profiles: DS.hasMany('profile', {async: false}),
 });

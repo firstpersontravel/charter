@@ -4,19 +4,19 @@ import PropTypes from 'prop-types';
 import { IndexLink, Link } from 'react-router';
 
 import GroupMap from '../partials/GroupMap';
-import { getParticipantPageInfo, sortParticipants } from '../utils';
+import { getPlayerPageInfo, sortPlayers } from '../utils';
 
-function renderAddUserIcon(participant) {
-  if (!participant.role.user) {
+function renderAddUserIcon(player) {
+  if (!player.role.user) {
     return null;
   }
-  if (participant.user) {
+  if (player.user) {
     return null;
   }
   return (
     <span>
       &nbsp;
-      <Link to={`/agency/live/${participant.trip.groupId}/all/casting`}>
+      <Link to={`/agency/live/${player.trip.groupId}/all/casting`}>
         <span className="text-danger">
           <i className="fa fa-user-plus" />
         </span>
@@ -27,7 +27,7 @@ function renderAddUserIcon(participant) {
 
 function renderActor(roleAndActors) {
   const actor = roleAndActors.actors[0];
-  const pageInfo = getParticipantPageInfo(actor);
+  const pageInfo = getPlayerPageInfo(actor);
   if (!pageInfo) {
     return null;
   }
@@ -52,14 +52,14 @@ function renderActor(roleAndActors) {
 }
 
 function renderPlayer(player) {
-  const pageInfo = getParticipantPageInfo(player);
+  const pageInfo = getPlayerPageInfo(player);
   if (!pageInfo) {
     return null;
   }
   return (
     <div key={player.id} className="constrain-text">
       <IndexLink
-        to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/participants/${player.role.name}`}>
+        to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/players/${player.role.name}`}>
         {player.trip.departureName} {player.role.name}:
         {' '}
         {pageInfo.status}
@@ -69,7 +69,7 @@ function renderPlayer(player) {
   );
 }
 
-function renderPlayers(tripAndPlayers) {
+function renderTripAndPlayers(tripAndPlayers) {
   const renderedPlayers = tripAndPlayers.players
     .map(player => renderPlayer(player));
   return (
@@ -79,14 +79,14 @@ function renderPlayers(tripAndPlayers) {
   );
 }
 
-function renderParticipants(group) {
+function renderAllPlayers(group) {
   if (group.trips.length === 0 || !group.script) {
     return null;
   }
-  const allParticipants = sortParticipants(group);
-  const players = allParticipants.playersByTrip.map(renderPlayers);
-  const activeActors = allParticipants.activeActorsByRole.map(renderActor);
-  const inactiveActors = allParticipants.inactiveActorsByRole
+  const allPlayers = sortPlayers(group);
+  const players = allPlayers.playersByTrip.map(renderTripAndPlayers);
+  const activeActors = allPlayers.activeActorsByRole.map(renderActor);
+  const inactiveActors = allPlayers.inactiveActorsByRole
     .map(renderActor);
   return (
     <div>
@@ -115,7 +115,7 @@ export default function GroupOverview({ groupStatus }) {
           <GroupMap trips={trips} />
         </div>
         <div className="col-md-5">
-          {renderParticipants(groupStatus.instance)}
+          {renderAllPlayers(groupStatus.instance)}
         </div>
       </div>
     </div>

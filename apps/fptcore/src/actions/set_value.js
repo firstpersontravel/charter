@@ -7,16 +7,16 @@ function setValue(script, context, params, applyAt) {
 
   // Check if we're setting the value on a player
   var roleNames = _.map(script.content.roles, 'name');
-  var isParticipant = _.includes(roleNames, params.value_ref.split('.')[0]);
+  var isPlayer = _.includes(roleNames, params.value_ref.split('.')[0]);
 
-  // If we are, set on the participant.
-  if (isParticipant) {
+  // If we are, set on the player.
+  if (isPlayer) {
     var roleName = params.value_ref.split('.')[0];
-    var participantValueRef = params.value_ref.split('.').slice(1).join('.');
+    var playerValueRef = params.value_ref.split('.').slice(1).join('.');
     return [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: roleName,
-      updates: { values: _.set({}, participantValueRef, { $set: newValue }) }
+      updates: { values: _.set({}, playerValueRef, { $set: newValue }) }
     }];
   }
   // Otherwise it's a trip value.

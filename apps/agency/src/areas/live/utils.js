@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { EvalCore, ParticipantCore } from 'fptcore';
+import { EvalCore, PlayerCore } from 'fptcore';
 
 export function sortForRole(role) {
   if (role.primary) {
@@ -12,56 +12,56 @@ export function sortForRole(role) {
   return 0;
 }
 
-export function getParticipantPageInfo(participant) {
-  const trip = participant.trip;
-  return ParticipantCore.getPageInfo(trip.script, trip.context,
-    participant);
+export function getPlayerPageInfo(player) {
+  const trip = player.trip;
+  return PlayerCore.getPageInfo(trip.script, trip.context,
+    player);
 }
 
-function getGroupParticipantsForRole(group, roleName) {
+function getGroupPlayersForRole(group, roleName) {
   const role = _.find(group.script.content.roles, { name: roleName });
   return group.trips
     .filter(trip => (
       !role.if || EvalCore.if(trip.context, role.if)
     ))
     .map(trip => (
-      _.find(trip.participants, { roleName: role.name })
+      _.find(trip.players, { roleName: role.name })
     ))
     .filter(Boolean)
-    .filter(participant => (
-      participant.currentPageName
+    .filter(player => (
+      player.currentPageName
     ));
 }
 
-function getTripParticipantsForRoles(trip, roleFilters) {
+function getTripPlayersForRoles(trip, roleFilters) {
   const roles = _.filter(trip.script.content.roles, roleFilters);
   return roles
     .filter(role => (
       !role.if || EvalCore.if(trip.context, role.if)
     ))
     .map(role => (
-      _.find(trip.participants, { roleName: role.name })
+      _.find(trip.players, { roleName: role.name })
     ))
     .filter(Boolean)
-    .filter(participant => (
-      participant.currentPageName
+    .filter(player => (
+      player.currentPageName
     ));
 }
 
 function getTripPlayers(trip) {
-  return getTripParticipantsForRoles(trip, { user: true, actor: false });
+  return getTripPlayersForRoles(trip, { user: true, actor: false });
 }
 
-function getParticipantSceneSort(participant) {
-  const trip = participant.trip;
-  return ParticipantCore.getSceneSort(trip.script, trip.context,
-    participant);
+function getPlayerSceneSort(player) {
+  const trip = player.trip;
+  return PlayerCore.getSceneSort(trip.script, trip.context,
+    player);
 }
 
 function getUserActors(group, role) {
   const actors = _.sortBy(
-    getGroupParticipantsForRole(group, role.name),
-    getParticipantSceneSort);
+    getGroupPlayersForRole(group, role.name),
+    getPlayerSceneSort);
   const actorsByUserId = _.groupBy(actors, 'userId');
   const roleHasMultipleUsers = _.keys(actorsByUserId).length > 1;
   return _.map(actorsByUserId, (actorsWithUser, userId) => ({
@@ -82,16 +82,16 @@ function getActors(group) {
     .filter(roleAndActors => roleAndActors.actors.length > 0)
     .value();
   return _.sortBy(rolesAndActors, roleAndActors => (
-    getParticipantSceneSort(roleAndActors.actors[0])
+    getPlayerSceneSort(roleAndActors.actors[0])
   ));
 }
 
 function isActorByRoleActive(roleAndActors) {
-  const pageInfo = getParticipantPageInfo(roleAndActors.actors[0]);
+  const pageInfo = getPlayerPageInfo(roleAndActors.actors[0]);
   return pageInfo && pageInfo.appearanceIsActive;
 }
 
-export function sortParticipants(group) {
+export function sortPlayers(group) {
   const playersByTrip = group.trips.map(trip => ({
     trip: trip,
     players: getTripPlayers(trip)
@@ -122,7 +122,7 @@ export function getMessagesNeedingReply(state, groupId, roleName) {
       if (!roleName) {
         return true;
       }
-      const sentTo = _.find(state.datastore.participants,
+      const sentTo = _.find(state.datastore.players,
         { id: message.sentToId });
       return roleName === sentTo.roleName;
     });
@@ -130,7 +130,7 @@ export function getMessagesNeedingReply(state, groupId, roleName) {
 
 export default {
   sortForRole: sortForRole,
-  getParticipantPageInfo: getParticipantPageInfo,
+  getPlayerPageInfo: getPlayerPageInfo,
   getMessagesNeedingReply: getMessagesNeedingReply,
-  sortParticipants: sortParticipants
+  sortPlayers: sortPlayers
 };

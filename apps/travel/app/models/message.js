@@ -2,8 +2,8 @@ import DS from 'ember-data';
 
 export default DS.Model.extend({
   trip: DS.belongsTo('trip', {async: false}),
-  sentBy: DS.belongsTo('participant', {async: false}),
-  sentTo: DS.belongsTo('participant', {async: false}),
+  sentBy: DS.belongsTo('player', {async: false}),
+  sentTo: DS.belongsTo('player', {async: false}),
   sentFromLatitude: DS.attr('number'),
   sentFromLongitude: DS.attr('number'),
   sentFromAccuracy: DS.attr('number'),

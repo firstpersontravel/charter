@@ -9,7 +9,7 @@ export default Ember.Controller.extend({
     },
     debug: function() {
       this.get('application').set('debug', !this.get('application.debug'));
-      this.transitionToRoute('participant.page');
+      this.transitionToRoute('player.page');
     }
   }
 });

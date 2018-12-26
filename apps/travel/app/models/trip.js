@@ -19,7 +19,7 @@ export default DS.Model.extend({
   schedule: DS.attr('obj'),
   history: DS.attr('obj'),
 
-  participants: DS.hasMany('participant', {async: false}),
+  players: DS.hasMany('player', {async: false}),
   messages: DS.hasMany('message', {async: false}),
 
   createLocalAction: function(name, params, scheduledAt, triggerName) {
@@ -49,11 +49,11 @@ export default DS.Model.extend({
     trip.schedule = JSON.parse(trip.schedule);
     trip.history = JSON.parse(trip.history);
     trip.values = JSON.parse(trip.values);
-    trip.participants = this.get('participants').map(((participant) => {
-      var p = participant.toJSON();
-      p.id = Number(participant.id);
+    trip.players = this.get('players').map(((player) => {
+      var p = player.toJSON();
+      p.id = Number(player.id);
       p.values = JSON.parse(p.values);
-      var user = participant.get('user');
+      var user = player.get('user');
       if (user) {
         p.user = user.toJSON();
         const profile = user.get('profiles').filter(profile => (
@@ -76,8 +76,8 @@ export default DS.Model.extend({
     return context;
   }.property(
     'values',
-    'participants.@each.currentPageName',
-    'participants.@each.values'),
+    'players.@each.currentPageName',
+    'players.@each.values'),
 
   lookupRef: function(ref) {
     var context = this.get('evalContext');

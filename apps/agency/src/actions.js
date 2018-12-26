@@ -178,7 +178,7 @@ export function refreshLiveData(tripIds) {
   return function (dispatch) {
     dispatch(listCollection('users', { isArchived: false }));
     dispatch(listCollection('trips', { id: tripIds }));
-    dispatch(listCollection('participants',
+    dispatch(listCollection('players',
       { tripId: tripIds }));
     dispatch(listCollection('actions',
       { tripId: tripIds, appliedAt: 'null' },
@@ -244,15 +244,15 @@ export function updateRelays(scriptName) {
   };
 }
 
-export function initializeTrip(fields, participantsFields) {
+export function initializeTrip(fields, playersFields) {
   return function (dispatch) {
     createInstance('trips', fields)(dispatch)
       .then((data) => {
         const tripId = data.id;
-        participantsFields.forEach((participantFields) => {
-          const mergedFields = _.assign({}, participantFields,
+        playersFields.forEach((playerFields) => {
+          const mergedFields = _.assign({}, playerFields,
             { tripId: tripId });
-          createInstance('participants', mergedFields)(dispatch);
+          createInstance('players', mergedFields)(dispatch);
         });
       })
       .catch((err) => {

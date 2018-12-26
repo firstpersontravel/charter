@@ -14,7 +14,7 @@ import withContext from './with-context';
 
 const GROUPING_THRESHOLD = 20;
 
-const ParticipantIcon = L.Icon.extend({
+const PlayerIcon = L.Icon.extend({
   options: {
     iconUrl: '/static/images/marker-icon.png',
     iconRetinaUrl: '/static/images/marker-icon-2x.png',
@@ -61,8 +61,8 @@ const userIcon = new HorseIcon();
 const userIconExpired = new HorseIcon({
   className: 'marker-grayscale'
 });
-const actorIcon = new ParticipantIcon();
-const actorIconLocExpired = new ParticipantIcon({
+const actorIcon = new PlayerIcon();
+const actorIconLocExpired = new PlayerIcon({
   className: 'marker-grayscale'
 });
 
@@ -183,21 +183,21 @@ export default class GroupMap extends Component {
   getActiveRoutePolylines() {
     const script = this.props.trips[0].script;
     const LinkWithContext = withContext(Link, this.context);
-    const activeParticipants = _(this.props.trips)
-      .map('participants')
+    const activePlayers = _(this.props.trips)
+      .map('players')
       .flatten()
       .filter('currentPageName')
       .value();
 
-    return _(activeParticipants)
-      .map((participant) => {
-        const participantLink = (
-          <LinkWithContext to={`/agency/live/${participant.trip.groupId}/trip/${participant.trip.id}/participants/${participant.roleName}`}>
-            {participant.trip.departureName}{' '}
-            {participant.roleName}
+    return _(activePlayers)
+      .map((player) => {
+        const playerLink = (
+          <LinkWithContext to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
+            {player.trip.departureName}{' '}
+            {player.roleName}
           </LinkWithContext>
         );
-        const pageName = participant.currentPageName;
+        const pageName = player.currentPageName;
         const page = _.find(script.content.pages, { name: pageName });
         if (!page) {
           return null;
@@ -205,15 +205,15 @@ export default class GroupMap extends Component {
         if (page.waypoint) {
           const waypointOption = WaypointCore.optionForWaypoint(
             script.content, page.waypoint,
-            participant.trip.values.waypoint_options);
+            player.trip.values.waypoint_options);
           return [
             <Marker
-              key={`${participant.id}-target`}
+              key={`${player.id}-target`}
               position={waypointOption.coords}
               icon={activeWaypointIcon}>
               <Popup>
                 <div>
-                  {participantLink} at {page.title}
+                  {playerLink} at {page.title}
                 </div>
               </Popup>
             </Marker>
@@ -224,27 +224,27 @@ export default class GroupMap extends Component {
         }
         const directions = WaypointCore.directionsForRoute(
           script.content, page.route,
-          participant.trip.values.waypoint_options);
+          player.trip.values.waypoint_options);
         const coords = PolylineEncoded.decode(directions.polyline);
         const destination = coords[coords.length - 1];
-        const user = participant.user;
+        const user = player.user;
         const userCoords = user &&
           user.locationLatitude &&
           [user.locationLatitude, user.locationLongitude];
         const coordsRemaining = getPolylineRemaining(coords, userCoords);
         return [
           <Polyline
-            key={participant.id}
+            key={player.id}
             positions={coordsRemaining}
             color={'#f3a842'}
             weight={6} />,
           <Marker
-            key={`${participant.id}-target`}
+            key={`${player.id}-target`}
             position={destination}
             icon={activeWaypointIcon}>
             <Popup>
               <div>
-                {participantLink} destination of {page.title}
+                {playerLink} destination of {page.title}
               </div>
             </Popup>
           </Marker>
@@ -256,38 +256,38 @@ export default class GroupMap extends Component {
   }
 
   getUsersWithLoc() {
-    const participants = _.flatMap(this.props.trips, 'participants');
-    const users = _.uniq(_.filter(_.map(participants, 'user'), Boolean));
+    const players = _.flatMap(this.props.trips, 'players');
+    const users = _.uniq(_.filter(_.map(players, 'user'), Boolean));
     const usersWithLoc = _.filter(users, 'locationLatitude');
     return usersWithLoc;
   }
 
-  getParticipantGroups() {
-    const participants = _.filter(
-      _.flatMap(this.props.trips, 'participants'),
+  getPlayerGroups() {
+    const players = _.filter(
+      _.flatMap(this.props.trips, 'players'),
       'user.locationLatitude');
-    return groupByLocation(participants,
+    return groupByLocation(players,
       'user.locationLatitude',
       'user.locationLongitude',
       GROUPING_THRESHOLD);
   }
 
-  renderMarkerParticipantSection(participant) {
+  renderMarkerPlayerSection(player) {
     const timezone = this.props.trips[0].script.timezone;
     const LinkWithContext = withContext(Link, this.context);
     return (
-      <div key={participant.id}>
+      <div key={player.id}>
         <div>
-          <LinkWithContext to={`/agency/live/${participant.trip.groupId}/trip/${participant.trip.id}/participants/${participant.roleName}`}>
-            {participant.trip.departureName}{' '}
-            {participant.roleName}{' '}
-            ({participant.user.firstName})
+          <LinkWithContext to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
+            {player.trip.departureName}{' '}
+            {player.roleName}{' '}
+            ({player.user.firstName})
           </LinkWithContext>
         </div>
         <div style={{ marginBottom: '0.25em' }}>
           <i className="fa fa-location-arrow" />
           &nbsp;{moment
-            .utc(participant.user.locationTimestamp)
+            .utc(player.user.locationTimestamp)
             .tz(timezone)
             .format('ddd, h:mmA z')}
         </div>
@@ -295,12 +295,12 @@ export default class GroupMap extends Component {
     );
   }
 
-  renderMarker(participantGroup) {
-    const user = participantGroup[0].user;
+  renderMarker(playerGroup) {
+    const user = playerGroup[0].user;
     const oneHourAgo = moment.utc().subtract(1, 'hour');
     const locatedAt = moment.utc(user.locationTimestamp);
     const locIsRecent = locatedAt.isAfter(oneHourAgo);
-    const isActor = participantGroup[0].role.actor;
+    const isActor = playerGroup[0].role.actor;
     const icons = isActor ?
       [actorIcon, actorIconLocExpired] :
       [userIcon, userIconExpired];
@@ -308,15 +308,15 @@ export default class GroupMap extends Component {
     const position = L.latLng(
       user.locationLatitude,
       user.locationLongitude);
-    const participantSections = participantGroup
-      .map(participant => (
-        this.renderMarkerParticipantSection(participant)
+    const playerSections = playerGroup
+      .map(player => (
+        this.renderMarkerPlayerSection(player)
       ));
     return (
       <Marker key={user.id} position={position} icon={icon}>
         <Popup>
           <div>
-            {participantSections}
+            {playerSections}
           </div>
         </Popup>
       </Marker>
@@ -324,9 +324,9 @@ export default class GroupMap extends Component {
   }
 
   renderMarkers() {
-    const participantGroups = this.getParticipantGroups();
-    return participantGroups.map(participantGroup => (
-      this.renderMarker(participantGroup)
+    const playerGroups = this.getPlayerGroups();
+    return playerGroups.map(playerGroup => (
+      this.renderMarker(playerGroup)
     ));
   }
 

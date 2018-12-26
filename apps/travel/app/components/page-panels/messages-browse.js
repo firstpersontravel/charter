@@ -21,24 +21,24 @@ export default Ember.Component.extend(WindowHeightMixin, {
     }
   },
 
-  asParticipant: function() {
+  asPlayer: function() {
     var roleName;
     if (this.get('params.as')) {
       roleName = this.get('params.as');
     } else {
-      roleName = this.get('participant.roleName');
+      roleName = this.get('player.roleName');
     }
-    return this.get('trip.participants').findBy('roleName', roleName);
-  }.property('params', 'participant.roleName'),
+    return this.get('trip.players').findBy('roleName', roleName);
+  }.property('params', 'player.roleName'),
 
   messagesWithSelf: function() {
-    var asParticipant = this.get('asParticipant');
+    var asPlayer = this.get('asPlayer');
     var messages = this.get('trip.messages');
     return messages
       .filter(function(message) {
         return (
-          message.get('sentBy') === asParticipant ||
-          message.get('sentTo') === asParticipant);
+          message.get('sentBy') === asPlayer ||
+          message.get('sentTo') === asPlayer);
       })
       .sort(function(a, b) {
         return Ember.compare(
@@ -49,24 +49,24 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   contacts: function() {
     // Senders sorted by who wrote to you most recently, most recent first.
-    var asParticipant = this.get('asParticipant');
-    var participants = this.get('trip.participants');
-    var addedRoleNames = asParticipant.get('values.accessible_contacts') || [];
+    var asPlayer = this.get('asPlayer');
+    var players = this.get('trip.players');
+    var addedRoleNames = asPlayer.get('values.accessible_contacts') || [];
     var accessibleContacts = addedRoleNames
       .map(function(roleName) {
-        return participants.findBy('roleName', roleName);
+        return players.findBy('roleName', roleName);
       });
     var messagesWithSelf = this.get('messagesWithSelf');
     var uniqueOrderedContacts = messagesWithSelf
       .reverse()
       .map(function(m) {
-        var isIncoming = m.get('sentTo') === asParticipant;
+        var isIncoming = m.get('sentTo') === asPlayer;
         // return other person
         return isIncoming ? m.get('sentBy') : m.get('sentTo');
       })
       .concat(accessibleContacts)
       .uniq();
-    return uniqueOrderedContacts.rejectBy('id', asParticipant.id);
+    return uniqueOrderedContacts.rejectBy('id', asPlayer.id);
   }.property('params', 'messagesWithSelf'),
 
   menu: function() {
@@ -99,7 +99,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   messagesParams: function() {
     return {
-      as: this.get('asParticipant.roleName'),
+      as: this.get('asPlayer.roleName'),
       with: this.get('selectedContact.roleName')
     };
   }.property('selectedContact'),

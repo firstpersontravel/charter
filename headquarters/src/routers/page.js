@@ -10,14 +10,14 @@ const pageRouter = express.Router();
 
 // Public routes
 pageRouter.get('/', asyncRoute(pagePublicRoutes.homeRoute));
-pageRouter.get('/s/:participantId',
-  asyncRoute(pagePublicRoutes.participantShortcutRoute));
+pageRouter.get('/s/:playerId',
+  asyncRoute(pagePublicRoutes.playerShortcutRoute));
 
 // Actor routes
 pageRouter.get('/actor/', asyncRoute(pageActorRoutes.actorsListRoute));
 pageRouter.get('/actor/:userId', asyncRoute(pageActorRoutes.userShowRoute));
-pageRouter.get('/actor/participant/:participantId',
-  asyncRoute(pageActorRoutes.participantShowRoute));
+pageRouter.get('/actor/player/:playerId',
+  asyncRoute(pageActorRoutes.playerShowRoute));
 
 // Gallery routes
 pageRouter.get('/gallery/:year/:month/:day/:alias',

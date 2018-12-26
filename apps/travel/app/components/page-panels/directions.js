@@ -34,12 +34,12 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.property('directions'),
 
   selfLocation: function() {
-    var selfParticipant = this.get('participant');
-    if (!selfParticipant.get('user.locationTimestamp')) { return null; }
+    var selfPlayer = this.get('player');
+    if (!selfPlayer.get('user.locationTimestamp')) { return null; }
     return L.latLng(
-      selfParticipant.get('user.locationLatitude'),
-      selfParticipant.get('user.locationLongitude'));
-  }.property('participant.user.locationTimestamp'),
+      selfPlayer.get('user.locationLatitude'),
+      selfPlayer.get('user.locationLongitude'));
+  }.property('player.user.locationTimestamp'),
 
   centerLocation: null,
   waypointLocation: null,

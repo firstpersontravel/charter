@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
 
   script: Ember.inject.controller(),
-  participant: Ember.inject.controller(),
+  player: Ember.inject.controller(),
   trip: Ember.inject.controller(),
   messages: Ember.inject.controller(),
 
@@ -12,8 +12,8 @@ export default Ember.Controller.extend({
 
   pageLayoutName: function() {
     var page = this.get('pageModel');
-    var participant = this.get('participant.model');
-    var pageLayoutName = participant.get('role').default_layout || null;
+    var player = this.get('player.model');
+    var pageLayoutName = player.get('role').default_layout || null;
     if (page.layout !== undefined) { pageLayoutName = page.layout; }
     return pageLayoutName;
   }.property('pageModel'),
@@ -23,13 +23,13 @@ export default Ember.Controller.extend({
   }.property('pageLayout'),
 
   pageModel: function() {
-    var participant = this.get('participant.model');
-    var script = participant.get('trip.script');
-    if (!participant) {
+    var player = this.get('player.model');
+    var script = player.get('trip.script');
+    if (!player) {
       return null;
     }
-    return script.findPageByName(participant.get('currentPageName'));
-  }.property('participant.model.currentPageName'),
+    return script.findPageByName(player.get('currentPageName'));
+  }.property('player.model.currentPageName'),
 
   pageLayout: function() {
     var scriptContent = this.get('script.model.content');

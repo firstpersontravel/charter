@@ -3,9 +3,9 @@ var moment = require('moment-timezone');
 
 var EvalCore = require('./eval');
 
-var ParticipantCore = {};
+var PlayerCore = {};
 
-ParticipantCore.getInitialFields = function (script, roleName, variantNames) {
+PlayerCore.getInitialFields = function (script, roleName, variantNames) {
   var role = _.find(script.content.roles, { name: roleName });
   var firstPageName = role.starting_page || '';
   var variants = script.content.variants || [];
@@ -25,9 +25,9 @@ ParticipantCore.getInitialFields = function (script, roleName, variantNames) {
   };
 };
 
-ParticipantCore.getPageInfo = function(script, context, participant) {
+PlayerCore.getPageInfo = function(script, context, player) {
   var page = _.find(script.content.pages,
-    { name: participant.currentPageName });
+    { name: player.currentPageName });
   if (!page) {
     return null;
   }
@@ -38,7 +38,7 @@ ParticipantCore.getPageInfo = function(script, context, participant) {
 
   var appearanceIsActive = !appearance.if ||
     EvalCore.if(context, appearance.if);
-  var pageTitle = page ? page.title : participant.currentPageName;
+  var pageTitle = page ? page.title : player.currentPageName;
   var appearanceTitle = appearanceIsActive ? pageTitle : appearance.disabled_message;
   var appearanceStart = appearance.start_ref ?
     moment.utc(EvalCore.lookupRef(context, appearance.start_ref)) :
@@ -54,9 +54,9 @@ ParticipantCore.getPageInfo = function(script, context, participant) {
   };
 };
 
-ParticipantCore.getSceneSort = function(script, context, participant) {
+PlayerCore.getSceneSort = function(script, context, player) {
   var page = _.find(script.content.pages,
-    { name: participant.currentPageName });
+    { name: player.currentPageName });
   if (!page) {
     return 0;
   }
@@ -69,4 +69,4 @@ ParticipantCore.getSceneSort = function(script, context, participant) {
   return moment.utc(EvalCore.lookupRef(context, appearance.start_ref)).unix();
 };
 
-module.exports = ParticipantCore;
+module.exports = PlayerCore;

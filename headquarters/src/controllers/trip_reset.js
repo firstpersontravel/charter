@@ -32,20 +32,20 @@ async function resetTrip(script, trip, checkpoint) {
 }
 
 /**
- * Reset a participant.
+ * Reset a player.
  */
-async function resetParticipant(script, trip, participant, checkpoint) {
+async function resetPlayer(script, trip, player, checkpoint) {
   // Get values
-  const fields = fptCore.ParticipantCore.getInitialFields(
-    script, participant.roleName, trip.variantNames.split(','));
+  const fields = fptCore.PlayerCore.getInitialFields(
+    script, player.roleName, trip.variantNames.split(','));
   // Update values
-  _.merge(fields.values, _.get(checkpoint, `values.${participant.roleName}`));
+  _.merge(fields.values, _.get(checkpoint, `values.${player.roleName}`));
   // Check starting page
-  if (_.get(checkpoint, 'pages.' + participant.roleName)) {
-    fields.currentPageName = checkpoint.pages[participant.roleName];
+  if (_.get(checkpoint, 'pages.' + player.roleName)) {
+    fields.currentPageName = checkpoint.pages[player.roleName];
   }
-  await participant.update(fields);
-  const user = await participant.getUser();
+  await player.update(fields);
+  const user = await player.getUser();
   if (!user) {
     return;
   }
@@ -62,8 +62,8 @@ async function resetParticipant(script, trip, participant, checkpoint) {
  */
 async function resetToCheckpoint(tripId, checkpointName) {
   const trip = await models.Trip.findById(tripId);
-  const participants = await (
-    models.Participant.findAll({ where: { tripId: tripId } })
+  const players = await (
+    models.Player.findAll({ where: { tripId: tripId } })
   );
   // Get script
   const script = await trip.getScript();
@@ -72,8 +72,8 @@ async function resetToCheckpoint(tripId, checkpointName) {
     { name: checkpointName });
   // Reset data
   await resetTrip(script, trip, checkpoint);
-  for (let participant of participants) {
-    await resetParticipant(script, trip, participant, checkpoint);
+  for (let player of players) {
+    await resetPlayer(script, trip, player, checkpoint);
   }
   // Clear actions and messages
   await models.Action.destroy({ where: { tripId: tripId }});

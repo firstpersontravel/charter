@@ -116,7 +116,7 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.Farmer.currentPageName, 'BACK-HOME');
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Farmer',
       updates: { currentPageName: { $set: 'BACK-HOME' } }
     }]);
@@ -133,7 +133,7 @@ describe('Integration - Nested Triggers', () => {
         history: { 'TRIGGER-PICK-APPLES': { $set: now.toISOString() } } 
       }
     }, {
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Farmer',
       updates: { values: { apples: { $set: 7 } } }
     }]);
@@ -154,7 +154,7 @@ describe('Integration - Nested Triggers', () => {
         history: { 'TRIGGER-UNLOAD-APPLES': { $set: now.toISOString() } } 
       }
     }, {
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Farmer',
       updates: { values: { apples: { $set: 0 } } }
     }]);

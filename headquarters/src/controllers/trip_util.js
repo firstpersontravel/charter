@@ -6,25 +6,25 @@ const config = require('../config');
 const models = require('../models');
 
 /**
- * Create participant context with the user and profile objects.
+ * Create player context with the user and profile objects.
  */
-function assembleParticipantFields(objs, participant) {
-  const userInstance = participant.userId ?
-    _.find(objs.users, u => u.id === participant.userId) :
+function assemblePlayerFields(objs, player) {
+  const userInstance = player.userId ?
+    _.find(objs.users, u => u.id === player.userId) :
     null;
   const user = userInstance ? userInstance.get({ plain: true }) : null;
   if (user) {
     const profileInstance = user ? _.find(objs.profiles, {
-      userId: participant.userId,
+      userId: player.userId,
       scriptName: objs.script.name,
-      roleName: participant.roleName,
+      roleName: player.roleName,
     }) : null;
     if (profileInstance) {
       user.profile = profileInstance.get({ plain: true });
     }
   }
 
-  return Object.assign(participant.get({ plain: true }), {
+  return Object.assign(player.get({ plain: true }), {
     user: user
   });
 }
@@ -33,8 +33,8 @@ function assembleTripFields(objs) {
   const trip = objs.trip.get({ plain: true });
   return Object.assign(trip, {
     script: objs.script.get({ plain: true }),
-    participants: _.map(objs.participants, participant => (
-      assembleParticipantFields(objs, participant)
+    players: _.map(objs.players, player => (
+      assemblePlayerFields(objs, player)
     ))
   });
 }
@@ -65,9 +65,9 @@ async function getContext(tripId) {
  * Get objects needed for a trip.
  */
 async function getObjectsForTrip(tripId) {
-  // Get trip and participants first
+  // Get trip and players first
   const trip = await models.Trip.findById(tripId);
-  const participants = await models.Participant.findAll({
+  const players = await models.Player.findAll({
     where: { tripId: tripId }
   });
   const script = await models.Script.findById(trip.scriptId);
@@ -76,12 +76,12 @@ async function getObjectsForTrip(tripId) {
   });
   const users = await models.User.findAll({
     where: {
-      id: _.map(participants, 'dataValues.userId').filter(Boolean)
+      id: _.map(players, 'dataValues.userId').filter(Boolean)
     }
   });
   return {
     trip,
-    participants,
+    players,
     script,
     profiles,
     users

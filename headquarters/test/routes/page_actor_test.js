@@ -19,7 +19,7 @@ describe('pageActorRoutes', () => {
       const res = httpMocks.createResponse();
 
       // stub db response
-      sandbox.stub(models.Participant, 'findAll').resolves([{
+      sandbox.stub(models.Player, 'findAll').resolves([{
         roleName: 'Gabe',
         user: { id: 10 },
         trip: {
@@ -33,9 +33,9 @@ describe('pageActorRoutes', () => {
 
       await pageActorRoutes.actorsListRoute(req, res);
 
-      // Test found participants with correct arguments
-      sinon.assert.calledOnce(models.Participant.findAll);
-      assert.deepStrictEqual(models.Participant.findAll.firstCall.args, [{
+      // Test found players with correct arguments
+      sinon.assert.calledOnce(models.Player.findAll);
+      assert.deepStrictEqual(models.Player.findAll.firstCall.args, [{
         where: { userId: { [Sequelize.Op.not]: null } },
         include: [{
           model: models.Trip,
@@ -58,7 +58,7 @@ describe('pageActorRoutes', () => {
     });
   });
 
-  describe('#participantShowRoute', () => {
+  describe('#playerShowRoute', () => {
     it.skip('returns 200', () => {});
     it.skip('returns 404 if does not exist', () => {});
   });

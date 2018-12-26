@@ -27,7 +27,7 @@ export default Ember.Route.extend({
         }
       }
       // Start playing audio -- after application state has been initialized.
-      this.controllerFor('participant').updateAudioState();
+      this.controllerFor('player').updateAudioState();
     });
   }
 });

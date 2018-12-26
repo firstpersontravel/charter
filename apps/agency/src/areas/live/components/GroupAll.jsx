@@ -22,18 +22,18 @@ export default function GroupAll({ children, params, groupStatus,
     .filter(role => role.user)
     .sortBy([sortForRole, 'name'])
     .value();
-  const allParticipants = _(groupStatus.instance.trips)
-    .map('participants')
+  const allPlayers = _(groupStatus.instance.trips)
+    .map('players')
     .flatten()
-    .filter(participant => (
-      !participant.role.if ||
-      EvalCore.if(participant.trip.context, participant.role.if)
+    .filter(player => (
+      !player.role.if ||
+      EvalCore.if(player.trip.context, player.role.if)
     ))
     .filter('currentPageName')
     .value();
   const roleLinks = _(roles)
     .map(role => (
-      _(allParticipants)
+      _(allPlayers)
         .filter({ roleName: role.name })
         .map('user')
         .uniq()

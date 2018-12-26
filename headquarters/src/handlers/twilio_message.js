@@ -61,7 +61,7 @@ async function handleIncomingMessage(fromNumber, toNumber, body, media) {
     return false;
   }
 
-  // Get participant or create trip.
+  // Get player or create trip.
   const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
   if (!tripId) {
     // If we couldn't create one, probably cos it's not a trailhead.

@@ -16,9 +16,9 @@ describe('EvalCore', () => {
     host: 'https://test.test'
   };
 
-  describe('#gatherParticipantContext', () => {
-    it('gathers values from participant', () => {
-      const participant = {
+  describe('#gatherPlayerContext', () => {
+    it('gathers values from player', () => {
+      const player = {
         id: 10,
         roleName: 'Vance',
         currentPageName: 'PAGE-NAME',
@@ -38,8 +38,8 @@ describe('EvalCore', () => {
         directive: null,
         skype: null
       };
-      const result = EvalCore.gatherParticipantContext(
-        env, { id: 1, script: { name: 'test' } }, participant);
+      const result = EvalCore.gatherPlayerContext(
+        env, { id: 1, script: { name: 'test' } }, player);
       assert.deepEqual(result, expected);
     });
 
@@ -57,15 +57,15 @@ describe('EvalCore', () => {
           }
         }
       };
-      const participant = {
+      const player = {
         currentPageName: 'PAGE-NAME'
       };
-      const result = EvalCore.gatherParticipantContext(env, trip, participant);
+      const result = EvalCore.gatherPlayerContext(env, trip, player);
       assert.equal(result.directive, 'Go to the Tavern');
     });
 
     it('gathers values from user', () => {
-      const participant = {
+      const player = {
         roleName: 'Dustin',
         user: {
           phoneNumber: '1234567890',
@@ -76,8 +76,8 @@ describe('EvalCore', () => {
         }
       };
       const context = { script: { name: 'theheadlandsgamble' } };
-      const result = EvalCore.gatherParticipantContext(env, context,
-        participant);
+      const result = EvalCore.gatherPlayerContext(env, context,
+        player);
       assert.equal(result.phone_number, '1234567890');
       assert.equal(result.photo, 'dustin.jpg');
       assert.equal(result.facetime, 'dustin');
@@ -97,7 +97,7 @@ describe('EvalCore', () => {
         values: {
           abc: '123'
         },
-        participants: [{
+        players: [{
           roleName: 'Sarai',
           user: {
             id: 3
@@ -111,7 +111,7 @@ describe('EvalCore', () => {
       const saraiValues = { vals: 's' };
       const vanceValues = { vals: 'v' };
       const subcontextStub = sandbox.stub(EvalCore,
-        'gatherParticipantContext');
+        'gatherPlayerContext');
       subcontextStub.onFirstCall().returns(saraiValues);
       subcontextStub.onSecondCall().returns(vanceValues);
 
@@ -126,8 +126,8 @@ describe('EvalCore', () => {
 
       const result = EvalCore.gatherContext(env, trip);
       assert.deepEqual(result, expected);
-      sinon.assert.calledWith(subcontextStub, env, trip, trip.participants[0]);
-      sinon.assert.calledWith(subcontextStub, env, trip, trip.participants[1]);
+      sinon.assert.calledWith(subcontextStub, env, trip, trip.players[0]);
+      sinon.assert.calledWith(subcontextStub, env, trip, trip.players[1]);
     });
 
     it('gathers context from waypoint options', () => {
@@ -154,7 +154,7 @@ describe('EvalCore', () => {
             waypoint1: 'option1'
           }
         },
-        participants: []
+        players: []
       };
       // Tests first option
       const res1 = EvalCore.gatherContext(env, trip);

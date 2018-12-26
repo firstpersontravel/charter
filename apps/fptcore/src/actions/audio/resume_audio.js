@@ -1,21 +1,21 @@
 function resumeAudio(script, context, params, applyAt) {
-  var participant = context[params.role_name];
-  if (!participant.audio || participant.audio.is_playing) {
+  var player = context[params.role_name];
+  if (!player.audio || player.audio.is_playing) {
     return null;
   }
-  if (!participant.audio.paused_time) {
+  if (!player.audio.paused_time) {
     return null;
   }
 
   return [{
-    operation: 'updateParticipant',
+    operation: 'updatePlayer',
     roleName: params.role_name,
     updates: {
       values: {
         audio: {
           is_playing: { $set: true },
           started_at: { $set: applyAt.toISOString() },
-          started_time: { $set: participant.audio.paused_time },
+          started_time: { $set: player.audio.paused_time },
           paused_time: { $set: null }
         }
       }

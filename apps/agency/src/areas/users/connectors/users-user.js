@@ -10,13 +10,13 @@ const mapStateToProps = (state, ownProps) => {
     { id: Number(ownProps.params.userId) });
   const profiles = _.filter(state.datastore.profiles,
     { userId: Number(ownProps.params.userId) });
-  const participants = _.filter(state.datastore.participants, {
+  const players = _.filter(state.datastore.players, {
     userId: Number(ownProps.params.userId)
   });
-  const activeRoles = participants
-    .map((participant) => {
+  const activeRoles = players
+    .map((player) => {
       const trip = _.find(state.datastore.trips, {
-        id: participant.tripId
+        id: player.tripId
       });
       const group = _.find(state.datastore.groups, {
         id: trip && trip.groupId
@@ -25,7 +25,7 @@ const mapStateToProps = (state, ownProps) => {
         id: trip && trip.scriptId
       });
       return {
-        participant: participant,
+        player: player,
         trip: trip,
         group: group,
         script: script

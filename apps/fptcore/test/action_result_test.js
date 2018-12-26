@@ -16,10 +16,10 @@ describe('ActionResultCore', () => {
       assert.deepStrictEqual(res, { a: { b: { c: 'def' } } });
     });
 
-    it('updates participant values deeply', () => {
+    it('updates player values deeply', () => {
       const old = { Phone: {} };
       const ops = [{
-        operation: 'updateParticipant',
+        operation: 'updatePlayer',
         roleName: 'Phone',
         updates: { values: { a: { b: { c: { $set: 'def' } } } } }
       }];
@@ -30,7 +30,7 @@ describe('ActionResultCore', () => {
     it('updates page with special value', () => {
       const old = { Phone: { currentPageName: 'old' } };
       const ops = [{
-        operation: 'updateParticipant',
+        operation: 'updatePlayer',
         roleName: 'Phone',
         updates: { currentPageName: { $set: 'new' } }
       }];

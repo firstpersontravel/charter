@@ -101,19 +101,19 @@ describe('API replace', () => {
     });
   });
 
-  describe('PUT /api/participants/:id', () => {
-    let participant;
+  describe('PUT /api/players/:id', () => {
+    let player;
 
     beforeEach(async () => {
-      participant = await models.Participant.find({
+      player = await models.Player.find({
         where: { tripId: trip.id }
       });
-      await participant.update({ values: { existing: true } });
+      await player.update({ values: { existing: true } });
     });
 
-    it('updates participant with simple value', () => {
+    it('updates player with simple value', () => {
       return request(app)
-        .put(`/api/participants/${participant.id}`)
+        .put(`/api/players/${player.id}`)
         .send({
           roleName: 'newRole',
           currentPageName: 'newPage'
@@ -121,14 +121,14 @@ describe('API replace', () => {
         .set('Accept', 'application/json')
         .expect(200)
         .then(async (res) => {
-          await participant.reload();
+          await player.reload();
           assert.deepStrictEqual(res.body, {
             data: {
-              participant: {
+              player: {
                 currentPageName: 'newPage',
                 acknowledgedPageAt: null,
                 acknowledgedPageName: '',
-                id: participant.id,
+                id: player.id,
                 tripId: trip.id,
                 roleName: 'newRole',
                 userId: null,

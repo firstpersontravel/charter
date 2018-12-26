@@ -13,7 +13,7 @@ describe('#stopAudio', () => {
       moment.utc());
     assert.deepEqual(res, [
       {
-        operation: 'updateParticipant',
+        operation: 'updatePlayer',
         roleName: 'Tablet',
         updates: {
           values: {

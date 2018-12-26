@@ -28,8 +28,8 @@ UserController.updateUserWithDeviceState = async (user, fields) => {
   return user.update(updates);
 };
 
-UserController.updateParticipantDeviceState = async (
-  user, trip, participant, oldState, clientId
+UserController.updatePlayerDeviceState = async (
+  user, trip, player, oldState, clientId
 ) => {
   const script = await models.Script.findById(trip.scriptId);
   // Calculate new geofences
@@ -47,10 +47,10 @@ UserController.updateParticipantDeviceState = async (
   for (let geofenceName of enteredGeofenceNames) {
     const event = {
       type: 'geofence_entered',
-      role: participant.roleName,
+      role: player.roleName,
       geofence: geofenceName
     };
-    await TripActionController.applyEvent(participant.tripId, event);
+    await TripActionController.applyEvent(player.tripId, event);
     await TripNotifyController.notifyEvent(trip.id, event, clientId);
   }
   // Notify new device state
@@ -73,7 +73,7 @@ UserController.updateParticipantDeviceState = async (
 //            -> creates enterGeofence events locally
 // Web update from tablet location or debug bar
 //   - web > `location.handleFix` > `lastFixDidChange` >
-//     `participant.updateLocation`
+//     `player.updateLocation`
 //     -> server update_device_state
 //          -> creates enterGeofence events on server
 //             -> calls realtimeEvents.event with enterGeofence on
@@ -96,17 +96,17 @@ UserController.updateDeviceState = async(userId, fields, clientId=null) => {
   };
   await UserController.updateUserWithDeviceState(user, fields);
   for (let trip of trips) {
-    const participant = await models.Participant.find({
+    const player = await models.Player.find({
       where: {
         userId: user.id,
         tripId: trip.id,
       }
     });
-    if (!participant) {
+    if (!player) {
       continue;
     }
-    await UserController.updateParticipantDeviceState(
-      user, trip, participant, oldState, clientId);
+    await UserController.updatePlayerDeviceState(
+      user, trip, player, oldState, clientId);
   }
 };
 

@@ -1,6 +1,6 @@
 const database = require('../config').database;
 const Trip = require('./trip');
-const Participant = require('./participant');
+const Player = require('./player');
 
 const {
   datetimeField,
@@ -35,7 +35,7 @@ const Message = database.define('Message', snakeCaseColumns({
 }));
 
 oneToMany(Message, Trip);
-Message.belongsTo(Participant, belongsTo('sentBy'));
-Message.belongsTo(Participant, belongsTo('sentTo'));
+Message.belongsTo(Player, belongsTo('sentBy'));
+Message.belongsTo(Player, belongsTo('sentTo'));
 
 module.exports = Message;

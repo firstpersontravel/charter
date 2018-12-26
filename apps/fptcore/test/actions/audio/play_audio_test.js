@@ -33,7 +33,7 @@ describe('#playAudio', () => {
       { role_name: 'Tablet', audio_name: 'AUDIO-1' }, now);
     assert.deepEqual(res, [
       {
-        operation: 'updateParticipant',
+        operation: 'updatePlayer',
         roleName: 'Tablet',
         updates: {
           values: {

@@ -6,19 +6,19 @@ var TimeCore = require('./time');
 
 var EvalCore = {};
 
-EvalCore.gatherParticipantContext = function (env, trip, participant) {
-  var user = participant.user || {};
+EvalCore.gatherPlayerContext = function (env, trip, player) {
+  var user = player.user || {};
   var profile = user.profile || {};
 
   var role = _.find(_.get(trip, 'script.content.roles') || [],
-    { name: participant.roleName }) || {};
+    { name: player.roleName }) || {};
   var page = _.find(_.get(trip, 'script.content.pages') || [],
-    { name: participant.currentPageName }) || {};
-  var link = (env.host || '') + '/s/' + participant.id;
+    { name: player.currentPageName }) || {};
+  var link = (env.host || '') + '/s/' + player.id;
 
-  return _.assign({}, profile.values, participant.values, {
-    id: participant.id,
-    currentPageName: participant.currentPageName || null,
+  return _.assign({}, profile.values, player.values, {
+    id: player.id,
+    currentPageName: player.currentPageName || null,
     link: link,
     contact_name: role.contact_name || user.firstName || null,
     photo: profile.photo || null,
@@ -53,10 +53,10 @@ EvalCore.gatherContext = function (env, trip) {
       _.assign(context, option.values);
     }
   });
-  // Add participant values
-  _.each(trip.participants, function(participant) {
-    context[participant.roleName] = EvalCore.gatherParticipantContext(
-      env, trip, participant);
+  // Add player values
+  _.each(trip.players, function(player) {
+    context[player.roleName] = EvalCore.gatherPlayerContext(
+      env, trip, player);
   });
   return context;
 };

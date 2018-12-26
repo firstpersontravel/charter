@@ -48,14 +48,14 @@ function getPanel(script, trip, context, panel) {
 /**
  * Construct an object of the page
  */
-function getPage(script, trip, context, participant) {
-  const pageInfo = fptCore.ParticipantCore.getPageInfo(script, context,
-    participant);
+function getPage(script, trip, context, player) {
+  const pageInfo = fptCore.PlayerCore.getPageInfo(script, context,
+    player);
   if (!pageInfo) {
     return null;
   }
-  const appearanceSort = fptCore.ParticipantCore.getSceneSort(script, context,
-    participant);
+  const appearanceSort = fptCore.PlayerCore.getSceneSort(script, context,
+    player);
   const localSceneStart = pageInfo.appearanceStart ?
     pageInfo.appearanceStart.clone().tz(script.timezone) :
     null;
@@ -74,7 +74,7 @@ function getPage(script, trip, context, participant) {
   return {
     scriptTitle: script.title,
     trip: trip,
-    participant: participant,
+    player: player,
     page: page,
     panels: panels,
     pageInfo: pageInfo,
@@ -92,7 +92,7 @@ function getPage(script, trip, context, participant) {
  * List all actors.
  */
 const actorsListRoute = async (req, res) => {
-  const participants = await models.Participant.findAll({
+  const players = await models.Player.findAll({
     where: { userId: { [Sequelize.Op.not]: null } },
     include: [{
       model: models.Trip,
@@ -107,12 +107,12 @@ const actorsListRoute = async (req, res) => {
       as: 'user'
     }]
   });
-  const actorParticipants = participants.filter(((participant) => {
-    const roles = participant.trip.script.content.roles;
-    const role = _.find(roles, { name: participant.roleName });
+  const actorPlayers = players.filter(((player) => {
+    const roles = player.trip.script.content.roles;
+    const role = _.find(roles, { name: player.roleName });
     return role && role.actor;
   }));
-  const users = _.uniqBy(_.map(actorParticipants, 'user'), 'id');
+  const users = _.uniqBy(_.map(actorPlayers, 'user'), 'id');
   res.render('actor/actors', {
     layout: 'actor',
     users: users
@@ -120,27 +120,27 @@ const actorsListRoute = async (req, res) => {
 };
 
 /**
- * Show a single participant (even if they have no user).
+ * Show a single player (even if they have no user).
  */
-const participantShowRoute = async (req, res) => {
-  const participantId = req.params.participantId;
-  const participant = await models.Participant.findById(participantId);
-  if (!participant) {
+const playerShowRoute = async (req, res) => {
+  const playerId = req.params.playerId;
+  const player = await models.Player.findById(playerId);
+  if (!player) {
     res.redirect('/actor');
     return;
   }
   const objs = await (
-    TripUtil.getObjectsForTrip(participant.tripId)
+    TripUtil.getObjectsForTrip(player.tripId)
   );
   const context = TripUtil.createContext(objs);
-  const page = getPage(objs.script, objs.trip, context, participant);
+  const page = getPage(objs.script, objs.trip, context, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
     userId: '',
-    userName: participant.roleName,
+    userName: player.roleName,
     pages: pages,
     stage: config.env.STAGE,
-    tripIds: participant.tripId
+    tripIds: player.tripId
   };
   if (req.query.is_partial) {
     res.render('partials/actor', Object.assign({ layout: false }, params));
@@ -150,7 +150,7 @@ const participantShowRoute = async (req, res) => {
 };
 
 /**
- * Show a user, including all active participants.
+ * Show a user, including all active players.
  */
 const userShowRoute = async (req, res) => {
   const user = await models.User.findById(req.params.userId);
@@ -158,7 +158,7 @@ const userShowRoute = async (req, res) => {
     res.redirect('/actor');
     return;
   }
-  const participants = await models.Participant.findAll({
+  const players = await models.Player.findAll({
     where: { userId: user.id },
     include: [{
       model: models.Trip,
@@ -166,17 +166,17 @@ const userShowRoute = async (req, res) => {
       where: { isArchived: false }
     }]
   });
-  const participantsByDeparture = _(participants)
-    .sortBy(participant => participant.trip.departureName)
+  const playersByDeparture = _(players)
+    .sortBy(player => player.trip.departureName)
     .value();
-  const objss = await Promise.map(participantsByDeparture, (participant) => (
-    TripUtil.getObjectsForTrip(participant.tripId)
+  const objss = await Promise.map(playersByDeparture, (player) => (
+    TripUtil.getObjectsForTrip(player.tripId)
   ));
-  const pages = _(participants)
-    .map((participant, i) => {
+  const pages = _(players)
+    .map((player, i) => {
       const objs = objss[i];
       const context = TripUtil.createContext(objs);
-      return getPage(objs.script, objs.trip, context, participant);
+      return getPage(objs.script, objs.trip, context, player);
     })
     .filter(Boolean)
     .sortBy('sort')
@@ -188,7 +188,7 @@ const userShowRoute = async (req, res) => {
     userName: `${user.firstName} ${user.lastName}`,
     pages: pages,
     stage: config.env.STAGE,
-    tripIds: _.map(participants, 'tripId').join(',')
+    tripIds: _.map(players, 'tripId').join(',')
   };
   if (req.query.is_partial) {
     res.render('partials/actor', Object.assign({ layout: false }, params));
@@ -199,6 +199,6 @@ const userShowRoute = async (req, res) => {
 
 module.exports = {
   actorsListRoute,
-  participantShowRoute,
+  playerShowRoute,
   userShowRoute
 };

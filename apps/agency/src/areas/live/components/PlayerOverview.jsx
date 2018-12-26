@@ -11,61 +11,61 @@ import { TimeCore } from 'fptcore';
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 
-function renderMap(participant) {
-  if (!participant.user || !participant.user.locationLatitude) {
+function renderMap(player) {
+  if (!player.user || !player.user.locationLatitude) {
     return null;
   }
   const center = L.latLng(
-    participant.user.locationLatitude,
-    participant.user.locationLongitude);
+    player.user.locationLatitude,
+    player.user.locationLongitude);
   return (
     <GroupMap
       center={center}
       zoom={15}
-      trips={[participant.trip]} />
+      trips={[player.trip]} />
   );
 }
 
-function renderGeo(participant) {
-  if (!participant.user || !participant.user.locationLatitude) {
+function renderGeo(player) {
+  if (!player.user || !player.user.locationLatitude) {
     return null;
   }
   return (
     <div>
       <strong>Location:</strong>
       &nbsp;Last fix {TimeCore.humanizeIso(
-        participant.user.locationTimestamp,
-        participant.trip.script.timezone)}
+        player.user.locationTimestamp,
+        player.trip.script.timezone)}
     </div>
   );
 }
 
-function renderBatt(participant) {
-  if (!participant.user || !participant.user.deviceBattery) {
+function renderBatt(player) {
+  if (!player.user || !player.user.deviceBattery) {
     return null;
   }
-  const batteryPercent = participant.user.deviceBattery >= 0 ?
-    `${Math.floor(participant.user.deviceBattery * 100)}%` : '–';
+  const batteryPercent = player.user.deviceBattery >= 0 ?
+    `${Math.floor(player.user.deviceBattery * 100)}%` : '–';
   return (
     <div>
       <strong>Batteries:</strong>
       {' '}{batteryPercent}
-      {' '}as of {TimeCore.humanizeIso(participant.user.deviceTimestamp,
-        participant.trip.script.timezone)}
+      {' '}as of {TimeCore.humanizeIso(player.user.deviceTimestamp,
+        player.trip.script.timezone)}
     </div>
   );
 }
 
-function renderActivity(participant) {
-  if (!participant.user || !participant.user.deviceLastActive) {
+function renderActivity(player) {
+  if (!player.user || !player.user.deviceLastActive) {
     return null;
   }
   return (
     <div>
       <strong>Activity:</strong>
       &nbsp;Last active {TimeCore.humanizeIso(
-        participant.user.deviceLastActive,
-        participant.trip.script.timezone)}
+        player.user.deviceLastActive,
+        player.trip.script.timezone)}
     </div>
   );
 }
@@ -85,30 +85,30 @@ function renderAudioStatus(audioStatus, audioEntry, timezone) {
   return `${audioEntry.title} playing until ${finishStr}`;
 }
 
-function renderAudio(participant) {
-  if (!participant.values.audio || !participant.values.audio.name) {
+function renderAudio(player) {
+  if (!player.values.audio || !player.values.audio.name) {
     return null;
   }
-  const audioStatus = participant.values.audio;
-  const audioEntry = _.find(participant.trip.script.content.audio,
+  const audioStatus = player.values.audio;
+  const audioEntry = _.find(player.trip.script.content.audio,
     { name: audioStatus.name });
   return (
     <div>
       <strong>Audio:</strong>
       &nbsp;{renderAudioStatus(audioStatus, audioEntry,
-        participant.trip.script.timezone)}
+        player.trip.script.timezone)}
     </div>
   );
 }
 
-function renderValues(participant) {
-  if (!participant.values || !_.keys(participant.values).length) {
+function renderValues(player) {
+  if (!player.values || !_.keys(player.values).length) {
     return null;
   }
   return (
     <div>
       <div><strong>Values</strong></div>
-      <pre>{yaml.safeDump(participant.values)}</pre>
+      <pre>{yaml.safeDump(player.values)}</pre>
     </div>
   );
 }
@@ -124,22 +124,22 @@ function renderUser(user) {
   );
 }
 
-function renderVars(participant) {
-  const script = participant.trip.script;
-  const trip = participant.trip;
-  const user = participant.user;
+function renderVars(player) {
+  const script = player.trip.script;
+  const trip = player.trip;
+  const user = player.user;
   const currentPage = _.find(script.content.pages,
-    { name: participant.currentPageName });
+    { name: player.currentPageName });
   const acknowledgedPage = _.find(script.content.pages,
-    { name: participant.acknowledgedPageName });
-  const acknowledgedPageAt = participant.acknowledgedPageAt;
+    { name: player.acknowledgedPageName });
+  const acknowledgedPageAt = player.acknowledgedPageAt;
   return (
     <div>
       <div>
         <strong>Role:</strong>
         &nbsp;
-        <Link to={`/agency/live/${trip.groupId}/all/role/${participant.roleName}/${user ? user.id : 0}`}>
-          {participant.roleName} ({user ? user.firstName : 'No user'})
+        <Link to={`/agency/live/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
+          {player.roleName} ({user ? user.firstName : 'No user'})
         </Link>
         <br />
 
@@ -156,22 +156,22 @@ function renderVars(participant) {
         &nbsp;{acknowledgedPage ? acknowledgedPage.title : 'None'}
         {acknowledgedPageAt ? ` at ${moment.utc(acknowledgedPageAt).tz(script.timezone).format('h:mma z')}` : ''}
       </div>
-      {renderGeo(participant)}
-      {renderBatt(participant)}
-      {renderActivity(participant)}
-      {renderAudio(participant)}
-      {renderValues(participant)}
+      {renderGeo(player)}
+      {renderBatt(player)}
+      {renderActivity(player)}
+      {renderAudio(player)}
+      {renderValues(player)}
     </div>
   );
 }
 
-export default function PlayerOverview({ participant }) {
-  const map = renderMap(participant);
-  const vars = renderVars(participant);
+export default function PlayerOverview({ player }) {
+  const map = renderMap(player);
+  const vars = renderVars(player);
   return (
     <div className="row">
       <div className="col-sm-6">
-        <Preview participant={participant} />
+        <Preview player={player} />
       </div>
       <div className="col-sm-6">
         {map}
@@ -182,5 +182,5 @@ export default function PlayerOverview({ participant }) {
 }
 
 PlayerOverview.propTypes = {
-  participant: PropTypes.object.isRequired
+  player: PropTypes.object.isRequired
 };

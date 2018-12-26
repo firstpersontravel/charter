@@ -30,22 +30,22 @@ async function interpretTwimlDial(tripId, relay, twimlResponse, twimlOp) {
   }
   const dialRelay = dialRelays[0];
 
-  // Find the active participant
-  const dialParticipant = await models.Participant.find({
+  // Find the active player
+  const dialPlayer = await models.Player.find({
     where: { tripId: tripId, roleName: twimlOp.toRoleName },
     include: [{ model: models.User, as: 'user' }]
   });
-  if (!dialParticipant) {
-    logger.warn(`Dial participant ${twimlOp.toRoleName} not found.`);
+  if (!dialPlayer) {
+    logger.warn(`Dial player ${twimlOp.toRoleName} not found.`);
     return hangup();
   }
-  if (!dialParticipant.user) {
+  if (!dialPlayer.user) {
     logger.warn('Dial target user not found.');
     return hangup();
   }
-  if (!dialParticipant.user.phoneNumber) {
+  if (!dialPlayer.user.phoneNumber) {
     logger.warn(
-      `Dial target user ${dialParticipant.userId} has no phone number.`
+      `Dial target user ${dialPlayer.userId} has no phone number.`
     );
     return hangup();
   }
@@ -53,7 +53,7 @@ async function interpretTwimlDial(tripId, relay, twimlResponse, twimlOp) {
     callerId: `+1${dialRelay.relayPhoneNumber}`,
     timeout: 30
   });
-  dial.number(`+1${dialParticipant.user.phoneNumber}`);
+  dial.number(`+1${dialPlayer.user.phoneNumber}`);
   twimlResponse.say('We\'re sorry, this number could not be reached.');
 }
 

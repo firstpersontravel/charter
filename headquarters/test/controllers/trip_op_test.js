@@ -40,17 +40,17 @@ describe('TripOpController', () => {
       });
     });
 
-    describe('updateParticipant', () => {
-      it('applies a deep value change to a participant', async () => {
+    describe('updatePlayer', () => {
+      it('applies a deep value change to a player', async () => {
         const objs = {
-          participants: [{
+          players: [{
             roleName: 'Test',
             values: { abc: 123 },
             save: sandbox.stub().resolves()
           }]
         };
         const op = {
-          operation: 'updateParticipant',
+          operation: 'updatePlayer',
           roleName: 'Test',
           updates: {
             values: { initiatives: { game_won: { $set: true } } }
@@ -59,8 +59,8 @@ describe('TripOpController', () => {
 
         await TripOpController.applyOp(objs, op);
         const newValues = { abc: 123, initiatives: { game_won: true } };
-        assert.deepStrictEqual(objs.participants[0].values, newValues);
-        sinon.assert.calledWith(objs.participants[0].save,
+        assert.deepStrictEqual(objs.players[0].values, newValues);
+        sinon.assert.calledWith(objs.players[0].save,
           { fields: ['values']});
       });
     });
@@ -73,7 +73,7 @@ describe('TripOpController', () => {
             phoneNumber: null,
             save: sandbox.stub().resolves(),
           }],
-          participants: [{
+          players: [{
             roleName: 'Test',
             userId: 1
           }]

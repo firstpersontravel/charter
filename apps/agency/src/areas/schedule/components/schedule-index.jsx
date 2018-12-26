@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { IndexLink } from 'react-router';
 
-import { TextCore, TripCore, ParticipantCore } from 'fptcore';
+import { TextCore, TripCore, PlayerCore } from 'fptcore';
 import AreYouSure from '../../common/partials/AreYouSure';
 import TripModal from '../partials/trip-modal';
 import GroupModal from '../partials/group-modal';
@@ -155,7 +155,7 @@ export default class ScheduleIndex extends Component {
     const userId = users.length === 1 ? users[0].id : null;
     const fields = Object.assign(
       { userId: userId },
-      ParticipantCore.getInitialFields(script, role.name, variantNames));
+      PlayerCore.getInitialFields(script, role.name, variantNames));
     return fields;
   }
 
@@ -177,7 +177,7 @@ export default class ScheduleIndex extends Component {
       schedule: schedule,
       lastScheduledTime: null
     };
-    const participantsFields = script.content.roles.map(role => (
+    const playersFields = script.content.roles.map(role => (
       this.initialFieldsForRole(script, role, fields.departureName,
         fields.variantNames)
     ));
@@ -185,10 +185,10 @@ export default class ScheduleIndex extends Component {
       // update existing trip
       this.props.updateInstance('trips', this.state.isEditingTrip.id,
         tripFields);
-      // TODO: update participants too
+      // TODO: update players too
     } else {
       // create new trip
-      this.props.initializeTrip(tripFields, participantsFields);
+      this.props.initializeTrip(tripFields, playersFields);
     }
     this.handleEditTripToggle();
   }

@@ -14,17 +14,17 @@ const TripRelaysController = {};
  * trailhead, null if the user wasn't found, or a phone number.
  */
 TripRelaysController.userPhoneNumberForRelay = async (trip, relaySpec) => {
-  // Find the participant and user for this trip and relay spec.
-  const participant = await models.Participant.find({
+  // Find the player and user for this trip and relay spec.
+  const player = await models.Player.find({
     where: { roleName: relaySpec.for, tripId: trip.id },
     include: [{ model: models.User, as: 'user' }]
   });
   // Can't create or find a relay for a user without a phone number, so skip
   // this relay without creating it.
-  if (!_.get(participant, 'user.phoneNumber')) {
+  if (!_.get(player, 'user.phoneNumber')) {
     return null;
   }
-  return participant.user.phoneNumber;
+  return player.user.phoneNumber;
 };
 
 /**
@@ -43,7 +43,7 @@ TripRelaysController.ensureRelay = async (trip, scriptName, relaySpec) => {
   const userPhoneNumber = await (
     TripRelaysController.userPhoneNumberForRelay(trip, relaySpec)
   );
-  // If no participant was found, or the participant doesn't have a phone
+  // If no player was found, or the player doesn't have a phone
   // number, then we can't create a relay, so we have to return null.
   if (userPhoneNumber === null) {
     return null;
@@ -98,16 +98,16 @@ TripRelaysController.initiateCall = async (
     return;
   }
   const relay = relays[0];
-  // Get participant for this trip.
-  const participant = await models.Participant.find({
+  // Get player for this trip.
+  const player = await models.Player.find({
     where: { tripId: trip.id, roleName: relay.forRoleName },
     include: [{ model: models.User, as: 'user' }]
   });
-  if (!participant) {
-    logger.warn(`Relay ${relay.id} has no participant.`);
+  if (!player) {
+    logger.warn(`Relay ${relay.id} has no player.`);
     return;
   }
-  await RelayController.initiateCall(relay, participant, detectVoicemail);
+  await RelayController.initiateCall(relay, player, detectVoicemail);
 };
 
 /**
@@ -136,8 +136,8 @@ async function formatMessageBody(trip, message, includeMeta) {
   // an actor role.
   const stage = config.env.STAGE === 'production' ?
     '' : `${config.env.STAGE[0].toUpperCase()}${config.env.STAGE.substr(1)} `;
-  const sentBy = await models.Participant.findById(message.sentById);
-  const sentTo = await models.Participant.findById(message.sentToId);
+  const sentBy = await models.Player.findById(message.sentById);
+  const sentTo = await models.Player.findById(message.sentToId);
   const contentPrefix = (
     `[${stage}${trip.departureName}] ` +
     `${sentBy.roleName} to ${sentTo.roleName}:`
@@ -190,8 +190,8 @@ TripRelaysController.partsForRelayMessage = async (trip, relay, message) => {
  */
 TripRelaysController.relayMessage = async (trip, message, suppressRelayId) => {
   const script = await trip.getScript();
-  const sentBy = await models.Participant.findById(message.sentById);
-  const sentTo = await models.Participant.findById(message.sentToId);
+  const sentBy = await models.Player.findById(message.sentById);
+  const sentTo = await models.Player.findById(message.sentToId);
 
   // Send to forward relays -- relays as the role receiving the message.
   const forwardFilters = { as: sentTo.roleName, with: sentBy.roleName };

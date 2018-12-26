@@ -52,12 +52,12 @@ export default (
         <Route path="initiatives" component={TripInitiativesConnector} />
         <Route path="controls" component={TripControlsConnector} />
         <Route path="gallery" component={TripGalleryConnector} />
-        <Route path="participants">
+        <Route path="players">
           <Route path=":roleName" component={PlayerConnector}>
             <IndexRoute component={PlayerOverviewConnector} />
             <Route path="messages">
               <IndexRedirect
-                to="/agency/live/:groupId/trip/:tripId/participants/:roleName/messages/All" />
+                to="/agency/live/:groupId/trip/:tripId/players/:roleName/messages/All" />
               <Route
                 path=":withRoleName"
                 component={PlayerMessagesConnector} />

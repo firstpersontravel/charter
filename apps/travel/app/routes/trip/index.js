@@ -4,6 +4,6 @@ export default Ember.Route.extend({
   afterModel: function() {
     var script = this.modelFor('trip').get('script');
     var roleName = script.get('content.roles.firstObject.name');
-    return this.transitionTo('participant.page', roleName);
+    return this.transitionTo('player.page', roleName);
   }
 });

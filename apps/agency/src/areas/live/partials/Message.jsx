@@ -92,13 +92,13 @@ export default function Message({ message, trip, updateInstance }) {
   if (!trip) {
     return null;
   }
-  const sentBy = _.find(trip.participants, { id: message.sentById });
+  const sentBy = _.find(trip.players, { id: message.sentById });
   if (!sentBy) {
     return null;
   }
   const sentByRole = _.find(trip.script.content.roles,
     { name: sentBy.roleName });
-  const sentTo = _.find(trip.participants, { id: message.sentToId });
+  const sentTo = _.find(trip.players, { id: message.sentToId });
   const userPlayer = sentByRole.actor ? sentTo : sentBy;
   const actorPlayer = userPlayer === sentBy ? sentTo : sentBy;
   const createdAt = moment.utc(message.createdAt);
@@ -110,7 +110,7 @@ export default function Message({ message, trip, updateInstance }) {
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <Link to={`/agency/live/${trip.groupId}/trip/${trip.id}/participants/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
+      <Link to={`/agency/live/${trip.groupId}/trip/${trip.id}/players/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
         {trip.departureName}&nbsp;
         {sentBy.roleName}
       </Link>:&nbsp;

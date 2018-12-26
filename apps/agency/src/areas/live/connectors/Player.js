@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 
-import { assembleParticipantStatus, instanceStatus } from '../../../connector-utils';
+import { assemblePlayerStatus, instanceStatus } from '../../../connector-utils';
 import Player from '../components/Player';
 
 const mapStateToProps = (state, ownProps) => ({
   groupStatus: instanceStatus(state, 'groups',
     { id: Number(ownProps.params.groupId) }),
-  participantStatus: assembleParticipantStatus(state, ownProps.params.tripId,
+  playerStatus: assemblePlayerStatus(state, ownProps.params.tripId,
     ownProps.params.roleName)
 });
 

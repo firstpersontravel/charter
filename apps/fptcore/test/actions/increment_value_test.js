@@ -9,7 +9,7 @@ describe('#incrementValue', () => {
       { Gabe: {} },
       { value_ref: 'Gabe.monkeys' }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 1 } } }
     }]);
@@ -20,7 +20,7 @@ describe('#incrementValue', () => {
       { Gabe: { monkeys: 2 } },
       { value_ref: 'Gabe.monkeys' }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 3 } } }
     }]);
@@ -31,7 +31,7 @@ describe('#incrementValue', () => {
       { Gabe: { monkeys: 2 } },
       { value_ref: 'Gabe.monkeys', delta: 10 }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 12 } } }
     }]);

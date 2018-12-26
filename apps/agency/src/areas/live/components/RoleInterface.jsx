@@ -8,16 +8,16 @@ function getIframeUrl(groupStatus, roleName, user) {
   if (role.actor) {
     return user ? `/actor/${user.id}?nogps=1&noack=1` : null;
   }
-  const participants = _(groupStatus.instance.trips)
-    .map('participants')
+  const players = _(groupStatus.instance.trips)
+    .map('players')
     .flatten()
     .filter({ roleName: roleName })
     .value();
-  if (!participants.length) {
+  if (!players.length) {
     return null;
   }
-  const participant = participants[0];
-  return `/travel/u/${user.id}/p/${participant.trip.id}/role/${roleName}?debug=true&nogps=true&mute=true&noack=true`;
+  const player = players[0];
+  return `/travel/u/${user.id}/p/${player.trip.id}/role/${roleName}?debug=true&nogps=true&mute=true&noack=true`;
 }
 
 export default function RoleInterface({ groupStatus, roleName, user }) {

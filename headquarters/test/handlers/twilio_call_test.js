@@ -25,7 +25,7 @@ describe('TwilioCallHandler', () => {
       const stubOppositeRelay = {
         relayPhoneNumber: '8887776666'
       };
-      const stubParticipant = {
+      const stubPlayer = {
         userId: 9,
         user: { phoneNumber: '9995551212'}
       };
@@ -33,10 +33,10 @@ describe('TwilioCallHandler', () => {
       sandbox
         .stub(RelayController, 'findSiblings')
         .resolves([stubOppositeRelay]);
-      // Stub searching for participant
+      // Stub searching for player
       sandbox
-        .stub(models.Participant, 'find')
-        .resolves(stubParticipant);
+        .stub(models.Player, 'find')
+        .resolves(stubPlayer);
       // Apply event returns a dial operation
       sandbox
         .stub(TripActionController, 'applyEvent')
@@ -56,10 +56,10 @@ describe('TwilioCallHandler', () => {
       assert.deepStrictEqual(
         RelayController.findSiblings.firstCall.args,
         [stubRelay, 'ToPerson', 'FromPerson']);
-      // Assert found participant by role
-      sinon.assert.calledOnce(models.Participant.find);
+      // Assert found player by role
+      sinon.assert.calledOnce(models.Player.find);
       assert.deepStrictEqual(
-        models.Participant.find.firstCall.args, [{
+        models.Player.find.firstCall.args, [{
           where: { tripId: 1, roleName: 'ToPerson' },
           include: [{ model: models.User, as: 'user' }]
         }]);

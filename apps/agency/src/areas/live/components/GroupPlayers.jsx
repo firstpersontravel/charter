@@ -36,15 +36,15 @@ export default class GroupPlayers extends Component {
   handleAssignUser(roleName, trips, userId) {
     const user = _.find(this.props.users, { id: Number(userId) });
     _.each(trips, (trip) => {
-      // Find participant for each trip.
-      const participant = _.find(trip.participants, { roleName: roleName });
-      if (!participant) {
-        console.warn('Participant not found.');
+      // Find player for each trip.
+      const player = _.find(trip.players, { roleName: roleName });
+      if (!player) {
+        console.warn('Player not found.');
         return;
       }
-      // If it exists, update the participant.
+      // If it exists, update the player.
       const updateFields = { userId: user ? user.id : null };
-      this.props.updateInstance('participants', participant.id,
+      this.props.updateInstance('players', player.id,
         updateFields);
     });
   }
@@ -59,8 +59,8 @@ export default class GroupPlayers extends Component {
     const departureNames = _.uniq(_.map(tripsWithRole, 'departureName'));
     const departureName = departureNames.length === 1 ? departureNames[0] : null;
     const users = _.uniq(tripsWithRole
-      .map(trip => _.find(trip.participants, { roleName: roleName }))
-      .map(participant => participant && participant.user));
+      .map(trip => _.find(trip.players, { roleName: roleName }))
+      .map(player => player && player.user));
 
     let userLabel = 'Unassigned';
     let userClass = 'faint';

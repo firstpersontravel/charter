@@ -11,18 +11,18 @@ const TwilioUtil = {};
  * trailhead, create a new trip if one isn't found. Otherwise, return null.
  */
 TwilioUtil.lookupOrCreateTripId = async (relay, userPhoneNumber) => {
-  // Get participant or create trip.
-  const participant = await (
-    RelayController.lookupParticipant(relay, userPhoneNumber)
+  // Get player or create trip.
+  const player = await (
+    RelayController.lookupPlayer(relay, userPhoneNumber)
   );
-  if (participant) {
-    return participant.tripId;
+  if (player) {
+    return player.tripId;
   }
   if (relay.userPhoneNumber !== '') {
     logger.warn(`Relay ${relay.id} is not a trailhead; can't create a new trip.`);
     return null;
   }
-  // If no participant, and it's a trailhead, then we need to create a new 
+  // If no player, and it's a trailhead, then we need to create a new 
   // trip.
   const trip = await (
     RelayTrailheadController.createTrip(relay, userPhoneNumber)

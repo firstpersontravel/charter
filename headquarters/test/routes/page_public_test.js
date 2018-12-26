@@ -25,45 +25,45 @@ describe('pagePublicRoutes', () => {
     });
   });
 
-  describe('#participantShortcutRoute', () => {
+  describe('#playerShortcutRoute', () => {
     it('redirects', async () => {
-      const req = httpMocks.createRequest({ params: { participantId: 1 } });
+      const req = httpMocks.createRequest({ params: { playerId: 1 } });
       const res = httpMocks.createResponse();
 
       // Stub response
-      const mockParticipant = {
+      const mockPlayer = {
         userId: 10,
         tripId: 2,
         roleName: 'Phone'
       };
-      sandbox.stub(models.Participant, 'findById').resolves(mockParticipant);
+      sandbox.stub(models.Player, 'findById').resolves(mockPlayer);
 
-      await pagePublicRoutes.participantShortcutRoute(req, res);
+      await pagePublicRoutes.playerShortcutRoute(req, res);
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 302);
       assert.strictEqual(res._getRedirectUrl(), '/travel/u/10/p/2/role/Phone');
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.Participant.findById);
-      assert.deepEqual(models.Participant.findById.firstCall.args, [1]);
+      sinon.assert.calledOnce(models.Player.findById);
+      assert.deepEqual(models.Player.findById.firstCall.args, [1]);
     });
 
-    it('returns 404 if participant not found', async () => {
-      const req = httpMocks.createRequest({ params: { participantId: 1 } });
+    it('returns 404 if player not found', async () => {
+      const req = httpMocks.createRequest({ params: { playerId: 1 } });
       const res = httpMocks.createResponse();
 
       // Stub response
-      sandbox.stub(models.Participant, 'findById').resolves(null);
+      sandbox.stub(models.Player, 'findById').resolves(null);
 
-      await pagePublicRoutes.participantShortcutRoute(req, res);
+      await pagePublicRoutes.playerShortcutRoute(req, res);
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 404);
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.Participant.findById);
-      assert.deepEqual(models.Participant.findById.firstCall.args, [1]);
+      sinon.assert.calledOnce(models.Player.findById);
+      assert.deepEqual(models.Player.findById.firstCall.args, [1]);
     });
   });
 

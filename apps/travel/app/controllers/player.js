@@ -9,9 +9,9 @@ export default Ember.Controller.extend({
   lastFixDidChange: function() {
     var lastFix = this.get('location.lastFix');
     if (!lastFix || !lastFix.timestamp || !lastFix.coords) { return; }
-    var participant = this.get('model');
+    var player = this.get('model');
     var lastFixAt = moment.utc(lastFix.timestamp);
-    var currentFixAt = participant.get('user.locationTimestamp');
+    var currentFixAt = player.get('user.locationTimestamp');
     if (lastFixAt < currentFixAt) { return; }
     this.send('updateLocation', lastFix);
   }.observes('location.lastFix').on('init'),

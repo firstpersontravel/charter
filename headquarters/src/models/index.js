@@ -4,7 +4,7 @@ module.exports = {
   Message: require('./message'),
   Profile: require('./profile'),
   Trip: require('./trip'),
-  Participant: require('./participant'),
+  Player: require('./player'),
   Relay: require('./relay'),
   Script: require('./script'),
   User: require('./user')

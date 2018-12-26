@@ -14,8 +14,8 @@ export default Ember.Controller.extend(RealtimeMixin, {
   time: Ember.inject.service(),
   api: Ember.inject.service(),
 
-  participants: Ember.inject.controller(),
-  participant: Ember.inject.controller(),
+  players: Ember.inject.controller(),
+  player: Ember.inject.controller(),
   script: Ember.inject.controller(),
   application: Ember.inject.controller(),
   messages: Ember.inject.controller(),
@@ -82,9 +82,9 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   getUiCallbacks: function() {
     var self = this;
-    var selfParticipant = this.get('participant.model');
-    var selfScript = selfParticipant.get('trip.script');
-    var selfRoleName = selfParticipant.get('roleName');
+    var selfPlayer = this.get('player.model');
+    var selfScript = selfPlayer.get('trip.script');
+    var selfRoleName = selfPlayer.get('roleName');
     return {
       transition: function(roleName, newState) {
         if (selfRoleName !== roleName) { return; }
@@ -100,7 +100,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
         }
       },
       updateAudioState: function() {
-        self.get('participant').updateAudioState();
+        self.get('player').updateAudioState();
       }
     };
   },
@@ -229,7 +229,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
   },
 
   applyResultOp: function(op, uiCallbacks) {
-    var participants = this.get('model.participants');
+    var players = this.get('model.players');
     switch (op.operation) {
 
       // Update audio
@@ -242,10 +242,10 @@ export default Ember.Controller.extend(RealtimeMixin, {
         uiCallbacks.transition(op.roleName, op.updates.newState);
         break;
 
-      // Update participant
-      case 'updateParticipant':
-        var participant = participants.findBy('roleName', op.roleName);
-        this.updateObj(participant, op.updates);
+      // Update player
+      case 'updatePlayer':
+        var player = players.findBy('roleName', op.roleName);
+        this.updateObj(player, op.updates);
         console.log('-> ' + op.roleName, JSON.stringify(op.updates));
         break;
 
@@ -258,9 +258,9 @@ export default Ember.Controller.extend(RealtimeMixin, {
       // Create a message
       case 'createMessage':
         op.updates.trip = this.get('model');
-        op.updates.sentBy = participants.findBy('id',
+        op.updates.sentBy = players.findBy('id',
           op.updates.sentById.toString());
-        op.updates.sentTo = participants.findBy('id',
+        op.updates.sentTo = players.findBy('id',
           op.updates.sentToId.toString());
         delete op.updates.sentById;
         delete op.updates.sentToId;
@@ -320,9 +320,9 @@ export default Ember.Controller.extend(RealtimeMixin, {
     },
 
     requestAck: function(content) {
-      var participant = this.get('participant.model');
-      var currentPageName = participant.get('currentPageName');
-      this.get('api').acknowledgePage(participant.id, currentPageName);
+      var player = this.get('player.model');
+      var currentPageName = player.get('currentPageName');
+      this.get('api').acknowledgePage(player.id, currentPageName);
     },
 
     deviceState: function(content) {

@@ -66,7 +66,7 @@ describe('RelayTrailheadController', () => {
         { userId: 5 }
       ];
       sandbox.stub(models.Profile, 'findAll').resolves(users);
-      sandbox.stub(models.Participant, 'update').resolves();
+      sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(TripRelaysController, 'sendAdminMessage').resolves();
 
       await RelayTrailheadController.assignActor(mockScript, mockTrip,
@@ -81,8 +81,8 @@ describe('RelayTrailheadController', () => {
           roleName: 'role'
         }
       });
-      // test update participant called
-      sinon.assert.calledWith(models.Participant.update,
+      // test update player called
+      sinon.assert.calledWith(models.Player.update,
         { userId: 4 },
         { where: { tripId: 100, roleName: 'role' } });
 
@@ -97,7 +97,7 @@ describe('RelayTrailheadController', () => {
 
     it('does nothing if no matching user is found', async () => {
       sandbox.stub(models.Profile, 'findAll').resolves([]);
-      sandbox.stub(models.Participant, 'update').resolves();
+      sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(TripRelaysController, 'sendAdminMessage').resolves();
 
       await RelayTrailheadController.assignActor(mockScript, mockTrip,
@@ -112,7 +112,7 @@ describe('RelayTrailheadController', () => {
           roleName: 'role'
         }
       });
-      sinon.assert.notCalled(models.Participant.update);
+      sinon.assert.notCalled(models.Player.update);
       sinon.assert.notCalled(TripRelaysController.sendAdminMessage);
     });
   });
@@ -130,7 +130,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
       sandbox.stub(TripsController, 'createWithDefaults')
         .resolves(mockTrip);
-      sandbox.stub(models.Participant, 'update').resolves();
+      sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(RelayTrailheadController, 'assignActors').resolves();
 
       // Create from trailhead

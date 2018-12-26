@@ -28,7 +28,7 @@ describe('TripUtil', () => {
           schedule: { 'TIME-1': 'time' },
           history: { 'CUE-1': 'time' }
         }),
-        participants: [models.Participant.build({
+        players: [models.Player.build({
           roleName: 'Role',
           id: 123,
           currentPageName: 'PAGE-1'

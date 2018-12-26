@@ -1,15 +1,15 @@
 var moment = require('moment');
 
 function pauseAudio(script, context, params, applyAt) {
-  var participant = context[params.role_name];
-  if (!participant.audio || !participant.audio.is_playing) { return null; }
+  var player = context[params.role_name];
+  if (!player.audio || !player.audio.is_playing) { return null; }
 
-  var startedTime = participant.audio.started_time;
-  var startedAt = moment.utc(participant.audio.started_at);
+  var startedTime = player.audio.started_time;
+  var startedAt = moment.utc(player.audio.started_at);
   var secSinceStarted = applyAt.unix() - startedAt.unix();
 
   return [{
-    operation: 'updateParticipant',
+    operation: 'updatePlayer',
     roleName: params.role_name,
     updates: {
       values: {

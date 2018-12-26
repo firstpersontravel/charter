@@ -21,44 +21,44 @@ export default Ember.Component.extend({
     this.set('displayCount', this.get('displayCountInitial'));
   }.observes('params'),
 
-  asParticipant: function() {
+  asPlayer: function() {
     var roleName = this.get('params.as') ||
-      this.get('participant.model.roleName');
-    return this.get('trip.participants')
+      this.get('player.model.roleName');
+    return this.get('trip.players')
       .findBy('roleName', roleName);
-  }.property('params', 'participant.roleName'),
+  }.property('params', 'player.roleName'),
 
-  withParticipant: function() {
+  withPlayer: function() {
     var roleName = this.get('params.with');
-    var withParticipant = this.get('trip.participants')
+    var withPlayer = this.get('trip.players')
       .findBy('roleName', roleName);
-    if (!withParticipant) {
-      throw new Error("Need a with participant for role " + roleName);
+    if (!withPlayer) {
+      throw new Error("Need a with player for role " + roleName);
     }
-    return withParticipant;
-  }.property('params', 'trip.participants.length'),
+    return withPlayer;
+  }.property('params', 'trip.players.length'),
 
   withName: function() {
-    var withParticipant = this.get('withParticipant');
-    if (!withParticipant) { return 'Unnamed'; }
-    return withParticipant.get('contactName') ||
-      withParticipant.get('firstName') ||
-      withParticipant.get('roleName');
-  }.property('withParticipant'),
+    var withPlayer = this.get('withPlayer');
+    if (!withPlayer) { return 'Unnamed'; }
+    return withPlayer.get('contactName') ||
+      withPlayer.get('firstName') ||
+      withPlayer.get('roleName');
+  }.property('withPlayer'),
 
   messages: function() {
-    var asParticipant = this.get('asParticipant');
-    var withParticipant = this.get('withParticipant');
+    var asPlayer = this.get('asPlayer');
+    var withPlayer = this.get('withPlayer');
     var allMessages = this.get('trip.messages');
     var isIncomingOnly = false;
     return allMessages
       .filter(function(message) {
         var isOutgoing = (
-          message.get('sentBy') === asParticipant &&
-          message.get('sentTo') === withParticipant);
+          message.get('sentBy') === asPlayer &&
+          message.get('sentTo') === withPlayer);
         var isIncoming = (
-          message.get('sentBy') === withParticipant &&
-          message.get('sentTo') === asParticipant);
+          message.get('sentBy') === withPlayer &&
+          message.get('sentTo') === asPlayer);
         return isIncoming || (isOutgoing && !isIncomingOnly);
       })
       .sort(function(a, b) {
@@ -103,20 +103,20 @@ export default Ember.Component.extend({
   }.property('withName', 'canSendTexts'),
 
   canSendTexts: function() {
-    return !!this.get('withParticipant.values.can_receive_texts');
-  }.property('withParticipant.values.can_receive_texts'),
+    return !!this.get('withPlayer.values.can_receive_texts');
+  }.property('withPlayer.values.can_receive_texts'),
 
   canSendImages: function() {
-    return !!this.get('withParticipant.values.can_receive_images');
-  }.property('withParticipant.values.can_receive_images'),
+    return !!this.get('withPlayer.values.can_receive_images');
+  }.property('withPlayer.values.can_receive_images'),
 
   canInitiateCalls: function() {
     if (this.get('callUrl') === '') {
       return false;
     }
-    return !!this.get('withParticipant.values.can_receive_calls');
+    return !!this.get('withPlayer.values.can_receive_calls');
   }.property(
-    'withParticipant.values.can_receive_calls',
+    'withPlayer.values.can_receive_calls',
     'callUrl'),
 
   canSend: function() {
@@ -124,21 +124,21 @@ export default Ember.Component.extend({
   }.property(),
 
   callUrl: function() {
-    var withParticipant = this.get('withParticipant');
-    if (!withParticipant.get('values.can_receive_calls')) {
+    var withPlayer = this.get('withPlayer');
+    if (!withPlayer.get('values.can_receive_calls')) {
       return '';
     }
-    if (withParticipant.get('skype')) {
-      return 'skype:' + withParticipant.get('skype');
+    if (withPlayer.get('skype')) {
+      return 'skype:' + withPlayer.get('skype');
     }
-    if (withParticipant.get('facetime')) {
-      return 'facetime-audio:' + withParticipant.get('facetime');
+    if (withPlayer.get('facetime')) {
+      return 'facetime-audio:' + withPlayer.get('facetime');
     }
-    if (withParticipant.get('user.phoneNumber')) {
-      return 'facetime-audio:' + withParticipant.get('user.phoneNumber');
+    if (withPlayer.get('user.phoneNumber')) {
+      return 'facetime-audio:' + withPlayer.get('user.phoneNumber');
     }
     return '';
-  }.property('withParticipant'),
+  }.property('withPlayer'),
 
   isSendTextDisabled: Ember.computed.not('canSendTexts'),
   isSendImageDisabled: Ember.computed.not('canSendImages'),
@@ -219,8 +219,8 @@ export default Ember.Component.extend({
     var bucket = config.s3UploadParams.bucket;
     var url = `https://${bucket}.s3.amazonaws.com/${key}`;
     var self = this;
-    var asRoleName = this.get('asParticipant.roleName');
-    var toRoleName = this.get('withParticipant.roleName');
+    var asRoleName = this.get('asPlayer.roleName');
+    var toRoleName = this.get('withPlayer.roleName');
     this.set('isSendingMessage', true);
     this.get('sync').add(function() {
       return self.get('media').upload(file, key)
@@ -250,8 +250,8 @@ export default Ember.Component.extend({
     sendMessage: function() {
       if (!this.get('messageInput')) { return; }
       if (this.get('messageInput') === '') { return; }
-      var asRoleName = this.get('asParticipant.roleName');
-      var toRoleName = this.get('withParticipant.roleName');
+      var asRoleName = this.get('asPlayer.roleName');
+      var toRoleName = this.get('withPlayer.roleName');
       // this.set('isSendingMessage', true);
       this.triggerAction({
         action: 'sendMessage',

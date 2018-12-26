@@ -17,7 +17,7 @@ describe('TwilioMessageHandler', () => {
 
   describe('#handleIncomingMessage', () => {
 
-    // Stub fetching relay and participant
+    // Stub fetching relay and player
     const script = {
       content: {
         relays: [{

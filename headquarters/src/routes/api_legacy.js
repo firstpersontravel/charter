@@ -57,9 +57,9 @@ async function getTripRoute(req, res) {
     return;
   }
   const script = await models.Script.findById(trip.scriptId);
-  const [participants, messages, actions, profiles, users] = (
+  const [players, messages, actions, profiles, users] = (
     await Promise.all([
-      models.Participant.findAll({
+      models.Player.findAll({
         where: { tripId: req.params.id }
       }),
       models.Message.findAll({
@@ -79,7 +79,7 @@ async function getTripRoute(req, res) {
     ])
   );
 
-  const objs = participants
+  const objs = players
     .concat(messages)
     .concat(actions)
     .concat(profiles)
@@ -94,8 +94,8 @@ async function getTripRoute(req, res) {
     .map(action => ({ id: action.id, type: 'action' }));
   data.relationships.message = messages
     .map(message => ({ id: message.id, type: 'message' }));
-  data.relationships.participant = participants
-    .map(participant => ({ id: participant.id, type: 'participant' }));
+  data.relationships.player = players
+    .map(player => ({ id: player.id, type: 'player' }));
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };

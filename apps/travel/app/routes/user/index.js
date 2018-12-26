@@ -11,22 +11,22 @@ export default Ember.Route.extend({
     }
     var self = this;
     return this.get('api')
-      .getData('/api/participants/', {
+      .getData('/api/players/', {
         userId: user.id,
         sort: '-id',
         count: 1
       })
       .then(function(results) {
-        var participantData = results.data.participants[0];
-        if (!participantData) {
+        var playerData = results.data.players[0];
+        if (!playerData) {
           self.transitionTo('login');
           alert(`${user.get('email')} has no active trips.`);
           return;
         }
-        var participantRoleName = participantData.roleName;
-        var tripId = participantData.tripId;
-        self.transitionTo('participant.page', tripId, 
-          participantRoleName);
+        var playerRoleName = playerData.roleName;
+        var tripId = playerData.tripId;
+        self.transitionTo('player.page', tripId, 
+          playerRoleName);
       });
   }
 });

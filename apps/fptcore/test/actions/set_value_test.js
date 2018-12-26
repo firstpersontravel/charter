@@ -8,7 +8,7 @@ describe('#setValue', () => {
       { Gabe: {} },
       { value_ref: 'Gabe.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 2 } } }
     }]);
@@ -19,7 +19,7 @@ describe('#setValue', () => {
       { Gabe: { monkeys: 6 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 2 } } }
     }]);
@@ -30,7 +30,7 @@ describe('#setValue', () => {
       { Gabe: { monkeys: 6 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: '"hi"' }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 'hi' } } }
     }]);
@@ -41,7 +41,7 @@ describe('#setValue', () => {
       { Gabe: { monkeys: 6 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: false }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: false } } }
     }]);
@@ -52,7 +52,7 @@ describe('#setValue', () => {
       { Gabe: { monkeys: 6, bananas: 10 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: 'Gabe.bananas' }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { $set: 10 } } }
     }]);
@@ -62,7 +62,7 @@ describe('#setValue', () => {
     const res = setValue({ content: { roles: [{ name: 'Gabe' }] } }, {},
       { value_ref: 'Gabe.monkeys.num', new_value_ref: 'true' }, null);
     assert.deepEqual(res, [{
-      operation: 'updateParticipant',
+      operation: 'updatePlayer',
       roleName: 'Gabe',
       updates: { values: { monkeys: { num: { $set: true } } } }
     }]);

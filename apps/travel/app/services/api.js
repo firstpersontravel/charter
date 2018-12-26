@@ -56,8 +56,8 @@ export default Ember.Service.extend({
     });
   },
 
-  acknowledgePage: function(participantId, pageName) {
-    this.ajax(`/api/participants/${participantId}`, 'put', {
+  acknowledgePage: function(playerId, pageName) {
+    this.ajax(`/api/players/${playerId}`, 'put', {
       acknowledgedPageName: pageName,
       acknowledgedPageAt: moment.utc().toISOString()
     });

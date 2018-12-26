@@ -40,7 +40,7 @@ function createCollectionRouter(model, config={})
 apiRouter.use('/actions', createCollectionRouter(models.Action));
 apiRouter.use('/groups', createCollectionRouter(models.Group));
 apiRouter.use('/messages', createCollectionRouter(models.Message));
-apiRouter.use('/participants', createCollectionRouter(models.Participant));
+apiRouter.use('/players', createCollectionRouter(models.Player));
 apiRouter.use('/profiles', createCollectionRouter(models.Profile));
 apiRouter.use('/trips', createCollectionRouter(models.Trip));
 apiRouter.use('/relays', createCollectionRouter(models.Relay));
