@@ -6,12 +6,10 @@ var send_to_page = {
   },
   applyAction: function(script, context, params, applyAt) {
     var newPageName = params.page_name !== 'null' ? params.page_name : '';
-    // Create updates object
-    var updates = { currentPageName: { $set: newPageName } };
     return [{
-      operation: 'updatePlayer',
+      operation: 'updatePlayerFields',
       roleName: params.role_name,
-      updates: updates
+      fields: { currentPageName: newPageName }
     }];
   }
 };

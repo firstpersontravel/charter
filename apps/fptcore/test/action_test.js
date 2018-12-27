@@ -15,8 +15,8 @@ describe('ActionCore', () => {
   var addAction = {
     applyAction: function(script, context, params, applyAt) {
       return [{
-        operation: 'updateTrip',
-        updates: { values: { number: { $set: (context.number || 0) + 1 } } }
+        operation: 'updateTripValues',
+        values: { number: (context.number || 0) + 1 }
       }];
     }
   };
@@ -35,9 +35,13 @@ describe('ActionCore', () => {
     sandbox.restore();
   });
 
-  describe('#opsForAction', () => {});
+  describe('#opsForAction', () => {
+    it.skip('tbd');
+  });
 
-  describe('#eventForAction', () => {});
+  describe('#eventForAction', () => {
+    it.skip('tbd');
+  });
 
   describe('#addEventToContext', () => {
     it('adds event to context', () => {
@@ -55,8 +59,8 @@ describe('ActionCore', () => {
 
       assert.deepStrictEqual(result.nextContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updateTrip',
-        updates: { values: { number: { $set: 1 } } }
+        operation: 'updateTripValues',
+        values: { number: 1 }
       }]);
     });
   });
@@ -68,20 +72,19 @@ describe('ActionCore', () => {
 
       assert.deepStrictEqual(result.nextContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updateTrip',
-        updates: { values: { number: { $set: 1 } } }
+        operation: 'updateTripValues',
+        values: { number: 1 }
       }]);
     });
 
     it('returns action and subsequent event results', () => {
-
       const eventSentinel = {};
       sandbox.stub(ActionCore, 'eventForAction').returns(eventSentinel);
       sandbox.stub(ActionCore, 'applyEvent')
         .callsFake(function(script, context, event, applyAt) {
           return {
             nextContext: context,
-            resultOps: [{ operation: 'updateTrip', updates: {} }],
+            resultOps: [{ operation: 'updateTripValues', values: {} }],
             scheduledActions: []
           };
         });
@@ -91,11 +94,11 @@ describe('ActionCore', () => {
 
       assert.deepStrictEqual(result.nextContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updateTrip',
-        updates: { values: { number: { $set: 1 } } }
+        operation: 'updateTripValues',
+        values: { number: 1 }
       }, {
-        operation: 'updateTrip',
-        updates: {}
+        operation: 'updateTripValues',
+        values: {}
       }]);
     });
   });
@@ -212,8 +215,8 @@ describe('ActionCore', () => {
         history: { trigger: now.toISOString() },
       });
       assert.deepEqual(res.resultOps, [{
-        operation: 'updateTrip',
-        updates: { history: { trigger: { $set: now.toISOString() } } }
+        operation: 'updateTripHistory',
+        history: { trigger: now.toISOString() }
       }]);
     });
 
@@ -232,11 +235,11 @@ describe('ActionCore', () => {
         number: 1
       });
       assert.deepEqual(res.resultOps, [{
-        operation: 'updateTrip',
-        updates: { history: { trigger: { $set: now.toISOString() } } }
+        operation: 'updateTripHistory',
+        history: { trigger: now.toISOString() }
       }, {
-        operation: 'updateTrip',
-        updates: { values: { number: { $set: 1 } } }
+        operation: 'updateTripValues',
+        values: { number: 1 }
       }]);
       assert.deepEqual(res.scheduledActions, []);
     });
@@ -262,8 +265,8 @@ describe('ActionCore', () => {
         history: { trigger: now.toISOString() }
       });
       assert.deepEqual(res.resultOps, [{
-        operation: 'updateTrip',
-        updates: { history: { trigger: { $set: now.toISOString() } } }
+        operation: 'updateTripHistory',
+        history: { trigger: now.toISOString() }
       }]);
       assert.deepStrictEqual(res.scheduledActions, [scheduledAction]);
     });

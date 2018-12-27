@@ -43,7 +43,7 @@ var custom_message = {
     return [{
       operation: 'createMessage',
       suppressRelayId: params.suppress_relay_id || null,
-      updates: {
+      fields: {
         sentById: context[params.from_role_name].id,
         sentToId: context[params.to_role_name].id,
         createdAt: applyAt,
@@ -79,7 +79,7 @@ var send_message = {
     }
     return [{
       operation: 'createMessage',
-      updates: {
+      fields: {
         sentById: context[fromRoleName].id,
         sentToId: context[toRoleName].id,
         createdAt: applyAt,

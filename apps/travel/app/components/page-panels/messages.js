@@ -103,39 +103,43 @@ export default Ember.Component.extend({
   }.property('withName', 'canSendTexts'),
 
   canSendTexts: function() {
-    return !!this.get('withPlayer.values.can_receive_texts');
-  }.property('withPlayer.values.can_receive_texts'),
+    const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
+    const hackValueName = `${lowerRoleName}_can_receive_texts`;
+    return !!this.get(`trip.values.${hackValueName}`);
+  }.property('trip.values'),
 
   canSendImages: function() {
-    return !!this.get('withPlayer.values.can_receive_images');
-  }.property('withPlayer.values.can_receive_images'),
+    const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
+    const hackValueName = `${lowerRoleName}_can_receive_images`;
+    return !!this.get(`trip.values.${hackValueName}`);
+  }.property('trip.values'),
 
   canInitiateCalls: function() {
     if (this.get('callUrl') === '') {
       return false;
     }
-    return !!this.get('withPlayer.values.can_receive_calls');
-  }.property(
-    'withPlayer.values.can_receive_calls',
-    'callUrl'),
+    const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
+    const hackValueName = `${lowerRoleName}_can_receive_calls`;
+    return !!this.get(`trip.values.${hackValueName}`);
+  }.property('trip.values', 'callUrl'),
 
   canSend: function() {
     return true;
   }.property(),
 
   callUrl: function() {
-    var withPlayer = this.get('withPlayer');
-    if (!withPlayer.get('values.can_receive_calls')) {
-      return '';
+    var profile = this.get('withPlayer.userProfile');
+    if (!profile) {
+      return;
     }
-    if (withPlayer.get('skype')) {
-      return 'skype:' + withPlayer.get('skype');
+    if (profile.get('skypeUsername')) {
+      return 'skype:' + profile.get('skypeUsername');
     }
-    if (withPlayer.get('facetime')) {
-      return 'facetime-audio:' + withPlayer.get('facetime');
+    if (profile.get('facetimeUsername')) {
+      return 'facetime-audio:' + profile.get('facetimeUsername');
     }
-    if (withPlayer.get('user.phoneNumber')) {
-      return 'facetime-audio:' + withPlayer.get('user.phoneNumber');
+    if (profile.get('phoneNumber')) {
+      return 'facetime-audio:' + profile.get('phoneNumber');
     }
     return '';
   }.property('withPlayer'),

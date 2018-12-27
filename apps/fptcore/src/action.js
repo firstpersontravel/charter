@@ -100,10 +100,8 @@ ActionCore.applyTrigger = function(script, triggerContext, currentContext,
   // History op to update history in db. This is required because some
   // scripts check the history.
   var historyOps = [{
-    operation: 'updateTrip',
-    updates: {
-      history: _.fromPairs([[trigger.name, { $set: applyAt.toISOString() }]])
-    }
+    operation: 'updateTripHistory',
+    history: _.set({}, trigger.name, applyAt.toISOString())
   }];
   // Create an initial result with this history update, so that subsequent
   // events can register that this was triggered.

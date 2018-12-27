@@ -26,7 +26,7 @@ describe('#custom_message', () => {
       script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
-      updates: {
+      fields: {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
@@ -59,7 +59,7 @@ describe('#custom_message', () => {
     };
     const res = messageActions.custom_message.applyAction(
       scriptWithActor, context, params, now);
-    assert.strictEqual(res[0].updates.isReplyNeeded, true);
+    assert.strictEqual(res[0].fields.isReplyNeeded, true);
   });
 
   it('sends image message with location', () => {
@@ -76,7 +76,7 @@ describe('#custom_message', () => {
       script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
-      updates: {
+      fields: {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
@@ -103,7 +103,7 @@ describe('#custom_message', () => {
       script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
-      updates: {
+      fields: {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
@@ -171,7 +171,7 @@ describe('#send_message', () => {
       script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
-      updates: {
+      fields: {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
@@ -200,7 +200,7 @@ describe('#send_message', () => {
       script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
-      updates: {
+      fields: {
         sentById: 1,
         sentToId: 2,
         createdAt: now,

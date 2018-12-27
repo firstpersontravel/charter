@@ -214,20 +214,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
       }, this);
   },
 
-  updateObj: function(obj, updates) {
-    Object.keys(updates).forEach(function(key) {
-      // fetch
-      var existing = obj.get(key);
-      var existingCopy = typeof existing === 'object' ?
-        Ember.$.extend(true, {}, existing) : existing;
-      // vivify
-      fptCore.ActionResultCore.autovivify(existingCopy, updates[key]);
-      // set
-      var updated = update(existingCopy, updates[key]);
-      obj.set(key, updated);
-    }, this);
-  },
-
   applyResultOp: function(op, uiCallbacks) {
     var players = this.get('model.players');
     switch (op.operation) {
@@ -243,31 +229,47 @@ export default Ember.Controller.extend(RealtimeMixin, {
         break;
 
       // Update player
-      case 'updatePlayer':
+      case 'updatePlayerFields':
         var player = players.findBy('roleName', op.roleName);
-        this.updateObj(player, op.updates);
-        console.log('-> ' + op.roleName, JSON.stringify(op.updates));
+        Object.keys(op.fields).forEach(key => {
+          player.set(key, op.fields[key]);
+        });
+        console.log('-> ' + op.roleName, JSON.stringify(op.fields));
         break;
 
       // Update trip
-      case 'updateTrip':
-        this.updateObj(this.get('model'), op.updates);
-        console.log('-> trip', JSON.stringify(op.updates));
+      case 'updateTripFields':
+        Object.keys(op.fields).forEach(key => {
+          this.get('model').set(key, op.fields[key]);
+        });
+        console.log('-> trip', JSON.stringify(op.fields));
+        break;
+
+      case 'updateTripValues':
+        var newValues = Object.assign({}, this.get('model.values'), op.values);
+        this.get('model').set('values', newValues);
+        console.log('-> trip values', JSON.stringify(op.values));
+        break;
+
+      case 'updateTripHistory':
+        var newHistory = Object.assign({}, this.get('model.history'), op.history);
+        this.get('model').set('history', newHistory);
+        console.log('-> trip values', JSON.stringify(op.history));
         break;
 
       // Create a message
       case 'createMessage':
-        op.updates.trip = this.get('model');
-        op.updates.sentBy = players.findBy('id',
-          op.updates.sentById.toString());
-        op.updates.sentTo = players.findBy('id',
-          op.updates.sentToId.toString());
-        delete op.updates.sentById;
-        delete op.updates.sentToId;
-        var msg = this.store.createRecord('message', op.updates);
+        op.fields.trip = this.get('model');
+        op.fields.sentBy = players.findBy('id',
+          op.fields.sentById.toString());
+        op.fields.sentTo = players.findBy('id',
+          op.fields.sentToId.toString());
+        delete op.fields.sentById;
+        delete op.fields.sentToId;
+        var msg = this.store.createRecord('message', op.fields);
         uiCallbacks.notifyMessage(msg);
-        console.log('-> msg', op.updates.messageName ||
-          op.updates.messageContent);
+        console.log('-> msg', op.fields.messageName ||
+          op.fields.messageContent);
         break;
     }
   },

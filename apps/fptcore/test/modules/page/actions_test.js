@@ -20,11 +20,9 @@ describe('#send_to_page', () => {
     const res = pageActions.send_to_page.applyAction(
       script, context, params, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlayer',
+      operation: 'updatePlayerFields',
       roleName: 'Tablet',
-      updates: {
-        currentPageName: { $set: 'PAGE-ONE' }
-      }
+      fields: { currentPageName: 'PAGE-ONE' }
     }]);
   });
 
@@ -33,11 +31,9 @@ describe('#send_to_page', () => {
     const res = pageActions.send_to_page.applyAction(
       script, context, params, null);
     assert.deepEqual(res, [{
-      operation: 'updatePlayer',
+      operation: 'updatePlayerFields',
       roleName: 'Tablet',
-      updates: {
-        currentPageName: { $set: '' }
-      }
+      fields: { currentPageName: '' }
     }]);
   });
 });

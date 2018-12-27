@@ -1,87 +1,63 @@
 const _ = require('lodash');
-const update = require('immutability-helper');
-
-const { ActionResultCore } = require('fptcore');
 
 const MessageController = require('../controllers/message');
 const TripRelaysController = require('../controllers/trip_relays');
 const models = require('../models');
 
-/**
- * Apply updates to a database instance.
- */
-function applyUpdatesToInstance(instance, updates) {
-  Object.keys(updates).forEach((key) => {
-    if (key === 'values') {
-      const values = _.cloneDeep(instance.values);
-      ActionResultCore.autovivify(values, updates.values);
-      instance.values = update(values, updates.values);
-    } else {
-      instance[key] = update(instance[key], updates[key]);
-    }
-  });
-}
-
-async function updateUser(objs, op) {
-  const player = _.find(objs.players, { roleName: op.roleName });
-  const user = _.find(objs.users, { id: player.userId });
-  if (!user) {
-    return null;
-  }
-  applyUpdatesToInstance(user, op.updates);
-  return await user.save({ fields: Object.keys(op.updates) });
-}
-
-async function updateTrip(objs, op) {
-  applyUpdatesToInstance(objs.trip, op.updates);
-  return await objs.trip.save({ fields: Object.keys(op.updates) });
-}
-
-async function updatePlayer(objs, op) {
-  const player = _.find(objs.players, { roleName: op.roleName });
-  applyUpdatesToInstance(player, op.updates);
-  return await player.save({ fields: Object.keys(op.updates) });
-}
-
-async function createMessage(objs, op) {
-  const fields = Object.assign({}, op.updates, {
-    tripId: objs.trip.id,
-    createdAt: op.updates.createdAt.toDate(),
-    readAt: op.updates.readAt ? op.updates.readAt.toDate() : null
-  });
-  const message = await models.Message.create(fields);
-  await MessageController.sendMessage(message);
-  await TripRelaysController.relayMessage(objs.trip, message,
-    op.suppressRelayId);
-  return message;
-}
-
-async function initiateCall(objs, op) {
-  return await TripRelaysController.initiateCall(
-    objs.trip, op.toRoleName, op.asRoleName, op.detectVoicemail);
-}
-
-const opFunctions = {
-  createMessage: createMessage,
-  initiateCall: initiateCall,
-  twiml: () => { /* ignore */ },
-  updateAudio: () => { /* ignore */ },
-  updateTrip: updateTrip,
-  updatePlayer: updatePlayer,
-  updateUser: updateUser,
-  updateUi: () => { /* ignore */ }
-};
-
 class TripOpController {
+
+  static async twiml() { /* ignore */ }
+  static async updateAudio() { /* ignore */ }
+  static async updateUi() { /* ignore */ }
+
+  static async updateTripFields(objs, op) {
+    return await objs.trip.update(op.fields);
+  }
+
+  static async updateTripValues(objs, op) {
+    return await objs.trip.update({
+      values: Object.assign(objs.trip.values, op.values)
+    });
+  }
+
+  static async updateTripHistory(objs, op) {
+    return await objs.trip.update({
+      history: Object.assign(objs.trip.history, op.values)
+    });
+  }
+
+  static async updatePlayerFields(objs, op) {
+    const player = _.find(objs.players, { roleName: op.roleName });
+    return await player.update(op.fields);
+  }
+
+  static async createMessage(objs, op) {
+    const fields = Object.assign({}, op.fields, {
+      tripId: objs.trip.id,
+      createdAt: op.fields.createdAt.toDate(),
+      readAt: op.fields.readAt ? op.fields.readAt.toDate() : null
+    });
+    const message = await models.Message.create(fields);
+    await MessageController.sendMessage(message);
+    await TripRelaysController.relayMessage(objs.trip, message,
+      op.suppressRelayId);
+    return message;
+  }
+
+  static async initiateCall(objs, op) {
+    return await TripRelaysController.initiateCall(
+      objs.trip, op.toRoleName, op.asRoleName, op.detectVoicemail);
+  }
+
   /**
    * Apply an op to database objects.
    */
   static async applyOp(objs, op) {
-    const opFunction = opFunctions[op.operation];
+    const opFunction = this[op.operation];
     if (!opFunction) {
       throw new Error(`Invalid op ${op.operation}`);
     }
-    return await opFunction(objs, op);
+    return await opFunction.call(this, objs, op);
   }
 }
 

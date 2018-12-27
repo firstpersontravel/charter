@@ -8,9 +8,7 @@ var set_state = {
     return [{
       operation: 'updateUi',
       roleName: params.role_name,
-      updates: {
-        newState: params.new_value
-      }
+      updates: { newState: params.new_value }
     }];
   }
 };

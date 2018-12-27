@@ -20,13 +20,13 @@ const script = {
     triggers: [{
       name: 'TRIGGER-PICK-APPLES',
       event: { cue_signaled: 'CUE-PICK-APPLES' },
-      actions: ['increment_value Farmer.apples 5']
+      actions: ['increment_value apples 5']
     }, {
       name: 'TRIGGER-UNLOAD-APPLES',
       event: {
         geofence_entered: { role: 'Farmer', geofence: 'GEOFENCE-FARM' }
       },
-      actions: ['set_value Farmer.apples 0']
+      actions: ['set_value apples 0']
     }, {
       name: 'TRIGGER-SUNRISE',
       event: { cue_signaled: 'CUE-SUNRISE' },
@@ -71,17 +71,10 @@ const script = {
 };
 
 const context = {
-  Farmer: {
-    id: 1,
-    page: 'TRACTOR',
-    apples: 2
-  },
-  Rooster: {
-    id: 2
-  },
-  Cowboy: {
-    id: 3
-  }
+  Farmer: { id: 1, page: 'TRACTOR' },
+  Rooster: { id: 2 },
+  Cowboy: { id: 3 },
+  apples: 2
 };
 
 const now = moment.utc();
@@ -118,9 +111,9 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.Farmer.currentPageName, 'BACK-HOME');
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updatePlayer',
+      operation: 'updatePlayerFields',
       roleName: 'Farmer',
-      updates: { currentPageName: { $set: 'BACK-HOME' } }
+      fields: { currentPageName: 'BACK-HOME' }
     }]);
   });
 
@@ -131,16 +124,13 @@ describe('Integration - Nested Triggers', () => {
     };
     const result = ActionCore.applyAction(script, context, action, now);
 
-    assert.strictEqual(result.nextContext.Farmer.apples, 7);
+    assert.strictEqual(result.nextContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updateTrip',
-      updates: {
-        history: { 'TRIGGER-PICK-APPLES': { $set: now.toISOString() } } 
-      }
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-PICK-APPLES': now.toISOString() }
     }, {
-      operation: 'updatePlayer',
-      roleName: 'Farmer',
-      updates: { values: { apples: { $set: 7 } } }
+      operation: 'updateTripValues',
+      values: { apples: 7 }
     }]);
   });
 
@@ -152,16 +142,13 @@ describe('Integration - Nested Triggers', () => {
     };
     const result = ActionCore.applyEvent(script, context, event, now);
 
-    assert.strictEqual(result.nextContext.Farmer.apples, 0);
+    assert.strictEqual(result.nextContext.apples, 0);
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updateTrip',
-      updates: {
-        history: { 'TRIGGER-UNLOAD-APPLES': { $set: now.toISOString() } } 
-      }
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-UNLOAD-APPLES': now.toISOString() } 
     }, {
-      operation: 'updatePlayer',
-      roleName: 'Farmer',
-      updates: { values: { apples: { $set: 0 } } }
+      operation: 'updateTripValues',
+      values: { apples: 0 }
     }]);
   });
 
@@ -170,12 +157,10 @@ describe('Integration - Nested Triggers', () => {
     const action = { name: 'signal_cue', params: { cue_name: 'CUE-SUNRISE' } };
     const result = ActionCore.applyAction(script, context, action, now);
 
-    assert.strictEqual(result.nextContext.Farmer.apples, 2);
+    assert.strictEqual(result.nextContext.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updateTrip',
-      updates: {
-        history: { 'TRIGGER-SUNRISE': { $set: now.toISOString() } } 
-      }
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-SUNRISE': now.toISOString() }
     }]);
     assert.strictEqual(result.scheduledActions.length, 1);
     assert.strictEqual(result.scheduledActions[0].name, 'send_message');
@@ -208,13 +193,8 @@ describe('Integration - Nested Triggers', () => {
     assert.deepStrictEqual(actionSpies.signal_cue.secondCall.args, [
       script,
       Object.assign({}, context, {
-        event: {
-          cue: 'CUE-GREET',
-          type: 'cue_signaled'
-        },
-        history: {
-          'TRIGGER-GREET-1': now.toISOString()
-        }
+        event: { cue: 'CUE-GREET', type: 'cue_signaled' },
+        history: { 'TRIGGER-GREET-1': now.toISOString() }
       }),
       { cue_name: 'CUE-GREET-REPLY' },
       now
@@ -224,10 +204,7 @@ describe('Integration - Nested Triggers', () => {
     assert.deepStrictEqual(actionSpies.custom_message.firstCall.args, [
       script,
       Object.assign({}, context, {
-        event: {
-          cue: 'CUE-GREET-REPLY',
-          type: 'cue_signaled'
-        },
+        event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
         history: {
           'TRIGGER-GREET-1': now.toISOString(),
           'TRIGGER-GREET-2': now.toISOString()
@@ -245,18 +222,14 @@ describe('Integration - Nested Triggers', () => {
     // Test results
     assert.deepStrictEqual(result.resultOps,
       [{
-        operation: 'updateTrip',
-        updates: {
-          history: { 'TRIGGER-GREET-1': { $set: now.toISOString() } } 
-        }
+        operation: 'updateTripHistory',
+        history: { 'TRIGGER-GREET-1': now.toISOString() }
       }, {
-        operation: 'updateTrip',
-        updates: {
-          history: { 'TRIGGER-GREET-2': { $set: now.toISOString() } } 
-        }
+        operation: 'updateTripHistory',
+        history: { 'TRIGGER-GREET-2': now.toISOString() }
       }, {
         operation: 'createMessage',
-        updates: {
+        fields: {
           messageType: 'text',
           messageContent: 'howdy',
           createdAt: now,
@@ -278,23 +251,17 @@ describe('Integration - Nested Triggers', () => {
 
     assert.deepStrictEqual(result.resultOps,
       [{
-        operation: 'updateTrip',
-        updates: {
-          history: { 'TRIGGER-NAV-1': { $set: now.toISOString() } } 
-        }
+        operation: 'updateTripHistory',
+        history: { 'TRIGGER-NAV-1': now.toISOString() }
       }, {
-        operation: 'updateTrip',
-        updates: {
-          values: { is_navigating: { $set: true } }
-        }
+        operation: 'updateTripValues',
+        values: { is_navigating: true }
       }, {
-        operation: 'updateTrip',
-        updates: {
-          history: { 'TRIGGER-NAV-2': { $set: now.toISOString() } } 
-        }
+        operation: 'updateTripHistory',
+        history: { 'TRIGGER-NAV-2': now.toISOString() }
       }, {
         operation: 'createMessage',
-        updates: {
+        fields: {
           messageType: 'text',
           messageContent: 'geewhiz',
           createdAt: now,

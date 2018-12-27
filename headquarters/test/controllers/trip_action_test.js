@@ -27,7 +27,7 @@ describe('TripActionController', () => {
 
     it('invokes result ops', async () => {
       const resultOps = [{
-        operation: 'updateTrip',
+        operation: 'updateTripFields',
         updates: {
           values: { initiatives: { won_the_game: { $set: true } } }
         }

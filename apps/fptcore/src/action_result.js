@@ -1,57 +1,6 @@
 var _ = require('lodash');
-var update = require('immutability-helper');
 
 var ActionResultCore = {};
-
-/**
- * Immutability helper doesn't fill in intermediate objects if you try to set
- * say a deep property without first creating the intermediates. This function
- * does that for you.
- */
-ActionResultCore.autovivify = function(obj, updates) {
-  if (typeof updates !== 'object') {
-    return;
-  }
-  Object.keys(updates).forEach(function(key) {
-    if (key[0] === '$') {
-      return;
-    }
-    if (typeof obj[key] === 'undefined') {
-      obj[key] = {};
-    }
-    ActionResultCore.autovivify(obj[key], updates[key]);
-  });
-};
-
-ActionResultCore.TEMP_KEY_MAPS = {
-  currentPageName: 'currentPageName',
-  currentSceneName: 'currentSceneName',
-  history: 'history'
-};
-
-/**
- * Update an object with updates, honoring temporary key maps.
- */
-ActionResultCore.tempUpdateObject = function(obj, updates) {
-  // Super hacky way to do a deep clone.
-  var updated = _.cloneDeep(obj);
-  Object.keys(updates).forEach(function(key) {
-    if (key === 'values') {
-      // vivify
-      ActionResultCore.autovivify(updated, updates.values);
-      // set
-      updated = update(updated, updates.values);
-    } else if (!_.isUndefined(ActionResultCore.TEMP_KEY_MAPS[key])) {
-      var contextKey = ActionResultCore.TEMP_KEY_MAPS[key];
-      if (contextKey) {
-        updated[contextKey] = update(updated[contextKey] || {}, updates[key]);
-      }
-    } else {
-      throw new Error('Bad key for temp update: ' + key);
-    }
-  }, this);
-  return updated;
-};
 
 /**
  * Go through result ops from a given action, and update the context with the
@@ -59,20 +8,24 @@ ActionResultCore.tempUpdateObject = function(obj, updates) {
  * to allow processing to continue... the real update will happen after the
  * whole order processing is complete by resultOps handling.
  */
-ActionResultCore.tempUpdateContextFromResultOp = function(context, resultOp) {
+ActionResultCore._tempApplyResultOp = function(context, resultOp) {
   switch (resultOp.operation) {
-  case 'updatePlayer': {
-    context = Object.assign({}, context);  // Shallow clone
-    context[resultOp.roleName] = ActionResultCore.tempUpdateObject(
-      context[resultOp.roleName], resultOp.updates);
-    break;
+  case 'updatePlayerFields': {
+    var oldPlayer = context[resultOp.roleName];
+    var player = Object.assign({}, oldPlayer, resultOp.fields);
+    return Object.assign({}, context, _.set({}, resultOp.roleName, player));
   }
-  case 'updateTrip': {
-    context = Object.assign({}, context);  // Shallow clone
-    context = ActionResultCore.tempUpdateObject(context, resultOp.updates);
-    break;
+  case 'updateTripFields': {
+    return Object.assign({}, context, resultOp.fields);
   }
-  // everything else we can ignore
+  case 'updateTripValues': {
+    return Object.assign({}, context, resultOp.values);
+  }
+  case 'updateTripHistory': {
+    var oldHistory = context.history || {};
+    var history = Object.assign({}, oldHistory, resultOp.history);
+    return Object.assign({}, context, { history: history });
+  }
   }
   return context;
 };
@@ -85,8 +38,7 @@ ActionResultCore.tempUpdateContextFromResultOp = function(context, resultOp) {
  */
 ActionResultCore.tempUpdateContext = function(context, resultOps) {
   resultOps.forEach(function(resultOp) {
-    context = ActionResultCore.tempUpdateContextFromResultOp(
-      context, resultOp);
+    context = ActionResultCore._tempApplyResultOp(context, resultOp);
   });
   return context;
 };

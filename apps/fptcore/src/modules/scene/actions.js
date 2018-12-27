@@ -13,16 +13,14 @@ var start_scene = {
   },
   applyAction: function(script, context, params, applyAt) {
     var newSceneName = params.scene_name;
-    var newScene = _.find(script.content.scenes || [],
-      { name: newSceneName });
+    var newScene = _.find(script.content.scenes, { name: newSceneName });
     if (!newScene) {
       return null;
     }
     // Create updates object
-    var updates = { currentSceneName: { $set: newSceneName } };
     return [{
-      operation: 'updateTrip',
-      updates: updates
+      operation: 'updateTripFields',
+      fields: { currentSceneName: newSceneName }
     }];
   }
 };
