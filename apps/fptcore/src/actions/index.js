@@ -12,8 +12,8 @@ module.exports = {
   // Cue
   signal_cue: require('../modules/cue/actions').signal_cue,
   // Message
-  custom_message: require('./message/custom_message'),
-  send_message: require('./message/send_message'),
+  custom_message: require('../modules/message/actions').custom_message,
+  send_message: require('../modules/message/actions').send_message,
   // Page
   send_to_page: require('./page/send_to_page'),
   // Scene

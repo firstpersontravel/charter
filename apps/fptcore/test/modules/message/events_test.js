@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const message_sent = require('../../../src/events/message/message_sent');
+const messageEvents = require('../../../src/modules/message/events');
 
 describe('#message_sent', () => {
   const imageClause = { from: 'Gabe', to: 'Cat', type: 'image' };
@@ -10,7 +10,8 @@ describe('#message_sent', () => {
       type: 'message_sent',
       message: { from: 'Gabe', to: 'Cat', type: 'image' }
     };
-    const res = message_sent.matchEvent({}, {}, imageClause, event);
+    const res = messageEvents.message_sent.matchEvent(
+      {}, {}, imageClause, event);
     assert.strictEqual(res, true);
   });
 
@@ -19,7 +20,8 @@ describe('#message_sent', () => {
       type: 'message_sent',
       message: { from: 'Cat', to: 'Gabe', type: 'image' }
     };
-    const res = message_sent.matchEvent({}, {}, imageClause, event);
+    const res = messageEvents.message_sent.matchEvent(
+      {}, {}, imageClause, event);
     assert.strictEqual(res, false);
   });
 
@@ -30,7 +32,8 @@ describe('#message_sent', () => {
       type: 'message_sent',
       message: { type: 'text', content: 'Gabe says hi' }
     };
-    const res = message_sent.matchEvent({}, {}, textClause, event);
+    const res = messageEvents.message_sent.matchEvent(
+      {}, {}, textClause, event);
     assert.strictEqual(res, true);
   });
 
@@ -39,7 +42,8 @@ describe('#message_sent', () => {
       type: 'message_sent',
       message: { type: 'text', content: 'Bob sez hi' }
     };
-    const res = message_sent.matchEvent({}, {}, textClause, event);
+    const res = messageEvents.message_sent.matchEvent(
+      {}, {}, textClause, event);
     assert.strictEqual(res, false);
   });
 
@@ -58,7 +62,8 @@ describe('#message_sent', () => {
       message: { from: 'Gabe', to: 'Cat', type: 'image' },
       location: { latitude: 37.75827, longitude: -122.41168, accuracy: 5 }
     };
-    const res = message_sent.matchEvent(geoScript, {}, geoClause, event);
+    const res = messageEvents.message_sent.matchEvent(
+      geoScript, {}, geoClause, event);
     assert.strictEqual(res, true);
   });
 
@@ -68,7 +73,8 @@ describe('#message_sent', () => {
       message: { from: 'Gabe', to: 'Cat', type: 'image' },
       location: { latitude: 37.75901, longitude: -122.41149, accuracy: 5 }
     };
-    const res = message_sent.matchEvent(geoScript, {}, geoClause, event);
+    const res = messageEvents.message_sent.matchEvent(
+      geoScript, {}, geoClause, event);
     assert.strictEqual(res, false);
   });
 });

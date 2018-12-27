@@ -1,10 +1,9 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const customMessage = require('../../../src/actions/message/custom_message');
+const messageActions = require('../../../src/modules/message/actions');
 
-describe('#customMessage', () => {
-
+describe('#custom_message', () => {
   const now = moment.utc();
   const script = {
     content: {
@@ -23,7 +22,8 @@ describe('#customMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = customMessage.applyAction(script, context, params, now);
+    const res = messageActions.custom_message.applyAction(
+      script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -57,7 +57,8 @@ describe('#customMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = customMessage.applyAction(scriptWithActor, context, params, now);
+    const res = messageActions.custom_message.applyAction(
+      scriptWithActor, context, params, now);
     assert.strictEqual(res[0].updates.isReplyNeeded, true);
   });
 
@@ -71,7 +72,8 @@ describe('#customMessage', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const res = customMessage.applyAction(script, context, params, now);
+    const res = messageActions.custom_message.applyAction(
+      script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -97,7 +99,8 @@ describe('#customMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = customMessage.applyAction(script, context, params, now);
+    const res = messageActions.custom_message.applyAction(
+      script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -126,7 +129,7 @@ describe('#customMessage', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const event = customMessage.eventForParams(params);
+    const event = messageActions.custom_message.eventForParams(params);
     assert.deepStrictEqual(event, {
       type: 'message_sent',
       message: {
@@ -141,5 +144,71 @@ describe('#customMessage', () => {
         accuracy: 30
       }
     });
+  });
+});
+
+describe('#send_message', () => {
+  const now = moment.utc();
+  const context = {
+    Ally: { id: 1, audio_path: 'hi.mp3' },
+    Babbit: { id: 2 }
+  };
+
+  it('sends text message with content', () => {
+    const script = {
+      content: {
+        messages: [{
+          name: 'MESSAGE-HELLO',
+          type: 'text',
+          from: 'Ally',
+          to: 'Babbit',
+          content: 'hello'
+        }]
+      }
+    };
+    const params = { message_name: 'MESSAGE-HELLO' };
+    const res = messageActions.send_message.applyAction(
+      script, context, params, now);
+    assert.deepStrictEqual(res, [{
+      operation: 'createMessage',
+      updates: {
+        sentById: 1,
+        sentToId: 2,
+        createdAt: now,
+        readAt: null,
+        messageName: 'MESSAGE-HELLO',
+        messageType: 'text',
+        messageContent: 'hello'
+      }
+    }]);
+  });
+
+  it('sends audio message with templated content', () => {
+    const script = {
+      content: {
+        messages: [{
+          name: 'MESSAGE-HELLO',
+          type: 'audio',
+          from: 'Ally',
+          to: 'Babbit',
+          content: '{{Ally.audio_path}}'
+        }]
+      }
+    };
+    const params = { message_name: 'MESSAGE-HELLO' };
+    const res = messageActions.send_message.applyAction(
+      script, context, params, now);
+    assert.deepStrictEqual(res, [{
+      operation: 'createMessage',
+      updates: {
+        sentById: 1,
+        sentToId: 2,
+        createdAt: now,
+        readAt: null,
+        messageName: 'MESSAGE-HELLO',
+        messageType: 'audio',
+        messageContent: 'hi.mp3'
+      }
+    }]);
   });
 });

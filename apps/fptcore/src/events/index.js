@@ -6,9 +6,9 @@ module.exports = {
   // Cue
   cue_signaled: require('../modules/cue/events').cue_signaled,
   // Geofence
-  geofence_entered: require('./geofence/geofence_entered'),
+  geofence_entered: require('../modules/geofence/events').geofence_entered,
   // Message
-  message_sent: require('./message/message_sent'),
+  message_sent: require('../modules/message/events').message_sent,
   // Query
   query_responded: require('./query/query_responded'),
   // Time
