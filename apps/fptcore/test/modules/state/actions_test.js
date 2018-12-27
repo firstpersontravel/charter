@@ -1,11 +1,11 @@
 const assert = require('assert');
 
-const setState = require('../../../src/actions/state/set_state');
+const stateActions = require('../../../src/modules/state/actions');
 
-describe('#setState', () => {
+describe('#set_state', () => {
   it('sets UI state', () => {
     const params = { role_name: 'Player', new_value: 'tab1' };
-    const res = setState.applyAction({}, {}, params, null);
+    const res = stateActions.set_state.applyAction({}, {}, params, null);
     assert.deepEqual(res, [{
       operation: 'updateUi',
       roleName: 'Player',

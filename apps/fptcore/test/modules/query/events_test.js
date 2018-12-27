@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const query_responded = require('../../../src/events/query/query_responded');
+const queryEvents = require('../../../src/modules/query/events');
 
 describe('#query_responded', () => {
   it('fires on matching response', () => {
@@ -10,7 +10,8 @@ describe('#query_responded', () => {
       query: 'CLIP-INTRO',
       partial: false
     };
-    const res = query_responded.matchEvent({}, {}, callClause, event);
+    const res = queryEvents.query_responded.matchEvent(
+      {}, {}, callClause, event);
     assert.strictEqual(res, true);
   });
 
@@ -21,7 +22,8 @@ describe('#query_responded', () => {
       query: 'CLIP-OUTRO',
       partial: false
     };
-    const res = query_responded.matchEvent({}, {}, callClause, event);
+    const res = queryEvents.query_responded.matchEvent(
+      {}, {}, callClause, event);
     assert.strictEqual(res, false);
   });
 
@@ -32,7 +34,8 @@ describe('#query_responded', () => {
       query: 'CLIP-INTRO',
       partial: true
     };
-    const res = query_responded.matchEvent({}, {}, callClause, event);
+    const res = queryEvents.query_responded.matchEvent(
+      {}, {}, callClause, event);
     assert.strictEqual(res, false);
   });
 
@@ -43,7 +46,8 @@ describe('#query_responded', () => {
       query: 'CLIP-INTRO',
       partial: false
     };
-    const res = query_responded.matchEvent({}, {}, callClause, event);
+    const res = queryEvents.query_responded.matchEvent(
+      {}, {}, callClause, event);
     assert.strictEqual(res, false);
   });
 });
