@@ -86,12 +86,11 @@ function renderAllPlayers(group) {
   const allPlayers = sortPlayers(group);
   const players = allPlayers.playersByTrip.map(renderTripAndPlayers);
   const activeActors = allPlayers.activeActorsByRole.map(renderActor);
-  const inactiveActors = allPlayers.inactiveActorsByRole
-    .map(renderActor);
+  const inactiveActors = allPlayers.inactiveActorsByRole.map(renderActor);
   return (
     <div>
       <div style={{ marginBottom: '0.5em' }}>
-        <h5>Players</h5>
+        <h5>Travelers</h5>
         {players}
       </div>
       <div style={{ marginBottom: '0.5em' }}>

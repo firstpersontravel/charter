@@ -25,16 +25,27 @@ export default class TripScenes extends Component {
   }
 
   renderCueButton(page, panel) {
+    const isCurrentScene = page.scene === this.props.trip.currentSceneName;
     const trip = this.props.trip;
-    const btnClass = isProduction() ? 'btn-danger' : 'btn-primary';
+    const pageScene = _.find(trip.script.content.scenes, { name: page.scene });
+    const pageSceneTitle = pageScene.title;
+    const activeBtnClass = isProduction() ? 'btn-danger' : 'btn-primary';
+    const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
     const panelText = EvalCore.templateText(trip.context, panel.text || '',
       trip.script.timezone);
-    const cueTitle = panel.type === 'button' ?
-      `Cue ${panel.cue} ("${panelText}")` :
-      `Cue ${panel.cue}`;
+    const activeCueTitle = panel.type === 'button' ?
+      panelText : `Cue ${panel.cue}`;
+    const inactiveCueTitle = (
+      <span>
+        <span style={{ textDecoration: 'line-through' }}>{panelText}</span>
+        &nbsp;(waiting for scene &quot;{pageSceneTitle}&quot;)
+      </span>
+    );
+    const cueTitle = isCurrentScene ? activeCueTitle : inactiveCueTitle;
     return (
       <div key={panel.cue} style={{ marginTop: '0.25em' }}>
         <button
+          disabled={!isCurrentScene}
           key={`${page.name}-${panel.cue}`}
           style={{ marginTop: '0.25em' }}
           onClick={() => (
