@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const signal_cue = require('../../src/actions/signal_cue');
+const signal_cue = require('../../../src/actions/cue/signal_cue');
 
 describe('#signal_cue', () => {
   it('does nothing', () => {

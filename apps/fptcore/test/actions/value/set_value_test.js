@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const setValue = require('../../src/actions/set_value');
+const setValue = require('../../../src/actions/value/set_value');
 
 describe('#setValue', () => {
   it('sets player value to number', () => {

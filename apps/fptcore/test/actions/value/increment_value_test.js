@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const incrementValue = require('../../src/actions/increment_value');
+const incrementValue = require('../../../src/actions/value/increment_value');
 
 describe('#incrementValue', () => {
 

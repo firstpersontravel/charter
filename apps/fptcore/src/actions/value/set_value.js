@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var EvalCore = require('../eval');
+var EvalCore = require('../../eval');
 
 function setValue(script, context, params, applyAt) {
   var newValue = EvalCore.lookupRef(context, params.new_value_ref);

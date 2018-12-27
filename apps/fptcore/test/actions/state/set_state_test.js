@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const setState = require('../../src/actions/set_state');
+const setState = require('../../../src/actions/state/set_state');
 
 describe('#setState', () => {
   it('sets UI state', () => {

@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const sendToPage = require('../../src/actions/send_to_page');
+const sendToPage = require('../../../src/actions/page/send_to_page');
 
 describe('#sendToPage', () => {
 
