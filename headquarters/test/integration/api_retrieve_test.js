@@ -39,7 +39,9 @@ describe('API retrieve', () => {
                 scriptId: group.scriptId,
                 variantNames: '',
                 title: 'test',
-                values: {}
+                values: {},
+                customizations: {},
+                waypointOptions: {}
               }
             }
           });

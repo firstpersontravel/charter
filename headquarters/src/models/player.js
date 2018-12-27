@@ -7,7 +7,6 @@ const {
   requiredStringField,
   optionalStringField,
   oneToMany,
-  jsonField,
   snakeCaseColumns
 } = require('./fields');
 
@@ -18,8 +17,7 @@ const Player = database.define('Player', snakeCaseColumns({
   roleName: requiredStringField(32, false),
   currentPageName: optionalStringField(64),
   acknowledgedPageName: optionalStringField(64),
-  acknowledgedPageAt: datetimeField(),
-  values: jsonField(database, 'Player', 'values'),
+  acknowledgedPageAt: datetimeField()
 }));
 
 oneToMany(Player, Trip);

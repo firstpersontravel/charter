@@ -12,24 +12,17 @@ class TripResetController {
   static async _resetTrip(script, trip, checkpoint) {
     // Get schedule and values
     const variants = trip.variantNames.split(',');
-    const schedule = TripCore.getInitialSchedule(script, trip.date, variants);
-    const initialValues = TripCore.getInitialValues(script, variants);
-
-    // Preserve some hard-coded keys, but reset the others
-    const preserveValueKeys = Object
-      .keys(initialValues)
-      .concat(['waypoint_options']);
-    const resetValues = _.pick(trip.values, preserveValueKeys);
+    const resetFields = TripCore.getInitialFields(script, trip.date, variants);
     const resetSceneName = checkpoint.scene || script.content.scenes[0].name;
 
     // Update values with checkpoint
-    _.merge(resetValues, _.get(checkpoint, 'values.Global'));
+    _.merge(resetFields.values, checkpoint.values);
 
     // Update!
     return await trip.update({
       currentSceneName: resetSceneName,
-      schedule: schedule,
-      values: resetValues,
+      schedule: resetFields.schedule,
+      values: resetFields.values,
       history: {}
     });
   }
@@ -42,8 +35,6 @@ class TripResetController {
     const variants = trip.variantNames.split(',');
     const fields = PlayerCore.getInitialFields(script, player.roleName,
       variants);
-    // Update values
-    _.merge(fields.values, _.get(checkpoint, `values.${player.roleName}`));
     // Check starting page
     if (_.get(checkpoint, 'pages.' + player.roleName)) {
       fields.currentPageName = checkpoint.pages[player.roleName];

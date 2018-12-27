@@ -83,7 +83,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
   directions: function() {
     if (!this.get('params.route')) { return null; }
     var trip = this.get('trip');
-    var waypointOptions = trip.get('values.waypoint_options');
+    var waypointOptions = trip.get('waypointOptions');
     var routeName = this.get('params.route');
     return fptCore.WaypointCore.directionsForRoute(
       this.get('trip.script.content'), routeName, waypointOptions);
@@ -99,7 +99,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
   fromWaypoint: function() {
     if (!this.get('params.route')) { return null; }
     var trip = this.get('trip');
-    var waypointOptions = trip.get('values.waypoint_options');
+    var waypointOptions = trip.get('waypointOptions');
     var fromWaypointName = this.get('directionsRoute').from;
     return fptCore.WaypointCore.optionForWaypoint(
       this.get('trip.script.content'),
@@ -108,7 +108,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   toWaypoint: function() {
     var trip = this.get('trip');
-    var waypointOptions = trip.get('values.waypoint_options');
+    var waypointOptions = trip.get('waypointOptions');
     if (!this.get('params.route')) {
       if (this.get('params.waypoint')) {
         return fptCore.WaypointCore.optionForWaypoint(

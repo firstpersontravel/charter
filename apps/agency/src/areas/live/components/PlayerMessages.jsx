@@ -105,13 +105,13 @@ export default class PlayerMessages extends Component {
       this.props.params.withRoleName === 'All' ||
       this.state.pendingMessage === '');
 
-    const role = _.find(this.props.player.trip.script.content.roles,
-      { name: this.props.params.roleName });
-    const channels = role.channels_with || [];
-    const counterpartOptions = channels
-      .map(channel => (
-        <option key={channel} value={channel}>{channel}</option>
-      ));
+    const relays = _.filter(this.props.player.trip.script.content.relays, (
+      relay => (relay.as || relay.for) === this.props.params.roleName
+    ));
+    const counterparts = _.uniq(relays.map(relay => relay.with));
+    const counterpartOptions = counterparts.map(counterpart => (
+      <option key={counterpart} value={counterpart}>{counterpart}</option>
+    ));
 
     return (
       <form className="row" onSubmit={this.handleSendPendingMessage}>

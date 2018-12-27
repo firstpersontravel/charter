@@ -161,10 +161,9 @@ export default class ScheduleIndex extends Component {
 
   handleEditTripConfirm(group, fields) {
     const script = _.find(this.props.scripts, { id: group.scriptId });
-    const values = TripCore.getInitialValues(script, fields.variantNames);
-    const schedule = TripCore.getInitialSchedule(script,
-      group.date, fields.variantNames);
-    const tripFields = {
+    const initialFields = TripCore.getInitialFields(script, group.date,
+      fields.variantNames);
+    const tripFields = Object.assign(initialFields, {
       groupId: group.id,
       scriptId: group.scriptId,
       date: group.date,
@@ -173,10 +172,8 @@ export default class ScheduleIndex extends Component {
       departureName: fields.departureName,
       variantNames: fields.variantNames.join(','),
       currentSceneName: '',
-      values: values,
-      schedule: schedule,
       lastScheduledTime: null
-    };
+    });
     const playersFields = script.content.roles.map(role => (
       this.initialFieldsForRole(script, role, fields.departureName,
         fields.variantNames)

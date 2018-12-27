@@ -11,50 +11,42 @@ export default class TripValues extends Component {
   constructor(props) {
     super(props);
     this.handleFlagUpdate = this.handleFlagUpdate.bind(this);
-    this.handleValueUpdate = this.handleValueUpdate.bind(this);
+    this.handleCustomizationUpdate = this.handleCustomizationUpdate.bind(this);
     this.handleWaypointUpdate = this.handleWaypointUpdate.bind(this);
   }
 
-  handleValueUpdate(key, newValue) {
+  handleCustomizationUpdate(key, newValue) {
     this.props.updateInstance('trips', this.props.params.tripId, {
-      values: { [key]: newValue }
+      customizations: { [key]: newValue }
     });
     this.props.postAdminAction(this.props.params.tripId, 'notify',
       { notify_type: 'refresh' }, false);
   }
 
   handleFlagUpdate(key, newValue) {
-    this.handleValueUpdate(key, newValue === 'Yes');
+    this.handleCustomizationUpdate(key, newValue === 'Yes');
   }
 
   handleWaypointUpdate(key, event) {
     this.props.updateInstance('trips', this.props.params.tripId, {
-      values: {
-        waypoint_options: {
-          $auto: {
-            $merge: {
-              [key]: event.target.value
-            }
-          }
-        }
-      }
+      waypointOptions: { [key]: event.target.value }
     });
     this.props.postAdminAction(this.props.params.tripId, 'notify',
       { notify_type: 'refresh' }, false);
   }
 
-  renderFlagRow(value) {
-    const title = TextCore.titleForKey(value.key.substring(5));
-    const label = value.value ? 'Yes' : 'No';
-    const labelClass = value.value ? '' : 'faint';
+  renderFlagRow(item) {
+    const title = TextCore.titleForKey(item.key.substring(5));
+    const label = item.value ? 'Yes' : 'No';
+    const labelClass = item.value ? '' : 'faint';
     return (
-      <tr key={value.key}>
+      <tr key={item.key}>
         <td>{title}</td>
         <td>
           <PopoverControl
             title={title}
             choices={['Yes', 'No']}
-            onConfirm={_.curry(this.handleFlagUpdate)(value.key)}
+            onConfirm={_.curry(this.handleFlagUpdate)(item.key)}
             value={label}
             labelClassName={labelClass} />
         </td>
@@ -62,37 +54,35 @@ export default class TripValues extends Component {
     );
   }
 
-  renderTextValue(value) {
-    const title = TextCore.titleForKey(value.key);
-    const isText = _.includes(['string', 'number'], typeof value.value);
+  renderTextCustomization(item) {
+    const title = TextCore.titleForKey(item.key);
+    const isText = _.includes(['string', 'number'], typeof item.value);
     if (!isText) {
-      return JSON.stringify(value.value, null, 2);
+      return JSON.stringify(item.value, null, 2);
     }
     return (
       <PopoverControl
         title={title}
-        onConfirm={_.curry(this.handleValueUpdate)(value.key)}
-        value={value.value} />
+        onConfirm={_.curry(this.handleCustomizationUpdate)(item.key)}
+        value={item.value} />
     );
   }
 
-  renderValueRow(value) {
-    const title = TextCore.titleForKey(value.key);
-    const valueComponent = this.renderTextValue(value);
+  renderCustomizationRow(item) {
+    const title = TextCore.titleForKey(item.key);
+    const itemComponent = this.renderTextCustomization(item);
     return (
-      <tr key={value.key}>
+      <tr key={item.key}>
         <td>{title}</td>
-        <td>
-          {valueComponent}
-        </td>
+        <td>{itemComponent}</td>
       </tr>
     );
   }
 
   renderWaypointRow(waypoint) {
-    const currentValue = _.get(
-      this.props.tripStatus.instance.values,
-      `waypoint_options.${waypoint.name}`) || waypoint.options[0].name;
+    const waypointOptions = this.props.tripStatus.instance.waypointOptions;
+    const currentValue = _.get(waypointOptions, waypoint.name);
+    const currentOrDefault = currentValue || waypoint.options[0].name;
     const options = waypoint.options.map(option => (
       <option key={option.name} value={option.name}>
         {option.title}
@@ -104,7 +94,7 @@ export default class TripValues extends Component {
         <br />
         <select
           className="form-control"
-          value={currentValue}
+          value={currentOrDefault}
           onChange={_.curry(this.handleWaypointUpdate)(waypoint.name)}>
           {options}
         </select>
@@ -129,19 +119,24 @@ export default class TripValues extends Component {
     if (!trip) {
       return <div>Loading</div>;
     }
-    const values = _(trip.values)
+    const customizations = _(trip.customizations)
       .map((v, k) => ({ key: k, value: v }))
-      .filter(({ key, value }) => key !== 'waypoint_options')
       .value();
-    const flags = _.filter(values, i => i.key.substring(0, 5) === 'flag_');
-    const nonflags = _.filter(values, i => i.key.substring(0, 5) !== 'flag_');
-    const flagRows = flags.map(flag => this.renderFlagRow(flag));
-    const nonflagRows = nonflags.map(value => this.renderValueRow(value));
+    const flags = _.filter(customizations,
+      i => i.key.substring(0, 5) === 'flag_');
+    const nonflags = _.filter(customizations,
+      i => i.key.substring(0, 5) !== 'flag_');
+    const flagRows = flags.map(flag => (
+      this.renderFlagRow(flag)
+    ));
+    const nonflagRows = nonflags.map(value => (
+      this.renderCustomizationRow(value)
+    ));
     const waypointRows = this.renderWaypointRows();
     return (
       <div className="row">
         <div className="col-sm-8">
-          <h3>Values</h3>
+          <h3>Customizations</h3>
           <table className="table table-striped table-sm">
             <tbody>
               {nonflagRows}

@@ -45,16 +45,4 @@ describe('Player', () => {
     player.acknowledgedPageAt = moment.utc();
     await player.validate();
   });
-
-  it('allows values', async () => {
-    player.values = { value: 2, another: 'abc' };
-    await player.validate();
-  });
-
-  it('requires values to be an object', async () => {
-    player.values = 'abc';
-    await assertValidation(player, { values: 'must be an object' });
-    player.values = [1, 2, 3];
-    await assertValidation(player, { values: 'must be an object' });
-  });
 });

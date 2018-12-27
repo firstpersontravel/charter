@@ -14,11 +14,11 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
     !playerStatus.instance.trip.script) {
     return <div>Loading</div>;
   }
-  const player = playerStatus.instance;
-  const script = player.trip.script;
-  const role = _.find(script.content.roles, { name: params.roleName });
-  const firstChannel = _.get(role, 'channels_with.0');
-  const messageTab = firstChannel ? (
+  const script = playerStatus.instance.trip.script;
+  const hasRelay = !!_.find(script.content.relays, relay => (
+    (relay.as || relay.for) === params.roleName
+  ));
+  const messageTab = hasRelay ? (
     <li className="nav-item">
       <Link
         className="nav-link"

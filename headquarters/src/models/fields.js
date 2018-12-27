@@ -186,7 +186,9 @@ function jsonField(db, modelName, fieldName, options) {
     allowNull: allowNull,
     get: function() {
       var currentValue = this.getDataValue(fieldName);
-      if (typeof currentValue == 'string') {
+      if (currentValue === '') {
+        this.dataValues[fieldName] = {};
+      } else if (typeof currentValue == 'string') {
         this.dataValues[fieldName] = JSON.parse(currentValue);
       }
       return this.dataValues[fieldName];

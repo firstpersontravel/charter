@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { EvalCore } from 'fptcore';
+import { ContextCore } from 'fptcore';
 
 export function areRequestsLoading(requestsState, operations) {
   return _.some(_.map(operations, (operation => (
@@ -58,7 +58,7 @@ export function assembleTripStatus(state, tripId) {
         user: _.find(users, { id: instance.userId })
       })
     ));
-    trip.context = trip.script ? EvalCore.gatherContext(env, trip) : null;
+    trip.context = trip.script ? ContextCore.gatherContext(env, trip) : null;
   }
   const isLoading = (
     scriptStatus.isLoading ||

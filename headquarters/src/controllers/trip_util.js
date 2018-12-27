@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const { ActionPhraseCore, EvalCore } = require('fptcore');
+const { ActionPhraseCore, ContextCore } = require('fptcore');
 
 const config = require('../config');
 const models = require('../models');
@@ -51,7 +51,7 @@ class TripUtil {
       config.env.SERVER_HOST_PUBLIC;
     const env = { host: host };
     // Create the context.
-    return EvalCore.gatherContext(env, trip);
+    return ContextCore.gatherContext(env, trip);
   }
 
   /**

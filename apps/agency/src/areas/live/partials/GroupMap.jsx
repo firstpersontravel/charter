@@ -205,7 +205,7 @@ export default class GroupMap extends Component {
         if (page.waypoint) {
           const waypointOption = WaypointCore.optionForWaypoint(
             script.content, page.waypoint,
-            player.trip.values.waypoint_options);
+            player.trip.waypointOptions);
           return [
             <Marker
               key={`${player.id}-target`}
@@ -224,7 +224,7 @@ export default class GroupMap extends Component {
         }
         const directions = WaypointCore.directionsForRoute(
           script.content, page.route,
-          player.trip.values.waypoint_options);
+          player.trip.waypointOptions);
         const coords = PolylineEncoded.decode(directions.polyline);
         const destination = coords[coords.length - 1];
         const user = player.user;

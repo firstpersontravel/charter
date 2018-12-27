@@ -50,12 +50,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
   contacts: function() {
     // Senders sorted by who wrote to you most recently, most recent first.
     var asPlayer = this.get('asPlayer');
-    var players = this.get('trip.players');
-    var addedRoleNames = asPlayer.get('values.accessible_contacts') || [];
-    var accessibleContacts = addedRoleNames
-      .map(function(roleName) {
-        return players.findBy('roleName', roleName);
-      });
     var messagesWithSelf = this.get('messagesWithSelf');
     var uniqueOrderedContacts = messagesWithSelf
       .reverse()
@@ -64,7 +58,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
         // return other person
         return isIncoming ? m.get('sentBy') : m.get('sentTo');
       })
-      .concat(accessibleContacts)
       .uniq();
     return uniqueOrderedContacts.rejectBy('id', asPlayer.id);
   }.property('params', 'messagesWithSelf'),

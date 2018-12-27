@@ -3,9 +3,7 @@ const assert = require('assert');
 const PlayerCore = require('../../src/cores/player');
 
 describe('PlayerCore', () => {
-
   describe('#getInitialFields', () => {
-
     const script = {
       content: {
         pages: [{
@@ -14,8 +12,7 @@ describe('PlayerCore', () => {
         roles: [{
           name: 'Sam',
           actor: false,
-          starting_page: 'PAGE-1',
-          initial_values: { carrots: 5 }
+          starting_page: 'PAGE-1'
         }],
         variants: [
           { name: 'default' },
@@ -25,21 +22,18 @@ describe('PlayerCore', () => {
     };
 
     it('creates values from role', () => {
-      const res = PlayerCore
-        .getInitialFields(script, 'Sam', []);
+      const res = PlayerCore.getInitialFields(script, 'Sam', []);
       assert.deepEqual(res, {
         currentPageName: 'PAGE-1',
         roleName: 'Sam',
-        values: { carrots: 5 }
+        acknowledgedPageName: '',
+        acknowledgedPageAt: null
       });
     });
 
     it('creates values with overrides from template', () => {
-      const res = PlayerCore.getInitialFields(
-        script, 'Sam', ['override']);
+      const res = PlayerCore.getInitialFields(script, 'Sam', ['override']);
       assert.strictEqual(res.currentPageName, 'PAGE-2');
     });
-
   });
-
 });

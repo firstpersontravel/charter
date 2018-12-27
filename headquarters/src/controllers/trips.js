@@ -20,27 +20,28 @@ class TripsController {
    * Create an initial trip including players with default values.
    */
   static async createTrip(groupId, title, departureName, variantNames=[]) {
-    const group = await models.Group.findById(groupId);
-    const script = await models.Script.findById(group.scriptId);
-    const values = TripCore.getInitialValues(script, variantNames);
-    const schedule = TripCore.getInitialSchedule(script, group.date,
+    const group = await models.Group.find({
+      where: { id: groupId },
+      include: [{ model: models.Script, as: 'script' }]
+    });
+    const initialFields = TripCore.getInitialFields(group.script, group.date,
       variantNames);
-    const scenes = script.content.scenes || [];
+    const scenes = group.script.content.scenes || [];
     const firstScene = scenes[0] || { name: '' };
-    const trip = await models.Trip.create({
-      scriptId: group.scriptId,
+    const tripFields = Object.assign({
+      scriptId: group.script.id,
       groupId: group.id,
       date: group.date,
       title: title,
       currentSceneName: firstScene.name,
       departureName: departureName,
       variantNames: variantNames.join(','),
-      values: values,
-      schedule: schedule
-    });
-    const roles = script.content.roles || [];
+      history: {}
+    }, initialFields);
+    const trip = await models.Trip.create(tripFields);
+    const roles = group.script.content.roles || [];
     for (let role of roles) {
-      await this._createPlayer(script, trip, role, variantNames);
+      await this._createPlayer(group.script, trip, role, variantNames);
     }
     return trip;
   }

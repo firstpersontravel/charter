@@ -70,32 +70,31 @@ function renderActivity(player) {
   );
 }
 
-function renderAudioStatus(audioStatus, audioEntry, timezone) {
-  if (!audioStatus.is_playing) {
-    const pausedAt = audioStatus.paused_time || 0;
+function renderAudioStatus(values, audioEntry, timezone) {
+  if (!values.audio_is_playing) {
+    const pausedAt = values.audio_paused_time || 0;
     const remaining = (audioEntry.duration * 60) - pausedAt;
     const remainingStr = TimeCore.humanizeDuration(remaining);
     return `${audioEntry.title} paused, ${remainingStr} remaining`;
   }
-  const startedAt = moment.utc(audioStatus.started_at);
-  const startedTime = audioStatus.started_time;
+  const startedAt = moment.utc(values.audio_started_at);
+  const startedTime = values.audio_started_time;
   const zeroPoint = startedAt.clone().subtract(startedTime, 'seconds');
   const finishAt = zeroPoint.clone().add(audioEntry.duration, 'minutes');
   const finishStr = finishAt.tz(timezone).format('h:mma');
   return `${audioEntry.title} playing until ${finishStr}`;
 }
 
-function renderAudio(player) {
-  if (!player.values.audio || !player.values.audio.name) {
+function renderAudio(trip, player) {
+  if (!trip.values.audio_name || trip.values.audio_role !== player.roleName) {
     return null;
   }
-  const audioStatus = player.values.audio;
   const audioEntry = _.find(player.trip.script.content.audio,
-    { name: audioStatus.name });
+    { name: trip.values.audio_name });
   return (
     <div>
       <strong>Audio:</strong>
-      &nbsp;{renderAudioStatus(audioStatus, audioEntry,
+      &nbsp;{renderAudioStatus(trip.values, audioEntry,
         player.trip.script.timezone)}
     </div>
   );
@@ -159,7 +158,7 @@ function renderVars(player) {
       {renderGeo(player)}
       {renderBatt(player)}
       {renderActivity(player)}
-      {renderAudio(player)}
+      {renderAudio(trip, player)}
       {renderValues(player)}
     </div>
   );

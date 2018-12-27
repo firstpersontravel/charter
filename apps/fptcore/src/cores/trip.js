@@ -5,36 +5,55 @@ var TimeCore = require('./time');
 
 var TripCore = {};
 
-TripCore.getInitialValues = function (script, variantNames) {
-  var values = {};
-  var variantNamesWithDefault = ['default'].concat(variantNames);
-  var variants = script.content.variants || [];
-  variantNamesWithDefault.forEach(function(variantName) {
-    var variant = _.find(variants, { name: variantName });
-    if (!variant || !variant.values) {
-      return;
-    }
-    _.extend(values, variant.values);
-  });
-  return values;
+/**
+ * Get variants are active given a list of variant names.
+ * Do default ones first, then non-defaults (non-defaults override defaults).
+ */
+TripCore._getActiveVariants = function(script, variantNames) {
+  return _(script.content.variants)
+    .filter(function(variant) {
+      if (variant.default) {
+        return true;
+      }
+      if (_.includes(variantNames, variant.name)) {
+        return true;
+      }
+      return false;
+    })
+    .sortBy(['default', 'name'])
+    .value();
 };
 
-TripCore.getInitialSchedule = function (script, date, variantNames) {
-  var schedule = {};
-  var variantNamesWithDefault = ['default'].concat(variantNames);
-  var variants = script.content.variants || {};
-  variantNamesWithDefault.forEach(function(variantName) {
-    var variant = _.find(variants, { name: variantName });
-    if (!variant || !variant.schedule) {
-      return;
+/**
+ * Get initial fields for a trip from variants.
+ */
+TripCore.getInitialFields = function(script, date, variantNames) {
+  var fields = {
+    customizations: {},
+    values: {},
+    waypointOptions: {},
+    schedule: {}
+  };
+  var variants = TripCore._getActiveVariants(script, variantNames);  
+  variants.forEach(function(variant) {
+    if (variant.customizations) {
+      _.assign(fields.customizations, variant.customizations);
     }
-    var day = moment(date).format('YYYY-MM-DD');
-    Object.keys(variant.schedule).forEach(function(key) {
-      schedule[key] = TimeCore.convertTimeShorthandToIso(
-        variant.schedule[key], day, script.timezone);
-    });
+    if (variant.waypoint_options) {
+      _.assign(fields.waypointOptions, variant.waypoint_options);
+    }
+    if (variant.initial_values) {
+      _.assign(fields.values, variant.initial_values);
+    }
+    if (variant.schedule) {
+      var day = moment(date).format('YYYY-MM-DD');
+      Object.keys(variant.schedule).forEach(function(key) {
+        fields.schedule[key] = TimeCore.convertTimeShorthandToIso(
+          variant.schedule[key], day, script.timezone);
+      });
+    }
   });
-  return schedule;
+  return fields;
 };
 
 module.exports = TripCore;

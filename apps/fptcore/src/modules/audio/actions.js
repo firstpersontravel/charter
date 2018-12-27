@@ -2,7 +2,9 @@ var _ = require('lodash');
 var moment = require('moment');
 
 var pause_audio = {
-  params: {},
+  params: {
+    role_name: { required: true, type: 'resource', collection: 'roles' }
+  },
   phraseForm: ['role_name'],
   applyAction: function(script, context, params, applyAt) {
     if (!context.audio_is_playing) { return null; }
@@ -25,6 +27,7 @@ var pause_audio = {
 
 var play_audio = {
   params: {
+    role_name: { required: true, type: 'resource', collection: 'roles' },
     audio_name: { required: true, type: 'resource', collection: 'audio' }
   },
   phraseForm: ['role_name', 'audio_name'],
@@ -52,7 +55,9 @@ var play_audio = {
 };
 
 var resume_audio = {
-  params: {},
+  params: {
+    role_name: { required: true, type: 'resource', collection: 'roles' }
+  },
   phraseForm: ['role_name'],
   applyAction: function(script, context, params, applyAt) {
     if (context.audio_is_playing) {
@@ -76,7 +81,9 @@ var resume_audio = {
 };
 
 var stop_audio = {
-  params: {},
+  params: {
+    role_name: { required: true, type: 'resource', collection: 'roles' }
+  },
   phraseForm: ['role_name'],
   applyAction: function(script, context, params, applyAt) {
     return [{

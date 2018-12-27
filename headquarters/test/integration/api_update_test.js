@@ -2,7 +2,6 @@ const assert = require('assert');
 const request = require('supertest');
 
 const app = require('../../src/app');
-const models = require('../../src/models');
 const TestUtil = require('../util');
 
 describe('API update', () => {
@@ -11,56 +10,40 @@ describe('API update', () => {
 
   beforeEach(async () => {
     trip = await TestUtil.createDummyTrip();
+    await trip.update({ values: { existing: true, outer: { one: 2 } } });
   });
 
-  describe('PATCH /api/players/:id', () => {
-    let player;
-
-    beforeEach(async () => {
-      player = await models.Player.find({ where: { tripId: trip.id } });
-      await player.update({ values: { existing: true, outer: { one: 2 } } });
-    });
-
+  describe('PATCH /api/trips/:id', () => {
     it('updates value with deep merge', () => {
       return request(app)
-        .patch(`/api/players/${player.id}`)
+        .patch(`/api/trips/${trip.id}`)
         .send({ values: { outer: { inner: 'value' } } })
         .set('Accept', 'application/json')
         .expect(200)
         .then(async (res) => {
           // Test set in DB
-          await player.reload();
-          assert.deepStrictEqual(player.values, {
+          await trip.reload();
+          assert.deepStrictEqual(trip.values, {
             existing: true,
             outer: { one: 2, inner: 'value' }
           });
           // Test updated in response
-          assert.deepStrictEqual(res.body, {
-            data: {
-              player: {
-                currentPageName: 'PAGE',
-                acknowledgedPageAt: null,
-                acknowledgedPageName: '',
-                id: player.id,
-                tripId: trip.id,
-                roleName: 'Dummy',
-                userId: null,
-                values: { existing: true, outer: { one: 2, inner: 'value' } }
-              }
-            }
+          assert.deepStrictEqual(res.body.data.trip.values, {
+            existing: true,
+            outer: { one: 2, inner: 'value' }
           });
         });
     });
 
     it('updates value with deep merge on non-matching type', async () => {
-      await player.update({ values: { outer: 'string' } });
+      await trip.update({ values: { outer: 'string' } });
       return request(app)
-        .patch(`/api/players/${player.id}`)
+        .patch(`/api/trips/${trip.id}`)
         .send({ values: { outer: { inner: 'value' } } })
         .set('Accept', 'application/json')
         .expect(200)
         .then(async (res) => {
-          assert.deepStrictEqual(res.body.data.player.values,
+          assert.deepStrictEqual(res.body.data.trip.values,
             { outer: { inner: 'value' } });
         });
     });

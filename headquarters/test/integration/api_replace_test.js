@@ -105,10 +105,7 @@ describe('API replace', () => {
     let player;
 
     beforeEach(async () => {
-      player = await models.Player.find({
-        where: { tripId: trip.id }
-      });
-      await player.update({ values: { existing: true } });
+      player = await models.Player.find({ where: { tripId: trip.id } });
     });
 
     it('updates player with simple value', () => {
@@ -131,8 +128,7 @@ describe('API replace', () => {
                 id: player.id,
                 tripId: trip.id,
                 roleName: 'newRole',
-                userId: null,
-                values: { existing: true }
+                userId: null
               }
             }
           });

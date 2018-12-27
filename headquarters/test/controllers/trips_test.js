@@ -13,49 +13,48 @@ describe('TripsController', () => {
   });
 
   describe('#createTrip', () => {
-
     it('creates a trip and players', async () => {
       const stubScript = {
         id: 2,
         timezone: 'US/Pacific',
         content: {
-          roles: [{
-            name: 'fake',
-            initial_values: { fakeValue: 1 }
-          }],
+          roles: [{ name: 'fake' }],
           scenes: [{
             name: 'SCENE-MAIN'
           }],
           variants: [{
             name: 'default',
-            values: { one: 1 },
+            default: true,
+            initial_values: { one: 1 },
+            customizations: { oysters: 'omg' },
             schedule: { startAt: '8:00am' }
           },
           {
             name: 'basic',
-            values: { two: 2 },
+            initial_values: { two: 2 },
             schedule: { basicIntro: '10:00am' }
           },
           {
             name: 'all_inclusive',
-            values: { three: 3 },
+            initial_values: { three: 3 },
             schedule: { allInclusiveIntro: '9:00am' }
           }]
         }
       };
       const stubGroup = {
         id: 1,
-        scriptId: 2,
-        date: '2018-01-01'
+        date: '2018-01-01',
+        script: stubScript
       };
-      sandbox.stub(models.Group, 'findById').resolves(stubGroup);
-      sandbox.stub(models.Script, 'findById').resolves(stubScript);
+      sandbox.stub(models.Group, 'find').resolves(stubGroup);
       sandbox.stub(models.Trip, 'create').resolves({ id: 3 });
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
       await TripsController.createTrip(1, 'title', 'T1', ['basic']);
-      sinon.assert.calledWith(models.Group.findById, 1);
-      sinon.assert.calledWith(models.Script.findById, 2);
+      sinon.assert.calledWith(models.Group.find, {
+        where: { id: 1 },
+        include: [{ model: models.Script, as: 'script' }]
+      });
       sinon.assert.calledOnce(models.Trip.create);
       // Create trip
       assert.deepStrictEqual(
@@ -70,8 +69,11 @@ describe('TripsController', () => {
           departureName: 'T1',
           scriptId: 2,
           variantNames: 'basic',
+          customizations: { oysters: 'omg' },
           title: 'title',
-          values: { one: 1, two: 2 }
+          values: { one: 1, two: 2 },
+          waypointOptions: {},
+          history: {}
         });
       // Create player
       sinon.assert.calledOnce(models.Player.create);
@@ -81,7 +83,8 @@ describe('TripsController', () => {
           tripId: 3,
           roleName: 'fake',
           userId: null,
-          values: { fakeValue: 1 }
+          acknowledgedPageAt: null,
+          acknowledgedPageName: ''
         });
     });
   });

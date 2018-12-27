@@ -15,7 +15,9 @@ export default DS.Model.extend({
   departureName: DS.attr('string'),
   currentSceneName: DS.attr('string'),
   title: DS.attr('string'),
+  customizations: DS.attr('obj'),
   values: DS.attr('obj'),
+  waypointOptions: DS.attr('obj'),
   schedule: DS.attr('obj'),
   history: DS.attr('obj'),
 
@@ -48,11 +50,12 @@ export default DS.Model.extend({
     trip.script = script;
     trip.schedule = JSON.parse(trip.schedule);
     trip.history = JSON.parse(trip.history);
+    trip.waypointOptions = JSON.parse(trip.waypointOptions);
+    trip.customizations = JSON.parse(trip.customizations);
     trip.values = JSON.parse(trip.values);
     trip.players = this.get('players').map(((player) => {
       var p = player.toJSON();
       p.id = Number(player.id);
-      p.values = JSON.parse(p.values);
       var user = player.get('user');
       if (user) {
         p.user = user.toJSON();
@@ -72,7 +75,7 @@ export default DS.Model.extend({
 
   evalContext: function() {
     var env = { host: this.get('environment.host') };
-    var context = fptCore.EvalCore.gatherContext(env, this.generateTrip());
+    var context = fptCore.ContextCore.gatherContext(env, this.generateTrip());
     return context;
   }.property(
     'values',

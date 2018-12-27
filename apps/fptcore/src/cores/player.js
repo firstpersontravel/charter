@@ -21,7 +21,8 @@ PlayerCore.getInitialFields = function (script, roleName, variantNames) {
   return {
     roleName: roleName,
     currentPageName: firstPageName,
-    values: Object.assign({}, role.initial_values)
+    acknowledgedPageName: '',
+    acknowledgedPageAt: null
   };
 };
 

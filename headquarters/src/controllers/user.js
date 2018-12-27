@@ -1,13 +1,16 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const fptCore = require('fptcore');
+const { ScriptCore } = require('fptcore');
 
 const TripActionController = require('./trip_action');
 const TripNotifyController = require('./trip_notify');
 const models = require('../models');
 
 class UserController {
+  /**
+   * Update the user device state.
+   */
   static async _updateUserDeviceState(user, fields) {
     const updates = {};
     const locationDate = new Date(fields.locationTimestamp * 1000);
@@ -27,16 +30,19 @@ class UserController {
     return user.update(updates);
   }
 
+  /**
+   * Send notifications and enter geofences if needed.
+   */
   static async _notifyNewDeviceState(user, trip, player, oldState,
     clientId) {
     const script = await models.Script.findById(trip.scriptId);
     // Calculate new geofences
-    const oldGeofences = fptCore.ScriptCore.geofencesInArea(
+    const oldGeofences = ScriptCore.geofencesInArea(
       script.content, oldState.latitude, oldState.longitude,
-      oldState.accuracy, trip.values.waypoint_options);
-    const newGeofences = fptCore.ScriptCore.geofencesInArea(
+      oldState.accuracy, trip.waypointOptions);
+    const newGeofences = ScriptCore.geofencesInArea(
       script.content, user.locationLatitude, user.locationLongitude,
-      user.locationAccuracy, trip.values.waypoint_options);
+      user.locationAccuracy, trip.waypointOptions);
     const enteredGeofenceNames = _.difference(
       _.map(newGeofences, 'name'),
       _.map(oldGeofences, 'name')
@@ -55,31 +61,35 @@ class UserController {
     await TripNotifyController.notifyUserDeviceState(trip.id, user, clientId);
   }
 
-  // Location update path
-  // Native update from tablet
-  //   - iOS -> server update_device_state
-  //            -> creates enterGeofence events on server
-  //               -> calls realtimeEvents.event with enterGeofence on
-  //                  other clients [NEEDED]
-  //            -> sends 'device_state' realtime event to other clients
-  //               -> calls realtimeEvents.deviceState on other clients
-  //                  -> sets user.location props locally (no new event)
-  //                  -> does not enterGeofence events locally
-  //   - iOS -> local nativeLocationUpdate
-  //            -> sets user.location props locally (no new event)
-  //            -> creates enterGeofence events locally
-  // Web update from tablet location or debug bar
-  //   - web > `location.handleFix` > `lastFixDidChange` >
-  //     `player.updateLocation`
-  //     -> server update_device_state
-  //          -> creates enterGeofence events on server
-  //             -> calls realtimeEvents.event with enterGeofence on
-  //                other clients [NEEDED]
-  //          -> sends 'device_state' realtime event to other clients
-  //             -> calls realtimeEvents.deviceState on other clients
-  //                -> sets user.location props locally (no new event)
-  //                -> does not enterGeofence events locally
-  //     -> create enterGeofence events locally
+  /**
+   * Update user state and send notifications to all active players.
+   *
+   * Location update path
+   * Native update from tablet
+   *   - iOS -> server update_device_state
+   *            -> creates enterGeofence events on server
+   *               -> calls realtimeEvents.event with enterGeofence on
+   *                  other clients [NEEDED]
+   *            -> sends 'device_state' realtime event to other clients
+   *               -> calls realtimeEvents.deviceState on other clients
+   *                  -> sets user.location props locally (no new event)
+   *                  -> does not enterGeofence events locally
+   *   - iOS -> local nativeLocationUpdate
+   *            -> sets user.location props locally (no new event)
+   *            -> creates enterGeofence events locally
+   * Web update from tablet location or debug bar
+   *   - web > `location.handleFix` > `lastFixDidChange` >
+   *     `player.updateLocation`
+   *     -> server update_device_state
+   *          -> creates enterGeofence events on server
+   *             -> calls realtimeEvents.event with enterGeofence on
+   *                other clients [NEEDED]
+   *          -> sends 'device_state' realtime event to other clients
+   *             -> calls realtimeEvents.deviceState on other clients
+   *                -> sets user.location props locally (no new event)
+   *                -> does not enterGeofence events locally
+   *     -> create enterGeofence events locally
+   */
   static async updateDeviceState(userId, fields, clientId=null) {
     const user = await models.User.findById(userId);
     const trips = await models.Trip.findAll({
