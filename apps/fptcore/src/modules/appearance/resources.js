@@ -6,7 +6,7 @@ var appearance = {
     intro: { type: 'string' },
     disabled_message: { type: 'string' },
     start: { type: 'resource', collection: 'times' },
-    if: { type: 'if' }
+    if: { type: 'ifstring' }
   }
 };
 

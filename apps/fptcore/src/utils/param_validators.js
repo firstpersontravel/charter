@@ -20,9 +20,9 @@ ParamValidators.simple = function(script, name, spec, param) {
   return [];
 };
 
-ParamValidators.if = function(script, name, spec, param) {
+ParamValidators.ifstring = function(script, name, spec, param) {
   if (!_.isString(param)) {
-    return ['If param "' + name + '" should be a string.'];
+    return ['Ifstring param "' + name + '" should be a string.'];
   }
   // TODO SHOULD DO MORE VALIDATION HERE
   return [];

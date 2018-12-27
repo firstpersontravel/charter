@@ -35,14 +35,14 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#if', () => {
+  describe('#ifstring', () => {
     it('permits string', () => {
-      ok(ParamValidators.if({}, 's', {}, 'abc'));
+      ok(ParamValidators.ifstring({}, 's', {}, 'abc'));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.if({}, 's', {}, []),
-        'If param "s" should be a string.');
+      err(ParamValidators.ifstring({}, 's', {}, []),
+        'Ifstring param "s" should be a string.');
     });
 
     it.skip('validates if statement', () => {});
