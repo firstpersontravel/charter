@@ -12,11 +12,13 @@ var sandbox = sinon.sandbox.create();
 describe('ActionCore', () => {
 
   var getActionStub;
-  var addAction = function(script, context, params, applyAt) {
-    return [{
-      operation: 'updateTrip',
-      updates: { values: { number: { $set: (context.number || 0) + 1 } } }
-    }];
+  var addAction = {
+    applyAction: function(script, context, params, applyAt) {
+      return [{
+        operation: 'updateTrip',
+        updates: { values: { number: { $set: (context.number || 0) + 1 } } }
+      }];
+    }
   };
 
   var scriptSentinel = {};

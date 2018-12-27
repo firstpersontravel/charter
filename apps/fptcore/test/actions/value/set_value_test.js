@@ -4,7 +4,7 @@ const setValue = require('../../../src/actions/value/set_value');
 
 describe('#setValue', () => {
   it('sets player value to number', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: {} },
       { value_ref: 'Gabe.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
@@ -15,7 +15,7 @@ describe('#setValue', () => {
   });
 
   it('overwrites player value to number', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: { monkeys: 6 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
@@ -26,7 +26,7 @@ describe('#setValue', () => {
   });
 
   it('overwrites player value to string', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: { monkeys: 6 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: '"hi"' }, null);
     assert.deepEqual(res, [{
@@ -37,7 +37,7 @@ describe('#setValue', () => {
   });
 
   it('overwrites player value to boolean', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: { monkeys: 6 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: false }, null);
     assert.deepEqual(res, [{
@@ -48,7 +48,7 @@ describe('#setValue', () => {
   });
 
   it('sets player value to value of other ref', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: { monkeys: 6, bananas: 10 } },
       { value_ref: 'Gabe.monkeys', new_value_ref: 'Gabe.bananas' }, null);
     assert.deepEqual(res, [{
@@ -59,7 +59,7 @@ describe('#setValue', () => {
   });
 
   it('sets deep player value to const', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } }, {},
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } }, {},
       { value_ref: 'Gabe.monkeys.num', new_value_ref: 'true' }, null);
     assert.deepEqual(res, [{
       operation: 'updatePlayer',
@@ -69,7 +69,7 @@ describe('#setValue', () => {
   });
 
   it('sets trip value to number', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: {} },
       { value_ref: 'cabana.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
@@ -79,7 +79,7 @@ describe('#setValue', () => {
   });
 
   it('overwrites trip value to number', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6 } },
       { value_ref: 'cabana.monkeys', new_value_ref: 2 }, null);
     assert.deepEqual(res, [{
@@ -89,7 +89,7 @@ describe('#setValue', () => {
   });
 
   it('overwrites trip value to string', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6 } },
       { value_ref: 'cabana.monkeys', new_value_ref: '"hi"' }, null);
     assert.deepEqual(res, [{
@@ -99,7 +99,7 @@ describe('#setValue', () => {
   });
 
   it('overwrites trip value to boolean', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6 } },
       { value_ref: 'cabana.monkeys', new_value_ref: false }, null);
     assert.deepEqual(res, [{
@@ -109,7 +109,7 @@ describe('#setValue', () => {
   });
 
   it('sets trip value to value of other ref', () => {
-    const res = setValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = setValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 6, bananas: 10 } },
       { value_ref: 'cabana.monkeys', new_value_ref: 'cabana.bananas' },
       null);

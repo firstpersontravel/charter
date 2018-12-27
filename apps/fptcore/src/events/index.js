@@ -1,10 +1,10 @@
 module.exports = {
   // Call
-  call_answered: require('./call/call_answered'),
-  call_received: require('./call/call_received'),
-  call_ended: require('./call/call_ended'),
+  call_answered: require('../modules/call/events').call_answered,
+  call_received: require('../modules/call/events').call_received,
+  call_ended: require('../modules/call/events').call_ended,
   // Cue
-  cue_signaled: require('./cue/cue_signaled'),
+  cue_signaled: require('../modules/cue/events').cue_signaled,
   // Geofence
   geofence_entered: require('./geofence/geofence_entered'),
   // Message

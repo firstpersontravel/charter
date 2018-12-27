@@ -1,14 +1,14 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const playClip = require('../../../src/actions/clip/play_clip');
+const clipActions = require('../../../src/modules/clip/actions');
 
-describe('#playClip', () => {
-
+describe('#play_clip', () => {
   it('does nothing if cannot find clip', () => {
     const script = { content: {} };
     const params = { clip_name: 'CLIP-TEST' };
-    const res = playClip(script, {}, params, moment.utc());
+    const res = clipActions.play_clip.applyAction(
+      script, {}, params, moment.utc());
     assert.deepEqual(res, null);
   });
 
@@ -22,7 +22,8 @@ describe('#playClip', () => {
       }
     };
     const params = { clip_name: 'CLIP-TEST' };
-    const res = playClip(script, {}, params, moment.utc());
+    const res = clipActions.play_clip.applyAction(
+      script, {}, params, moment.utc());
     assert.deepEqual(res, [
       { operation: 'twiml', clause: 'play', media: 'audio.mp3' }
     ]);
@@ -38,7 +39,8 @@ describe('#playClip', () => {
       }
     };
     const params = { clip_name: 'CLIP-TEST' };
-    const res = playClip(script, {}, params, moment.utc());
+    const res = clipActions.play_clip.applyAction(
+      script, {}, params, moment.utc());
     assert.deepEqual(res, [{
       operation: 'twiml',
       clause: 'say',
@@ -59,7 +61,8 @@ describe('#playClip', () => {
       }
     };
     const params = { clip_name: 'CLIP-TEST' };
-    const res = playClip(script, {}, params, moment.utc());
+    const res = clipActions.play_clip.applyAction(
+      script, {}, params, moment.utc());
     assert.deepEqual(res, [{
       operation: 'twiml',
       clause: 'gather',
@@ -86,7 +89,8 @@ describe('#playClip', () => {
       }
     };
     const params = { clip_name: 'CLIP-TEST' };
-    const res = playClip(script, {}, params, moment.utc());
+    const res = clipActions.play_clip.applyAction(
+      script, {}, params, moment.utc());
     assert.deepEqual(res, [{
       operation: 'twiml',
       clause: 'gather',

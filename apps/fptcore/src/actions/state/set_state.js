@@ -1,12 +1,14 @@
-function setState(script, context, params, applyAt) {
-  return [{
-    operation: 'updateUi',
-    roleName: params.role_name,
-    updates: {
-      newState: params.new_value
-    }
-  }];
-}
+var setState = {
+  applyAction: function(script, context, params, applyAt) {
+    return [{
+      operation: 'updateUi',
+      roleName: params.role_name,
+      updates: {
+        newState: params.new_value
+      }
+    }];
+  }
+};
 
 setState.phraseForm = ['role_name', 'new_value'];
 

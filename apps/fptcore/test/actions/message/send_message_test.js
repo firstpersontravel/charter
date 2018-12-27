@@ -24,7 +24,7 @@ describe('#sendMessage', () => {
       }
     };
     const params = { message_name: 'MESSAGE-HELLO' };
-    const res = sendMessage(script, context, params, now);
+    const res = sendMessage.applyAction(script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -52,7 +52,7 @@ describe('#sendMessage', () => {
       }
     };
     const params = { message_name: 'MESSAGE-HELLO' };
-    const res = sendMessage(script, context, params, now);
+    const res = sendMessage.applyAction(script, context, params, now);
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       updates: {

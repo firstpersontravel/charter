@@ -96,9 +96,11 @@ describe('Integration - Nested Triggers', () => {
       .stub(ActionValidationCore, 'getAction')
       .callsFake((name) => {
         if (!actionSpies[name]) {
-          actionSpies[name] = sinon.spy(Actions[name]);
+          actionSpies[name] = sinon.spy(Actions[name].applyAction);
         }
-        return actionSpies[name];
+        return Object.assign({}, Actions[name], {
+          applyAction: actionSpies[name]
+        });
       });
   });
 

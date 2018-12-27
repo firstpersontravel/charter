@@ -21,11 +21,11 @@ ActionCore.addEventToContext = function(context, event) {
 ActionCore.opsForAction = function(script, context, action, applyAt) {
   var contextWithEvent = ActionCore.addEventToContext(context, action.event);
   ActionValidationCore.validateActionAtRun(script, contextWithEvent, action);
-  var actionFunc = ActionValidationCore.getAction(action.name);
-  var paramsSpec = actionFunc.params;
+  var actionClass = ActionValidationCore.getAction(action.name);
+  var paramsSpec = actionClass.params;
   var params = ActionParamCore.prepareParams(script, context, paramsSpec,
     action.params);
-  actionFunc = actionFunc.applyAction || actionFunc;
+  var actionFunc = actionClass.applyAction;
   return actionFunc(script, contextWithEvent, params, applyAt) || [];
 };
 
@@ -33,11 +33,11 @@ ActionCore.opsForAction = function(script, context, action, applyAt) {
  * Get the results for a given action.
  */
 ActionCore.eventForAction = function(action) {
-  var actionFunc = ActionValidationCore.getAction(action.name);
-  if (!actionFunc) {
+  var actionClass = ActionValidationCore.getAction(action.name);
+  if (!actionClass) {
     throw new Error('Invalid action "' + action.name + '".');
   }
-  var eventFunc = actionFunc.eventForParams;
+  var eventFunc = actionClass.eventForParams;
   return eventFunc ? eventFunc(action.params) : null;
 };
 

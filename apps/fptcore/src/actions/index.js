@@ -1,16 +1,16 @@
 module.exports = {
   // Audio
-  pause_audio: require('../resources/audio/actions').pause_audio,
-  play_audio: require('../resources/audio/actions').play_audio,
-  resume_audio: require('../resources/audio/actions').resume_audio,
-  stop_audio: require('../resources/audio/actions').stop_audio,
+  pause_audio: require('../modules/audio/actions').pause_audio,
+  play_audio: require('../modules/audio/actions').play_audio,
+  resume_audio: require('../modules/audio/actions').resume_audio,
+  stop_audio: require('../modules/audio/actions').stop_audio,
   // Call
-  initiate_call: require('./call/initiate_call'),
-  add_to_call: require('./call/add_to_call'),
+  initiate_call: require('../modules/call/actions').initiate_call,
+  add_to_call: require('../modules/call/actions').add_to_call,
   // Clip
-  play_clip: require('./clip/play_clip'),
+  play_clip: require('../modules/clip/actions').play_clip,
   // Cue
-  signal_cue: require('./cue/signal_cue'),
+  signal_cue: require('../modules/cue/actions').signal_cue,
   // Message
   custom_message: require('./message/custom_message'),
   send_message: require('./message/send_message'),

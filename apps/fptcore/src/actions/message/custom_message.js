@@ -1,28 +1,30 @@
 var _ = require('lodash');
 
-function customMessage(script, context, params, applyAt) {
-  var roles = script.content.roles || [];
-  var sentByRole = _.find(roles, { name: params.from_role_name });
-  var sentToRole = _.find(roles, { name: params.to_role_name });
-  // Messages need replies if they are sent from non-actors to actors.
-  var isReplyNeeded = !!sentToRole.actor && !sentByRole.actor;
-  return [{
-    operation: 'createMessage',
-    suppressRelayId: params.suppress_relay_id || null,
-    updates: {
-      sentById: context[params.from_role_name].id,
-      sentToId: context[params.to_role_name].id,
-      createdAt: applyAt,
-      messageType: params.message_type,
-      messageContent: params.message_content,
-      sentFromLatitude: params.location_latitude || null,
-      sentFromLongitude: params.location_longitude || null,
-      sentFromAccuracy: params.location_accuracy || null,
-      isReplyNeeded: isReplyNeeded,
-      isInGallery: params.message_type === 'image'
-    }
-  }];
-}
+var customMessage = {
+  applyAction: function(script, context, params, applyAt) {
+    var roles = script.content.roles || [];
+    var sentByRole = _.find(roles, { name: params.from_role_name });
+    var sentToRole = _.find(roles, { name: params.to_role_name });
+    // Messages need replies if they are sent from non-actors to actors.
+    var isReplyNeeded = !!sentToRole.actor && !sentByRole.actor;
+    return [{
+      operation: 'createMessage',
+      suppressRelayId: params.suppress_relay_id || null,
+      updates: {
+        sentById: context[params.from_role_name].id,
+        sentToId: context[params.to_role_name].id,
+        createdAt: applyAt,
+        messageType: params.message_type,
+        messageContent: params.message_content,
+        sentFromLatitude: params.location_latitude || null,
+        sentFromLongitude: params.location_longitude || null,
+        sentFromAccuracy: params.location_accuracy || null,
+        isReplyNeeded: isReplyNeeded,
+        isInGallery: params.message_type === 'image'
+      }
+    }];
+  }
+};
 
 customMessage.phraseForm = ['from_role_name', 'to_role_name', 'message_type',
   'message_content'];

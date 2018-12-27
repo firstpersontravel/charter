@@ -26,17 +26,17 @@ ActionValidationCore.getAction = function(name) {
  * Check the action and return a list of warnings.
  */
 ActionValidationCore.checkAction = function(script, action) {
-  var actionFunc = ActionValidationCore.getAction(action.name);
-  if (!actionFunc) {
+  var actionClass = ActionValidationCore.getAction(action.name);
+  if (!actionClass) {
     return ['Invalid action "' + action.name + '".'];
   }
-  if (!actionFunc.params) {
-    return null;
+  if (!actionClass.params) {
+    throw new Error('Expected action ' + action.name + ' to have params.');
   }
   var warnings = [];
   // Check for required params
-  Object.keys(actionFunc.params).forEach(function(paramName) {
-    var paramSpec = actionFunc.params[paramName];
+  Object.keys(actionClass.params).forEach(function(paramName) {
+    var paramSpec = actionClass.params[paramName];
     var param = action.params[paramName];
     if (_.isUndefined(param)) {
       if (paramSpec.required) {
@@ -50,7 +50,7 @@ ActionValidationCore.checkAction = function(script, action) {
   });
   // Check for unexpected params
   Object.keys(action.params).forEach(function(paramName) {
-    if (!actionFunc.params[paramName]) {
+    if (!actionClass.params[paramName]) {
       warnings.push('Unexpected param "' + paramName + '".');
     }
   });
@@ -61,14 +61,14 @@ ActionValidationCore.precheckAction = function(script, action, trigger) {
   // Gather normal checks
   var warnings = ActionValidationCore.checkAction(script, action);
   // And add trigger checks.
-  var actionFunc = ActionValidationCore.getAction(action.name);
-  if (actionFunc.requiredContext) {
+  var actionClass = ActionValidationCore.getAction(action.name);
+  if (actionClass.requiredContext) {
     // Check that the trigger event type matches the required context.
     var triggerEventType = Object.keys(trigger.event || {})[0] || null;
-    if (!_.includes(actionFunc.requiredContext, triggerEventType)) {
+    if (!_.includes(actionClass.requiredContext, triggerEventType)) {
       warnings.push(
         'Required context ' +
-        actionFunc.requiredContext
+        actionClass.requiredContext
           .map(function(s) { return '"' + s + '"'; })
           .join(' or ') +
         ' not present.');
@@ -84,20 +84,20 @@ ActionValidationCore.validateActionAtRun = function(script, context, action) {
   // Gather normal checks
   var warnings = ActionValidationCore.checkAction(script, action);
   // Runtime validation of requiredContext
-  var actionFunc = ActionValidationCore.getAction(action.name);
-  if (actionFunc.requiredContext) {
+  var actionClass = ActionValidationCore.getAction(action.name);
+  if (actionClass.requiredContext) {
     if (!context.event) {
       warnings.push(
         'Required context ' +
-        actionFunc.requiredContext
+        actionClass.requiredContext
           .map(function(s) { return '"' + s + '"'; })
           .join(' or ') +
         ' but executed without event.'
       );
-    } else if (!_.includes(actionFunc.requiredContext, context.event.type)) {
+    } else if (!_.includes(actionClass.requiredContext, context.event.type)) {
       warnings.push(
         'Required context ' +
-        actionFunc.requiredContext
+        actionClass.requiredContext
           .map(function(s) { return '"' + s + '"'; })
           .join(' or ') +
         ' but executed with event "' + context.event.type + '".'

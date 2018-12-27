@@ -23,7 +23,7 @@ describe('#customMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = customMessage(script, context, params, now);
+    const res = customMessage.applyAction(script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -57,7 +57,7 @@ describe('#customMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = customMessage(scriptWithActor, context, params, now);
+    const res = customMessage.applyAction(scriptWithActor, context, params, now);
     assert.strictEqual(res[0].updates.isReplyNeeded, true);
   });
 
@@ -71,7 +71,7 @@ describe('#customMessage', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const res = customMessage(script, context, params, now);
+    const res = customMessage.applyAction(script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {
@@ -97,7 +97,7 @@ describe('#customMessage', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = customMessage(script, context, params, now);
+    const res = customMessage.applyAction(script, context, params, now);
     assert.deepEqual(res, [{
       operation: 'createMessage',
       updates: {

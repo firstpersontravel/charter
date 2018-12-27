@@ -1,13 +1,15 @@
-function sendToPage(script, context, params, applyAt) {
-  var newPageName = params.page_name !== 'null' ? params.page_name : '';
-  // Create updates object
-  var updates = { currentPageName: { $set: newPageName } };
-  return [{
-    operation: 'updatePlayer',
-    roleName: params.role_name,
-    updates: updates
-  }];
-}
+var sendToPage = {
+  applyAction: function(script, context, params, applyAt) {
+    var newPageName = params.page_name !== 'null' ? params.page_name : '';
+    // Create updates object
+    var updates = { currentPageName: { $set: newPageName } };
+    return [{
+      operation: 'updatePlayer',
+      roleName: params.role_name,
+      updates: updates
+    }];
+  }
+};
 
 sendToPage.phraseForm = ['role_name', 'page_name'];
 

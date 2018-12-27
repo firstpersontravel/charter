@@ -5,7 +5,7 @@ const incrementValue = require('../../../src/actions/value/increment_value');
 describe('#incrementValue', () => {
 
   it('increments absent player value by 1 by default', () => {
-    const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = incrementValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: {} },
       { value_ref: 'Gabe.monkeys' }, null);
     assert.deepEqual(res, [{
@@ -16,7 +16,7 @@ describe('#incrementValue', () => {
   });
 
   it('increments player value by 1 by default', () => {
-    const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = incrementValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: { monkeys: 2 } },
       { value_ref: 'Gabe.monkeys' }, null);
     assert.deepEqual(res, [{
@@ -27,7 +27,7 @@ describe('#incrementValue', () => {
   });
 
   it('increments player value by number', () => {
-    const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = incrementValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { Gabe: { monkeys: 2 } },
       { value_ref: 'Gabe.monkeys', delta: 10 }, null);
     assert.deepEqual(res, [{
@@ -38,7 +38,7 @@ describe('#incrementValue', () => {
   });
 
   it('increments absent trip value', () => {
-    const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = incrementValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       {},
       { value_ref: 'cabana.monkeys' }, null);
     assert.deepEqual(res, [{
@@ -48,7 +48,7 @@ describe('#incrementValue', () => {
   });
 
   it('increments trip value by 1 by default', () => {
-    const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = incrementValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 2 } },
       { value_ref: 'cabana.monkeys' }, null);
     assert.deepEqual(res, [{
@@ -58,7 +58,7 @@ describe('#incrementValue', () => {
   });
 
   it('increments trip value by number', () => {
-    const res = incrementValue({ content: { roles: [{ name: 'Gabe' }] } },
+    const res = incrementValue.applyAction({ content: { roles: [{ name: 'Gabe' }] } },
       { cabana: { monkeys: 2 } },
       { value_ref: 'cabana.monkeys', delta: 10 }, null);
     assert.deepEqual(res, [{

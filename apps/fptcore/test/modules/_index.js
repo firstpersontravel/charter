@@ -6,7 +6,7 @@ fs.readdirSync(`${__dirname}/`).forEach(function(file) {
   if (!fs.existsSync(subdir) || !fs.lstatSync(subdir).isDirectory()) {
     return;
   }
-  describe(`${_.upperFirst(file)}Resource`, () => {
+  describe(`${_.upperFirst(file)}Module`, () => {
     fs.readdirSync(subdir).forEach(function(subfile) {
       if (subfile.match(/\.js$/) !== null && subfile !== 'index.js') {
         describe(_.upperFirst(subfile.replace('_test.js', '')), () => {
