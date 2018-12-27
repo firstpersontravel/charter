@@ -18,11 +18,13 @@ function getAppearanceStart(player) {
   }
   const appearance = _.find(player.trip.script.content.appearances,
     { name: page.appearance });
-  if (!appearance || !appearance.start_ref) {
+  if (!appearance || !appearance.start) {
     return null;
   }
-  return moment.utc(EvalCore.lookupRef(player.trip.context,
-    appearance.start_ref));
+  if (!player.trip.schedule[appearance.start]) {
+    return null;
+  }
+  return moment.utc(player.trip.schedule[appearance.start]);
 }
 
 function renderMap(trip, user) {

@@ -107,6 +107,7 @@ function renderCollections(script, currentCollectionName, currentSceneName) {
         {renderCollection(script, currentCollectionName, 'messages', currentSceneName)}
         {renderCollection(script, currentCollectionName, 'cues', currentSceneName)}
         {renderCollection(script, currentCollectionName, 'initiatives', currentSceneName)}
+        {renderCollection(script, currentCollectionName, 'times', currentSceneName)}
       </div>
     </div>
   );

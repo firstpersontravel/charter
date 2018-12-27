@@ -90,11 +90,11 @@ export default Ember.Route.extend({
       newLatitude, newLongitude, newAccuracy) {
     var trip = this.modelFor('trip');
     var script = trip.get('script');
-    var oldGeofences = fptCore.ScriptCore.geofencesInArea(
+    var oldGeofences = fptCore.GeofenceCore.geofencesInArea(
       script.get('content'), oldLatitude, oldLongitude, oldAccuracy,
       trip.get('waypointOptions'));
     var oldGeofenceNames = oldGeofences.map(g => g.name);
-    var newGeofences = fptCore.ScriptCore.geofencesInArea(
+    var newGeofences = fptCore.GeofenceCore.geofencesInArea(
       script.get('content'), newLatitude, newLongitude, newAccuracy,
       trip.get('waypointOptions'));
     var newGeofenceNames = newGeofences.map(g => g.name);

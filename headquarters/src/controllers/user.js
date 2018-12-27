@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const { ScriptCore } = require('fptcore');
+const { GeofenceCore } = require('fptcore');
 
 const TripActionController = require('./trip_action');
 const TripNotifyController = require('./trip_notify');
@@ -37,10 +37,10 @@ class UserController {
     clientId) {
     const script = await models.Script.findById(trip.scriptId);
     // Calculate new geofences
-    const oldGeofences = ScriptCore.geofencesInArea(
+    const oldGeofences = GeofenceCore.geofencesInArea(
       script.content, oldState.latitude, oldState.longitude,
       oldState.accuracy, trip.waypointOptions);
-    const newGeofences = ScriptCore.geofencesInArea(
+    const newGeofences = GeofenceCore.geofencesInArea(
       script.content, user.locationLatitude, user.locationLongitude,
       user.locationAccuracy, trip.waypointOptions);
     const enteredGeofenceNames = _.difference(

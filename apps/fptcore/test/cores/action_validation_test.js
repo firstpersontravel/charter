@@ -2,33 +2,12 @@ const assert = require('assert');
 const sinon = require('sinon');
 
 const ActionValidationCore = require('../../src/cores/action_validation');
-const ParamValidators = require('../../src/utils/param_validators');
 
 const sandbox = sinon.sandbox.create();
 
 describe('ActionValidationCore', () => {
-
   afterEach(() => {
     sandbox.restore();
-  });
-
-  describe('#checkParam', () => {
-    it('calls correct validator and returns return value', () => {
-      const sentinel = {};
-      const stub = sandbox.stub(ParamValidators, 'number').returns(sentinel);
-      const script = {};
-      const spec = { type: 'number' };
-      assert.strictEqual(
-        ActionValidationCore.checkParam(script, 'n', spec, 'abc'), sentinel);
-      sinon.assert.calledWith(stub, script, 'n', spec, 'abc');
-    });
-
-    it('returns error if invalid param', () => {
-      const spec = { type: 'abc' };
-      assert.throws(() => (
-        ActionValidationCore.checkParam({}, 'n', spec, 'abc')
-      ), err => err.message === 'Invalid param type "abc".');
-    });
   });
 
   describe('#checkAction', () => {

@@ -7,7 +7,7 @@ import {
   ActionsRegistry,
   ActionPhraseCore,
   EventsRegistry,
-  ScriptCore,
+  ScriptValidationCore,
   TextCore
 } from 'fptcore';
 
@@ -89,13 +89,6 @@ function renderReverseRelation(script, reverseRelation, resourceName) {
 
 function doesParamMatchResource(paramSpec, paramValue, collectionName,
   resource) {
-  if (paramSpec.type === 'cue_name') {
-    if (collectionName === 'cues') {
-      if (paramValue === resource.name) {
-        return true;
-      }
-    }
-  }
   if (paramSpec.type === 'resource') {
     if (paramSpec.collection === collectionName) {
       if (paramValue === resource.name) {
@@ -107,7 +100,7 @@ function doesParamMatchResource(paramSpec, paramValue, collectionName,
 }
 
 function renderActionRefs(script, collectionName, resource) {
-  const referringActions = ScriptCore.gatherActions(script)
+  const referringActions = ScriptValidationCore.gatherActions(script)
     .filter((action) => {
       const actionParamsSpec = ActionsRegistry[action.action.name].params;
       return _.some(action.action.params, (paramValue, paramName) => {
@@ -461,10 +454,7 @@ function renderFields(script, collectionName, resource) {
 }
 
 function getCollection(script, collectionName) {
-  if (_.includes(ScriptCore.IMPLICIT_COLLECTION_NAMES, collectionName)) {
-    return ScriptCore.gatherImplicitResources(script)[collectionName];
-  }
-  return script.content[collectionName];
+  return script.content[collectionName] || [];
 }
 
 function getResource(script, collectionName, resourceName) {

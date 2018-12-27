@@ -1,19 +1,9 @@
 var _ = require('lodash');
 
 var ActionsRegistry = require('../registries/actions');
-var ParamValidators = require('../utils/param_validators');
+var SpecValidationCore = require('./spec_validation');
 
 var ActionValidationCore = {};
-
-/**
- * Check a single param and return null or an error message.
- */
-ActionValidationCore.checkParam = function(script, name, spec, param) {
-  if (!ParamValidators[spec.type]) {
-    throw new Error('Invalid param type "' + spec.type + '".');
-  }
-  return ParamValidators[spec.type](script, name, spec, param);
-};
 
 /**
  * Get action.
@@ -33,28 +23,8 @@ ActionValidationCore.checkAction = function(script, action) {
   if (!actionClass.params) {
     throw new Error('Expected action ' + action.name + ' to have params.');
   }
-  var warnings = [];
-  // Check for required params
-  Object.keys(actionClass.params).forEach(function(paramName) {
-    var paramSpec = actionClass.params[paramName];
-    var param = action.params[paramName];
-    if (_.isUndefined(param)) {
-      if (paramSpec.required) {
-        warnings.push('Required param "' + paramName + '" not present.');
-      }
-    } else {
-      warnings = warnings.concat(
-        ActionValidationCore.checkParam(script, paramName, paramSpec, param) ||
-        []);
-    }
-  });
-  // Check for unexpected params
-  Object.keys(action.params).forEach(function(paramName) {
-    if (!actionClass.params[paramName]) {
-      warnings.push('Unexpected param "' + paramName + '".');
-    }
-  });
-  return warnings;
+  return SpecValidationCore.getWarnings(script, actionClass.params,
+    action.params);
 };
 
 ActionValidationCore.precheckAction = function(script, action, trigger) {

@@ -1,16 +1,8 @@
 const assert = require('assert');
-const sinon = require('sinon');
 
 const ParamValidators = require('../../src/utils/param_validators');
 
-const sandbox = sinon.sandbox.create();
-
 describe('ParamValidators', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#string', () => {
     it('permits string', () => {
       const result = ParamValidators.string({}, 's', {}, 'abc');
@@ -21,6 +13,20 @@ describe('ParamValidators', () => {
       const result = ParamValidators.string({}, 's', {}, []);
       assert.strictEqual(result, 'String param "s" should be a string.');
     });
+  });
+
+  describe('#if', () => {
+    it('permits string', () => {
+      const result = ParamValidators.if({}, 's', {}, 'abc');
+      assert.strictEqual(result, null);
+    });
+
+    it('warns if not a string', () => {
+      const result = ParamValidators.if({}, 's', {}, []);
+      assert.strictEqual(result, 'If param "s" should be a string.');
+    });
+
+    it.skip('validates if statement', () => {});
   });
 
   describe('#ref', () => {
@@ -49,33 +55,6 @@ describe('ParamValidators', () => {
         'Ref param "s" should be alphanumeric with periods.');
       assert.strictEqual(ParamValidators.ref({}, 's', {}, 'b^$(D'),
         'Ref param "s" should be alphanumeric with periods.');
-    });
-  });
-
-  describe('#cue_name', () => {
-    it('permits valid cue names', () => {
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, 'abc'), null);
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, 'A12'), null);
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, 'A_-'), null);
-    });
-
-    it('warns if not a string', () => {
-      const result = ParamValidators.cue_name({}, 's', {}, 1);
-      assert.strictEqual(result, 'Cue param "s" should be a string.');
-    });
-
-    it('warns if does not start with a letter', () => {
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, '1bc'),
-        'Cue param "s" must start with a letter.');
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, '.bc'),
-        'Cue param "s" must start with a letter.');
-    });
-
-    it('warns if contains invalid characters', () => {
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, 'a.b'),
-        'Cue param "s" should be alphanumeric with dashes.');
-      assert.strictEqual(ParamValidators.cue_name({}, 's', {}, 'b^$(D'),
-        'Cue param "s" should be alphanumeric with dashes.');
     });
   });
 
@@ -137,16 +116,52 @@ describe('ParamValidators', () => {
 
     it('warns if not a string', () => {
       const result = ParamValidators.resource({}, 's', spec, 1);
-      assert.strictEqual(result, 'Resource param "s" should be a string.');
+      assert.strictEqual(result, 'Resource param "s" ("1") should be a string.');
     });
 
     it('warns if does not start with a letter', () => {
       assert.strictEqual(
         ParamValidators.resource({}, 's', spec, '1bc'),
-        'Resource param "s" must start with a letter.');
+        'Resource param "s" ("1bc") should start with a letter.');
       assert.strictEqual(
         ParamValidators.resource({}, 's', spec, '.bc'),
-        'Resource param "s" must start with a letter.');
+        'Resource param "s" (".bc") should start with a letter.');
+    });
+
+    it('warns if contains invalid characters', () => {
+      assert.strictEqual(ParamValidators.resource({}, 's', {}, 'a%b'),
+        'Resource param "s" ("a%b") should be alphanumeric with dashes or underscores.');
+      assert.strictEqual(ParamValidators.resource({}, 's', {}, 'a"-b'),
+        'Resource param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
+      assert.strictEqual(ParamValidators.resource({}, 's', {}, 'b^$(D'),
+        'Resource param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
+    });
+  });
+
+  describe('#name', () => {
+    const spec = { type: 'name' };
+
+    it('warns if not a string', () => {
+      const result = ParamValidators.name({}, 's', spec, 1);
+      assert.strictEqual(result, 'Name param "s" ("1") should be a string.');
+    });
+
+    it('warns if does not start with a letter', () => {
+      assert.strictEqual(
+        ParamValidators.name({}, 's', spec, '1bc'),
+        'Name param "s" ("1bc") should start with a letter.');
+      assert.strictEqual(
+        ParamValidators.name({}, 's', spec, '.bc'),
+        'Name param "s" (".bc") should start with a letter.');
+    });
+
+    it('warns if contains invalid characters', () => {
+      assert.strictEqual(ParamValidators.name({}, 's', {}, 'a%b'),
+        'Name param "s" ("a%b") should be alphanumeric with dashes or underscores.');
+      assert.strictEqual(ParamValidators.name({}, 's', {}, 'a"-b'),
+        'Name param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
+      assert.strictEqual(ParamValidators.name({}, 's', {}, 'b^$(D'),
+        'Name param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
     });
   });
 });

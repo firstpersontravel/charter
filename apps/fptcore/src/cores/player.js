@@ -41,8 +41,8 @@ PlayerCore.getPageInfo = function(script, context, player) {
     EvalCore.if(context, appearance.if);
   var pageTitle = page ? page.title : player.currentPageName;
   var appearanceTitle = appearanceIsActive ? pageTitle : appearance.disabled_message;
-  var appearanceStart = appearance.start_ref ?
-    moment.utc(EvalCore.lookupRef(context, appearance.start_ref)) :
+  var appearanceStart = appearance.start ?
+    moment.utc(context.schedule[appearance.start]) :
     null;
   return {
     page: page,
@@ -64,10 +64,10 @@ PlayerCore.getSceneSort = function(script, context, player) {
   var appearance = _.find(script.content.appearances, {
     name: page.appearance
   });
-  if (!appearance || !appearance.start_ref) {
+  if (!appearance || !appearance.start) {
     return 0;
   }
-  return moment.utc(EvalCore.lookupRef(context, appearance.start_ref)).unix();
+  return moment.utc(context.schedule[appearance.start]).unix();
 };
 
 module.exports = PlayerCore;

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import yaml from 'js-yaml';
 
-import { ScriptCore, TriggerEventCore } from 'fptcore';
+import { TriggerEventCore } from 'fptcore';
 
 import { isProduction } from '../../../utils';
 
@@ -228,7 +228,7 @@ export default class TripControls extends Component {
 
   renderCues() {
     const script = this.props.trip.script;
-    const cues = ScriptCore.gatherImplicitResources(script).cues;
+    const cues = script.content.cues;
     const pendingCueName = this.state.pendingCueName;
     const cueOptions = cues.map(cue => (
       <option key={cue.name} value={cue.name}>{cue.name}</option>

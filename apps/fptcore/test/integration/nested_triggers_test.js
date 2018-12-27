@@ -10,13 +10,19 @@ var sandbox = sinon.sandbox.create();
 
 const script = {
   content: {
-    roles: [{
-      name: 'Farmer'
-    }, {
-      name: 'Rooster'
-    }, {
-      name: 'Cowboy'
-    }],
+    roles: [
+      { name: 'Farmer' },
+      { name: 'Rooster' },
+      { name: 'Cowboy' }
+    ],
+    cues: [
+      { name: 'CUE-PICK-APPLES', scene: 'MAIN' },
+      { name: 'CUE-SUNRISE', scene: 'MAIN' },
+      { name: 'CUE-GREET', scene: 'MAIN' },
+      { name: 'CUE-GREET-REPLY', scene: 'MAIN' },
+      { name: 'CUE-NAV-1', scene: 'MAIN' },
+      { name: 'CUE-NAV-2', scene: 'MAIN' }
+    ],
     triggers: [{
       name: 'TRIGGER-PICK-APPLES',
       event: { cue_signaled: 'CUE-PICK-APPLES' },
@@ -52,14 +58,12 @@ const script = {
       if: 'is_navigating',
       actions: ['custom_message Cowboy Farmer text geewhiz']
     }],
-    pages: [{
-      name: 'TRACTOR'
-    }, {
-      name: 'BACK-HOME'
-    }],
-    geofences: [{
-      name: 'GEOFENCE-FARM'
-    }],
+    scenes: [{ name: 'MAIN' }],
+    pages: [
+      { name: 'TRACTOR', scene: 'MAIN' },
+      { name: 'BACK-HOME', scene: 'MAIN' }
+    ],
+    geofences: [{ name: 'GEOFENCE-FARM' }],
     messages: [{
       name: 'MESSAGE-CROW',
       type: 'text',

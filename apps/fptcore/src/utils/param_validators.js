@@ -11,16 +11,11 @@ ParamValidators.string = function(script, name, spec, param) {
   return null;
 };
 
-ParamValidators.cue_name = function(script, name, spec, param) {
+ParamValidators.if = function(script, name, spec, param) {
   if (!_.isString(param)) {
-    return 'Cue param "' + name + '" should be a string.';
+    return 'If param "' + name + '" should be a string.';
   }
-  if (!/[a-zA-Z]/.test(param[0])) {
-    return 'Cue param "' + name + '" must start with a letter.';
-  }
-  if (!/^[\w\d-_]+$/.test(param)) {
-    return 'Cue param "' + name + '" should be alphanumeric with dashes.';
-  }
+  // TODO SHOULD DO MORE VALIDATION HERE
   return null;
 };
 
@@ -65,15 +60,31 @@ ParamValidators.duration = function(script, name, spec, param) {
   return null;
 };
 
+ParamValidators.name = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return 'Name param "' + name + '" ("' + param + '") should be a string.';
+  }
+  if (!/[a-zA-Z]/.test(param[0])) {
+    return 'Name param "' + name + '" ("' + param + '") should start with a letter.';
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(param)) {
+    return 'Name param "' + name + '" ("' + param + '") should be alphanumeric with dashes or underscores.';
+  }
+  return null;
+};
+
 ParamValidators.resource = function(script, name, spec, param) {
   if (param === 'null' && spec.collection === 'pages') {
     return null;
   }
   if (!_.isString(param)) {
-    return 'Resource param "' + name + '" should be a string.';
+    return 'Resource param "' + name + '" ("' + param + '") should be a string.';
   }
   if (!/[a-zA-Z]/.test(param[0])) {
-    return 'Resource param "' + name + '" must start with a letter.';
+    return 'Resource param "' + name + '" ("' + param + '") should start with a letter.';
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(param)) {
+    return 'Resource param "' + name + '" ("' + param + '") should be alphanumeric with dashes or underscores.';
   }
   var collectionName = spec.collection;
   var resourceNames = _.map(script.content[collectionName] || [], 'name');

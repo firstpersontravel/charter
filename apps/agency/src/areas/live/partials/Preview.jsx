@@ -50,8 +50,8 @@ function renderPanel(player, page, panel) {
 
 function renderPageNotActive(appearance, player) {
   const trip = player.trip;
-  const appearanceStart = appearance.start_ref ?
-    moment.utc(EvalCore.lookupRef(trip.context, appearance.start_ref)) :
+  const appearanceStart = appearance.start ?
+    moment.utc(trip.schedule[appearance.start]) :
     null;
   const startLabel = appearanceStart ? ` - ${appearanceStart.clone().tz(trip.script.timezone).format('h:mma')}` : '';
   const introText = EvalCore.templateText(trip.context,

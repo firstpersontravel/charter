@@ -10,7 +10,7 @@ module.exports = {
   EventsRegistry: require('./registries/events'),
   PlayerCore: require('./cores/player'),
   SceneCore: require('./cores/scene'),
-  ScriptCore: require('./cores/script'),
+  ScriptValidationCore: require('./cores/script_validation'),
   TextCore: require('./cores/text'),
   TimeCore: require('./cores/time'),
   TripCore: require('./cores/trip'),
