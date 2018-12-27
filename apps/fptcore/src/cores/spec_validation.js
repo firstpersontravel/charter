@@ -19,13 +19,10 @@ SpecValidationCore.getWarnings = function(script, paramsSpec, item) {
       }
       return;
     }
-    var paramValidator = ParamValidators[paramSpec.type];
-    if (!paramValidator) {
-      throw new Error('Invalid param type "' + paramSpec.type + '".');
-    }
-    var paramWarning = paramValidator(script, paramName, paramSpec, param);
-    if (paramWarning) {
-      warnings.push(paramWarning);
+    var paramWarnings = ParamValidators.validate(script, paramName, paramSpec,
+      param);
+    if (paramWarnings && paramWarnings.length > 0) {
+      warnings.push.apply(warnings, paramWarnings);
     }
   });
   // Check for unexpected params -- events sometimes have string items,

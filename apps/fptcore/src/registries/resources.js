@@ -1,6 +1,7 @@
 var moduleResourceSets = [
   require('../modules/audio/resources'),
-  require('../modules/appearance/resources')
+  require('../modules/appearance/resources'),
+  require('../modules/checkpoint/resources')
 ];
 
 var ResourcesRegistry = {};

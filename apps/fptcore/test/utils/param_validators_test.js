@@ -2,28 +2,32 @@ const assert = require('assert');
 
 const ParamValidators = require('../../src/utils/param_validators');
 
+const eq = assert.deepStrictEqual;
+const ok = (res) => eq(res, []);
+const err = (res, expected) => eq(res, [expected]);
+
 describe('ParamValidators', () => {
   describe('#string', () => {
     it('permits string', () => {
       const result = ParamValidators.string({}, 's', {}, 'abc');
-      assert.strictEqual(result, null);
+      ok(result);
     });
 
     it('warns if not a string', () => {
       const result = ParamValidators.string({}, 's', {}, []);
-      assert.strictEqual(result, 'String param "s" should be a string.');
+      err(result, 'String param "s" should be a string.');
     });
   });
 
   describe('#if', () => {
     it('permits string', () => {
       const result = ParamValidators.if({}, 's', {}, 'abc');
-      assert.strictEqual(result, null);
+      ok(result);
     });
 
     it('warns if not a string', () => {
       const result = ParamValidators.if({}, 's', {}, []);
-      assert.strictEqual(result, 'If param "s" should be a string.');
+      err(result, 'If param "s" should be a string.');
     });
 
     it.skip('validates if statement', () => {});
@@ -31,44 +35,44 @@ describe('ParamValidators', () => {
 
   describe('#ref', () => {
     it('permits valid refs', () => {
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'abc'), null);
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'A12'), null);
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'A_BC'), null);
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'a.b.c'), null);
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, '0'), null);
+      ok(ParamValidators.ref({}, 's', {}, 'abc'));
+      ok(ParamValidators.ref({}, 's', {}, 'A12'));
+      ok(ParamValidators.ref({}, 's', {}, 'A_BC'));
+      ok(ParamValidators.ref({}, 's', {}, 'a.b.c'));
+      ok(ParamValidators.ref({}, 's', {}, '0'));
     });
 
     it('permits with quotes', () => {
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, '"abc"'), null);
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, '\'A\''), null);
+      ok(ParamValidators.ref({}, 's', {}, '"abc"'));
+      ok(ParamValidators.ref({}, 's', {}, '\'A\''));
     });
 
     it('warns if not a string', () => {
       const result = ParamValidators.ref({}, 's', {}, 1);
-      assert.strictEqual(result, 'Ref param "s" should be a string.');
+      err(result, 'Ref param "s" should be a string.');
     });
 
     it('warns if contains invalid characters', () => {
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'a-b'),
+      err(ParamValidators.ref({}, 's', {}, 'a-b'),
         'Ref param "s" should be alphanumeric with periods.');
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'a"-b'),
+      err(ParamValidators.ref({}, 's', {}, 'a"-b'),
         'Ref param "s" should be alphanumeric with periods.');
-      assert.strictEqual(ParamValidators.ref({}, 's', {}, 'b^$(D'),
+      err(ParamValidators.ref({}, 's', {}, 'b^$(D'),
         'Ref param "s" should be alphanumeric with periods.');
     });
   });
 
   describe('#number', () => {
     it('permits string number', () => {
-      assert.strictEqual(ParamValidators.number({}, 's', {}, '1'), null);
+      ok(ParamValidators.number({}, 's', {}, '1'));
     });
 
     it('permits number', () => {
-      assert.strictEqual(ParamValidators.number({}, 's', {}, 1.5), null);
+      ok(ParamValidators.number({}, 's', {}, 1.5));
     });
 
     it('warns if not a number', () => {
-      assert.strictEqual(ParamValidators.number({}, 's', {}, 'abc'),
+      err(ParamValidators.number({}, 's', {}, 'abc'),
         'Number param "s" should be a number.');
     });
   });
@@ -76,18 +80,18 @@ describe('ParamValidators', () => {
   describe('#enum', () => {
     it('permits if in enum', () => {
       const spec = { type: 'enum', values: [1, true, 'abc'] };
-      assert.strictEqual(ParamValidators.enum({}, 's', spec, 1), null);
-      assert.strictEqual(ParamValidators.enum({}, 's', spec, true), null);
-      assert.strictEqual(ParamValidators.enum({}, 's', spec, 'abc'), null);
+      ok(ParamValidators.enum({}, 's', spec, 1));
+      ok(ParamValidators.enum({}, 's', spec, true));
+      ok(ParamValidators.enum({}, 's', spec, 'abc'));
     });
 
     it('warns if not in enum', () => {
       const spec = { type: 'enum', values: [1, true, 'abc'] };
-      assert.strictEqual(ParamValidators.enum({}, 's', spec, '1'),
+      err(ParamValidators.enum({}, 's', spec, '1'),
         'Enum param "s" is not one of "1", "true", "abc".');
-      assert.strictEqual(ParamValidators.enum({}, 's', spec, false),
+      err(ParamValidators.enum({}, 's', spec, false),
         'Enum param "s" is not one of "1", "true", "abc".');
-      assert.strictEqual(ParamValidators.enum({}, 's', spec, 'adc'),
+      err(ParamValidators.enum({}, 's', spec, 'adc'),
         'Enum param "s" is not one of "1", "true", "abc".');
     });
   });
@@ -97,43 +101,42 @@ describe('ParamValidators', () => {
     const spec = { type: 'resource', collection: 'geofences' };
 
     it('permits found resources', () => {
-      assert.strictEqual(
-        ParamValidators.resource(script, 's', spec, 'GEOFENCE-2'), null);
+      ok(ParamValidators.resource(script, 's', spec, 'GEOFENCE-2'));
     });
 
     it('warns if resource is not found', () => {
-      assert.strictEqual(
+      err(
         ParamValidators.resource(script, 's', spec, 'GEOFENCE-3'),
         'Resource param "s" ("GEOFENCE-3") is not in collection "geofences".');
     });
 
     it('warns if collection is empty', () => {
       const spec = { type: 'resource', collection: 'messages' };
-      assert.strictEqual(
+      err(
         ParamValidators.resource(script, 's', spec, 'GEOFENCE-3'),
         'Resource param "s" ("GEOFENCE-3") is not in collection "messages".');
     });
 
     it('warns if not a string', () => {
       const result = ParamValidators.resource({}, 's', spec, 1);
-      assert.strictEqual(result, 'Resource param "s" ("1") should be a string.');
+      err(result, 'Resource param "s" ("1") should be a string.');
     });
 
     it('warns if does not start with a letter', () => {
-      assert.strictEqual(
+      err(
         ParamValidators.resource({}, 's', spec, '1bc'),
         'Resource param "s" ("1bc") should start with a letter.');
-      assert.strictEqual(
+      err(
         ParamValidators.resource({}, 's', spec, '.bc'),
         'Resource param "s" (".bc") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
-      assert.strictEqual(ParamValidators.resource({}, 's', {}, 'a%b'),
+      err(ParamValidators.resource({}, 's', {}, 'a%b'),
         'Resource param "s" ("a%b") should be alphanumeric with dashes or underscores.');
-      assert.strictEqual(ParamValidators.resource({}, 's', {}, 'a"-b'),
+      err(ParamValidators.resource({}, 's', {}, 'a"-b'),
         'Resource param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
-      assert.strictEqual(ParamValidators.resource({}, 's', {}, 'b^$(D'),
+      err(ParamValidators.resource({}, 's', {}, 'b^$(D'),
         'Resource param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
     });
   });
@@ -143,24 +146,24 @@ describe('ParamValidators', () => {
 
     it('warns if not a string', () => {
       const result = ParamValidators.name({}, 's', spec, 1);
-      assert.strictEqual(result, 'Name param "s" ("1") should be a string.');
+      err(result, 'Name param "s" ("1") should be a string.');
     });
 
     it('warns if does not start with a letter', () => {
-      assert.strictEqual(
+      err(
         ParamValidators.name({}, 's', spec, '1bc'),
         'Name param "s" ("1bc") should start with a letter.');
-      assert.strictEqual(
+      err(
         ParamValidators.name({}, 's', spec, '.bc'),
         'Name param "s" (".bc") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
-      assert.strictEqual(ParamValidators.name({}, 's', {}, 'a%b'),
+      err(ParamValidators.name({}, 's', {}, 'a%b'),
         'Name param "s" ("a%b") should be alphanumeric with dashes or underscores.');
-      assert.strictEqual(ParamValidators.name({}, 's', {}, 'a"-b'),
+      err(ParamValidators.name({}, 's', {}, 'a"-b'),
         'Name param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
-      assert.strictEqual(ParamValidators.name({}, 's', {}, 'b^$(D'),
+      err(ParamValidators.name({}, 's', {}, 'b^$(D'),
         'Name param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
     });
   });
