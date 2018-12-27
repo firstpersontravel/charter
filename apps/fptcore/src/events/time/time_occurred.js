@@ -1,6 +1,6 @@
 var moment = require('moment');
 
-var TimeCore = require('../time');
+var TimeCore = require('../../time');
 
 function timeForSpec(context, spec) {
   var offset = 0;

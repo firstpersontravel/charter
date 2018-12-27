@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const scene_started = require('../../src/events/scene_started');
+const scene_started = require('../../../src/events/scene/scene_started');
 
 describe('#scene_started', () => {
   it('fires on matching scene', () => {

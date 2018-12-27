@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const message_sent = require('../../src/events/message_sent');
+const message_sent = require('../../../src/events/message/message_sent');
 
 describe('#message_sent', () => {
   const imageClause = { from: 'Gabe', to: 'Cat', type: 'image' };

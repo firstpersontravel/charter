@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const cue_signaled = require('../../src/events/cue_signaled');
+const cue_signaled = require('../../../src/events/cue/cue_signaled');
 
 describe('#cue_signaled', () => {
   it('fires on matching cue', () => {

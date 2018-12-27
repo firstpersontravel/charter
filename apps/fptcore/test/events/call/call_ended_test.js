@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const call_ended = require('../../src/events/call_ended');
+const call_ended = require('../../../src/events/call/call_ended');
 
 describe('#call_ended', () => {
   it('fires on matching call ended', () => {

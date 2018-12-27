@@ -1,11 +1,18 @@
 module.exports = {
-  call_answered: require('./call_answered'),
-  call_received: require('./call_received'),
-  call_ended: require('./call_ended'),
-  cue_signaled: require('./cue_signaled'),
-  geofence_entered: require('./geofence_entered'),
-  message_sent: require('./message_sent'),
-  query_responded: require('./query_responded'),
-  time_occurred: require('./time_occurred'),
-  scene_started: require('./scene_started')
+  // Call
+  call_answered: require('./call/call_answered'),
+  call_received: require('./call/call_received'),
+  call_ended: require('./call/call_ended'),
+  // Cue
+  cue_signaled: require('./cue/cue_signaled'),
+  // Geofence
+  geofence_entered: require('./geofence/geofence_entered'),
+  // Message
+  message_sent: require('./message/message_sent'),
+  // Query
+  query_responded: require('./query/query_responded'),
+  // Time
+  time_occurred: require('./time/time_occurred'),
+  // Scene
+  scene_started: require('./scene/scene_started')
 };

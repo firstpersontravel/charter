@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const geofence_entered = require('../../src/events/geofence_entered');
+const geofence_entered = require('../../../src/events/geofence/geofence_entered');
 
 describe('#geofence_entered', () => {
   it('fires on matching geofence', () => {

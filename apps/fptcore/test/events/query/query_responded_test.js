@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const query_responded = require('../../src/events/query_responded');
+const query_responded = require('../../../src/events/query/query_responded');
 
 describe('#query_responded', () => {
   it('fires on matching response', () => {
