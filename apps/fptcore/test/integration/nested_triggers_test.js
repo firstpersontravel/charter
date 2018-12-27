@@ -2,9 +2,9 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const ActionCore = require('../../src/action');
+const ActionCore = require('../../src/cores/action');
 const ActionsRegistry = require('../../src/registries/actions');
-const ActionValidationCore = require('../../src/action_validation');
+const ActionValidationCore = require('../../src/cores/action_validation');
 
 var sandbox = sinon.sandbox.create();
 

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const ScriptCore = require('../src/script');
+const ScriptCore = require('../../src/cores/script');
 
 const sandbox = sinon.sandbox.create();
 

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const ActionParamCore = require('../src/action_param');
+const ActionParamCore = require('../../src/cores/action_param');
 
 const sandbox = sinon.sandbox.create();
 

@@ -2,10 +2,10 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const ActionCore = require('../src/action');
-const ActionValidationCore = require('../src/action_validation');
-const TriggerCore = require('../src/trigger');
-const TriggerEventCore = require('../src/trigger_event');
+const ActionCore = require('../../src/cores/action');
+const ActionValidationCore = require('../../src/cores/action_validation');
+const TriggerCore = require('../../src/cores/trigger');
+const TriggerEventCore = require('../../src/cores/trigger_event');
 
 var sandbox = sinon.sandbox.create();
 

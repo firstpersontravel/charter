@@ -1,7 +1,7 @@
 var assert = require('assert');
 var moment = require('moment');
 
-var ActionPhraseCore = require('../src/action_phrase');
+var ActionPhraseCore = require('../../src/cores/action_phrase');
 
 function assertOffset(actual, expected, offsetInSeconds) {
   assert.equal(

@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const PlayerCore = require('../src/player');
+const PlayerCore = require('../../src/cores/player');
 
 describe('PlayerCore', () => {
 

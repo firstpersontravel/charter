@@ -1,6 +1,6 @@
 var moment = require('moment-timezone');
 
-var ActionsRegistry = require('./registries/actions');
+var ActionsRegistry = require('../registries/actions');
 var EvalCore = require('./eval');
 var TextCore = require('./text');
 var TimeCore = require('./time');

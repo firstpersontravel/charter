@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var EvalCore = require('../../eval');
+var EvalCore = require('../../cores/eval');
 
 var MESSAGE_TYPES = ['text', 'image', 'audio'];
 

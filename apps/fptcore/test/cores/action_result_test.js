@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const ActionResultCore = require('../src/action_result');
+const ActionResultCore = require('../../src/cores/action_result');
 
 describe('ActionResultCore', () => {
   describe('#tempUpdateContext', () => {

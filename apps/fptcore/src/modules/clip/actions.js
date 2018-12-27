@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var EvalCore = require('../../eval');
+var EvalCore = require('../../cores/eval');
 
 var play_clip = {
   phraseForm: ['clip_name'],

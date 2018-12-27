@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var EvalCore = require('./eval');
-var EventsRegistry = require('./registries/events');
+var EventsRegistry = require('../registries/events');
 
 var TriggerEventCore = {};
 

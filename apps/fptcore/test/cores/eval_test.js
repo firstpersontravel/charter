@@ -2,7 +2,7 @@ const _ = require('lodash');
 const assert = require('assert');
 const sinon = require('sinon');
 
-const EvalCore = require('../src/eval');
+const EvalCore = require('../../src/cores/eval');
 
 const sandbox = sinon.sandbox.create();
 

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const TriggerCore = require('../src/trigger');
+const TriggerCore = require('../../src/cores/trigger');
 
 var sandbox = sinon.sandbox.create();
 

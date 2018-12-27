@@ -1,13 +1,13 @@
 var _ = require('lodash');
 var moment = require('moment');
 
-var ActionsRegistry = require('./registries/actions');
+var ActionsRegistry = require('../registries/actions');
 var ActionPhraseCore = require('./action_phrase');
 var ActionValidationCore = require('./action_validation');
-var EventsRegistry = require('./registries/events');
-var ParamValidators = require('./utils/param_validators');
+var EventsRegistry = require('../registries/events');
+var ParamValidators = require('../utils/param_validators');
 var TextCore = require('./text');
-var distance = require('./utils/distance');
+var distance = require('../utils/distance');
 var WaypointCore = require('./waypoint');
 
 var ScriptCore = {};

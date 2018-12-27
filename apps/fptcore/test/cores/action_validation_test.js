@@ -1,8 +1,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const ActionValidationCore = require('../src/action_validation');
-const ParamValidators = require('../src/utils/param_validators');
+const ActionValidationCore = require('../../src/cores/action_validation');
+const ParamValidators = require('../../src/utils/param_validators');
 
 const sandbox = sinon.sandbox.create();
 

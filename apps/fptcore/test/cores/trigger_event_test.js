@@ -1,8 +1,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const EventsRegistry = require('../src/registries/events');
-const TriggerEventCore = require('../src/trigger_event');
+const EventsRegistry = require('../../src/registries/events');
+const TriggerEventCore = require('../../src/cores/trigger_event');
 
 var sandbox = sinon.sandbox.create();
 
