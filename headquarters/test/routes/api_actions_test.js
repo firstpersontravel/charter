@@ -17,8 +17,8 @@ describe('apiActionsRoutes', () => {
   describe('#createActionRoute', () => {
     it('applies and notifies on an action', async () => {
       const req = httpMocks.createRequest({
-        params: { tripId: 100, actionName: 'action_name'},
-        body: { param: 'true', client_id: 123 }
+        params: { tripId: 100 },
+        body: { name: 'action_name', params: { param: true }, client_id: 123 }
       });
       const res = httpMocks.createResponse();
 
@@ -34,7 +34,7 @@ describe('apiActionsRoutes', () => {
       assert.deepStrictEqual(JSON.parse(res._getData()), expected);
 
       // Check apply called with correct args
-      const action = { name: 'action_name', params: { param: 'true' } };
+      const action = { name: 'action_name', params: { param: true } };
       sinon.assert.calledOnce(TripActionController.applyAction);
       assert.deepStrictEqual(
         TripActionController.applyAction.firstCall.args, [100, action]);

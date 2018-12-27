@@ -80,7 +80,7 @@ class RelaysController {
       forRoleName: relaySpec.for,
       withRoleName: relaySpec.with,
       asRoleName: relaySpec.as || relaySpec.for,
-      userNumber: userNumber
+      userPhoneNumber: userNumber
     };
     // Return relay if it exists
     const existingRelay = await models.Relay.find({ where: relayFields });

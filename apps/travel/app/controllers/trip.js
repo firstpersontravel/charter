@@ -1,7 +1,6 @@
 import Ember from 'ember';
 import RealtimeMixin from '../mixins/controllers/realtime';
 
-import update from 'npm:immutability-helper';
 import fptCore from 'npm:fptcore';
 
 export default Ember.Controller.extend(RealtimeMixin, {

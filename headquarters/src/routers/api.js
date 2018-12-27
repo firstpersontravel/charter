@@ -48,7 +48,7 @@ apiRouter.use('/scripts', createCollectionRouter(models.Script));
 apiRouter.use('/users', createCollectionRouter(models.User));
 
 // Action routes
-apiRouter.post('/trips/:tripId/:actionName',
+apiRouter.post('/trips/:tripId/actions',
   asyncRoute(apiActionsRoutes.createActionRoute));
 apiRouter.post('/trips/:tripId/events',
   asyncRoute(apiActionsRoutes.createEventRoute));

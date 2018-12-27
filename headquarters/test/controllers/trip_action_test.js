@@ -37,7 +37,7 @@ describe('TripActionController', () => {
           scheduledActions: []
         });
 
-      const action = { name: 'cue', params: {} };
+      const action = { name: 'signal_cue', params: {} };
       await TripActionController.applyAction(trip.id, action);
       sinon.assert.calledOnce(TripOpController.applyOp);
       assert.deepStrictEqual(
@@ -60,7 +60,7 @@ describe('TripActionController', () => {
         scheduledActions: [scheduleAction]
       });
 
-      const action = { name: 'cue', params: {} };
+      const action = { name: 'signal_cue', params: {} };
       await TripActionController.applyAction(trip.id, action);
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
         type: 'action',

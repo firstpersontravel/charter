@@ -6,7 +6,7 @@ export default Ember.Component.extend({
     'hasAudio:active:inactive'
   ],
 
-  audio: null,
+  values: null,
   script: null,
 
   init: function() {
@@ -24,23 +24,24 @@ export default Ember.Component.extend({
   },
 
   hasAudio: function() {
-    return !!this.get('audio');
-  }.property('audio'),
+    return !!this.get('audioName');
+  }.property('audioName'),
 
   audioIsInProgress: function() {
-    var audioState = this.get('audio');
+    var audioState = this.get('audioName');
     if (!audioState) { return false; }
     return this.get('audioTime') <= this.get('audioDuration');
-  }.property('audio', 'audioTime'),
+  }.property('values', 'audioTime'),
 
-  audioIsPlaying: Ember.computed.bool('audio.is_playing'),
-  audioIsPaused: Ember.computed.bool('audio.paused_time'),
+  audioName: Ember.computed.oneWay('values.audio_name'),
+  audioIsPlaying: Ember.computed.bool('values.audio_is_playing'),
+  audioIsPaused: Ember.computed.bool('values.audio_paused_time'),
 
   audioHasEnded: function() {
-    var audioState = this.get('audio');
+    var audioState = this.get('audioName');
     if (!audioState) { return false; }
     return this.get('audioTime') > this.get('audioDuration');
-  }.property('audio', 'audioTime'),
+  }.property('audioName', 'audioTime'),
 
   audioElapsed: function() {
     var mins = Math.floor(this.get('audioTime') / 60);
@@ -56,23 +57,22 @@ export default Ember.Component.extend({
   }.property('audioTime'),
 
   audioTime: function() {
-    var audioState = this.get('audio');
-    if (!audioState) { return 0; }
-    if (!audioState.is_playing) {
-      return (audioState.paused_time || 0).toFixed(1);
+    if (!this.get('audioName')) { return 0; }
+    if (!this.get('audioIsPlaying')) {
+      return (this.get('values.audio_paused_time') || 0).toFixed(1);
     }
-    var startedAt = audioState.started_at;
-    var startedTime = audioState.started_time;
+    var startedAt = this.get('values.audio_started_at');
+    var startedTime = this.get('values.audio_started_time');
     var elapsedMsec = moment.utc().diff(startedAt);
     var currentTime = startedTime + elapsedMsec / 1000.0;
     return currentTime;
   }.property('audio', 'currentTime'),
 
   audioContent: function() {
-    var audioName = this.get('audio.name');
+    var audioName = this.get('audioName');
     if (!audioName) { return null; }
     return this.get('script.content.audio').findBy('name', audioName);
-  }.property('audio'),
+  }.property('audioName'),
 
   audioDuration: function() {
     if (!this.get('audioContent')) { return null; }

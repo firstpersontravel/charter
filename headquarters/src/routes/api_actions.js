@@ -11,8 +11,12 @@ const UserController = require('../controllers/user');
 const createActionRoute = async (req, res) => {
   const tripId = req.params.tripId;
   const clientId = req.body.client_id;
-  const params = _.omit(req.body, ['client_id']);
-  const action = { name: req.params.actionName, params: params };
+  if (!req.body.name) {
+    res.status(400);
+    res.json({ error: 'Name required.' });
+    return;
+  }
+  const action = { name: req.body.name, params: req.body.params || {} };
   await TripActionController.applyAction(tripId, action);
   await TripNotifyController.notifyAction(tripId, action, clientId);
   res.status(200);

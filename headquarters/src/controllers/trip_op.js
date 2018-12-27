@@ -39,8 +39,10 @@ class TripOpController {
     });
     const message = await models.Message.create(fields);
     await MessageController.sendMessage(message);
-    await TripRelaysController.relayMessage(objs.trip, message,
-      op.suppressRelayId);
+    if (!fields.readAt) {
+      await TripRelaysController.relayMessage(objs.trip, message,
+        op.suppressRelayId);
+    }
     return message;
   }
 

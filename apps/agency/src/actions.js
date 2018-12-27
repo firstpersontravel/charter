@@ -196,9 +196,9 @@ export function postAction(tripId, actionName, actionParams) {
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(actionParams)
+      body: JSON.stringify({ name: actionName, params: actionParams })
     };
-    const url = `/api/trips/${tripId}/${actionName}`;
+    const url = `/api/trips/${tripId}/actions`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(refreshLiveData([tripId]));

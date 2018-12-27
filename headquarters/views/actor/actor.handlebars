@@ -5,11 +5,16 @@ function postAction($btn, data) {
   $btn && $btn.text('Sending...');
   $('button, a').addClass('disabled');
   if (data.name) {
+    var body = {
+      name: data.name,
+      params: data.params,
+      client_id: clientId
+    };
     $.ajax({
       type: 'post',
-      url: '/api/trips/' + data.trip_id + '/' + data.name,
+      url: '/api/trips/' + data.trip_id + '/actions',
       contentType: 'application/json',
-      data: data.params,
+      data: JSON.stringify(body),
       dataType: 'html',
       success: function(response) {
         loadNewPage();
@@ -131,11 +136,10 @@ $(function() {
     var tripId = $btn.attr('data-trip-id');
     var actionName = $btn.attr('data-action');
     var actionParams = JSON.parse($btn.attr('data-params'));
-    var params = Object.assign(actionParams, { client_id: clientId });
     postAction($btn, {
       trip_id: tripId,
       name: actionName,
-      params: JSON.stringify(params)
+      params: actionParams
     });
   });
   $('#container').on('click', 'a[data-ui]', function(e) {

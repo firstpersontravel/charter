@@ -35,13 +35,15 @@ const supportedPartials = {
   default: () => ({})
 };
 
-function getPanel(script, trip, context, panel) {
+function getPanel(script, trip, context, pageInfo, panel) {
   const panelType = supportedPartials[panel.type] ? panel.type : 'default';
   const customParams = supportedPartials[panelType](script, context, panel);
   return Object.assign(customParams, {
     type: 'panels/' + panelType,
+    pageInfo: pageInfo,
     panel: panel,
-    trip: trip
+    trip: trip,
+    isPageActive: pageInfo.page.scene === trip.currentSceneName
   });
 }
 
@@ -69,7 +71,7 @@ function getPage(script, trip, context, player) {
     page.directive, script.timezone);
   const panels = _(page.panels || [])
     .filter(panel => !panel.if || fptCore.EvalCore.if(context, panel.if))
-    .map(panel => getPanel(script, trip, context, panel))
+    .map(panel => getPanel(script, trip, context, pageInfo, panel))
     .value();
   return {
     scriptTitle: script.title,

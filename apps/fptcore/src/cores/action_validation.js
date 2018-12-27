@@ -85,6 +85,9 @@ ActionValidationCore.validateActionAtRun = function(script, context, action) {
   var warnings = ActionValidationCore.checkAction(script, action);
   // Runtime validation of requiredContext
   var actionClass = ActionValidationCore.getAction(action.name);
+  if (!actionClass) {
+    throw new Error('Invalid action "' + action.name + '".');
+  }
   if (actionClass.requiredContext) {
     if (!context.event) {
       warnings.push(

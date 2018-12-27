@@ -37,7 +37,9 @@ export default class TripScenes extends Component {
         <button
           key={`${page.name}-${panel.cue}`}
           style={{ marginTop: '0.25em' }}
-          onClick={() => this.handleAction('cue', { cue_name: panel.cue })}
+          onClick={() => (
+            this.handleAction('signal_cue', { cue_name: panel.cue })
+          )}
           className={`wrap-text btn btn-block btn-sm ${btnClass}`}>
           {cueTitle}
         </button>

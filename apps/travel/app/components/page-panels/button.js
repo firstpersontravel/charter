@@ -20,7 +20,7 @@ export default Ember.Component.extend({
     press: function() {
       if (this.get('params').cue) {
         this.triggerAction({
-          action: 'cue',
+          action: 'signalCue',
           actionContext: [this.get('params').cue]
         });
       } else {

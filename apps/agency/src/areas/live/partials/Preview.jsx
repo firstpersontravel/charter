@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 
 import { EvalCore } from 'fptcore';
 
-function renderPanel(player, panel) {
+function renderPanel(player, page, panel) {
   if (panel.if && !EvalCore.if(player.trip.context, panel.if)) {
     return null;
   }
@@ -21,15 +21,25 @@ function renderPanel(player, panel) {
   }
   if (panel.type === 'button' ||
       panel.type === 'numberpad') {
-    const panelText = EvalCore.templateText(
-      player.trip.context, panel.text || panel.placeholder,
-      player.trip.script.timezone);
+    const isSceneActive = page.scene === player.trip.currentSceneName;
+    const script = player.trip.script;
+    const panelText = EvalCore.templateText(player.trip.context,
+      panel.text || panel.placeholder, script.timezone);
+    const scene = _.find(script.content.scenes, { name: page.scene });
+    const disabledPanelText = (
+      <span>
+        <span style={{ textDecoration: 'line-through' }}>{panelText}</span>
+        &nbsp;
+        (Waiting for scene &quot;{scene.title}&quot;)
+      </span>
+    );
+    const panelContent = isSceneActive ? panelText : disabledPanelText;
     return (
       <button
-        style={{ marginBottom: '0.5rem' }}
+        style={{ marginBottom: '0.5rem', whiteSpace: 'initial' }}
         className="btn btn-block constrain-text btn-outline-secondary"
         disabled>
-        {panelText}
+        {panelContent}
       </button>
     );
   }
@@ -85,7 +95,7 @@ function renderPage(appearance, page, player) {
   const panelsRendered = panels
     .map(panel => (
       <div key={`${page.name}-${panel.type}-${panel.text || ''}`}>
-        {renderPanel(player, panel)}
+        {renderPanel(player, page, panel)}
       </div>
     ));
   return (

@@ -60,7 +60,7 @@ class TripResetController {
   static async resetToCheckpoint(tripId, checkpointName) {
     const trip = await models.Trip.find({
       where: { id: tripId },
-      include: [{ models: models.Script, as: 'script' }]
+      include: [{ model: models.Script, as: 'script' }]
     });
     const players = await models.Player.findAll({ where: { tripId: tripId } });
     // Load checkpoint

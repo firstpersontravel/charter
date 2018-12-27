@@ -48,7 +48,7 @@ export default Ember.Service.extend({
   },
 
   updateLocation: function(userId, latitude, longitude, accuracy, timestamp) {
-    return this.ajax(`/api/users/${userId}/device_state`, 'post', {
+    return this.sendData(`/api/users/${userId}/device_state`, 'post', {
       location_latitude: latitude,
       location_longitude: longitude,
       location_accuracy: accuracy,
@@ -57,16 +57,16 @@ export default Ember.Service.extend({
   },
 
   acknowledgePage: function(playerId, pageName) {
-    this.ajax(`/api/players/${playerId}`, 'put', {
+    this.sendData(`/api/players/${playerId}`, 'put', {
       acknowledgedPageName: pageName,
       acknowledgedPageAt: moment.utc().toISOString()
     });
   },
 
   postAction: function(tripId, name, params) {
-    return this.ajax(
-      `/api/trips/${tripId}/${name}`, 'post',
-      Object.assign({ client_id: this._clientId }, params)
+    return this.sendData(
+      `/api/trips/${tripId}/actions`, 'post',
+      { client_id: this._clientId, name: name, params: params }
     );
   }
 });

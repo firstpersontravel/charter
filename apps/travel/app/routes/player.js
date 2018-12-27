@@ -193,8 +193,8 @@ export default Ember.Route.extend({
       });
     },
 
-    cue: function(cueName) {
-      this.makeAction('cue', {cue_name: cueName});
+    signalCue: function(cueName) {
+      this.makeAction('signal_cue', {cue_name: cueName});
     },
 
     setValue: function(valueRef, newValueRef) {

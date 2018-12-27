@@ -20,7 +20,7 @@ export default Ember.Component.extend({
       if (!value || !cue) { return; }
       if (value.toString() === entry.toString()) {
         this.triggerAction({
-          action: 'cue',
+          action: 'signalCue',
           actionContext: [cue]
         });
         triggered = true;          

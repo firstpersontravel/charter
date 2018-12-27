@@ -16,7 +16,10 @@ export default class TripIndex extends Component {
   getRedirect() {
     const trip = this.props.tripStatus.instance;
     const firstSceneName = trip.script.content.scenes[0].name;
-    const onFirstScene = trip.currentSceneName === firstSceneName;
+    const onFirstScene = (
+      trip.currentSceneName === firstSceneName ||
+      trip.currentSceneName === ''
+    );
     if (onFirstScene) {
       return (
         `/agency/live/${this.props.params.groupId}` +
