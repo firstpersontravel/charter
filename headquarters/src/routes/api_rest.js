@@ -1,20 +1,10 @@
 const _ = require('lodash');
 const inflection = require('inflection');
-const immutableUpdate = require('immutability-helper');
 const Sequelize = require('sequelize');
 
 const errors = require('../errors');
 
 const LIST_COUNT_DEFAULT = 100;
-
-/**
- * Add $auto for extending JSON objects
- */
-immutableUpdate.extend('$auto', function(value, object) {
-  return object ?
-    immutableUpdate(object, value):
-    immutableUpdate({}, value);
-});
 
 /**
  * Serialization / deserialization functions
@@ -38,30 +28,6 @@ function serializeRecord(model, record) {
     .value();
 }
 
-/**
- * Scan the update and if any simple-form updates are present, i.e.
- * {parent: {value: 'new-value'}}, convert it to immutability-helper format,
- * i.e. {parent: {value: {$set: 'new-value'}}}.
- */
-function convertToImmutableUpdate(object) {
-  if (!_.isPlainObject(object)) {
-    throw new errors.badRequestError('Invalid immutable update object.');
-  }
-  return _.mapValues(object, function(value, key) {
-    // Commands are handled explicitly.
-    if (key[0] === '$') {
-      return value;
-    }
-    // If it's an object, continue recursion.
-    if (_.isPlainObject(value)) {
-      return convertToImmutableUpdate(value);
-    }
-    // Otherwise -- it's a string, number, boolean, or array, so we assume
-    // this is an implicit $set command. So add it.
-    return {$set: value};
-  });
-}
-
 function deserializeField(field) {
   return field;
 }
@@ -74,8 +40,8 @@ function deserializeFields(fields) {
 
 function mergeFields(record, fields) {
   return _.mapValues(fields, function(value, key) {
-    if (record[key] && _.isPlainObject(value)) {
-      return immutableUpdate(record[key], convertToImmutableUpdate(value));
+    if (_.isPlainObject(record[key]) && _.isPlainObject(value)) {
+      return _.merge({}, record[key], value);
     } else {
       return value;
     }

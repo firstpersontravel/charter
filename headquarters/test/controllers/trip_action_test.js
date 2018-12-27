@@ -28,9 +28,7 @@ describe('TripActionController', () => {
     it('invokes result ops', async () => {
       const resultOps = [{
         operation: 'updateTripFields',
-        updates: {
-          values: { initiatives: { won_the_game: { $set: true } } }
-        }
+        fields: { newField: true }
       }];
       sandbox.stub(TripOpController, 'applyOp').resolves();
       sandbox.stub(fptCore.ActionCore, 'applyAction')

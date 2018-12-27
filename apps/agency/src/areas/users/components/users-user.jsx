@@ -78,10 +78,8 @@ export default class UsersUser extends Component {
       const create = Object.assign({}, fields, { userId: this.props.user.id });
       this.props.createInstance('profiles', create);
     } else {
-      const updates = Object.assign({}, fields, {
-        values: { $set: fields.values }
-      });
-      this.props.updateInstance('profiles', editingProfileId, updates);
+      // Replace to completely update values
+      this.props.updateInstance('profiles', editingProfileId, fields);
     }
     this.handleProfileModalClose();
   }
