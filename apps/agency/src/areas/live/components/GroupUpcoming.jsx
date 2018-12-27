@@ -4,12 +4,12 @@ import React from 'react';
 import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-import { Actions, Events, TriggerEventCore } from 'fptcore';
+import { ActionsRegistry, EventsRegistry, TriggerEventCore } from 'fptcore';
 
 import Param from '../../common/partials/Param';
 
 function renderActionParam(trip, action, paramName) {
-  const actionParamsSpec = Actions[action.name].params;
+  const actionParamsSpec = ActionsRegistry[action.name].params;
   return (
     <div className="wrap-text" key={paramName}>
       {paramName}:&nbsp;
@@ -112,7 +112,7 @@ function getScheduledTripTriggers(trip) {
   return triggers.map((trigger) => {
     const triggerEvent = TriggerEventCore.triggerEventForEventType(
       trigger, event.type);
-    const scheduledAt = Events.time_occurred.timeForSpec(
+    const scheduledAt = EventsRegistry.time_occurred.timeForSpec(
         trip.context, triggerEvent[event.type]);
     return {
       id: trigger.name,

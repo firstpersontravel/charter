@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var Actions = require('./actions');
+var ActionsRegistry = require('./registries/actions');
 var ParamValidators = require('./param_validators');
 
 var ActionValidationCore = {};
@@ -19,7 +19,7 @@ ActionValidationCore.checkParam = function(script, name, spec, param) {
  * Get action.
  */
 ActionValidationCore.getAction = function(name) {
-  return Actions[name];
+  return ActionsRegistry[name];
 };
 
 /**

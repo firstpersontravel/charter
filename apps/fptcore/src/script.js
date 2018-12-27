@@ -1,10 +1,10 @@
 var _ = require('lodash');
 var moment = require('moment');
 
-var Actions = require('./actions');
+var ActionsRegistry = require('./registries/actions');
 var ActionPhraseCore = require('./action_phrase');
 var ActionValidationCore = require('./action_validation');
-var Events = require('./events');
+var EventsRegistry = require('./registries/events');
 var ParamValidators = require('./param_validators');
 var TextCore = require('./text');
 var distance = require('./distance');
@@ -112,7 +112,7 @@ ScriptCore.gatherEventWarnings = function(script, event) {
   if (!eventType) {
     return ['No event type.'];
   }
-  var eventSpec = Events[eventType];
+  var eventSpec = EventsRegistry[eventType];
   var eventParams = event[eventType];
   if (!eventSpec) {
     return ['Invalid event type "' + eventType + '".'];
@@ -254,7 +254,7 @@ ScriptCore.gatherImplicitResources = function(script) {
   var actions = ScriptCore.gatherActions(script);
   actions.forEach(function(action) {
     Object.keys(action.action.params).forEach(function(paramName) {
-      var paramSpec = Actions[action.action.name].params[paramName];
+      var paramSpec = ActionsRegistry[action.action.name].params[paramName];
       if (paramSpec.type === 'cue_name') {
         cues.push({
           name: action.action.params[paramName],
@@ -271,7 +271,7 @@ ScriptCore.gatherImplicitResources = function(script) {
       var eventParamsObj = _.isObject(eventParams) ? eventParams :
         { self: eventParams };
       Object.keys(eventParamsObj).forEach(function(paramName) {
-        var paramSpec = Events[eventType].specParams[paramName];
+        var paramSpec = EventsRegistry[eventType].specParams[paramName];
         if (paramSpec.type === 'cue_name') {
           cues.push({
             name: eventParamsObj[paramName],

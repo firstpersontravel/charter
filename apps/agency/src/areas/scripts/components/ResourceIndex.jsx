@@ -3,7 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import yaml from 'js-yaml';
 
-import { Actions, ActionPhraseCore, Events, ScriptCore, TextCore } from 'fptcore';
+import {
+  ActionsRegistry,
+  ActionPhraseCore,
+  EventsRegistry,
+  ScriptCore,
+  TextCore
+} from 'fptcore';
 
 import { COLLECTION_NAMES } from '../consts';
 import { getItems } from './utils';
@@ -103,7 +109,7 @@ function doesParamMatchResource(paramSpec, paramValue, collectionName,
 function renderActionRefs(script, collectionName, resource) {
   const referringActions = ScriptCore.gatherActions(script)
     .filter((action) => {
-      const actionParamsSpec = Actions[action.action.name].params;
+      const actionParamsSpec = ActionsRegistry[action.action.name].params;
       return _.some(action.action.params, (paramValue, paramName) => {
         // Check if action param matches this resource
         const paramSpec = actionParamsSpec[paramName];
@@ -140,7 +146,7 @@ function doesEventMatchResource(event, collectionName, resource) {
   const eventParams = event[eventType];
   const eventParamsObj = _.isObject(eventParams) ? eventParams :
     { self: eventParams };
-  const eventParamsSpec = Events[eventType].specParams;
+  const eventParamsSpec = EventsRegistry[eventType].specParams;
   return _.some(eventParamsObj, (paramValue, paramName) => {
     // Check if action param matches this resource
     const paramSpec = eventParamsSpec[paramName];
@@ -209,7 +215,7 @@ function renderReverseRefs(script, collectionName, resource) {
 }
 
 function renderActionParam(scriptId, actionName, paramName, paramValue) {
-  const paramSpec = Actions[actionName].params[paramName];
+  const paramSpec = ActionsRegistry[actionName].params[paramName];
   return (
     <Param scriptId={scriptId} spec={paramSpec} value={paramValue} />
   );
@@ -224,7 +230,7 @@ function renderActionPhrase(scriptId, actionPhrase) {
     <span className="faint">{modifier}: </span>
   ) : null;
 
-  const paramNames = Actions[actionName].phraseForm;
+  const paramNames = ActionsRegistry[actionName].phraseForm;
   const renderedActionParams = actionParams.map((paramValue, i) => (
     <span key={paramNames[i]} style={{ paddingRight: '0.25em' }}>
       {renderActionParam(scriptId, actionName, paramNames[i], paramValue)}
@@ -343,7 +349,7 @@ function renderActionClause(scriptId, action) {
 }
 
 function renderEventParam(scriptId, eventType, paramName, paramValue) {
-  const event = Events[eventType];
+  const event = EventsRegistry[eventType];
   const paramSpec = event.specParams[paramName];
   return (
     <Param scriptId={scriptId} spec={paramSpec} value={paramValue} />

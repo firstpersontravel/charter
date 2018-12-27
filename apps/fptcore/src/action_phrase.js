@@ -1,6 +1,6 @@
 var moment = require('moment-timezone');
 
-var Actions = require('./actions');
+var ActionsRegistry = require('./registries/actions');
 var EvalCore = require('./eval');
 var TextCore = require('./text');
 var TimeCore = require('./time');
@@ -57,11 +57,11 @@ ActionPhraseCore.extractModifier = function(actionPhrase) {
 ActionPhraseCore.expandPlainActionPhrase = function(plainActionPhrase) {
   var words = TextCore.splitWords(plainActionPhrase);
   var name = words[0];
-  var actionFunc = Actions[name];
-  if (!actionFunc) {
+  var actionClass = ActionsRegistry[name];
+  if (!actionClass) {
     throw new Error('Unknown action ' + name);
   }
-  var paramNames = actionFunc.phraseForm || [];
+  var paramNames = actionClass.phraseForm || [];
   var params = {};
   words.slice(1)
     .forEach(function(arg, index) {

@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var EvalCore = require('./eval');
-var Events = require('./events');
+var EventsRegistry = require('./registries/events');
 
 var TriggerEventCore = {};
 
@@ -17,7 +17,7 @@ TriggerEventCore.doesEventFireTriggerEvent = function(
   }
   // Get matching function and calculate match.
   var spec = triggerEvent[event.type];
-  return Events[event.type].matchEvent(script, context, spec, event);
+  return EventsRegistry[event.type].matchEvent(script, context, spec, event);
 };
 
 /**
@@ -38,7 +38,7 @@ TriggerEventCore.doesEventFireTrigger = function(
   script, context, trigger, event
 ) {
   // If no matcher for this event type, exit
-  if (!Events[event.type]) {
+  if (!EventsRegistry[event.type]) {
     return false;
   }
   var triggerEvent = TriggerEventCore.triggerEventForEventType(

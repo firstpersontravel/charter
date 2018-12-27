@@ -1,5 +1,5 @@
 module.exports = {
-  Actions: require('./actions'),
+  ActionsRegistry: require('./registries/actions'),
   ActionCore: require('./action'),
   ActionParamCore: require('./action_param'),
   ActionPhraseCore: require('./action_phrase'),
@@ -7,7 +7,7 @@ module.exports = {
   ActionValidationCore: require('./action_validation'),
   Errors: require('./errors'),
   EvalCore: require('./eval'),
-  Events: require('./events'),
+  EventsRegistry: require('./registries/events'),
   ParamValidators: require('./param_validators'),
   PlayerCore: require('./player'),
   SceneCore: require('./scene'),

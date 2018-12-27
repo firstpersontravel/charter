@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const Events = require('../src/events');
+const EventsRegistry = require('../src/registries/events');
 const TriggerEventCore = require('../src/trigger_event');
 
 var sandbox = sinon.sandbox.create();
@@ -153,7 +153,7 @@ describe('TriggerEventCore', () => {
 
     it('returns result of event matcher', () => {
       const stub = sandbox
-        .stub(Events.cue_signaled, 'matchEvent')
+        .stub(EventsRegistry.cue_signaled, 'matchEvent')
         .returns(true);
       const triggerEvent = { cue_signaled: {} };
       const event = { type: 'cue_signaled' };
