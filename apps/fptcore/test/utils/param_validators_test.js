@@ -9,25 +9,40 @@ const err = (res, expected) => eq(res, [expected]);
 describe('ParamValidators', () => {
   describe('#string', () => {
     it('permits string', () => {
-      const result = ParamValidators.string({}, 's', {}, 'abc');
-      ok(result);
+      ok(ParamValidators.string({}, 's', {}, 'abc'));
     });
 
     it('warns if not a string', () => {
-      const result = ParamValidators.string({}, 's', {}, []);
-      err(result, 'String param "s" should be a string.');
+      err(
+        ParamValidators.string({}, 's', {}, []),
+        'String param "s" should be a string.');
+    });
+  });
+
+  describe('#simple', () => {
+    it('permits string, number, or boolean', () => {
+      ok(ParamValidators.simple({}, 's', {}, 'abc'));
+      ok(ParamValidators.simple({}, 's', {}, 123));
+      ok(ParamValidators.simple({}, 's', {}, true));
+      ok(ParamValidators.simple({}, 's', {}, false));
+    });
+
+    it('warns if not a string, number or boolean', () => {
+      err(ParamValidators.simple({}, 's', {}, [1]),
+        'Simple param "s" should be a string, number or boolean.');
+      err(ParamValidators.simple({}, 's', {}, {a: 2}),
+        'Simple param "s" should be a string, number or boolean.');
     });
   });
 
   describe('#if', () => {
     it('permits string', () => {
-      const result = ParamValidators.if({}, 's', {}, 'abc');
-      ok(result);
+      ok(ParamValidators.if({}, 's', {}, 'abc'));
     });
 
     it('warns if not a string', () => {
-      const result = ParamValidators.if({}, 's', {}, []);
-      err(result, 'If param "s" should be a string.');
+      err(ParamValidators.if({}, 's', {}, []),
+        'If param "s" should be a string.');
     });
 
     it.skip('validates if statement', () => {});
@@ -48,8 +63,8 @@ describe('ParamValidators', () => {
     });
 
     it('warns if not a string', () => {
-      const result = ParamValidators.ref({}, 's', {}, 1);
-      err(result, 'Ref param "s" should be a string.');
+      err(ParamValidators.ref({}, 's', {}, 1),
+        'Ref param "s" should be a string.');
     });
 
     it('warns if contains invalid characters', () => {
@@ -165,6 +180,40 @@ describe('ParamValidators', () => {
         'Name param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
       err(ParamValidators.name({}, 's', {}, 'b^$(D'),
         'Name param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
+    });
+  });
+
+  describe('#dictionary', () => {
+    const spec = {
+      type: 'dictionary',
+      keys: { type: 'ref' },
+      values: { type: 'simple' }
+    };
+
+    it('checks keys and values', () => {
+      const valid = { abc_123: 5, 'def.egf': true, '0': 'abc' };
+      ok(ParamValidators.dictionary({}, 's', spec, valid));
+    });
+
+    it('warns if not an object', () => {
+      err(ParamValidators.dictionary({}, 's', spec, [1]),
+        'Dictionary param "s" should be an object.');
+      err(ParamValidators.dictionary({}, 's', spec, 123),
+        'Dictionary param "s" should be an object.');
+      err(ParamValidators.dictionary({}, 's', spec, true),
+        'Dictionary param "s" should be an object.');
+    });
+
+    it('warns if invalid key', () => {
+      const invalid = { 'd%f': false };
+      err(ParamValidators.dictionary({}, 's', spec, invalid),
+        'Ref param "s key" should be alphanumeric with periods.');
+    });
+
+    it('warns if invalid value', () => {
+      const invalid = { 'car': ['an', 'array'] };
+      err(ParamValidators.dictionary({}, 's', spec, invalid),
+        'Simple param "s value" should be a string, number or boolean.');
     });
   });
 });

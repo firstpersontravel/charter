@@ -105,8 +105,14 @@ ParamValidators.resource = function(script, name, spec, param) {
 };
 
 ParamValidators.dictionary = function(script, name, spec, param) {
+  if (!spec.keys) {
+    throw new Error('Invalid dictionary spec: requires keys.');
+  }
+  if (!spec.values) {
+    throw new Error('Invalid dictionary spec: requires values.');
+  }
   if (!_.isPlainObject(param)) {
-    return 'Dictionary param "' + name + '" should be an object.';
+    return ['Dictionary param "' + name + '" should be an object.'];
   }
   var itemWarnings = [];
   _.each(param, function(value, key) {
