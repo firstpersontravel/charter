@@ -1,24 +1,6 @@
 var _ = require('lodash');
 
-/**
- * Meters distance between two coordinate pairs.
- */
-function latLngDistance(lat1, lng1, lat2, lng2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2 - lat1);  // deg2rad below
-  var dLon = deg2rad(lng2 - lng1); 
-  var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; // Distance in km
-  return d * 1000; // in meters
-}
-
-function deg2rad(deg) {
-  return deg * (Math.PI / 180);
-}
+var distance = require('../../utils/distance');
 
 module.exports = {
   message_sent: {
@@ -57,7 +39,7 @@ module.exports = {
         var waypoint = _.find(script.content.waypoints, {
           name: geofence.center
         });
-        var dist = latLngDistance(
+        var dist = distance(
           event.location.latitude, event.location.longitude,
           waypoint.coords[0], waypoint.coords[1]);
         // Don't let accuracy get wider than 15 meters, since that'd cause

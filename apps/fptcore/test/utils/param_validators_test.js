@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const ParamValidators = require('../src/param_validators');
+const ParamValidators = require('../../src/utils/param_validators');
 
 const sandbox = sinon.sandbox.create();
 
@@ -10,7 +10,6 @@ describe('ParamValidators', () => {
   afterEach(() => {
     sandbox.restore();
   });
-
 
   describe('#string', () => {
     it('permits string', () => {

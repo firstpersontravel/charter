@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var TimeCore = require('./time');
+var TimeCore = require('../time');
 
 var ParamValidators = {};
 

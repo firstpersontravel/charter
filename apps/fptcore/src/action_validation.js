@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var ActionsRegistry = require('./registries/actions');
-var ParamValidators = require('./param_validators');
+var ParamValidators = require('./utils/param_validators');
 
 var ActionValidationCore = {};
 

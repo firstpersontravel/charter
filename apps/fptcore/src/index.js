@@ -8,7 +8,6 @@ module.exports = {
   Errors: require('./errors'),
   EvalCore: require('./eval'),
   EventsRegistry: require('./registries/events'),
-  ParamValidators: require('./param_validators'),
   PlayerCore: require('./player'),
   SceneCore: require('./scene'),
   ScriptCore: require('./script'),

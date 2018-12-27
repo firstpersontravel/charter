@@ -5,9 +5,9 @@ var ActionsRegistry = require('./registries/actions');
 var ActionPhraseCore = require('./action_phrase');
 var ActionValidationCore = require('./action_validation');
 var EventsRegistry = require('./registries/events');
-var ParamValidators = require('./param_validators');
+var ParamValidators = require('./utils/param_validators');
 var TextCore = require('./text');
-var distance = require('./distance');
+var distance = require('./utils/distance');
 var WaypointCore = require('./waypoint');
 
 var ScriptCore = {};
