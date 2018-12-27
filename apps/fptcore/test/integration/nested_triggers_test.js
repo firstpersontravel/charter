@@ -34,7 +34,7 @@ const script = {
     }, {
       name: 'TRIGGER-GREET-1',
       event: { cue_signaled: 'CUE-GREET' },
-      actions: ['cue CUE-GREET-REPLY']
+      actions: ['signal_cue CUE-GREET-REPLY']
     }, {
       name: 'TRIGGER-GREET-2',
       event: { cue_signaled: 'CUE-GREET-REPLY' },
@@ -44,7 +44,7 @@ const script = {
       event: { cue_signaled: 'CUE-NAV-1' },
       actions: [
         'set_value is_navigating true',
-        'cue CUE-NAV-2'
+        'signal_cue CUE-NAV-2'
       ]
     }, {
       name: 'TRIGGER-NAV-2',
@@ -123,7 +123,10 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies cue triggering action immediately', () => {
-    const action = { name: 'cue', params: { cue_name: 'CUE-PICK-APPLES' } };
+    const action = {
+      name: 'signal_cue',
+      params: { cue_name: 'CUE-PICK-APPLES' }
+    };
     const result = ActionCore.applyAction(script, context, action, now);
 
     assert.strictEqual(result.nextContext.Farmer.apples, 7);
@@ -162,7 +165,7 @@ describe('Integration - Nested Triggers', () => {
 
   it('applies cue triggering action later', () => {
     const inTwoHours = now.clone().add(2, 'hours');
-    const action = { name: 'cue', params: { cue_name: 'CUE-SUNRISE' } };
+    const action = { name: 'signal_cue', params: { cue_name: 'CUE-SUNRISE' } };
     const result = ActionCore.applyAction(script, context, action, now);
 
     assert.strictEqual(result.nextContext.Farmer.apples, 2);
@@ -187,20 +190,20 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies nested triggers', () => {
-    const action = { name: 'cue', params: { cue_name: 'CUE-GREET' } };
+    const action = { name: 'signal_cue', params: { cue_name: 'CUE-GREET' } };
     const result = ActionCore.applyAction(script, context, action, now);
 
     // Test intermediate action calls
     // First cue should have been called with no event
-    assert(actionSpies.cue);
-    assert.deepStrictEqual(actionSpies.cue.firstCall.args, [
+    assert(actionSpies.signal_cue);
+    assert.deepStrictEqual(actionSpies.signal_cue.firstCall.args, [
       script,
       Object.assign({}, context, { event: null }),
       { cue_name: 'CUE-GREET' },
       now
     ]);
     // Second cue should have been called with the event 'cue CUE-GREET',
-    assert.deepStrictEqual(actionSpies.cue.secondCall.args, [
+    assert.deepStrictEqual(actionSpies.signal_cue.secondCall.args, [
       script,
       Object.assign({}, context, {
         event: {
@@ -268,7 +271,7 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies nested triggers requiring intermediate context', () => {
-    const action = { name: 'cue', params: { cue_name: 'CUE-NAV-1' } };
+    const action = { name: 'signal_cue', params: { cue_name: 'CUE-NAV-1' } };
     const result = ActionCore.applyAction(script, context, action, now);
 
     assert.deepStrictEqual(result.resultOps,

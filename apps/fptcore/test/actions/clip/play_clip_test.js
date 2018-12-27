@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const playClip = require('../../../src/actions/call/play_clip');
+const playClip = require('../../../src/actions/clip/play_clip');
 
 describe('#playClip', () => {
 

@@ -1,14 +1,19 @@
-describe('Actions', () => {
-  
-  // Require subdirs
-  require('./audio/_index');
-  require('./call/_index');
-  require('./message/_index');
+const fs = require('fs');
 
-  require('fs').readdirSync(__dirname + '/')
-    .forEach(function(file) {
-      if (file.match(/\.js$/) !== null && file !== 'index.js') {
-        exports[file.replace('.js', '')] = require('./' + file);
+describe('Actions', () => {
+  fs.readdirSync(`${__dirname}/`).forEach(function(file) {
+    if (file.match(/\.js$/) !== null && file !== 'index.js') {
+      require(`./${file}`);
+      return;
+    }
+    const subdir = `${__dirname}/${file}/`;
+    if (!fs.existsSync(subdir) || !fs.lstatSync(subdir).isDirectory()) {
+      return;
+    }
+    fs.readdirSync(subdir).forEach(function(subfile) {
+      if (subfile.match(/\.js$/) !== null && subfile !== 'index.js') {
+        require(`./${file}/${subfile}`);
       }
     });
+  });
 });

@@ -1,4 +1,10 @@
-describe('Call', () => {
+describe('Events', () => {
+  
+  // Require subdirs
+  // require('./audio/_index');
+  // require('./call/_index');
+  // require('./message/_index');
+
   require('fs').readdirSync(__dirname + '/')
     .forEach(function(file) {
       if (file.match(/\.js$/) !== null && file !== 'index.js') {

@@ -90,8 +90,9 @@ describe('ActionPhraseCore', () => {
 
   describe('#expandActionPhrase', () => {
     it('parses simple cue', () => {
-      var res = ActionPhraseCore.expandActionPhrase('cue cue_name', now, context);
-      assert.equal(res.name, 'cue');
+      var res = ActionPhraseCore.expandActionPhrase(
+        'signal_cue cue_name', now, context);
+      assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
       assertOffset(res.scheduleAt, now, 0);
     });
@@ -115,30 +116,30 @@ describe('ActionPhraseCore', () => {
 
     it('parses action with relative time modifier', () => {
       var res = ActionPhraseCore.expandActionPhrase(
-        'in 3m, cue cue_name', now, context);
-      assert.equal(res.name, 'cue');
+        'in 3m, signal_cue cue_name', now, context);
+      assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
       assertOffset(res.scheduleAt, now, 180);
     });
 
     it('parses action with absolute time modifier', () => {
       var res = ActionPhraseCore.expandActionPhrase(
-        'at time134p, cue cue_name', now, context);
-      assert.equal(res.name, 'cue');
+        'at time134p, signal_cue cue_name', now, context);
+      assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
       assertOffset(res.scheduleAt, time134p, 0);
     });
 
     it('parses action with complex time modifier', () => {
       var res = ActionPhraseCore.expandActionPhrase(
-        '10m AFTER  time134p, cue cue_name', now, context);
-      assert.equal(res.name, 'cue');
+        '10m AFTER  time134p, signal_cue cue_name', now, context);
+      assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
       assertOffset(res.scheduleAt, time134p, 600);
 
       var res2 = ActionPhraseCore.expandActionPhrase(
-        '10s  before time134p , cue cue_name', now, context);
-      assert.equal(res2.name, 'cue');
+        '10s  before time134p , signal_cue cue_name', now, context);
+      assert.equal(res2.name, 'signal_cue');
       assert.deepEqual(res2.params, { cue_name: 'cue_name' });
       assertOffset(res2.scheduleAt, time134p, -10);
     });
