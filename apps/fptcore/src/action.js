@@ -25,6 +25,7 @@ ActionCore.opsForAction = function(script, context, action, applyAt) {
   var paramsSpec = actionFunc.params;
   var params = ActionParamCore.prepareParams(script, context, paramsSpec,
     action.params);
+  actionFunc = actionFunc.applyAction || actionFunc;
   return actionFunc(script, contextWithEvent, params, applyAt) || [];
 };
 

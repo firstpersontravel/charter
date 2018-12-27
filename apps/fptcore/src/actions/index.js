@@ -1,9 +1,9 @@
 module.exports = {
   // Audio
-  pause_audio: require('./audio/pause_audio'),
-  play_audio: require('./audio/play_audio'),
-  resume_audio: require('./audio/resume_audio'),
-  stop_audio: require('./audio/stop_audio'),
+  pause_audio: require('../resources/audio/actions').pause_audio,
+  play_audio: require('../resources/audio/actions').play_audio,
+  resume_audio: require('../resources/audio/actions').resume_audio,
+  stop_audio: require('../resources/audio/actions').stop_audio,
   // Call
   initiate_call: require('./call/initiate_call'),
   add_to_call: require('./call/add_to_call'),
