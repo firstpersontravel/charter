@@ -18,10 +18,6 @@ ParamValidators.simple = function(script, name, spec, param) {
   }
 };
 
-ParamValidators.ifClause = function(script, name, spec, param) {
-  // TODO SHOULD DO MORE VALIDATION HERE
-};
-
 ParamValidators.number = function(script, name, spec, param) {
   if (isNaN(Number(param))) {
     return ['Number param "' + name + '" should be a number.'];
@@ -97,10 +93,10 @@ ParamValidators.simpleAttribute = function(script, name, spec, param) {
     return ['Simple attribute param "' + name + '" should be a string.'];
   }
   if (!/[A-Za-z]/.test(param[0])) {
-    return ['Simple attribute param "' + name + '" should start with a letter.'];
+    return ['Simple attribute param "' + name + '" ("' + param + '") should start with a letter.'];
   }
   if (!/^[\w\d_]*$/.test(param)) {
-    return ['Simple attribute param "' + name + '" should be alphanumeric with underscores.'];
+    return ['Simple attribute param "' + name + '" ("' + param + '") should be alphanumeric with underscores.'];
   }
 };
 
@@ -109,19 +105,19 @@ ParamValidators.nestedAttribute = function(script, name, spec, param) {
     return ['Nested attribute param "' + name + '" should be a string.'];
   }
   if (!/[A-Za-z]/.test(param[0])) {
-    return ['Nested attribute param "' + name + '" should start with a letter.'];
+    return ['Nested attribute param "' + name + '" ("' + param + '") should start with a letter.'];
   }
   if (!/^[\w\d_.]+$/.test(param)) {
-    return ['Nested attribute param "' + name + '" should be alphanumeric with underscores and periods.'];
+    return ['Nested attribute param "' + name + '" ("' + param + '") should be alphanumeric with underscores and periods.'];
   }
 };
 
 ParamValidators.lookupable = function(script, name, spec, param) {
   if (!_.isString(param)) {
-    return ['Lookupable param "' + name + '" should be a string.'];
+    return ['Lookupable param "' + name + '" ("' + param + '") should be a string.'];
   }
   if (!/^['"]?[\w\d_.]+['"]?$/.test(param)) {
-    return ['Lookupable param "' + name + '" should be alphanumeric with underscores and periods.'];
+    return ['Lookupable param "' + name + '" ("' + param + '") should be alphanumeric with underscores and periods.'];
   }
 };
 
@@ -144,6 +140,10 @@ ParamValidators.reference = function(script, name, spec, param) {
     return ['Reference param "' + name + '" ("' + param + '") ' +
       'is not in collection "' + collectionName + '".'];
   }
+};
+
+ParamValidators.ifClause = function(script, name, spec, param) {
+  // TODO SHOULD DO MORE VALIDATION HERE
 };
 
 ParamValidators.dictionary = function(script, name, spec, param) {
@@ -189,6 +189,15 @@ ParamValidators.list = function(script, name, spec, param) {
   return itemWarnings;
 };
 
+ParamValidators.object = function(script, name, spec, param) {
+  if (!spec.properties) {
+    throw new Error('Invalid object spec: requires properties.');
+  }
+  var prefix = name + '.';
+  return ParamValidators.validateParams(script, spec.properties, param,
+    prefix);
+};
+
 /**
  * Embed a subresource validator
  */
@@ -210,26 +219,32 @@ ParamValidators.variegated = function(script, name, spec, param) {
   if (!spec.classes) {
     throw new Error('Invalid variegated spec: requires classes.');
   }
-  if (!_.isPlainObject(param)) {
-    return ['Variegated param "' + name + '" should be an object.'];
+  if (!_.isFunction(spec.key)) {
+    if (!_.isPlainObject(param)) {
+      return ['Variegated param "' + name + '" should be an object.'];
+    }
   }
-  if (!param[spec.key]) {
-    return ['Variegated param "' + name + '" should have a "' + spec.key +
+  // HACK TO SUPPORT FUNCTION KEYS FOR NOW UNTIL WE SIMPLIFY THE EVENT
+  // STRUCTURE -- should be {type: event_type, ...params}.
+  var keyName = _.isFunction(spec.key) ? 'key' : spec.key;
+  var variety = _.isFunction(spec.key) ? spec.key(param) : param[spec.key];
+  if (!variety) {
+    return ['Variegated param "' + name + '" should have a "' + keyName +
       '" property.'];
   }
-  if (!_.isString(param[spec.key])) {
-    return ['Variegated param "' + name + '" property "' + spec.key +
+  if (!_.isString(variety)) {
+    return ['Variegated param "' + name + '" property "' + keyName +
       '" should be a string.'];
   }
-  if (!spec.classes[param[spec.key]]) {
-    return ['Variegated param "' + name + '" property "' + spec.key +
-      '" ("' + param[spec.key] + '") should be one of: ' +
+  if (!spec.classes[variety]) {
+    return ['Variegated param "' + name + '" property "' + keyName +
+      '" ("' + variety + '") should be one of: ' +
       Object.keys(spec.classes).join(', ') + '.'];
   }
   var commonClass = spec.common;
-  var variedClass = spec.classes[param[spec.key]];
+  var variedClass = spec.classes[variety];
   var mergedClass = _.merge({}, commonClass, variedClass);
-  var prefix = name + '{' + spec.key + '=' + param[spec.key] + '}.';
+  var prefix = name + '{' + keyName + '=' + variety + '}.';
   return ParamValidators.validateResource(script, mergedClass, param, prefix);
 };
 
@@ -267,6 +282,10 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
     var paramSpec = paramsSpec[paramName];
     var param = isPassthrough ? params : params[paramName];
     var paramNameWithPrefix = prefix + paramName;
+    if (!paramSpec) {
+      console.log('paramsSpec', paramsSpec);
+      throw new Error('Empty param spec for param "' + paramNameWithPrefix + '".');
+    }
     if (_.isUndefined(param)) {
       if (paramSpec.required) {
         warnings.push(
@@ -300,9 +319,12 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
  */
 ParamValidators.validateResource = function(script, resourceClass, resource,
   prefix) {
-  var paramsSpec = resourceClass.properties;
-  var warnings = ParamValidators.validateParams(script, paramsSpec,
-    resource, prefix || '');
+  if (!resourceClass.properties) {
+    console.log('resourceClass', resourceClass);
+    throw new Error('Invalid resource: expected properties.');
+  }
+  var warnings = ParamValidators.validateParams(script,
+    resourceClass.properties, resource, prefix || '');
   if (resourceClass.validateResource) {
     var resourceWarnings = resourceClass.validateResource(script, resource);
     warnings.push.apply(warnings, resourceWarnings);

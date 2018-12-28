@@ -30,12 +30,10 @@ var PANEL_CLASSES = {
         type: 'list',
         required: true,
         items: {
-          type: 'subresource',
-          class: {
-            properties: {
-              value: { type: 'string', required: true },
-              text: { type: 'string', required: true }
-            }
+          type: 'object',
+          properties: {
+            value: { type: 'string', required: true },
+            text: { type: 'string', required: true }
           }
         }
       }

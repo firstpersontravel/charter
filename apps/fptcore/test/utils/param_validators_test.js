@@ -160,21 +160,21 @@ describe('ParamValidators', () => {
 
     it('warns if starts with a number', () => {
       err(ParamValidators.simpleAttribute({}, 's', {}, '0'),
-        'Simple attribute param "s" should start with a letter.');
+        'Simple attribute param "s" ("0") should start with a letter.');
     });
 
     it('does not allow quotes', () => {
       err(ParamValidators.simpleAttribute({}, 's', {}, '"abc"'),
-        'Simple attribute param "s" should start with a letter.');
+        'Simple attribute param "s" (""abc"") should start with a letter.');
       err(ParamValidators.simpleAttribute({}, 's', {}, '\'A\''),
-        'Simple attribute param "s" should start with a letter.');
+        'Simple attribute param "s" ("\'A\'") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
       err(ParamValidators.simpleAttribute({}, 's', {}, 'a.b'),
-        'Simple attribute param "s" should be alphanumeric with underscores.');
+        'Simple attribute param "s" ("a.b") should be alphanumeric with underscores.');
       err(ParamValidators.simpleAttribute({}, 's', {}, 'b^$(D'),
-        'Simple attribute param "s" should be alphanumeric with underscores.');
+        'Simple attribute param "s" ("b^$(D") should be alphanumeric with underscores.');
     });
   });
 
@@ -193,23 +193,23 @@ describe('ParamValidators', () => {
 
     it('warns if starts with a number', () => {
       err(ParamValidators.nestedAttribute({}, 's', {}, '0'),
-        'Nested attribute param "s" should start with a letter.');
+        'Nested attribute param "s" ("0") should start with a letter.');
     });
 
     it('does not allow quotes', () => {
       err(ParamValidators.nestedAttribute({}, 's', {}, '"abc"'),
-        'Nested attribute param "s" should start with a letter.');
+        'Nested attribute param "s" (""abc"") should start with a letter.');
       err(ParamValidators.nestedAttribute({}, 's', {}, '\'A\''),
-        'Nested attribute param "s" should start with a letter.');
+        'Nested attribute param "s" ("\'A\'") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
       err(ParamValidators.nestedAttribute({}, 's', {}, 'a-b'),
-        'Nested attribute param "s" should be alphanumeric with underscores and periods.');
+        'Nested attribute param "s" ("a-b") should be alphanumeric with underscores and periods.');
       err(ParamValidators.nestedAttribute({}, 's', {}, 'a"-b'),
-        'Nested attribute param "s" should be alphanumeric with underscores and periods.');
+        'Nested attribute param "s" ("a"-b") should be alphanumeric with underscores and periods.');
       err(ParamValidators.nestedAttribute({}, 's', {}, 'b^$(D'),
-        'Nested attribute param "s" should be alphanumeric with underscores and periods.');
+        'Nested attribute param "s" ("b^$(D") should be alphanumeric with underscores and periods.');
     });
   });
 
@@ -229,16 +229,16 @@ describe('ParamValidators', () => {
 
     it('warns if not a string', () => {
       err(ParamValidators.lookupable({}, 's', {}, 1),
-        'Lookupable param "s" should be a string.');
+        'Lookupable param "s" ("1") should be a string.');
     });
 
     it('warns if contains invalid characters', () => {
       err(ParamValidators.lookupable({}, 's', {}, 'a-b'),
-        'Lookupable param "s" should be alphanumeric with underscores and periods.');
+        'Lookupable param "s" ("a-b") should be alphanumeric with underscores and periods.');
       err(ParamValidators.lookupable({}, 's', {}, 'a"-b'),
-        'Lookupable param "s" should be alphanumeric with underscores and periods.');
+        'Lookupable param "s" ("a"-b") should be alphanumeric with underscores and periods.');
       err(ParamValidators.lookupable({}, 's', {}, 'b^$(D'),
-        'Lookupable param "s" should be alphanumeric with underscores and periods.');
+        'Lookupable param "s" ("b^$(D") should be alphanumeric with underscores and periods.');
     });
   });
 
@@ -326,7 +326,7 @@ describe('ParamValidators', () => {
     it('warns if invalid key', () => {
       const invalid = { 'd%f': false };
       err(ParamValidators.dictionary({}, 's', spec, invalid),
-        'Nested attribute param "s[d%f]" should be alphanumeric with underscores and periods.');
+        'Nested attribute param "s[d%f]" ("d%f") should be alphanumeric with underscores and periods.');
     });
 
     it('warns if invalid value', () => {
@@ -357,6 +357,46 @@ describe('ParamValidators', () => {
       const invalid = ['abc'];
       err(ParamValidators.list({}, 's', spec, invalid),
         'Number param "s[0]" should be a number.');
+    });
+  });
+
+  describe('#object', () => {
+    const spec = {
+      type: 'object',
+      properties: {
+        name: { type: 'name', required: true },
+        count: { type: 'number' }
+      }
+    };
+
+    it('checks object', () => {
+      const valid = { name: 'test', count: 123 };
+      ok(ParamValidators.object({}, 's', spec, valid));
+    });
+
+    it('warns if missing item', () => {
+      err(ParamValidators.object({}, 's', spec, { count: 2 }),
+        'Required param "s.name" not present.');
+    });
+
+    it('warns if extra item', () => {
+      var withExtra = { name: 'test', extra: true };
+      err(ParamValidators.object({}, 's', spec, withExtra),
+        'Unexpected param "s.extra" (expected one of: name, count).');
+    });
+
+    it('gathers multiple warnings', () => {
+      var invalid = { count: [123], extra: true };
+      var res = ParamValidators.object({}, 's', spec, invalid);
+      eq(res, [
+        'Required param "s.name" not present.',
+        'Unexpected param "s.extra" (expected one of: name, count).'
+      ]);
+    });
+
+    it('warns if not an object', () => {
+      err(ParamValidators.object({}, 's', spec, 'abc'),
+        'Parameters should be an object.');
     });
   });
 

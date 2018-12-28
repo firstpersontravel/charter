@@ -34,15 +34,17 @@ ActionValidationCore.precheckAction = function(script, action, trigger) {
   var actionClass = ActionValidationCore.getAction(action.name);
   if (actionClass.requiredContext) {
     // Check that the trigger event type matches the required context.
-    var triggerEventType = Object.keys(trigger.event || {})[0] || null;
-    if (!_.includes(actionClass.requiredContext, triggerEventType)) {
-      warnings.push(
-        'Required context ' +
-        actionClass.requiredContext
-          .map(function(s) { return '"' + s + '"'; })
-          .join(' or ') +
-        ' not present.');
-    }
+    _.forEach(trigger.event, function(triggerEvent) {
+      var triggerEventType = Object.keys(triggerEvent || {})[0] || null;
+      if (!_.includes(actionClass.requiredContext, triggerEventType)) {
+        warnings.push(
+          'Required context ' +
+          actionClass.requiredContext
+            .map(function(s) { return '"' + s + '"'; })
+            .join(' or ') +
+          ' not present.');
+      }
+    });
   }
   return warnings;
 };
