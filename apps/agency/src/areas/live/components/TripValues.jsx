@@ -107,7 +107,7 @@ export default class TripValues extends Component {
       return null;
     }
     return (this.props.tripStatus.instance.script.content.waypoints || [])
-      .filter(w => w.options)
+      .filter(w => w.options && w.options.length > 1)
       .map(w => this.renderWaypointRow(w));
   }
 
