@@ -2,13 +2,13 @@ var _ = require('lodash');
 
 var EvalCore = require('../../cores/eval');
 
-var MESSAGE_TYPES = ['text', 'image', 'audio'];
+var MESSAGE_TYPE_OPTIONS = ['text', 'image', 'audio'];
 
 var custom_message = {
   params: {
     from_role_name: { required: true, type: 'reference', collection: 'roles' },
     to_role_name: { required: true, type: 'reference', collection: 'roles' },
-    message_type: { required: true, type: 'enum', values: MESSAGE_TYPES },
+    message_type: { required: true, type: 'enum', options: MESSAGE_TYPE_OPTIONS },
     message_content: { required: true, type: 'string' },
     location_latitude: { required: false, type: 'number' },
     location_longitude: { required: false, type: 'number' },

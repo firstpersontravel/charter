@@ -1,11 +1,11 @@
 var SubresourcesRegistry = require('../../registries/subresources');
 
-var LAYOUT_TYPE_VALUES = ['simple', 'tabs'];
+var LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
 
 var layout = {
   properties: {
     name: { type: 'string', required: true },
-    type: { type: 'enum', values: LAYOUT_TYPE_VALUES, required: true },
+    type: { type: 'enum', options: LAYOUT_TYPE_OPTIONS, required: true },
     section: { type: 'string' },
     header_panels: {
       type: 'list',

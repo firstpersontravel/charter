@@ -1,6 +1,6 @@
-var PANEL_BUTTON_STYLE_VALUES = ['solo'];
-var PANEL_IMAGE_STYLE_VALUES = ['float-right'];
-var PANEL_TEXT_STYLE_VALUES = ['centered', 'quest'];
+var PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
+var PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
+var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'quest'];
 
 var PANEL_COMMON_CLASS = {
   properties: {
@@ -19,7 +19,7 @@ var PANEL_CLASSES = {
     properties: {
       text: { type: 'string', required: true },
       cue: { type: 'reference', collection: 'cues', required: true },
-      style: { type: 'enum', values: PANEL_BUTTON_STYLE_VALUES }
+      style: { type: 'enum', options: PANEL_BUTTON_STYLE_OPTIONS }
     }
   },
   choice: {
@@ -64,7 +64,7 @@ var PANEL_CLASSES = {
   image: {
     properties: {
       path: { type: 'media', required: true },
-      style: { type: 'enum', values: PANEL_IMAGE_STYLE_VALUES }
+      style: { type: 'enum', options: PANEL_IMAGE_STYLE_OPTIONS }
     }
   },
   messages_browse: {
@@ -96,7 +96,7 @@ var PANEL_CLASSES = {
   text: {
     properties: {
       text: { type: 'string', required: true },
-      style: { type: 'enum', values: PANEL_TEXT_STYLE_VALUES }
+      style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
     }
   },
   video: {

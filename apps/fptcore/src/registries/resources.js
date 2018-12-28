@@ -12,7 +12,8 @@ var moduleResourceSets = [
   require('../modules/message/resources'),
   require('../modules/page/resources'),
   require('../modules/relay/resources'),
-  require('../modules/role/resources')
+  require('../modules/role/resources'),
+  require('../modules/route/resources')
 ];
 
 var ResourcesRegistry = {};

@@ -1,5 +1,7 @@
 var _ = require('lodash');
 
+var MESSAGE_TYPE_OPTIONS = ['text', 'image', 'audio'];
+
 var distance = require('../../utils/distance');
 
 module.exports = {
@@ -7,11 +9,7 @@ module.exports = {
     specParams: {
       from: { required: false, type: 'reference', collection: 'roles' },
       to: { required: false, type: 'reference', collection: 'roles' },
-      type: {
-        required: false,
-        type: 'enum',
-        values: ['text', 'image', 'audio']
-      },
+      type: { required: false, type: 'enum', options: MESSAGE_TYPE_OPTIONS },
       contains: { required: false, type: 'string' },
       geofence: { required: false, type: 'reference', collection: 'geofences' }
     },

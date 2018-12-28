@@ -1,9 +1,9 @@
-var QUERY_TYPE_VALUES = ['normal'];
+var QUERY_TYPE_OPTIONS = ['normal'];
 
 var query = {
   properties: {
     name: { type: 'name' },
-    type: { type: 'enum', values: QUERY_TYPE_VALUES, default: 'normal' },
+    type: { type: 'enum', options: QUERY_TYPE_OPTIONS, default: 'normal' },
     hints: { type: 'list', items: { type: 'string' } }
   }
 };

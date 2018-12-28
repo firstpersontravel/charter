@@ -1,10 +1,10 @@
-var MESSAGE_TYPE_VALUES = ['text', 'image', 'audio'];
+var MESSAGE_TYPE_OPTIONS = ['text', 'image', 'audio'];
 
 var message = {
   properties: {
     name: { type: 'name', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    type: { type: 'enum', values: MESSAGE_TYPE_VALUES, required: true },
+    type: { type: 'enum', options: MESSAGE_TYPE_OPTIONS, required: true },
     from: { type: 'reference', collection: 'roles', required: true },
     to: { type: 'reference', collection: 'roles' },
     content: { type: 'string', required: true },

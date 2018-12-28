@@ -36,7 +36,7 @@ var initiate_call = {
     detect_voicemail: {
       required: false,
       type: 'enum',
-      values: ['detect_voicemail']
+      options: ['detect_voicemail']
     }
   },
   phraseForm: ['to_role_name', 'as_role_name', 'detect_voicemail'],

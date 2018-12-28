@@ -42,8 +42,108 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#ifClause', () => {
-    it.skip('validates if statement', () => {});
+  describe('#number', () => {
+    it('permits string number', () => {
+      ok(ParamValidators.number({}, 's', {}, '1'));
+    });
+
+    it('permits number', () => {
+      ok(ParamValidators.number({}, 's', {}, 1.5));
+    });
+
+    it('warns if not a number', () => {
+      err(ParamValidators.number({}, 's', {}, 'abc'),
+        'Number param "s" should be a number.');
+    });
+  });
+
+  describe('#coords', () => {
+    it('permits valid coords', () => {
+      ok(ParamValidators.coords({}, 's', {}, [42, -18.3]));
+    });
+
+    it('warns if not an array of length 2', () => {
+      err(ParamValidators.coords({}, 's', {}, 2),
+        'Coords param "s" should be an array of two numbers.');
+      err(ParamValidators.coords({}, 's', {}, []),
+        'Coords param "s" should be an array of two numbers.');
+      err(ParamValidators.coords({}, 's', {}, [1, 2, 3]),
+        'Coords param "s" should be an array of two numbers.');
+    });
+
+    it('warns if coords are out of bounds', () => {
+      err(ParamValidators.coords({}, 's', {}, [-1000, 0]),
+        'Coords param "s[0]" should be between -180 and 180.');
+      err(ParamValidators.coords({}, 's', {}, [32, 230]),
+        'Coords param "s[1]" should be between -180 and 180.');
+    });
+  });
+
+
+  describe('#name', () => {
+    const spec = { type: 'name' };
+
+    it('warns if not a string', () => {
+      const result = ParamValidators.name({}, 's', spec, 1);
+      err(result, 'Name param "s" ("1") should be a string.');
+    });
+
+    it('warns if does not start with a letter', () => {
+      err(
+        ParamValidators.name({}, 's', spec, '1bc'),
+        'Name param "s" ("1bc") should start with a letter.');
+      err(
+        ParamValidators.name({}, 's', spec, '.bc'),
+        'Name param "s" (".bc") should start with a letter.');
+    });
+
+    it('warns if contains invalid characters', () => {
+      err(ParamValidators.name({}, 's', {}, 'a%b'),
+        'Name param "s" ("a%b") should be alphanumeric with dashes or underscores.');
+      err(ParamValidators.name({}, 's', {}, 'a"-b'),
+        'Name param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
+      err(ParamValidators.name({}, 's', {}, 'b^$(D'),
+        'Name param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
+    });
+  });
+
+  describe('#media', () => {
+    it('permits path', () => {
+      ok(ParamValidators.media({}, 's', {}, 'abc.mp3'));
+    });
+
+    it('warns if not a string', () => {
+      err(ParamValidators.media({}, 's', {}, 123),
+        'Media param "s" should be a string.');
+      err(ParamValidators.media({}, 's', {}, false),
+        'Media param "s" should be a string.');
+    });
+
+    it('warns if not valid extension', () => {
+      const spec = { extensions: ['mp4', 'jpg'] };
+      err(
+        ParamValidators.media({}, 's', spec, 'gabe.mp3'),
+        'Media param "s" should have one of the following extensions: mp4, jpg.');
+    });
+  });
+
+  describe('#enum', () => {
+    it('permits if in enum', () => {
+      const spec = { type: 'enum', options: [1, true, 'abc'] };
+      ok(ParamValidators.enum({}, 's', spec, 1));
+      ok(ParamValidators.enum({}, 's', spec, true));
+      ok(ParamValidators.enum({}, 's', spec, 'abc'));
+    });
+
+    it('warns if not in enum', () => {
+      const spec = { type: 'enum', options: [1, true, 'abc'] };
+      err(ParamValidators.enum({}, 's', spec, '1'),
+        'Enum param "s" is not one of "1", "true", "abc".');
+      err(ParamValidators.enum({}, 's', spec, false),
+        'Enum param "s" is not one of "1", "true", "abc".');
+      err(ParamValidators.enum({}, 's', spec, 'adc'),
+        'Enum param "s" is not one of "1", "true", "abc".');
+    });
   });
 
   describe('#simpleAttribute', () => {
@@ -142,40 +242,6 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#number', () => {
-    it('permits string number', () => {
-      ok(ParamValidators.number({}, 's', {}, '1'));
-    });
-
-    it('permits number', () => {
-      ok(ParamValidators.number({}, 's', {}, 1.5));
-    });
-
-    it('warns if not a number', () => {
-      err(ParamValidators.number({}, 's', {}, 'abc'),
-        'Number param "s" should be a number.');
-    });
-  });
-
-  describe('#enum', () => {
-    it('permits if in enum', () => {
-      const spec = { type: 'enum', values: [1, true, 'abc'] };
-      ok(ParamValidators.enum({}, 's', spec, 1));
-      ok(ParamValidators.enum({}, 's', spec, true));
-      ok(ParamValidators.enum({}, 's', spec, 'abc'));
-    });
-
-    it('warns if not in enum', () => {
-      const spec = { type: 'enum', values: [1, true, 'abc'] };
-      err(ParamValidators.enum({}, 's', spec, '1'),
-        'Enum param "s" is not one of "1", "true", "abc".');
-      err(ParamValidators.enum({}, 's', spec, false),
-        'Enum param "s" is not one of "1", "true", "abc".');
-      err(ParamValidators.enum({}, 's', spec, 'adc'),
-        'Enum param "s" is not one of "1", "true", "abc".');
-    });
-  });
-
   describe('#reference', () => {
     const script = { content: { geofences: [{ name: 'GEOFENCE-2' }] } };
     const spec = { type: 'reference', collection: 'geofences' };
@@ -232,51 +298,8 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#name', () => {
-    const spec = { type: 'name' };
-
-    it('warns if not a string', () => {
-      const result = ParamValidators.name({}, 's', spec, 1);
-      err(result, 'Name param "s" ("1") should be a string.');
-    });
-
-    it('warns if does not start with a letter', () => {
-      err(
-        ParamValidators.name({}, 's', spec, '1bc'),
-        'Name param "s" ("1bc") should start with a letter.');
-      err(
-        ParamValidators.name({}, 's', spec, '.bc'),
-        'Name param "s" (".bc") should start with a letter.');
-    });
-
-    it('warns if contains invalid characters', () => {
-      err(ParamValidators.name({}, 's', {}, 'a%b'),
-        'Name param "s" ("a%b") should be alphanumeric with dashes or underscores.');
-      err(ParamValidators.name({}, 's', {}, 'a"-b'),
-        'Name param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
-      err(ParamValidators.name({}, 's', {}, 'b^$(D'),
-        'Name param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
-    });
-  });
-
-  describe('#media', () => {
-    it('permits path', () => {
-      ok(ParamValidators.media({}, 's', {}, 'abc.mp3'));
-    });
-
-    it('warns if not a string', () => {
-      err(ParamValidators.media({}, 's', {}, 123),
-        'Media param "s" should be a string.');
-      err(ParamValidators.media({}, 's', {}, false),
-        'Media param "s" should be a string.');
-    });
-
-    it('warns if not valid extension', () => {
-      const spec = { extensions: ['mp4', 'jpg'] };
-      err(
-        ParamValidators.media({}, 's', spec, 'gabe.mp3'),
-        'Media param "s" should have one of the following extensions: mp4, jpg.');
-    });
+  describe('#ifClause', () => {
+    it.skip('validates if statement', () => {});
   });
 
   describe('#dictionary', () => {
@@ -502,13 +525,13 @@ describe('ParamValidators', () => {
         image: {
           properties: {
             path: { type: 'media', required: true },
-            style: { type: 'enum', values: ['float-right'] }
+            style: { type: 'enum', options: ['float-right'] }
           }
         },
         text: {
           properties: {
             text: { type: 'string', required: true },
-            style: { type: 'enum', values: ['centered', 'quest'] }
+            style: { type: 'enum', options: ['centered', 'quest'] }
           }
         },
       };

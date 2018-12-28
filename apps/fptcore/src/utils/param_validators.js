@@ -22,39 +22,6 @@ ParamValidators.ifClause = function(script, name, spec, param) {
   // TODO SHOULD DO MORE VALIDATION HERE
 };
 
-ParamValidators.simpleAttribute = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['Simple attribute param "' + name + '" should be a string.'];
-  }
-  if (!/[A-Za-z]/.test(param[0])) {
-    return ['Simple attribute param "' + name + '" should start with a letter.'];
-  }
-  if (!/^[\w\d_]*$/.test(param)) {
-    return ['Simple attribute param "' + name + '" should be alphanumeric with underscores.'];
-  }
-};
-
-ParamValidators.nestedAttribute = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['Nested attribute param "' + name + '" should be a string.'];
-  }
-  if (!/[A-Za-z]/.test(param[0])) {
-    return ['Nested attribute param "' + name + '" should start with a letter.'];
-  }
-  if (!/^[\w\d_.]+$/.test(param)) {
-    return ['Nested attribute param "' + name + '" should be alphanumeric with underscores and periods.'];
-  }
-};
-
-ParamValidators.lookupable = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['Lookupable param "' + name + '" should be a string.'];
-  }
-  if (!/^['"]?[\w\d_.]+['"]?$/.test(param)) {
-    return ['Lookupable param "' + name + '" should be alphanumeric with underscores and periods.'];
-  }
-};
-
 ParamValidators.number = function(script, name, spec, param) {
   if (isNaN(Number(param))) {
     return ['Number param "' + name + '" should be a number.'];
@@ -68,10 +35,13 @@ ParamValidators.boolean = function(script, name, spec, param) {
 };
 
 ParamValidators.enum = function(script, name, spec, param) {
-  if (!_.includes(spec.values, param)) {
+  if (!spec.options) {
+    throw new Error('Invalid enum spec: missing options.');
+  }
+  if (!_.includes(spec.options, param)) {
     return [
       'Enum param "' + name + '" is not one of ' +
-      spec.values.map(function(s) { return '"' + s + '"'; }).join(', ') + '.'
+      spec.options.map(function(s) { return '"' + s + '"'; }).join(', ') + '.'
     ];
   }
 };
@@ -106,6 +76,52 @@ ParamValidators.media = function(script, name, spec, param) {
     if (!matchesExtension) {
       return ['Media param "' + name + '" should have one of the following extensions: ' + spec.extensions.join(', ') + '.'];
     }
+  }
+};
+
+ParamValidators.coords = function(script, name, spec, param) {
+  if (!_.isArray(param) || param.length !== 2 ||
+      isNaN(Number(param[0])) || isNaN(Number(param[1]))) {
+    return ['Coords param "' + name + '" should be an array of two numbers.'];
+  }
+  if (param[0] < -180 || param[0] > 180) {
+    return ['Coords param "' + name + '[0]" should be between -180 and 180.'];
+  }
+  if (param[1] < -180 || param[1] > 180) {
+    return ['Coords param "' + name + '[1]" should be between -180 and 180.'];
+  }
+};
+
+ParamValidators.simpleAttribute = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Simple attribute param "' + name + '" should be a string.'];
+  }
+  if (!/[A-Za-z]/.test(param[0])) {
+    return ['Simple attribute param "' + name + '" should start with a letter.'];
+  }
+  if (!/^[\w\d_]*$/.test(param)) {
+    return ['Simple attribute param "' + name + '" should be alphanumeric with underscores.'];
+  }
+};
+
+ParamValidators.nestedAttribute = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Nested attribute param "' + name + '" should be a string.'];
+  }
+  if (!/[A-Za-z]/.test(param[0])) {
+    return ['Nested attribute param "' + name + '" should start with a letter.'];
+  }
+  if (!/^[\w\d_.]+$/.test(param)) {
+    return ['Nested attribute param "' + name + '" should be alphanumeric with underscores and periods.'];
+  }
+};
+
+ParamValidators.lookupable = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Lookupable param "' + name + '" should be a string.'];
+  }
+  if (!/^['"]?[\w\d_.]+['"]?$/.test(param)) {
+    return ['Lookupable param "' + name + '" should be alphanumeric with underscores and periods.'];
   }
 };
 
