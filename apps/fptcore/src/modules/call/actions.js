@@ -5,7 +5,7 @@ var add_to_call = {
     'call_answered'  // type: call_answered, to: role
   ],
   params: {
-    role_name: { required: true, type: 'resource', collection: 'roles' }
+    role_name: { required: true, type: 'reference', collection: 'roles' }
   },
   applyAction: function (script, context, params, applyAt) {
     // If triggered by an incoming call
@@ -31,8 +31,8 @@ var add_to_call = {
 
 var initiate_call = {
   params: {
-    to_role_name: { required: true, type: 'resource', collection: 'roles' },
-    as_role_name: { required: true, type: 'resource', collection: 'roles' },
+    to_role_name: { required: true, type: 'reference', collection: 'roles' },
+    as_role_name: { required: true, type: 'reference', collection: 'roles' },
     detect_voicemail: {
       required: false,
       type: 'enum',

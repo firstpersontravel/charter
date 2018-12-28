@@ -3,8 +3,8 @@ var _ = require('lodash');
 module.exports = {
   call_answered: {
     specParams: {
-      from: { required: true, type: 'resource', collection: 'roles' },
-      to: { required: true, type: 'resource', collection: 'roles' }
+      from: { required: true, type: 'reference', collection: 'roles' },
+      to: { required: true, type: 'reference', collection: 'roles' }
     },
     matchEvent: function(script, context, spec, event) {
       return spec.from === event.from && spec.to === event.to;
@@ -13,7 +13,7 @@ module.exports = {
 
   call_ended: {
     specParams: {
-      role: { required: true, type: 'resource', collection: 'roles' }
+      role: { required: true, type: 'reference', collection: 'roles' }
     },
     matchEvent: function(script, context, spec, event) {
       return _.includes(event.roles, spec.role);
@@ -22,8 +22,8 @@ module.exports = {
 
   call_received: {
     specParams: {
-      from: { required: true, type: 'resource', collection: 'roles' },
-      to: { required: true, type: 'resource', collection: 'roles' }
+      from: { required: true, type: 'reference', collection: 'roles' },
+      to: { required: true, type: 'reference', collection: 'roles' }
     },
     matchEvent: function(script, context, spec, event) {
       return spec.from === event.from && spec.to === event.to;

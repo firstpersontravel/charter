@@ -5,15 +5,15 @@ var distance = require('../../utils/distance');
 module.exports = {
   message_sent: {
     specParams: {
-      from: { required: false, type: 'resource', collection: 'roles' },
-      to: { required: false, type: 'resource', collection: 'roles' },
+      from: { required: false, type: 'reference', collection: 'roles' },
+      to: { required: false, type: 'reference', collection: 'roles' },
       type: {
         required: false,
         type: 'enum',
         values: ['text', 'image', 'audio']
       },
       contains: { required: false, type: 'string' },
-      geofence: { required: false, type: 'resource', collection: 'geofences' }
+      geofence: { required: false, type: 'reference', collection: 'geofences' }
     },
     matchEvent: function(script, context, spec, event) {
       if (spec.type && spec.type !== event.message.type) {

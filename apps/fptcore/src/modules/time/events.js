@@ -19,7 +19,7 @@ function timeForSpec(context, spec) {
 module.exports = {
   time_occurred: {
     specParams: {
-      time: { required: true, type: 'resource', collection: 'times' },
+      time: { required: true, type: 'reference', collection: 'times' },
       before: { required: false, type: 'duration' },
       after: { required: false, type: 'duration' }
     },

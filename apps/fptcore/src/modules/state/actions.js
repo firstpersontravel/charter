@@ -1,8 +1,8 @@
 var set_state = {
   phraseForm: ['role_name', 'new_value'],
   params: {
-    role_name: { required: true, type: 'resource', collection: 'roles' },
-    new_value: { required: true, type: 'ref' }
+    role_name: { required: true, type: 'reference', collection: 'roles' },
+    new_value: { required: true, type: 'valueName' }
   },
   applyAction: function(script, context, params, applyAt) {
     return [{

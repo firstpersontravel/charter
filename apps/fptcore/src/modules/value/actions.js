@@ -4,8 +4,8 @@ var EvalCore = require('../../cores/eval');
 
 var set_value = {
   params: {
-    value_ref: { required: true, type: 'ref' },
-    new_value_ref: { required: true, type: 'ref' }
+    value_ref: { required: true, type: 'valueName' },
+    new_value_ref: { required: true, type: 'valueName' }
   },
   phraseForm: ['value_ref', 'new_value_ref'],
   applyAction: function(script, context, params, applyAt) {
@@ -19,7 +19,7 @@ var set_value = {
 
 var increment_value = {
   params: {
-    value_ref: { required: true, type: 'ref' },
+    value_ref: { required: true, type: 'valueName' },
     delta: { required: false, type: 'number' }
   },
   phraseForm: ['value_ref', 'delta'],

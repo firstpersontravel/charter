@@ -1,8 +1,8 @@
 module.exports = {
   geofence_entered: {
     specParams: {
-      role: { required: true, type: 'resource', collection: 'roles' },
-      geofence: { required: true, type: 'resource', collection: 'geofences' }
+      role: { required: true, type: 'reference', collection: 'roles' },
+      geofence: { required: true, type: 'reference', collection: 'geofences' }
     },
     matchEvent: function(script, context, spec, event) {
       return (

@@ -5,8 +5,7 @@ var ActionPhraseCore = require('./action_phrase');
 var ActionValidationCore = require('./action_validation');
 var EventsRegistry = require('../registries/events');
 var ResourceRegistry = require('../registries/resources');
-var ResourceValidationCore = require('./resource_validation');
-var SpecValidationCore = require('./spec_validation');
+var ParamValidators = require('../utils/param_validators');
 var TextCore = require('./text');
 
 var ScriptValidationCore = {};
@@ -114,8 +113,8 @@ function gatherEventWarnings(script, event) {
     return ['Invalid event type "' + eventType + '".'];
   }
   var eventParams = event[eventType];
-  return SpecValidationCore.getWarnings(script, eventSpec.specParams,
-    eventParams);
+  return ParamValidators.validateParams(script, eventSpec.specParams,
+    eventParams, '');
 }
 
 function gatherTriggerActions(script, trigger, path, warnings) {
@@ -201,12 +200,15 @@ function gatherDependencyWarnings(script, warnings) {
  */
 function gatherResourceWarnings(script, warnings) {
   _.each(ResourceRegistry, function(resourceClass, resourceType) {
+    // Get the collection for all resources
     var collectionName = resourceType === 'audio' ?
-      resourceType :
-      resourceType + 's';
+      resourceType : resourceType + 's';
+    // Go through each
     _.each(script.content[collectionName], function(resource) {
-      var resourceWarnings = ResourceValidationCore.getResourceWarnings(
-        script, resourceType, resource);
+      // And validate
+      var resourceWarnings = ParamValidators.validateResource(script,
+        resourceClass, resource);
+      // Logging warnings
       warnings.push.apply(warnings, resourceWarnings.map(function(warning) {
         var resourceNameString = resource.name ? ('[name=' + resource.name + ']') : '';
         return resourceType + resourceNameString + ': ' + warning;

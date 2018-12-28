@@ -52,9 +52,9 @@ describe('ActionParamCore', () => {
       });
     });
 
-    describe('ref', () => {
+    describe('valueName', () => {
       it('preserves refs', () => {
-        const spec = { type: 'ref' };
+        const spec = { type: 'valueName' };
         const res = ActionParamCore.prepareParam(null, null, spec, 'abc');
         assert.strictEqual(res, 'abc');
       });

@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var ActionsRegistry = require('../registries/actions');
-var SpecValidationCore = require('./spec_validation');
+var ParamValidators = require('../utils/param_validators');
 
 var ActionValidationCore = {};
 
@@ -23,8 +23,8 @@ ActionValidationCore.checkAction = function(script, action) {
   if (!actionClass.params) {
     throw new Error('Expected action ' + action.name + ' to have params.');
   }
-  return SpecValidationCore.getWarnings(script, actionClass.params,
-    action.params);
+  return ParamValidators.validateParams(script, actionClass.params,
+    action.params, '');
 };
 
 ActionValidationCore.precheckAction = function(script, action, trigger) {

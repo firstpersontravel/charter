@@ -2,11 +2,11 @@ var checkpoint = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    scene: { type: 'resource', collection: 'scenes', required: true },
+    scene: { type: 'reference', collection: 'scenes', required: true },
     pages: {
       type: 'dictionary',
-      keys: { type: 'resource', collection: 'roles' },
-      values: { type: 'resource', collection: 'pages' }
+      keys: { type: 'reference', collection: 'roles' },
+      values: { type: 'reference', collection: 'pages' }
     },
     values: {
       type: 'dictionary',

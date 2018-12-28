@@ -89,7 +89,7 @@ function renderReverseRelation(script, reverseRelation, resourceName) {
 
 function doesParamMatchResource(paramSpec, paramValue, collectionName,
   resource) {
-  if (paramSpec.type === 'resource') {
+  if (paramSpec.type === 'reference') {
     if (paramSpec.collection === collectionName) {
       if (paramValue === resource.name) {
         return true;

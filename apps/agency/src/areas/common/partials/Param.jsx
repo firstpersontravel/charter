@@ -17,7 +17,7 @@ export function renderLink(scriptId, collectionName, resourceName) {
 }
 
 export default function Param({ scriptId, spec, value }) {
-  if (spec.type === 'resource') {
+  if (spec.type === 'reference') {
     return renderLink(scriptId, spec.collection, value);
   }
   return value;

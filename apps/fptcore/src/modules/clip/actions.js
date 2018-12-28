@@ -10,7 +10,7 @@ var play_clip = {
     'query_responded', // type: query_responded, clip: clip-name
   ],
   params: {
-    clip_name: { required: true, type: 'resource', collection: 'clips' }
+    clip_name: { required: true, type: 'reference', collection: 'clips' }
   },
   applyAction: function (script, context, params, applyAt) {
     // Find the clip.
@@ -19,8 +19,8 @@ var play_clip = {
       return null;
     }
     // Play audio if it is present.
-    var playClause = clip.audio ?
-      { clause: 'play', media: clip.audio } :
+    var playClause = clip.path ?
+      { clause: 'play', media: clip.path } :
       {
         clause: 'say',
         voice: clip.voice || 'alice',
@@ -33,9 +33,9 @@ var play_clip = {
       return [{
         operation: 'twiml',
         clause: 'gather',
-        queryName: clip.query,
-        queryType: clip.query_type || 'normal',
-        queryHints: clip.query_hints || null,
+        queryName: clip.query.name,
+        queryType: clip.query.type || 'normal',
+        queryHints: clip.query.hints || null,
         subclause: playClause
       }];
     }

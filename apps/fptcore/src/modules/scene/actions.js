@@ -9,7 +9,7 @@ var start_scene = {
     };
   },
   params: {
-    scene_name: { required: true, type: 'resource', collection: 'scenes' }
+    scene_name: { required: true, type: 'reference', collection: 'scenes' }
   },
   applyAction: function(script, context, params, applyAt) {
     var newSceneName = params.scene_name;

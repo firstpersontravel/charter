@@ -17,7 +17,7 @@ describe('#play_clip', () => {
       content: {
         clips: [{
           name: 'CLIP-TEST',
-          audio: 'audio.mp3'
+          path: 'audio.mp3'
         }]
       }
     };
@@ -54,9 +54,11 @@ describe('#play_clip', () => {
       content: {
         clips: [{
           name: 'CLIP-TEST',
-          audio: 'audio.mp3',
-          query: 'QUERY-TEST',
-          query_hints: ['yes', 'no']
+          path: 'audio.mp3',
+          query: {
+            name: 'QUERY-TEST',
+            hints: ['yes', 'no']
+          }
         }]
       }
     };
@@ -82,9 +84,11 @@ describe('#play_clip', () => {
         clips: [{
           name: 'CLIP-TEST',
           transcript: 'Why hello there',
-          query: 'QUERY-TEST',
-          query_type: 'phone',
-          query_hints: ['yes', 'no']
+          query: {
+            name: 'QUERY-TEST',
+            type: 'phone',
+            hints: ['yes', 'no']
+          }
         }]
       }
     };

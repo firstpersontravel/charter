@@ -6,8 +6,8 @@ var MESSAGE_TYPES = ['text', 'image', 'audio'];
 
 var custom_message = {
   params: {
-    from_role_name: { required: true, type: 'resource', collection: 'roles' },
-    to_role_name: { required: true, type: 'resource', collection: 'roles' },
+    from_role_name: { required: true, type: 'reference', collection: 'roles' },
+    to_role_name: { required: true, type: 'reference', collection: 'roles' },
     message_type: { required: true, type: 'enum', values: MESSAGE_TYPES },
     message_content: { required: true, type: 'string' },
     location_latitude: { required: false, type: 'number' },
@@ -61,8 +61,8 @@ var custom_message = {
 
 var send_message = {
   params: {
-    message_name: { required: true, type: 'resource', collection: 'messages' },
-    to_role_name: { required: false, type: 'resource', collection: 'roles' }
+    message_name: { required: true, type: 'reference', collection: 'messages' },
+    to_role_name: { required: false, type: 'reference', collection: 'roles' }
   },
   phraseForm: ['message_name', 'to_role_name'],
   applyAction: function(script, context, params, applyAt) {
