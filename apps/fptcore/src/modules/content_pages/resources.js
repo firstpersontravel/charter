@@ -1,4 +1,4 @@
-var pageSubresources = require('../page/subresources');
+var SubresourcesRegistry = require('../../registries/subresources');
 
 var content_page = {
   properties: {
@@ -6,7 +6,11 @@ var content_page = {
     section: { type: 'string', required: true },
     title: { type: 'string', required: true },
     if: { type: 'ifClause' },
-    panels: { type: 'subresource', class: pageSubresources.panel_list }
+    panels: {
+      type: 'list',
+      required: true,
+      items: { type: 'subresource', class: SubresourcesRegistry.panel }
+    }
   }
 };
 

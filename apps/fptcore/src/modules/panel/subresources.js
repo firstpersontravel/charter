@@ -124,16 +124,6 @@ var panel = {
   }
 };
 
-var panel_list = {
-  properties: {
-    self: {
-      type: 'list',
-      items: { type: 'subresource', class: panel }
-    }
-  }
-};
-
 module.exports = {
-  panel_list: panel_list,
   panel: panel
 };

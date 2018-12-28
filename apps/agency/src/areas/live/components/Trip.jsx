@@ -76,8 +76,8 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/initiatives`}>
-            Initiatives
+            to={`/agency/live/${params.groupId}/trip/${params.tripId}/achievements`}>
+            Achievements
           </Link>
         </li>
         <li className="nav-item">

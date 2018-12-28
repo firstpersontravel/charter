@@ -2,7 +2,7 @@ export const COLLECTION_NAMES = {
   'cues.scene': 'scenes',
   'checkpoints.scene': 'scenes',
   'geofences.center': 'waypoints',
-  'initiatives.scene': 'scenes',
+  'achievements.scene': 'scenes',
   'messages.scene': 'scenes',
   'messages.from': 'roles',
   'messages.to': 'roles',

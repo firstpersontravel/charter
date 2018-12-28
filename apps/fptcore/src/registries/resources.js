@@ -1,9 +1,13 @@
 var moduleResourceSets = [
-  require('../modules/audio/resources'),
+  require('../modules/achievement/resources'),
   require('../modules/appearance/resources'),
+  require('../modules/audio/resources'),
   require('../modules/checkpoint/resources'),
   require('../modules/clip/resources'),
-  require('../modules/content_pages/resources')
+  require('../modules/content_pages/resources'),
+  require('../modules/cue/resources'),
+  require('../modules/departure/resources'),
+  require('../modules/geofence/resources')
 ];
 
 var ResourcesRegistry = {};

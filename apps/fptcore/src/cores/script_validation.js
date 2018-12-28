@@ -19,7 +19,7 @@ ScriptValidationCore.SCRIPT_DEPENDENCY_TREE = {
   checkpoints: { scene: 'scenes' },
   cues: { scene: 'scenes' },
   geofences: { center: 'waypoints' },
-  initiatives: { scene: 'scenes' },
+  achievements: { scene: 'scenes' },
   pages: {
     appearance: 'appearances',
     waypoint: 'waypoints',

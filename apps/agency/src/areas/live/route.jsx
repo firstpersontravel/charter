@@ -10,7 +10,7 @@ import GroupUpcomingConnector from './connectors/GroupUpcoming';
 import IndexConnector from './connectors/Index';
 import TripConnector from './connectors/Trip';
 import TripIndexConnector from './connectors/TripIndex';
-import TripInitiativesConnector from './connectors/TripInitiatives';
+import TripAchievementsConnector from './connectors/TripAchievements';
 import TripScenesConnector from './connectors/TripScenes';
 import TripControlsConnector from './connectors/TripControls';
 import TripGalleryConnector from './connectors/TripGallery';
@@ -49,7 +49,7 @@ export default (
         <Route path="values" component={TripValuesConnector} />
         <Route path="schedule" component={TripScheduleConnector} />
         <Route path="scenes" component={TripScenesConnector} />
-        <Route path="initiatives" component={TripInitiativesConnector} />
+        <Route path="achievements" component={TripAchievementsConnector} />
         <Route path="controls" component={TripControlsConnector} />
         <Route path="gallery" component={TripGalleryConnector} />
         <Route path="players">

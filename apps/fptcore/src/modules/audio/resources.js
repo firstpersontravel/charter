@@ -1,9 +1,9 @@
 var audio = {
   properties: {
-    name: { type: 'name' },
+    name: { type: 'name', required: true },
     title: { type: 'string' },
-    duration: { type: 'number' },
-    path: { type: 'media', extensions: ['m4a', 'mp3'] }
+    duration: { type: 'number', required: true },
+    path: { type: 'media', required: true, extensions: ['m4a', 'mp3'] }
   }
 };
 
