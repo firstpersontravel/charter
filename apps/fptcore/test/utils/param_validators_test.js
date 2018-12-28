@@ -26,18 +26,18 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#simple', () => {
+  describe('#simpleValue', () => {
     it('permits string, number, or boolean', () => {
-      ok(ParamValidators.simple({}, 's', {}, 'abc'));
-      ok(ParamValidators.simple({}, 's', {}, 123));
-      ok(ParamValidators.simple({}, 's', {}, true));
-      ok(ParamValidators.simple({}, 's', {}, false));
+      ok(ParamValidators.simpleValue({}, 's', {}, 'abc'));
+      ok(ParamValidators.simpleValue({}, 's', {}, 123));
+      ok(ParamValidators.simpleValue({}, 's', {}, true));
+      ok(ParamValidators.simpleValue({}, 's', {}, false));
     });
 
     it('warns if not a string, number or boolean', () => {
-      err(ParamValidators.simple({}, 's', {}, [1]),
+      err(ParamValidators.simpleValue({}, 's', {}, [1]),
         'Simple param "s" should be a string, number or boolean.');
-      err(ParamValidators.simple({}, 's', {}, {a: 2}),
+      err(ParamValidators.simpleValue({}, 's', {}, {a: 2}),
         'Simple param "s" should be a string, number or boolean.');
     });
   });
@@ -79,6 +79,27 @@ describe('ParamValidators', () => {
     });
   });
 
+  describe('#timeShorthand', () => {
+    it('permits valid time shorthand', () => {
+      ok(ParamValidators.timeShorthand({}, 's', {}, '1:00pm'));
+      ok(ParamValidators.timeShorthand({}, 's', {}, '12:59am'));
+      ok(ParamValidators.timeShorthand({}, 's', {}, '+1d 10:23a'));
+      ok(ParamValidators.timeShorthand({}, 's', {}, '+4d 12:00p'));
+    });
+
+    it('rejects invalid time shorthand', () => {
+      err(ParamValidators.timeShorthand({}, 's', {}, '10:00x'),
+        'Time shorthand param "s" ("10:00x") must be valid.');
+      err(ParamValidators.timeShorthand({}, 's', {}, '23:00pm'),
+        'Time shorthand param "s" ("23:00pm") must be valid.');
+      err(ParamValidators.timeShorthand({}, 's', {}, '3:99a'),
+        'Time shorthand param "s" ("3:99a") must be valid.');
+      err(ParamValidators.timeShorthand({}, 's', {}, '-1d 2:00pm'),
+        'Time shorthand param "s" ("-1d 2:00pm") must be valid.');
+      err(ParamValidators.timeShorthand({}, 's', {}, 'd 2:00pm'),
+        'Time shorthand param "s" ("d 2:00pm") must be valid.');
+    });
+  });
 
   describe('#name', () => {
     const spec = { type: 'name' };
@@ -306,7 +327,7 @@ describe('ParamValidators', () => {
     const spec = {
       type: 'dictionary',
       keys: { type: 'nestedAttribute' },
-      values: { type: 'simple' }
+      values: { type: 'simpleValue' }
     };
 
     it('checks keys and values', () => {

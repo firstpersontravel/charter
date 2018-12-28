@@ -16,7 +16,9 @@ var moduleResourceSets = [
   require('../modules/route/resources'),
   require('../modules/scene/resources'),
   require('../modules/time/resources'),
-  require('../modules/trigger/resources')
+  require('../modules/trigger/resources'),
+  require('../modules/variant/resources'),
+  require('../modules/variant_group/resources')
 ];
 
 var ResourcesRegistry = {};

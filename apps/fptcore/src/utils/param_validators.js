@@ -10,7 +10,7 @@ ParamValidators.string = function(script, name, spec, param) {
   }
 };
 
-ParamValidators.simple = function(script, name, spec, param) {
+ParamValidators.simpleValue = function(script, name, spec, param) {
   if (!_.isString(param) && !_.isNumber(param) && !_.isBoolean(param)) {
     return [
       'Simple param "' + name + '" should be a string, number or boolean.'
@@ -85,6 +85,14 @@ ParamValidators.coords = function(script, name, spec, param) {
   }
   if (param[1] < -180 || param[1] > 180) {
     return ['Coords param "' + name + '[1]" should be between -180 and 180.'];
+  }
+};
+
+ParamValidators.timeShorthand = function(script, name, spec, param) {
+  if (!TimeCore.timeShorthandRegex.test(param)) {
+    return [
+      'Time shorthand param "' + name + '" ("' + param + '") must be valid.'
+    ];
   }
 };
 

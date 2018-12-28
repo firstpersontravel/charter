@@ -11,7 +11,7 @@ var checkpoint = {
     values: {
       type: 'dictionary',
       keys: { type: 'name', },
-      values: { type: 'simple' }
+      values: { type: 'simpleValue' }
     }
   }
 };
