@@ -25,7 +25,7 @@ var PANEL_CLASSES = {
   choice: {
     properties: {
       text: { type: 'string', required: true },
-      value_ref: { type: 'valueName', required: true },
+      value_ref: { type: 'simpleAttribute', required: true },
       choices: {
         type: 'list',
         required: true,
@@ -84,7 +84,7 @@ var PANEL_CLASSES = {
       submit: { type: 'string' },
       placeholder: { type: 'string' },
       unknown: { type: 'string' },
-      correct_ref: { type: 'valueName', required: true },
+      correct_ref: { type: 'simpleAttribute', required: true },
       cue: { type: 'reference', collection: 'cues', required: true }
     }
   },
@@ -108,7 +108,7 @@ var PANEL_CLASSES = {
   yesno: {
     properties: {
       text: { type: 'string', required: true },
-      value_ref: { type: 'valueName', required: true }
+      value_ref: { type: 'simpleAttribute', required: true }
     }
   }
 };

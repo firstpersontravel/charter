@@ -6,7 +6,7 @@ var checkpoint = {
     pages: {
       type: 'dictionary',
       keys: { type: 'reference', collection: 'roles' },
-      values: { type: 'reference', collection: 'pages' }
+      values: { type: 'reference', collection: 'pages', allowNull: true }
     },
     values: {
       type: 'dictionary',

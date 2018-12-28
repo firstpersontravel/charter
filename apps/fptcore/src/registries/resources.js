@@ -4,10 +4,15 @@ var moduleResourceSets = [
   require('../modules/audio/resources'),
   require('../modules/checkpoint/resources'),
   require('../modules/clip/resources'),
-  require('../modules/content_pages/resources'),
+  require('../modules/content_page/resources'),
   require('../modules/cue/resources'),
   require('../modules/departure/resources'),
-  require('../modules/geofence/resources')
+  require('../modules/geofence/resources'),
+  require('../modules/layout/resources'),
+  require('../modules/message/resources'),
+  require('../modules/page/resources'),
+  require('../modules/relay/resources'),
+  require('../modules/role/resources')
 ];
 
 var ResourcesRegistry = {};

@@ -58,10 +58,10 @@ export default class ProfileModal extends Component {
     this.setState({ [fieldName]: value });
   }
 
-  handleChangeValue(valueName, event) {
+  handleChangeValue(nestedAttribute, event) {
     this.setState({
       values: Object.assign(this.state.values, {
-        [valueName]: event.target.value
+        [nestedAttribute]: event.target.value
       })
     });
   }

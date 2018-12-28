@@ -22,12 +22,36 @@ ParamValidators.ifClause = function(script, name, spec, param) {
   // TODO SHOULD DO MORE VALIDATION HERE
 };
 
-ParamValidators.valueName = function(script, name, spec, param) {
+ParamValidators.simpleAttribute = function(script, name, spec, param) {
   if (!_.isString(param)) {
-    return ['Value name param "' + name + '" should be a string.'];
+    return ['Simple attribute param "' + name + '" should be a string.'];
+  }
+  if (!/[A-Za-z]/.test(param[0])) {
+    return ['Simple attribute param "' + name + '" should start with a letter.'];
+  }
+  if (!/^[\w\d_]*$/.test(param)) {
+    return ['Simple attribute param "' + name + '" should be alphanumeric with underscores.'];
+  }
+};
+
+ParamValidators.nestedAttribute = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Nested attribute param "' + name + '" should be a string.'];
+  }
+  if (!/[A-Za-z]/.test(param[0])) {
+    return ['Nested attribute param "' + name + '" should start with a letter.'];
+  }
+  if (!/^[\w\d_.]+$/.test(param)) {
+    return ['Nested attribute param "' + name + '" should be alphanumeric with underscores and periods.'];
+  }
+};
+
+ParamValidators.lookupable = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Lookupable param "' + name + '" should be a string.'];
   }
   if (!/^['"]?[\w\d_.]+['"]?$/.test(param)) {
-    return ['Value name param "' + name + '" should be alphanumeric with periods.'];
+    return ['Lookupable param "' + name + '" should be alphanumeric with underscores and periods.'];
   }
 };
 
@@ -86,7 +110,7 @@ ParamValidators.media = function(script, name, spec, param) {
 };
 
 ParamValidators.reference = function(script, name, spec, param) {
-  if (spec.collection === 'pages' && param === 'null') {
+  if (param === 'null' && spec.allowNull) {
     return [];
   }
   if (!_.isString(param)) {
@@ -119,14 +143,14 @@ ParamValidators.dictionary = function(script, name, spec, param) {
   var itemWarnings = [];
   _.each(param, function(value, key) {
     // Add warnings for key
-    var keyName = name + '.key';
+    var keyName = name + '[' + key + ']';
     itemWarnings.push.apply(itemWarnings,
       ParamValidators.validateParam(script, keyName, spec.keys, key)
     );
     // Add warnings for value
-    var valueName = name + '.value';
+    var nestedAttribute = name + '[' + key + ']';
     itemWarnings.push.apply(itemWarnings,
-      ParamValidators.validateParam(script, valueName, spec.values, value)
+      ParamValidators.validateParam(script, nestedAttribute, spec.values, value)
     );
   });
   return itemWarnings;
@@ -140,9 +164,10 @@ ParamValidators.list = function(script, name, spec, param) {
     return ['List param "' + name + '" should be an array.'];
   }
   var itemWarnings = [];
-  _.each(param, function(item) {
+  _.each(param, function(item, i) {
     itemWarnings.push.apply(itemWarnings,
-      ParamValidators.validateParam(script, name + '.item', spec.items, item)
+      ParamValidators.validateParam(script, name + '[' + i + ']',
+        spec.items, item)
     );
   });
   return itemWarnings;
@@ -188,7 +213,7 @@ ParamValidators.variegated = function(script, name, spec, param) {
   var commonClass = spec.common;
   var variedClass = spec.classes[param[spec.key]];
   var mergedClass = _.merge({}, commonClass, variedClass);
-  var prefix = name + '.';
+  var prefix = name + '{' + spec.key + '=' + param[spec.key] + '}.';
   return ParamValidators.validateResource(script, mergedClass, param, prefix);
 };
 

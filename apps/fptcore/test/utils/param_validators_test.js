@@ -1,3 +1,4 @@
+const sinon = require('sinon');
 const assert = require('assert');
 
 const ParamValidators = require('../../src/utils/param_validators');
@@ -6,7 +7,13 @@ const eq = assert.deepStrictEqual;
 const ok = (res) => eq(res === undefined ? [] : res, []);
 const err = (res, expected) => eq(res, [expected]);
 
+const sandbox = sinon.sandbox.create();
+
 describe('ParamValidators', () => {
+  beforeEach(() => {
+    sandbox.restore();
+  });
+
   describe('#string', () => {
     it('permits string', () => {
       ok(ParamValidators.string({}, 's', {}, 'abc'));
@@ -39,32 +46,99 @@ describe('ParamValidators', () => {
     it.skip('validates if statement', () => {});
   });
 
-  describe('#valueName', () => {
+  describe('#simpleAttribute', () => {
     it('permits valid value names', () => {
-      ok(ParamValidators.valueName({}, 's', {}, 'abc'));
-      ok(ParamValidators.valueName({}, 's', {}, 'A12'));
-      ok(ParamValidators.valueName({}, 's', {}, 'A_BC'));
-      ok(ParamValidators.valueName({}, 's', {}, 'a.b.c'));
-      ok(ParamValidators.valueName({}, 's', {}, '0'));
-    });
-
-    it('permits with quotes', () => {
-      ok(ParamValidators.valueName({}, 's', {}, '"abc"'));
-      ok(ParamValidators.valueName({}, 's', {}, '\'A\''));
+      ok(ParamValidators.simpleAttribute({}, 's', {}, 'abc'));
+      ok(ParamValidators.simpleAttribute({}, 's', {}, 'A12'));
+      ok(ParamValidators.simpleAttribute({}, 's', {}, 'A_BC'));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.valueName({}, 's', {}, 1),
-        'Value name param "s" should be a string.');
+      err(ParamValidators.simpleAttribute({}, 's', {}, 1),
+        'Simple attribute param "s" should be a string.');
+    });
+
+    it('warns if starts with a number', () => {
+      err(ParamValidators.simpleAttribute({}, 's', {}, '0'),
+        'Simple attribute param "s" should start with a letter.');
+    });
+
+    it('does not allow quotes', () => {
+      err(ParamValidators.simpleAttribute({}, 's', {}, '"abc"'),
+        'Simple attribute param "s" should start with a letter.');
+      err(ParamValidators.simpleAttribute({}, 's', {}, '\'A\''),
+        'Simple attribute param "s" should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
-      err(ParamValidators.valueName({}, 's', {}, 'a-b'),
-        'Value name param "s" should be alphanumeric with periods.');
-      err(ParamValidators.valueName({}, 's', {}, 'a"-b'),
-        'Value name param "s" should be alphanumeric with periods.');
-      err(ParamValidators.valueName({}, 's', {}, 'b^$(D'),
-        'Value name param "s" should be alphanumeric with periods.');
+      err(ParamValidators.simpleAttribute({}, 's', {}, 'a.b'),
+        'Simple attribute param "s" should be alphanumeric with underscores.');
+      err(ParamValidators.simpleAttribute({}, 's', {}, 'b^$(D'),
+        'Simple attribute param "s" should be alphanumeric with underscores.');
+    });
+  });
+
+  describe('#nestedAttribute', () => {
+    it('permits valid value names', () => {
+      ok(ParamValidators.nestedAttribute({}, 's', {}, 'abc'));
+      ok(ParamValidators.nestedAttribute({}, 's', {}, 'A12'));
+      ok(ParamValidators.nestedAttribute({}, 's', {}, 'A_BC'));
+      ok(ParamValidators.nestedAttribute({}, 's', {}, 'a.b.c'));
+    });
+
+    it('warns if not a string', () => {
+      err(ParamValidators.nestedAttribute({}, 's', {}, 1),
+        'Nested attribute param "s" should be a string.');
+    });
+
+    it('warns if starts with a number', () => {
+      err(ParamValidators.nestedAttribute({}, 's', {}, '0'),
+        'Nested attribute param "s" should start with a letter.');
+    });
+
+    it('does not allow quotes', () => {
+      err(ParamValidators.nestedAttribute({}, 's', {}, '"abc"'),
+        'Nested attribute param "s" should start with a letter.');
+      err(ParamValidators.nestedAttribute({}, 's', {}, '\'A\''),
+        'Nested attribute param "s" should start with a letter.');
+    });
+
+    it('warns if contains invalid characters', () => {
+      err(ParamValidators.nestedAttribute({}, 's', {}, 'a-b'),
+        'Nested attribute param "s" should be alphanumeric with underscores and periods.');
+      err(ParamValidators.nestedAttribute({}, 's', {}, 'a"-b'),
+        'Nested attribute param "s" should be alphanumeric with underscores and periods.');
+      err(ParamValidators.nestedAttribute({}, 's', {}, 'b^$(D'),
+        'Nested attribute param "s" should be alphanumeric with underscores and periods.');
+    });
+  });
+
+  describe('#lookupable', () => {
+    it('permits valid value names', () => {
+      ok(ParamValidators.lookupable({}, 's', {}, 'abc'));
+      ok(ParamValidators.lookupable({}, 's', {}, 'A12'));
+      ok(ParamValidators.lookupable({}, 's', {}, 'A_BC'));
+      ok(ParamValidators.lookupable({}, 's', {}, 'a.b.c'));
+      ok(ParamValidators.lookupable({}, 's', {}, '0'));
+    });
+
+    it('permits with quotes', () => {
+      ok(ParamValidators.lookupable({}, 's', {}, '"abc"'));
+      ok(ParamValidators.lookupable({}, 's', {}, '\'A\''));
+    });
+
+    it('warns if not a string', () => {
+      err(ParamValidators.lookupable({}, 's', {}, 1),
+        'Lookupable param "s" should be a string.');
+    });
+
+    it('warns if contains invalid characters', () => {
+      err(ParamValidators.lookupable({}, 's', {}, 'a-b'),
+        'Lookupable param "s" should be alphanumeric with underscores and periods.');
+      err(ParamValidators.lookupable({}, 's', {}, 'a"-b'),
+        'Lookupable param "s" should be alphanumeric with underscores and periods.');
+      err(ParamValidators.lookupable({}, 's', {}, 'b^$(D'),
+        'Lookupable param "s" should be alphanumeric with underscores and periods.');
     });
   });
 
@@ -145,6 +219,17 @@ describe('ParamValidators', () => {
       err(ParamValidators.reference({}, 's', {}, 'b^$(D'),
         'Reference param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
     });
+
+    it('permits "null" only if explicitly allowed', () => {
+      const specWithNull = {
+        type: 'reference',
+        collection: 'geofences',
+        allowNull: true
+      };
+      ok(ParamValidators.reference(script, 's', specWithNull, 'null'));
+      err(ParamValidators.reference(script, 's', spec, 'null'),
+        'Reference param "s" ("null") is not in collection "geofences".');
+    });
   });
 
   describe('#name', () => {
@@ -197,12 +282,12 @@ describe('ParamValidators', () => {
   describe('#dictionary', () => {
     const spec = {
       type: 'dictionary',
-      keys: { type: 'valueName' },
+      keys: { type: 'nestedAttribute' },
       values: { type: 'simple' }
     };
 
     it('checks keys and values', () => {
-      const valid = { abc_123: 5, 'def.egf': true, '0': 'abc' };
+      const valid = { abc_123: 5, 'def.egf': true, 'word_two': 'abc' };
       ok(ParamValidators.dictionary({}, 's', spec, valid));
     });
 
@@ -218,13 +303,13 @@ describe('ParamValidators', () => {
     it('warns if invalid key', () => {
       const invalid = { 'd%f': false };
       err(ParamValidators.dictionary({}, 's', spec, invalid),
-        'Value name param "s.key" should be alphanumeric with periods.');
+        'Nested attribute param "s[d%f]" should be alphanumeric with underscores and periods.');
     });
 
     it('warns if invalid value', () => {
       const invalid = { 'car': ['an', 'array'] };
       err(ParamValidators.dictionary({}, 's', spec, invalid),
-        'Simple param "s.value" should be a string, number or boolean.');
+        'Simple param "s[car]" should be a string, number or boolean.');
     });
   });
 
@@ -248,7 +333,7 @@ describe('ParamValidators', () => {
     it('warns if invalid item', () => {
       const invalid = ['abc'];
       err(ParamValidators.list({}, 's', spec, invalid),
-        'Number param "s.item" should be a number.');
+        'Number param "s[0]" should be a number.');
     });
   });
 
@@ -347,26 +432,46 @@ describe('ParamValidators', () => {
     it('warns if invalid items in common class', () => {
       const invalid = { family: 'snake', name: false, isVenomous: true };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'String param "s.name" should be a string.');
+        'String param "s{family=snake}.name" should be a string.');
     });
 
     it('warns if invalid items in varied class', () => {
       const invalid = { family: 'snake', isVenomous: 'abc' };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Boolean param "s.isVenomous" ("abc") should be true or false.');
+        'Boolean param "s{family=snake}.isVenomous" ("abc") should be true or false.');
     });
 
     it('warns if extra items', () => {
       const invalid = { family: 'snake', isVenomous: false, extra: 'hi' };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Unexpected param "s.extra" (expected one of: family, name, isVenomous).');
+        'Unexpected param "s{family=snake}.extra" (expected one of: family, name, isVenomous).');
     });
 
     it('warns if has items from non-chosen variety', () => {
       const invalid = { family: 'snake', isVenomous: false, numFins: 3 };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Unexpected param "s.numFins" (expected one of: family, name, isVenomous).');
+        'Unexpected param "s{family=snake}.numFins" (expected one of: family, name, isVenomous).');
     });
+  });
+
+  describe('#validateParam', () => {
+    it('calls param by name', () => {
+      sandbox.stub(ParamValidators, 'string').returns([]);
+      const spec = { type: 'string' };
+
+      ParamValidators.validateParam({}, 'name', spec, null);
+
+      sinon.assert.calledWith(ParamValidators.string, {}, 'name', spec, null);
+    });
+  });
+
+  describe('#validateParams', () => {
+    it.skip('warns on non-object input', () => {});
+    it.skip('warns on unexpected param', () => {});
+    it.skip('warns on missing required param', () => {});
+    it.skip('passes through if just one key equaling self', () => {});
+    it.skip('does not pass through if multiple keys', () => {});
+    it.skip('allows non-object input if passthrough', () => {});
   });
 
   describe('#validateResource', () => {
