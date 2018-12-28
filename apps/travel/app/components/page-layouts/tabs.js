@@ -53,7 +53,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
       if (panel.type === 'outlet') {
         var innerPanels = this.get('pagePanels')[panel.name];
         if (!innerPanels || innerPanels.length === 0) {
-          innerPanels = panel.default_panels || [];
+          innerPanels = [];
+          // innerPanels = panel.default_panels || [];
         }
         collectedPanels = collectedPanels.concat(innerPanels);
       } else {

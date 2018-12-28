@@ -18,10 +18,7 @@ ParamValidators.simple = function(script, name, spec, param) {
   }
 };
 
-ParamValidators.ifstring = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['Ifstring param "' + name + '" should be a string.'];
-  }
+ParamValidators.ifClause = function(script, name, spec, param) {
   // TODO SHOULD DO MORE VALIDATION HERE
 };
 
@@ -122,12 +119,12 @@ ParamValidators.dictionary = function(script, name, spec, param) {
   var itemWarnings = [];
   _.each(param, function(value, key) {
     // Add warnings for key
-    var keyName = name + ' key';
+    var keyName = name + '.key';
     itemWarnings.push.apply(itemWarnings,
       ParamValidators.validateParam(script, keyName, spec.keys, key)
     );
     // Add warnings for value
-    var valueName = name + ' value';
+    var valueName = name + '.value';
     itemWarnings.push.apply(itemWarnings,
       ParamValidators.validateParam(script, valueName, spec.values, value)
     );
@@ -145,7 +142,7 @@ ParamValidators.list = function(script, name, spec, param) {
   var itemWarnings = [];
   _.each(param, function(item) {
     itemWarnings.push.apply(itemWarnings,
-      ParamValidators.validateParam(script, name + ' item', spec.items, item)
+      ParamValidators.validateParam(script, name + '.item', spec.items, item)
     );
   });
   return itemWarnings;
@@ -163,9 +160,45 @@ ParamValidators.subresource = function(script, name, spec, param) {
 };
 
 /**
+ * Embed a variegated validator which hinges on a key param.
+ */
+ParamValidators.variegated = function(script, name, spec, param) {
+  if (!spec.key) {
+    throw new Error('Invalid variegated spec: requires key.');
+  }
+  if (!spec.classes) {
+    throw new Error('Invalid variegated spec: requires classes.');
+  }
+  if (!_.isPlainObject(param)) {
+    return ['Variegated param "' + name + '" should be an object.'];
+  }
+  if (!param[spec.key]) {
+    return ['Variegated param "' + name + '" should have a "' + spec.key +
+      '" property.'];
+  }
+  if (!_.isString(param[spec.key])) {
+    return ['Variegated param "' + name + '" property "' + spec.key +
+      '" should be a string.'];
+  }
+  if (!spec.classes[param[spec.key]]) {
+    return ['Variegated param "' + name + '" property "' + spec.key +
+      '" ("' + param[spec.key] + '") should be one of: ' +
+      Object.keys(spec.classes).join(', ') + '.'];
+  }
+  var commonClass = spec.common;
+  var variedClass = spec.classes[param[spec.key]];
+  var mergedClass = _.merge({}, commonClass, variedClass);
+  var prefix = name + '.';
+  return ParamValidators.validateResource(script, mergedClass, param, prefix);
+};
+
+/**
  * Get param type from the spec and validate a param against it.
  */
 ParamValidators.validateParam = function(script, name, spec, param) {
+  if (!spec.type) {
+    throw new Error('Missing param type in spec "' + name + '".');
+  }
   var paramValidator = ParamValidators[spec.type];
   if (!paramValidator) {
     throw new Error('Invalid param type "' + spec.type + '".');
@@ -178,10 +211,20 @@ ParamValidators.validateParam = function(script, name, spec, param) {
  */
 ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
   var warnings = [];
+
+  var paramNames = Object.keys(paramsSpec);
+  // If you only have a 'self' parameter, then apply the parameter checking
+  // passing through the object. Otherwise require an object and do parameter
+  // checking on each key/value pair.
+  var isPassthrough = paramNames.length === 1 && paramNames[0] === 'self';
+  if (!isPassthrough && !_.isPlainObject(params)) {
+    return ['Parameters should be an object.'];
+  }
+
   // Check for required params and do individual parameter validation.
-  Object.keys(paramsSpec).forEach(function(paramName) {
+  paramNames.forEach(function(paramName) {
     var paramSpec = paramsSpec[paramName];
-    var param = paramName === 'self' ? params : params[paramName];
+    var param = isPassthrough ? params : params[paramName];
     var paramNameWithPrefix = prefix + paramName;
     if (_.isUndefined(param)) {
       if (paramSpec.required) {
@@ -199,11 +242,11 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
   });
   // Check for unexpected params -- events sometimes have string paramss,
   // like in `{ event: { cue: CUE-NAME } }`.
-  if (_.isObject(params)) {
+  if (!isPassthrough) {
     Object.keys(params).forEach(function(paramName) {
       var paramNameWithPrefix = prefix + paramName;
       if (!paramsSpec[paramName]) {
-        warnings.push('Unexpected param "' + paramNameWithPrefix + '".');
+        warnings.push('Unexpected param "' + paramNameWithPrefix + '" (expected one of: ' + Object.keys(paramsSpec).join(', ') + ').');
       }
     });
   }
@@ -217,11 +260,8 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
 ParamValidators.validateResource = function(script, resourceClass, resource,
   prefix) {
   var paramsSpec = resourceClass.properties;
-  if (!_.isPlainObject(resource)) {
-    return ['Resource should be an object.'];
-  }
   var warnings = ParamValidators.validateParams(script, paramsSpec,
-    resource, prefix);
+    resource, prefix || '');
   if (resourceClass.validateResource) {
     var resourceWarnings = resourceClass.validateResource(script, resource);
     warnings.push.apply(warnings, resourceWarnings);

@@ -49,7 +49,7 @@ describe('ActionValidationCore', () => {
 
       const action = { name: 'dummy', params: { number: 1, extra: 2 } };
       const result = ActionValidationCore.checkAction({}, action);
-      assert.deepStrictEqual(result, ['Unexpected param "extra".']);
+      assert.deepStrictEqual(result, ['Unexpected param "extra" (expected one of: number).']);
     });
   });
 

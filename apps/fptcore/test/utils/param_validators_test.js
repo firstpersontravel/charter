@@ -35,16 +35,7 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#ifstring', () => {
-    it('permits string', () => {
-      ok(ParamValidators.ifstring({}, 's', {}, 'abc'));
-    });
-
-    it('warns if not a string', () => {
-      err(ParamValidators.ifstring({}, 's', {}, []),
-        'Ifstring param "s" should be a string.');
-    });
-
+  describe('#ifClause', () => {
     it.skip('validates if statement', () => {});
   });
 
@@ -227,13 +218,13 @@ describe('ParamValidators', () => {
     it('warns if invalid key', () => {
       const invalid = { 'd%f': false };
       err(ParamValidators.dictionary({}, 's', spec, invalid),
-        'Value name param "s key" should be alphanumeric with periods.');
+        'Value name param "s.key" should be alphanumeric with periods.');
     });
 
     it('warns if invalid value', () => {
       const invalid = { 'car': ['an', 'array'] };
       err(ParamValidators.dictionary({}, 's', spec, invalid),
-        'Simple param "s value" should be a string, number or boolean.');
+        'Simple param "s.value" should be a string, number or boolean.');
     });
   });
 
@@ -257,7 +248,7 @@ describe('ParamValidators', () => {
     it('warns if invalid item', () => {
       const invalid = ['abc'];
       err(ParamValidators.list({}, 's', spec, invalid),
-        'Number param "s item" should be a number.');
+        'Number param "s.item" should be a number.');
     });
   });
 
@@ -285,7 +276,7 @@ describe('ParamValidators', () => {
     it('warns if extra item', () => {
       var withExtra = { name: 'test', extra: true };
       err(ParamValidators.subresource({}, 's', spec, withExtra),
-        'Unexpected param "s.extra".');
+        'Unexpected param "s.extra" (expected one of: name, count).');
     });
 
     it('gathers multiple warnings', () => {
@@ -293,13 +284,161 @@ describe('ParamValidators', () => {
       var res = ParamValidators.subresource({}, 's', spec, invalid);
       eq(res, [
         'Required param "s.name" not present.',
-        'Unexpected param "s.extra".'
+        'Unexpected param "s.extra" (expected one of: name, count).'
       ]);
     });
 
     it('warns if not an object', () => {
       err(ParamValidators.subresource({}, 's', spec, 'abc'),
-        'Resource should be an object.');
+        'Parameters should be an object.');
+    });
+  });
+
+  describe('#variegated', () => {
+    const spec = {
+      type: 'variegated',
+      key: 'family',
+      common: {
+        properties: {
+          family: { type: 'string', required: true },
+          name: { type: 'string' }
+        }
+      },
+      classes: {
+        snake: {
+          properties: {
+            isVenomous: { type: 'boolean', required: true }
+          }
+        },
+        fish: {
+          properties: {
+            numFins: { type: 'number' }
+          }
+        }
+      }
+    };
+
+    it('allows members of either class', () => {
+      const snake = { family: 'snake', name: 'rattler', isVenomous: true };
+      ok(ParamValidators.variegated({}, 's', spec, snake));
+
+      const fish = { family: 'fish', name: 'zebrafish' };
+      ok(ParamValidators.variegated({}, 's', spec, fish));
+    });
+
+    it('warns if missing key', () => {
+      const invalid = {};
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'Variegated param "s" should have a "family" property.');
+    });
+
+    it('warns if non-string key', () => {
+      const invalid = { family: 123 };
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'Variegated param "s" property "family" should be a string.');
+    });
+
+    it('warns if invalid key', () => {
+      const invalid = { family: 'marsupial' };
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'Variegated param "s" property "family" ("marsupial") should be one of: snake, fish.');
+    });
+
+    it('warns if invalid items in common class', () => {
+      const invalid = { family: 'snake', name: false, isVenomous: true };
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'String param "s.name" should be a string.');
+    });
+
+    it('warns if invalid items in varied class', () => {
+      const invalid = { family: 'snake', isVenomous: 'abc' };
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'Boolean param "s.isVenomous" ("abc") should be true or false.');
+    });
+
+    it('warns if extra items', () => {
+      const invalid = { family: 'snake', isVenomous: false, extra: 'hi' };
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'Unexpected param "s.extra" (expected one of: family, name, isVenomous).');
+    });
+
+    it('warns if has items from non-chosen variety', () => {
+      const invalid = { family: 'snake', isVenomous: false, numFins: 3 };
+      err(ParamValidators.variegated({}, 's', spec, invalid),
+        'Unexpected param "s.numFins" (expected one of: family, name, isVenomous).');
+    });
+  });
+
+  describe('#validateResource', () => {
+    it('works when nested', () => {
+      var value = {
+        name: 'sarai1',
+        section: 'contacts',
+        title: 'Sarai Medouin',
+        panels: [{
+          type: 'image',
+          style: 'float-right',
+          path: '{{Sarai.photo}}'
+        }, {
+          type: 'text',
+          text: 'You are meeting Sarai.'
+        }],
+        if: 'contact_sarai1'
+      };
+
+      var panelCommon = {
+        properties: {
+          type: { type: 'string', required: true },
+          if: { type: 'ifClause' }
+        }
+      };
+
+      var panelClasses = {
+        image: {
+          properties: {
+            path: { type: 'media', required: true },
+            style: { type: 'enum', values: ['float-right'] }
+          }
+        },
+        text: {
+          properties: {
+            text: { type: 'string', required: true },
+            style: { type: 'enum', values: ['centered', 'quest'] }
+          }
+        },
+      };
+
+      var panel = {
+        properties: {
+          self: {
+            type: 'variegated',
+            key: 'type',
+            common: panelCommon,
+            classes: panelClasses
+          }
+        }
+      };
+
+      var panelList = {
+        properties: {
+          self: {
+            type: 'list',
+            items: { type: 'subresource', class: panel }
+          }
+        }
+      };
+
+      var contentPage = {
+        properties: {
+          name: { type: 'name', required: true },
+          section: { type: 'string', required: true },
+          title: { type: 'string', required: true },
+          if: { type: 'ifClause' },
+          panels: { type: 'subresource', class: panelList }
+        }
+      };
+
+      ok(ParamValidators.validateResource({}, contentPage, value, ''));
     });
   });
 });

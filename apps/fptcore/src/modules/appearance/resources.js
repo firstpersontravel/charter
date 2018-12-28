@@ -6,7 +6,7 @@ var appearance = {
     intro: { type: 'string' },
     disabled_message: { type: 'string' },
     start: { type: 'reference', collection: 'times' },
-    if: { type: 'ifstring' }
+    if: { type: 'ifClause' }
   }
 };
 
