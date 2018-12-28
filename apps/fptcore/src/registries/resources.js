@@ -13,7 +13,10 @@ var moduleResourceSets = [
   require('../modules/page/resources'),
   require('../modules/relay/resources'),
   require('../modules/role/resources'),
-  require('../modules/route/resources')
+  require('../modules/route/resources'),
+  require('../modules/scene/resources'),
+  require('../modules/time/resources'),
+  // require('../modules/trigger/resources')
 ];
 
 var ResourcesRegistry = {};
