@@ -1,5 +1,4 @@
 const sinon = require('sinon');
-const moment = require('moment');
 
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
@@ -12,9 +11,9 @@ describe('Trip', () => {
 
   beforeEach(() => {
     trip = models.Trip.build({
+      experienceId: 3,
       scriptId: 1,
       groupId: 2,
-      createdAt: moment.utc('2018-01-01T02:03:04Z'),
       title: 'Trip',
       date: '2018-01-01',
       departureName: 'Main'
@@ -27,6 +26,11 @@ describe('Trip', () => {
 
   it('validates with all fields present', async () => {
     await trip.validate();
+  });
+
+  it('requires an experience', async () => {
+    trip.experienceId = null;
+    await assertValidation(trip, { experienceId: 'must be present' });
   });
 
   it('requires a script', async () => {

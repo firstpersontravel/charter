@@ -18,9 +18,11 @@ const mockTrailhead = {
 const mockTrip = { id: 100 };
 const mockScript = {
   id: 10,
-  name: 'script',
-  title: 'Script',
-  timezone: 'US/Pacific',
+  experience: {
+    name: 'script',
+    title: 'Script',
+    timezone: 'US/Pacific',
+  },
   content: {
     roles: [{
       name: 'actor',
@@ -140,7 +142,9 @@ describe('RelayTrailheadController', () => {
       sinon.assert.calledWith(models.Group.findOrCreate, {
         where: {
           scriptId: 10,
-          date: moment.utc().tz(mockScript.timezone).format('YYYY-MM-DD'),
+          date: moment.utc()
+            .tz(mockScript.experience.timezone)
+            .format('YYYY-MM-DD'),
           isArchived: false
         }
       });

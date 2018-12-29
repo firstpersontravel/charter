@@ -59,13 +59,22 @@ describe('API create', () => {
   });
 
   describe('POST /api/scripts', () => {
+
+    let experience;
+
+    beforeEach(async () => {
+      experience = await models.Experience.create({
+        name: 'test',
+        title: 'Test',
+        timezone: 'US/Pacific',
+      });
+    });
+
     it('creates script', () => {
       return request(app)
         .post('/api/scripts')
         .send({
-          name: 'test',
-          title: 'Test',
-          timezone: 'US/Pacific',
+          experienceId: experience.id,
           version: 0,
           content: { roles: [{ name: 'hi' }] }
         })
@@ -76,8 +85,6 @@ describe('API create', () => {
           assert.deepStrictEqual(res.body.data.script.content, {
             roles: [{ name: 'hi' }]
           });
-          // Test created at was set
-          assert(res.body.data.script.createdAt);
         });
     });
 
@@ -85,9 +92,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/scripts')
         .send({
-          name: 'test',
-          title: 'Test',
-          timezone: 'US/Pacific',
+          experienceId: experience.id,
           version: 0,
           content: { departures: [{ scene: 'TEST' }] }
         })
@@ -115,9 +120,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/scripts')
         .send({
-          name: 'test',
-          title: 'Test',
-          timezone: 'US/Pacific',
+          experienceId: experience.id,
           version: 0,
           content: '{ "roles": [{ "name": "hi" }] }'
         })
@@ -137,21 +140,32 @@ describe('API create', () => {
   });
 
   describe('POST /api/trips', () => {
-    it('creates trip', async () => {
-      const script = await models.Script.create({
+
+    let script;
+    let group;
+
+    beforeEach(async () => {
+      const experience = await models.Experience.create({
         name: 'test',
         title: 'Test',
         timezone: 'US/Pacific',
+      });
+      script = await models.Script.create({
+        experienceId: experience.id,
         version: 0,
         content: {}
       });
-      const group = await models.Group.create({
+      group = await models.Group.create({
         scriptId: script.id,
         date: '2018-04-02'
       });
+    });
+
+    it('creates trip', () => {
       return request(app)
         .post('/api/trips')
         .send({
+          experienceId: script.experienceId,
           scriptId: script.id,
           groupId: group.id,
           departureName: 'T3',
@@ -171,17 +185,11 @@ describe('API create', () => {
         });        
     });
 
-    it('fails on invalid foreign key', async () => {
-      const script = await models.Script.create({
-        name: 'test',
-        title: 'Test',
-        timezone: 'US/Pacific',
-        version: 0,
-        content: {}
-      });
+    it('fails on invalid foreign key', () => {
       return request(app)
         .post('/api/trips')
         .send({
+          experienceId: script.experienceId,
           scriptId: script.id,
           groupId: 1000,
           departureName: 'T3',

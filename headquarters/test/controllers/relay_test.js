@@ -15,14 +15,19 @@ describe('RelayController', () => {
 
   describe('#scriptForRelay', () => {
     it('looks up active script for a script name', async () => {
-      const stubScript = { name: 'abc' };
+      const stubScript = { name: 'abc', experience: {} };
       const relay = { scriptName: 'abc' };
 
       sandbox.stub(models.Script, 'find').resolves(stubScript);
       const res = await RelayController.scriptForRelay(relay);
       assert.strictEqual(res, stubScript);
       sinon.assert.calledWith(models.Script.find, {
-        where: { name: 'abc', isActive: true, isArchived: false }
+        where: { isActive: true, isArchived: false },
+        include: [{
+          model: models.Experience,
+          as: 'experience',
+          where: { name: 'abc' }
+        }]
       });
     });
   });
@@ -105,7 +110,11 @@ describe('RelayController', () => {
           include: [{
             model: models.Script,
             as: 'script',
-            where: { name: relay.scriptName }
+            include: [{
+              model: models.Experience,
+              as: 'experience',
+              where: { name: relay.scriptName }
+            }]
           }]
         }]
       });

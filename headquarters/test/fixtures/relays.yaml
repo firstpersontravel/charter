@@ -1,9 +1,13 @@
-- model: Script
+- model: Experience
   data:
-    id: 1
     name: script
     title: Script
     timezone: US/Pacific
+
+- model: Script
+  data:
+    id: 1
+    experience: 1
     isActive: true
     isArchived: false
     content:
@@ -41,6 +45,7 @@
 - model: Trip
   data:
     id: 1
+    experience: 1
     group: 1
     script: 1
     departureName: T1

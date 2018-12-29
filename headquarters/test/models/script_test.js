@@ -11,9 +11,7 @@ describe('Script', () => {
 
   beforeEach(() => {
     script = models.Script.build({
-      name: 'test',
-      title: 'test',
-      timezone: 'US/Pacific',
+      experienceId: 1,
       content: {}
     });
   });
@@ -24,6 +22,13 @@ describe('Script', () => {
 
   it('validates with all fields present', async () => {
     await script.validate();
+  });
+
+  it('requires experience', async () => {
+    script.experienceId = null;
+    await assertValidation(script, {
+      experienceId: 'must be present'
+    });
   });
 
   it('errors on invalid collection', async () => {

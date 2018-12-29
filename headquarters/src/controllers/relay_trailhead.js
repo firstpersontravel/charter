@@ -18,7 +18,7 @@ class RelayTrailheadController {
       where: {
         isActive: true,
         isArchived: false,
-        scriptName: script.name,
+        scriptName: script.experience.name,
         roleName: role.name
       }
     });
@@ -34,7 +34,7 @@ class RelayTrailheadController {
     const host = config.env.SERVER_HOST_PUBLIC;
     const actorUrl = `${host}/actor/${matchingProfile.userId}`;
     const castMessage = (
-      `New trip for ${script.title} as ${role.name}: ${actorUrl}`
+      `New trip for ${script.experience.title} as ${role.name}: ${actorUrl}`
     );
     await TripRelaysController.sendAdminMessage(trip, role.name, castMessage);
   }
@@ -59,7 +59,7 @@ class RelayTrailheadController {
    */
   static async createTrip(trailheadRelay, fromNumber) {
     const script = await RelayController.scriptForRelay(trailheadRelay);
-    const localTime = moment.utc().tz(script.timezone);
+    const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {
         scriptId: script.id,
@@ -74,21 +74,21 @@ class RelayTrailheadController {
     // Look for a user, or create if doesn't exist.
     const [trailheadUser, ] = await models.User.findOrCreate({
       where: { isActive: true, phoneNumber: fromNumber },
-      defaults: { firstName: `${script.title} Player` }
+      defaults: { firstName: `${script.experience.title} Player` }
     });
 
     // Create profile if not already exists
     const [trailheadProfile, ] = await models.Profile.findOrCreate({
       where: {
         userId: trailheadUser.id,
-        scriptName: script.name,
+        scriptName: script.experience.name,
         roleName: trailheadRelay.forRoleName,
         isArchived: false
       },
       defaults: {
         isActive: true,
         isArchived: false,
-        firstName: `${script.title} Player`
+        firstName: `${script.experience.title} Player`
       }
     });
 

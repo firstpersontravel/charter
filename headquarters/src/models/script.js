@@ -1,16 +1,15 @@
 const _ = require('lodash');
-const { NOW, INTEGER, ValidationError } = require('sequelize');
+const { INTEGER, ValidationError } = require('sequelize');
 
 const { TextUtil, ParamValidators, ResourcesRegistry } = require('fptcore');
 
+const Experience = require('./experience');
 const database = require('../config').database;
 
 const {
-  datetimeField,
   booleanField,
-  requiredStringField,
-  optionalStringField,
   jsonField,
+  oneToMany,
   snakeCaseColumns
 } = require('./fields');
 
@@ -65,11 +64,6 @@ function validateScriptContent(script) {
  * Script model.
  */
 const Script = database.define('Script', snakeCaseColumns({
-  createdAt: Object.assign(datetimeField(), { defaultValue: NOW }),
-  name: requiredStringField(255),
-  title: requiredStringField(255),
-  host: optionalStringField(64),
-  timezone: requiredStringField(32),
   version: INTEGER,
   content: jsonField(database, 'Script', 'content', {
     extraValidate: {
@@ -93,5 +87,7 @@ const Script = database.define('Script', snakeCaseColumns({
   isActive: booleanField(false),
   isArchived: booleanField(false)
 }));
+
+oneToMany(Script, Experience);
 
 module.exports = Script;

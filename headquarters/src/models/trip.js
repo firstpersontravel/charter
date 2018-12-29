@@ -1,6 +1,5 @@
-const { NOW } = require('sequelize');
-
 const database = require('../config').database;
+const Experience = require('./experience');
 const Group = require('./group');
 const Script = require('./script');
 
@@ -19,7 +18,6 @@ const {
  * Trip model.
  */
 const Trip = database.define('Trip', snakeCaseColumns({
-  createdAt: Object.assign(datetimeField(), { defaultValue: NOW }),
   title: requiredStringField(255),
   date: dateField('date'),
   departureName: requiredStringField(10),
@@ -35,6 +33,7 @@ const Trip = database.define('Trip', snakeCaseColumns({
   isArchived: booleanField(false)
 }));
 
+oneToMany(Trip, Experience);
 oneToMany(Trip, Script);
 oneToMany(Trip, Group);
 

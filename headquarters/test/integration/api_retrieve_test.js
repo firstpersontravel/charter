@@ -25,9 +25,9 @@ describe('API retrieve', () => {
           assert.deepStrictEqual(res.body, {
             data: {
               trip: {
-                createdAt: trip.createdAt.toISOString(),
                 currentSceneName: 'SCENE-MAIN',
                 date: today,
+                experienceId: trip.experienceId,
                 groupId: group.id,
                 history: {},
                 id: trip.id,

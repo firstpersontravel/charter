@@ -16,7 +16,10 @@ describe('TripsController', () => {
     it('creates a trip and players', async () => {
       const stubScript = {
         id: 2,
-        timezone: 'US/Pacific',
+        experience: {
+          id: 3,
+          timezone: 'US/Pacific',
+        },
         content: {
           roles: [{ name: 'fake' }],
           scenes: [{
@@ -53,7 +56,14 @@ describe('TripsController', () => {
       await TripsController.createTrip(1, 'title', 'T1', ['basic']);
       sinon.assert.calledWith(models.Group.find, {
         where: { id: 1 },
-        include: [{ model: models.Script, as: 'script' }]
+        include: [{
+          model: models.Script,
+          as: 'script',
+          include: [{
+            model: models.Experience,
+            as: 'experience'
+          }]
+        }]
       });
       sinon.assert.calledOnce(models.Trip.create);
       // Create trip
@@ -68,6 +78,7 @@ describe('TripsController', () => {
           },
           departureName: 'T1',
           scriptId: 2,
+          experienceId: 3,
           variantNames: 'basic',
           customizations: { oysters: 'omg' },
           title: 'title',

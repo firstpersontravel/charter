@@ -98,7 +98,7 @@ describe('TwilioCallHandler', () => {
     it('returns play', async () => {
       // Stubs script for media lookups
       const stubScript = {
-        name: 'test_script',
+        experience: { name: 'test_script' },
         content: {}
       };
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
@@ -131,7 +131,7 @@ describe('TwilioCallHandler', () => {
     it('returns gather', async () => {
       // Stubs script for media lookups
       const stubScript = {
-        name: 'test_script',
+        experience: { name: 'test_script' },
         content: {}
       };
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);

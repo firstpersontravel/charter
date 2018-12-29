@@ -4,10 +4,15 @@ const moment = require('moment');
 const TripsController = require('../src/controllers/trips');
 const models = require('../src/models');
 
-const dummyScriptFields = {
+const dummyExperienceFields = {
+  id: 1,
   name: 'dummy',
   title: 'dummy',
   timezone: 'US/Pacific',
+};
+
+const dummyScriptFields = {
+  experienceId: 1,
   version: 1,
   content: {
     roles: [{
@@ -21,6 +26,7 @@ const dummyScriptFields = {
 };
 
 async function createDummyTrip() {
+  await models.Experience.create(dummyExperienceFields);
   const script = await models.Script.create(dummyScriptFields);
   return createDummyTripForScript(script);
 }

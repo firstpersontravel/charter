@@ -52,7 +52,8 @@ class TwilioCallOps {
 
   static async play(tripId, relay, twimlResponse, twimlOp) {
     const script = await RelayController.scriptForRelay(relay);
-    const mediaUrl = TwilioCallUtil.getTwilioMediaPath(script, twimlOp.media);
+    const mediaUrl = TwilioCallUtil.getTwilioMediaPath(
+      script.experience.name, twimlOp.media);
     twimlResponse.play({}, mediaUrl);
   }
 

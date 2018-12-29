@@ -27,7 +27,7 @@ TripCore._getActiveVariants = function(script, variantNames) {
 /**
  * Get initial fields for a trip from variants.
  */
-TripCore.getInitialFields = function(script, date, variantNames) {
+TripCore.getInitialFields = function(script, date, timezone, variantNames) {
   var fields = {
     customizations: {},
     values: {},
@@ -49,7 +49,7 @@ TripCore.getInitialFields = function(script, date, variantNames) {
       var day = moment(date).format('YYYY-MM-DD');
       Object.keys(variant.schedule).forEach(function(key) {
         fields.schedule[key] = TimeUtil.convertTimeShorthandToIso(
-          variant.schedule[key], day, script.timezone);
+          variant.schedule[key], day, timezone);
       });
     }
   });

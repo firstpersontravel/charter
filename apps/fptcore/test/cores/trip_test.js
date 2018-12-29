@@ -22,7 +22,8 @@ describe('TripCore', () => {
           }]
         }
       };
-      const res = TripCore.getInitialFields(script, null, ['opt1']);
+      const res = TripCore.getInitialFields(script, null, 'US/Pacific',
+        ['opt1']);
       assert.deepEqual(res.customizations, {
         abc: 123,
         def: 456,
@@ -45,7 +46,8 @@ describe('TripCore', () => {
           }]
         }
       };
-      const res = TripCore.getInitialFields(script, null, ['opt1']);
+      const res = TripCore.getInitialFields(script, null, 'US/Pacific',
+        ['opt1']);
       assert.deepEqual(res.values, {
         abc: 123,
         def: 456
@@ -65,7 +67,8 @@ describe('TripCore', () => {
           }]
         }
       };
-      const res = TripCore.getInitialFields(script, null, ['opt2']);
+      const res = TripCore.getInitialFields(script, null, 'US/Pacific',
+        ['opt2']);
       assert.deepEqual(res.waypointOptions, { w1: 'option1' });
     });
 
@@ -77,10 +80,9 @@ describe('TripCore', () => {
             { name: '1', schedule: { cue2: '8:00pm' } },
             { name: '2', schedule: { cue3: '+1d 9:30am' } }
           ]
-        },
-        timezone: 'US/Pacific'
+        }
       };
-      const res = TripCore.getInitialFields(script, '2017-11-01', ['1', '2']);
+      const res = TripCore.getInitialFields(script, '2017-11-01', 'US/Pacific', ['1', '2']);
       const sch = res.schedule;
       assert.strictEqual(
         moment.utc(sch.cue1).tz('US/Pacific').format('MMM Do YYYY h:mmA z'),
@@ -104,7 +106,7 @@ describe('TripCore', () => {
         },
         timezone: 'US/Pacific'
       };
-      const res = TripCore.getInitialFields(script, '2017-11-04', []);
+      const res = TripCore.getInitialFields(script, '2017-11-04', 'US/Pacific',[]);
       const sch = res.schedule;
       assert.strictEqual(
         moment.utc(sch.beforeDst).tz('US/Pacific').format('MMM D h:mmA z Z'),

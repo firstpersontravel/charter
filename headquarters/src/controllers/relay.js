@@ -18,10 +18,16 @@ class RelayController {
   static async scriptForRelay(relay) {
     return await models.Script.find({
       where: {
-        name: relay.scriptName,
         isActive: true,
         isArchived: false
-      }
+      },
+      include: [{
+        model: models.Experience,
+        as: 'experience',
+        where: {
+          name: relay.scriptName
+        }
+      }]
     });
   }
 
@@ -73,7 +79,11 @@ class RelayController {
         include: [{
           model: models.Script,
           as: 'script',
-          where: { name: relay.scriptName }
+          include: [{
+            model: models.Experience,
+            as: 'experience',
+            where: { name: relay.scriptName }
+          }]
         }]
       }]
     });

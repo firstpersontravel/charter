@@ -22,13 +22,21 @@ class TripsController {
   static async createTrip(groupId, title, departureName, variantNames=[]) {
     const group = await models.Group.find({
       where: { id: groupId },
-      include: [{ model: models.Script, as: 'script' }]
+      include: [{
+        model: models.Script,
+        as: 'script',
+        include: [{
+          model: models.Experience,
+          as: 'experience'
+        }]
+      }]
     });
     const initialFields = TripCore.getInitialFields(group.script, group.date,
-      variantNames);
+      group.script.experience.timezone, variantNames);
     const scenes = group.script.content.scenes || [];
     const firstScene = scenes[0] || { name: '' };
     const tripFields = Object.assign({
+      experienceId: group.script.experience.id,
       scriptId: group.script.id,
       groupId: group.id,
       date: group.date,

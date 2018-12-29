@@ -12,11 +12,13 @@ const {
   snakeCaseColumns
 } = require('./fields');
 
+const ACTION_TYPES = ['event', 'action', 'trigger'];
+
 /**
  * Action model.
  */
 const Action = database.define('Action', snakeCaseColumns({
-  type: enumStringField(10, ['event', 'action', 'trigger'], 'must be an event, action, or trigger'),
+  type: enumStringField(10, ACTION_TYPES),
   name: requiredStringField(64),
   params: jsonField(database, 'Action', 'params'),
   triggerName: optionalStringField(64),

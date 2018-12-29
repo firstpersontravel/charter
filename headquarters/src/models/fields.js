@@ -55,12 +55,12 @@ function optionalStringField(maxLength, validate=null) {
   return stringField(maxLength, validate);
 }
 
-function enumStringField(maxLength, values, msg) {
+function enumStringField(maxLength, values) {
   return stringField(maxLength, {
     notNull: { msg: 'must be present' },
     isIn: {
       args: [values],
-      msg: msg || `must be one of ${values.join(', ')}`
+      msg: `must be one of ${values.join(', ')}`
     }
   });
 }

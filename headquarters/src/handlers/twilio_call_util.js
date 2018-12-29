@@ -6,9 +6,9 @@ class TwilioCallUtil {
   /**
    * Generate a path for referred media.
    */
-  static getTwilioMediaPath(script, mediaPath) {
+  static getTwilioMediaPath(experienceName, mediaPath) {
     const mediaHost = config.env.TWILIO_MEDIA_HOST;
-    return `${mediaHost}/${script.name}/${mediaPath}`;
+    return `${mediaHost}/${experienceName}/${mediaPath}`;
   }
 
   /**
@@ -23,14 +23,15 @@ class TwilioCallUtil {
   /**
    * Return a voicemail, or hangup if no voicemail is available.
    */
-  static hangupOrVoicemail(script, voicemailPath) {
+  static hangupOrVoicemail(experienceName, voicemailPath) {
     // If no voicemail configured, hang up.
     if (!voicemailPath) {
       return this.hangup();
     }
     // Otherwise, play voicemail
     const twimlResponse = new twilio.twiml.VoiceResponse();
-    const voicemailUrl = this.getTwilioMediaPath(script, voicemailPath);
+    const voicemailUrl = this.getTwilioMediaPath(experienceName,
+      voicemailPath);
     twimlResponse.play({}, voicemailUrl);
     twimlResponse.hangup();
     return twimlResponse;
