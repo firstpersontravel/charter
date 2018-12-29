@@ -4,7 +4,7 @@ var EvalCore = require('../../cores/eval');
 
 var play_clip = {
   phraseForm: ['clip_name'],
-  requiredContext: [
+  requiredEventTypes: [
     'call_received', // type: call_received, from: role
     'call_answered', // type: call_answered, to: role
     'query_responded', // type: query_responded, clip: clip-name
