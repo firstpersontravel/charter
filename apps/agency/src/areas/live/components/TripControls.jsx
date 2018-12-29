@@ -228,7 +228,7 @@ export default class TripControls extends Component {
 
   renderCues() {
     const script = this.props.trip.script;
-    const cues = script.content.cues;
+    const cues = script.content.cues || [];
     const pendingCueName = this.state.pendingCueName;
     const cueOptions = cues.map(cue => (
       <option key={cue.name} value={cue.name}>{cue.name}</option>
@@ -350,7 +350,9 @@ export default class TripControls extends Component {
   }
 
   renderReset() {
-    const checkpoints = this.props.trip.script.content.checkpoints || [];
+    const defaultCheckpoint = { name: '__start', title: 'Start' };
+    const checkpoints = [defaultCheckpoint]
+      .concat(this.props.trip.script.content.checkpoints || []);
     const pendingCheckpoint = _.find(checkpoints,
       { name: this.state.pendingCheckpointName });
     const checkpointOptions = checkpoints.map(checkpoint => (

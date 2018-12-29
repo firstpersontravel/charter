@@ -14,6 +14,7 @@ describe('TripResetController', () => {
   });
 
   describe('#resetToCheckpoint', () => {
-    it.skip('resets', () => {});
+    it.skip('resets to start', () => {});
+    it.skip('resets to defined checkpoint', () => {});
   });
 });

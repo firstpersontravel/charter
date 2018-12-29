@@ -20,7 +20,7 @@ function getResourceErrors(script, collectionName, resource) {
   const resourceClass = ResourcesRegistry[resourceType];
   if (!resourceClass) {
     return [{
-      path: `content.${collectionName}`,
+      path: collectionName,
       collection: collectionName,
       message: `Invalid collection: ${collectionName}.`
     }];
@@ -41,7 +41,7 @@ function validateScriptContent(script) {
     const collection = script.content[collectionName];
     if (!_.isArray(collection)) {
       errors.push({
-        path: `content.${collectionName}`,
+        path: collectionName,
         collection: collectionName,
         message: `Collection must be an array: ${collectionName}.`
       });

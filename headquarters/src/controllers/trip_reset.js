@@ -1,8 +1,9 @@
 const _ = require('lodash');
 
-const { TripCore, PlayerCore } = require('fptcore');
+const { SceneCore, TripCore, PlayerCore } = require('fptcore');
 
 const TripNotifyController = require('./trip_notify');
+const TripUtil = require('./trip_util');
 const models = require('../models');
 
 class TripResetController {
@@ -62,10 +63,14 @@ class TripResetController {
       where: { id: tripId },
       include: [{ model: models.Script, as: 'script' }]
     });
+    const context = TripUtil.getContext(tripId);
     const players = await models.Player.findAll({ where: { tripId: tripId } });
+    // Create hardcoded default 'start' checkpoint
+    const startingScene = SceneCore.getStartingSceneName(trip.script, context);
+    const start = { name: '__start', scene: startingScene };
     // Load checkpoint
-    const checkpoint = _.find(trip.script.content.checkpoints || [],
-      { name: checkpointName });
+    const checkpoints = [start].concat(trip.script.content.checkpoints || []);
+    const checkpoint = _.find(checkpoints, { name: checkpointName });
     // Reset data
     await this._resetTrip(trip.script, trip, checkpoint);
     for (let player of players) {

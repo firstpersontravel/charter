@@ -31,7 +31,7 @@ TextUtil.splitWords = function(sentence) {
 };
 
 // TODO: rename audio collection to something that can be dumbly pluralized.
-var innumerateWords = ['audio'];
+var innumerateWords = ['audio', 'directions'];
 
 // SUPER DUMB pluralization
 TextUtil.pluralize = function(singular) {
