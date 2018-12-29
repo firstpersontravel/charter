@@ -136,8 +136,8 @@ function renderActionRefs(script, collectionName, resource) {
       <li
         key={
           `${referringAction.triggerName}-` +
-          `${referringAction.name}-` +
-          `${_.values(referringAction.params).join(',')}`
+          `${referringAction.action.name}-` +
+          `${_.values(referringAction.action.params).join(',')}`
         }>
         {renderLink(script.id, 'triggers', referringAction.triggerName)}
       </li>
