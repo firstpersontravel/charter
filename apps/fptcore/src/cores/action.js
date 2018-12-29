@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 var ActionParamCore = require('./action_param');
 var ActionResultCore = require('./action_result');
-var ActionValidationCore = require('./action_validation');
+var ActionsRegistry = require('../registries/actions');
 var TriggerCore = require('./trigger');
 var TriggerEventCore = require('./trigger_event');
 
@@ -20,8 +20,10 @@ ActionCore.addEventToContext = function(context, event) {
  */
 ActionCore.opsForAction = function(script, context, action, applyAt) {
   var contextWithEvent = ActionCore.addEventToContext(context, action.event);
-  ActionValidationCore.validateActionAtRun(script, contextWithEvent, action);
-  var actionClass = ActionValidationCore.getAction(action.name);
+  var actionClass = ActionsRegistry[action.name];
+  if (!actionClass) {
+    throw new Error('Invalid action "' + action.name + '".');
+  }
   var paramsSpec = actionClass.params;
   var params = ActionParamCore.prepareParams(script, context, paramsSpec,
     action.params);
@@ -33,7 +35,7 @@ ActionCore.opsForAction = function(script, context, action, applyAt) {
  * Get the results for a given action.
  */
 ActionCore.eventForAction = function(action) {
-  var actionClass = ActionValidationCore.getAction(action.name);
+  var actionClass = ActionsRegistry[action.name];
   if (!actionClass) {
     throw new Error('Invalid action "' + action.name + '".');
   }
@@ -148,9 +150,6 @@ ActionCore.actionsForTriggerAndEvent = function(trigger, context, event,
 ActionCore.applyOrScheduleAction = function(script, context, action, applyAt) {
   // Schedule actions if they have a later time.
   if (action.scheduleAt.isAfter(applyAt)) {
-    // Validate first to ensure it's ok.
-    ActionValidationCore.validateActionAtRun(script, context, action);
-    // If it is, allow it to be scheduled.
     return {
       nextContext: context,
       resultOps: [],

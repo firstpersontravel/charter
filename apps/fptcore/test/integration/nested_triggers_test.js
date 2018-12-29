@@ -4,7 +4,6 @@ const moment = require('moment');
 
 const ActionCore = require('../../src/cores/action');
 const ActionsRegistry = require('../../src/registries/actions');
-const ActionValidationCore = require('../../src/cores/action_validation');
 
 var sandbox = sinon.sandbox.create();
 
@@ -85,24 +84,19 @@ const now = moment.utc();
 
 describe('Integration - Nested Triggers', () => {
 
-  let actionSpies;
-
   beforeEach(() => {
-    actionSpies = {};
-    sandbox
-      .stub(ActionValidationCore, 'getAction')
-      .callsFake((name) => {
-        if (!actionSpies[name]) {
-          actionSpies[name] = sinon.spy(ActionsRegistry[name].applyAction);
-        }
-        return Object.assign({}, ActionsRegistry[name], {
-          applyAction: actionSpies[name]
-        });
-      });
+    const oldActions = Object.assign({}, ActionsRegistry);
+    const spyActions = ['custom_message', 'signal_cue', 'send_to_page'];
+    spyActions.forEach((spyAction) => {
+      sandbox
+        .stub(ActionsRegistry, spyAction)
+        .value(Object.assign({}, ActionsRegistry[spyAction], {
+          applyAction: sinon.spy(oldActions[spyAction].applyAction)
+        }));
+    });
   });
 
   afterEach(() => {
-    actionSpies = null;
     sandbox.restore();
   });
 
@@ -186,42 +180,35 @@ describe('Integration - Nested Triggers', () => {
 
     // Test intermediate action calls
     // First cue should have been called with no event
-    assert(actionSpies.signal_cue);
-    assert.deepStrictEqual(actionSpies.signal_cue.firstCall.args, [
-      script,
-      Object.assign({}, context, { event: null }),
-      { cue_name: 'CUE-GREET' },
-      now
-    ]);
+    assert.deepStrictEqual(
+      ActionsRegistry.signal_cue.applyAction.firstCall.args, [
+        script, Object.assign({}, context, { event: null }),
+        { cue_name: 'CUE-GREET' }, now]);
+
     // Second cue should have been called with the event 'cue CUE-GREET',
-    assert.deepStrictEqual(actionSpies.signal_cue.secondCall.args, [
-      script,
-      Object.assign({}, context, {
-        event: { cue: 'CUE-GREET', type: 'cue_signaled' },
-        history: { 'TRIGGER-GREET-1': now.toISOString() }
-      }),
-      { cue_name: 'CUE-GREET-REPLY' },
-      now
-    ]);
+    assert.deepStrictEqual(
+      ActionsRegistry.signal_cue.applyAction.secondCall.args, [
+        script, Object.assign({}, context, {
+          event: { cue: 'CUE-GREET', type: 'cue_signaled' },
+          history: { 'TRIGGER-GREET-1': now.toISOString() }
+        }),
+        { cue_name: 'CUE-GREET-REPLY' }, now]);
+
     // Then custom_message with event 'cue CUE-GREET-REPLY'
-    assert(actionSpies.custom_message);
-    assert.deepStrictEqual(actionSpies.custom_message.firstCall.args, [
-      script,
-      Object.assign({}, context, {
-        event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
-        history: {
-          'TRIGGER-GREET-1': now.toISOString(),
-          'TRIGGER-GREET-2': now.toISOString()
-        }
-      }),
-      {
-        from_role_name: 'Cowboy',
-        to_role_name: 'Farmer',
-        message_content: 'howdy',
-        message_type: 'text'
-      },
-      now
-    ]);
+    assert.deepStrictEqual(
+      ActionsRegistry.custom_message.applyAction.firstCall.args, [
+        script, Object.assign({}, context, {
+          event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
+          history: {
+            'TRIGGER-GREET-1': now.toISOString(),
+            'TRIGGER-GREET-2': now.toISOString()
+          }
+        }), {
+          from_role_name: 'Cowboy',
+          to_role_name: 'Farmer',
+          message_content: 'howdy',
+          message_type: 'text'
+        }, now]);
 
     // Test results
     assert.deepStrictEqual(result.resultOps,

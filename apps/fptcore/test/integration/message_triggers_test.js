@@ -3,8 +3,6 @@ const sinon = require('sinon');
 const moment = require('moment');
 
 const ActionCore = require('../../src/cores/action');
-const ActionsRegistry = require('../../src/registries/actions');
-const ActionValidationCore = require('../../src/cores/action_validation');
 
 var sandbox = sinon.sandbox.create();
 
@@ -12,24 +10,7 @@ const now = moment.utc();
 
 describe('Integration - Message Triggers', () => {
 
-  let actionSpies;
-
-  beforeEach(() => {
-    actionSpies = {};
-    sandbox
-      .stub(ActionValidationCore, 'getAction')
-      .callsFake((name) => {
-        if (!actionSpies[name]) {
-          actionSpies[name] = sinon.spy(ActionsRegistry[name].applyAction);
-        }
-        return Object.assign({}, ActionsRegistry[name], {
-          applyAction: actionSpies[name]
-        });
-      });
-  });
-
   afterEach(() => {
-    actionSpies = null;
     sandbox.restore();
   });
 

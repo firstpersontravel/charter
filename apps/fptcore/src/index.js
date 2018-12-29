@@ -4,7 +4,6 @@ module.exports = {
   ActionParamCore: require('./cores/action_param'),
   ActionPhraseCore: require('./cores/action_phrase'),
   ActionResultCore: require('./cores/action_result'),
-  ActionValidationCore: require('./cores/action_validation'),
   ContextCore: require('./cores/context'),
   EvalCore: require('./cores/eval'),
   EventsRegistry: require('./registries/events'),

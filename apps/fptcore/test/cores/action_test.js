@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const moment = require('moment');
 
 const ActionCore = require('../../src/cores/action');
-const ActionValidationCore = require('../../src/cores/action_validation');
+const ActionsRegistry = require('../../src/registries/actions');
 const TriggerCore = require('../../src/cores/trigger');
 const TriggerEventCore = require('../../src/cores/trigger_event');
 
@@ -11,7 +11,6 @@ var sandbox = sinon.sandbox.create();
 
 describe('ActionCore', () => {
 
-  var getActionStub;
   var addAction = {
     applyAction: function(script, context, params, applyAt) {
       return [{
@@ -25,14 +24,12 @@ describe('ActionCore', () => {
   var now = moment.utc();
 
   beforeEach(() => {
-    getActionStub = sandbox.stub(ActionValidationCore, 'getAction');
-    getActionStub.withArgs('add').returns(addAction);
-    // pause on validation for testing
-    sandbox.stub(ActionValidationCore, 'validateActionAtRun').returns(null);
+    ActionsRegistry.add = addAction;
   });
 
   afterEach(() => {
     sandbox.restore();
+    delete ActionsRegistry.add;
   });
 
   describe('#opsForAction', () => {
