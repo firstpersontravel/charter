@@ -161,6 +161,26 @@ function dateField(fieldName) {
   };
 }
 
+const defaultJsonValidation = {
+  notNull: {
+    msg: 'must be present'
+  },
+  isObject: function(value) {
+    if (!value) {
+      return;
+    }
+    if (typeof value === 'string') {
+      if (value[0] !== '{') {
+        throw new Error('must be an object');
+      }
+    } else {
+      if (!_.isObject(value)) {
+        throw new Error('must be an object');
+      }
+    }
+  }
+};
+
 function jsonField(db, modelName, fieldName, options) {
   var self = this;
   options = options || {};
@@ -180,10 +200,10 @@ function jsonField(db, modelName, fieldName, options) {
     }
   });
 
-  var allowNull = options.allowNull !== false;
-  var model = {
+  // Generate the model and return it.
+  return {
     type: options.type || TEXT,
-    allowNull: allowNull,
+    allowNull: false,
     get: function() {
       var currentValue = this.getDataValue(fieldName);
       if (currentValue === '') {
@@ -196,30 +216,9 @@ function jsonField(db, modelName, fieldName, options) {
     set: function(value) {
       this.setDataValue(fieldName, stringify(value, {space: 2}));
     },
-    validate: {
-      notNull: {
-        msg: 'must be present'
-      },
-      isObject: function(value) {
-        if (!value) {
-          return;
-        }
-        if (typeof value === 'string') {
-          if (value[0] !== '{') {
-            throw new Error('must be an object');
-          }
-        } else {
-          if (!_.isObject(value)) {
-            throw new Error('must be an object');
-          }
-        }
-      }
-    }
+    validate: Object.assign(defaultJsonValidation, options.extraValidate),
+    defaultValue: JSON.stringify(options.defaultValue || {})
   };
-
-  model.defaultValue = JSON.stringify(options.defaultValue || {});
-
-  return model;
 }
 
 module.exports = {

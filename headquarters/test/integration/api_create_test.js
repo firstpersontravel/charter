@@ -58,7 +58,7 @@ describe('API create', () => {
     });
   });
 
-  describe('POST /api/scripts', () => {
+  describe.only('POST /api/scripts', () => {
     it('creates script', () => {
       return request(app)
         .post('/api/scripts')
@@ -78,6 +78,24 @@ describe('API create', () => {
           });
           // Test created at was set
           assert(res.body.data.script.createdAt);
+        });
+    });
+
+    it.only('fails on invalid script content', () => {
+      return request(app)
+        .post('/api/scripts')
+        .send({
+          name: 'test',
+          title: 'Test',
+          timezone: 'US/Pacific',
+          version: 0,
+          content: { departures: [{ scene: 'TEST' }] }
+        })
+        .set('Accept', 'application/json')
+        .expect(422)
+        .then((res) => {
+          // Test returns an error
+          assert.deepStrictEqual(res.body, { a: 2 });
         });
     });
 

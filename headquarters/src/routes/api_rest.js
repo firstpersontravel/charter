@@ -68,6 +68,33 @@ function respondWithRecords(res, model, records) {
  * Persistence functions
  */
 
+// Convert sequelize errs into api errors here.
+function apiErrorFromValidationError(err) {
+  const fieldNames = _.uniq(_.map(err.errors, 'path')).sort().join(', ');
+  const fields = [];
+  const message = `Invalid fields: ${fieldNames}.`;
+  for (const fieldErr of err.errors) {
+    // Check for *NESTED* validation errors and unpack those -- this is most
+    // likely from the script schema validation.
+    if (fieldErr.path === 'content' &&
+        fieldErr.__raw &&
+        fieldErr.__raw.errors) {
+      fields.push.apply(fields, fieldErr.__raw.errors.map(rawErr => ({
+        field: fieldErr.path,
+        path: rawErr.path,
+        message: rawErr.message
+      })));
+      continue;
+    }
+    // Otherwise just a normal error.
+    fields.push({
+      field: fieldErr.path,
+      message: fieldErr.message
+    });
+  }
+  return errors.validationError(message, { fields: fields });
+}
+
 async function updateRecord(record, fields) {
   record.set(fields);
 
@@ -76,15 +103,7 @@ async function updateRecord(record, fields) {
     await record.validate();
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
-      // convert sequelize errs into api errors here
-      const fieldNames = _.uniq(_.map(err.errors, 'path')).sort().join(', ');
-      const message = `Invalid fields: ${fieldNames}.`;
-      throw errors.validationError(message, {
-        fields: err.errors.map(fieldErr => ({
-          field: fieldErr.path,
-          message: fieldErr.message
-        }))
-      });
+      throw apiErrorFromValidationError(err);
     } else {
       throw err;
     }

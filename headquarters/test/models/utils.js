@@ -10,7 +10,7 @@ async function assertValidation(record, expectedFieldErrors) {
   }
   if (!caughtError) {
     assert.fail(
-      `Expected errors on ${_.keys(expectedFieldErrors).join(', ')}.`
+      `Expected errors on ${_.keys(expectedFieldErrors).join(', ')}, but validation passed.`
     );
   }
   const caughtFieldErrors = _(caughtError.errors)
