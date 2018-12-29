@@ -38,11 +38,11 @@ describe('Integration - Message Triggers', () => {
       content: {
         triggers: [{
           name: 'trigger1',
-          event: { message_sent: { from: 'A', to: 'B' } },
+          events: [{ message_sent: { from: 'A', to: 'B' } }],
           actions: ['set_value trigger true']
         }, {
           name: 'trigger2',
-          event: { message_sent: { from: 'A', to: 'B' } },
+          events: [{ message_sent: { from: 'A', to: 'B' } }],
           if: ['trigger'],
           actions: ['set_value SHOULD_NOT_FIRE true']
         }]
@@ -60,7 +60,7 @@ describe('Integration - Message Triggers', () => {
       content: {
         triggers: [{
           name: 'trigger1',
-          event: { message_sent: { type: 'text' } },
+          events: [{ message_sent: { type: 'text' } }],
           if: 'contains event.message.content "1234"',
           actions: ['set_value trigger true']
         }]
@@ -85,7 +85,7 @@ describe('Integration - Message Triggers', () => {
       content: {
         triggers: [{
           name: 'trigger1',
-          event: { message_sent: { type: 'text' } },
+          events: [{ message_sent: { type: 'text' } }],
           if: 'contains event.message.content "1234"',
           actions: ['set_value trigger true']
         }]

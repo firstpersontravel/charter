@@ -24,9 +24,7 @@ TriggerEventCore.doesEventFireTriggerEvent = function(
  * Return the first trigger event
  */
 TriggerEventCore.triggerEventForEventType = function(trigger, eventType) {
-  var triggerEvents = _.isArray(trigger.event) ?
-    trigger.event : [trigger.event];
-  return _.find(triggerEvents, function(triggerEvent) {
+  return _.find(trigger.events, function(triggerEvent) {
     return !!triggerEvent[eventType];
   }) || null;
 };

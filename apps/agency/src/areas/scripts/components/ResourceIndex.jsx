@@ -150,15 +150,14 @@ function doesEventMatchResource(event, collectionName, resource) {
 
 function renderEventRefs(script, collectionName, resource) {
   const referringEvents = _(script.content.triggers)
-    .map((trigger) => {
-      const events = _.isArray(trigger.event) ? trigger.event : [trigger.event];
-      return _(events)
+    .map(trigger => (
+      _(trigger.events)
         .filter(event => (
           doesEventMatchResource(event, collectionName, resource)
         ))
         .map(event => ({ event: event, trigger: trigger }))
-        .value();
-    })
+        .value()
+    ))
     .flatten()
     .value();
   if (!referringEvents.length) {

@@ -34,7 +34,7 @@ ActionValidationCore.precheckAction = function(script, action, trigger) {
   var actionClass = ActionValidationCore.getAction(action.name);
   if (actionClass.requiredContext) {
     // Check that the trigger event type matches the required context.
-    _.forEach(trigger.event, function(triggerEvent) {
+    _.forEach(trigger.events, function(triggerEvent) {
       var triggerEventType = Object.keys(triggerEvent || {})[0] || null;
       if (!_.includes(actionClass.requiredContext, triggerEventType)) {
         warnings.push(

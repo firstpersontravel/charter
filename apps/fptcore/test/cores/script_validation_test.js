@@ -11,7 +11,7 @@ describe('ScriptValidationCore', () => {
           triggers: [{
             name: 'TRIGGER-MESSAGE-GABE-TOM',
             scene: 'SCENE-1',
-            event: [],
+            events: [],
             actions: ['send_message']
           }]
         }
@@ -37,13 +37,13 @@ describe('ScriptValidationCore', () => {
             // Has required context
             name: 'TRIGGER-CALL-FROM-GABE',
             scene: 'SCENE-1',
-            event: [{ 'call_received': { from: 'Gabe', to: 'Tom' } }],
+            events: [{ 'call_received': { from: 'Gabe', to: 'Tom' } }],
             actions: ['add_to_call Tom']
           }, {
             // Does not
             name: 'TRIGGER-CALL-FROM-TOM',
             scene: 'SCENE-1',
-            event: [],
+            events: [],
             actions: ['add_to_call Gabe']
           }]
         }

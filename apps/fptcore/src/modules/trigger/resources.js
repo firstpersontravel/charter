@@ -93,7 +93,7 @@ var trigger = {
   properties: {
     name: { type: 'name', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    event: { type: 'list', items: event, required: true },
+    events: { type: 'list', items: event, required: true },
     repeatable: { type: 'boolean', default: true },
     if: { type: 'ifClause' },
     actions: Object.assign({ required: true }, actionListParam)

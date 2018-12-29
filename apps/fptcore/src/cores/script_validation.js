@@ -98,61 +98,11 @@ function gatherChildActions(obj, path, actions, warnings) {
   }
 }
 
-// function gatherEventWarnings(script, event) {
-//   if (!event) {
-//     return ['Empty event.'];
-//   }
-//   var eventType = Object.keys(event)[0];
-//   if (!eventType) {
-//     return ['No event type.'];
-//   }
-//   var eventSpec = EventsRegistry[eventType];
-//   if (!eventSpec) {
-//     return ['Invalid event type "' + eventType + '".'];
-//   }
-//   var eventParams = event[eventType];
-//   return ParamValidators.validateParams(script, eventSpec.specParams,
-//     eventParams, '');
-// }
-
 function gatherTriggerActions(script, trigger, path, warnings) {
   var actions = [];
   gatherChildActions(trigger, path, actions, warnings);
   return actions;
 }
-
-// function gatherTriggerWarnings(script, trigger, path, warnings) {
-//   var actions = gatherTriggerActions(script, trigger, path, warnings);
-//   actions.forEach(function(action) {
-//     // Check validations
-//     var actionWarnings = ActionValidationCore.precheckAction(
-//       script, action.action, trigger);
-//     warnings.push.apply(warnings, actionWarnings.map(function(warning) {
-//       return action.path + ' (' + action.action.name + '): ' + warning;
-//     }));
-//   });
-
-//   var events = _.isArray(trigger.event) ? trigger.event : [trigger.event];
-//   events.forEach(function(eventItem) {
-//     if (!eventItem) {
-//       return;
-//     }
-//     var eventWarnings = gatherEventWarnings(script, eventItem);
-//     warnings.push.apply(warnings, eventWarnings.map(function(warning) {
-//       return path + '.event[type=' + Object.keys(eventItem)[0] + ']: ' + warning;
-//     }));
-//   });
-// }
-
-// function gatherScriptTriggerWarnings(script, warnings) {
-//   var triggers = script.content.triggers || [];
-//   triggers.forEach(function(trigger, i) {
-//     var triggerPath = trigger.name ?
-//       'triggers[name=' + trigger.name + ']' :
-//       'triggers[' + i + ']';
-//     gatherTriggerWarnings(script, trigger, triggerPath, warnings);
-//   });
-// }
 
 ScriptValidationCore.gatherActions = function(script) {
   var triggers = script.content.triggers || [];
@@ -169,29 +119,6 @@ ScriptValidationCore.gatherActions = function(script) {
     .flatten()
     .value();
 };
-
-// TODO: ONCE ALL RESOURCES ARE REPRESENTED IN MODULES, WE SHOULD BE ABLE
-// TO DO THIS IN A SMARTER WAY.
-// function gatherDependencyWarnings(script, warnings) {
-//   _.each(ScriptValidationCore.SCRIPT_DEPENDENCY_TREE, function(relations, collectionName) {
-//     var collection = script.content[collectionName] || [];
-//     collection.forEach(function(item, i) {
-//       var itemPath = collectionName + '[' +
-//         (item.name ? ('name=' + item.name) : i) + ']';
-//       _.each(relations, function(relationCollectionName, relationKey) {
-//         var depName = item[relationKey];
-//         if (!depName) {
-//           return;
-//         }
-//         var depCollection = script.content[relationCollectionName] || [];
-//         if (!_.find(depCollection, { name: depName })) {
-//           warnings.push(itemPath + ': No "' + depName +
-//             '" in ' + relationCollectionName + '.');
-//         }
-//       });
-//     });
-//   });
-// }
 
 /**
  * Gather warnings for resources.
@@ -221,8 +148,6 @@ function gatherResourceWarnings(script, warnings) {
 ScriptValidationCore.gatherScriptWarnings = function(script) {
   var warnings = [];
   gatherResourceWarnings(script, warnings);
-  // gatherScriptTriggerWarnings(script, warnings);
-  // gatherDependencyWarnings(script, warnings);
   return warnings;
 };
 

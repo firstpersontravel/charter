@@ -144,7 +144,7 @@ describe('TriggerEventCore', () => {
 
   describe('#doesEventFireTriggerEvent', () => {
     it('returns false on non-matching event', () => {
-      const trigger = { event: { call_ended: {} } };
+      const trigger = { events: [{ call_ended: {} }] };
       const event = { type: 'cue_signaled', };
       const res = TriggerEventCore
         .doesEventFireTriggerEvent({}, {}, trigger, event);
@@ -171,16 +171,16 @@ describe('TriggerEventCore', () => {
   describe('#triggerEventForEventType', () => {
     it('returns matching event', () => {
       const trigger = {
-        event: { thing_happened: { params: true } }
+        events: [{ thing_happened: { params: true } }]
       };
       const eventType = 'thing_happened';
       const res = TriggerEventCore.triggerEventForEventType(trigger, eventType);
-      assert.strictEqual(res, trigger.event);
+      assert.strictEqual(res, trigger.events[0]);
     });
 
     it('skips non-matching event', () => {
       const trigger = {
-        event: { thing_happened: { params: true } }
+        events: [{ thing_happened: { params: true } }]
       };
       const eventType = 'other_thing_happened';
       const res = TriggerEventCore.triggerEventForEventType(trigger, eventType);
@@ -189,7 +189,7 @@ describe('TriggerEventCore', () => {
 
     it('goes through multiple events to return matching one', () => {
       const trigger = {
-        event: [
+        events: [
           { this_happened: { params: true } },
           { that_happened: { params: true } },
           { another_thing_happened: { params: true } }
@@ -197,17 +197,17 @@ describe('TriggerEventCore', () => {
       };
       const eventType = 'that_happened';
       const res = TriggerEventCore.triggerEventForEventType(trigger, eventType);
-      assert.strictEqual(res, trigger.event[1]);
+      assert.strictEqual(res, trigger.events[1]);
     });
   });
 
   describe('#doesEventFireTrigger', () => {
     it('detects matching case', () => {
-      const trigger = { event: { cue_signaled: {} } };
+      const trigger = { events: [{ cue_signaled: {} }] };
       const event = { type: 'cue_signaled' };
       const stub = sandbox
         .stub(TriggerEventCore, 'triggerEventForEventType')
-        .returns(trigger.event);
+        .returns(trigger.events[0]);
       const stub2 = sandbox
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(true);
@@ -217,11 +217,11 @@ describe('TriggerEventCore', () => {
       assert.strictEqual(res, true);
 
       sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.calledWith(stub2, {}, {}, trigger.event, event);
+      sinon.assert.calledWith(stub2, {}, {}, trigger.events[0], event);
     });
 
     it('detects coarse non-matching case', () => {
-      const trigger = { event: { cue_signaled: {} } };
+      const trigger = { events: [{ cue_signaled: {} }] };
       const event = { type: 'cue_signaled' };
       const stub = sandbox
         .stub(TriggerEventCore, 'triggerEventForEventType')
@@ -239,11 +239,11 @@ describe('TriggerEventCore', () => {
     });
 
     it('detects fine non-matching case', () => {
-      const trigger = { event: { cue_signaled: {} } };
+      const trigger = { events: [{ cue_signaled: {} }] };
       const event = { type: 'cue_signaled' };
       const stub = sandbox
         .stub(TriggerEventCore, 'triggerEventForEventType')
-        .returns(trigger.event);
+        .returns(trigger.events[0]);
       const stub2 = sandbox
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(false);
@@ -253,7 +253,7 @@ describe('TriggerEventCore', () => {
       assert.strictEqual(res, false);
 
       sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.calledWith(stub2, {}, {}, trigger.event, event);
+      sinon.assert.calledWith(stub2, {}, {}, trigger.events[0], event);
     });
   });
 
@@ -276,9 +276,9 @@ describe('TriggerEventCore', () => {
       const script = {
         content: {
           triggers: [
-            { scene: 'SCENE-1', event: {} },
-            { scene: 'SCENE-2', event: {} },
-            { scene: 'SCENE-3', event: {} }]
+            { scene: 'SCENE-1', events: [] },
+            { scene: 'SCENE-2', events: [] },
+            { scene: 'SCENE-3', events: [] }]
         }
       };
       const context = { currentSceneName: 'SCENE-1' };

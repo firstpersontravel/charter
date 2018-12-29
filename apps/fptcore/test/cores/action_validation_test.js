@@ -66,7 +66,7 @@ describe('ActionValidationCore', () => {
       dummyAction.requiredContext = ['dummy_event_type'];
       ActionValidationCore.getAction.returns(dummyAction);
 
-      const trigger = { event: [{ other_type: { param: 'value' } }] };
+      const trigger = { events: [{ other_type: { param: 'value' } }] };
       const action = { name: 'dummy', params: { number: 1, extra: 2 } };
       const result = ActionValidationCore.precheckAction({}, action, trigger);
       assert.deepStrictEqual(result, [
@@ -79,7 +79,7 @@ describe('ActionValidationCore', () => {
       dummyAction.requiredContext = ['dummy_event_type'];
       ActionValidationCore.getAction.returns(dummyAction);
 
-      const trigger = { event: [{ dummy_event_type: { param: 'value' } }] };
+      const trigger = { events: [{ dummy_event_type: { param: 'value' } }] };
       const action = { name: 'dummy', params: { number: 1, extra: 2 } };
       const result = ActionValidationCore.precheckAction({}, action, trigger);
       assert.deepStrictEqual(result, []);
