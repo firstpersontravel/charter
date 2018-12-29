@@ -13,6 +13,7 @@ const mapStateToProps = (state, ownProps) => {
     isArchived: false
   });
   return {
+    experiences: state.datastore.experiences,
     scripts: state.datastore.scripts,
     users: state.datastore.users,
     profiles: state.datastore.profiles,

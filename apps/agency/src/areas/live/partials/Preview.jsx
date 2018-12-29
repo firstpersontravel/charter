@@ -12,7 +12,7 @@ function renderPanel(player, page, panel) {
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
     const humanized = EvalCore.templateText(player.trip.context,
-      panel.text, player.trip.script.timezone);
+      panel.text, player.trip.experience.timezone);
     return humanized.split('\n').filter(Boolean).map(p => (
       <p key={p} style={{ marginBottom: '0.5em' }} className="card-text">
         {p}
@@ -24,7 +24,7 @@ function renderPanel(player, page, panel) {
     const isSceneActive = page.scene === player.trip.currentSceneName;
     const script = player.trip.script;
     const panelText = EvalCore.templateText(player.trip.context,
-      panel.text || panel.placeholder, script.timezone);
+      panel.text || panel.placeholder, player.trip.experience.timezone);
     const scene = _.find(script.content.scenes, { name: page.scene });
     const disabledPanelText = (
       <span>
@@ -53,9 +53,9 @@ function renderPageNotActive(appearance, player) {
   const appearanceStart = appearance.start ?
     moment.utc(trip.schedule[appearance.start]) :
     null;
-  const startLabel = appearanceStart ? ` - ${appearanceStart.clone().tz(trip.script.timezone).format('h:mma')}` : '';
+  const startLabel = appearanceStart ? ` - ${appearanceStart.clone().tz(trip.experience.timezone).format('h:mma')}` : '';
   const introText = EvalCore.templateText(trip.context,
-    appearance.intro, trip.script.timezone);
+    appearance.intro, trip.experience.timezone);
   return (
     <div className="card" style={{ marginBottom: '0.5em' }}>
       <div className="card-header">
@@ -81,7 +81,7 @@ function renderPage(appearance, page, player) {
   let headerPanel = null;
   if (page.directive) {
     const headerText = EvalCore.templateText(trip.context,
-      page.directive, trip.script.timezone);
+      page.directive, trip.experience.timezone);
     headerPanel = (
       <div className="card-header">
         <strong>

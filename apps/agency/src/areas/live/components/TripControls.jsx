@@ -180,7 +180,7 @@ export default class TripControls extends Component {
           className={`btn ${btnOutlineDangerClass}`}
           onClick={() => this.handleAdminAction('fast_forward_next')}>
           <i className="fa fa-fast-forward" />
-          &nbsp;{moment.utc(this.props.nextAction.scheduledAt).tz(this.props.trip.script.timezone).format('h:mm:ssa')}
+          &nbsp;{moment.utc(this.props.nextAction.scheduledAt).tz(this.props.trip.experience.timezone).format('h:mm:ssa')}
         </button>,
         <button
           key="ff-2"

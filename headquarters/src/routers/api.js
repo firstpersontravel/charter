@@ -38,6 +38,7 @@ function createCollectionRouter(model, config={})
 
 // REST API routes
 apiRouter.use('/actions', createCollectionRouter(models.Action));
+apiRouter.use('/experiences', createCollectionRouter(models.Experience));
 apiRouter.use('/groups', createCollectionRouter(models.Group));
 apiRouter.use('/messages', createCollectionRouter(models.Message));
 apiRouter.use('/players', createCollectionRouter(models.Player));

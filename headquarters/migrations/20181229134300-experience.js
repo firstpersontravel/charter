@@ -43,6 +43,13 @@ module.exports = {
       onDelete: 'NO ACTION',
       onUpdate: 'CASCADE'
     });
+    await queryInterface.addColumn('Trips', 'experience_id', {
+      allowNull: true,
+      after: 'id',
+      type: 'INTEGER',
+      onDelete: 'NO ACTION',
+      onUpdate: 'CASCADE'
+    });
 
     // Gather scripts
     const scriptsSql = 'select id, name, title, host, timezone from Scripts';
@@ -61,17 +68,33 @@ module.exports = {
     await queryInterface.bulkInsert('Experiences', experiencesToCreate);
 
     // Add reference
-    const updateRefSql = `
+    const updateScriptRefSql = `
       update Scripts
         inner join Experiences
         on Experiences.name = Scripts.name
       set
         Scripts.experience_id = Experiences.id;
     `;
-    await queryInterface.sequelize.query(updateRefSql);
+    await queryInterface.sequelize.query(updateScriptRefSql);
+
+      const updateTripRefSql = `
+      update Trips
+        inner join Scripts
+        on Scripts.id = Trips.script_id
+      set
+        Trips.experience_id = Scripts.experience_id;
+    `;
+    await queryInterface.sequelize.query(updateTripRefSql);
 
     // rm null constraint
     await queryInterface.changeColumn('Scripts', 'experience_id', {
+      allowNull: false,
+      after: 'id',
+      type: 'INTEGER',
+      onDelete: 'NO ACTION',
+      onUpdate: 'CASCADE'
+    });
+    await queryInterface.changeColumn('Trips', 'experience_id', {
       allowNull: false,
       after: 'id',
       type: 'INTEGER',
@@ -146,6 +169,7 @@ module.exports = {
     `;
     await queryInterface.sequelize.query(refillSql);
     await queryInterface.removeColumn('Scripts', 'experience_id');
+    await queryInterface.removeColumn('Trips', 'experience_id');
     // await queryInterface.removeColumn('Trips', 'timezone');
     await queryInterface.dropTable('Experiences');
   }

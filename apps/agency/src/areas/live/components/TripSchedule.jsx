@@ -16,7 +16,7 @@ export default class TripSchedule extends Component {
 
   handleTimeUpdate(timeName, oldTimestamp, newTimeShorthand) {
     const trip = this.props.trip;
-    const timezone = trip.script.timezone;
+    const timezone = trip.experience.timezone;
     const oldDate = moment.utc(oldTimestamp).tz(timezone).format('YYYY-MM-DD');
     const newTimestamp = TimeUtil.convertTimeShorthandToIso(
       newTimeShorthand, oldDate, timezone);
@@ -50,7 +50,7 @@ export default class TripSchedule extends Component {
   }
 
   render() {
-    const timezone = this.props.trip.script.timezone;
+    const timezone = this.props.trip.experience.timezone;
     const timeRows = _.map(this.props.trip.schedule, (timestamp, timeName) => (
       this.renderTimeRow(timeName, timestamp, timezone)
     ));

@@ -37,8 +37,10 @@ export function instanceStatus(state, collectionName, query) {
 }
 
 export function assembleTripStatus(state, tripId) {
-  const tripStatus = instanceStatus(state, 'trips',
-    { id: Number(tripId) });
+  const tripStatus = instanceStatus(state, 'trips', { id: Number(tripId) });
+  const experienceId = _.get(tripStatus, 'instance.experienceId');
+  const experienceStatus = instanceStatus(state, 'experiences',
+    { id: experienceId });
   const scriptId = _.get(tripStatus, 'instance.scriptId');
   const scriptStatus = instanceStatus(state, 'scripts', { id: scriptId });
   const playersStatus = instancesStatus(state, 'players',
@@ -49,6 +51,7 @@ export function assembleTripStatus(state, tripId) {
     host: `${window.location.protocol}//${window.location.hostname}`
   };
   if (trip) {
+    trip.experience = experienceStatus.instance;
     trip.script = scriptStatus.instance;
     const roles = _.get(scriptStatus.instance, 'content.roles') || [];
     trip.players = _.map(playersStatus.instances, instance => (
@@ -61,11 +64,13 @@ export function assembleTripStatus(state, tripId) {
     trip.context = trip.script ? ContextCore.gatherContext(env, trip) : null;
   }
   const isLoading = (
+    experienceStatus.isLoading ||
     scriptStatus.isLoading ||
     tripStatus.isLoading ||
     playersStatus.isLoading
   );
   const isError = (
+    experienceStatus.isError ||
     scriptStatus.isError ||
     tripStatus.isError ||
     playersStatus.isError
@@ -80,9 +85,19 @@ export function assembleTripStatus(state, tripId) {
 export function assembleGroupStatus(state, groupId) {
   const groupStatus = instanceStatus(state, 'groups', { id: Number(groupId) });
   const group = _.clone(groupStatus.instance);
-  const scriptStatus = instanceStatus(state, 'scripts',
-    { id: group && group.scriptId });
-  if (group && scriptStatus.instance) {
+
+  const scriptStatus = group ?
+    instanceStatus(state, 'scripts', { id: group.scriptId }) : null;
+
+  const experienceStatus = scriptStatus && scriptStatus.instance ?
+    instanceStatus(state, 'experiences',
+      { id: scriptStatus.instance.experienceId }) : null;
+
+  if (group &&
+      scriptStatus &&
+      scriptStatus.instance &&
+      experienceStatus &&
+      experienceStatus.instance) {
     const departures = scriptStatus.instance.content.departures;
     const departureNames = _.map(departures, 'name');
     const tripIds = _(state.datastore.trips)
@@ -94,12 +109,25 @@ export function assembleGroupStatus(state, groupId) {
     _.assign(group, {
       tripIds: tripIds,
       trips: _.map(tripsStatuses, 'instance').filter(Boolean),
-      script: scriptStatus.instance
+      script: scriptStatus.instance,
+      experience: experienceStatus.instance
     });
   }
+  const isLoading = (
+    groupStatus.isLoading ||
+    !scriptStatus ||
+    scriptStatus.isLoading ||
+    !experienceStatus ||
+    experienceStatus.isLoading
+  );
+  const isError = (
+    groupStatus.isError ||
+    scriptStatus && scriptStatus.isError ||
+    experienceStatus && experienceStatus.isError
+  );
   return {
-    isLoading: groupStatus.isLoading || scriptStatus.isLoading,
-    isError: groupStatus.isError || scriptStatus.isError,
+    isLoading: isLoading,
+    isError: isError,
     instance: group
   };
 }

@@ -43,7 +43,7 @@ class TripUtil {
   /**
    * Create trip context suitable for passing into the action parser.
    */
-  static createContext(objs) {
+  static createEvalContext(objs) {
     const trip = this._assembleTripFields(objs);
     // Only allow custom hosts in production.
     const host = config.env.STAGE === 'production' ? 
@@ -59,7 +59,7 @@ class TripUtil {
    */
   static async getContext(tripId) {
     const objs = await this.getObjectsForTrip(tripId);
-    return this.createContext(objs);
+    return this.createEvalContext(objs);
   }
 
   /**

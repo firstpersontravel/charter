@@ -59,7 +59,7 @@ export default function GroupAll({ children, params, groupStatus,
     <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-info">
       {moment
         .utc(nextUnappliedAction.scheduledAt)
-        .tz(script.timezone)
+        .tz(groupStatus.instance.experience.timezone)
         .format('h:mm:ssa')}
     </span>
   ) : null;

@@ -32,7 +32,7 @@ export default class TripScenes extends Component {
     const activeBtnClass = isProduction() ? 'btn-danger' : 'btn-primary';
     const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
     const panelText = EvalCore.templateText(trip.context, panel.text || '',
-      trip.script.timezone);
+      trip.experience.timezone);
     const activeCueTitle = panel.type === 'button' ?
       panelText : `Cue ${panel.cue}`;
     const inactiveCueTitle = (
@@ -94,7 +94,7 @@ export default class TripScenes extends Component {
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = EvalCore.templateText(trip.context, page.title,
-      trip.script.timezone);
+      trip.experience.timezone);
 
     const isAckedIcon = isAckedPage ? (
       <span>
@@ -102,7 +102,7 @@ export default class TripScenes extends Component {
         <i className="fa fa-check" />
         {moment
           .utc(player.acknowledgedPageAt)
-          .tz(trip.script.timezone)
+          .tz(trip.experience.timezone)
           .format('h:mma')}
       </span>
     ) : null;

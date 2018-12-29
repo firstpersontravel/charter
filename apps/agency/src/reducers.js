@@ -5,6 +5,7 @@ const initialState = {
   requests: {},
   requestErrors: {},
   datastore: {
+    experiences: [],
     scripts: [],
     groups: [],
     profiles: [],

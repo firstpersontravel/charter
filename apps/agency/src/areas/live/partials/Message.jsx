@@ -103,7 +103,7 @@ export default function Message({ message, trip, updateInstance }) {
   const actorPlayer = userPlayer === sentBy ? sentTo : sentBy;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
-  const timeShort = createdAt.tz(trip.script.timezone).format(timeFormat);
+  const timeShort = createdAt.tz(trip.experience.timezone).format(timeFormat);
   const messageContent = renderMessageContent(message);
   const icon = renderMessageIcon(message, sentBy, sentTo);
   const archivedClass = message.isArchived ? 'message-archived' : '';

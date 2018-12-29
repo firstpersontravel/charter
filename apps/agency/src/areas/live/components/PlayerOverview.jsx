@@ -35,7 +35,7 @@ function renderGeo(player) {
       <strong>Location:</strong>
       &nbsp;Last fix {TimeUtil.humanizeIso(
         player.user.locationTimestamp,
-        player.trip.script.timezone)}
+        player.trip.experience.timezone)}
     </div>
   );
 }
@@ -51,7 +51,7 @@ function renderBatt(player) {
       <strong>Batteries:</strong>
       {' '}{batteryPercent}
       {' '}as of {TimeUtil.humanizeIso(player.user.deviceTimestamp,
-        player.trip.script.timezone)}
+        player.trip.experience.timezone)}
     </div>
   );
 }
@@ -65,7 +65,7 @@ function renderActivity(player) {
       <strong>Activity:</strong>
       &nbsp;Last active {TimeUtil.humanizeIso(
         player.user.deviceLastActive,
-        player.trip.script.timezone)}
+        player.trip.experience.timezone)}
     </div>
   );
 }
@@ -95,7 +95,7 @@ function renderAudio(trip, player) {
     <div>
       <strong>Audio:</strong>
       &nbsp;{renderAudioStatus(trip.values, audioEntry,
-        player.trip.script.timezone)}
+        player.trip.experience.timezone)}
     </div>
   );
 }
@@ -153,7 +153,7 @@ function renderVars(player) {
 
         <strong>Acknowledged page:</strong>
         &nbsp;{acknowledgedPage ? acknowledgedPage.title : 'None'}
-        {acknowledgedPageAt ? ` at ${moment.utc(acknowledgedPageAt).tz(script.timezone).format('h:mma z')}` : ''}
+        {acknowledgedPageAt ? ` at ${moment.utc(acknowledgedPageAt).tz(trip.experience.timezone).format('h:mma z')}` : ''}
       </div>
       {renderGeo(player)}
       {renderBatt(player)}

@@ -24,7 +24,7 @@ function renderActionParam(trip, action, paramName) {
 function renderTrigger(trigger, trip, postAdminAction) {
   const timeShort = moment
     .utc(trigger.scheduledAt)
-    .tz(trip.script.timezone)
+    .tz(trip.experience.timezone)
     .format('ddd h:mm:ssa');
   const cellClass = 'upcoming-unarchived';
 
@@ -47,7 +47,7 @@ function renderTrigger(trigger, trip, postAdminAction) {
 function renderAction(action, trip, updateInstance, postAdminAction) {
   const timeShort = moment
     .utc(action.scheduledAt)
-    .tz(trip.script.timezone)
+    .tz(trip.experience.timezone)
     .format('ddd h:mm:ssa');
   const values = _.keys(action.params).map(k => (
     renderActionParam(trip, action, k)

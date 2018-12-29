@@ -56,7 +56,7 @@ class SchedulerWorker {
   static async _scheduleTripActions(tripId, threshold) {
     const objs = await TripUtil.getObjectsForTrip(tripId);
     const trip = objs.trip;
-    const context = TripUtil.createContext(objs);
+    const context = TripUtil.createEvalContext(objs);
     const now = moment.utc();
 
     // Get actions based on occurance of time.

@@ -134,7 +134,7 @@ const playerShowRoute = async (req, res) => {
   const objs = await (
     TripUtil.getObjectsForTrip(player.tripId)
   );
-  const context = TripUtil.createContext(objs);
+  const context = TripUtil.createEvalContext(objs);
   const page = getPage(objs.script, objs.trip, context, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
@@ -177,7 +177,7 @@ const userShowRoute = async (req, res) => {
   const pages = _(players)
     .map((player, i) => {
       const objs = objss[i];
-      const context = TripUtil.createContext(objs);
+      const context = TripUtil.createEvalContext(objs);
       return getPage(objs.script, objs.trip, context, player);
     })
     .filter(Boolean)

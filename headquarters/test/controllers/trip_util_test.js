@@ -12,7 +12,7 @@ describe('TripUtil', () => {
     sandbox.restore();
   });
 
-  describe('#createContext', () => {
+  describe('#createEvalContext', () => {
     it('creates trip context', () => {
       const objs = {
         script: models.Script.build({
@@ -35,7 +35,7 @@ describe('TripUtil', () => {
         })]
       };
 
-      const res = TripUtil.createContext(objs);
+      const res = TripUtil.createEvalContext(objs);
 
       assert.deepStrictEqual(res, {
         currentSceneName: 'SCENE-1',

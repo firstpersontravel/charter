@@ -11,7 +11,7 @@ function renderPage(player, page, postAction) {
     .filter({ type: 'button' })
     .map(panel => (
       <li key={`${page.name}-${panel.cue}`}>
-        {EvalCore.templateText(trip.context, panel.text, trip.script.timezone)}
+        {EvalCore.templateText(trip.context, panel.text, trip.experience.timezone)}
       </li>
     ))
     .value();
@@ -19,9 +19,9 @@ function renderPage(player, page, postAction) {
     <ul style={{ margin: 0 }}>{cueButtons}</ul>
   ) : null;
   const title = EvalCore.templateText(context, page.title,
-    player.trip.script.timezone);
+    player.trip.experience.timezone);
   const directiveText = EvalCore.templateText(context, page.directive,
-    trip.script.timezone);
+    trip.experience.timezone);
   const directive = page.directive ? `: ${directiveText}` : '';
   return (
     <div key={page.name}>

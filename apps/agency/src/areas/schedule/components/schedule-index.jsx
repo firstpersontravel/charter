@@ -242,7 +242,7 @@ export default class ScheduleIndex extends Component {
     );
   }
 
-  renderGroup(group, script, trips) {
+  renderGroup(group, script, experience, trips) {
     const dateShort = moment(group.date).format('MMM D, YYYY');
     const departureNames = _.map(script.content.departures, 'name');
     const scheduleCells = departureNames.map(departureName =>
@@ -254,7 +254,7 @@ export default class ScheduleIndex extends Component {
         <div className="col-sm-3">
           <strong>
             <IndexLink to={`/agency/live/${group.id}`}>
-              {script.title}
+              {experience && experience.title}
             </IndexLink>
           </strong>
           <br />
@@ -286,12 +286,14 @@ export default class ScheduleIndex extends Component {
       return <div>Error</div>;
     }
     const groups = this.props.groupsStatus.instances;
-    const groupRows = _.map(groups, group => (
-      this.renderGroup(group,
-        _.find(this.props.scripts, { id: group.scriptId }),
-        _.filter(this.props.tripsStatus.instances,
-        { groupId: group.id }))
-    ));
+    const groupRows = _.map(groups, (group) => {
+      const script = _.find(this.props.scripts, { id: group.scriptId });
+      const experience = _.find(this.props.experiences, { id: script.experienceId });
+      const trips = _.filter(this.props.tripsStatus.instances, {
+        groupId: group.id
+      });
+      return this.renderGroup(group, script, experience, trips);
+    });
     return (
       <div>
         {groupRows}
@@ -336,6 +338,7 @@ export default class ScheduleIndex extends Component {
 
 ScheduleIndex.propTypes = {
   scripts: PropTypes.array.isRequired,
+  experiences: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   groupsStatus: PropTypes.object.isRequired,

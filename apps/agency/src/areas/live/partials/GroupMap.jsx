@@ -273,7 +273,7 @@ export default class GroupMap extends Component {
   }
 
   renderMarkerPlayerSection(player) {
-    const timezone = this.props.trips[0].script.timezone;
+    const timezone = this.props.trips[0].experience.timezone;
     const LinkWithContext = withContext(Link, this.context);
     return (
       <div key={player.id}>
