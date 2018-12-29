@@ -1,15 +1,15 @@
 var moment = require('moment-timezone');
 
-var TimeCore = {};
+var TimeUtil = {};
 
-TimeCore.timeShorthandRegex = /^(\+\dd\s)?(\d|1[0-2]):[0-5]\d(a|p|am|pm)$/i;
+TimeUtil.timeShorthandRegex = /^(\+\dd\s)?(\d|1[0-2]):[0-5]\d(a|p|am|pm)$/i;
 
-TimeCore.isoTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z/;
+TimeUtil.isoTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z/;
 
 /**
  * Get today in date form.
  */
-TimeCore.getTodayDate = function(timezone) {
+TimeUtil.getTodayDate = function(timezone) {
   return moment.utc().tz(timezone).format('YYYY-MM-DD');
 };
 
@@ -19,7 +19,7 @@ TimeCore.getTodayDate = function(timezone) {
  *
  * Interpret +Nd H:mma by adding a N*24 hours to the date.
  */
-TimeCore.convertTimeShorthandToIso = function (shorthand, date, timezone) {
+TimeUtil.convertTimeShorthandToIso = function (shorthand, date, timezone) {
   var addDays = 0;
   if (shorthand[0] === '+' && shorthand.indexOf(' ') > -1) {
     addDays = Number(shorthand.split(' ')[0][1]);
@@ -37,21 +37,21 @@ TimeCore.convertTimeShorthandToIso = function (shorthand, date, timezone) {
  * Convert an ISO timestamp to a human readable time. Time only if today,
  * otherwise include the day.
  */
-TimeCore.humanizeIso = function (iso, timezone) {
+TimeUtil.humanizeIso = function (iso, timezone) {
   var time = moment.utc(iso).tz(timezone);
   var now = moment.utc().tz(timezone);
   var format = time.isSame(now, 'day') ? 'h:mma' : 'ddd, h:mma';
   return time.format(format);
 };
 
-TimeCore.validateTimeShorthand = function (timeShorthand) {
-  return TimeCore.timeShorthandRegex.test(timeShorthand);
+TimeUtil.validateTimeShorthand = function (timeShorthand) {
+  return TimeUtil.timeShorthandRegex.test(timeShorthand);
 };
 
 /**
  * Humanize a time duration in seconds.
  */
-TimeCore.humanizeDuration = function (seconds) {
+TimeUtil.humanizeDuration = function (seconds) {
   var mins = Math.floor(seconds / 60);
   var secs = Math.floor(seconds - (mins * 60));
   return mins + ':' + (secs < 10 ? '0' : '') + secs;
@@ -60,7 +60,7 @@ TimeCore.humanizeDuration = function (seconds) {
 /**
  * Convert a duration shorthand like 3s or 10m into seconds.
  */
-TimeCore.secondsForDurationShorthand = function(durationShorthand) {
+TimeUtil.secondsForDurationShorthand = function(durationShorthand) {
   if (!durationShorthand) {
     return 0;
   }
@@ -76,4 +76,4 @@ TimeCore.secondsForDurationShorthand = function(durationShorthand) {
   return num * multiplier;
 };
 
-module.exports = TimeCore;
+module.exports = TimeUtil;

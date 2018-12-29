@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 import { getItems, doesCollectionHaveScene } from './utils';
 
@@ -52,7 +52,7 @@ export default function Collection({ script, collectionName, children, params, l
     <div>
       <div className="row">
         <div className="col-sm-4">
-          <h3>{TextCore.titleForKey(collectionName)}</h3>
+          <h3>{TextUtil.titleForKey(collectionName)}</h3>
           {renderedItems}
         </div>
         <div className="col-sm-8">

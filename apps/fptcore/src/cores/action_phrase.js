@@ -2,8 +2,8 @@ var moment = require('moment-timezone');
 
 var ActionsRegistry = require('../registries/actions');
 var EvalCore = require('./eval');
-var TextCore = require('./text');
-var TimeCore = require('./time');
+var TextUtil = require('../utils/text');
+var TimeUtil = require('../utils/time');
 
 var ActionPhraseCore = {};
 
@@ -19,7 +19,7 @@ var ActionPhraseCore = {};
 ActionPhraseCore.timeForShorthand = function(shorthand, evaluateAt, context) {
   var words = shorthand.split(/\s+/);
   if (words[0].toLowerCase() === 'in') {
-    var inSeconds = TimeCore.secondsForDurationShorthand(words[1]);
+    var inSeconds = TimeUtil.secondsForDurationShorthand(words[1]);
     return evaluateAt.clone().add(inSeconds, 'seconds');
   }
   if (words[0].toLowerCase() === 'at') {
@@ -28,12 +28,12 @@ ActionPhraseCore.timeForShorthand = function(shorthand, evaluateAt, context) {
   }
   if (words[1].toLowerCase() === 'after') {
     var afterTimestamp = EvalCore.lookupRef(context, words[2]);
-    var afterSecs = TimeCore.secondsForDurationShorthand(words[0]);
+    var afterSecs = TimeUtil.secondsForDurationShorthand(words[0]);
     return moment.utc(afterTimestamp).add(afterSecs, 'seconds');
   }
   if (words[1].toLowerCase() === 'before') {
     var beforeTimestamp = EvalCore.lookupRef(context, words[2]);
-    var beforeSecs = TimeCore.secondsForDurationShorthand(words[0]);
+    var beforeSecs = TimeUtil.secondsForDurationShorthand(words[0]);
     return moment.utc(beforeTimestamp).subtract(beforeSecs, 'seconds');
   }
   console.warn('Illegal time shorthand ' + shorthand);
@@ -55,7 +55,7 @@ ActionPhraseCore.extractModifier = function(actionPhrase) {
  * Expand a plain phrase that doesn't include a schedule modifier.
  */
 ActionPhraseCore.expandPlainActionPhrase = function(plainActionPhrase) {
-  var words = TextCore.splitWords(plainActionPhrase);
+  var words = TextUtil.splitWords(plainActionPhrase);
   var name = words[0];
   var actionClass = ActionsRegistry[name];
   if (!actionClass) {

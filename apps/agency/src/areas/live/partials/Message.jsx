@@ -4,14 +4,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 function renderMessageContent(message) {
   if (message.messageType === 'image' && message.messageName) {
-    return `[Image: ${TextCore.titleForTypedKey(message.messageName)}]`;
+    return `[Image: ${TextUtil.titleForTypedKey(message.messageName)}]`;
   }
   if (message.messageType === 'audio' && message.messageName) {
-    return `[Audio: ${TextCore.titleForTypedKey(message.messageName)}]`;
+    return `[Audio: ${TextUtil.titleForTypedKey(message.messageName)}]`;
   }
   if (message.messageType === 'image') {
     return (

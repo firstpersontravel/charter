@@ -8,7 +8,7 @@ import {
   ActionPhraseCore,
   EventsRegistry,
   TriggerCore,
-  TextCore
+  TextUtil
 } from 'fptcore';
 
 import { COLLECTION_NAMES } from '../consts';
@@ -235,7 +235,7 @@ function renderActionPhrase(scriptId, actionPhrase) {
   const modifierAndAction = ActionPhraseCore.extractModifier(actionPhrase);
   const modifier = modifierAndAction[1];
   const plainActionPhrase = modifierAndAction[2];
-  const [actionName, ...actionParams] = TextCore.splitWords(plainActionPhrase);
+  const [actionName, ...actionParams] = TextUtil.splitWords(plainActionPhrase);
   const renderedModifier = modifier ? (
     <span className="faint">{modifier}: </span>
   ) : null;

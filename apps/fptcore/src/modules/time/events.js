@@ -1,13 +1,13 @@
 var moment = require('moment');
 
-var TimeCore = require('../../cores/time');
+var TimeUtil = require('../../utils/time');
 
 function timeForSpec(context, spec) {
   var offset = 0;
   if (spec.after) {
-    offset = TimeCore.secondsForDurationShorthand(spec.after);
+    offset = TimeUtil.secondsForDurationShorthand(spec.after);
   } else if (spec.before) {
-    offset = -TimeCore.secondsForDurationShorthand(spec.before);
+    offset = -TimeUtil.secondsForDurationShorthand(spec.before);
   }
   var timestring = context.schedule[spec.time];
   if (!timestring) {

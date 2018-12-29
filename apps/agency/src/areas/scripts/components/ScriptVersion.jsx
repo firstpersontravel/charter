@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 import { getItems, doesCollectionHaveScene } from './utils';
 
@@ -18,7 +18,7 @@ function renderCollection(script, currentCollectionName, collectionName, current
   if (numItems === 0) {
     return (
       <div key={collectionName}>
-        {TextCore.titleForKey(collectionName)}
+        {TextUtil.titleForKey(collectionName)}
       </div>
     );
   }
@@ -35,7 +35,7 @@ function renderCollection(script, currentCollectionName, collectionName, current
           ),
           query: currentSceneName ? { scene: currentSceneName } : null
         }}>
-        {TextCore.titleForKey(collectionName)} ({numItems})
+        {TextUtil.titleForKey(collectionName)} ({numItems})
       </Link>
     </div>
   );

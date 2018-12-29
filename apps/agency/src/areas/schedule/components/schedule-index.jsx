@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { IndexLink } from 'react-router';
 
-import { TextCore, TripCore, PlayerCore } from 'fptcore';
+import { TextUtil, TripCore, PlayerCore } from 'fptcore';
 import AreYouSure from '../../common/partials/AreYouSure';
 import TripModal from '../partials/trip-modal';
 import GroupModal from '../partials/group-modal';
@@ -214,7 +214,7 @@ export default class ScheduleIndex extends Component {
             </IndexLink>
           </div>
           <div className="col-sm-4">
-            {trip.variantNames.split(',').filter(Boolean).map(TextCore.titleForKey).join(', ')}
+            {trip.variantNames.split(',').filter(Boolean).map(TextUtil.titleForKey).join(', ')}
           </div>
           <div className="col-sm-4">
             <button

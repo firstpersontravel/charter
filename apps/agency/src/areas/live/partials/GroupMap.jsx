@@ -7,7 +7,7 @@ import { Circle, Map, Marker, Popup, TileLayer, Polyline, PropTypes as ReactLeaf
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
 
-import { TextCore, WaypointCore } from 'fptcore';
+import { TextUtil, WaypointCore } from 'fptcore';
 
 import Constants from '../../../constants';
 import withContext from './with-context';
@@ -85,7 +85,7 @@ function renderGeofenceOptions(script, geofence) {
       fill={false}
       fillOpacity={0}>
       <Popup>
-        <div>{TextCore.titleForTypedKey(geofence.name)}</div>
+        <div>{TextUtil.titleForTypedKey(geofence.name)}</div>
       </Popup>
     </Circle>
   ));

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 import PopoverControl from '../../../controls/popover-control';
 
@@ -36,7 +36,7 @@ export default class TripValues extends Component {
   }
 
   renderFlagRow(item) {
-    const title = TextCore.titleForKey(item.key.substring(5));
+    const title = TextUtil.titleForKey(item.key.substring(5));
     const label = item.value ? 'Yes' : 'No';
     const labelClass = item.value ? '' : 'faint';
     return (
@@ -55,7 +55,7 @@ export default class TripValues extends Component {
   }
 
   renderTextCustomization(item) {
-    const title = TextCore.titleForKey(item.key);
+    const title = TextUtil.titleForKey(item.key);
     const isText = _.includes(['string', 'number'], typeof item.value);
     if (!isText) {
       return JSON.stringify(item.value, null, 2);
@@ -69,7 +69,7 @@ export default class TripValues extends Component {
   }
 
   renderCustomizationRow(item) {
-    const title = TextCore.titleForKey(item.key);
+    const title = TextUtil.titleForKey(item.key);
     const itemComponent = this.renderTextCustomization(item);
     return (
       <tr key={item.key}>

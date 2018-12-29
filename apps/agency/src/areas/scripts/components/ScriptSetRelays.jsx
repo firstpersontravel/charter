@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 import Checkbox from '../partials/Checkbox';
 import { getStage } from '../../../utils';
@@ -95,10 +95,10 @@ export default class ScriptSetRelays extends React.Component {
     }
     const relaysRendered = relays.map(relay => (
       <div key={relay.id}>
-        {TextCore.formatPhone(relay.relayPhoneNumber)}
+        {TextUtil.formatPhone(relay.relayPhoneNumber)}
         &nbsp;for&nbsp;
         {relay.userPhoneNumber ?
-          TextCore.formatPhone(relay.userPhoneNumber) :
+          TextUtil.formatPhone(relay.userPhoneNumber) :
           'all'}
       </div>
     ));
@@ -150,7 +150,7 @@ export default class ScriptSetRelays extends React.Component {
     const trailheadDetails = trailheads.map(trailhead => (
       <span key={trailhead.id}>
         {trailhead.departureName}:&nbsp;
-        {TextCore.formatPhone(trailhead.relayPhoneNumber)}
+        {TextUtil.formatPhone(trailhead.relayPhoneNumber)}
         &nbsp;
       </span>
     ));

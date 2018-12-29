@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { EvalCore, TextCore } from 'fptcore';
+import { EvalCore, TextUtil } from 'fptcore';
 
 function renderCompletedAchievementStatus(trip, achievement) {
   if (achievement.type === 'choice') {
@@ -38,7 +38,7 @@ function renderAchievement(trip, achievement) {
   const inProgress = isInProgress ? ' (scene in progress)' : '';
   return (
     <div key={achievement.name} className={achievementClass}>
-      <strong>{TextCore.titleForTypedKey(achievement.name)}:</strong>
+      <strong>{TextUtil.titleForTypedKey(achievement.name)}:</strong>
       &nbsp;{status}{inProgress}
     </div>
   );

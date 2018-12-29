@@ -1,17 +1,17 @@
 var _ = require('lodash');
 
-var TextCore = {};
+var TextUtil = {};
 
-TextCore.titleForKey = function (key) {
+TextUtil.titleForKey = function (key) {
   return key[0].toUpperCase() +
     key.toLowerCase().replace(/[_-]/g, ' ').substring(1);
 };
 
-TextCore.titleForTypedKey = function (key) {
-  return TextCore.titleForKey(key.split('-').slice(1).join('-'));
+TextUtil.titleForTypedKey = function (key) {
+  return TextUtil.titleForKey(key.split('-').slice(1).join('-'));
 };
 
-TextCore.formatPhone = function(text) {
+TextUtil.formatPhone = function(text) {
   if (!text || text.length !== 10) {
     return text;
   }
@@ -19,7 +19,7 @@ TextCore.formatPhone = function(text) {
     text.substr(6, 6);
 };
 
-TextCore.splitWords = function(sentence) {
+TextUtil.splitWords = function(sentence) {
   return _(sentence)
     .split('"')
     .map(function(v, i) {
@@ -30,4 +30,4 @@ TextCore.splitWords = function(sentence) {
     .value();
 };
 
-module.exports = TextCore;
+module.exports = TextUtil;

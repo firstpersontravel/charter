@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 import UserModal from '../partials/user-modal';
 import ProfileModal from '../partials/profile-modal';
@@ -104,7 +104,7 @@ export default class UsersUser extends Component {
         <strong>Email:</strong> {this.props.user.email}
         <br />
         <strong>Phone:</strong>
-        &nbsp;{TextCore.formatPhone(this.props.user.phoneNumber)}
+        &nbsp;{TextUtil.formatPhone(this.props.user.phoneNumber)}
         <br />
       </p>
     );

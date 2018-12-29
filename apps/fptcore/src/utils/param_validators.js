@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var TimeCore = require('../cores/time');
+var TimeUtil = require('../utils/time');
 
 var ParamValidators = {};
 
@@ -43,7 +43,7 @@ ParamValidators.enum = function(script, name, spec, param) {
 };
 
 ParamValidators.duration = function(script, name, spec, param) {
-  if (TimeCore.secondsForDurationShorthand(param) === 0) {
+  if (TimeUtil.secondsForDurationShorthand(param) === 0) {
     return ['Duration param "' + name + '" ("' + param + '") should be a number with "h", "m", or "s".'];
   }
 };
@@ -89,7 +89,7 @@ ParamValidators.coords = function(script, name, spec, param) {
 };
 
 ParamValidators.timeShorthand = function(script, name, spec, param) {
-  if (!TimeCore.timeShorthandRegex.test(param)) {
+  if (!TimeUtil.timeShorthandRegex.test(param)) {
     return [
       'Time shorthand param "' + name + '" ("' + param + '") must be valid.'
     ];

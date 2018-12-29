@@ -1,11 +1,11 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const TextCore = require('../../src/cores/text');
+const TextUtil = require('../../src/utils/text');
 
 const sandbox = sinon.sandbox.create();
 
-describe('TextCore', () => {
+describe('TextUtil', () => {
 
   afterEach(() => {
     sandbox.restore();
@@ -13,13 +13,13 @@ describe('TextCore', () => {
 
   describe('#splitWords', () => {
     it('splits by whitespace', () => {
-      assert.deepStrictEqual(TextCore.splitWords('a b c'), ['a', 'b', 'c']);
-      assert.deepStrictEqual(TextCore.splitWords(' a b  c'), ['a', 'b', 'c']);
+      assert.deepStrictEqual(TextUtil.splitWords('a b c'), ['a', 'b', 'c']);
+      assert.deepStrictEqual(TextUtil.splitWords(' a b  c'), ['a', 'b', 'c']);
     });
 
     it('preserves spaces inside quoted strings', () => {
       assert.deepStrictEqual(
-        TextCore.splitWords('custom_message "gabe can\'t leave now" to Bob'),
+        TextUtil.splitWords('custom_message "gabe can\'t leave now" to Bob'),
         ['custom_message', '"gabe can\'t leave now"', 'to', 'Bob']);
     });
   });

@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 
-var TimeCore = require('./time');
+var TimeUtil = require('../utils/time');
 
 var TripCore = {};
 
@@ -48,7 +48,7 @@ TripCore.getInitialFields = function(script, date, variantNames) {
     if (variant.schedule) {
       var day = moment(date).format('YYYY-MM-DD');
       Object.keys(variant.schedule).forEach(function(key) {
-        fields.schedule[key] = TimeCore.convertTimeShorthandToIso(
+        fields.schedule[key] = TimeUtil.convertTimeShorthandToIso(
           variant.schedule[key], day, script.timezone);
       });
     }

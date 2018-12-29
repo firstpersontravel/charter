@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-import { TextCore } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 export default class TripModal extends Component {
 
@@ -92,7 +92,7 @@ export default class TripModal extends Component {
       <option
         key={departure.name}
         value={departure.name}>
-        {TextCore.titleForKey(departure.name)}
+        {TextUtil.titleForKey(departure.name)}
       </option>
     ));
 

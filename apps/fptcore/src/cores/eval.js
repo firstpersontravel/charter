@@ -1,8 +1,8 @@
 var _ = require('lodash');
 var moment = require('moment-timezone');
 
-var TextCore = require('./text');
-var TimeCore = require('./time');
+var TextUtil = require('../utils/text');
+var TimeUtil = require('../utils/time');
 
 var EvalCore = {};
 
@@ -26,7 +26,7 @@ EvalCore.IF_COMMANDS = {
 };
 
 EvalCore.simpleIf = function (context, ifStatement) {
-  var ifParts = TextCore.splitWords(ifStatement);
+  var ifParts = TextUtil.splitWords(ifStatement);
   var isNegated = ifParts[0] === 'not';
   if (isNegated) {
     ifParts = ifParts.slice(1);
@@ -101,7 +101,7 @@ EvalCore.templateText = function (context, text, timezone) {
   if (_.isNumber(text)) { return text.toString(); }
 
   // Is time
-  if (TimeCore.isoTimeRegex.test(text)) {
+  if (TimeUtil.isoTimeRegex.test(text)) {
     if (!timezone) {
       throw new Error('Timezone is required.');
     }

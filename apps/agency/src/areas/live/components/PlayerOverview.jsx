@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import yaml from 'js-yaml';
 import L from 'leaflet';
 
-import { TimeCore } from 'fptcore';
+import { TimeUtil } from 'fptcore';
 
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
@@ -33,7 +33,7 @@ function renderGeo(player) {
   return (
     <div>
       <strong>Location:</strong>
-      &nbsp;Last fix {TimeCore.humanizeIso(
+      &nbsp;Last fix {TimeUtil.humanizeIso(
         player.user.locationTimestamp,
         player.trip.script.timezone)}
     </div>
@@ -50,7 +50,7 @@ function renderBatt(player) {
     <div>
       <strong>Batteries:</strong>
       {' '}{batteryPercent}
-      {' '}as of {TimeCore.humanizeIso(player.user.deviceTimestamp,
+      {' '}as of {TimeUtil.humanizeIso(player.user.deviceTimestamp,
         player.trip.script.timezone)}
     </div>
   );
@@ -63,7 +63,7 @@ function renderActivity(player) {
   return (
     <div>
       <strong>Activity:</strong>
-      &nbsp;Last active {TimeCore.humanizeIso(
+      &nbsp;Last active {TimeUtil.humanizeIso(
         player.user.deviceLastActive,
         player.trip.script.timezone)}
     </div>
@@ -74,7 +74,7 @@ function renderAudioStatus(values, audioEntry, timezone) {
   if (!values.audio_is_playing) {
     const pausedAt = values.audio_paused_time || 0;
     const remaining = (audioEntry.duration * 60) - pausedAt;
-    const remainingStr = TimeCore.humanizeDuration(remaining);
+    const remainingStr = TimeUtil.humanizeDuration(remaining);
     return `${audioEntry.title} paused, ${remainingStr} remaining`;
   }
   const startedAt = moment.utc(values.audio_started_at);
