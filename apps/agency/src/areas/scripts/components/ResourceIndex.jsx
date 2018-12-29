@@ -7,7 +7,7 @@ import {
   ActionsRegistry,
   ActionPhraseCore,
   EventsRegistry,
-  ScriptValidationCore,
+  TriggerCore,
   TextCore
 } from 'fptcore';
 
@@ -99,17 +99,35 @@ function doesParamMatchResource(paramSpec, paramValue, collectionName,
   return false;
 }
 
+function doesActionReferToResource(action, collectionName, resource) {
+  const actionParamsSpec = ActionsRegistry[action.name].params;
+  return _.some(action.params, (paramValue, paramName) => {
+    // Check if action param matches this resource
+    const paramSpec = actionParamsSpec[paramName];
+    return doesParamMatchResource(paramSpec, paramValue, collectionName,
+      resource);
+  });
+}
+
+function gatherReferringActions(script, collectionName, resource) {
+  const referringActions = [];
+  _.each(script.content.triggers, (trigger) => {
+    TriggerCore.walkActions(trigger.actions, '', (action, path) => {
+      const modifierAndAction = ActionPhraseCore.extractModifier(action);
+      const plainActionPhrase = modifierAndAction[2];
+      const plainAction = ActionPhraseCore.expandPlainActionPhrase(
+        plainActionPhrase);
+      if (doesActionReferToResource(plainAction, collectionName, resource)) {
+        referringActions.push({ action: action, triggerName: trigger.name });
+      }
+    }, () => {});
+  });
+  return referringActions;
+}
+
 function renderActionRefs(script, collectionName, resource) {
-  const referringActions = ScriptValidationCore.gatherActions(script)
-    .filter((action) => {
-      const actionParamsSpec = ActionsRegistry[action.action.name].params;
-      return _.some(action.action.params, (paramValue, paramName) => {
-        // Check if action param matches this resource
-        const paramSpec = actionParamsSpec[paramName];
-        return doesParamMatchResource(paramSpec, paramValue, collectionName,
-          resource);
-      });
-    });
+  const referringActions = gatherReferringActions(script, collectionName,
+    resource);
   if (!referringActions.length) {
     return null;
   }

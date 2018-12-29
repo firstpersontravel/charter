@@ -4,6 +4,7 @@ var ActionPhraseCore = require('../../cores/action_phrase');
 var ActionsRegistry = require('../../registries/actions');
 var EventsRegistry = require('../../registries/events');
 var ParamValidators = require('../../utils/param_validators');
+var TriggerCore = require('../../cores/trigger');
 
 // TODO: don't parse the action string here -- have it be in the json
 // as name/params.
@@ -89,34 +90,6 @@ var event = {
   classes: eventsClasses
 };
 
-function walkActions(actions, path, actionIteree, ifIteree) {
-  if (!actions) {
-    return;
-  }
-  actions.forEach(function(action, i) {
-    var indexPath = path + '[' + i + ']';
-    if (_.isString(action)) {
-      actionIteree(action, indexPath);
-      return;
-    }
-    if (_.isPlainObject(action)) {
-      if (action.if) {
-        ifIteree(action.if, indexPath + '.if');
-      }
-      walkActions(action.actions, indexPath + '.actions', actionIteree,
-        ifIteree);
-      (action.elseifs || []).forEach(function(elseif, j) {
-        var elseifPath = indexPath + '.elseifs[' + j + ']';
-        ifIteree(elseif.if, elseifPath + '.if');
-        walkActions(elseif.actions, elseifPath + '.actions', actionIteree,
-          ifIteree);
-      });
-      walkActions(action.else, indexPath + '.else', actionIteree,
-        ifIteree);
-    }
-  });
-}
-
 function validateActionWithTrigger(action, path, trigger) {
   var warnings = [];
   var modifierAndAction = ActionPhraseCore.extractModifier(action);
@@ -166,7 +139,8 @@ var trigger = {
     var ifIteree = function(ifClause, path) {
 
     };
-    walkActions(resource.actions, 'actions', actionIteree, ifIteree);
+    TriggerCore.walkActions(resource.actions, 'actions', actionIteree,
+      ifIteree);
     return warnings;
   }
 };

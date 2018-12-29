@@ -5,6 +5,37 @@ var EvalCore = require('./eval');
 
 var TriggerCore = {};
 
+/**
+ * Walk the trigger actions and call the iterees for each child.
+ */
+TriggerCore.walkActions = function(actions, path, actionIteree, ifIteree) {
+  if (!actions) {
+    return;
+  }
+  actions.forEach(function(action, i) {
+    var indexPath = path + '[' + i + ']';
+    if (_.isString(action)) {
+      actionIteree(action, indexPath);
+      return;
+    }
+    if (_.isPlainObject(action)) {
+      if (action.if) {
+        ifIteree(action.if, indexPath + '.if');
+      }
+      TriggerCore.walkActions(action.actions, indexPath + '.actions', 
+        actionIteree, ifIteree);
+      (action.elseifs || []).forEach(function(elseif, j) {
+        var elseifPath = indexPath + '.elseifs[' + j + ']';
+        ifIteree(elseif.if, elseifPath + '.if');
+        TriggerCore.walkActions(elseif.actions, elseifPath + '.actions',
+          actionIteree, ifIteree);
+      });
+      TriggerCore.walkActions(action.else, indexPath + '.else', actionIteree,
+        ifIteree);
+    }
+  });
+};
+
 TriggerCore.activeActionPhrasesForClause = function(clause, context) {
   // If no if statement, then pick from actions.
   if (!clause.if) {
