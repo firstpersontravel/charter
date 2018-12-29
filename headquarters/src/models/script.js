@@ -22,7 +22,7 @@ function getResourceErrors(script, collectionName, resource) {
     return [{
       path: `content.${collectionName}`,
       collection: collectionName,
-      message: 'Invalid collection'
+      message: `Invalid collection: ${collectionName}.`
     }];
   }
   const errors = ParamValidators.validateResource(script, resourceClass, 
@@ -38,7 +38,16 @@ function getResourceErrors(script, collectionName, resource) {
 function validateScriptContent(script) {
   var errors = [];
   for (const collectionName of Object.keys(script.content)) {
-    for (const resource of script.content[collectionName]) {
+    const collection = script.content[collectionName];
+    if (!_.isArray(collection)) {
+      errors.push({
+        path: `content.${collectionName}`,
+        collection: collectionName,
+        message: `Collection must be an array: ${collectionName}.`
+      });
+      continue;
+    }
+    for (const resource of collection) {
       const resourceErrors = getResourceErrors(script, collectionName,
         resource);
       errors.push.apply(errors, resourceErrors);
@@ -73,7 +82,11 @@ const Script = database.define('Script', snakeCaseColumns({
             // Pass, since the error will be caught elsewhere.
           }
         }
-        validateScriptContent({ content: value });
+        // Don't check if it's not an object cos that overlaps with the string
+        // case where you get a string.
+        if (_.isObject(value)) {
+          validateScriptContent({ content: value });
+        }
       }
     }
   }),

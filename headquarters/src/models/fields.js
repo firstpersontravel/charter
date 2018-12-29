@@ -216,7 +216,7 @@ function jsonField(db, modelName, fieldName, options) {
     set: function(value) {
       this.setDataValue(fieldName, stringify(value, {space: 2}));
     },
-    validate: Object.assign(defaultJsonValidation, options.extraValidate),
+    validate: Object.assign({}, defaultJsonValidation, options.extraValidate),
     defaultValue: JSON.stringify(options.defaultValue || {})
   };
 }

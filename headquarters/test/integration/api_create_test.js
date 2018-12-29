@@ -58,7 +58,7 @@ describe('API create', () => {
     });
   });
 
-  describe.only('POST /api/scripts', () => {
+  describe('POST /api/scripts', () => {
     it('creates script', () => {
       return request(app)
         .post('/api/scripts')
@@ -81,7 +81,7 @@ describe('API create', () => {
         });
     });
 
-    it.only('fails on invalid script content', () => {
+    it('fails on invalid script content', () => {
       return request(app)
         .post('/api/scripts')
         .send({
@@ -95,7 +95,19 @@ describe('API create', () => {
         .expect(422)
         .then((res) => {
           // Test returns an error
-          assert.deepStrictEqual(res.body, { a: 2 });
+          assert.deepStrictEqual(res.body, {
+            fields: [{
+              field: 'content',
+              message: 'Required param "name" not present.',
+              path: 'departures[name=<unknown>]'
+            }, {
+              field: 'content',
+              message: 'Unexpected param "scene" (expected one of: name).',
+              path: 'departures[name=<unknown>]'
+            }],
+            message: 'Invalid fields: content.',
+            type: 'ValidationError'
+          });
         });
     });
 

@@ -12,20 +12,24 @@
         - name: Player
         - name: StageManager
       relays:
-        - for: Actor
+        - name: relay-1
+          for: Actor
           with: Player
           phone_in: true
           phone_out: true
           sms_in: true
           sms_out: true
-        - for: Player
+        - name: relay-2
+          for: Player
           with: Actor
           phone_in: true
           phone_out: true
           sms_in: true
           sms_out: true
           trailhead: true
-        - for: StageManager
+        - name: relay-3
+          for: StageManager
+          with: Player
           admin_out: true
 
 - model: Group
