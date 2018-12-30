@@ -7,22 +7,22 @@ var add_to_call = {
   params: {
     role_name: { required: true, type: 'reference', collection: 'roles' }
   },
-  applyAction: function (script, context, params, applyAt) {
+  applyAction: function (params, actionContext) {
     // If triggered by an incoming call
-    if (context.event.type === 'call_received') {
+    if (actionContext.evalContext.event.type === 'call_received') {
       return [{
         operation: 'twiml',
         clause: 'dial',
-        fromRoleName: context.event.from,
+        fromRoleName: actionContext.evalContext.event.from,
         toRoleName: params.role_name
       }];
     }
     // If triggered by an outgoing call
-    if (context.event.type === 'call_answered') {
+    if (actionContext.evalContext.event.type === 'call_answered') {
       return [{
         operation: 'twiml',
         clause: 'dial',
-        fromRoleName: context.event.to,
+        fromRoleName: actionContext.evalContext.event.to,
         toRoleName: params.role_name
       }];
     }
@@ -40,7 +40,7 @@ var initiate_call = {
     }
   },
   phraseForm: ['to_role_name', 'as_role_name', 'detect_voicemail'],
-  applyAction: function (script, context, params, applyAt) {
+  applyAction: function (params, actionContext) {
     return [{
       operation: 'initiateCall',
       toRoleName: params.to_role_name,

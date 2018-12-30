@@ -16,28 +16,31 @@ var ActionPhraseCore = {};
  * - 1m after TIME-VAR
  * - 2s before TIME-VAR
  */
-ActionPhraseCore.timeForShorthand = function(shorthand, evaluateAt, context) {
+ActionPhraseCore.timeForShorthand = function(shorthand, actionContext) {
   var words = shorthand.split(/\s+/);
   if (words[0].toLowerCase() === 'in') {
     var inSeconds = TimeUtil.secondsForDurationShorthand(words[1]);
-    return evaluateAt.clone().add(inSeconds, 'seconds');
+    return actionContext.evaluateAt.clone().add(inSeconds, 'seconds');
   }
   if (words[0].toLowerCase() === 'at') {
-    var atTimestamp = EvalCore.lookupRef(context, words[1]);
+    var atTimestamp = EvalCore.lookupRef(actionContext.evalContext,
+      words[1]);
     return moment.utc(atTimestamp);
   }
   if (words[1].toLowerCase() === 'after') {
-    var afterTimestamp = EvalCore.lookupRef(context, words[2]);
+    var afterTimestamp = EvalCore.lookupRef(actionContext.evalContext,
+      words[2]);
     var afterSecs = TimeUtil.secondsForDurationShorthand(words[0]);
     return moment.utc(afterTimestamp).add(afterSecs, 'seconds');
   }
   if (words[1].toLowerCase() === 'before') {
-    var beforeTimestamp = EvalCore.lookupRef(context, words[2]);
+    var beforeTimestamp = EvalCore.lookupRef(actionContext.evalContext,
+      words[2]);
     var beforeSecs = TimeUtil.secondsForDurationShorthand(words[0]);
     return moment.utc(beforeTimestamp).subtract(beforeSecs, 'seconds');
   }
   console.warn('Illegal time shorthand ' + shorthand);
-  return evaluateAt.clone();
+  return actionContext.evaluateAt.clone();
 };
 
 ActionPhraseCore.extractModifier = function(actionPhrase) {
@@ -76,8 +79,7 @@ ActionPhraseCore.expandPlainActionPhrase = function(plainActionPhrase) {
  * Parse an action shorthand (in 3m, do this) into an object containing action
  * name, params, and scheduleAt).
  */
-ActionPhraseCore.expandActionPhrase = function(actionPhrase, evaluateAt,
-  context) {
+ActionPhraseCore.expandActionPhrase = function(actionPhrase, actionContext) {
   // Break out modifier
   var modifierAndAction = ActionPhraseCore.extractModifier(actionPhrase);
   var modifierType = modifierAndAction[0];
@@ -89,10 +91,9 @@ ActionPhraseCore.expandActionPhrase = function(actionPhrase, evaluateAt,
     .expandPlainActionPhrase(plainActionPhrase);
 
   // Calculate schedule
-  var scheduleAt = evaluateAt;
+  var scheduleAt = actionContext.evaluateAt;
   if (modifierType === 'when') {
-    scheduleAt = ActionPhraseCore.timeForShorthand(
-      modifier, evaluateAt, context);
+    scheduleAt = ActionPhraseCore.timeForShorthand(modifier, actionContext);
   }
   return {
     name: plainAction.name,

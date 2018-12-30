@@ -57,7 +57,7 @@ class TripUtil {
   /**
    * Apply an action and gather the results.
    */
-  static async getContext(tripId) {
+  static async getEvalContext(tripId) {
     const objs = await this.getObjectsForTrip(tripId);
     return this.createEvalContext(objs);
   }
@@ -69,7 +69,10 @@ class TripUtil {
     // Get trip and players first
     const trip = await models.Trip.find({
       where: { id: tripId },
-      include: [{ model: models.Script, as: 'script' }]
+      include: [
+        { model: models.Script, as: 'script' },
+        { model: models.Experience, as: 'experience' }
+      ]
     });
     const players = await models.Player.findAll({
       where: { tripId: tripId }
@@ -81,6 +84,7 @@ class TripUtil {
       where: { id: _.map(players, 'dataValues.userId').filter(Boolean) }
     });
     return {
+      experience: trip.experience,
       trip: trip,
       players: players,
       script: trip.script,

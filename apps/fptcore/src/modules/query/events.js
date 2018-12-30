@@ -5,7 +5,7 @@ module.exports = {
       partial: { required: false, type: 'boolean' },
       final: { required: false, type: 'boolean' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       if (spec.partial === true && event.partial === false) {
         return false;
       }

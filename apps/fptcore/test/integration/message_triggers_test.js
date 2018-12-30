@@ -15,8 +15,8 @@ describe('Integration - Message Triggers', () => {
   });
 
   it('messages only trigger triggers when conditionals match at start', () => {
-    const script = {
-      content: {
+    const actionContext = {
+      scriptContent: {
         triggers: [{
           name: 'trigger1',
           events: [{ message_sent: { from: 'A', to: 'B' } }],
@@ -27,25 +27,29 @@ describe('Integration - Message Triggers', () => {
           if: ['trigger'],
           actions: ['set_value SHOULD_NOT_FIRE true']
         }]
-      }
+      },
+      evalContext: {},
+      evaluateAt: now
     };
     const event = { type: 'message_sent', message: { from: 'A', to: 'B' } };
-    const result = ActionCore.applyEvent(script, {}, event, now);
+    const result = ActionCore.applyEvent(event, actionContext);
 
     // Should not fire shouldn't be set
-    assert.equal(result.nextContext.SHOULD_NOT_FIRE, undefined);
+    assert.equal(result.nextContext.evalContext.SHOULD_NOT_FIRE, undefined);
   });
 
   it('matches message event on contextual if statement', () => {
-    const script = {
-      content: {
+    const actionContext = {
+      scriptContent: {
         triggers: [{
           name: 'trigger1',
           events: [{ message_sent: { type: 'text' } }],
           if: 'contains event.message.content "1234"',
           actions: ['set_value trigger true']
         }]
-      }
+      },
+      evalContext: {},
+      evaluateAt: now
     };
     const okEvent = {
       type: 'message_sent',
@@ -57,20 +61,22 @@ describe('Integration - Message Triggers', () => {
       }
     };
     // Ok result should fire
-    const hitResult = ActionCore.applyEvent(script, {}, okEvent, now);
-    assert.equal(hitResult.nextContext.trigger, true);
+    const hitResult = ActionCore.applyEvent(okEvent, actionContext);
+    assert.equal(hitResult.nextContext.evalContext.trigger, true);
   });
 
   it('skips non-matching message event on contextual if statement', () => {
-    const script = {
-      content: {
+    const actionContext = {
+      scriptContent: {
         triggers: [{
           name: 'trigger1',
           events: [{ message_sent: { type: 'text' } }],
           if: 'contains event.message.content "1234"',
           actions: ['set_value trigger true']
         }]
-      }
+      },
+      evalContext: {},
+      evaluateAt: now
     };
     const missEvent = {
       type: 'message_sent',
@@ -82,7 +88,7 @@ describe('Integration - Message Triggers', () => {
       }
     };
     // Ok result should fire
-    const missResult = ActionCore.applyEvent(script, {}, missEvent, now);
-    assert.equal(missResult.nextContext.trigger, undefined);
+    const missResult = ActionCore.applyEvent(missEvent, actionContext);
+    assert.equal(missResult.nextContext.evalContext.trigger, undefined);
   });
 });

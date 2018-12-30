@@ -35,7 +35,7 @@ class SchedulerWorker {
         TriggerEventCore.triggerEventForEventType(trigger, 'time_occurred')
       );
       const intendedAt = Events.time_occurred.timeForSpec(
-        context, timeOccurredTriggerEvent.time_occurred);
+        timeOccurredTriggerEvent.time_occurred, context);
       const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
       // Construct schdeduled action
       return {

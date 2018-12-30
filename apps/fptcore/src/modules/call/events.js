@@ -6,7 +6,7 @@ module.exports = {
       from: { required: true, type: 'reference', collection: 'roles' },
       to: { required: true, type: 'reference', collection: 'roles' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       return spec.from === event.from && spec.to === event.to;
     }
   },
@@ -15,7 +15,7 @@ module.exports = {
     specParams: {
       role: { required: true, type: 'reference', collection: 'roles' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       return _.includes(event.roles, spec.role);
     }
   },
@@ -25,7 +25,7 @@ module.exports = {
       from: { required: true, type: 'reference', collection: 'roles' },
       to: { required: true, type: 'reference', collection: 'roles' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       return spec.from === event.from && spec.to === event.to;
     }
   }

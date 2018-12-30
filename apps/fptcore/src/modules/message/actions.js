@@ -34,8 +34,8 @@ var custom_message = {
       }
     };
   },
-  applyAction: function(script, context, params, applyAt) {
-    var roles = script.content.roles || [];
+  applyAction: function(params, actionContext) {
+    var roles = actionContext.scriptContent.roles || [];
     var sentByRole = _.find(roles, { name: params.from_role_name });
     var sentToRole = _.find(roles, { name: params.to_role_name });
     // Messages need replies if they are sent from non-actors to actors.
@@ -44,9 +44,9 @@ var custom_message = {
       operation: 'createMessage',
       suppressRelayId: params.suppress_relay_id || null,
       fields: {
-        sentById: context[params.from_role_name].id,
-        sentToId: context[params.to_role_name].id,
-        createdAt: applyAt,
+        sentById: actionContext.evalContext[params.from_role_name].id,
+        sentToId: actionContext.evalContext[params.to_role_name].id,
+        createdAt: actionContext.evaluateAt,
         messageType: params.message_type,
         messageContent: params.message_content,
         sentFromLatitude: params.location_latitude || null,
@@ -65,12 +65,13 @@ var send_message = {
     to_role_name: { required: false, type: 'reference', collection: 'roles' }
   },
   phraseForm: ['message_name', 'to_role_name'],
-  applyAction: function(script, context, params, applyAt) {
+  applyAction: function(params, actionContext) {
     var messageName = params.message_name;
-    var messageData = _.find(script.content.messages, { name: messageName });
+    var messageData = _.find(actionContext.scriptContent.messages,
+      { name: messageName });
     var messageType = messageData.type;
-    var messageContent = EvalCore.templateText(context, messageData.content,
-      script.timezone);
+    var messageContent = EvalCore.templateText(actionContext.evalContext,
+      messageData.content, actionContext.timezone);
     var hasBeenRead = messageData.read === true;
     var fromRoleName = messageData.from;
     var toRoleName = params.to_role_name || messageData.to;
@@ -80,10 +81,10 @@ var send_message = {
     return [{
       operation: 'createMessage',
       fields: {
-        sentById: context[fromRoleName].id,
-        sentToId: context[toRoleName].id,
-        createdAt: applyAt,
-        readAt: hasBeenRead ? applyAt : null,
+        sentById: actionContext.evalContext[fromRoleName].id,
+        sentToId: actionContext.evalContext[toRoleName].id,
+        createdAt: actionContext.evaluateAt,
+        readAt: hasBeenRead ? actionContext.evaluateAt : null,
         messageName: messageName,
         messageType: messageType,
         messageContent: messageContent

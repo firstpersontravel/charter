@@ -63,10 +63,11 @@ class TripResetController {
       where: { id: tripId },
       include: [{ model: models.Script, as: 'script' }]
     });
-    const context = TripUtil.getContext(tripId);
+    const evalContext = TripUtil.getEvalContext(tripId);
     const players = await models.Player.findAll({ where: { tripId: tripId } });
     // Create hardcoded default 'start' checkpoint
-    const startingScene = SceneCore.getStartingSceneName(trip.script, context);
+    const startingScene = SceneCore.getStartingSceneName(trip.script.content,
+      evalContext);
     const start = { name: '__start', scene: startingScene };
     // Load checkpoint
     const checkpoints = [start].concat(trip.script.content.checkpoints || []);

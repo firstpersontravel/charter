@@ -12,6 +12,10 @@ describe('TripUtil', () => {
     sandbox.restore();
   });
 
+  describe('#getObjectsForTrip', () => {
+    it.skip('gets all needed objects for a trip', () => {});
+  });
+
   describe('#createEvalContext', () => {
     it('creates trip context', () => {
       const objs = {

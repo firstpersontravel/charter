@@ -6,12 +6,12 @@ var pause_audio = {
     role_name: { required: true, type: 'reference', collection: 'roles' }
   },
   phraseForm: ['role_name'],
-  applyAction: function(script, context, params, applyAt) {
-    if (!context.audio_is_playing) { return null; }
+  applyAction: function(params, actionContext) {
+    if (!actionContext.evalContext.audio_is_playing) { return null; }
 
-    var startedTime = context.audio_started_time;
-    var startedAt = moment.utc(context.audio_started_at);
-    var secSinceStarted = applyAt.unix() - startedAt.unix();
+    var startedTime = actionContext.evalContext.audio_started_time;
+    var startedAt = moment.utc(actionContext.evalContext.audio_started_at);
+    var secSinceStarted = actionContext.evaluateAt.unix() - startedAt.unix();
 
     return [{
       operation: 'updateTripValues',
@@ -31,8 +31,9 @@ var play_audio = {
     audio_name: { required: true, type: 'reference', collection: 'audio' }
   },
   phraseForm: ['role_name', 'audio_name'],
-  applyAction: function(script, context, params, applyAt) {
-    var audio = _.find(script.content.audio, { name: params.audio_name });
+  applyAction: function(params, actionContext) {
+    var audio = _.find(actionContext.scriptContent.audio,
+      { name: params.audio_name });
     if (!audio) {
       return null;
     }
@@ -43,7 +44,7 @@ var play_audio = {
         audio_name: audio.name,
         audio_role: params.role_name,
         audio_path: audio.path,
-        audio_started_at: applyAt.toISOString(),
+        audio_started_at: actionContext.evaluateAt.toISOString(),
         audio_started_time: 0,
         audio_paused_time: null,
         audio_is_playing: true
@@ -59,19 +60,19 @@ var resume_audio = {
     role_name: { required: true, type: 'reference', collection: 'roles' }
   },
   phraseForm: ['role_name'],
-  applyAction: function(script, context, params, applyAt) {
-    if (context.audio_is_playing) {
+  applyAction: function(params, actionContext) {
+    if (actionContext.evalContext.audio_is_playing) {
       return null;
     }
-    if (!context.audio_paused_time) {
+    if (!actionContext.evalContext.audio_paused_time) {
       return null;
     }
     return [{
       operation: 'updateTripValues',
       values: {
         audio_is_playing: true,
-        audio_started_at: applyAt.toISOString(),
-        audio_started_time: context.audio_paused_time,
+        audio_started_at: actionContext.evaluateAt.toISOString(),
+        audio_started_time: actionContext.evalContext.audio_paused_time,
         audio_paused_time: null
       }
     }, {
@@ -85,7 +86,7 @@ var stop_audio = {
     role_name: { required: true, type: 'reference', collection: 'roles' }
   },
   phraseForm: ['role_name'],
-  applyAction: function(script, context, params, applyAt) {
+  applyAction: function(params, actionContext) {
     return [{
       operation: 'updateTripValues',
       values: {

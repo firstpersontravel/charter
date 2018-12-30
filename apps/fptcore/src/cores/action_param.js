@@ -7,17 +7,17 @@ var ActionParamCore = {};
  */
 ActionParamCore.PARAM_PREP_FUNCTIONS = {
   // Strip quotes from strings
-  string: function(script, context, paramSpec, param) {
+  string: function(paramSpec, param, actionContext) {
     if (param[0] === '"' && param[param.length - 1] === '"') {
       return param.slice(1, param.length - 1);
     }
     return param;
   },
-  number: function(script, context, paramSpec, param) {
+  number: function(paramSpec, param, actionContext) {
     return Number(param);
   },
   // Don't decode refs yet
-  ref: function(script, context, paramSpec, param) {
+  ref: function(paramSpec, param, actionContext) {
     if (paramSpec.raw) {
       return param;
     }
@@ -25,19 +25,19 @@ ActionParamCore.PARAM_PREP_FUNCTIONS = {
   }
 };
 
-ActionParamCore.prepareParam = function(script, context, paramSpec, param) {
+ActionParamCore.prepareParam = function(paramSpec, param, actionContext) {
   var paramPrepFunc = ActionParamCore.PARAM_PREP_FUNCTIONS[paramSpec.type];
   // If no prep function is present, return the param as-is.
   if (!paramPrepFunc) {
     return param;
   }
-  return paramPrepFunc(script, context, paramSpec, param);
+  return paramPrepFunc(paramSpec, param, actionContext);
 };
 
-ActionParamCore.prepareParams = function(script, context, paramsSpec, params) {
+ActionParamCore.prepareParams = function(paramsSpec, params, actionContext) {
   return _.mapValues(params, function(param, key) {
     var spec = paramsSpec[key];
-    return ActionParamCore.prepareParam(script, context, spec, param);
+    return ActionParamCore.prepareParam(spec, param, actionContext);
   });
 };
 

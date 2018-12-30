@@ -77,7 +77,7 @@ module.exports = {
     `;
     await queryInterface.sequelize.query(updateScriptRefSql);
 
-      const updateTripRefSql = `
+    const updateTripRefSql = `
       update Trips
         inner join Scripts
         on Scripts.id = Trips.script_id

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
@@ -7,11 +8,10 @@ const ActionsRegistry = require('../../src/registries/actions');
 const TriggerCore = require('../../src/cores/trigger');
 const TriggerEventCore = require('../../src/cores/trigger_event');
 
-var sandbox = sinon.sandbox.create();
+const sandbox = sinon.sandbox.create();
 
 describe('ActionCore', () => {
-
-  var addAction = {
+  const addAction = {
     applyAction: function(script, context, params, applyAt) {
       return [{
         operation: 'updateTripValues',
@@ -20,8 +20,7 @@ describe('ActionCore', () => {
     }
   };
 
-  var scriptSentinel = {};
-  var now = moment.utc();
+  const now = moment.utc();
 
   beforeEach(() => {
     ActionsRegistry.add = addAction;
@@ -42,19 +41,23 @@ describe('ActionCore', () => {
 
   describe('#addEventToContext', () => {
     it('adds event to context', () => {
-      const context = { abc: '123' };
       const event = { type: 'event' };
-      const result = ActionCore.addEventToContext(context, event);
-      assert.deepEqual(result, { abc: '123', event: event });      
+      const actionContext = { evalContext: { abc: '123' } };
+
+      const result = ActionCore.addEventToContext(event, actionContext);
+
+      assert.deepEqual(result.evalContext, { abc: '123', event: event });      
     });
   });
 
   describe('#applyActionSimple', () => {
     it('returns action results', () => {
       const action = { name: 'add', params: {} };
-      const result = ActionCore.applyAction(scriptSentinel, {}, action, now);
+      const actionContext = { scriptContent: {}, evaluateAt: now };
 
-      assert.deepStrictEqual(result.nextContext, { number: 1 });
+      const result = ActionCore.applyActionSimple(action, actionContext);
+
+      assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
         operation: 'updateTripValues',
         values: { number: 1 }
@@ -65,9 +68,11 @@ describe('ActionCore', () => {
   describe('#applyAction', () => {
     it('returns action results', () => {
       const action = { name: 'add', params: {} };
-      const result = ActionCore.applyAction(scriptSentinel, {}, action, now);
+      const actionContext = { scriptContent: {}, evaluateAt: now };
 
-      assert.deepStrictEqual(result.nextContext, { number: 1 });
+      const result = ActionCore.applyAction(action, actionContext);
+
+      assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
         operation: 'updateTripValues',
         values: { number: 1 }
@@ -78,18 +83,20 @@ describe('ActionCore', () => {
       const eventSentinel = {};
       sandbox.stub(ActionCore, 'eventForAction').returns(eventSentinel);
       sandbox.stub(ActionCore, 'applyEvent')
-        .callsFake(function(script, context, event, applyAt) {
+        .callsFake(function(event, actionContext) {
           return {
-            nextContext: context,
+            nextContext: actionContext,
             resultOps: [{ operation: 'updateTripValues', values: {} }],
             scheduledActions: []
           };
         });
 
       const action = { name: 'add', params: {} };
-      const result = ActionCore.applyAction(scriptSentinel, {}, action, now);
+      const actionContext = { scriptContent: {}, evaluateAt: now };
 
-      assert.deepStrictEqual(result.nextContext, { number: 1 });
+      const result = ActionCore.applyAction(action, actionContext);
+
+      assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
         operation: 'updateTripValues',
         values: { number: 1 }
@@ -101,25 +108,23 @@ describe('ActionCore', () => {
   });
 
   describe('#applyEvent', () => {
+    const actionContext = { scriptContent: {}, evaluateAt: now };
 
     it('returns nothing if no triggers', () => {
-      const contextSentinel = {};
       sandbox.stub(TriggerEventCore, 'triggersForEvent').callsFake(() => {
         return [];
       });
       const event = { type: 'added' };
-      const result = ActionCore.applyEvent(scriptSentinel, contextSentinel,
-        event, now);
+      const result = ActionCore.applyEvent(event, actionContext);
 
       assert.deepStrictEqual(result, {
-        nextContext: contextSentinel,
+        nextContext: actionContext,
         resultOps: [],
         scheduledActions: []
       });
     });
 
     it('returns trigger results if present', () => {
-      const contextSentinel = {};
       const resultSentinel = {
         nextContext: {},
         resultOps: [{}],
@@ -130,33 +135,28 @@ describe('ActionCore', () => {
         return [trigger];
       });
       sandbox.stub(ActionCore, 'applyTrigger')
-        .callsFake((
-          script, triggerContext, currentContext, trigger,
-          event, applyAt
-        ) => {
-          return resultSentinel;
-        });
+        .callsFake(() => (resultSentinel));
 
       const event = { type: 'added' };
-      const result = ActionCore.applyEvent(scriptSentinel, contextSentinel,
-        event, now);
+      const result = ActionCore.applyEvent(event, actionContext);
 
       assert.deepStrictEqual(result, resultSentinel);
       sinon.assert.calledWith(ActionCore.applyTrigger,
-        scriptSentinel, {}, {}, trigger, event, now);
+        trigger, event, actionContext, actionContext);
     });
   });
 
-  describe('#actionsForTriggerAndEvent', () => {
+  describe('#actionsForTrigger', () => {
     it('returns actions with added event and trigger info', () => {
       sandbox.stub(TriggerCore, 'actionsForTrigger').callsFake(() => {
         return [{ name: 'fake', params: {} }];
       });
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const contextWithEvent = { event: event };
-      const result = ActionCore.actionsForTriggerAndEvent(
-        trigger, contextWithEvent, event, now);
+      const actionContext = { evalContext: {} };
+
+      const result = ActionCore.actionsForTrigger(trigger, event,
+        actionContext);
 
       assert.deepStrictEqual(result, [{
         name: 'fake',
@@ -164,32 +164,39 @@ describe('ActionCore', () => {
         triggerName: trigger.name,
         event: event
       }]);
+
+      // Ensure TriggerCore.actionsForTrigger was called with the event
+      // added to the context -- for when triggers have if statements
+      // that depend on the contextual event.
       assert.deepStrictEqual(
-        TriggerCore.actionsForTrigger.firstCall.args,
-        [trigger, contextWithEvent, now]);
+        TriggerCore.actionsForTrigger.firstCall.args, [
+          trigger,
+          _.merge({}, actionContext, { evalContext: { event: event } })
+        ]);
     });
   });
 
   describe('#applyOrScheduleAction', () => {
+
+    const actionContext = { evaluateAt: now };
+
     it('applies action if scheduled immediately', () => {
       const action = { scheduleAt: now };
-      const resultSentinel = {};
-      sandbox.stub(ActionCore, 'applyAction').returns(resultSentinel);
-      const result = ActionCore.applyOrScheduleAction(scriptSentinel,
-        {}, action, now);
+      const stubContext = {};
+      sandbox.stub(ActionCore, 'applyAction').returns(stubContext);
+      const result = ActionCore.applyOrScheduleAction(action, actionContext);
 
-      assert.strictEqual(result, resultSentinel);
+      assert.strictEqual(result, stubContext);
       sinon.assert.calledOnce(ActionCore.applyAction);
     });
 
     it('schedule action if scheduled in the future', () => {
       const action = { scheduleAt: now.clone().add(1, 'days') };
       sandbox.stub(ActionCore, 'applyAction').returns({});
-      const result = ActionCore.applyOrScheduleAction(scriptSentinel,
-        {}, action, now);
+      const result = ActionCore.applyOrScheduleAction(action, actionContext);
 
       assert.deepEqual(result, {
-        nextContext: {},
+        nextContext: actionContext,
         resultOps: [],
         scheduledActions: [action]
       });
@@ -198,17 +205,17 @@ describe('ActionCore', () => {
   });
 
   describe('#applyTrigger', () => {
+    const actionContext = { evalContext: {}, evaluateAt: now };
 
     it('returns history op even if no actions', () => {
-      sandbox.stub(ActionCore, 'actionsForTriggerAndEvent').returns([]);
+      sandbox.stub(ActionCore, 'actionsForTrigger').returns([]);
 
-      const contextSentinel = {};
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const res = ActionCore.applyTrigger(scriptSentinel, contextSentinel,
-        contextSentinel, trigger, event, now);
+      const res = ActionCore.applyTrigger(trigger, event, actionContext,
+        actionContext);
 
-      assert.deepEqual(res.nextContext, {
+      assert.deepEqual(res.nextContext.evalContext, {
         history: { trigger: now.toISOString() },
       });
       assert.deepEqual(res.resultOps, [{
@@ -218,16 +225,15 @@ describe('ActionCore', () => {
     });
 
     it('returns immediate result', () => {
-      sandbox.stub(ActionCore, 'actionsForTriggerAndEvent')
+      sandbox.stub(ActionCore, 'actionsForTrigger')
         .returns([{ name: 'add',  params: {}, scheduleAt: now }]);
 
-      const contextSentinel = {};
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const res = ActionCore.applyTrigger(scriptSentinel, contextSentinel,
-        contextSentinel, trigger, event, now);
+      const res = ActionCore.applyTrigger(trigger, event,
+        actionContext, actionContext);
 
-      assert.deepEqual(res.nextContext, {
+      assert.deepEqual(res.nextContext.evalContext, {
         history: { trigger: now.toISOString() },
         number: 1
       });
@@ -251,14 +257,13 @@ describe('ActionCore', () => {
         triggerName: 'trigger',
         event: event
       };
-      sandbox.stub(ActionCore, 'actionsForTriggerAndEvent')
+      sandbox.stub(ActionCore, 'actionsForTrigger')
         .returns([scheduledAction]);
 
-      const contextSentinel = {};
-      const res = ActionCore.applyTrigger(scriptSentinel, contextSentinel,
-        contextSentinel, trigger, event, now);
+      const res = ActionCore.applyTrigger(trigger, event,
+        actionContext, actionContext);
 
-      assert.deepEqual(res.nextContext, {
+      assert.deepEqual(res.nextContext.evalContext, {
         history: { trigger: now.toISOString() }
       });
       assert.deepEqual(res.resultOps, [{

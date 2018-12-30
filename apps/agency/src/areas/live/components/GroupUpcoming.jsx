@@ -113,7 +113,7 @@ function getScheduledTripTriggers(trip) {
     const triggerEvent = TriggerEventCore.triggerEventForEventType(
       trigger, event.type);
     const scheduledAt = EventsRegistry.time_occurred.timeForSpec(
-        trip.context, triggerEvent[event.type]);
+        triggerEvent[event.type], trip.context);
     return {
       id: trigger.name,
       type: 'trigger',

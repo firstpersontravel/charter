@@ -5,14 +5,14 @@ const audioActions = require('../../../src/modules/audio/actions');
 
 describe('#pause_audio', () => {
   it('does nothing if no audio', () => {
-    const context = { Tablet: {} };
+    const actionContext = { evalContext: {} };
     const res = audioActions.pause_audio.applyAction(
-      {}, context, { role_name: 'Tablet' }, null);
+      { role_name: 'Tablet' }, actionContext);
     assert.strictEqual(res, null);
   });
 
   it('does nothing if audio is paused', () => {
-    const context = { Tablet: { audio: { is_playing: false } } };
+    const context = { evalContext: { audio_is_playing: false } };
     const res = audioActions.pause_audio.applyAction(
       {}, context, { role_name: 'Tablet' }, null);
     assert.strictEqual(res, null);
@@ -20,14 +20,17 @@ describe('#pause_audio', () => {
 
   it('pauses and updates value', () => {
     // Audio started a minute ago
-    const applyAt = moment.utc();
-    const context = {
-      audio_is_playing: true,
-      audio_started_at: applyAt.clone().subtract(1, 'minutes').toISOString(),
-      audio_started_time: 10
+    const now = moment.utc();
+    const actionContext = {
+      evalContext: {
+        audio_is_playing: true,
+        audio_started_at: now.clone().subtract(1, 'minutes').toISOString(),
+        audio_started_time: 10
+      },
+      evaluateAt: now
     };
-    const res = audioActions.pause_audio.applyAction(
-      {}, context, { role_name: 'Tablet' }, applyAt);
+    const res = audioActions.pause_audio.applyAction({ role_name: 'Tablet' }, 
+      actionContext);
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
       values: {
@@ -42,27 +45,33 @@ describe('#pause_audio', () => {
 
 describe('#play_audio', () => {
   const now = moment.utc();
-  const script = {
-    content: {
-      audio: [{
-        name: 'AUDIO-1',
-        path: 'audio/audio.mp3',
-        duration: 120
-      }]
-    }
+  const scriptContent = {
+    audio: [{
+      name: 'AUDIO-1',
+      path: 'audio/audio.mp3',
+      duration: 120
+    }]
   };
 
   it('does nothing if audio not found', () => {
-    const context = { Tablet: { audio: { is_playing: false } } };
-    const res = audioActions.play_audio.applyAction(
-      script, context, { role_name: 'Tablet', audio_name: 'AUDIO-3' }, now);
+    const params = { role_name: 'Tablet', audio_name: 'AUDIO-3' };
+    const actionContext = {
+      scriptContent: scriptContent,
+      evalContext: { audio_is_playing: false },
+      evaluateAt: now
+    };
+    const res = audioActions.play_audio.applyAction(params, actionContext);
     assert.strictEqual(res, null);
   });
 
   it('plays audio', () => {
-    const context = { Tablet: { audio: { is_playing: false } } };
-    const res = audioActions.play_audio.applyAction(
-      script, context, { role_name: 'Tablet', audio_name: 'AUDIO-1' }, now);
+    const params = { role_name: 'Tablet', audio_name: 'AUDIO-1' };
+    const actionContext = {
+      scriptContent: scriptContent,
+      evalContext: { audio_is_playing: false },
+      evaluateAt: now
+    };
+    const res = audioActions.play_audio.applyAction(params, actionContext);
     assert.deepEqual(res, [
       {
         operation: 'updateTripValues',
@@ -84,37 +93,44 @@ describe('#play_audio', () => {
 
 describe('#resume_audio', () => {
   const now = moment.utc();
-  const script = {
-    content: {
-      audio: [{
-        name: 'AUDIO-1',
-        path: 'audio/audio.mp3',
-        duration: 120
-      }]
-    }
+  const scriptContent = {
+    audio: [{
+      name: 'AUDIO-1',
+      path: 'audio/audio.mp3',
+      duration: 120
+    }]
   };
 
   it('does nothing if not started', () => {
-    const context = {};
-    const res = audioActions.resume_audio.applyAction(
-      script, context, { role_name: 'Tablet' }, now);
+    const params = { role_name: 'Tablet' };
+    const actionContext = {
+      scriptContent: scriptContent,
+      evalContext: {},
+      evaluateAt: now
+    };
+    const res = audioActions.resume_audio.applyAction(params, actionContext);
     assert.strictEqual(res, null);
   });
 
   it('does nothing if playing', () => {
-    const context = { audio_is_playing: true };
-    const res = audioActions.resume_audio.applyAction(
-      script, context, { role_name: 'Tablet' }, now);
+    const params = { role_name: 'Tablet' };
+    const actionContext = {
+      scriptContent: scriptContent,
+      evalContext: { audio_is_playing: true },
+      evaluateAt: now
+    };
+    const res = audioActions.resume_audio.applyAction(params, actionContext);
     assert.strictEqual(res, null);
   });
 
   it('resume audio', () => {
-    const context = {
-      audio_is_playing: false,
-      audio_paused_time: 10
+    const params = { role_name: 'Tablet' };
+    const actionContext = {
+      scriptContent: scriptContent,
+      evalContext: { audio_is_playing: false, audio_paused_time: 10 },
+      evaluateAt: now
     };
-    const res = audioActions.resume_audio.applyAction(
-      script, context, { role_name: 'Tablet' }, now);
+    const res = audioActions.resume_audio.applyAction(params, actionContext);
     assert.deepEqual(res, [
       {
         operation: 'updateTripValues',
@@ -133,12 +149,13 @@ describe('#resume_audio', () => {
 
 describe('#stop_audio', () => {
   it('stops audio', () => {
-    const context = {
-      audio_is_playing: false,
-      audio_paused_time: 10
+    const params = { role_name: 'Tablet' };
+    const actionContext = {
+      scriptContent: {},
+      evalContext: { audio_is_playing: false, audio_paused_time: 10 },
+      evaluateAt: moment.utc()
     };
-    const res = audioActions.stop_audio.applyAction(
-      {}, context, { role_name: 'Tablet' }, moment.utc());
+    const res = audioActions.stop_audio.applyAction(params, actionContext);
     assert.deepEqual(res, [
       {
         operation: 'updateTripValues',

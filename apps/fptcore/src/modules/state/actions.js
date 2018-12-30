@@ -4,7 +4,7 @@ var set_state = {
     role_name: { required: true, type: 'reference', collection: 'roles' },
     new_value: { required: true, type: 'string' }
   },
-  applyAction: function(script, context, params, applyAt) {
+  applyAction: function(params, actionContext) {
     return [{
       operation: 'updateUi',
       roleName: params.role_name,

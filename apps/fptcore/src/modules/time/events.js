@@ -2,14 +2,14 @@ var moment = require('moment');
 
 var TimeUtil = require('../../utils/time');
 
-function timeForSpec(context, spec) {
+function timeForSpec(spec, evalContext) {
   var offset = 0;
   if (spec.after) {
     offset = TimeUtil.secondsForDurationShorthand(spec.after);
   } else if (spec.before) {
     offset = -TimeUtil.secondsForDurationShorthand(spec.before);
   }
-  var timestring = context.schedule[spec.time];
+  var timestring = evalContext.schedule[spec.time];
   if (!timestring) {
     return null;
   }
@@ -24,8 +24,8 @@ module.exports = {
       after: { required: false, type: 'duration' }
     },
     timeForSpec: timeForSpec,
-    matchEvent: function(script, context, spec, event) {
-      var specTime = timeForSpec(context, spec);
+    matchEvent: function(spec, event, actionContext) {
+      var specTime = timeForSpec(spec, actionContext.evalContext);
       if (!specTime) {
         return false;
       }

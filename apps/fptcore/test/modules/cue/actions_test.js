@@ -4,7 +4,7 @@ const cueActions = require('../../../src/modules/cue/actions');
 
 describe('#signal_cue', () => {
   it('does nothing', () => {
-    const res = cueActions.signal_cue.applyAction({}, {}, {}, null);
+    const res = cueActions.signal_cue.applyAction({}, {});
     assert.strictEqual(res, null);
   });
 

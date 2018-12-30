@@ -36,19 +36,19 @@ TriggerCore.walkActions = function(actions, path, actionIteree, ifIteree) {
   });
 };
 
-TriggerCore.activeActionPhrasesForClause = function(clause, context) {
+TriggerCore.activeActionPhrasesForClause = function(clause, actionContext) {
   // If no if statement, then pick from actions.
   if (!clause.if) {
     return clause.actions;
   }
   // If .if is true, use normal actions.
-  if (EvalCore.if(context, clause.if)) {
+  if (EvalCore.if(actionContext.evalContext, clause.if)) {
     return clause.actions;
   }
   // Check for elseifs and iterate in order.
   if (clause.elseifs) {
     for (var i = 0; i < clause.elseifs.length; i++) {
-      if (EvalCore.if(context, clause.elseifs[i].if)) {
+      if (EvalCore.if(actionContext.evalContext, clause.elseifs[i].if)) {
         return clause.elseifs[i].actions;
       }
     }
@@ -64,9 +64,10 @@ TriggerCore.activeActionPhrasesForClause = function(clause, context) {
 /**
  * Get executable actions for a given trigger or subclause.
  */
-TriggerCore.actionPhrasesForClause = function(clause, context) {
+TriggerCore.actionPhrasesForClause = function(clause, actionContext) {
   // Figure out which if clause is active
-  var actions = TriggerCore.activeActionPhrasesForClause(clause, context);
+  var actions = TriggerCore.activeActionPhrasesForClause(clause,
+    actionContext);
 
   // Detect nothing
   if (!actions) {
@@ -75,7 +76,7 @@ TriggerCore.actionPhrasesForClause = function(clause, context) {
 
   // Detect subclauses
   if (typeof actions === 'object' && actions.actions) {
-    return TriggerCore.actionPhrasesForClause(actions, context);
+    return TriggerCore.actionPhrasesForClause(actions, actionContext);
   }
 
   // Detect single actions
@@ -87,7 +88,7 @@ TriggerCore.actionPhrasesForClause = function(clause, context) {
   return _.flatten(actions.map(function(action) {
     // Detect subclauses
     if (typeof action === 'object' && action.actions) {
-      return TriggerCore.actionPhrasesForClause(action, context);
+      return TriggerCore.actionPhrasesForClause(action, actionContext);
     }
     // Otherwise it's a simple action.
     return [action];
@@ -97,12 +98,13 @@ TriggerCore.actionPhrasesForClause = function(clause, context) {
 /**
  * Get executable actions for a given trigger.
  */
-TriggerCore.actionsForTrigger = function(trigger, context, evaluateAt) {
-  var actionPhrases = TriggerCore.actionPhrasesForClause(trigger, context);
+TriggerCore.actionsForTrigger = function(trigger, actionContext) {
+  var actionPhrases = TriggerCore.actionPhrasesForClause(
+    trigger, actionContext);
+
   var actions = actionPhrases
     .map(function(actionPhrase) {
-      return ActionPhraseCore.expandActionPhrase(
-        actionPhrase, evaluateAt, context);
+      return ActionPhraseCore.expandActionPhrase(actionPhrase, actionContext);
     });
   return actions;
 };

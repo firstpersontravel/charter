@@ -8,26 +8,26 @@ var ActionResultCore = {};
  * to allow processing to continue... the real update will happen after the
  * whole order processing is complete by resultOps handling.
  */
-ActionResultCore._tempApplyResultOp = function(context, resultOp) {
+ActionResultCore._tempApplyResultOp = function(resultOp, evalContext) {
   switch (resultOp.operation) {
   case 'updatePlayerFields': {
-    var oldPlayer = context[resultOp.roleName];
+    var oldPlayer = evalContext[resultOp.roleName];
     var player = Object.assign({}, oldPlayer, resultOp.fields);
-    return Object.assign({}, context, _.set({}, resultOp.roleName, player));
+    return Object.assign({}, evalContext, _.set({}, resultOp.roleName, player));
   }
   case 'updateTripFields': {
-    return Object.assign({}, context, resultOp.fields);
+    return Object.assign({}, evalContext, resultOp.fields);
   }
   case 'updateTripValues': {
-    return Object.assign({}, context, resultOp.values);
+    return Object.assign({}, evalContext, resultOp.values);
   }
   case 'updateTripHistory': {
-    var oldHistory = context.history || {};
+    var oldHistory = evalContext.history || {};
     var history = Object.assign({}, oldHistory, resultOp.history);
-    return Object.assign({}, context, { history: history });
+    return Object.assign({}, evalContext, { history: history });
   }
   }
-  return context;
+  return evalContext;
 };
 
 /**
@@ -36,25 +36,31 @@ ActionResultCore._tempApplyResultOp = function(context, resultOp) {
  * to allow processing to continue... the real update will happen after the
  * whole order processing is complete by resultOps handling.
  */
-ActionResultCore.tempUpdateContext = function(context, resultOps) {
+ActionResultCore.tempUpdateContext = function(resultOps, actionContext) {
+  var nextEvalContext = actionContext.evalContext;
   resultOps.forEach(function(resultOp) {
-    context = ActionResultCore._tempApplyResultOp(context, resultOp);
+    nextEvalContext = ActionResultCore._tempApplyResultOp(resultOp, 
+      nextEvalContext);
   });
-  return context;
+  return Object.assign({}, actionContext, { evalContext: nextEvalContext });
 };
 
 /**
  * Get an object representing a blank action result.
  */
-ActionResultCore.initialResult = function(context) {
-  return { nextContext: context, resultOps: [], scheduledActions: [] };
+ActionResultCore.initialResult = function(actionContext) {
+  return {
+    nextContext: actionContext,
+    resultOps: [],
+    scheduledActions: []
+  };
 };
 
 /**
  * Get an object representing a simple application of ops to a context
  */
-ActionResultCore.resultFromContextAndOps = function(context, ops) {
-  var nextContext = ActionResultCore.tempUpdateContext(context, ops);
+ActionResultCore.resultFromOps = function(ops, actionContext) {
+  var nextContext = ActionResultCore.tempUpdateContext(ops, actionContext);
   return {
     nextContext: nextContext,
     resultOps: ops,

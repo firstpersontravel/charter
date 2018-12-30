@@ -4,48 +4,60 @@ const callEvents = require('../../../src/modules/call/events');
 
 describe('#call_answered', () => {
   it('fires on matching call', () => {
-    const callClause = { from: 'Bob', to: 'Jim' };
+    const spec = { from: 'Bob', to: 'Jim' };
     const event = { type: 'call_answered', from: 'Bob', to: 'Jim' };
-    const res = callEvents.call_answered.matchEvent({}, {}, callClause, event);
+
+    const res = callEvents.call_answered.matchEvent(spec, event, {});
+
     assert.strictEqual(res, true);
   });
 
   it('does not fire on unmatched call', () => {
-    const callClause = { from: 'Bob', to: 'Gale' };
+    const spec = { from: 'Bob', to: 'Gale' };
     const event = { type: 'call_answered', from: 'Bob', to: 'Jim' };
-    const res = callEvents.call_answered.matchEvent({}, {}, callClause, event);
+
+    const res = callEvents.call_answered.matchEvent(spec, event, {});
+
     assert.strictEqual(res, false);
   });
 });
 
 describe('#call_ended', () => {
   it('fires on matching call ended', () => {
-    const callClause = { role: 'King' };
+    const spec = { role: 'King' };
     const event = { type: 'call_ended', roles: ['King', 'Queen'] };
-    const res = callEvents.call_ended.matchEvent({}, {}, callClause, event);
+
+    const res = callEvents.call_ended.matchEvent(spec, event, {});
+
     assert.strictEqual(res, true);
   });
 
   it('does not fire on unmatched call', () => {
-    const callClause = { role: 'Jack' };
+    const spec = { role: 'Jack' };
     const event = { type: 'call_ended', roles: ['King', 'Queen'] };
-    const res = callEvents.call_ended.matchEvent({}, {}, callClause, event);
+
+    const res = callEvents.call_ended.matchEvent(spec, event, {});
+
     assert.strictEqual(res, false);
   });
 });
 
 describe('#call_received', () => {
   it('fires on matching call', () => {
-    const callClause = { from: 'Bob', to: 'Jim' };
+    const spec = { from: 'Bob', to: 'Jim' };
     const event = { type: 'call_received', from: 'Bob', to: 'Jim' };
-    const res = callEvents.call_received.matchEvent({}, {}, callClause, event);
+
+    const res = callEvents.call_received.matchEvent(spec, event, {});
+
     assert.strictEqual(res, true);
   });
 
   it('does not fire on unmatched call', () => {
-    const callClause = { from: 'Bob', to: 'Gale' };
+    const spec = { from: 'Bob', to: 'Gale' };
     const event = { type: 'call_received', from: 'Bob', to: 'Jim' };
-    const res = callEvents.call_received.matchEvent({}, {}, callClause, event);
+
+    const res = callEvents.call_received.matchEvent(spec, event, {});
+
     assert.strictEqual(res, false);
   });
 });

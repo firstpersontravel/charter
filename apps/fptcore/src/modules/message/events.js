@@ -13,7 +13,7 @@ module.exports = {
       contains: { required: false, type: 'string' },
       geofence: { required: false, type: 'reference', collection: 'geofences' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       if (spec.type && spec.type !== event.message.type) {
         return false;
       }
@@ -33,10 +33,10 @@ module.exports = {
         if (!event.location.latitude || !event.location.longitude) {
           return false;
         }
-        var geofence = _.find(script.content.geofences, { name: spec.geofence });
-        var waypoint = _.find(script.content.waypoints, {
-          name: geofence.center
-        });
+        var geofence = _.find(actionContext.scriptContent.geofences,
+          { name: spec.geofence });
+        var waypoint = _.find(actionContext.scriptContent.waypoints,
+          { name: geofence.center });
         var dist = distance(
           event.location.latitude, event.location.longitude,
           waypoint.coords[0], waypoint.coords[1]);

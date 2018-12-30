@@ -12,9 +12,10 @@ var play_clip = {
   params: {
     clip_name: { required: true, type: 'reference', collection: 'clips' }
   },
-  applyAction: function (script, context, params, applyAt) {
+  applyAction: function (params, actionContext) {
     // Find the clip.
-    var clip = _.find(script.content.clips, { name: params.clip_name });
+    var clip = _.find(actionContext.scriptContent.clips,
+      { name: params.clip_name });
     if (!clip) {
       return null;
     }
@@ -24,7 +25,8 @@ var play_clip = {
       {
         clause: 'say',
         voice: clip.voice || 'alice',
-        message: EvalCore.templateText(context, clip.transcript, script.timezone)
+        message: EvalCore.templateText(actionContext.evalContext,
+          clip.transcript, actionContext.timezone)
       };
 
     // If we expect a response, return the play within a gather

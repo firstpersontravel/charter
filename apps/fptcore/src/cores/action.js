@@ -11,24 +11,29 @@ var ActionCore = {};
 /**
  * Merge event into action context.
  */
-ActionCore.addEventToContext = function(context, event) {
-  return Object.assign({}, context, { event: event || null });
+ActionCore.addEventToContext = function(event, actionContext) {
+  var evalContextWithEvent = Object.assign({}, actionContext.evalContext, {
+    event: event || null
+  });
+  return Object.assign({}, actionContext, {
+    evalContext: evalContextWithEvent
+  });
 };
 
 /**
  * Get the results for a given action.
  */
-ActionCore.opsForAction = function(script, context, action, applyAt) {
-  var contextWithEvent = ActionCore.addEventToContext(context, action.event);
+ActionCore.opsForAction = function(action, actionContext) {
+  var contextWithEvent = ActionCore.addEventToContext(action.event,
+    actionContext);
   var actionClass = ActionsRegistry[action.name];
   if (!actionClass) {
     throw new Error('Invalid action "' + action.name + '".');
   }
   var paramsSpec = actionClass.params;
-  var params = ActionParamCore.prepareParams(script, context, paramsSpec,
-    action.params);
-  var actionFunc = actionClass.applyAction;
-  return actionFunc(script, contextWithEvent, params, applyAt) || [];
+  var params = ActionParamCore.prepareParams(paramsSpec, action.params,
+    actionContext);
+  return actionClass.applyAction(params, contextWithEvent) || [];
 };
 
 /**
@@ -46,16 +51,16 @@ ActionCore.eventForAction = function(action) {
 /**
  * Just apply a simple action and return the result.
  */
-ActionCore.applyActionSimple = function(script, context, action, applyAt) {
-  var ops = ActionCore.opsForAction(script, context, action, applyAt);
-  return ActionResultCore.resultFromContextAndOps(context, ops);
+ActionCore.applyActionSimple = function(action, actionContext) {
+  var ops = ActionCore.opsForAction(action, actionContext);
+  return ActionResultCore.resultFromOps(ops, actionContext);
 };
 
 /**
  * Apply an action, including any triggers started by a resulting event.
  */
-ActionCore.applyAction = function(script, context, action, applyAt) {
-  var result = ActionCore.applyActionSimple(script, context, action, applyAt);
+ActionCore.applyAction = function(action, actionContext) {
+  var result = ActionCore.applyActionSimple(action, actionContext);
   var event = ActionCore.eventForAction(action);
   // If no event, return the simple result
   if (!event) {
@@ -63,31 +68,30 @@ ActionCore.applyAction = function(script, context, action, applyAt) {
   }
   // Otherwise, calculate the concatentation of that action and the triggered
   // event.
-  var eventResult = ActionCore.applyEvent(script, result.nextContext, event,
-    applyAt);
+  var eventResult = ActionCore.applyEvent(event, result.nextContext);
   return ActionResultCore.concatResult(result, eventResult);
 };
 
 /**
  * Trigger any triggers applied by an event.
  */
-ActionCore.applyEvent = function(script, context, event, applyAt) {
+ActionCore.applyEvent = function(event, actionContext) {
   // Get blank result.
-  var result = ActionResultCore.initialResult(context);
+  var result = ActionResultCore.initialResult(actionContext);
   
   // Assemble all triggers. Include event with context because if statements
   // on the triggers may include the event context. This will filter out
   // non-repeatable triggers, or ones with failing if statements, or ones
   // in the wrong scene or page.
-  var contextWithEvent = ActionCore.addEventToContext(context, event);
-  var nextTriggers = TriggerEventCore
-    .triggersForEvent(script, contextWithEvent, event);
+  var contextWithEvent = ActionCore.addEventToContext(event, actionContext);
+  var nextTriggers = TriggerEventCore.triggersForEvent(event,
+    contextWithEvent);
 
   // Apply each trigger with original context
-  var triggerContext = context;
+  var actionContextWhenTriggered = actionContext;
   nextTriggers.forEach(function(trigger) {
-    var triggerResult = ActionCore.applyTrigger(script,
-      triggerContext, result.nextContext, trigger, event, applyAt);
+    var triggerResult = ActionCore.applyTrigger(
+      trigger, event, result.nextContext, actionContextWhenTriggered);
     result = ActionResultCore.concatResult(result, triggerResult);
   });
   // Return concatenated results.
@@ -97,28 +101,27 @@ ActionCore.applyEvent = function(script, context, event, applyAt) {
 /**
  * Apply a trigger, including subsequent actions.
  */
-ActionCore.applyTrigger = function(script, triggerContext, currentContext,
-  trigger, event, applyAt) {
+ActionCore.applyTrigger = function(trigger, event, actionContext,
+  actionContextWhenTriggered) {
   // History op to update history in db. This is required because some
   // scripts check the history.
   var historyOps = [{
     operation: 'updateTripHistory',
-    history: _.set({}, trigger.name, applyAt.toISOString())
+    history: _.set({}, trigger.name, actionContext.evaluateAt.toISOString())
   }];
   // Create an initial result with this history update, so that subsequent
   // events can register that this was triggered.
-  var result = ActionResultCore.resultFromContextAndOps(
-    currentContext, historyOps);
+  var result = ActionResultCore.resultFromOps(historyOps, actionContext);
 
   // Add event to context for consideration for if logic. Figure out which
   // actions should be called, either now or later.
-  var nextActions = ActionCore.actionsForTriggerAndEvent(
-    trigger, triggerContext, event, applyAt);
+  var nextActions = ActionCore.actionsForTrigger(
+    trigger, event, actionContextWhenTriggered);
 
   // Either call or schedule each action.
   nextActions.forEach(function(action) {
-    var actionResult = ActionCore.applyOrScheduleAction(
-      script, result.nextContext, action, applyAt);
+    var actionResult = ActionCore.applyOrScheduleAction(action,
+      result.nextContext);
     result = ActionResultCore.concatResult(result, actionResult);
   });
 
@@ -130,11 +133,10 @@ ActionCore.applyTrigger = function(script, triggerContext, currentContext,
  * Calculate actions for a trigger and event -- include the trigger name
  * and event in the action result.
  */
-ActionCore.actionsForTriggerAndEvent = function(trigger, context, event,
-  applyAt) {
-  var contextWithEvent = ActionCore.addEventToContext(context, event);
+ActionCore.actionsForTrigger = function(trigger, event, actionContext) {
+  var contextWithEvent = ActionCore.addEventToContext(event, actionContext);
   return TriggerCore
-    .actionsForTrigger(trigger, contextWithEvent, applyAt)
+    .actionsForTrigger(trigger, contextWithEvent)
     .map(function(action) {
       return Object.assign(action, {
         triggerName: trigger.name,
@@ -147,17 +149,17 @@ ActionCore.actionsForTriggerAndEvent = function(trigger, context, event,
  * Generate a result for a given action, either schedule it for later, or
  * apply it now.
  */
-ActionCore.applyOrScheduleAction = function(script, context, action, applyAt) {
+ActionCore.applyOrScheduleAction = function(action, actionContext) {
   // Schedule actions if they have a later time.
-  if (action.scheduleAt.isAfter(applyAt)) {
+  if (action.scheduleAt.isAfter(actionContext.evaluateAt)) {
     return {
-      nextContext: context,
+      nextContext: actionContext,
       resultOps: [],
       scheduledActions: [action]
     };
   }
   // Otherwise apply them now, including any nested triggers!
-  return ActionCore.applyAction(script, context, action, applyAt);
+  return ActionCore.applyAction(action, actionContext);
 };
 
 module.exports = ActionCore;

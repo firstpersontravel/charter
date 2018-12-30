@@ -1,18 +1,17 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const messageActions = require('../../../src/modules/message/actions');
+const {
+  custom_message,
+  send_message
+} = require('../../../src/modules/message/actions');
 
 describe('#custom_message', () => {
   const now = moment.utc();
-  const script = {
-    content: {
-      roles: [{ name: 'Ally' }, { name: 'Babbit' }]
-    }
-  };
-  const context = {
-    Ally: { id: 1 },
-    Babbit: { id: 2 }
+  const actionContext = {
+    scriptContent: { roles: [{ name: 'Ally' }, { name: 'Babbit' }] },
+    evalContext: { Ally: { id: 1 }, Babbit: { id: 2 } },
+    evaluateAt: now
   };
 
   it('sends text message with content', () => {
@@ -22,8 +21,9 @@ describe('#custom_message', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = messageActions.custom_message.applyAction(
-      script, context, params, now);
+
+    const res = custom_message.applyAction(params, actionContext);
+
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
@@ -43,22 +43,23 @@ describe('#custom_message', () => {
   });
 
   it('reply is needed for non-actor to actor', () => {
-    const scriptWithActor = {
-      content: {
+    const actionContextWithActor = Object.assign({}, actionContext, {
+      scriptContent: {
         roles: [
           { name: 'Ally', actor: false },
           { name: 'Babbit', actor: true }
         ]
       }
-    };
+    });
     const params = {
       message_type: 'text',
       message_content: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = messageActions.custom_message.applyAction(
-      scriptWithActor, context, params, now);
+
+    const res = custom_message.applyAction(params, actionContextWithActor);
+
     assert.strictEqual(res[0].fields.isReplyNeeded, true);
   });
 
@@ -72,8 +73,9 @@ describe('#custom_message', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const res = messageActions.custom_message.applyAction(
-      script, context, params, now);
+
+    const res = custom_message.applyAction(params, actionContext);
+
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
@@ -99,8 +101,9 @@ describe('#custom_message', () => {
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
-    const res = messageActions.custom_message.applyAction(
-      script, context, params, now);
+
+    const res = custom_message.applyAction(params, actionContext);
+
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
@@ -129,7 +132,9 @@ describe('#custom_message', () => {
       location_longitude: -122.693563,
       location_accuracy: 30
     };
-    const event = messageActions.custom_message.eventForParams(params);
+
+    const event = custom_message.eventForParams(params);
+
     assert.deepStrictEqual(event, {
       type: 'message_sent',
       message: {
@@ -149,14 +154,11 @@ describe('#custom_message', () => {
 
 describe('#send_message', () => {
   const now = moment.utc();
-  const context = {
-    Ally: { id: 1, audio_path: 'hi.mp3' },
-    Babbit: { id: 2 }
-  };
 
   it('sends text message with content', () => {
-    const script = {
-      content: {
+    const params = { message_name: 'MESSAGE-HELLO' };
+    const actionContext = {
+      scriptContent: {
         messages: [{
           name: 'MESSAGE-HELLO',
           type: 'text',
@@ -164,11 +166,16 @@ describe('#send_message', () => {
           to: 'Babbit',
           content: 'hello'
         }]
-      }
+      },
+      evalContext: {
+        Ally: { id: 1, audio_path: 'hi.mp3' },
+        Babbit: { id: 2 }
+      },
+      evaluateAt: now
     };
-    const params = { message_name: 'MESSAGE-HELLO' };
-    const res = messageActions.send_message.applyAction(
-      script, context, params, now);
+
+    const res = send_message.applyAction(params, actionContext);
+
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       fields: {
@@ -184,8 +191,9 @@ describe('#send_message', () => {
   });
 
   it('sends audio message with templated content', () => {
-    const script = {
-      content: {
+    const params = { message_name: 'MESSAGE-HELLO' };
+    const actionContext = {
+      scriptContent: {
         messages: [{
           name: 'MESSAGE-HELLO',
           type: 'audio',
@@ -193,11 +201,16 @@ describe('#send_message', () => {
           to: 'Babbit',
           content: '{{Ally.audio_path}}'
         }]
-      }
+      },
+      evalContext: {
+        Ally: { id: 1, audio_path: 'hi.mp3' },
+        Babbit: { id: 2 }
+      },
+      evaluateAt: now
     };
-    const params = { message_name: 'MESSAGE-HELLO' };
-    const res = messageActions.send_message.applyAction(
-      script, context, params, now);
+
+    const res = send_message.applyAction(params, actionContext);
+
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       fields: {

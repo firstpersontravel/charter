@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
@@ -7,8 +8,10 @@ const ActionsRegistry = require('../../src/registries/actions');
 
 var sandbox = sinon.sandbox.create();
 
-const script = {
-  content: {
+const now = moment.utc();
+
+const actionContext = {
+  scriptContent: {
     roles: [
       { name: 'Farmer' },
       { name: 'Rooster' },
@@ -70,17 +73,15 @@ const script = {
       to: 'Farmer',
       content: 'cock-a-doodle-doo!'
     }]
-  }
+  },
+  evalContext: {
+    Farmer: { id: 1, page: 'TRACTOR' },
+    Rooster: { id: 2 },
+    Cowboy: { id: 3 },
+    apples: 2
+  },
+  evaluateAt: now
 };
-
-const context = {
-  Farmer: { id: 1, page: 'TRACTOR' },
-  Rooster: { id: 2 },
-  Cowboy: { id: 3 },
-  apples: 2
-};
-
-const now = moment.utc();
 
 describe('Integration - Nested Triggers', () => {
 
@@ -105,9 +106,10 @@ describe('Integration - Nested Triggers', () => {
       name: 'send_to_page',
       params: { role_name: 'Farmer', page_name: 'BACK-HOME' }
     };
-    const result = ActionCore.applyAction(script, context, action, now);
+    const result = ActionCore.applyAction(action, actionContext);
 
-    assert.strictEqual(result.nextContext.Farmer.currentPageName, 'BACK-HOME');
+    assert.strictEqual(result.nextContext.evalContext.Farmer.currentPageName,
+      'BACK-HOME');
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'updatePlayerFields',
       roleName: 'Farmer',
@@ -120,9 +122,10 @@ describe('Integration - Nested Triggers', () => {
       name: 'signal_cue',
       params: { cue_name: 'CUE-PICK-APPLES' }
     };
-    const result = ActionCore.applyAction(script, context, action, now);
 
-    assert.strictEqual(result.nextContext.apples, 7);
+    const result = ActionCore.applyAction(action, actionContext);
+
+    assert.strictEqual(result.nextContext.evalContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'updateTripHistory',
       history: { 'TRIGGER-PICK-APPLES': now.toISOString() }
@@ -138,9 +141,10 @@ describe('Integration - Nested Triggers', () => {
       role: 'Farmer',
       geofence: 'GEOFENCE-FARM'
     };
-    const result = ActionCore.applyEvent(script, context, event, now);
 
-    assert.strictEqual(result.nextContext.apples, 0);
+    const result = ActionCore.applyEvent(event, actionContext);
+
+    assert.strictEqual(result.nextContext.evalContext.apples, 0);
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'updateTripHistory',
       history: { 'TRIGGER-UNLOAD-APPLES': now.toISOString() } 
@@ -153,9 +157,10 @@ describe('Integration - Nested Triggers', () => {
   it('applies cue triggering action later', () => {
     const inTwoHours = now.clone().add(2, 'hours');
     const action = { name: 'signal_cue', params: { cue_name: 'CUE-SUNRISE' } };
-    const result = ActionCore.applyAction(script, context, action, now);
 
-    assert.strictEqual(result.nextContext.apples, 2);
+    const result = ActionCore.applyAction(action, actionContext);
+
+    assert.strictEqual(result.nextContext.evalContext.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'updateTripHistory',
       history: { 'TRIGGER-SUNRISE': now.toISOString() }
@@ -176,39 +181,46 @@ describe('Integration - Nested Triggers', () => {
 
   it('applies nested triggers', () => {
     const action = { name: 'signal_cue', params: { cue_name: 'CUE-GREET' } };
-    const result = ActionCore.applyAction(script, context, action, now);
+
+    const result = ActionCore.applyAction(action, actionContext);
 
     // Test intermediate action calls
     // First cue should have been called with no event
     assert.deepStrictEqual(
       ActionsRegistry.signal_cue.applyAction.firstCall.args, [
-        script, Object.assign({}, context, { event: null }),
-        { cue_name: 'CUE-GREET' }, now]);
+        { cue_name: 'CUE-GREET' },
+        _.merge({}, actionContext, { evalContext: { event: null } })
+      ]);
 
     // Second cue should have been called with the event 'cue CUE-GREET',
     assert.deepStrictEqual(
       ActionsRegistry.signal_cue.applyAction.secondCall.args, [
-        script, Object.assign({}, context, {
-          event: { cue: 'CUE-GREET', type: 'cue_signaled' },
-          history: { 'TRIGGER-GREET-1': now.toISOString() }
-        }),
-        { cue_name: 'CUE-GREET-REPLY' }, now]);
+        { cue_name: 'CUE-GREET-REPLY' },
+        _.merge({}, actionContext, {
+          evalContext: {
+            event: { cue: 'CUE-GREET', type: 'cue_signaled' },
+            history: { 'TRIGGER-GREET-1': now.toISOString() }
+          }
+        })]);
 
     // Then custom_message with event 'cue CUE-GREET-REPLY'
     assert.deepStrictEqual(
       ActionsRegistry.custom_message.applyAction.firstCall.args, [
-        script, Object.assign({}, context, {
-          event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
-          history: {
-            'TRIGGER-GREET-1': now.toISOString(),
-            'TRIGGER-GREET-2': now.toISOString()
-          }
-        }), {
+        {
           from_role_name: 'Cowboy',
           to_role_name: 'Farmer',
           message_content: 'howdy',
           message_type: 'text'
-        }, now]);
+        },
+        _.merge({}, actionContext, {
+          evalContext: {
+            event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
+            history: {
+              'TRIGGER-GREET-1': now.toISOString(),
+              'TRIGGER-GREET-2': now.toISOString()
+            }
+          }
+        })]);
 
     // Test results
     assert.deepStrictEqual(result.resultOps,
@@ -238,7 +250,8 @@ describe('Integration - Nested Triggers', () => {
 
   it('applies nested triggers requiring intermediate context', () => {
     const action = { name: 'signal_cue', params: { cue_name: 'CUE-NAV-1' } };
-    const result = ActionCore.applyAction(script, context, action, now);
+
+    const result = ActionCore.applyAction(action, actionContext);
 
     assert.deepStrictEqual(result.resultOps,
       [{
@@ -269,8 +282,8 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies scene start cues after start_scene event', () => {
-    const script = {
-      content: {
+    const sceneActionContext = {
+      scriptContent: {
         scenes: [{
           name: 'SCENE-1'
         }, {
@@ -287,13 +300,15 @@ describe('Integration - Nested Triggers', () => {
           scene: 'SCENE-2',
           actions: ['set_value val true']
         }]
-      }
+      },
+      evalContext: { currentSceneName: 'SCENE-1' },
+      evaluateAt: now
     };
-    const context = { currentSceneName: 'SCENE-1' };
     const event = { type: 'cue_signaled', cue: 'end-of-1' };
-    const result = ActionCore.applyEvent(script, context, event, now);
 
-    assert.deepStrictEqual(result.nextContext, {
+    const result = ActionCore.applyEvent(event, sceneActionContext);
+
+    assert.deepStrictEqual(result.nextContext.evalContext, {
       currentSceneName: 'SCENE-2',
       history: { trigger1: now.toISOString(), trigger2: now.toISOString() },
       val: true

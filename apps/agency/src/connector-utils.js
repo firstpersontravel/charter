@@ -122,8 +122,8 @@ export function assembleGroupStatus(state, groupId) {
   );
   const isError = (
     groupStatus.isError ||
-    scriptStatus && scriptStatus.isError ||
-    experienceStatus && experienceStatus.isError
+    (scriptStatus && scriptStatus.isError) ||
+    (experienceStatus && experienceStatus.isError)
   );
   return {
     isLoading: isLoading,

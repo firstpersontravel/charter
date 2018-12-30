@@ -9,7 +9,7 @@ var signal_cue = {
       cue: params.cue_name
     };
   },
-  applyAction: function(script, context, params, applyAt) {
+  applyAction: function(params, actionContext) {
     return null;
   }
 };

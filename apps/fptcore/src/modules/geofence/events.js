@@ -4,7 +4,7 @@ module.exports = {
       role: { required: true, type: 'reference', collection: 'roles' },
       geofence: { required: true, type: 'reference', collection: 'geofences' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       return (
         spec.geofence === event.geofence &&
         spec.role === event.role

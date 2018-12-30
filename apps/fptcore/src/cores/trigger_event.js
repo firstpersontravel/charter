@@ -9,7 +9,7 @@ var TriggerEventCore = {};
  * Test if a single trigger event spec is set off by an event.
  */
 TriggerEventCore.doesEventFireTriggerEvent = function(
-  script, context, triggerEvent, event
+  triggerEvent, event, actionContext
 ) {
   // event type should equal trigger event clause
   if (!triggerEvent[event.type]) {
@@ -17,7 +17,7 @@ TriggerEventCore.doesEventFireTriggerEvent = function(
   }
   // Get matching function and calculate match.
   var spec = triggerEvent[event.type];
-  return EventsRegistry[event.type].matchEvent(script, context, spec, event);
+  return EventsRegistry[event.type].matchEvent(spec, event, actionContext);
 };
 
 /**
@@ -32,9 +32,8 @@ TriggerEventCore.triggerEventForEventType = function(trigger, eventType) {
 /**
  * Test if a trigger is set off by an event.
  */
-TriggerEventCore.doesEventFireTrigger = function(
-  script, context, trigger, event
-) {
+TriggerEventCore.doesEventFireTrigger = function(trigger, event,
+  actionContext) {
   // If no matcher for this event type, exit
   if (!EventsRegistry[event.type]) {
     return false;
@@ -45,20 +44,20 @@ TriggerEventCore.doesEventFireTrigger = function(
     return false;
   }
   return TriggerEventCore.doesEventFireTriggerEvent(
-    script, context, triggerEvent, event);
+    triggerEvent, event, actionContext);
 };
 
 /**
  * Test if a scene is active for a given context.
  */
-TriggerEventCore.isSceneActive = function(script, context, sceneName) {
-  var scene = _.find(script.content.scenes, { name: sceneName });
+TriggerEventCore.isSceneActive = function(sceneName, actionContext) {
+  var scene = _.find(actionContext.scriptContent.scenes, { name: sceneName });
   if (!scene) {
     return false;
   }
 
   // If we have a conditional, return false if it's not true.
-  if (scene.if && !EvalCore.if(context, scene.if)) {
+  if (scene.if && !EvalCore.if(actionContext.evalContext, scene.if)) {
     return false;
   }
 
@@ -68,7 +67,7 @@ TriggerEventCore.isSceneActive = function(script, context, sceneName) {
   }
 
   // If it's not a global scene, then check if it's current.
-  if (context.currentSceneName === sceneName) {
+  if (actionContext.evalContext.currentSceneName === sceneName) {
     return true;
   }
 
@@ -79,22 +78,23 @@ TriggerEventCore.isSceneActive = function(script, context, sceneName) {
 /**
  * Test if a trigger is active for a given context.
  */
-TriggerEventCore.isTriggerActive = function(script, context, trigger) {
+TriggerEventCore.isTriggerActive = function(trigger, actionContext) {
   // Skip triggers that don't match the current scene
   if (trigger.scene) {
-    if (!TriggerEventCore.isSceneActive(script, context, trigger.scene)) {
+    if (!TriggerEventCore.isSceneActive(trigger.scene, actionContext)) {
       return false;
     }
   }
   // Skip inactive triggers
   if (trigger.if) {
-    if (!EvalCore.if(context, trigger.if)) {
+    if (!EvalCore.if(actionContext.evalContext, trigger.if)) {
       return false;
     }
   }
   // Skip non-repeatable triggers that have already fired.
   if (trigger.repeatable === false) {
-    if (context.history && context.history[trigger.name]) {
+    if (actionContext.evalContext.history &&
+        actionContext.evalContext.history[trigger.name]) {
       return false;
     }
   }
@@ -105,14 +105,15 @@ TriggerEventCore.isTriggerActive = function(script, context, trigger) {
 /**
  * Get triggers that should be set off by a given action name and params.
  */
-TriggerEventCore.triggersForEvent = function(script, context, event) {
-  return _.filter(script.content.triggers, function(trigger) {
+TriggerEventCore.triggersForEvent = function(event, actionContext) {
+  return _.filter(actionContext.scriptContent.triggers, function(trigger) {
     // Skip trigger if it's not active
-    if (!TriggerEventCore.isTriggerActive(script, context, trigger)) {
+    if (!TriggerEventCore.isTriggerActive(trigger, actionContext)) {
       return false;
     }
     // Skip if the event doesn't match the trigger.
-    if (!TriggerEventCore.doesEventFireTrigger(script, context, trigger, event)) {
+    if (!TriggerEventCore.doesEventFireTrigger(
+      trigger, event, actionContext)) {
       return false;
     }
     return true;

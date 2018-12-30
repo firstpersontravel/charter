@@ -13,28 +13,36 @@ const logger = config.logger.child({ name: 'controllers.trip_action' });
 class TripActionController {
 
   /**
+   * Prepare an object containing everything needed to evaluate actions.
+   */
+  static _prepareActionContext(objs, evaluateAt) {
+    return {
+      evaluateAt: evaluateAt,
+      timezone: objs.experience.timezone,
+      scriptContent: objs.script.content,
+      evalContext: TripUtil.createEvalContext(objs)
+    };
+  }
+
+  /**
    * Intermediate function.
    */
   static _getResultsForActionAndObjs(objs, action, applyAt) {
-    const context = TripUtil.createContext(objs);
-    const script = objs.script.get({ plain: true });
-    const applyAtOrNow = applyAt || moment.utc();
-    return ActionCore.applyAction(script, context, action, applyAtOrNow);
+    const evaluateAt = applyAt || moment.utc();
+    const actionContext = this._prepareActionContext(objs, evaluateAt);
+    return ActionCore.applyAction(action, actionContext);
   }
 
   static _getResultsForEventAndObjs(objs, event, applyAt) {
-    const context = TripUtil.createContext(objs);
-    const script = objs.script.get({ plain: true });
-    const applyAtOrNow = applyAt || moment.utc();
-    return ActionCore.applyEvent(script, context, event, applyAtOrNow);
+    const evaluateAt = applyAt || moment.utc();
+    const actionContext = this._prepareActionContext(objs, evaluateAt);
+    return ActionCore.applyEvent(event, actionContext);
   }
 
   static _getResultsForTriggerAndObjs(objs, trigger, applyAt) {
-    const context = TripUtil.createContext(objs);
-    const script = objs.script.get({ plain: true });
-    const applyAtOrNow = applyAt || moment.utc();
-    return ActionCore.applyTrigger(script, context, context, trigger, null,
-      applyAtOrNow);
+    const evaluateAt = applyAt || moment.utc();
+    const actionContext = this._prepareActionContext(objs, evaluateAt);
+    return ActionCore.applyTrigger(trigger, null, actionContext);
   }
   
   static async _scheduleAction(tripId, action) {

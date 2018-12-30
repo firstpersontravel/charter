@@ -238,7 +238,7 @@ export default class Group extends Component {
               {dateShort}
               <br />
               <span style={{ fontSize: '10pt' }}>
-                {script.title}
+                {groupStatus.instance.experience.title}
               </span>
             </Link>
           </li>

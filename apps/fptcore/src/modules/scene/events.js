@@ -3,7 +3,7 @@ module.exports = {
     specParams: {
       self: { required: true, type: 'reference', collection: 'scenes' }
     },
-    matchEvent: function(script, context, spec, event) {
+    matchEvent: function(spec, event, actionContext) {
       return spec === event.scene;
     }
   }

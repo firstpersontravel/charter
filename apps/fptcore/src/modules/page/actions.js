@@ -5,7 +5,7 @@ var send_to_page = {
     page_name: { required: true, type: 'reference', collection: 'pages',
       allowNull: true }
   },
-  applyAction: function(script, context, params, applyAt) {
+  applyAction: function(params, actionContext) {
     var newPageName = params.page_name !== 'null' ? params.page_name : '';
     return [{
       operation: 'updatePlayerFields',
