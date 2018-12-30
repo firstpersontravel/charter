@@ -24,9 +24,10 @@ export default class ScheduleIndex extends Component {
       isGroupEditModalOpen: false,
       defaultGroupDate: null,
       defaultGroupScriptId: null,
+      defaultGroupExperienceId: null,
       defaultTripGroup: null,
       defaultTripGroupScript: null,
-      defaultTripScheduleName: null
+      defaultTripDepartureName: null
     };
     this.handleArchiveGroup = this.handleArchiveGroup.bind(this);
     this.handleArchiveGroupToggle = this.handleArchiveGroupToggle.bind(this);
@@ -114,20 +115,23 @@ export default class ScheduleIndex extends Component {
       isEditingTrip: null,
       defaultTripGroup: group,
       defaultTripScript: _.find(this.props.scripts, { id: group.scriptId }),
-      defaultTripScheduleName: defaultDepartureName
+      defaultTripDepartureName: defaultDepartureName
     });
   }
 
   handleEditTrip(trip) {
-    const group = _.find(this.props.groupsStatus.instances,
-      { id: trip.groupId });
-    const script = _.find(this.props.scripts, { id: trip.scriptId });
+    const group = _.find(this.props.groupsStatus.instances, {
+      id: trip.groupId
+    });
+    const script = _.find(this.props.scripts, {
+      id: trip.scriptId
+    });
     this.setState({
       isTripEditModalOpen: true,
       isEditingTrip: trip,
       defaultTripGroup: group,
       defaultTripScript: script,
-      defaultTripScheduleName: null
+      defaultTripDepartureName: null
     });
   }
 
@@ -140,14 +144,15 @@ export default class ScheduleIndex extends Component {
   handleCreateGroup(fields) {
     this.props.createInstance('groups', {
       date: fields.date,
-      scriptId: fields.scriptId
+      scriptId: fields.scriptId,
+      experienceId: fields.experienceId
     });
     this.handleEditGroupToggle();
   }
 
-  initialFieldsForRole(script, role, departureName, variantNames) {
+  initialFieldsForRole(experience, script, role, departureName, variantNames) {
     const profiles = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, script.name,
+      this.props.profiles, this.props.users, experience.name,
       role.name, departureName);
     const users = profiles.map(profile => (
       _.find(this.props.users, { id: profile.userId })
@@ -155,17 +160,21 @@ export default class ScheduleIndex extends Component {
     const userId = users.length === 1 ? users[0].id : null;
     const fields = Object.assign(
       { userId: userId },
-      PlayerCore.getInitialFields(script, role.name, variantNames));
+      PlayerCore.getInitialFields(script.content, role.name, variantNames));
     return fields;
   }
 
   handleEditTripConfirm(group, fields) {
+    const experience = _.find(this.props.experiences, {
+      id: group.experienceId
+    });
     const script = _.find(this.props.scripts, { id: group.scriptId });
-    const initialFields = TripCore.getInitialFields(script, group.date,
-      fields.variantNames);
+    const initialFields = TripCore.getInitialFields(script.content, group.date,
+      experience.timezone, fields.variantNames);
     const tripFields = Object.assign(initialFields, {
       groupId: group.id,
       scriptId: group.scriptId,
+      experienceId: group.experienceId,
       date: group.date,
       title: fields.title,
       galleryName: _.kebabCase(fields.title),
@@ -175,7 +184,7 @@ export default class ScheduleIndex extends Component {
       lastScheduledTime: null
     });
     const playersFields = script.content.roles.map(role => (
-      this.initialFieldsForRole(script, role, fields.departureName,
+      this.initialFieldsForRole(experience, script, role, fields.departureName,
         fields.variantNames)
     ));
     if (this.state.isEditingTrip) {
@@ -311,14 +320,16 @@ export default class ScheduleIndex extends Component {
           group={this.state.defaultTripGroup}
           script={this.state.defaultTripScript}
           trip={this.state.isEditingTrip}
-          defaultDepartureName={this.state.defaultTripScheduleName}
+          defaultDepartureName={this.state.defaultTripDepartureName}
           onClose={this.handleEditTripToggle}
           onConfirm={this.handleEditTripConfirm} />
         <GroupModal
           isOpen={this.state.isGroupEditModalOpen}
           scripts={this.props.scripts}
+          experiences={this.props.experiences}
           defaultDate={this.state.defaultGroupDate}
           defaultScriptId={this.state.defaultGroupScriptId}
+          defaultExperienceId={this.state.defaultGroupExperienceId}
           onClose={this.handleEditGroupToggle}
           onConfirm={this.handleCreateGroup} />
         <AreYouSure

@@ -62,7 +62,7 @@ export default class TripControls extends Component {
 
   getCueTriggerContent(cueName) {
     const script = this.props.trip.script;
-    const context = this.props.trip.context;
+    const context = this.props.trip.evalContext;
     const event = { type: 'cue_signaled', cue: cueName };
     const triggers = TriggerEventCore.triggersForEvent(script, context, event);
     const renderedTriggers = triggers.map(trigger => (
@@ -80,7 +80,7 @@ export default class TripControls extends Component {
 
   classifyTrigger(trigger) {
     const script = this.props.trip.script;
-    const context = this.props.trip.context;
+    const context = this.props.trip.evalContext;
     const isActive = TriggerEventCore.isTriggerActive(
       script, context, trigger);
     const hasBeenTriggered = !!this.props.trip.history[trigger.name];

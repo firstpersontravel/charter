@@ -1,5 +1,6 @@
 - model: Experience
   data:
+    id: 1
     name: script
     title: Script
     timezone: US/Pacific
@@ -40,6 +41,7 @@
   data:
     id: 1
     script: 1
+    experience: 1
     date: "2018-01-01"
 
 - model: Trip

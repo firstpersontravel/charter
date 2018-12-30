@@ -13,35 +13,20 @@ const logger = config.logger.child({ name: 'controllers.trip_action' });
 class TripActionController {
 
   /**
-   * Prepare an object containing everything needed to evaluate actions.
-   */
-  static _prepareActionContext(objs, evaluateAt) {
-    return {
-      evaluateAt: evaluateAt,
-      timezone: objs.experience.timezone,
-      scriptContent: objs.script.content,
-      evalContext: TripUtil.createEvalContext(objs)
-    };
-  }
-
-  /**
    * Intermediate function.
    */
-  static _getResultsForActionAndObjs(objs, action, applyAt) {
-    const evaluateAt = applyAt || moment.utc();
-    const actionContext = this._prepareActionContext(objs, evaluateAt);
+  static _getResultsForActionAndObjs(objs, action, evaluateAt) {
+    const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
     return ActionCore.applyAction(action, actionContext);
   }
 
-  static _getResultsForEventAndObjs(objs, event, applyAt) {
-    const evaluateAt = applyAt || moment.utc();
-    const actionContext = this._prepareActionContext(objs, evaluateAt);
+  static _getResultsForEventAndObjs(objs, event, evaluateAt) {
+    const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
     return ActionCore.applyEvent(event, actionContext);
   }
 
-  static _getResultsForTriggerAndObjs(objs, trigger, applyAt) {
-    const evaluateAt = applyAt || moment.utc();
-    const actionContext = this._prepareActionContext(objs, evaluateAt);
+  static _getResultsForTriggerAndObjs(objs, trigger, evaluateAt) {
+    const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
     return ActionCore.applyTrigger(trigger, null, actionContext);
   }
   
@@ -87,8 +72,9 @@ class TripActionController {
    */
   static async applyAction(tripId, action, applyAt) {
     logger.info(action.params, `Applying action: ${action.name}.`);
+    const evaluateAt = applyAt || moment.utc();
     const objs = await TripUtil.getObjectsForTrip(tripId);
-    const result = this._getResultsForActionAndObjs(objs, action, applyAt);
+    const result = this._getResultsForActionAndObjs(objs, action, evaluateAt);
     await this._applyResult(objs, result);
     return result;
   }
@@ -98,8 +84,9 @@ class TripActionController {
    */
   static async applyEvent(tripId, event, applyAt) {
     logger.info(event, `Applying event: ${event.type}.`);
+    const evaluateAt = applyAt || moment.utc();
     const objs = await TripUtil.getObjectsForTrip(tripId);
-    const result = this._getResultsForEventAndObjs(objs, event, applyAt);
+    const result = this._getResultsForEventAndObjs(objs, event, evaluateAt);
     await this._applyResult(objs, result);
     return result;
   }
@@ -109,13 +96,15 @@ class TripActionController {
    */
   static async applyTrigger(tripId, triggerName, applyAt) {
     logger.info(`Applying trigger: ${triggerName}.`);
+    const evaluateAt = applyAt || moment.utc();
     const objs = await TripUtil.getObjectsForTrip(tripId);
     const trigger = _.find(objs.script.content.triggers || [],
       { name: triggerName });
     if (!trigger) {
       return null;
     }
-    const result = this._getResultsForTriggerAndObjs(objs, trigger, applyAt);
+    const result = this._getResultsForTriggerAndObjs(objs, trigger,
+      evaluateAt);
     await this._applyResult(objs, result);
     return result;
   }

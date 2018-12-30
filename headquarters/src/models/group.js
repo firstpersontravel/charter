@@ -1,4 +1,5 @@
 const database = require('../config').database;
+const Experience = require('./experience');
 const Script = require('./script');
 
 const {
@@ -16,6 +17,7 @@ const Group = database.define('Group', snakeCaseColumns({
   isArchived: booleanField(false)
 }));
 
+oneToMany(Group, Experience);
 oneToMany(Group, Script);
 
 module.exports = Group;

@@ -7,7 +7,7 @@ export function renderLink(scriptId, collectionName, resourceName) {
     <Link
       activeClassName="bold"
       to={
-        `/agency/scripts/version/${scriptId}` +
+        `/agency/design/script/${scriptId}` +
         `/collection/${collectionName}` +
         `/resource/${resourceName}`
       }>

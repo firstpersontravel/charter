@@ -5,7 +5,7 @@ var ContextCore = {};
 /**
  * Gather context for a player.
  */
-ContextCore.gatherPlayerContext = function (env, trip, player) {
+ContextCore.gatherPlayerEvalContext = function (env, trip, player) {
   var user = player.user || {};
   var profile = user.profile || {};
 
@@ -31,7 +31,7 @@ ContextCore.gatherPlayerContext = function (env, trip, player) {
 /**
  * Gather all context for a trip.
  */
-ContextCore.gatherContext = function (env, trip) {
+ContextCore.gatherEvalContext = function (env, trip) {
   // Gather core values
   var context = _.assign({}, trip.customizations, trip.values, {
     currentSceneName: trip.currentSceneName,
@@ -57,7 +57,7 @@ ContextCore.gatherContext = function (env, trip) {
   });
   // Add player values
   _.each(trip.players, function(player) {
-    context[player.roleName] = ContextCore.gatherPlayerContext(
+    context[player.roleName] = ContextCore.gatherPlayerEvalContext(
       env, trip, player);
   });
   return context;

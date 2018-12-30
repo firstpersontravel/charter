@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment';
 
 import { ContextCore } from 'fptcore';
 
@@ -50,7 +51,10 @@ export function assembleTripStatus(state, tripId) {
   const env = {
     host: `${window.location.protocol}//${window.location.hostname}`
   };
-  if (trip) {
+
+  const experience = experienceStatus.instance;
+  const script = scriptStatus.instance;
+  if (trip && experience && script) {
     trip.experience = experienceStatus.instance;
     trip.script = scriptStatus.instance;
     const roles = _.get(scriptStatus.instance, 'content.roles') || [];
@@ -61,7 +65,13 @@ export function assembleTripStatus(state, tripId) {
         user: _.find(users, { id: instance.userId })
       })
     ));
-    trip.context = trip.script ? ContextCore.gatherContext(env, trip) : null;
+    trip.evalContext = ContextCore.gatherEvalContext(env, trip);
+    trip.actionContext = {
+      scriptContent: script.content,
+      timezone: experience,
+      evalContext: trip.evalContext,
+      evaluateAt: moment.utc()
+    };
   }
   const isLoading = (
     experienceStatus.isLoading ||
@@ -86,12 +96,11 @@ export function assembleGroupStatus(state, groupId) {
   const groupStatus = instanceStatus(state, 'groups', { id: Number(groupId) });
   const group = _.clone(groupStatus.instance);
 
+  const experienceStatus = group ?
+    instanceStatus(state, 'experiences', { id: group.experienceId }) : null;
+
   const scriptStatus = group ?
     instanceStatus(state, 'scripts', { id: group.scriptId }) : null;
-
-  const experienceStatus = scriptStatus && scriptStatus.instance ?
-    instanceStatus(state, 'experiences',
-      { id: scriptStatus.instance.experienceId }) : null;
 
   if (group &&
       scriptStatus &&

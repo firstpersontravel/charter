@@ -16,7 +16,7 @@ function renderItem(script, collectionName, item, i) {
       <Link
         activeClassName="bold"
         to={
-          `/agency/scripts/version/${script.id}` +
+          `/agency/design/script/${script.id}` +
           `/collection/${collectionName}` +
           `/resource/${item.name || i}`
         }>

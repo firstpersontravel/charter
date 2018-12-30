@@ -75,7 +75,7 @@ export default DS.Model.extend({
 
   evalContext: function() {
     var env = { host: this.get('environment.host') };
-    var context = fptCore.ContextCore.gatherContext(env, this.generateTrip());
+    var context = fptCore.ContextCore.gatherEvalContext(env, this.generateTrip());
     return context;
   }.property(
     'values',

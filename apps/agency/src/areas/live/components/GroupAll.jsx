@@ -27,7 +27,7 @@ export default function GroupAll({ children, params, groupStatus,
     .flatten()
     .filter(player => (
       !player.role.if ||
-      EvalCore.if(player.trip.context, player.role.if)
+      EvalCore.if(player.trip.evalContext, player.role.if)
     ))
     .filter('currentPageName')
     .value();

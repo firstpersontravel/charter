@@ -24,11 +24,15 @@ const mapStateToProps = (state, ownProps) => {
       const script = _.find(state.datastore.scripts, {
         id: trip && trip.scriptId
       });
+      const experience = _.find(state.datastore.experiences, {
+        id: trip && trip.experienceId
+      });
       return {
         player: player,
         trip: trip,
         group: group,
-        script: script
+        script: script,
+        experience: experience
       };
     })
     .filter(pAndP => pAndP.trip && !pAndP.trip.isArchived);
@@ -37,6 +41,7 @@ const mapStateToProps = (state, ownProps) => {
     user: user,
     profiles: profiles,
     scripts: state.datastore.scripts,
+    experiences: state.datastore.experiences,
     activeRoles: activeRoles
   };
 };

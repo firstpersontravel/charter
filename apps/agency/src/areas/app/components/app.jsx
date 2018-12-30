@@ -20,8 +20,8 @@ function renderNav() {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/agency/scripts">
-              Scripts
+            <Link activeClassName="active" className="nav-link" to="/agency/design">
+              Design
             </Link>
           </li>
           <li className="nav-item">

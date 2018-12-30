@@ -13,7 +13,7 @@ class SchedulerWorker {
   /**
    * Get all triggers that should fire based on time elapsing.
    */
-  static _getTimeOccuranceActions(objs, context, threshold) {
+  static _getTimeOccuranceActions(objs, actionContext, threshold) {
     const now = moment.utc();
     const lastDate = objs.trip.lastScheduledTime;
     const lastTimestamp = lastDate ? moment.utc(lastDate).unix() : null;
@@ -26,8 +26,8 @@ class SchedulerWorker {
       to_timestamp: toTimestamp
     };
 
-    const triggers = TriggerEventCore.triggersForEvent(objs.script,
-      context, timeOccurredEvent);
+    const triggers = TriggerEventCore.triggersForEvent(timeOccurredEvent,
+      actionContext);
 
     return triggers.map(function(trigger) {
       // Get intended time of time occurred trigger
@@ -35,7 +35,7 @@ class SchedulerWorker {
         TriggerEventCore.triggerEventForEventType(trigger, 'time_occurred')
       );
       const intendedAt = Events.time_occurred.timeForSpec(
-        timeOccurredTriggerEvent.time_occurred, context);
+        timeOccurredTriggerEvent.time_occurred, actionContext.evalContext);
       const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
       // Construct schdeduled action
       return {
@@ -56,18 +56,19 @@ class SchedulerWorker {
   static async _scheduleTripActions(tripId, threshold) {
     const objs = await TripUtil.getObjectsForTrip(tripId);
     const trip = objs.trip;
-    const context = TripUtil.createEvalContext(objs);
     const now = moment.utc();
+    const actionContext = TripUtil.prepareActionContext(objs, now);
 
     // Get actions based on occurance of time.
-    const actions = this._getTimeOccuranceActions(objs, context, threshold);
+    const actions = this._getTimeOccuranceActions(objs, actionContext,
+      threshold);
 
     // Add scene start event if needed -- only if we have just reset since
     // otherwise we might get into an infinite loop if the workers are backed
     // up or not running.
     if (!trip.lastScheduledTime && !trip.currentSceneName) {
-      const firstSceneName = SceneCore.getStartingSceneName(objs.script,
-        context);
+      const firstSceneName = SceneCore.getStartingSceneName(
+        objs.script.content, actionContext.evalContext);
       if (firstSceneName) {
         actions.push({
           tripId: objs.trip.id,

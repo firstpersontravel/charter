@@ -31,7 +31,7 @@ function renderCollection(script, currentCollectionName, collectionName, current
         activeClassName="bold"
         to={{
           pathname: (
-            `/agency/scripts/version/${script.id}/collection/${collectionName}`
+            `/agency/design/script/${script.id}/collection/${collectionName}`
           ),
           query: currentSceneName ? { scene: currentSceneName } : null
         }}>
@@ -43,7 +43,7 @@ function renderCollection(script, currentCollectionName, collectionName, current
 
 function handleSelectScene(script, sceneName) {
   browserHistory.push(
-    `/agency/scripts/version/${script.id}` +
+    `/agency/design/script/${script.id}` +
     `${sceneName ? `?scene=${sceneName}` : ''}`
   );
 }
@@ -113,8 +113,8 @@ function renderCollections(script, currentCollectionName, currentSceneName) {
   );
 }
 
-export default function ScriptVersion({ script, children, params, location }) {
-  if (!script) {
+export default function Script({ script, experience, children, params, location }) {
+  if (!script || !experience) {
     return <div className="container-fluid">Loading!</div>;
   }
   // Get current scene from either the resource (if we're looking at one)
@@ -132,14 +132,14 @@ export default function ScriptVersion({ script, children, params, location }) {
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to="/agency/scripts">Scripts</Link>
+          <Link to="/agency/design">Experiences</Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/scripts/script/${script.name}`}>
-            {script.title}
+          <Link to={`/agency/design/experience/${experience.name}`}>
+            {experience.title}
           </Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/scripts/version/${script.id}`}>
-            v{script.version}
+          <Link to={`/agency/design/script/${script.id}`}>
+            Version {script.version}
           </Link>
         </div>
       </div>
@@ -156,9 +156,10 @@ export default function ScriptVersion({ script, children, params, location }) {
   );
 }
 
-ScriptVersion.propTypes = {
+Script.propTypes = {
   children: PropTypes.node,
   location: PropTypes.object.isRequired,
   script: PropTypes.object,
+  experience: PropTypes.object,
   params: PropTypes.object
 };

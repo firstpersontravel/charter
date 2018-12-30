@@ -25,7 +25,7 @@ EvalCore.IF_COMMANDS = {
   }
 };
 
-EvalCore.simpleIf = function (context, ifStatement) {
+EvalCore.simpleIf = function (evalContext, ifStatement) {
   var ifParts = TextUtil.splitWords(ifStatement);
   var isNegated = ifParts[0] === 'not';
   if (isNegated) {
@@ -34,7 +34,7 @@ EvalCore.simpleIf = function (context, ifStatement) {
   var ifCommand = ifParts.length > 1 ? ifParts[0] : 'istrue';
   var ifArgs = ifParts.length > 1 ? ifParts.slice(1) : ifParts;
   var ifValues = ifArgs.map(function(item) {
-    return EvalCore.lookupRef(context, item);
+    return EvalCore.lookupRef(evalContext, item);
   });
   var ifFunc = EvalCore.IF_COMMANDS[ifCommand];
   if (!ifFunc) {
@@ -45,18 +45,18 @@ EvalCore.simpleIf = function (context, ifStatement) {
   return finalResult;
 };
 
-EvalCore.if = function (context, ifStatement) {
+EvalCore.if = function (evalContext, ifStatement) {
   // If it's an array, join with AND
   if (_.isArray(ifStatement)) {
     return ifStatement.reduce(function(prev, ifItem) {
-      return prev && EvalCore.if(context, ifItem);
+      return prev && EvalCore.if(evalContext, ifItem);
     }, true);
   }
 
   // If it's an {or: [...array...]} object, join with OR
   if (_.isPlainObject(ifStatement) && ifStatement.or) {
     return ifStatement.or.reduce(function(prev, ifEl) {
-      return prev || EvalCore.if(context, ifEl);
+      return prev || EvalCore.if(evalContext, ifEl);
     }, false);
   }
 
@@ -65,12 +65,12 @@ EvalCore.if = function (context, ifStatement) {
   }
 
   // Now it's one item.
-  return EvalCore.simpleIf(context, ifStatement);
+  return EvalCore.simpleIf(evalContext, ifStatement);
 };
 
 EvalCore.constants = { true: true, false: false, null: null };
 
-EvalCore.lookupRef = function (context, ref) {
+EvalCore.lookupRef = function (evalContext, ref) {
   if (_.isBoolean(ref) || _.isNull(ref) || _.isNumber(ref)) {
     return ref;
   }
@@ -87,14 +87,14 @@ EvalCore.lookupRef = function (context, ref) {
       (ref[0] === '\'' && ref[ref.length - 1] === '\'')) {
     return ref.slice(1, ref.length - 1);
   }
-  var result = _.get(context, ref);
+  var result = _.get(evalContext, ref);
   return _.isUndefined(result) ? null : result;
 };
 
 EvalCore.templateRegex = /{{\s*([\w_\-.:]+)\s*}}/gi;
 EvalCore.ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif\s*%}/gi;
 
-EvalCore.templateText = function (context, text, timezone) {
+EvalCore.templateText = function (evalContext, text, timezone) {
   if (text === null || text === undefined) { return ''; }
   if (text === false) { return 'No'; }
   if (text === true) { return 'Yes'; }
@@ -119,12 +119,12 @@ EvalCore.templateText = function (context, text, timezone) {
 
   // Interpolate {{ }}s first.
   text = text.replace(EvalCore.templateRegex, function(m, p1) {
-    return EvalCore.templateText(context, EvalCore.lookupRef(context, p1),
+    return EvalCore.templateText(evalContext, EvalCore.lookupRef(evalContext, p1),
       timezone);
   });
   // Then {% if %} {% endif %} statements.
   text = text.replace(EvalCore.ifElseRegex, function(m, p1, p2, p3) {
-    return EvalCore.if(context, p1) ? p2 : (p3 || '');
+    return EvalCore.if(evalContext, p1) ? p2 : (p3 || '');
   });
   return text;
 };

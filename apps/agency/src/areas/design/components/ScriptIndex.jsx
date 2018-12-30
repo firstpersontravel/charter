@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ScriptVersionIndex() {
+export default function ScriptIndex() {
   return (
     <div className="row">
       <div className="col-sm-6">

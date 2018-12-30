@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Users from '../components/users';
 
 const mapStateToProps = (state, ownProps) => ({
-  scripts: _.filter(state.datastore.scripts, { isArchived: false }),
+  experiences: _.filter(state.datastore.experiences, { isArchived: false }),
   profiles: state.datastore.profiles
 });
 

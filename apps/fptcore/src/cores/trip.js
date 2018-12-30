@@ -9,8 +9,8 @@ var TripCore = {};
  * Get variants are active given a list of variant names.
  * Do default ones first, then non-defaults (non-defaults override defaults).
  */
-TripCore._getActiveVariants = function(script, variantNames) {
-  return _(script.content.variants)
+TripCore._getActiveVariants = function(scriptContent, variantNames) {
+  return _(scriptContent.variants)
     .filter(function(variant) {
       if (variant.default) {
         return true;
@@ -27,14 +27,16 @@ TripCore._getActiveVariants = function(script, variantNames) {
 /**
  * Get initial fields for a trip from variants.
  */
-TripCore.getInitialFields = function(script, date, timezone, variantNames) {
+TripCore.getInitialFields = function(
+  scriptContent, date, timezone, variantNames
+) {
   var fields = {
     customizations: {},
     values: {},
     waypointOptions: {},
     schedule: {}
   };
-  var variants = TripCore._getActiveVariants(script, variantNames);  
+  var variants = TripCore._getActiveVariants(scriptContent, variantNames);  
   variants.forEach(function(variant) {
     if (variant.customizations) {
       _.assign(fields.customizations, variant.customizations);

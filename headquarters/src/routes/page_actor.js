@@ -2,42 +2,43 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const Sequelize = require('sequelize');
 
-const fptCore = require('fptcore');
+const { EvalCore, PlayerCore } = require('fptcore');
 
 const config = require('../config');
 const models = require('../models');
 const TripUtil = require('../controllers/trip_util');
 
 const supportedPartials = {
-  button: (script, context, panel) => ({
-    text: fptCore.EvalCore.templateText(context, panel.text, script.timezone)
+  button: (evalContext, panel, timezone) => ({
+    text: EvalCore.templateText(evalContext, panel.text, timezone)
   }),
-  text: (script, context, panel) => ({
-    paragraphs: fptCore.EvalCore
-      .templateText(context, panel.text, script.timezone)
+  text: (evalContext, panel, timezone) => ({
+    paragraphs: EvalCore
+      .templateText(evalContext, panel.text, timezone)
       .split('\n')
       .filter(Boolean)
   }),
-  choice: (script, context, panel) => ({
-    text: fptCore.EvalCore.templateText(context, panel.text, script.timezone),
+  choice: (evalContext, panel, timezone) => ({
+    text: EvalCore.templateText(evalContext, panel.text, timezone),
     choices: _.map(panel.choices, choice => (
       Object.assign({}, choice, {
-        isChosen: fptCore.EvalCore.lookupRef(context, panel.value_ref) ===
+        isChosen: EvalCore.lookupRef(evalContext, panel.value_ref) ===
           choice.value
       })
     ))
   }),
-  yesno: (script, context, panel) => ({
-    text: fptCore.EvalCore.templateText(context, panel.text, script.timezone),
-    isYes: fptCore.EvalCore.lookupRef(context, panel.value_ref) === true,
-    isNo: fptCore.EvalCore.lookupRef(context, panel.value_ref) === false
+  yesno: (evalContext, panel, timezone) => ({
+    text: EvalCore.templateText(evalContext, panel.text, timezone),
+    isYes: EvalCore.lookupRef(evalContext, panel.value_ref) === true,
+    isNo: EvalCore.lookupRef(evalContext, panel.value_ref) === false
   }),
   default: () => ({})
 };
 
-function getPanel(script, trip, context, pageInfo, panel) {
+function getPanel(trip, evalContext, timezone, pageInfo, panel) {
   const panelType = supportedPartials[panel.type] ? panel.type : 'default';
-  const customParams = supportedPartials[panelType](script, context, panel);
+  const customParams = supportedPartials[panelType](evalContext, panel,
+    timezone);
   return Object.assign(customParams, {
     type: 'panels/' + panelType,
     pageInfo: pageInfo,
@@ -50,28 +51,26 @@ function getPanel(script, trip, context, pageInfo, panel) {
 /**
  * Construct an object of the page
  */
-function getPage(script, trip, context, player) {
-  const pageInfo = fptCore.PlayerCore.getPageInfo(script, context,
-    player);
+function getPage(script, trip, evalContext, player, timezone) {
+  const pageInfo = PlayerCore.getPageInfo(script, evalContext, player);
   if (!pageInfo) {
     return null;
   }
-  const appearanceSort = fptCore.PlayerCore.getSceneSort(script, context,
-    player);
+  const appearanceSort = PlayerCore.getSceneSort(script, evalContext, player);
   const localSceneStart = pageInfo.appearanceStart ?
-    pageInfo.appearanceStart.clone().tz(script.timezone) :
+    pageInfo.appearanceStart.clone().tz(timezone) :
     null;
   const appearanceDisabledStart = localSceneStart ?
     ('- Starts ' + localSceneStart.format('h:mma')) : '';
   const appearance = pageInfo.appearance;
-  const introText = fptCore.EvalCore.templateText(context, appearance.intro,
-    script.timezone);
+  const introText = EvalCore.templateText(evalContext, appearance.intro,
+    timezone);
   const page = pageInfo.page;
-  const directiveText = fptCore.EvalCore.templateText(context,
-    page.directive, script.timezone);
+  const directiveText = EvalCore.templateText(evalContext,
+    page.directive, timezone);
   const panels = _(page.panels || [])
-    .filter(panel => !panel.if || fptCore.EvalCore.if(context, panel.if))
-    .map(panel => getPanel(script, trip, context, pageInfo, panel))
+    .filter(panel => !panel.if || EvalCore.if(evalContext, panel.if))
+    .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
   return {
     scriptTitle: script.title,
@@ -131,11 +130,10 @@ const playerShowRoute = async (req, res) => {
     res.redirect('/actor');
     return;
   }
-  const objs = await (
-    TripUtil.getObjectsForTrip(player.tripId)
-  );
-  const context = TripUtil.createEvalContext(objs);
-  const page = getPage(objs.script, objs.trip, context, player);
+  const objs = await TripUtil.getObjectsForTrip(player.tripId);
+  const evalContext = TripUtil.prepareEvalContext(objs);
+  const page = getPage(objs.script, objs.trip, evalContext, player,
+    objs.experience.timezone);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
     userId: '',
@@ -162,23 +160,20 @@ const userShowRoute = async (req, res) => {
   }
   const players = await models.Player.findAll({
     where: { userId: user.id },
-    include: [{
-      model: models.Trip,
-      as: 'trip',
-      where: { isArchived: false }
-    }]
+    include: [{ model: models.Trip, as: 'trip', where: { isArchived: false } }]
   });
   const playersByDeparture = _(players)
     .sortBy(player => player.trip.departureName)
     .value();
-  const objss = await Promise.map(playersByDeparture, (player) => (
+  const objsList = await Promise.map(playersByDeparture, (player) => (
     TripUtil.getObjectsForTrip(player.tripId)
   ));
   const pages = _(players)
     .map((player, i) => {
-      const objs = objss[i];
-      const context = TripUtil.createEvalContext(objs);
-      return getPage(objs.script, objs.trip, context, player);
+      const objs = objsList[i];
+      const evalContext = TripUtil.prepareEvalContext(objs);
+      return getPage(objs.script, objs.trip, evalContext, player,
+        objs.experience.timezone);
     })
     .filter(Boolean)
     .sortBy('sort')

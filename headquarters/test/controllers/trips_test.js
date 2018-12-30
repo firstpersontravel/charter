@@ -14,12 +14,12 @@ describe('TripsController', () => {
 
   describe('#createTrip', () => {
     it('creates a trip and players', async () => {
+      const stubExperience = {
+        id: 3,
+        timezone: 'US/Pacific',
+      };
       const stubScript = {
         id: 2,
-        experience: {
-          id: 3,
-          timezone: 'US/Pacific',
-        },
         content: {
           roles: [{ name: 'fake' }],
           scenes: [{
@@ -47,7 +47,8 @@ describe('TripsController', () => {
       const stubGroup = {
         id: 1,
         date: '2018-01-01',
-        script: stubScript
+        script: stubScript,
+        experience: stubExperience
       };
       sandbox.stub(models.Group, 'find').resolves(stubGroup);
       sandbox.stub(models.Trip, 'create').resolves({ id: 3 });
@@ -56,14 +57,10 @@ describe('TripsController', () => {
       await TripsController.createTrip(1, 'title', 'T1', ['basic']);
       sinon.assert.calledWith(models.Group.find, {
         where: { id: 1 },
-        include: [{
-          model: models.Script,
-          as: 'script',
-          include: [{
-            model: models.Experience,
-            as: 'experience'
-          }]
-        }]
+        include: [
+          { model: models.Script, as: 'script' },
+          { model: models.Experience, as: 'experience' }
+        ]
       });
       sinon.assert.calledOnce(models.Trip.create);
       // Create trip

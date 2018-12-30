@@ -42,12 +42,12 @@ export default class ScriptSetRelays extends React.Component {
   componentDidMount() {
     this.props.listCollection('relays', {
       stage: getStage(),
-      scriptName: this.props.scriptName
+      scriptName: this.props.experienceName
     });
   }
 
   handleUpdateRelays() {
-    this.props.updateRelays(this.props.scriptName);
+    this.props.updateRelays(this.props.experienceName);
   }
 
   handleToggleAllActive() {
@@ -72,7 +72,7 @@ export default class ScriptSetRelays extends React.Component {
 
   relaysForSpec(relaySpec) {
     return _.filter(this.props.relays, {
-      scriptName: this.props.scriptName,
+      scriptName: this.props.experienceName,
       forRoleName: relaySpec.for,
       withRoleName: relaySpec.with,
       asRoleName: relaySpec.as || relaySpec.for
@@ -82,7 +82,7 @@ export default class ScriptSetRelays extends React.Component {
   renderRelay(relaySpec, departureName) {
     const relays = _(this.props.relays)
       .filter({
-        scriptName: this.props.scriptName,
+        scriptName: this.props.experienceName,
         departureName: departureName,
         forRoleName: relaySpec.for,
         withRoleName: relaySpec.with,
@@ -248,7 +248,7 @@ ScriptSetRelays.propTypes = {
   listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   updateRelays: PropTypes.func.isRequired,
-  scriptName: PropTypes.string.isRequired,
+  experienceName: PropTypes.string.isRequired,
   script: PropTypes.object,
   relays: PropTypes.array.isRequired
 };

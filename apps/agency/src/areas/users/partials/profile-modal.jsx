@@ -27,6 +27,7 @@ export default class ProfileModal extends Component {
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
+    this.handleChangeScriptName = this.handleChangeScriptName.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
   }
 
@@ -48,6 +49,14 @@ export default class ProfileModal extends Component {
 
   handleConfirm() {
     this.props.onConfirm(_.assign({}, this.state));
+  }
+
+  handleChangeScriptName(event) {
+    this.setState({
+      scriptName: event.target.value,
+      roleName: '',
+      departureName: ''
+    });
   }
 
   handleChangeField(fieldName, event) {
@@ -91,10 +100,18 @@ export default class ProfileModal extends Component {
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
 
-    const scriptOptions = this.props.scripts.map(script => (
-      <option key={script.name} value={script.name}>{script.title}</option>
+    const experienceOptions = this.props.experiences.map(experience => (
+      <option key={experience.name} value={experience.name}>
+        {experience.title}
+      </option>
     ));
-    const script = _.find(this.props.scripts, { name: this.state.scriptName });
+    const experience = _.find(this.props.experiences, {
+      name: this.state.scriptName
+    });
+    const script = _.find(this.props.scripts, {
+      experienceId: experience && experience.id,
+      isArchived: false
+    });
     const roles = script ? script.content.roles : [];
     const departures = script ? script.content.departures : [];
     const roleOptions = roles.map(role => (
@@ -135,14 +152,14 @@ export default class ProfileModal extends Component {
           <form>
             <div className="row">
               <div className="form-group col-sm-5">
-                <label htmlFor="profile_script_name">Script</label>
+                <label htmlFor="profile_script_name">Experience</label>
                 <select
                   className="form-control"
                   id="profile_script_name"
-                  onChange={_.curry(this.handleChangeField)('scriptName')}
+                  onChange={this.handleChangeScriptName}
                   value={this.state.scriptName}>
                   <option value="">--</option>
-                  {scriptOptions}
+                  {experienceOptions}
                 </select>
               </div>
               <div className="form-group col-sm-4">
@@ -236,6 +253,7 @@ export default class ProfileModal extends Component {
 ProfileModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   scripts: PropTypes.array.isRequired,
+  experiences: PropTypes.array.isRequired,
   profile: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired

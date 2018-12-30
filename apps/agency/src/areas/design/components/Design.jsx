@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function Scripts({ scriptsStatus, children }) {
+export default function Design({ scriptsStatus, children }) {
   if (scriptsStatus.isLoading) {
     return (
       <div className="container-fluid">Loading...</div>
@@ -19,7 +19,7 @@ export default function Scripts({ scriptsStatus, children }) {
   );
 }
 
-Scripts.propTypes = {
+Design.propTypes = {
   children: PropTypes.node.isRequired,
   scriptsStatus: PropTypes.object.isRequired
 };

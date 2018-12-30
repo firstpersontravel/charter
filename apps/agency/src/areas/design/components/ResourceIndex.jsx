@@ -26,7 +26,7 @@ const PROP_ORDERING = [
   'type',
   'cue',
   'if',
-  'event',
+  'events',
   'actions',
   'for',
   'with',
@@ -118,11 +118,14 @@ function gatherReferringActions(script, collectionName, resource) {
       const plainAction = ActionPhraseCore.expandPlainActionPhrase(
         plainActionPhrase);
       if (doesActionReferToResource(plainAction, collectionName, resource)) {
-        referringActions.push({ action: action, triggerName: trigger.name });
+        referringActions.push({
+          action: plainAction,
+          triggerName: trigger.name
+        });
       }
     }, () => {});
   });
-  return referringActions;
+  return _.uniqBy(referringActions, 'triggerName');
 }
 
 function renderActionRefs(script, collectionName, resource) {

@@ -31,7 +31,7 @@ export default class TripScenes extends Component {
     const pageSceneTitle = pageScene.title;
     const activeBtnClass = isProduction() ? 'btn-danger' : 'btn-primary';
     const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
-    const panelText = EvalCore.templateText(trip.context, panel.text || '',
+    const panelText = EvalCore.templateText(trip.evalContext, panel.text || '',
       trip.experience.timezone);
     const activeCueTitle = panel.type === 'button' ?
       panelText : `Cue ${panel.cue}`;
@@ -90,10 +90,10 @@ export default class TripScenes extends Component {
 
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => !panel.if || EvalCore.if(trip.context, panel.if))
+      .filter(panel => !panel.if || EvalCore.if(trip.evalContext, panel.if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
-    const pageTitle = EvalCore.templateText(trip.context, page.title,
+    const pageTitle = EvalCore.templateText(trip.evalContext, page.title,
       trip.experience.timezone);
 
     const isAckedIcon = isAckedPage ? (
@@ -193,7 +193,7 @@ export default class TripScenes extends Component {
     const trip = this.props.trip;
     const showPastScenes = this.props.location.query.past === 'true';
     const roles = _(trip.script.content.roles)
-      .filter(role => !role.if || EvalCore.if(trip.context, role.if))
+      .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
       .sortBy([sortForRole, 'name'])
       .value();
     const players = _(roles)

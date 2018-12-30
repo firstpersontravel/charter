@@ -11,6 +11,8 @@ export default DS.Model.extend({
   version: DS.attr('number'),
   content: DS.attr('obj'),
 
+  experience: DS.belongsTo('experience', {async: false}),
+
   findResourceByName: function(resourceType, name) {
     var resources = this.get('content')[resourceType + 's'];
     var resource = resources.findBy('name', name);
@@ -36,7 +38,7 @@ export default DS.Model.extend({
     if (path.slice(0, 8) === 'https://') { return path; }
 
     var contentPath = this.get('environment.contentPath');
-    var scriptFolder = this.get('name');
+    var scriptFolder = this.get('experience.name');
     return `${contentPath}/${scriptFolder}/${path}`;
   },
 

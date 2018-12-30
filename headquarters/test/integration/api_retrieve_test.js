@@ -36,7 +36,7 @@ describe('API retrieve', () => {
                 schedule: {},
                 departureName: 'T1',
                 galleryName: '',
-                scriptId: group.scriptId,
+                scriptId: trip.scriptId,
                 variantNames: '',
                 title: 'test',
                 values: {},

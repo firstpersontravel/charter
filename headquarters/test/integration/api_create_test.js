@@ -156,6 +156,7 @@ describe('API create', () => {
         content: {}
       });
       group = await models.Group.create({
+        experienceId: experience.id,
         scriptId: script.id,
         date: '2018-04-02'
       });

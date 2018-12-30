@@ -5,10 +5,10 @@ var EvalCore = require('./eval');
 
 var PlayerCore = {};
 
-PlayerCore.getInitialFields = function (script, roleName, variantNames) {
-  var role = _.find(script.content.roles, { name: roleName });
+PlayerCore.getInitialFields = function(scriptContent, roleName, variantNames) {
+  var role = _.find(scriptContent.roles, { name: roleName });
   var firstPageName = role.starting_page || '';
-  var variants = script.content.variants || [];
+  var variants = scriptContent.variants || [];
   variantNames.forEach(function(variantName) {
     var variant = _.find(variants, { name: variantName });
     if (!variant) {
@@ -26,7 +26,7 @@ PlayerCore.getInitialFields = function (script, roleName, variantNames) {
   };
 };
 
-PlayerCore.getPageInfo = function(script, context, player) {
+PlayerCore.getPageInfo = function(script, evalContext, player) {
   var page = _.find(script.content.pages,
     { name: player.currentPageName });
   if (!page) {
@@ -38,11 +38,11 @@ PlayerCore.getPageInfo = function(script, context, player) {
     { name: 'No appearance', title: 'No appearance' };
 
   var appearanceIsActive = !appearance.if ||
-    EvalCore.if(context, appearance.if);
+    EvalCore.if(evalContext, appearance.if);
   var pageTitle = page ? page.title : player.currentPageName;
   var appearanceTitle = appearanceIsActive ? pageTitle : appearance.disabled_message;
   var appearanceStart = appearance.start ?
-    moment.utc(context.schedule[appearance.start]) :
+    moment.utc(evalContext.schedule[appearance.start]) :
     null;
   return {
     page: page,

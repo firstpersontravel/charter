@@ -16,7 +16,7 @@ describe('TripUtil', () => {
     it.skip('gets all needed objects for a trip', () => {});
   });
 
-  describe('#createEvalContext', () => {
+  describe('#prepareEvalContext', () => {
     it('creates trip context', () => {
       const objs = {
         script: models.Script.build({
@@ -39,7 +39,7 @@ describe('TripUtil', () => {
         })]
       };
 
-      const res = TripUtil.createEvalContext(objs);
+      const res = TripUtil.prepareEvalContext(objs);
 
       assert.deepStrictEqual(res, {
         currentSceneName: 'SCENE-1',

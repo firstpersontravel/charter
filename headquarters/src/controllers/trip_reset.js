@@ -10,10 +10,11 @@ class TripResetController {
   /**
    * Reset a trip.
    */
-  static async _resetTrip(script, trip, checkpoint) {
+  static async _resetTrip(script, trip, timezone, checkpoint) {
     // Get schedule and values
     const variants = trip.variantNames.split(',');
-    const resetFields = TripCore.getInitialFields(script, trip.date, variants);
+    const resetFields = TripCore.getInitialFields(script.content,
+      trip.date, timezone, variants);
     const resetSceneName = checkpoint.scene || script.content.scenes[0].name;
 
     // Update values with checkpoint
@@ -34,7 +35,7 @@ class TripResetController {
   static async _resetPlayer(script, trip, player, checkpoint) {
     // Get values
     const variants = trip.variantNames.split(',');
-    const fields = PlayerCore.getInitialFields(script, player.roleName,
+    const fields = PlayerCore.getInitialFields(script.content, player.roleName,
       variants);
     // Check starting page
     if (_.get(checkpoint, 'pages.' + player.roleName)) {
@@ -61,9 +62,12 @@ class TripResetController {
   static async resetToCheckpoint(tripId, checkpointName) {
     const trip = await models.Trip.find({
       where: { id: tripId },
-      include: [{ model: models.Script, as: 'script' }]
+      include: [
+        { model: models.Script, as: 'script' },
+        { model: models.Experience, as: 'experience' }
+      ]
     });
-    const evalContext = TripUtil.getEvalContext(tripId);
+    const evalContext = await TripUtil.getEvalContext(tripId);
     const players = await models.Player.findAll({ where: { tripId: tripId } });
     // Create hardcoded default 'start' checkpoint
     const startingScene = SceneCore.getStartingSceneName(trip.script.content,
@@ -73,7 +77,8 @@ class TripResetController {
     const checkpoints = [start].concat(trip.script.content.checkpoints || []);
     const checkpoint = _.find(checkpoints, { name: checkpointName });
     // Reset data
-    await this._resetTrip(trip.script, trip, checkpoint);
+    await this._resetTrip(trip.script, trip, trip.experience.timezone,
+      checkpoint);
     for (let player of players) {
       await this._resetPlayer(trip.script, trip, player, checkpoint);
     }

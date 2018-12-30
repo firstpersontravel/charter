@@ -13,7 +13,7 @@ function doesTripHaveRole(trip, roleName) {
   if (!role.if) {
     return true;
   }
-  return EvalCore.if(trip.context, role.if);
+  return EvalCore.if(trip.evalContext, role.if);
 }
 
 function renderScheduleHeader(trip) {
@@ -50,10 +50,11 @@ export default class GroupPlayers extends Component {
   }
 
   renderRoleCell(roleName, trips) {
+    const experience = this.props.groupStatus.instance.experience;
     const script = this.props.groupStatus.instance.script;
     const tripsWithRole = trips
       .filter(trip => doesTripHaveRole(trip, roleName));
-    if (!script || tripsWithRole.length === 0) {
+    if (!experience || !script || tripsWithRole.length === 0) {
       return null;
     }
     const departureNames = _.uniq(_.map(tripsWithRole, 'departureName'));
@@ -75,7 +76,7 @@ export default class GroupPlayers extends Component {
       userClass = '';
     }
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, script.name, roleName,
+      this.props.profiles, this.props.users, experience.name, roleName,
       departureName);
     const userChoices = profileChoices
       .map(profile => (
@@ -91,7 +92,11 @@ export default class GroupPlayers extends Component {
           <Link
             to={{
               pathname: '/agency/users',
-              query: { editing: true, role: roleName, script: script.name }
+              query: {
+                editing: true,
+                role: roleName,
+                experience: experience.name
+              }
             }}>
             Add user
           </Link>

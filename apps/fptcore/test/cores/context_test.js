@@ -13,7 +13,7 @@ describe('ContextCore', () => {
     sandbox.restore();
   });
 
-  describe('#gatherPlayerContext', () => {
+  describe('#gatherPlayerEvalContext', () => {
     it('gathers values from player', () => {
       const player = {
         id: 10,
@@ -35,7 +35,7 @@ describe('ContextCore', () => {
         directive: null,
         skype: null
       };
-      const result = ContextCore.gatherPlayerContext(
+      const result = ContextCore.gatherPlayerEvalContext(
         env, { id: 1, script: { name: 'test' } }, player);
       assert.deepEqual(result, expected);
     });
@@ -57,7 +57,7 @@ describe('ContextCore', () => {
       const player = {
         currentPageName: 'PAGE-NAME'
       };
-      const result = ContextCore.gatherPlayerContext(env, trip, player);
+      const result = ContextCore.gatherPlayerEvalContext(env, trip, player);
       assert.equal(result.directive, 'Go to the Tavern');
     });
 
@@ -73,7 +73,7 @@ describe('ContextCore', () => {
         }
       };
       const context = { script: { name: 'theheadlandsgamble' } };
-      const result = ContextCore.gatherPlayerContext(env, context,
+      const result = ContextCore.gatherPlayerEvalContext(env, context,
         player);
       assert.equal(result.phone_number, '1234567890');
       assert.equal(result.photo, 'dustin.jpg');
@@ -81,7 +81,7 @@ describe('ContextCore', () => {
     });
   });
 
-  describe('#gatherContext', () => {
+  describe('#gatherEvalContext', () => {
     it('gathers all context', () => {
       const trip = {
         currentSceneName: 'SCENE-01',
@@ -106,7 +106,7 @@ describe('ContextCore', () => {
 
       const saraiValues = { vals: 's' };
       const vanceValues = { vals: 'v' };
-      const subcontextStub = sandbox.stub(ContextCore, 'gatherPlayerContext');
+      const subcontextStub = sandbox.stub(ContextCore, 'gatherPlayerEvalContext');
       subcontextStub.onFirstCall().returns(saraiValues);
       subcontextStub.onSecondCall().returns(vanceValues);
 
@@ -120,7 +120,7 @@ describe('ContextCore', () => {
         Vance: vanceValues
       };
 
-      const result = ContextCore.gatherContext(env, trip);
+      const result = ContextCore.gatherEvalContext(env, trip);
       assert.deepEqual(result, expected);
       sinon.assert.calledWith(subcontextStub, env, trip, trip.players[0]);
       sinon.assert.calledWith(subcontextStub, env, trip, trip.players[1]);
@@ -147,19 +147,19 @@ describe('ContextCore', () => {
         players: []
       };
       // Tests first option
-      const res1 = ContextCore.gatherContext(env, trip);
+      const res1 = ContextCore.gatherEvalContext(env, trip);
       assert.strictEqual(res1.color, 'red');
       // Tests second option
       trip.waypointOptions.waypoint1 = 'option2';
-      const res2 = ContextCore.gatherContext(env, trip);
+      const res2 = ContextCore.gatherEvalContext(env, trip);
       assert.strictEqual(res2.color, 'blue');
       // Tests empty
       trip.waypointOptions.waypoint1 = null;
-      const res3 = ContextCore.gatherContext(env, trip);
+      const res3 = ContextCore.gatherEvalContext(env, trip);
       assert.strictEqual(_.includes(Object.keys(res3), 'color'), false);
       // Tests bad option
       trip.waypointOptions.waypoint1 = 'nonexistent';
-      const res4 = ContextCore.gatherContext(env, trip);
+      const res4 = ContextCore.gatherEvalContext(env, trip);
       assert.strictEqual(_.includes(Object.keys(res4), 'color'), false);
     });
   });

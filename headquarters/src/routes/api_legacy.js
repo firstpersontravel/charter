@@ -51,17 +51,20 @@ async function getUserRoute(req, res) {
  */
 async function getTripRoute(req, res) {
   const includeScript = !!req.query.script;
-  const trip = await models.Trip.findById(req.params.id);
+  const trip = await models.Trip.find({
+    where: { id: req.params.id },
+    include: [
+      { model: models.Script, as: 'script' },
+      { model: models.Experience, as: 'experience' }
+    ]
+  });
   if (!trip) {
     res.status(404).send('Not Found');
     return;
   }
-  const script = await models.Script.findById(trip.scriptId);
   const [players, messages, actions, profiles, users] = (
     await Promise.all([
-      models.Player.findAll({
-        where: { tripId: req.params.id }
-      }),
+      models.Player.findAll({ where: { tripId: req.params.id } }),
       models.Message.findAll({
         where: { tripId: req.params.id, isArchived: false }
       }),
@@ -86,7 +89,8 @@ async function getTripRoute(req, res) {
     .concat(users);
 
   if (includeScript) {
-    objs.push(script);
+    objs.push(trip.script);
+    objs.push(trip.experience);
   }
 
   const data = jsonApiSerialize(trip);

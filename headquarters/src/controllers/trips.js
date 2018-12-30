@@ -6,8 +6,8 @@ class TripsController {
   /**
    * Create an initial player including default values.
    */
-  static async _createPlayer(script, trip, role, variantNames) {
-    const initialFields = PlayerCore.getInitialFields(script, role.name,
+  static async _createPlayer(scriptContent, trip, role, variantNames) {
+    const initialFields = PlayerCore.getInitialFields(scriptContent, role.name,
       variantNames);
     const fields = Object.assign(initialFields, {
       tripId: trip.id,
@@ -22,23 +22,20 @@ class TripsController {
   static async createTrip(groupId, title, departureName, variantNames=[]) {
     const group = await models.Group.find({
       where: { id: groupId },
-      include: [{
-        model: models.Script,
-        as: 'script',
-        include: [{
-          model: models.Experience,
-          as: 'experience'
-        }]
-      }]
+      include: [
+        { model: models.Script, as: 'script' },
+        { model: models.Experience, as: 'experience' }
+      ]
     });
-    const initialFields = TripCore.getInitialFields(group.script, group.date,
-      group.script.experience.timezone, variantNames);
+    const initialFields = TripCore.getInitialFields(
+      group.script.content, group.date,
+      group.experience.timezone, variantNames);
     const scenes = group.script.content.scenes || [];
     const firstScene = scenes[0] || { name: '' };
     const tripFields = Object.assign({
-      experienceId: group.script.experience.id,
-      scriptId: group.script.id,
+      experienceId: group.experience.id,
       groupId: group.id,
+      scriptId: group.script.id,
       date: group.date,
       title: title,
       currentSceneName: firstScene.name,
@@ -49,7 +46,7 @@ class TripsController {
     const trip = await models.Trip.create(tripFields);
     const roles = group.script.content.roles || [];
     for (let role of roles) {
-      await this._createPlayer(group.script, trip, role, variantNames);
+      await this._createPlayer(group.script.content, trip, role, variantNames);
     }
     return trip;
   }

@@ -25,9 +25,9 @@ export default class Users extends Component {
 
   handleUserModalClose() {
     const role = this.props.location.query.role;
-    const script = this.props.location.query.script;
+    const scriptName = this.props.location.query.experience;
     browserHistory.push(
-      `/agency/users${script ? `?script=${script}` : ''}` +
+      `/agency/users${scriptName ? `?experience=${scriptName}` : ''}` +
       `${role ? `&role=${role}` : ''}`
     );
   }
@@ -41,7 +41,7 @@ export default class Users extends Component {
       statusIcons.push(<i key="comment" className="fa fa-comment" />);
     }
     const profileParams = { userId: user.id };
-    const scriptName = this.props.location.query.script;
+    const scriptName = this.props.location.query.experience;
     if (scriptName) {
       profileParams.scriptName = scriptName;
     }
@@ -58,7 +58,7 @@ export default class Users extends Component {
           }}
           to={{
             pathname: '/agency/users',
-            query: { script: profile.scriptName, role: profile.roleName }
+            query: { experience: profile.scriptName, role: profile.roleName }
           }}>
           {profile.roleName}
         </Link>
@@ -81,26 +81,29 @@ export default class Users extends Component {
 
   renderHeader() {
     const roleName = this.props.location.query.role;
-    const scriptName = this.props.location.query.script;
-    const script = _.find(this.props.scripts, { name: scriptName });
-    const scriptTitle = script ? script.title : scriptName;
-    if (roleName && scriptName) {
+    const experienceName = this.props.location.query.experience;
+    const experience = experienceName ?
+      _.find(this.props.experiences, { name: experienceName }) : null;
+    const experienceTitle = experience ? experience.title : experienceName;
+    if (roleName && experienceName) {
       return (
         <h3>
           <Link to="/agency/users">Users</Link>
           &nbsp;›&nbsp;
-          <Link to={`/agency/users?script=${scriptName}`}>{scriptTitle}</Link>
+          <Link to={`/agency/users?experience=${experienceName}`}>
+            {experienceTitle}
+          </Link>
           &nbsp;›&nbsp;
           {roleName}
         </h3>
       );
     }
-    if (scriptName) {
+    if (experienceName) {
       return (
         <h3>
           <Link to="/agency/users">Users</Link>
           &nbsp;›&nbsp;
-          {scriptTitle}
+          {experienceTitle}
         </h3>
       );
     }
@@ -111,7 +114,7 @@ export default class Users extends Component {
 
   render() {
     const roleName = this.props.location.query.role;
-    const scriptName = this.props.location.query.script;
+    const experienceName = this.props.location.query.experience;
     const userRows = _.filter(this.props.users,
       (user) => {
         if (roleName === 'Archived') {
@@ -122,12 +125,12 @@ export default class Users extends Component {
         }
         const userProfiles = _.filter(this.props.profiles,
           { userId: user.id });
-        if (scriptName) {
-          if (!_.find(userProfiles, { scriptName: scriptName })) {
+        if (experienceName) {
+          if (!_.find(userProfiles, { scriptName: experienceName })) {
             return false;
           }
           if (roleName) {
-            const roleParams = { scriptName: scriptName, roleName: roleName };
+            const roleParams = { scriptName: experienceName, roleName: roleName };
             if (!_.find(userProfiles, roleParams)) {
               return false;
             }
@@ -158,7 +161,7 @@ export default class Users extends Component {
               pathname: '/agency/users',
               query: {
                 role: roleName || undefined,
-                script: scriptName || undefined,
+                experience: experienceName || undefined,
                 editing: true
               }
             }}
@@ -181,5 +184,5 @@ Users.propTypes = {
   location: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
-  scripts: PropTypes.array.isRequired
+  experiences: PropTypes.array.isRequired
 };

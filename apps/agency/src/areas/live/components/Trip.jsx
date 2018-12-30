@@ -18,7 +18,7 @@ export default function Trip({ params, tripStatus, children }) {
   const trip = tripStatus.instance;
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
-    .filter(role => !role.if || EvalCore.if(trip.context, role.if))
+    .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
     .filter(role => (
       _.get(_.find(trip.players, { roleName: role.name }),
         'currentPageName')

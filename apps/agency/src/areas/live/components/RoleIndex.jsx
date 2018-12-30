@@ -64,7 +64,7 @@ function renderPlayerCell(player, isFirst) {
   const appearance = _.find(trip.script.content.appearances, {
     name: page.appearance
   }) || {};
-  const appearanceIsActive = !appearance.if || EvalCore.if(trip.context, appearance.if);
+  const appearanceIsActive = !appearance.if || EvalCore.if(trip.evalContext, appearance.if);
   const pageTitle = page ? page.title : player.currentPageName;
   const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
   const tripRoleUrl = `/agency/live/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;

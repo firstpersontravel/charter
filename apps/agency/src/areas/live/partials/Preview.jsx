@@ -6,12 +6,12 @@ import moment from 'moment-timezone';
 import { EvalCore } from 'fptcore';
 
 function renderPanel(player, page, panel) {
-  if (panel.if && !EvalCore.if(player.trip.context, panel.if)) {
+  if (panel.if && !EvalCore.if(player.trip.evalContext, panel.if)) {
     return null;
   }
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
-    const humanized = EvalCore.templateText(player.trip.context,
+    const humanized = EvalCore.templateText(player.trip.evalContext,
       panel.text, player.trip.experience.timezone);
     return humanized.split('\n').filter(Boolean).map(p => (
       <p key={p} style={{ marginBottom: '0.5em' }} className="card-text">
@@ -23,7 +23,7 @@ function renderPanel(player, page, panel) {
       panel.type === 'numberpad') {
     const isSceneActive = page.scene === player.trip.currentSceneName;
     const script = player.trip.script;
-    const panelText = EvalCore.templateText(player.trip.context,
+    const panelText = EvalCore.templateText(player.trip.evalContext,
       panel.text || panel.placeholder, player.trip.experience.timezone);
     const scene = _.find(script.content.scenes, { name: page.scene });
     const disabledPanelText = (
@@ -54,7 +54,7 @@ function renderPageNotActive(appearance, player) {
     moment.utc(trip.schedule[appearance.start]) :
     null;
   const startLabel = appearanceStart ? ` - ${appearanceStart.clone().tz(trip.experience.timezone).format('h:mma')}` : '';
-  const introText = EvalCore.templateText(trip.context,
+  const introText = EvalCore.templateText(trip.evalContext,
     appearance.intro, trip.experience.timezone);
   return (
     <div className="card" style={{ marginBottom: '0.5em' }}>
@@ -80,7 +80,7 @@ function renderPage(appearance, page, player) {
   const panels = page.panels || [];
   let headerPanel = null;
   if (page.directive) {
-    const headerText = EvalCore.templateText(trip.context,
+    const headerText = EvalCore.templateText(trip.evalContext,
       page.directive, trip.experience.timezone);
     headerPanel = (
       <div className="card-header">
@@ -121,7 +121,7 @@ export default function Preview({ player }) {
   const appearanceIsActive = (
     !appearance ||
     !appearance.if ||
-    EvalCore.if(trip.context, appearance.if)
+    EvalCore.if(trip.evalContext, appearance.if)
   );
   if (!appearanceIsActive) {
     return renderPageNotActive(appearance, player);

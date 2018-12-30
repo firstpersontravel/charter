@@ -12,7 +12,8 @@ describe('Group', () => {
   beforeEach(() => {
     group = models.Group.build({
       date: '2018-03-03',
-      scriptId: 1
+      experienceId: 1,
+      scriptId: 2
     });
   });
 
@@ -27,6 +28,11 @@ describe('Group', () => {
   it('requires a script', async () => {
     group.scriptId = null;
     await assertValidation(group, { scriptId: 'must be present' });
+  });
+
+  it('requires an experience', async () => {
+    group.experienceId = null;
+    await assertValidation(group, { experienceId: 'must be present' });
   });
 
   it('requires a date', async () => {

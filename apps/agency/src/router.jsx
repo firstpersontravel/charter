@@ -5,7 +5,7 @@ import AppConnector from './areas/app/connectors/app';
 import ScheduleRoute from './areas/schedule/route';
 import LiveRoute from './areas/live/route';
 import UsersRoute from './areas/users/route';
-import ScriptsRoute from './areas/scripts/route';
+import DesignRoute from './areas/design/route';
 
 function InvalidPage() {
   return <div>Page not found</div>;
@@ -18,7 +18,7 @@ export default (
       {ScheduleRoute}
       {LiveRoute}
       {UsersRoute}
-      {ScriptsRoute}
+      {DesignRoute}
       <Route path="*" component={InvalidPage} />
     </Route>
   </Router>

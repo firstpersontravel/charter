@@ -34,7 +34,7 @@ function renderTrigger(trigger, trip, postAdminAction) {
       <td className={cellClass}>{trip.departureName}</td>
       <td className={cellClass}>{trigger.type}</td>
       <td className={cellClass}>
-        <Link to={`/agency/scripts/version/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
+        <Link to={`/agency/design/script/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
           {trigger.name}
         </Link>
       </td>
@@ -107,13 +107,13 @@ function getScheduledTripTriggers(trip) {
     last_timestamp: now.unix(),
     to_timestamp: inOneHour
   };
-  const triggers = TriggerEventCore.triggersForEvent(
-    trip.script, trip.context, event);
+  const triggers = TriggerEventCore.triggersForEvent(event,
+    trip.actionContext);
   return triggers.map((trigger) => {
     const triggerEvent = TriggerEventCore.triggerEventForEventType(
       trigger, event.type);
     const scheduledAt = EventsRegistry.time_occurred.timeForSpec(
-        triggerEvent[event.type], trip.context);
+        triggerEvent[event.type], trip.evalContext);
     return {
       id: trigger.name,
       type: 'trigger',

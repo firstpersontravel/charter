@@ -14,7 +14,7 @@ export function sortForRole(role) {
 
 export function getPlayerPageInfo(player) {
   const trip = player.trip;
-  return PlayerCore.getPageInfo(trip.script, trip.context,
+  return PlayerCore.getPageInfo(trip.script, trip.evalContext,
     player);
 }
 
@@ -22,7 +22,7 @@ function getGroupPlayersForRole(group, roleName) {
   const role = _.find(group.script.content.roles, { name: roleName });
   return group.trips
     .filter(trip => (
-      !role.if || EvalCore.if(trip.context, role.if)
+      !role.if || EvalCore.if(trip.evalContext, role.if)
     ))
     .map(trip => (
       _.find(trip.players, { roleName: role.name })
@@ -37,7 +37,7 @@ function getTripPlayersForRoles(trip, roleFilters) {
   const roles = _.filter(trip.script.content.roles, roleFilters);
   return roles
     .filter(role => (
-      !role.if || EvalCore.if(trip.context, role.if)
+      !role.if || EvalCore.if(trip.evalContext, role.if)
     ))
     .map(role => (
       _.find(trip.players, { roleName: role.name })
@@ -54,7 +54,7 @@ function getTripPlayers(trip) {
 
 function getPlayerSceneSort(player) {
   const trip = player.trip;
-  return PlayerCore.getSceneSort(trip.script, trip.context,
+  return PlayerCore.getSceneSort(trip.script, trip.evalContext,
     player);
 }
 

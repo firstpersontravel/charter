@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-export default function ScriptSetVersions({ scriptName, scripts }) {
+export default function ExperienceScripts({ experienceName, experience, scripts }) {
   if (!scripts.length) {
     return <div>Loading!</div>;
   }
@@ -10,9 +10,9 @@ export default function ScriptSetVersions({ scriptName, scripts }) {
     <div key={script.id}>
       <Link
         to={
-          `/agency/scripts/version/${script.id}`
+          `/agency/design/script/${script.id}`
         }>
-        {script.name} v{script.version}
+        Version {script.version}
       </Link>
     </div>
   ));
@@ -22,7 +22,7 @@ export default function ScriptSetVersions({ scriptName, scripts }) {
         {renderedScripts}
       </div>
       <div className="col-sm-6">
-        <Link to={`/agency/scripts/script/${scriptName}/relays`}>
+        <Link to={`/agency/design/experience/${experienceName}/relays`}>
           Relays
         </Link>
       </div>
@@ -30,7 +30,12 @@ export default function ScriptSetVersions({ scriptName, scripts }) {
   );
 }
 
-ScriptSetVersions.propTypes = {
-  scriptName: PropTypes.string.isRequired,
+ExperienceScripts.propTypes = {
+  experienceName: PropTypes.string.isRequired,
+  experience: PropTypes.object,
   scripts: PropTypes.array.isRequired
+};
+
+ExperienceScripts.defaultProps = {
+  experience: null
 };

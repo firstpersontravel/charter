@@ -3,49 +3,50 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-function renderRole(script, role, profiles) {
-  const num = _.filter(profiles, profile => (
-    !profile.isArchived &&
-    profile.scriptName === script.name &&
-    profile.roleName === role.name
-  )).length;
-
+function renderRole(experience, roleName, roleProfiles) {
+  if (!roleProfiles.length) {
+    return null;
+  }
   return (
-    <div key={role.name} className="constrain-text">
+    <div key={roleName} className="constrain-text">
       &rsaquo; <Link
         activeClassName="bold"
         to={{
           pathname: '/agency/users',
-          query: { script: script.name, role: role.name }
+          query: { experience: experience.name, role: roleName }
         }}>
-        {role.name}
+        {roleName}
       </Link>
-       &nbsp;({num})
+       &nbsp;({roleProfiles.length})
     </div>
   );
 }
 
-function renderScriptRoles(roleQuery, script, profiles) {
-  const roles = script.content.roles || [];
-  const roleCells = _.filter(roles, { user: true })
-    .map(role => renderRole(script, role, profiles));
+function renderExperienceRoles(roleQuery, experience, profiles) {
+  const experienceProfiles = _.filter(profiles, {
+    scriptName: experience.name
+  });
+  const roleNames = _.uniq(_.map(profiles, 'roleName')).sort();
+  const renderedRoles = _.filter(roleNames)
+    .map(roleName => renderRole(experience, roleName,
+      _.filter(experienceProfiles, { roleName: roleName })));
   return (
-    <div key={script.name} style={{ marginTop: '0.5em' }}>
+    <div key={experience.id} style={{ marginTop: '0.5em' }}>
       <div>
         <strong>
-          <Link to={`/agency/users?script=${script.name}`}>
-            {script.title}
+          <Link to={`/agency/users?experience=${experience.name}`}>
+            {experience.title}
           </Link>
         </strong>
       </div>
-      {roleCells}
+      {renderedRoles}
     </div>
   );
 }
 
-function renderRolesCol(roleQuery, scripts, profiles) {
-  const scriptCells = scripts
-    .map(script => renderScriptRoles(roleQuery, script, profiles));
+function renderRolesCol(roleQuery, experiences, profiles) {
+  const scriptCells = experiences
+    .map(experience => renderExperienceRoles(roleQuery, experience, profiles));
   return (
     <div className="col-sm-3 d-none d-sm-block">
       <h3>Roles</h3>
@@ -64,9 +65,9 @@ function renderRolesCol(roleQuery, scripts, profiles) {
   );
 }
 
-export default function Users({ children, location, scripts, profiles }) {
+export default function Users({ children, location, experiences, profiles }) {
   const roleQuery = location.query.role;
-  const rolesCol = renderRolesCol(roleQuery, scripts, profiles);
+  const rolesCol = renderRolesCol(roleQuery, experiences, profiles);
   return (
     <div className="container-fluid">
       <div className="row">
@@ -80,6 +81,6 @@ export default function Users({ children, location, scripts, profiles }) {
 Users.propTypes = {
   children: PropTypes.node,
   location: PropTypes.object,
-  scripts: PropTypes.array,
+  experiences: PropTypes.array,
   profiles: PropTypes.array
 };

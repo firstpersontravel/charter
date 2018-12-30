@@ -130,8 +130,8 @@ export default class UsersUser extends Component {
   renderPlayers(profile) {
     const playerItems = this.props.activeRoles
       .filter(role => (
-        role.script &&
-        role.script.name === profile.scriptName &&
+        role.experience &&
+        role.experience.name === profile.scriptName &&
         role.player &&
         role.player.roleName === profile.roleName
       ))
@@ -144,8 +144,14 @@ export default class UsersUser extends Component {
   }
 
   renderProfile(profile) {
-    const script = _.find(this.props.scripts, { name: profile.scriptName });
-    if (!script) {
+    const experience = _.find(this.props.experiences, {
+      name: profile.scriptName
+    });
+    const script = _.find(this.props.scripts, {
+      experienceId: experience.id,
+      isArchived: false
+    });
+    if (!experience || !script) {
       return null;
     }
     const photo = profile.photo ? (<div>Photo: {profile.photo}</div>) : null;
@@ -173,11 +179,11 @@ export default class UsersUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            <Link to={`/agency/users?script=${script.name}`}>
-              {script.title}
+            <Link to={`/agency/users?experience=${experience.name}`}>
+              {experience.title}
             </Link>
             &nbsp;&bull;&nbsp;
-            <Link to={`/agency/users?script=${script.name}&role=${role.name}`}>
+            <Link to={`/agency/users?experience=${experience.name}&role=${role.name}`}>
               {role.name}
             </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }
@@ -294,6 +300,7 @@ export default class UsersUser extends Component {
           onConfirm={this.handleUpdateUser} />
         <ProfileModal
           isOpen={!!editingProfileId}
+          experiences={this.props.experiences}
           scripts={this.props.scripts}
           profile={editingProfile}
           onClose={this.handleProfileModalClose}
@@ -310,6 +317,7 @@ UsersUser.propTypes = {
   location: PropTypes.object.isRequired,
   activeRoles: PropTypes.array.isRequired,
   user: PropTypes.object,
+  experiences: PropTypes.array.isRequired,
   scripts: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired
 };

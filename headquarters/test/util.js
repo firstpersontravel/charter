@@ -14,6 +14,8 @@ const dummyExperienceFields = {
 const dummyScriptFields = {
   experienceId: 1,
   version: 1,
+  isActive: true,
+  isArchived: false,
   content: {
     roles: [{
       name: 'Dummy'
@@ -34,6 +36,7 @@ async function createDummyTrip() {
 async function createDummyTripForScript(script, variantNames) {
   const today = moment.utc().format('YYYY-MM-DD');
   const group = await models.Group.create({
+    experienceId: script.experienceId,
     scriptId: script.id,
     date: today
   });

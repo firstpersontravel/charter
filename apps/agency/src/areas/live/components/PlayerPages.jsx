@@ -6,12 +6,12 @@ import { EvalCore } from 'fptcore';
 
 function renderPage(player, page, postAction) {
   const trip = player.trip;
-  const context = player.trip.context;
+  const context = player.trip.evalContext;
   const cueButtons = _(page.panels)
     .filter({ type: 'button' })
     .map(panel => (
       <li key={`${page.name}-${panel.cue}`}>
-        {EvalCore.templateText(trip.context, panel.text, trip.experience.timezone)}
+        {EvalCore.templateText(trip.evalContext, panel.text, trip.experience.timezone)}
       </li>
     ))
     .value();
