@@ -15,7 +15,7 @@ export default class TripScenes extends Component {
     const trip = this.props.trip;
     const shouldConfirm = isProduction();
     if (shouldConfirm) {
-      const confirmText = `Are you sure you want to apply the "${actionName}" action on ${trip.script.title} ${trip.departureName} "${trip.title}"?`;
+      const confirmText = `Are you sure you want to apply the "${actionName}" action on ${trip.experience.title} ${trip.departureName} "${trip.title}"?`;
       // eslint-disable-next-line no-alert
       if (!confirm(confirmText)) {
         return;

@@ -55,6 +55,7 @@ class TripRelaysController {
    */
   static async ensureRelays(trip, specFilters, specType) {
     const script = await models.Script.findById(trip.scriptId);
+    const experience = await models.Experience.findById(trip.experienceId);
 
     // Get specs that match the filters and also the type we're looking for.
     const relaySpecs = _(script.content.relays)
@@ -68,7 +69,7 @@ class TripRelaysController {
 
     // Ensure all relays exist.
     const relays = await Promise.all(relaySpecs.map(relaySpec => (
-      this.ensureRelay(trip, script.name, relaySpec))
+      this.ensureRelay(trip, experience.name, relaySpec))
     ));
 
     // Filter out null responses returned for users w/no phone numbers.
@@ -136,12 +137,12 @@ class TripRelaysController {
   /**
    * Format a media url.
    */
-  static _formatMediaUrl(script, url) {
+  static _formatMediaUrl(experienceName, url) {
     if (_.startsWith(url, 'http')) {
       return url;
     }
     const mediaHost = config.env.TWILIO_MEDIA_HOST;
-    return `${mediaHost}/${script.name}/${url}`;
+    return `${mediaHost}/${experienceName}/${url}`;
   }
 
   /**
@@ -150,6 +151,7 @@ class TripRelaysController {
    */
   static async _partsForRelayMessage(trip, relay, message) {
     const script = await trip.getScript();
+    const experience = await trip.getExperience();
 
     if (message.messageType === 'text') {
       // Otherwise send the raw content as-is.
@@ -167,7 +169,8 @@ class TripRelaysController {
       const ext = message.messageContent.split('.').reverse()[0].toLowerCase();
       const isAllowedMediaExtension = _.includes(ALLOWED_MEDIA_EXTENSIONS, ext);
       if (isAllowedMediaExtension) {
-        const mediaUrl = this._formatMediaUrl(script, message.messageContent);
+        const mediaUrl = this._formatMediaUrl(experience.name,
+          message.messageContent);
         return [null, mediaUrl];
       }
     }

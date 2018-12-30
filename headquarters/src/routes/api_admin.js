@@ -1,7 +1,7 @@
 const moment = require('moment');
 
 const models = require('../models');
-const RelaysController = require('../controllers/relays');
+const ExperienceController = require('../controllers/experience');
 const RunnerWorker = require('../workers/runner');
 const TripActionController = require('../controllers/trip_action');
 const TripNotifyController = require('../controllers/trip_notify');
@@ -9,7 +9,7 @@ const TripResetController = require('../controllers/trip_reset');
 const TripUtil = require('../controllers/trip_util');
 
 async function updateRelaysRoute(req, res) {
-  await RelaysController.ensureTrailheadsForScriptName(req.params.scriptName);
+  await ExperienceController.ensureTrailheads(req.params.experienceId);
   res.json({ data: { ok: true } });
 }
 

@@ -44,6 +44,7 @@ export default DS.Model.extend({
   },
 
   generateTrip: function() {
+    var experience = this.get('experience');
     var script = this.get('script').toJSON();
     script.content = JSON.parse(script.content);
     var trip = this.toJSON();
@@ -60,7 +61,7 @@ export default DS.Model.extend({
       if (user) {
         p.user = user.toJSON();
         const profile = user.get('profiles').filter(profile => (
-          profile.get('scriptName') === script.name &&
+          profile.get('scriptName') === experience.get('name') &&
           profile.get('roleName') === p.roleName
         ))[0];
         if (profile) {
@@ -101,6 +102,6 @@ export default DS.Model.extend({
 
   humanizeText: function(text) {
     return fptCore.EvalCore.templateText(this.get('evalContext'), text,
-      this.get('script.timezone'));
+      this.get('script.experience.timezone'));
   }
 });

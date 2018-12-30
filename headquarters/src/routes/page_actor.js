@@ -51,7 +51,9 @@ function getPanel(trip, evalContext, timezone, pageInfo, panel) {
 /**
  * Construct an object of the page
  */
-function getPage(script, trip, evalContext, player, timezone) {
+function getPage(objs, trip, evalContext, player) {
+  const script = objs.script;
+  const timezone = objs.experience.timezone;
   const pageInfo = PlayerCore.getPageInfo(script, evalContext, player);
   if (!pageInfo) {
     return null;
@@ -73,7 +75,7 @@ function getPage(script, trip, evalContext, player, timezone) {
     .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
   return {
-    scriptTitle: script.title,
+    experienceTitle: objs.experience.title,
     trip: trip,
     player: player,
     page: page,
@@ -132,8 +134,7 @@ const playerShowRoute = async (req, res) => {
   }
   const objs = await TripUtil.getObjectsForTrip(player.tripId);
   const evalContext = TripUtil.prepareEvalContext(objs);
-  const page = getPage(objs.script, objs.trip, evalContext, player,
-    objs.experience.timezone);
+  const page = getPage(objs, evalContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
     userId: '',
@@ -172,8 +173,7 @@ const userShowRoute = async (req, res) => {
     .map((player, i) => {
       const objs = objsList[i];
       const evalContext = TripUtil.prepareEvalContext(objs);
-      return getPage(objs.script, objs.trip, evalContext, player,
-        objs.experience.timezone);
+      return getPage(objs, evalContext, player);
     })
     .filter(Boolean)
     .sortBy('sort')

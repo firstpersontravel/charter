@@ -5,11 +5,10 @@ export default DS.Model.extend({
 
   environment: Ember.inject.service(),
 
-  name: DS.attr('string'),
-  title: DS.attr('string'),
-  timezone: DS.attr('string'),
   version: DS.attr('number'),
   content: DS.attr('obj'),
+
+  timezone: Ember.oneWay('experience.timezone'),
 
   experience: DS.belongsTo('experience', {async: false}),
 

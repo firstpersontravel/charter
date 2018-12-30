@@ -7,10 +7,7 @@ const galleryRoute = async (req, res) => {
   const where = isNaN(Number(alias)) ? { galleryName: alias } : { id: alias };
   const trip = await models.Trip.find({
     where: where,
-    include: [{
-      model: models.Script,
-      as: 'script'
-    }]
+    include: [{ model: models.Experience, as: 'experience' }]
   });
   if (!trip) {
     res.status(404);
@@ -39,7 +36,7 @@ const galleryRoute = async (req, res) => {
   // Render
   res.render('gallery/gallery', {
     layout: 'gallery',
-    tripTitle: trip.script.title,
+    tripTitle: trip.experience.title,
     galleryRows: galleryRows
   });
 };

@@ -57,7 +57,7 @@ apiRouter.post('/users/:userId/device_state',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
 
 // Admin routes
-apiRouter.post('/admin/scripts/:scriptName/update_relays',
+apiRouter.post('/admin/experiences/:experienceId/update_relays',
   asyncRoute(apiAdminRoutes.updateRelaysRoute));
 apiRouter.post('/admin/trips/:tripId/notify',
   asyncRoute(apiAdminRoutes.notifyRoute));

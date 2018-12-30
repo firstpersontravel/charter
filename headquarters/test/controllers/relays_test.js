@@ -27,10 +27,6 @@ describe('RelaysController', () => {
     it.skip('creates relay if does not exist', async () => {});
   });
 
-  describe('#ensureTrailheadsForScriptName', () => {
-    it.skip('ensure all trailhead relays are created', async () => {});
-  });
-
   describe('#findByNumber', () => {
 
     const stubRelay = {

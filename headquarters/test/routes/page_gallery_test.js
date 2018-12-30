@@ -23,7 +23,7 @@ describe('pageGalleryRoutes', () => {
       const mockTrip = {
         id: 1,
         title: 'some people',
-        script: { title: 'The Headlands Gamble' }
+        experience: { title: 'The Headlands Gamble' }
       };
       sandbox.stub(models.Trip, 'find').resolves(mockTrip);
       
@@ -42,7 +42,7 @@ describe('pageGalleryRoutes', () => {
       sinon.assert.calledOnce(models.Trip.find);
       assert.deepStrictEqual(models.Trip.find.firstCall.args, [{
         where: { galleryName: 'abc' },
-        include: [{ model: models.Script, as: 'script' }]
+        include: [{ model: models.Experience, as: 'experience' }]
       }]);
       sinon.assert.calledOnce(models.Message.findAll);
       assert.deepStrictEqual(models.Message.findAll.firstCall.args, [{
@@ -78,14 +78,7 @@ describe('pageGalleryRoutes', () => {
 
       await pageGalleryRoutes.galleryRoute(req, res);
 
-      // Test call made correctly
-      sinon.assert.calledOnce(models.Trip.find);
-      assert.deepStrictEqual(models.Trip.find.firstCall.args, [{
-        where: { id: 1 },
-        include: [{ model: models.Script, as: 'script' }]
-      }]);
-
-      // Test redirect happens correctly
+      // Test not found.
       assert.strictEqual(res.statusCode, 404);
     });
   });

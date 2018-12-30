@@ -104,24 +104,6 @@ class RelaysController {
   }
 
   /**
-   * Create trailhead relays.
-   */
-  static async ensureTrailheadsForScriptName(scriptName) {
-    // Get active script by name
-    const script = await models.Script.find({
-      where: { name: scriptName, isActive: true, isArchived: false }
-    });
-    // Create only trailhead relays
-    const trailheadRelays = _.filter(script.content.relays, { trailhead: true });
-    for (let departure of script.content.departures) {
-      for (let relaySpec of trailheadRelays) {
-        await RelaysController.ensureRelay(script.name, departure.name,
-          relaySpec, '');
-      }
-    }
-  }
-
-  /**
    * Find a relay by its number and a user number.
    */
   static async findByNumber(relayNumber, userNumber) {

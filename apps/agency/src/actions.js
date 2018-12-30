@@ -230,10 +230,10 @@ export function postAdminAction(tripId, actionName, actionParams,
   };
 }
 
-export function updateRelays(scriptName) {
+export function updateRelays(experienceId) {
   return function (dispatch) {
     const params = { method: 'POST' };
-    const url = `/api/admin/scripts/${scriptName}/update_relays`;
+    const url = `/api/admin/experiences/${experienceId}/update_relays`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(listCollection('relays', { stage: getStage() }));

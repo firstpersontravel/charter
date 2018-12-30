@@ -30,7 +30,7 @@ function getCapabilities(relaySpec) {
   return capabilities.filter(Boolean).join(', ');
 }
 
-export default class ScriptSetRelays extends React.Component {
+export default class ExperienceRelays extends React.Component {
 
   constructor(props) {
     super(props);
@@ -47,7 +47,10 @@ export default class ScriptSetRelays extends React.Component {
   }
 
   handleUpdateRelays() {
-    this.props.updateRelays(this.props.experienceName);
+    if (!this.props.experience) {
+      return;
+    }
+    this.props.updateRelays(this.props.experience.id);
   }
 
   handleToggleAllActive() {
@@ -243,16 +246,18 @@ export default class ScriptSetRelays extends React.Component {
   }
 }
 
-ScriptSetRelays.propTypes = {
+ExperienceRelays.propTypes = {
   areAnyRequestsPending: PropTypes.bool.isRequired,
   listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   updateRelays: PropTypes.func.isRequired,
   experienceName: PropTypes.string.isRequired,
+  experience: PropTypes.object,
   script: PropTypes.object,
   relays: PropTypes.array.isRequired
 };
 
-ScriptSetRelays.defaultProps = {
-  script: null
+ExperienceRelays.defaultProps = {
+  script: null,
+  experience: null
 };

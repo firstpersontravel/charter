@@ -110,8 +110,10 @@ describe('TripRelaysController', () => {
 
   describe('#ensureRelays', () => {
 
+    const stubExperience = models.Experience.build({
+      name: 'journey'
+    });
     const stubScript = models.Script.build({
-      name: 's',
       content: {
         relays: [
           { for: 'for', as: 'as', with: 'with', sms_out: true },
@@ -131,6 +133,7 @@ describe('TripRelaysController', () => {
     it('gets relay with as and with params', async () => {
       // Script has multiple relay specs
       sandbox.stub(models.Script, 'findById').resolves(stubScript);
+      sandbox.stub(models.Experience, 'findById').resolves(stubExperience);
       sandbox.stub(TripRelaysController, 'ensureRelay').resolves(stubRelay);
 
       const filters = { as: 'as', with: 'with' };
@@ -141,7 +144,7 @@ describe('TripRelaysController', () => {
       // Should filter out by spec and only call ensureRelay with one
       sinon.assert.calledOnce(TripRelaysController.ensureRelay);
       sinon.assert.calledWith(TripRelaysController.ensureRelay, stubTrip,
-        stubScript.name, stubScript.content.relays[0]);
+        stubExperience.name, stubScript.content.relays[0]);
       // Should return list of relays
       assert.deepStrictEqual(res, [stubRelay]);
     });
