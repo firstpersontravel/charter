@@ -32,7 +32,7 @@ class ExperienceController {
     });
     for (let departure of script.content.departures) {
       for (let relaySpec of trailheadRelays) {
-        await RelaysController.ensureRelay(experience.name, departure.name,
+        await RelaysController.ensureRelay(experienceId, departure.name,
           relaySpec, '');
       }
     }

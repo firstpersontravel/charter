@@ -15,9 +15,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
     return <div>Loading</div>;
   }
   const script = playerStatus.instance.trip.script;
-  const hasRelay = !!_.find(script.content.relays, relay => (
-    (relay.as || relay.for) === params.roleName
-  ));
+  const hasRelay = !!_.find(script.content.relays, { as: params.roleName });
   const messageTab = hasRelay ? (
     <li className="nav-item">
       <Link

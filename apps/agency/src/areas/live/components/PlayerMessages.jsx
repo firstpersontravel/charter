@@ -105,9 +105,8 @@ export default class PlayerMessages extends Component {
       this.props.params.withRoleName === 'All' ||
       this.state.pendingMessage === '');
 
-    const relays = _.filter(this.props.player.trip.script.content.relays, (
-      relay => (relay.as || relay.for) === this.props.params.roleName
-    ));
+    const relays = _.filter(this.props.player.trip.script.content.relays,
+      { as: this.props.params.roleName });
     const counterparts = _.uniq(relays.map(relay => relay.with));
     const counterpartOptions = counterparts.map(counterpart => (
       <option key={counterpart} value={counterpart}>{counterpart}</option>

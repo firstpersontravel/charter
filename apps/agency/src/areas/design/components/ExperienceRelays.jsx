@@ -34,15 +34,31 @@ export default class ExperienceRelays extends React.Component {
 
   constructor(props) {
     super(props);
+    this.fetchedExperienceId = null;
     this.handleUpdateRelays = this.handleUpdateRelays.bind(this);
     this.handleToggleAllActive = this.handleToggleAllActive.bind(this);
     this.handleChangeRelayIsActive = this.handleChangeRelayIsActive.bind(this);
   }
 
   componentDidMount() {
+    this.fetchRelays(this.props.experience);
+  }
+
+  componentDidReceiveProps(nextProps) {
+    this.fetchRelays(nextProps.experience);
+  }
+
+  fetchRelays(experience) {
+    if (!experience) {
+      return;
+    }
+    if (experience.id === this.fetchedExperienceId) {
+      return;
+    }
+    this.fetchedExperienceId = experience.id;
     this.props.listCollection('relays', {
       stage: getStage(),
-      scriptName: this.props.experienceName
+      experienceId: experience.id
     });
   }
 
@@ -75,7 +91,7 @@ export default class ExperienceRelays extends React.Component {
 
   relaysForSpec(relaySpec) {
     return _.filter(this.props.relays, {
-      scriptName: this.props.experienceName,
+      experienceId: this.props.experience.id,
       forRoleName: relaySpec.for,
       withRoleName: relaySpec.with,
       asRoleName: relaySpec.as || relaySpec.for
@@ -85,7 +101,7 @@ export default class ExperienceRelays extends React.Component {
   renderRelay(relaySpec, departureName) {
     const relays = _(this.props.relays)
       .filter({
-        scriptName: this.props.experienceName,
+        experienceId: this.props.experience.id,
         departureName: departureName,
         forRoleName: relaySpec.for,
         withRoleName: relaySpec.with,
@@ -229,7 +245,7 @@ export default class ExperienceRelays extends React.Component {
   }
 
   render() {
-    if (!this.props.script) {
+    if (!this.props.script || !this.props.experience) {
       return <div>Loading</div>;
     }
     return (
@@ -251,7 +267,6 @@ ExperienceRelays.propTypes = {
   listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   updateRelays: PropTypes.func.isRequired,
-  experienceName: PropTypes.string.isRequired,
   experience: PropTypes.object,
   script: PropTypes.object,
   relays: PropTypes.array.isRequired

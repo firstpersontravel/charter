@@ -56,6 +56,11 @@ async function handleIncomingMessage(fromNumber, toNumber, body, media) {
   }
 
   const relaySpec = RelayController.specForRelay(script, relay);
+  if (!relaySpec) {
+    logger.warn(`Relay ${relay.id} does not have a spec in this script.`);
+    return false;
+  }
+
   if (!relaySpec.sms_in) {
     logger.warn(`Relay ${relay.id} does not accept incoming SMS.`);
     return false;

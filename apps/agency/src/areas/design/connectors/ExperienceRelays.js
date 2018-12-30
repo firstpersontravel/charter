@@ -11,13 +11,14 @@ const mapStateToProps = (state, ownProps) => {
   });
   return {
     areAnyRequestsPending: _.includes(_.values(state.requests), 'pending'),
-    experienceName: ownProps.params.experienceName,
     experience: experience,
     script: _.find(state.datastore.scripts, {
-      experienceId: experience && experience.id
+      experienceId: experience && experience.id,
+      isArchived: false,
+      isActive: true
     }),
     relays: _.filter(state.datastore.relays, {
-      scriptName: ownProps.params.experienceName,
+      experienceId: experience && experience.id,
       stage: getStage()
     })
   };

@@ -71,16 +71,16 @@ class RelaysController {
   /**
    * Make sure a relay exists for a given spec
    */
-  static async ensureRelay(scriptName, departureName, relaySpec, userNumber) {
+  static async ensureRelay(experienceId, departureName, relaySpec, userNum) {
     // Get relay if it exists, either for everyone or for this user.
     const relayFields = {
       stage: config.env.STAGE,
-      scriptName: scriptName,
+      experienceId: experienceId,
       departureName: departureName,
       forRoleName: relaySpec.for,
       withRoleName: relaySpec.with,
       asRoleName: relaySpec.as || relaySpec.for,
-      userPhoneNumber: userNumber
+      userPhoneNumber: userNum
     };
     // Return relay if it exists
     const existingRelay = await models.Relay.find({ where: relayFields });
@@ -89,7 +89,7 @@ class RelaysController {
     }
     // If it doesn't we'll need to create it! Allocate a new number.
     const relayPhoneNumber = await (
-      RelaysController.assignRelayPhoneNumber(userNumber)
+      RelaysController.assignRelayPhoneNumber(userNum)
     );
     // Return null if we couldn't allocate a phone number -- due to no twilio
     // client.
@@ -106,12 +106,12 @@ class RelaysController {
   /**
    * Find a relay by its number and a user number.
    */
-  static async findByNumber(relayNumber, userNumber) {
+  static async findByNumber(relayNumber, userNum) {
     return await models.Relay.find({
       where: {
         stage: config.env.STAGE,
         relayPhoneNumber: relayNumber,
-        userPhoneNumber: { [Sequelize.Op.or]: ['', userNumber] },
+        userPhoneNumber: { [Sequelize.Op.or]: ['', userNum] },
         isActive: true
       }
     });

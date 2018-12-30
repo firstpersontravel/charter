@@ -19,6 +19,7 @@
       relays:
         - name: relay-1
           for: Actor
+          as: Actor
           with: Player
           phone_in: true
           phone_out: true
@@ -26,6 +27,7 @@
           sms_out: true
         - name: relay-2
           for: Player
+          as: Player
           with: Actor
           phone_in: true
           phone_out: true
@@ -34,6 +36,7 @@
           trailhead: true
         - name: relay-3
           for: StageManager
+          as: StageManager
           with: Player
           admin_out: true
 
@@ -88,7 +91,7 @@
 - model: Relay
   data:
     id: 3
-    scriptName: script
+    experience: 1
     departureName: T1
     stage: test
     isActive: true
@@ -102,7 +105,7 @@
 - model: Relay
   data:
     id: 4
-    scriptName: script
+    experience: 1
     departureName: T1
     stage: test
     isActive: true
@@ -116,7 +119,7 @@
 - model: Relay
   data:
     id: 5
-    scriptName: script
+    experience: 1
     departureName: T1
     stage: test
     isActive: true

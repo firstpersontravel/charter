@@ -16,7 +16,7 @@ describe('RelayController', () => {
   describe('#scriptForRelay', () => {
     it('looks up active script for a script name', async () => {
       const stubScript = { name: 'abc', experience: {} };
-      const relay = { scriptName: 'abc' };
+      const relay = { experienceId: 10 };
 
       sandbox.stub(models.Script, 'find').resolves(stubScript);
       const res = await RelayController.scriptForRelay(relay);
@@ -26,7 +26,7 @@ describe('RelayController', () => {
         include: [{
           model: models.Experience,
           as: 'experience',
-          where: { name: 'abc' }
+          where: { id: 10 }
         }]
       });
     });
@@ -35,7 +35,7 @@ describe('RelayController', () => {
   describe('#specForRelay', () => {
     const stubRelays = [
       { for: 'for', with: 'with', as: 'as' },
-      { for: 'for2', with: 'with2' }
+      { for: 'for2', with: 'with', as: 'as' }
     ];
     const stubScript = { content: { relays: stubRelays } };
 
@@ -43,12 +43,6 @@ describe('RelayController', () => {
       const res = RelayController.specForRelay(stubScript,
         { forRoleName: 'for', withRoleName: 'with', asRoleName: 'as' });
       assert.deepStrictEqual(res, stubScript.content.relays[0]);
-    });
-
-    it('finds spec with for and with', () => {
-      const res = RelayController.specForRelay(stubScript,
-        { forRoleName: 'for2', withRoleName: 'with2', asRoleName: 'for2' });
-      assert.deepStrictEqual(res, stubScript.content.relays[1]);
     });
 
     it('returns null if spec not found', () => {
@@ -60,7 +54,7 @@ describe('RelayController', () => {
 
   describe('#findSiblings', () => {
     it('looks up sibling relays', async () => {
-      const relay = { scriptName: 'script', departureName: 'dep' };
+      const relay = { experienceId: 10, departureName: 'dep' };
       const stubResult = { id: 2 };
       sandbox.stub(models.Relay, 'findAll').resolves(stubResult);
       
@@ -70,7 +64,7 @@ describe('RelayController', () => {
       sinon.assert.calledWith(models.Relay.findAll, {
         where: {
           stage: 'test',
-          scriptName: relay.scriptName,
+          experienceId: relay.experienceId,
           departureName: relay.departureName,
           withRoleName: 'with',
           asRoleName: 'as',
@@ -87,7 +81,7 @@ describe('RelayController', () => {
       const relay = {
         forRoleName: 'ForRole',
         departureName: 'T1',
-        scriptName: 'abc'
+        experienceId: 10
       };
 
       sandbox.stub(models.Player, 'find').resolves(stubPlayer);
@@ -106,16 +100,11 @@ describe('RelayController', () => {
         }, {
           model: models.Trip,
           as: 'trip',
-          where: { departureName: relay.departureName, isArchived: false },
-          include: [{
-            model: models.Script,
-            as: 'script',
-            include: [{
-              model: models.Experience,
-              as: 'experience',
-              where: { name: relay.scriptName }
-            }]
-          }]
+          where: {
+            experienceId: relay.experienceId,
+            departureName: relay.departureName,
+            isArchived: false
+          },
         }]
       });
     });

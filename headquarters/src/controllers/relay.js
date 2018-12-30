@@ -24,9 +24,7 @@ class RelayController {
       include: [{
         model: models.Experience,
         as: 'experience',
-        where: {
-          name: relay.scriptName
-        }
+        where: { id: relay.experienceId }
       }]
     });
   }
@@ -38,7 +36,7 @@ class RelayController {
     return _.find(script.content.relays, r => (
       r.for === relay.forRoleName &&
       r.with === relay.withRoleName &&
-      (r.as || r.for) === relay.asRoleName
+      r.as === relay.asRoleName
     )) || null;
   }
 
@@ -49,7 +47,7 @@ class RelayController {
     return await models.Relay.findAll({
       where: {
         stage: config.env.STAGE,
-        scriptName: relay.scriptName,
+        experienceId: relay.experienceId,
         departureName: relay.departureName,
         withRoleName: withRoleName,
         asRoleName: asRoleName,
@@ -75,16 +73,11 @@ class RelayController {
       }, {
         model: models.Trip,
         as: 'trip',
-        where: { departureName: relay.departureName, isArchived: false },
-        include: [{
-          model: models.Script,
-          as: 'script',
-          include: [{
-            model: models.Experience,
-            as: 'experience',
-            where: { name: relay.scriptName }
-          }]
-        }]
+        where: {
+          experienceId: relay.experienceId,
+          departureName: relay.departureName,
+          isArchived: false
+        },
       }]
     });
   }

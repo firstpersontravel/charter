@@ -60,7 +60,7 @@ describe('TripRelaysController', () => {
 
   describe('#ensureRelay', () => {
 
-    const trip = { id: 1, departureName: 'dep1' };
+    const trip = { id: 1, departureName: 'dep1', experienceId: 10 };
     const relaySpec = { for: 'Role' };
     const phoneNum = '1234567890';
     const stubRelay = {};
@@ -70,28 +70,27 @@ describe('TripRelaysController', () => {
       sandbox.stub(TripRelaysController, 'userNumberForRelay')
         .resolves(phoneNum);
 
-      const res = await TripRelaysController.ensureRelay(
-        trip, 's', relaySpec);
+      const res = await TripRelaysController.ensureRelay(trip, relaySpec);
 
       assert.strictEqual(res, stubRelay);
       sinon.assert.calledWith(TripRelaysController.userNumberForRelay,
         trip, relaySpec);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        's', 'dep1', relaySpec, phoneNum);
+        10, 'dep1', relaySpec, phoneNum);
     });
 
     it('fetches relay for trailhead', async () => {
-      const trailheadSpec = { for: 'Role', trailhead: true };
+      const trailheadSpec = { for: 'Role', trailhead: true, experienceId: 10 };
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
       sandbox.stub(TripRelaysController, 'userNumberForRelay');
 
       const res = await TripRelaysController.ensureRelay(
-        trip, 's', trailheadSpec);
+        trip, trailheadSpec);
 
       assert.strictEqual(res, stubRelay);
       sinon.assert.notCalled(TripRelaysController.userNumberForRelay);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        's', 'dep1', trailheadSpec, '');
+        10, 'dep1', trailheadSpec, '');
     });
 
     it('returns null if no phone number found', async () => {
@@ -99,7 +98,7 @@ describe('TripRelaysController', () => {
       sandbox.stub(TripRelaysController, 'userNumberForRelay')
         .resolves(null);
 
-      const res = await TripRelaysController.ensureRelay(trip, 's', relaySpec);
+      const res = await TripRelaysController.ensureRelay(trip, relaySpec);
 
       assert.strictEqual(res, null);
       sinon.assert.notCalled(RelaysController.ensureRelay);
@@ -144,7 +143,7 @@ describe('TripRelaysController', () => {
       // Should filter out by spec and only call ensureRelay with one
       sinon.assert.calledOnce(TripRelaysController.ensureRelay);
       sinon.assert.calledWith(TripRelaysController.ensureRelay, stubTrip,
-        stubExperience.name, stubScript.content.relays[0]);
+        stubScript.content.relays[0]);
       // Should return list of relays
       assert.deepStrictEqual(res, [stubRelay]);
     });

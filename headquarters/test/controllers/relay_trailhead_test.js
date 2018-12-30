@@ -12,7 +12,7 @@ const sandbox = sinon.sandbox.create();
 
 const mockTrailhead = {
   forRoleName: 'Player',
-  scriptName: 'script',
+  experienceIe: 10,
   departureName: 'Main'
 };
 const mockTrip = { id: 100 };

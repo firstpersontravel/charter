@@ -31,11 +31,11 @@ class TripRelaysController {
   /**
    * Ensure a relay exists for a given spec and script.
    */
-  static async ensureRelay(trip, scriptName, relaySpec) {
+  static async ensureRelay(trip, relaySpec) {
     // If it's a trailhead, look for a universal relay.
     if (relaySpec.trailhead) {
-      return await RelaysController.ensureRelay(scriptName, trip.departureName,
-        relaySpec, '');
+      return await RelaysController.ensureRelay(trip.experienceId,
+        trip.departureName, relaySpec, '');
     }
     // Otherwise, look up the user phone number for a relay.
     const userPhoneNumber = await this.userNumberForRelay(trip, relaySpec);
@@ -46,8 +46,8 @@ class TripRelaysController {
     }
     // If we have a phone number, then we can ensure a relay exists for that
     // number.
-    return await RelaysController.ensureRelay(scriptName, trip.departureName,
-      relaySpec, userPhoneNumber);
+    return await RelaysController.ensureRelay(trip.experienceId,
+      trip.departureName, relaySpec, userPhoneNumber);
   }
 
   /**
@@ -55,7 +55,6 @@ class TripRelaysController {
    */
   static async ensureRelays(trip, specFilters, specType) {
     const script = await models.Script.findById(trip.scriptId);
-    const experience = await models.Experience.findById(trip.experienceId);
 
     // Get specs that match the filters and also the type we're looking for.
     const relaySpecs = _(script.content.relays)
@@ -69,7 +68,7 @@ class TripRelaysController {
 
     // Ensure all relays exist.
     const relays = await Promise.all(relaySpecs.map(relaySpec => (
-      this.ensureRelay(trip, experience.name, relaySpec))
+      this.ensureRelay(trip, relaySpec))
     ));
 
     // Filter out null responses returned for users w/no phone numbers.
