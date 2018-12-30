@@ -13,7 +13,7 @@ function renderRole(experience, roleName, roleProfiles) {
         activeClassName="bold"
         to={{
           pathname: '/agency/users',
-          query: { experience: experience.name, role: roleName }
+          query: { experienceId: experience.id, role: roleName }
         }}>
         {roleName}
       </Link>
@@ -24,7 +24,7 @@ function renderRole(experience, roleName, roleProfiles) {
 
 function renderExperienceRoles(roleQuery, experience, profiles) {
   const experienceProfiles = _.filter(profiles, {
-    scriptName: experience.name
+    experienceId: experience.id
   });
   const roleNames = _.uniq(_.map(profiles, 'roleName')).sort();
   const renderedRoles = _.filter(roleNames)
@@ -34,7 +34,7 @@ function renderExperienceRoles(roleQuery, experience, profiles) {
     <div key={experience.id} style={{ marginTop: '0.5em' }}>
       <div>
         <strong>
-          <Link to={`/agency/users?experience=${experience.name}`}>
+          <Link to={`/agency/users?experienceId=${experience.id}`}>
             {experience.title}
           </Link>
         </strong>

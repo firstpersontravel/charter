@@ -76,7 +76,7 @@ export default class GroupPlayers extends Component {
       userClass = '';
     }
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, experience.name, roleName,
+      this.props.profiles, this.props.users, experience.id, roleName,
       departureName);
     const userChoices = profileChoices
       .map(profile => (
@@ -95,7 +95,7 @@ export default class GroupPlayers extends Component {
               query: {
                 editing: true,
                 role: roleName,
-                experience: experience.name
+                experienceId: experience.id
               }
             }}>
             Add user

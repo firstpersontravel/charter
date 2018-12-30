@@ -6,7 +6,7 @@ import { createInstance } from '../../../actions';
 
 const mapStateToProps = (state, ownProps) => ({
   users: state.datastore.users,
-  experiences: _.filter(state.datastore.profiles, { isArchived: false }),
+  experiences: _.filter(state.datastore.experiences, { isArchived: false }),
   profiles: _.filter(state.datastore.profiles, { isArchived: false })
 });
 

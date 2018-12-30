@@ -10,7 +10,7 @@ export default class ProfileModal extends Component {
 
   static getDefaultState(profile) {
     return {
-      scriptName: profile ? profile.scriptName : '',
+      experienceId: profile ? profile.experienceId : '',
       roleName: profile ? profile.roleName : '',
       departureName: profile ? profile.departureName : '',
       photo: profile ? profile.photo : '',
@@ -27,7 +27,7 @@ export default class ProfileModal extends Component {
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
-    this.handleChangeScriptName = this.handleChangeScriptName.bind(this);
+    this.handleChangeExperienceId = this.handleChangeExperienceId.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
   }
 
@@ -51,9 +51,9 @@ export default class ProfileModal extends Component {
     this.props.onConfirm(_.assign({}, this.state));
   }
 
-  handleChangeScriptName(event) {
+  handleChangeExperienceId(event) {
     this.setState({
-      scriptName: event.target.value,
+      experienceId: event.target.value,
       roleName: '',
       departureName: ''
     });
@@ -76,7 +76,7 @@ export default class ProfileModal extends Component {
   }
 
   isValid() {
-    if (!this.state.scriptName) {
+    if (!this.state.experienceId) {
       return false;
     }
     if (!this.state.roleName) {
@@ -101,16 +101,17 @@ export default class ProfileModal extends Component {
     const isValid = this.isValid();
 
     const experienceOptions = this.props.experiences.map(experience => (
-      <option key={experience.name} value={experience.name}>
+      <option key={experience.id} value={experience.id}>
         {experience.title}
       </option>
     ));
     const experience = _.find(this.props.experiences, {
-      name: this.state.scriptName
+      id: this.state.experienceId
     });
     const script = _.find(this.props.scripts, {
       experienceId: experience && experience.id,
-      isArchived: false
+      isArchived: false,
+      isActive: true
     });
     const roles = script ? script.content.roles : [];
     const departures = script ? script.content.departures : [];
@@ -156,8 +157,8 @@ export default class ProfileModal extends Component {
                 <select
                   className="form-control"
                   id="profile_script_name"
-                  onChange={this.handleChangeScriptName}
-                  value={this.state.scriptName}>
+                  onChange={this.handleChangeExperienceId}
+                  value={this.state.experienceId}>
                   <option value="">--</option>
                   {experienceOptions}
                 </select>

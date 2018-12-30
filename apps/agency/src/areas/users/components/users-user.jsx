@@ -131,7 +131,7 @@ export default class UsersUser extends Component {
     const playerItems = this.props.activeRoles
       .filter(role => (
         role.experience &&
-        role.experience.name === profile.scriptName &&
+        role.experience.id === profile.experienceId &&
         role.player &&
         role.player.roleName === profile.roleName
       ))
@@ -145,13 +145,16 @@ export default class UsersUser extends Component {
 
   renderProfile(profile) {
     const experience = _.find(this.props.experiences, {
-      name: profile.scriptName
+      id: profile.experienceId
     });
+    if (!experience) {
+      return null;
+    }
     const script = _.find(this.props.scripts, {
       experienceId: experience.id,
       isArchived: false
     });
-    if (!experience || !script) {
+    if (!script) {
       return null;
     }
     const photo = profile.photo ? (<div>Photo: {profile.photo}</div>) : null;
@@ -179,11 +182,11 @@ export default class UsersUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            <Link to={`/agency/users?experience=${experience.name}`}>
+            <Link to={`/agency/users?experienceId=${experience.id}`}>
               {experience.title}
             </Link>
             &nbsp;&bull;&nbsp;
-            <Link to={`/agency/users?experience=${experience.name}&role=${role.name}`}>
+            <Link to={`/agency/users?experienceId=${experience.id}&role=${role.name}`}>
               {role.name}
             </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }

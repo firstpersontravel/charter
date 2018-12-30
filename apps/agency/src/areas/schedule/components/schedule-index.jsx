@@ -152,7 +152,7 @@ export default class ScheduleIndex extends Component {
 
   initialFieldsForRole(experience, script, role, departureName, variantNames) {
     const profiles = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, experience.name,
+      this.props.profiles, this.props.users, experience.id,
       role.name, departureName);
     const users = profiles.map(profile => (
       _.find(this.props.users, { id: profile.userId })

@@ -31,10 +31,10 @@ describe('TwilioMessageHandler', () => {
     };
     const relaySentinel = {
       id: 2,
+      experienceId: 20,
       forRoleName: 'From',
       asRoleName: 'From',
-      withRoleName: 'To',
-      scriptName: 'script'
+      withRoleName: 'To'
     };
 
     beforeEach(() => {

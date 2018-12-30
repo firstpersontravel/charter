@@ -22,7 +22,7 @@ export default DS.Model.extend({
     var profiles = this.get('user.profiles')
       .filter(profile => (
         profile.get('roleName') === this.get('roleName') &&
-        profile.get('scriptName') === this.get('trip.experience.name')
+        profile.get('experience') === this.get('trip.experience')
       ));
     return profiles[0] || null;
   }.property('user.profiles'),

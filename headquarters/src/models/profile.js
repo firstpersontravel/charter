@@ -1,4 +1,5 @@
 const database = require('../config').database;
+const Experience = require('./experience');
 const User = require('./user');
 
 const {
@@ -14,7 +15,6 @@ const {
  * Profile model
  */
 const Profile = database.define('Profile', snakeCaseColumns({
-  scriptName: requiredStringField(32),
   roleName: requiredStringField(32),
   departureName: optionalStringField(32),
   isActive: booleanField(true),
@@ -27,5 +27,6 @@ const Profile = database.define('Profile', snakeCaseColumns({
 }));
 
 oneToMany(Profile, User);
+oneToMany(Profile, Experience);
 
 module.exports = Profile;

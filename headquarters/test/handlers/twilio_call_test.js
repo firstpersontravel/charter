@@ -18,7 +18,7 @@ describe('TwilioCallHandler', () => {
 
   describe('#_triggerEventAndGatherTwiml', () => {
 
-    const stubRelay = { id: 100, scriptName: 'script', departureName: 'T0' };
+    const stubRelay = { id: 100, experienceId: 10, departureName: 'T0' };
     const stubEvent = { event: true };
 
     it('returns dial', async () => {

@@ -19,6 +19,7 @@ const mockTrip = { id: 100 };
 const mockScript = {
   id: 10,
   experience: {
+    id: 20,
     name: 'script',
     title: 'Script',
     timezone: 'US/Pacific',
@@ -79,7 +80,7 @@ describe('RelayTrailheadController', () => {
         where: {
           isActive: true,
           isArchived: false,
-          scriptName: 'script',
+          experienceId: 20,
           roleName: 'role'
         }
       });
@@ -110,7 +111,7 @@ describe('RelayTrailheadController', () => {
         where: {
           isActive: true,
           isArchived: false,
-          scriptName: 'script',
+          experienceId: 20,
           roleName: 'role'
         }
       });
@@ -156,7 +157,7 @@ describe('RelayTrailheadController', () => {
         where: {
           isArchived: false,
           roleName: 'Player',
-          scriptName: 'script',
+          experienceId: 20,
           userId: 2
         },
         defaults: {

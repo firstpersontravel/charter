@@ -12,13 +12,13 @@ class RelayTrailheadController {
    * Update the player to assign a user when starting a new trip
    * for a trailhead.
    */
-  static async assignActor(script, trip, role) {
+  static async assignActor(experience, trip, role) {
     // If we pass through here, try finding a user for this role.
     const roleProfiles = await models.Profile.findAll({
       where: {
         isActive: true,
         isArchived: false,
-        scriptName: script.experience.name,
+        experienceId: experience.id,
         roleName: role.name
       }
     });
@@ -34,7 +34,7 @@ class RelayTrailheadController {
     const host = config.env.SERVER_HOST_PUBLIC;
     const actorUrl = `${host}/actor/${matchingProfile.userId}`;
     const castMessage = (
-      `New trip for ${script.experience.title} as ${role.name}: ${actorUrl}`
+      `New trip for ${experience.title} as ${role.name}: ${actorUrl}`
     );
     await TripRelaysController.sendAdminMessage(trip, role.name, castMessage);
   }
@@ -50,7 +50,8 @@ class RelayTrailheadController {
       if (!role.user || !role.actor) {
         continue;
       }
-      await RelayTrailheadController.assignActor(script, trip, role);
+      await RelayTrailheadController.assignActor(script.experience, trip,
+        role);
     }
   }
 
@@ -81,7 +82,7 @@ class RelayTrailheadController {
     const [trailheadProfile, ] = await models.Profile.findOrCreate({
       where: {
         userId: trailheadUser.id,
-        scriptName: script.experience.name,
+        experienceId: script.experience.id,
         roleName: trailheadRelay.forRoleName,
         isArchived: false
       },

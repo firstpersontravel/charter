@@ -25,9 +25,9 @@ export default class Users extends Component {
 
   handleUserModalClose() {
     const role = this.props.location.query.role;
-    const scriptName = this.props.location.query.experience;
+    const experienceId = this.props.location.query.experienceId;
     browserHistory.push(
-      `/agency/users${scriptName ? `?experience=${scriptName}` : ''}` +
+      `/agency/users${experienceId ? `?experienceId=${experienceId}` : ''}` +
       `${role ? `&role=${role}` : ''}`
     );
   }
@@ -40,10 +40,10 @@ export default class Users extends Component {
     if (user.devicePushToken) {
       statusIcons.push(<i key="comment" className="fa fa-comment" />);
     }
+    const experienceId = this.props.location.query.experienceId;
     const profileParams = { userId: user.id };
-    const scriptName = this.props.location.query.experience;
-    if (scriptName) {
-      profileParams.scriptName = scriptName;
+    if (experienceId) {
+      profileParams.experienceId = Number(experienceId);
     }
     const userProfiles = _(this.props.profiles)
       .filter(profileParams)
@@ -58,7 +58,10 @@ export default class Users extends Component {
           }}
           to={{
             pathname: '/agency/users',
-            query: { experience: profile.scriptName, role: profile.roleName }
+            query: {
+              experienceId: profile.experienceId,
+              role: profile.roleName
+            }
           }}>
           {profile.roleName}
         </Link>
@@ -81,29 +84,28 @@ export default class Users extends Component {
 
   renderHeader() {
     const roleName = this.props.location.query.role;
-    const experienceName = this.props.location.query.experience;
-    const experience = experienceName ?
-      _.find(this.props.experiences, { name: experienceName }) : null;
-    const experienceTitle = experience ? experience.title : experienceName;
-    if (roleName && experienceName) {
+    const experienceId = this.props.location.query.experienceId;
+    const experience = experienceId ?
+      _.find(this.props.experiences, { id: Number(experienceId) }) : null;
+    if (roleName && experience) {
       return (
         <h3>
           <Link to="/agency/users">Users</Link>
           &nbsp;›&nbsp;
-          <Link to={`/agency/users?experience=${experienceName}`}>
-            {experienceTitle}
+          <Link to={`/agency/users?experienceId=${experienceId}`}>
+            {experience.title}
           </Link>
           &nbsp;›&nbsp;
           {roleName}
         </h3>
       );
     }
-    if (experienceName) {
+    if (experience) {
       return (
         <h3>
           <Link to="/agency/users">Users</Link>
           &nbsp;›&nbsp;
-          {experienceTitle}
+          {experience.title}
         </h3>
       );
     }
@@ -114,7 +116,7 @@ export default class Users extends Component {
 
   render() {
     const roleName = this.props.location.query.role;
-    const experienceName = this.props.location.query.experience;
+    const experienceId = this.props.location.query.experienceId;
     const userRows = _.filter(this.props.users,
       (user) => {
         if (roleName === 'Archived') {
@@ -123,14 +125,18 @@ export default class Users extends Component {
         if (user.isArchived) {
           return false;
         }
-        const userProfiles = _.filter(this.props.profiles,
-          { userId: user.id });
-        if (experienceName) {
-          if (!_.find(userProfiles, { scriptName: experienceName })) {
+        const userProfiles = _.filter(this.props.profiles, {
+          userId: user.id
+        });
+        if (experienceId) {
+          if (!_.find(userProfiles, { experienceId: Number(experienceId) })) {
             return false;
           }
           if (roleName) {
-            const roleParams = { scriptName: experienceName, roleName: roleName };
+            const roleParams = {
+              experienceId: Number(experienceId),
+              roleName: roleName
+            };
             if (!_.find(userProfiles, roleParams)) {
               return false;
             }
@@ -161,7 +167,7 @@ export default class Users extends Component {
               pathname: '/agency/users',
               query: {
                 role: roleName || undefined,
-                experience: experienceName || undefined,
+                experienceId: experienceId || undefined,
                 editing: true
               }
             }}

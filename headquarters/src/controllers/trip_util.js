@@ -17,7 +17,7 @@ class TripUtil {
     if (user) {
       const profileInstance = user ? _.find(objs.profiles, {
         userId: player.userId,
-        scriptName: objs.experience.name,
+        experienceId: objs.experience.id,
         roleName: player.roleName,
       }) : null;
       if (profileInstance) {
@@ -92,7 +92,7 @@ class TripUtil {
       where: { tripId: tripId }
     });
     const profiles = await models.Profile.findAll({
-      where: { scriptName: trip.experience.name }
+      where: { experienceId: trip.experience.id }
     });
     const users = await models.User.findAll({
       where: { id: _.map(players, 'dataValues.userId').filter(Boolean) }

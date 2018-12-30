@@ -10,6 +10,8 @@ export default DS.Model.extend({
   environment: Ember.inject.service(),
 
   script: DS.belongsTo('script', {async: false}),
+  experience: DS.belongsTo('experience', {async: false}),
+
   date: DS.attr('string'),
   templateName: DS.attr('string'),
   departureName: DS.attr('string'),
@@ -61,7 +63,7 @@ export default DS.Model.extend({
       if (user) {
         p.user = user.toJSON();
         const profile = user.get('profiles').filter(profile => (
-          profile.get('scriptName') === experience.get('name') &&
+          profile.get('experience') === experience &&
           profile.get('roleName') === p.roleName
         ))[0];
         if (profile) {
@@ -102,6 +104,6 @@ export default DS.Model.extend({
 
   humanizeText: function(text) {
     return fptCore.EvalCore.templateText(this.get('evalContext'), text,
-      this.get('script.experience.timezone'));
+      this.get('experience.timezone'));
   }
 });
