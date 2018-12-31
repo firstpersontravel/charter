@@ -11,7 +11,7 @@ const {
   jsonField,
   oneToMany,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 function getResourceErrors(script, collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);

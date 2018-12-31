@@ -135,4 +135,29 @@ describe('API replace', () => {
         });
     });
   });
+
+  describe('PUT /api/trips/:id', () => {
+    beforeEach(async () => {
+      await trip.update({ values: { existing: true, outer: { one: 2 } } });
+    });
+
+    it('replaces values completely', () => {
+      return request(app)
+        .put(`/api/trips/${trip.id}`)
+        .send({ values: { outer: { inner: 'value' } } })
+        .set('Accept', 'application/json')
+        .expect(200)
+        .then(async (res) => {
+          // Test set in DB
+          await trip.reload();
+          assert.deepStrictEqual(trip.values, {
+            outer: { inner: 'value' }
+          });
+          // Test updated in response
+          assert.deepStrictEqual(res.body.data.trip.values, {
+            outer: { inner: 'value' }
+          });
+        });
+    });
+  });
 });

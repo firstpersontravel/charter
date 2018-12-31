@@ -13,7 +13,7 @@ const {
   oneToMany,
   belongsTo,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 
 /**

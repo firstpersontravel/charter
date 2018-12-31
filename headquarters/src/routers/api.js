@@ -36,17 +36,49 @@ function createCollectionRouter(model, config={})
   return router;
 }
 
-// REST API routes
-apiRouter.use('/actions', createCollectionRouter(models.Action));
-apiRouter.use('/experiences', createCollectionRouter(models.Experience));
-apiRouter.use('/groups', createCollectionRouter(models.Group));
-apiRouter.use('/messages', createCollectionRouter(models.Message));
-apiRouter.use('/players', createCollectionRouter(models.Player));
-apiRouter.use('/profiles', createCollectionRouter(models.Profile));
-apiRouter.use('/trips', createCollectionRouter(models.Trip));
-apiRouter.use('/relays', createCollectionRouter(models.Relay));
-apiRouter.use('/scripts', createCollectionRouter(models.Script));
-apiRouter.use('/users', createCollectionRouter(models.User));
+// Custom field definitions
+const apiConfigs = {
+  Action: {
+    route: '/actions'
+  },
+  Experience: {
+    route: '/experiences'
+  },
+  Group: {
+    route: '/groups'
+  },
+  Message: {
+    route: '/messages'
+  },
+  Player: {
+    route: '/players'
+  },
+  Profile: {
+    route: '/profiles'
+  },
+  Trip: {
+    route: '/trips'
+  },
+  Relay: {
+    route: '/relays'
+  },
+  Script: {
+    route: '/scripts'
+  },
+  User: {
+    route: '/users'
+  }
+};
+
+// Create REST API routes.
+Object.keys(apiConfigs).forEach((key) => {
+  const apiConfig = apiConfigs[key];
+  const route = apiConfig.route;
+  const routeConfig = apiConfig.config;
+  const model = models[key];
+  const collectionRouter = createCollectionRouter(model, routeConfig);
+  apiRouter.use(route, collectionRouter);
+});
 
 // Action routes
 apiRouter.post('/trips/:tripId/actions',

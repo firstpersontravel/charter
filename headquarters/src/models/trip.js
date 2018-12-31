@@ -12,7 +12,7 @@ const {
   jsonField,
   oneToMany,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 /**
  * Trip model.

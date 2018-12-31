@@ -7,7 +7,7 @@ const {
   booleanField,
   oneToMany,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 /**
  * Group model.

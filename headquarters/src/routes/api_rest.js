@@ -41,7 +41,8 @@ function deserializeFields(fields) {
 function mergeFields(record, fields) {
   return _.mapValues(fields, function(value, key) {
     if (_.isPlainObject(record[key]) && _.isPlainObject(value)) {
-      return _.merge({}, record[key], value);
+      // Shallow merge of records only
+      return Object.assign({}, record[key], value);
     } else {
       return value;
     }

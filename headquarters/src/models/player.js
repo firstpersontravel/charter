@@ -8,7 +8,7 @@ const {
   optionalStringField,
   oneToMany,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 /**
  * Player model.

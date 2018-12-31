@@ -9,7 +9,7 @@ const {
   oneToMany,
   jsonField,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 /**
  * Profile model

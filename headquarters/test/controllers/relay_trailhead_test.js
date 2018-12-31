@@ -57,7 +57,7 @@ describe('RelayTrailheadController', () => {
       // Test called only once with the actor
       sinon.assert.calledOnce(RelayTrailheadController.assignActor);
       sinon.assert.calledWith(RelayTrailheadController.assignActor,
-        mockScript, mockTrip, mockScript.content.roles[0]);
+        mockScript.experience, mockTrip, mockScript.content.roles[0]);
     });
   });
 
@@ -72,8 +72,8 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(TripRelaysController, 'sendAdminMessage').resolves();
 
-      await RelayTrailheadController.assignActor(mockScript, mockTrip,
-        { name: 'role' });
+      await RelayTrailheadController.assignActor(
+        mockScript.experience, mockTrip, { name: 'role' });
 
       // Test assertions
       sinon.assert.calledWith(models.Profile.findAll, {
@@ -103,8 +103,8 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(TripRelaysController, 'sendAdminMessage').resolves();
 
-      await RelayTrailheadController.assignActor(mockScript, mockTrip,
-        { name: 'role' });
+      await RelayTrailheadController.assignActor(
+        mockScript.experience, mockTrip, { name: 'role' });
 
       // Test assertions
       sinon.assert.calledWith(models.Profile.findAll, {

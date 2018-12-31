@@ -6,8 +6,10 @@ const faye = require('faye');
 const Sequelize = require('sequelize');
 const twilio = require('twilio');
 
+const sequelizeReadonlyPlugin = require('./sequelize/readonly');
+
 try {
-  var envPath = '/var/apps/galaxy/shared/env';
+  const envPath = '/var/apps/galaxy/shared/env';
   fs.readFileSync(envPath, 'utf8')
     .split('\n')
     .filter(Boolean)
@@ -24,7 +26,7 @@ try {
 const ENV_DEFAULTS = {true: true, false: false};
 const env = {};
 
-for (var k in process.env) {
+for (const k in process.env) {
   if (ENV_DEFAULTS[process.env[k]] !== undefined) {
     env[k] = ENV_DEFAULTS[process.env[k]];
   } else {
@@ -38,7 +40,12 @@ const logger = pino({ safe: true, base: {} });
 
 // Configure database
 const dbConfig = require('../config/config');
-var database = new Sequelize(dbConfig[process.env.NODE_ENV || 'development']);
+const environmentName = process.env.NODE_ENV || 'development';
+
+let database = new Sequelize(dbConfig[environmentName]);
+
+// Install read-only fields plugin
+sequelizeReadonlyPlugin(database);
 
 /**
  * Monkey patch issue causing deprecation warning when customizing allowNull
@@ -60,7 +67,7 @@ function getApnProvider() {
     production: (env.APNS_SANDBOX === false)
   });
 }
-var apnProvider = getApnProvider();
+let apnProvider = getApnProvider();
 
 // Configure twilio
 function getTwilioClient() {
@@ -69,7 +76,7 @@ function getTwilioClient() {
   }
   return new twilio(env.TWILIO_SID, env.TWILIO_AUTHTOKEN);
 }
-var twilioClient = getTwilioClient();
+let twilioClient = getTwilioClient();
 
 const fayePath = `${pubsubHost}/pubsub`;
 const fayeClient = new faye.Client(fayePath);

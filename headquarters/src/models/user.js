@@ -8,7 +8,7 @@ const {
   doubleField,
   floatField,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 /**
  * User model.

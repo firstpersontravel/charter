@@ -14,7 +14,7 @@ describe('API update', () => {
   });
 
   describe('PATCH /api/trips/:id', () => {
-    it('updates value with deep merge', () => {
+    it('updates values with shallow merge', () => {
       return request(app)
         .patch(`/api/trips/${trip.id}`)
         .send({ values: { outer: { inner: 'value' } } })
@@ -25,17 +25,17 @@ describe('API update', () => {
           await trip.reload();
           assert.deepStrictEqual(trip.values, {
             existing: true,
-            outer: { one: 2, inner: 'value' }
+            outer: { inner: 'value' }
           });
           // Test updated in response
           assert.deepStrictEqual(res.body.data.trip.values, {
             existing: true,
-            outer: { one: 2, inner: 'value' }
+            outer: { inner: 'value' }
           });
         });
     });
 
-    it('updates value with deep merge on non-matching type', async () => {
+    it('updates values with shallow merge on non-matching type', async () => {
       await trip.update({ values: { outer: 'string' } });
       return request(app)
         .patch(`/api/trips/${trip.id}`)

@@ -5,7 +5,7 @@ const {
   requiredStringField,
   optionalStringField,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 /**
  * Experience model.

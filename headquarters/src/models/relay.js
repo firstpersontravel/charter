@@ -9,7 +9,7 @@ const {
   oneToMany,
   optionalStringField,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 const RELAY_STAGE_OPTIONS = ['test', 'development', 'staging', 'production'];
 

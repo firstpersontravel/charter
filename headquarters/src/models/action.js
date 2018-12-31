@@ -10,7 +10,7 @@ const {
   oneToMany,
   jsonField,
   snakeCaseColumns
-} = require('./fields');
+} = require('../sequelize/fields');
 
 const ACTION_TYPES = ['event', 'action', 'trigger'];
 
