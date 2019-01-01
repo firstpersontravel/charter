@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var moment = require('moment');
-var { DOUBLE, FLOAT, STRING, BOOLEAN, DATE, DATEONLY, TEXT } = require('sequelize');
+var { INTEGER, DOUBLE, FLOAT, STRING, BOOLEAN, DATE, DATEONLY, TEXT } = require('sequelize');
 var stringify = require('json-stable-stringify');
 
 function snakeCaseColumns(fieldValues) {
@@ -12,37 +12,46 @@ function snakeCaseColumns(fieldValues) {
   });
 }
 
-function belongsTo(name, allowNull=false) {
+function mutableModifier(field) {
+  if (field.foreignKey) {
+    delete field.foreignKey.readOnly;
+  } else {
+    delete field.readOnly;
+  }
+  return field;
+}
+
+function allowNullModifier(field) {
+  if (field.foreignKey) {
+    field.foreignKey.allowNull = true;
+    delete field.foreignKey.validate;
+  } else {
+    field.allowNull = true;
+    delete field.validate.allowNull;
+  }
+  return field;
+}
+
+function belongsToField(name) {
   var idField = name + 'Id';
   return {
     as: name,
     foreignKey: {
       name: idField,
       field: _.snakeCase(idField),
-      allowNull: allowNull,
-      validate: allowNull ? {} : { notNull: { msg: 'must be present' } }
+      allowNull: false,
+      readOnly: true,
+      validate: { notNull: { msg: 'must be present' } }
     }
   };
 }
 
-function hasMany(as, targetName, allowNull=false) {
-  var targetIdField = targetName + 'Id';
+function integerField() {
   return {
-    as: as,
-    foreignKey: {
-      name: targetIdField,
-      field: _.snakeCase(targetIdField),
-      allowNull: allowNull,
-      validate: allowNull ? {} : { notNull: { msg: 'must be present' } }
-    }
+    type: INTEGER,
+    allowNull: false,
+    readOnly: true
   };
-}
-
-function oneToMany(HasId, RelatedTo, allowNull=false) {
-  const hasIdName = HasId.name.toLowerCase();
-  const relatedToName = RelatedTo.name.toLowerCase();
-  HasId.belongsTo(RelatedTo, belongsTo(relatedToName, allowNull));
-  RelatedTo.hasMany(HasId, hasMany(hasIdName, relatedToName, allowNull));
 }
 
 function requiredStringField(maxLength, validate=null) {
@@ -74,6 +83,7 @@ function stringField(maxLength, validate=null) {
   return {
     type: STRING,
     allowNull: false,
+    readOnly: true,
     defaultValue: '',
     validate: validateWithLen
   };
@@ -83,6 +93,7 @@ function textField(validate) {
   return {
     type: TEXT,
     allowNull: false,
+    readOnly: true,
     defaultValue: '',
     validate: validate
   };
@@ -92,6 +103,7 @@ function doubleField() {
   return {
     type: DOUBLE,
     allowNull: true,
+    readOnly: true,
     validate: { isFloat: { msg: 'must be a valid number' } }
   };
 }
@@ -100,6 +112,7 @@ function floatField() {
   return {
     type: FLOAT,
     allowNull: true,
+    readOnly: true,
     validate: { isFloat: { msg: 'must be a valid number' } }
   };
 }
@@ -108,6 +121,7 @@ function booleanField(defaultValue) {
   return {
     type: BOOLEAN,
     defaultValue: defaultValue,
+    readOnly: true,
     validate: {
       isBoolean: function(value) {
         if (value !== true && value !== false) {
@@ -118,15 +132,12 @@ function booleanField(defaultValue) {
   };
 }
 
-function datetimeField(allowNull=true) {
-  const validate = { isDate: true };
-  if (!allowNull) {
-    validate.notNull = { msg: 'must be present' };
-  }
+function datetimeField() {
   return {
     type: DATE,
-    allowNull: allowNull,
-    validate: validate
+    allowNull: false,
+    readOnly: true,
+    validate: { isDate: true, notNull: { msg: 'must be present' } }
   };
 }
 
@@ -134,6 +145,7 @@ function dateField(fieldName) {
   return {
     type: DATEONLY,
     allowNull: false,
+    readOnly: true,
     validate: {
       notNull: {
         msg: 'must be present'
@@ -204,6 +216,7 @@ function jsonField(db, modelName, fieldName, options) {
   return {
     type: options.type || TEXT,
     allowNull: false,
+    readOnly: true,
     get: function() {
       var currentValue = this.getDataValue(fieldName);
       if (currentValue === '') {
@@ -222,19 +235,20 @@ function jsonField(db, modelName, fieldName, options) {
 }
 
 module.exports = {
-  belongsTo,
+  allowNullModifier,
+  belongsToField,
   booleanField,
   dateField,
   datetimeField,
   doubleField,
   enumStringField,
-  snakeCaseColumns,
   floatField,
-  hasMany,
+  integerField,
   jsonField,
-  oneToMany,
+  mutableModifier,
   optionalStringField,
   requiredStringField,
+  snakeCaseColumns,
   stringField,
   textField
 };

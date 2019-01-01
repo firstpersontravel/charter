@@ -3,11 +3,12 @@ const Experience = require('./experience');
 const User = require('./user');
 
 const {
+  belongsToField,
   booleanField,
-  requiredStringField,
-  optionalStringField,
-  oneToMany,
   jsonField,
+  mutableModifier,
+  optionalStringField,
+  requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -15,18 +16,18 @@ const {
  * Profile model
  */
 const Profile = database.define('Profile', snakeCaseColumns({
-  roleName: requiredStringField(32),
-  departureName: optionalStringField(32),
-  isActive: booleanField(true),
-  photo: optionalStringField(255),
-  phoneNumber: optionalStringField(10),
-  skypeUsername: optionalStringField(64),
-  facetimeUsername: optionalStringField(64),
-  values: jsonField(database, 'Profile', 'values'),
-  isArchived: booleanField(false)
+  roleName: mutableModifier(requiredStringField(32)),
+  departureName: mutableModifier(optionalStringField(32)),
+  isActive: mutableModifier(booleanField(true)),
+  photo: mutableModifier(optionalStringField(255)),
+  phoneNumber: mutableModifier(optionalStringField(10)),
+  skypeUsername: mutableModifier(optionalStringField(64)),
+  facetimeUsername: mutableModifier(optionalStringField(64)),
+  values: mutableModifier(jsonField(database, 'Profile', 'values')),
+  isArchived: mutableModifier(booleanField(false))
 }));
 
-oneToMany(Profile, User);
-oneToMany(Profile, Experience);
+Profile.belongsTo(User, belongsToField('user'));
+Profile.belongsTo(Experience, mutableModifier(belongsToField('experience')));
 
 module.exports = Profile;

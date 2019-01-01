@@ -2,12 +2,14 @@ const database = require('../config').database;
 const Trip = require('./trip');
 
 const {
+  allowNullModifier,
+  belongsToField,
   booleanField,
   datetimeField,
   enumStringField,
+  mutableModifier,
   requiredStringField,
   optionalStringField,
-  oneToMany,
   jsonField,
   snakeCaseColumns
 } = require('../sequelize/fields');
@@ -22,14 +24,14 @@ const Action = database.define('Action', snakeCaseColumns({
   name: requiredStringField(64),
   params: jsonField(database, 'Action', 'params'),
   triggerName: optionalStringField(64),
-  event: jsonField(database, 'Action', 'event', { allowNull: true }),
-  isArchived: booleanField(false),
+  event: allowNullModifier(jsonField(database, 'Action', 'event')),
   createdAt: datetimeField(),
   scheduledAt: datetimeField(),
-  appliedAt: datetimeField(),
-  failedAt: datetimeField()
+  appliedAt: mutableModifier(allowNullModifier(datetimeField())),
+  failedAt: mutableModifier(allowNullModifier(datetimeField())),
+  isArchived: mutableModifier(booleanField(false))
 }));
 
-oneToMany(Action, Trip);
+Action.belongsTo(Trip, belongsToField('trip'));
 
 module.exports = Action;

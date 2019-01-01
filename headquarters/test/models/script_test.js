@@ -12,6 +12,8 @@ describe('Script', () => {
   beforeEach(() => {
     script = models.Script.build({
       experienceId: 1,
+      revision: 1,
+      contentVersion: 1,
       content: {}
     });
   });

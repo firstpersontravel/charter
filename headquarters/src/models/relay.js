@@ -3,11 +3,12 @@ const database = require('../config').database;
 const Experience = require('./experience');
 
 const {
+  belongsToField,
   booleanField,
   enumStringField,
-  requiredStringField,
-  oneToMany,
+  mutableModifier,
   optionalStringField,
+  requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -24,9 +25,9 @@ const Relay = database.define('Relay', snakeCaseColumns({
   withRoleName: requiredStringField(32),
   relayPhoneNumber: requiredStringField(10),
   userPhoneNumber: optionalStringField(10),  // blank if for everyone
-  isActive: booleanField(true)
+  isActive: mutableModifier(booleanField(true))
 }));
 
-oneToMany(Relay, Experience);
+Relay.belongsTo(Experience, belongsToField('experience'));
 
 module.exports = Relay;

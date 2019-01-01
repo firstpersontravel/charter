@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 
 const models = require('../../src/models');
+const TestUtil = require('../util');
 const { assertValidation } = require('./utils');
 
 const sandbox = sinon.sandbox.create();
@@ -83,5 +84,17 @@ describe('Trip', () => {
   it('allows gallery name', async () => {
     trip.galleryName = 'abc';
     await trip.validate();
+  });
+
+  it('prevents changing associations', async () => {
+    const testTrip = await TestUtil.createDummyTrip();
+    testTrip.experienceId = 2;
+    testTrip.scriptId = 3;
+    testTrip.groupId = 4;
+    await assertValidation(testTrip, {
+      experienceId: 'experienceId is readonly',
+      scriptId: 'scriptId is readonly',
+      groupId: 'groupId is readonly'
+    });
   });
 });

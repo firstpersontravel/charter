@@ -3,10 +3,12 @@ const Trip = require('./trip');
 const User = require('./user');
 
 const {
+  allowNullModifier,
+  belongsToField,
   datetimeField,
-  requiredStringField,
+  mutableModifier,
   optionalStringField,
-  oneToMany,
+  requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -16,11 +18,11 @@ const {
 const Player = database.define('Player', snakeCaseColumns({
   roleName: requiredStringField(32, false),
   currentPageName: optionalStringField(64),
-  acknowledgedPageName: optionalStringField(64),
-  acknowledgedPageAt: datetimeField()
+  acknowledgedPageName: mutableModifier(optionalStringField(64)),
+  acknowledgedPageAt: mutableModifier(allowNullModifier(datetimeField()))
 }));
 
-oneToMany(Player, Trip);
-oneToMany(Player, User, true);
+Player.belongsTo(Trip, belongsToField('trip'));
+Player.belongsTo(User, mutableModifier(allowNullModifier(belongsToField('user'))));
 
 module.exports = Player;

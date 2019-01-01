@@ -13,9 +13,8 @@ const dummyExperienceFields = {
 
 const dummyScriptFields = {
   experienceId: 1,
-  version: 1,
-  isActive: true,
-  isArchived: false,
+  revision: 1,
+  contentVersion: 1,
   content: {
     roles: [{
       name: 'Dummy'
@@ -24,11 +23,17 @@ const dummyScriptFields = {
       name: 'SCENE-MAIN',
       title: 'Main'
     }]
-  }
+  },
+  isActive: true,
+  isArchived: false
 };
 
+async function createDummyExperience() {
+  return await models.Experience.create(dummyExperienceFields);
+}
+
 async function createDummyTrip() {
-  await models.Experience.create(dummyExperienceFields);
+  await createDummyExperience();
   const script = await models.Script.create(dummyScriptFields);
   return createDummyTripForScript(script);
 }
@@ -46,6 +51,7 @@ async function createDummyTripForScript(script, variantNames) {
 }
 
 const TestUtil = {
+  createDummyExperience: createDummyExperience,
   createDummyTrip: createDummyTrip,
   createDummyTripForScript: createDummyTripForScript
 };

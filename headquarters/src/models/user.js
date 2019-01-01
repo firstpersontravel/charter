@@ -1,12 +1,14 @@
 const database = require('../config').database;
 
 const {
-  datetimeField,
+  allowNullModifier,
   booleanField,
-  requiredStringField,
-  optionalStringField,
+  datetimeField,
   doubleField,
   floatField,
+  mutableModifier,
+  optionalStringField,
+  requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -14,21 +16,21 @@ const {
  * User model.
  */
 const User = database.define('User', snakeCaseColumns({
-  email: optionalStringField(255),
-  firstName: requiredStringField(255),
-  lastName: optionalStringField(255),
-  phoneNumber: optionalStringField(10),
-  isActive: booleanField(true),
-  deviceId: optionalStringField(255),
-  devicePushToken: optionalStringField(255),
-  locationLatitude: doubleField(),
-  locationLongitude: doubleField(),
-  locationAccuracy: floatField(),
-  locationTimestamp: datetimeField(),
-  deviceBattery: floatField(),
-  deviceLastActive: datetimeField(),
-  deviceTimestamp: datetimeField(),
-  isArchived: booleanField(false)
+  email: mutableModifier(optionalStringField(255)),
+  firstName: mutableModifier(requiredStringField(255)),
+  lastName: mutableModifier(optionalStringField(255)),
+  phoneNumber: mutableModifier(optionalStringField(10)),
+  isActive: mutableModifier(booleanField(true)),
+  deviceId: mutableModifier(optionalStringField(255)),
+  devicePushToken: mutableModifier(optionalStringField(255)),
+  locationLatitude: mutableModifier(doubleField()),
+  locationLongitude: mutableModifier(doubleField()),
+  locationAccuracy: mutableModifier(floatField()),
+  locationTimestamp: mutableModifier(allowNullModifier(datetimeField())),
+  deviceBattery: mutableModifier(floatField()),
+  deviceLastActive: mutableModifier(allowNullModifier(datetimeField())),
+  deviceTimestamp: mutableModifier(allowNullModifier(datetimeField())),
+  isArchived: mutableModifier(booleanField(false))
 }));
 
 module.exports = User;

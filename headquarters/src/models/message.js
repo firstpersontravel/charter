@@ -3,16 +3,17 @@ const Trip = require('./trip');
 const Player = require('./player');
 
 const {
-  datetimeField,
+  allowNullModifier,
+  belongsToField,
   booleanField,
+  datetimeField,
   doubleField,
-  floatField,
-  optionalStringField,
   enumStringField,
-  textField,
-  oneToMany,
-  belongsTo,
-  snakeCaseColumns
+  floatField,
+  mutableModifier,
+  optionalStringField,
+  snakeCaseColumns,
+  textField
 } = require('../sequelize/fields');
 
 
@@ -20,22 +21,22 @@ const {
  * Message model.
  */
 const Message = database.define('Message', snakeCaseColumns({
-  createdAt: datetimeField(false),
+  createdAt: datetimeField(),
   sentFromLatitude: doubleField(),
   sentFromLongitude: doubleField(),
   sentFromAccuracy: floatField(),
   messageName: optionalStringField(64),
   messageType: enumStringField(5, ['text', 'image', 'audio', 'video']),
   messageContent: textField({ notNull: { msg: 'must be present' } }),
-  readAt: datetimeField(),
   isReplyNeeded: booleanField(false),
-  replyReceivedAt: datetimeField(),
-  isInGallery: booleanField(false),
-  isArchived: booleanField(false)
+  readAt: mutableModifier(allowNullModifier(datetimeField())),
+  replyReceivedAt: mutableModifier(allowNullModifier(datetimeField())),
+  isInGallery: mutableModifier(booleanField(false)),
+  isArchived: mutableModifier(booleanField(false))
 }));
 
-oneToMany(Message, Trip);
-Message.belongsTo(Player, belongsTo('sentBy'));
-Message.belongsTo(Player, belongsTo('sentTo'));
+Message.belongsTo(Trip, belongsToField('trip'));
+Message.belongsTo(Player, belongsToField('sentBy'));
+Message.belongsTo(Player, belongsToField('sentTo'));
 
 module.exports = Message;

@@ -16,84 +16,15 @@ describe('API replace', () => {
   });
 
   describe('PUT /api/groups/:id', () => {
-    it('updates group with new date', () => {
+    it('rejects change to date', () => {
       return request(app)
         .put(`/api/groups/${group.id}`)
-        .send({ date: '2018-04-04' })
-        .set('Accept', 'application/json')
-        .expect(200)
-        .then(async (res) => {
-          await group.reload();
-          // Test group was updated
-          assert.strictEqual(group.date, '2018-04-04');
-          // Test response
-          assert.strictEqual(res.body.data.group.date, '2018-04-04');
-        });
-    });
-
-    it('rejects badly formatted date', () => {
-      return request(app)
-        .put(`/api/groups/${group.id}`)
-        .send({ date: 'abcd' })
+        .send({ date: '2017-01-03' })
         .set('Accept', 'application/json')
         .expect(422)
         .then(async (res) => {
           assert.deepStrictEqual(res.body, {
-            fields: [{
-              field: 'date',
-              message: 'must be a date in YYYY-MM-DD format'
-            }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects invalid date', () => {
-      return request(app)
-        .put(`/api/groups/${group.id}`)
-        .send({ date: '2000-40-80' })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
-            fields: [{
-              field: 'date',
-              message: 'must be a date in YYYY-MM-DD format'
-            }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects date with time', () => {
-      return request(app)
-        .put(`/api/groups/${group.id}`)
-        .send({ date: '2018-01-01T10:00:00Z' })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
-            fields: [{
-              field: 'date',
-              message: 'must be a date in YYYY-MM-DD format'
-            }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects null date', () => {
-      return request(app)
-        .put(`/api/groups/${group.id}`)
-        .send({ date: null })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
-            fields: [{ field: 'date', message: 'must be present' }],
+            fields: [{ field: 'date', message: 'date is readonly' }],
             message: 'Invalid fields: date.',
             type: 'ValidationError'
           });
@@ -108,12 +39,12 @@ describe('API replace', () => {
       player = await models.Player.find({ where: { tripId: trip.id } });
     });
 
-    it('updates player with simple value', () => {
+    it('updates player with simple values', () => {
       return request(app)
         .put(`/api/players/${player.id}`)
         .send({
-          roleName: 'newRole',
-          currentPageName: 'newPage'
+          acknowledgedPageName: 'newPage',
+          acknowledgedPageAt: '2018-01-01T00:00:00Z'
         })
         .set('Accept', 'application/json')
         .expect(200)
@@ -122,12 +53,12 @@ describe('API replace', () => {
           assert.deepStrictEqual(res.body, {
             data: {
               player: {
-                currentPageName: 'newPage',
-                acknowledgedPageAt: null,
-                acknowledgedPageName: '',
+                currentPageName: '',
+                acknowledgedPageAt: '2018-01-01T00:00:00.000Z',
+                acknowledgedPageName: 'newPage',
                 id: player.id,
                 tripId: trip.id,
-                roleName: 'newRole',
+                roleName: 'Dummy',
                 userId: null
               }
             }

@@ -3,9 +3,10 @@ const Experience = require('./experience');
 const Script = require('./script');
 
 const {
-  dateField,
+  belongsToField,
   booleanField,
-  oneToMany,
+  dateField,
+  mutableModifier,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -14,10 +15,10 @@ const {
  */
 const Group = database.define('Group', snakeCaseColumns({
   date: dateField('date'),
-  isArchived: booleanField(false)
+  isArchived: mutableModifier(booleanField(false))
 }));
 
-oneToMany(Group, Experience);
-oneToMany(Group, Script);
+Group.belongsTo(Experience, belongsToField('experience'));
+Group.belongsTo(Script, belongsToField('script'));
 
 module.exports = Group;

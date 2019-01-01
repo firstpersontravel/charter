@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { INTEGER, ValidationError } = require('sequelize');
+const { ValidationError } = require('sequelize');
 
 const { TextUtil, ParamValidators, ResourcesRegistry } = require('fptcore');
 
@@ -7,9 +7,11 @@ const Experience = require('./experience');
 const database = require('../config').database;
 
 const {
+  belongsToField,
   booleanField,
+  integerField,
   jsonField,
-  oneToMany,
+  mutableModifier,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -64,8 +66,9 @@ function validateScriptContent(script) {
  * Script model.
  */
 const Script = database.define('Script', snakeCaseColumns({
-  version: INTEGER,
-  content: jsonField(database, 'Script', 'content', {
+  revision: integerField(),
+  contentVersion: integerField(),
+  content: mutableModifier(jsonField(database, 'Script', 'content', {
     extraValidate: {
       resources: (value) => {
         if (_.isString(value)) {
@@ -83,11 +86,11 @@ const Script = database.define('Script', snakeCaseColumns({
         }
       }
     }
-  }),
-  isActive: booleanField(false),
-  isArchived: booleanField(false)
+  })),
+  isActive: mutableModifier(booleanField(false)),
+  isArchived: mutableModifier(booleanField(false))
 }));
 
-oneToMany(Script, Experience);
+Script.belongsTo(Experience, belongsToField('experience'));
 
 module.exports = Script;

@@ -7,7 +7,7 @@ module.exports = function (sequelize) {
 
   sequelize.addHook('beforeValidate', function (instance, options) {
     if (!options.validate) {
-      return;
+      // return;
     }
     if (instance.isNewRecord) {
       return;
@@ -32,14 +32,14 @@ module.exports = function (sequelize) {
       var fieldDefinition = instance.rawAttributes[fieldName];
 
       if (fieldDefinition.readOnly) {
-        validationErrors.push(new sequelize.ValidationErrorItem('`' + fieldName + '` cannot be updated due `readOnly` constraint', 'readOnly Violation', fieldName, instance[fieldName]));
+        validationErrors.push(new sequelize.ValidationErrorItem(fieldName + ' is readonly', 'readOnly Violation', fieldName, instance[fieldName]));
         return;
       }
 
       if (fieldDefinition.noUpdate &&
           instance._previousDataValues[fieldName] !== undefined &&
           instance._previousDataValues[fieldName] !== null) {
-        validationErrors.push(new sequelize.ValidationErrorItem('`' + fieldName + '` cannot be updated due `noUpdate` constraint', 'noUpdate Violation', fieldName, instance[fieldName]));
+        validationErrors.push(new sequelize.ValidationErrorItem(fieldName + 'cannot be updated', 'noUpdate Violation', fieldName, instance[fieldName]));
       }
     });
 

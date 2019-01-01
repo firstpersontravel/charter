@@ -4,13 +4,15 @@ const Group = require('./group');
 const Script = require('./script');
 
 const {
+  allowNullModifier,
+  belongsToField,
+  booleanField,
   dateField,
   datetimeField,
-  booleanField,
-  requiredStringField,
-  optionalStringField,
+  mutableModifier,
   jsonField,
-  oneToMany,
+  optionalStringField,
+  requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -18,23 +20,25 @@ const {
  * Trip model.
  */
 const Trip = database.define('Trip', snakeCaseColumns({
-  title: requiredStringField(255),
+  title: mutableModifier(requiredStringField(255)),
   date: dateField('date'),
-  departureName: requiredStringField(10),
-  variantNames: optionalStringField(255),
-  currentSceneName: optionalStringField(64),
-  customizations: jsonField(database, 'Trip', 'customizations'),
-  values: jsonField(database, 'Trip', 'values'),
-  waypointOptions: jsonField(database, 'Trip', 'waypointOptions'),
-  schedule: jsonField(database, 'Trip', 'schedule'),
-  history: jsonField(database, 'Trip', 'history'),
-  galleryName: optionalStringField(64),
-  lastScheduledTime: datetimeField(),
-  isArchived: booleanField(false)
+  departureName: mutableModifier(requiredStringField(10)),
+  variantNames: mutableModifier(optionalStringField(255)),
+  currentSceneName: mutableModifier(optionalStringField(64)),
+  customizations: mutableModifier(
+    jsonField(database, 'Trip', 'customizations')),
+  values: mutableModifier(jsonField(database, 'Trip', 'values')),
+  waypointOptions: mutableModifier(
+    jsonField(database, 'Trip', 'waypointOptions')),
+  schedule: mutableModifier(jsonField(database, 'Trip', 'schedule')),
+  history: mutableModifier(jsonField(database, 'Trip', 'history')),
+  galleryName: mutableModifier(optionalStringField(64)),
+  lastScheduledTime: mutableModifier(allowNullModifier(datetimeField())),
+  isArchived: mutableModifier(booleanField(false))
 }));
 
-oneToMany(Trip, Experience);
-oneToMany(Trip, Script);
-oneToMany(Trip, Group);
+Trip.belongsTo(Experience, belongsToField('experience'));
+Trip.belongsTo(Script, belongsToField('script'));
+Trip.belongsTo(Group, belongsToField('group'));
 
 module.exports = Trip;

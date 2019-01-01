@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 const sinon = require('sinon');
 
 const models = require('../../src/models');
@@ -14,6 +15,9 @@ describe('Action', () => {
     action = models.Action.build({
       type: 'action',
       name: 'set_value',
+      params: {},
+      createdAt: moment.utc(),
+      scheduledAt: moment.utc(),
       tripId: 2
     });
   });

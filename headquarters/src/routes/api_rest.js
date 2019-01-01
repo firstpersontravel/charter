@@ -254,20 +254,10 @@ function updateRecordRoute(model) {
   };
 }
 
-function deleteRecordRoute(model) {
-  return async (req, res) => {
-    const record = await loadRecord(model, req.params.recordId);
-    const fields = deserializeFields(req.body);
-    await updateRecord(record, fields);
-    res.status(204);
-  };
-}
-
 module.exports = {
   listCollectionRoute,
   createRecordRoute,
   retrieveRecordRoute,
   replaceRecordRoute,
-  updateRecordRoute,
-  deleteRecordRoute
+  updateRecordRoute
 };

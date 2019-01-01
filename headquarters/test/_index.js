@@ -45,6 +45,10 @@ moment.updateLocale('en', {
 // SQLite database
 config.database = new Sequelize(require('../config/config').test);
 
+// Readonly plugin
+const sequelizeReadonlyPlugin = require('../src/sequelize/readonly');
+sequelizeReadonlyPlugin(config.database);
+
 // Require models to make sure all are registered
 require('../src/models');
 

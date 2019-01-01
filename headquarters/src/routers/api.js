@@ -22,8 +22,7 @@ function createCollectionRouter(model, config={})
     create: apiRestRoutes.createRecordRoute(model, config.create),
     retrieve: apiRestRoutes.retrieveRecordRoute(model, config.retrieve),
     replace: apiRestRoutes.replaceRecordRoute(model, config.replace),
-    update: apiRestRoutes.updateRecordRoute(model, config.update),
-    delete: apiRestRoutes.deleteRecordRoute(model, config.delete)
+    update: apiRestRoutes.updateRecordRoute(model, config.update)
   };
   // Create and return router
   const router = express.Router();
@@ -32,7 +31,6 @@ function createCollectionRouter(model, config={})
   router.get('/:recordId', asyncRoute(routes.retrieve));
   router.put('/:recordId', asyncRoute(routes.replace));
   router.patch('/:recordId', asyncRoute(routes.update));
-  router.delete('/:recordId', asyncRoute(routes.delete));
   return router;
 }
 
