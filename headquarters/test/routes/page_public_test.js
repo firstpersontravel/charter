@@ -2,18 +2,11 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
-
 const pagePublicRoutes = require('../../src/routes/page_public');
 
-const sandbox = sinon.sandbox.create();
-
 describe('pagePublicRoutes', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#homeRoute', () => {
     it('returns 200', async () => {
       const req = httpMocks.createRequest();

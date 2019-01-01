@@ -2,22 +2,15 @@ const assert = require('assert');
 const sinon = require('sinon');
 const twilio = require('twilio');
 
+const { sandbox } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 const TripActionController = require('../../src/controllers/trip_action');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TwilioCallHandler', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#_triggerEventAndGatherTwiml', () => {
-
     const stubRelay = { id: 100, experienceId: 10, departureName: 'T0' };
     const stubEvent = { event: true };
 
@@ -48,9 +41,11 @@ describe('TwilioCallHandler', () => {
             toRoleName: 'ToPerson'
           }]
         });
+
       const twiml = await (
         TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
+
       // Assert found relays by opposite
       sinon.assert.calledOnce(RelayController.findSiblings);
       assert.deepStrictEqual(
@@ -85,9 +80,11 @@ describe('TwilioCallHandler', () => {
             message: 'test message'
           }]
         });
+
       const twiml = await (
         TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
+
       // Assert response
       assert.strictEqual(
         twiml.toString(),
@@ -112,9 +109,11 @@ describe('TwilioCallHandler', () => {
             media: 'audio.mp3'
           }]
         });
+
       const twiml = await (
         TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
+
       // Assert found script by role
       sinon.assert.calledOnce(RelayController.scriptForRelay);
       assert.deepStrictEqual(
@@ -150,9 +149,11 @@ describe('TwilioCallHandler', () => {
             }
           }]
         });
+
       const twiml = await (
         TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
+
       // Assert found script by role
       sinon.assert.calledOnce(RelayController.scriptForRelay);
       assert.deepStrictEqual(
@@ -174,29 +175,19 @@ describe('TwilioCallHandler', () => {
   });
 
   describe('#handleIncomingCall', () => {
-    it.skip('hangs up if relay not found', async () => {
+    it.skip('hangs up if relay not found', async () => {});
 
-    });
-
-    it.skip('hangs up if no spec found', async () => {
-
-    });
+    it.skip('hangs up if no spec found', async () => {});
 
     it.skip('hangs up if phone-in disallowed and no voicemail', async () => {
-
     });
 
     it.skip('plays voicemail if phone-in disallowed and defined', async () => {
-
     });
 
-    it.skip('returns gathered twiml', async () => {
+    it.skip('returns gathered twiml', async () => {});
 
-    });
-
-    it.skip('plays voicemail if no twiml was gathered', async () => {
-
-    });
+    it.skip('plays voicemail if no twiml was gathered', async () => {});
   });
 
   describe('#_interruptCall', () => {
@@ -211,6 +202,7 @@ describe('TwilioCallHandler', () => {
       );
 
       await TwilioCallHandler._interruptCall('123', twimlSentinel);
+
       sinon.assert.calledWith(
         config.getTwilioClient().calls, '123');
       sinon.assert.calledWith(

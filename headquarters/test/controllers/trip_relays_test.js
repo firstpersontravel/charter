@@ -1,21 +1,14 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 const RelaysController = require('../../src/controllers/relays');
 const TripRelaysController = require('../../src/controllers/trip_relays');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TripRelaysController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#userNumberForRelay', () => {
-
     const trip = { id: 1 };
 
     it('looks up user phone number for a relay', async () => {
@@ -59,7 +52,6 @@ describe('TripRelaysController', () => {
   });
 
   describe('#ensureRelay', () => {
-
     const trip = { id: 1, departureName: 'dep1', experienceId: 10 };
     const relaySpec = { for: 'Role' };
     const phoneNum = '1234567890';
@@ -108,10 +100,10 @@ describe('TripRelaysController', () => {
   });
 
   describe('#ensureRelays', () => {
-
     const stubExperience = models.Experience.build({
       name: 'journey'
     });
+
     const stubScript = models.Script.build({
       content: {
         relays: [
@@ -120,9 +112,11 @@ describe('TripRelaysController', () => {
         ]
       }
     });
+
     const stubTrip = models.Trip.build({
       departureName: 'T1',
     });
+
     const stubRelay = {
       forRoleName: 'for',
       asRoleName: 'as',

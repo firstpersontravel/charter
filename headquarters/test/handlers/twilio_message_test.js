@@ -1,23 +1,15 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const RelayController = require('../../src/controllers/relay');
 const RelaysController = require('../../src/controllers/relays');
 const TripActionController = require('../../src/controllers/trip_action');
 const TwilioMessageHandler = require('../../src/handlers/twilio_message');
 const TwilioUtil = require('../../src/handlers/twilio_util');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TwilioMessageHandler', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#handleIncomingMessage', () => {
-
-    // Stub fetching relay and player
     const script = {
       content: {
         relays: [{
@@ -41,8 +33,6 @@ describe('TwilioMessageHandler', () => {
       sandbox.stub(RelayController, 'scriptForRelay').resolves(script);
       sandbox.stub(RelaysController, 'findByNumber').resolves(relaySentinel);
       sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(100);
-
-      // Stub applying action
       sandbox.stub(TripActionController, 'applyAction').resolves();
     });
 
@@ -50,6 +40,7 @@ describe('TwilioMessageHandler', () => {
       const result = await (
         TwilioMessageHandler.handleIncomingMessage(
           '123', '456', 'incomïng mêssage', []));
+
       assert.strictEqual(result, true);
       sinon.assert.calledOnce(TripActionController.applyAction);
       assert.deepStrictEqual(
@@ -71,6 +62,7 @@ describe('TwilioMessageHandler', () => {
         TwilioMessageHandler.handleIncomingMessage(
           '123', '456', null,
           [{ url: 'http://test/image.jpg', contentType: 'image/jpg' }]));
+
       assert.strictEqual(result, true);
       sinon.assert.calledOnce(TripActionController.applyAction);
       assert.deepStrictEqual(
@@ -91,6 +83,7 @@ describe('TwilioMessageHandler', () => {
       const result = await TwilioMessageHandler.handleIncomingMessage(
         '123', '456', 'text',
         [{ url: 'http://test/image.jpg', contentType: 'image/jpg' }]);
+
       assert.strictEqual(result, true);
       sinon.assert.calledTwice(TripActionController.applyAction);
       assert.deepStrictEqual(

@@ -2,18 +2,11 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
-
 const pageGalleryRoutes = require('../../src/routes/page_gallery');
 
-const sandbox = sinon.sandbox.create();
-
 describe('pageGalleryRoutes', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#galleryRoute', () => {
     it('shows gallery by name', async () => {
       const req = httpMocks.createRequest({ params: { alias: 'abc' } });

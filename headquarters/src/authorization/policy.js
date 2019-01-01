@@ -38,10 +38,11 @@ class Policy {
   hasPermission(subject, action, resource, context) {
     const policyResult = this.getPolicyResult(subject, action, resource,
       context);
-    const resourceName = resource.id ? `${resource.type} #${resource.id}` :
-      `new ${resource.type}`;
+    const resourceName = resource.record ?
+      `${resource.modelName} #${resource.record.id}` :
+      `new ${resource.modelName}`;
     const resourceNameWithField = resourceName +
-      (resource.field ? ` ${resource.field}` : '');
+      (resource.fieldName ? ` ${resource.fieldName}` : '');
     return Object.assign({
       message: (
         `${action} of ${resourceNameWithField} by ${subject.name} ` +

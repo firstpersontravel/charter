@@ -1,25 +1,18 @@
 const moment = require('moment');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RunnerWorker = require('../../src/workers/runner');
 const TripActionController = require('../../src/controllers/trip_action');
 
-const sandbox = sinon.sandbox.create();
-
 describe('RunnerWorker', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#scheduleActions', () => {
     it.skip('schedules time occurred', () => {});
     it.skip('schedules scene start if needed', () => {});
   });
 
   describe('#runScheduledActions', () => {
-
     it('runs successfully', async () => {
       const now = moment.utc();
       const stubAction = {

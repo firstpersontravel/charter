@@ -2,18 +2,13 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const apiActionsRoutes = require('../../src/routes/api_actions');
 const TripActionController = require('../../src/controllers/trip_action');
 const TripNotifyController = require('../../src/controllers/trip_notify');
 const UserController = require('../../src/controllers/user');
 
-const sandbox = sinon.sandbox.create();
-
 describe('apiActionsRoutes', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#createActionRoute', () => {
     it('applies and notifies on an action', async () => {
       const req = httpMocks.createRequest({

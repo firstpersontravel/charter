@@ -1,14 +1,10 @@
 const _ = require('lodash');
 const moment = require('moment');
-const sinon = require('sinon');
 
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
-const sandbox = sinon.sandbox.create();
-
 describe('Action', () => {
-
   let action;
 
   beforeEach(() => {
@@ -20,10 +16,6 @@ describe('Action', () => {
       scheduledAt: moment.utc(),
       tripId: 2
     });
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   it('validates with all fields present', async () => {

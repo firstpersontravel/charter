@@ -4,10 +4,9 @@ const moment = require('moment');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const apiRestRoutes = require('../../src/routes/api_rest');
 const errors = require('../../src/errors');
-
-const sandbox = sinon.sandbox.create();
 
 const sequelize = new Sequelize({
   dialect: 'sqlite'
@@ -65,10 +64,6 @@ describe('apiRestRoutes', () => {
     };
     req = httpMocks.createRequest();
     res = httpMocks.createResponse();
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   describe('#listCollectionRoute', () => {

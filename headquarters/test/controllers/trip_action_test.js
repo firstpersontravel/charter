@@ -4,21 +4,14 @@ const sinon = require('sinon');
 
 const fptCore = require('fptcore');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const TripActionController = require('../../src/controllers/trip_action');
 const TripOpController = require('../../src/controllers/trip_op');
 const TestUtil = require('../util');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TripActionController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#applyAction', () => {
-
     let trip;
 
     beforeEach(async () => {
@@ -75,7 +68,5 @@ describe('TripActionController', () => {
         triggerName: ''
       });
     });
-
   });
-
 });

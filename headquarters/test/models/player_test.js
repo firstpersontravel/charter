@@ -1,13 +1,9 @@
-const sinon = require('sinon');
 const moment = require('moment');
 
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
-const sandbox = sinon.sandbox.create();
-
 describe('Player', () => {
-
   let player;
 
   beforeEach(() => {
@@ -15,10 +11,6 @@ describe('Player', () => {
       tripId: 2,
       roleName: 'Role'
     });
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   it('validates with all fields present', async () => {

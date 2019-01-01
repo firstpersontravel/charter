@@ -30,5 +30,6 @@ function teardownTestMocks() {
 
 module.exports = {
   createTestMocks: createTestMocks,
+  sandbox: sandbox,
   teardownTestMocks: teardownTestMocks
 };

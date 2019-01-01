@@ -1,12 +1,7 @@
-const sinon = require('sinon');
-
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
-const sandbox = sinon.sandbox.create();
-
 describe('Group', () => {
-
   let group;
 
   beforeEach(() => {
@@ -15,10 +10,6 @@ describe('Group', () => {
       experienceId: 1,
       scriptId: 2
     });
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   it('validates with all fields present', async () => {

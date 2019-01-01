@@ -1,13 +1,8 @@
-const sinon = require('sinon');
-
 const models = require('../../src/models');
 const TestUtil = require('../util');
 const { assertValidation } = require('./utils');
 
-const sandbox = sinon.sandbox.create();
-
 describe('Trip', () => {
-
   let trip;
 
   beforeEach(() => {
@@ -19,10 +14,6 @@ describe('Trip', () => {
       date: '2018-01-01',
       departureName: 'Main'
     });
-  });
-
-  afterEach(() => {
-    sandbox.restore();
   });
 
   it('validates with all fields present', async () => {

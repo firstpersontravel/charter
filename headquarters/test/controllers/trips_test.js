@@ -1,17 +1,11 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const TripsController = require('../../src/controllers/trips');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TripsController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#createTrip', () => {
     it('creates a trip and players', async () => {
       const stubExperience = {
@@ -55,6 +49,7 @@ describe('TripsController', () => {
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
       await TripsController.createTrip(1, 'title', 'T1', ['basic']);
+
       sinon.assert.calledWith(models.Group.find, {
         where: { id: 1 },
         include: [

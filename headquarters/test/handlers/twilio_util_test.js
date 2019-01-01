@@ -1,20 +1,13 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const RelayController = require('../../src/controllers/relay');
 const RelayTrailheadController = require('../../src/controllers/relay_trailhead');
 const TwilioUtil = require('../../src/handlers/twilio_util');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TwilioUtil', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#lookupOrCreateTripId', () => {
-
     const phoneNumber = '2223334444';
     const player = { tripId: 100 };
 

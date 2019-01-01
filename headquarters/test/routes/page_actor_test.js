@@ -3,16 +3,11 @@ const httpMocks = require('node-mocks-http');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const pageActorRoutes = require('../../src/routes/page_actor');
 
-const sandbox = sinon.sandbox.create();
-
 describe('pageActorRoutes', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#actorsListRoute', () => {
     it('returns 200', async () => {
       const req = httpMocks.createRequest();

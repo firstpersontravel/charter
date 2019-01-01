@@ -7,21 +7,15 @@ const sinon = require('sinon');
 const twilio = require('twilio');
 const yaml = require('js-yaml');
 
+const { sandbox } = require('../mocks');
 const twilioRoutes = require('../../src/routes/twilio');
 const models = require('../../src/models');
 const TripActionController = require('../../src/controllers/trip_action');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 
-const sandbox = sinon.sandbox.create();
-
 describe('twilioRoutes', () => {
-
   const fixturePath = path.join(__dirname, '../fixtures/relays.yaml');
   const fixtures = yaml.safeLoad(fs.readFileSync(fixturePath, 'utf8'));
-
-  afterEach(() => {
-    sandbox.restore();
-  });
 
   beforeEach(async () => {
     await sequelizeFixtures.loadFixtures(fixtures, models);

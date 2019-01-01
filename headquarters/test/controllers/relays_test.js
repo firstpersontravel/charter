@@ -2,17 +2,11 @@ const assert = require('assert');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelaysController = require('../../src/controllers/relays');
 
-const sandbox = sinon.sandbox.create();
-
 describe('RelaysController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#purchaseNumber', () => {
     it.skip('purchases a phone number', async () => {});
   });
@@ -28,7 +22,6 @@ describe('RelaysController', () => {
   });
 
   describe('#findByNumber', () => {
-
     const stubRelay = {
       relayPhoneNumber: '1234567890',
       userPhoneNumber: '9999999999'

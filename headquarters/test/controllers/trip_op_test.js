@@ -1,19 +1,13 @@
 const moment = require('moment');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const MessageController = require('../../src/controllers/message');
 const TripOpController = require('../../src/controllers/trip_op');
 const TripRelaysController = require('../../src/controllers/trip_relays');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TripOpController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#applyOp', () => {
     it.skip('calls op function by name', () => {});
   });

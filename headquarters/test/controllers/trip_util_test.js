@@ -1,17 +1,9 @@
 const assert = require('assert');
-const sinon = require('sinon');
 
 const models = require('../../src/models');
 const TripUtil = require('../../src/controllers/trip_util');
 
-const sandbox = sinon.sandbox.create();
-
 describe('TripUtil', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#getObjectsForTrip', () => {
     it.skip('gets all needed objects for a trip', () => {});
   });

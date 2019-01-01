@@ -1,18 +1,12 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 
-const sandbox = sinon.sandbox.create();
-
 describe('RelayController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#scriptForRelay', () => {
     it('looks up active script for a script name', async () => {
       const stubScript = { name: 'abc', experience: {} };

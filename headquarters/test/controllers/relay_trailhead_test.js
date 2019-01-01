@@ -1,14 +1,13 @@
 const moment = require('moment-timezone');
 const sinon = require('sinon');
 
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 const RelayTrailheadController = require(
   '../../src/controllers/relay_trailhead');
 const TripRelaysController = require('../../src/controllers/trip_relays');
 const TripsController = require('../../src/controllers/trips');
-
-const sandbox = sinon.sandbox.create();
 
 const mockTrailhead = {
   forRoleName: 'Player',
@@ -42,13 +41,7 @@ const mockScript = {
 };
 
 describe('RelayTrailheadController', () => {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe('#assignActors', () => {
-
     it('assigns users for actor roles only', async () => {
       sandbox.stub(RelayTrailheadController, 'assignActor').resolves();
 
@@ -62,7 +55,6 @@ describe('RelayTrailheadController', () => {
   });
 
   describe('#assignActor', () => {
-
     it('assigns first matching user', async () => {
       const users = [
         { userId: 4 },
@@ -121,7 +113,6 @@ describe('RelayTrailheadController', () => {
   });
 
   describe('#createTrip', () => {
-
     it('creates group and user when they don\'t exist', async () => {
       const mockGroup = { id: 1 };
       const mockUser = { id: 2 };
