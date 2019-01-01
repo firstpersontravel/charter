@@ -5,24 +5,31 @@ const apiActionsRoutes = require('../routes/api_actions');
 const apiAdminRoutes = require('../routes/api_admin');
 const apiLegacyRoutes = require('../routes/api_legacy');
 const apiRestRoutes = require('../routes/api_rest');
+const Authorizor = require('../authorization/authorizer');
+const Policy = require('../authorization/policy');
+const designerPolicies = require('../policies/designer');
 const config = require('../config');
 const models = require('../models');
 const { asyncRoute } = require('./utils');
+
+// Create authorization framework
+const apiPolicy = new Policy(designerPolicies);
+const apiAuthorizor = new Authorizor(apiPolicy);
 
 const apiRouter = express.Router();
 
 /**
  * Utility function to create a REST collection router
  */
-function createCollectionRouter(model, config={}) 
+function createCollectionRouter(model) 
 {
   // Create routes
   const routes = {
-    list: apiRestRoutes.listCollectionRoute(model, config.list),
-    create: apiRestRoutes.createRecordRoute(model, config.create),
-    retrieve: apiRestRoutes.retrieveRecordRoute(model, config.retrieve),
-    replace: apiRestRoutes.replaceRecordRoute(model, config.replace),
-    update: apiRestRoutes.updateRecordRoute(model, config.update)
+    list: apiRestRoutes.listCollectionRoute(model, apiAuthorizor),
+    create: apiRestRoutes.createRecordRoute(model, apiAuthorizor),
+    retrieve: apiRestRoutes.retrieveRecordRoute(model, apiAuthorizor),
+    replace: apiRestRoutes.replaceRecordRoute(model, apiAuthorizor),
+    update: apiRestRoutes.updateRecordRoute(model, apiAuthorizor)
   };
   // Create and return router
   const router = express.Router();
@@ -34,49 +41,17 @@ function createCollectionRouter(model, config={})
   return router;
 }
 
-// Custom field definitions
-const apiConfigs = {
-  Action: {
-    route: '/actions'
-  },
-  Experience: {
-    route: '/experiences'
-  },
-  Group: {
-    route: '/groups'
-  },
-  Message: {
-    route: '/messages'
-  },
-  Player: {
-    route: '/players'
-  },
-  Profile: {
-    route: '/profiles'
-  },
-  Trip: {
-    route: '/trips'
-  },
-  Relay: {
-    route: '/relays'
-  },
-  Script: {
-    route: '/scripts'
-  },
-  User: {
-    route: '/users'
-  }
-};
-
-// Create REST API routes.
-Object.keys(apiConfigs).forEach((key) => {
-  const apiConfig = apiConfigs[key];
-  const route = apiConfig.route;
-  const routeConfig = apiConfig.config;
-  const model = models[key];
-  const collectionRouter = createCollectionRouter(model, routeConfig);
-  apiRouter.use(route, collectionRouter);
-});
+// REST API routers.
+apiRouter.use('/actions', createCollectionRouter(models.Action));
+apiRouter.use('/experiences', createCollectionRouter(models.Experience));
+apiRouter.use('/groups', createCollectionRouter(models.Group));
+apiRouter.use('/messages', createCollectionRouter(models.Message));
+apiRouter.use('/players', createCollectionRouter(models.Player));
+apiRouter.use('/profiles', createCollectionRouter(models.Profile));
+apiRouter.use('/relays', createCollectionRouter(models.Relay));
+apiRouter.use('/scripts', createCollectionRouter(models.Script));
+apiRouter.use('/trips', createCollectionRouter(models.Trip));
+apiRouter.use('/users', createCollectionRouter(models.User));
 
 // Action routes
 apiRouter.post('/trips/:tripId/actions',

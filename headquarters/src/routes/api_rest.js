@@ -200,7 +200,7 @@ function whereFromQuery(model, whereQuery) {
   ));
 }
 
-function listCollectionRoute(model) {
+function listCollectionRoute(model, authz) {
   return async (req, res) => {
     const offset = Number(req.query.offset || 0);
     const count = Number(req.query.count || LIST_COUNT_DEFAULT);
@@ -213,12 +213,16 @@ function listCollectionRoute(model) {
       order: order,
       where: where
     });
+    for (const record of records) {
+      authz.checkRecord(req, 'retrieve', model, record);
+    }
     respondWithRecords(res, model, records);
   };
 }
 
-function createRecordRoute(model) {
+function createRecordRoute(model, authz) {
   return async (req, res) => {
+    authz.checkFields(req, 'create', model, null, req.body);
     const fields = deserializeFields(req.body);
     if (fields.id) {
       throw errors.badRequestError('Id is not allowed on create.');
@@ -229,25 +233,33 @@ function createRecordRoute(model) {
   };
 }
 
-function retrieveRecordRoute(model) {
+function retrieveRecordRoute(model, authz) {
   return async (req, res) => {
-    const record = await loadRecord(model, req.params.recordId);
+    const recordId = req.params.recordId;
+    const record = await loadRecord(model, recordId);
+    authz.checkRecord(req, 'retrieve', model, record);
     respondWithRecord(res, model, record);
   };
 }
 
-function replaceRecordRoute(model) {
+function replaceRecordRoute(model, authz) {
   return async (req, res) => {
-    const record = await loadRecord(model, req.params.recordId);
+    const recordId = req.params.recordId;
+    const record = await loadRecord(model, recordId);
+    authz.checkRecord(req, 'update', model, record);
+    authz.checkFields(req, 'update', model, record, req.body);
     const fields = deserializeFields(req.body);
     await updateRecord(record, fields);
     respondWithRecord(res, model, record);
   };
 }
 
-function updateRecordRoute(model) {
+function updateRecordRoute(model, authz) {
   return async (req, res) => {
-    const record = await loadRecord(model, req.params.recordId);
+    const recordId = req.params.recordId;
+    const record = await loadRecord(model, recordId);
+    authz.checkRecord(req, 'update', model, record);
+    authz.checkFields(req, 'update', model, record, req.body);
     const fields = mergeFields(record, deserializeFields(req.body));
     await updateRecord(record, fields);
     respondWithRecord(res, model, record);

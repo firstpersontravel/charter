@@ -19,6 +19,14 @@ function badRequestError(message, data) {
   return apiError(400, 'BadRequestError', message, data);
 }
 
+function unauthorizedError(message, data) {
+  return apiError(401, 'ForbiddenError', message, data);
+}
+
+function forbiddenError(message, data) {
+  return apiError(403, 'ForbiddenError', message, data);
+}
+
 function notFoundError(message, data) {
   return apiError(404, 'NotFoundError', message, data);
 }
@@ -29,7 +37,9 @@ function internalError(message, data) {
 
 module.exports = {
   badRequestError,
+  forbiddenError,
+  internalError,
   notFoundError,
-  validationError,
-  internalError
+  unauthorizedError,
+  validationError
 };

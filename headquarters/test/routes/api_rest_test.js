@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
 const apiRestRoutes = require('../../src/routes/api_rest');
+const errors = require('../../src/errors');
 
 const sandbox = sinon.sandbox.create();
 
@@ -53,19 +54,30 @@ async function assertThrows(fn, status, message) {
 }
 
 describe('apiRestRoutes', () => {
+  let dummyAuthz;
+  let req;
+  let res;
+
+  beforeEach(() => {
+    dummyAuthz = {
+      checkRecord: sinon.stub().returns(null),
+      checkFields: sinon.stub().returns(null)
+    };
+    req = httpMocks.createRequest();
+    res = httpMocks.createResponse();
+  });
+
   afterEach(() => {
     sandbox.restore();
   });
 
   describe('#listCollectionRoute', () => {
     it('lists a collection', async () => {
-      const req = httpMocks.createRequest({ query: { offset: 1, count: 5 } });
-      const res = httpMocks.createResponse();
-
+      req.query = { offset: 1, count: 5 };
       sandbox.stub(Model, 'findAll').resolves([sampleRecord1, sampleRecord2]);
 
       // Call the route
-      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+      await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
       // Check response
       assert.strictEqual(res.statusCode, 200);
@@ -94,16 +106,38 @@ describe('apiRestRoutes', () => {
       });
     });
 
-    it('sorts ascending', async () => {
-      const req = httpMocks.createRequest({
-        query: { offset: 1, sort: 'id' }
-      });
-      const res = httpMocks.createResponse();
+    it('calls authorizer', async () => {
+      req.query = { offset: 1, count: 5 };
+      sandbox.stub(Model, 'findAll').resolves([sampleRecord1, sampleRecord2]);
 
+      // Call the route
+      await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
+
+      // Assert authz calls are made
+      sinon.assert.calledTwice(dummyAuthz.checkRecord);
+      sinon.assert.calledWith(dummyAuthz.checkRecord,
+        req, 'retrieve', Model, sampleRecord1);
+      sinon.assert.calledWith(dummyAuthz.checkRecord,
+        req, 'retrieve', Model, sampleRecord2);
+    });
+
+    it('returns error if authorizer denies request', async () => {
+      req.query = { offset: 1, count: 5 };
+      sandbox.stub(Model, 'findAll').resolves([sampleRecord1, sampleRecord2]);
+      dummyAuthz.checkRecord.throws(errors.forbiddenError('Sample'));
+
+      // Call the route and assert forbidden error.
+      await assertThrows(async () => {
+        await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
+      }, 403, 'Sample');
+    });
+
+    it('sorts ascending', async () => {
+      req.query = { offset: 1, sort: 'id' };
       sandbox.stub(Model, 'findAll').resolves([]);
 
       // Call the route
-      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+      await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
@@ -115,15 +149,11 @@ describe('apiRestRoutes', () => {
     });
 
     it('sorts descending', async () => {
-      const req = httpMocks.createRequest({
-        query: { offset: 1, sort: '-title' }
-      });
-      const res = httpMocks.createResponse();
-
+      req.query = { offset: 1, sort: '-title' };
       sandbox.stub(Model, 'findAll').resolves([]);
 
       // Call the route
-      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+      await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
@@ -135,30 +165,22 @@ describe('apiRestRoutes', () => {
     });
 
     it('returns bad request on invalid sort param', async () => {
-      const req = httpMocks.createRequest({
-        query: { offset: 1, sort: 'abc' }
-      });
-      const res = httpMocks.createResponse();
-
+      req.query = { offset: 1, sort: 'abc' };
       sandbox.stub(Model, 'findAll').resolves([]);
 
       // Call the route
       await assertThrows(async () => {
-        await apiRestRoutes.listCollectionRoute(Model)(req, res);
+        await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
       }, 400, 'Invalid sort parameter: abc.');
     });
 
     it('returns bad request on invalid filter param', async () => {
-      const req = httpMocks.createRequest({
-        query: { offset: 1, missingField: 'abc' }
-      });
-      const res = httpMocks.createResponse();
-
+      req.query = { offset: 1, missingField: 'abc' };
       sandbox.stub(Model, 'findAll').resolves([]);
 
       // Call the route
       await assertThrows(async () => {
-        await apiRestRoutes.listCollectionRoute(Model)(req, res);
+        await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
       }, 400, 'Invalid query parameter: missingField.');
     });
 
@@ -172,15 +194,12 @@ describe('apiRestRoutes', () => {
         ['timestamp', '2018-02-04T04:05:06Z', '2018-02-04T04:05:06Z'],
         ['isShiny', 'null', null]
       ];
-      const req = httpMocks.createRequest({ query: {} });
-      const res = httpMocks.createResponse();
-
       for (let [fieldName, queryValue, whereValue] of okValues) {
         req.query = { [fieldName]: queryValue };
         sandbox.stub(Model, 'findAll').resolves([]);
 
         // Call the route
-        await apiRestRoutes.listCollectionRoute(Model)(req, res);
+        await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
         // Assert find call made
         assert.deepStrictEqual(Model.findAll.firstCall.args, [{
@@ -202,28 +221,21 @@ describe('apiRestRoutes', () => {
         ['id', 'abc'],
         ['timestamp', '2018-asd']
       ];
-      const req = httpMocks.createRequest({ query: {} });
-      const res = httpMocks.createResponse();
-
       for (let [fieldName, queryValue] of okValues) {
         req.query = { [fieldName]: queryValue };
         // Call the route
         await assertThrows(async () => {
-          await apiRestRoutes.listCollectionRoute(Model)(req, res);
+          await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
         }, 400, `Invalid value "${queryValue}" for parameter ${fieldName}.`);
       }
     });
 
     it('filters by multiple with comma', async () => {
-      const req = httpMocks.createRequest({
-        query: { offset: 1, title: 'x,y' }
-      });
-      const res = httpMocks.createResponse();
-
+      req.query = { offset: 1, title: 'x,y' };
       sandbox.stub(Model, 'findAll').resolves([]);
 
       // Call the route
-      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+      await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
@@ -235,15 +247,11 @@ describe('apiRestRoutes', () => {
     });
 
     it('filters by multiple with multiple params', async () => {
-      const req = httpMocks.createRequest({
-        query: { offset: 1, title: ['x', 'y'] }
-      });
-      const res = httpMocks.createResponse();
-
+      req.query = { offset: 1, title: ['x', 'y'] };
       sandbox.stub(Model, 'findAll').resolves([]);
 
       // Call the route
-      await apiRestRoutes.listCollectionRoute(Model)(req, res);
+      await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
@@ -257,13 +265,7 @@ describe('apiRestRoutes', () => {
 
   describe('#createRecordRoute', () => {
     it('creates a record', async () => {
-      const req = httpMocks.createRequest({
-        body: {
-          title: 'ghi',
-          timestamp: '2018-01-01T04:05:06.000Z'
-        }
-      });
-      const res = httpMocks.createResponse();
+      req.body = { title: 'ghi', timestamp: '2018-01-01T04:05:06.000Z' };
       let record;
 
       sandbox.stub(Model, 'build').callsFake(() => {
@@ -275,7 +277,7 @@ describe('apiRestRoutes', () => {
       });
 
       // Call the route
-      await apiRestRoutes.createRecordRoute(Model)(req, res);
+      await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
 
       // Check response
       assert.strictEqual(res.statusCode, 201);
@@ -302,32 +304,44 @@ describe('apiRestRoutes', () => {
       assert.deepStrictEqual(record.save.firstCall.args, [{}]);
     });
 
-    it('does not allow creation with id', async () => {
-      const req = httpMocks.createRequest({
-        body: {
-          id: 5,
-          title: 'ghi',
-          timestamp: '2018-01-01T04:05:06.000Z'
-        }
+    it('calls authorizer', async () => {
+      req.body = { title: 'ghi', timestamp: '2018-01-01T04:05:06.000Z' };
+      let record;
+
+      sandbox.stub(Model, 'build').callsFake(() => {
+        record = new Model();
+        sandbox.stub(record, 'save').callsFake(() => {
+          record.id = 3;
+        });
+        return record;
       });
-      const res = httpMocks.createResponse();
+
+      // Call the route
+      await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
+
+      // Assert authz calls are made
+      sinon.assert.calledOnce(dummyAuthz.checkFields);
+      sinon.assert.calledWith(dummyAuthz.checkFields,
+        req, 'create', Model, null, req.body);
+    });
+
+    it('does not allow creation with id', async () => {
+      req.body = { id: 5, title: 'ghi', timestamp: '2018-01-01T04:05:06Z' };
 
       // Call the route
       await assertThrows(async () => {
-        await apiRestRoutes.createRecordRoute(Model)(req, res);
+        await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
       }, 400, 'Id is not allowed on create.');
     });
   });
 
   describe('#retrieveRecordRoute', () => {
     it('returns a record', async () => {
-      const req = httpMocks.createRequest({ params: { recordId: '10' } });
-      const res = httpMocks.createResponse();
-
+      req.params = { recordId: '10' };
       sandbox.stub(Model, 'findById').resolves(sampleRecord1);
 
       // Call the route
-      await apiRestRoutes.retrieveRecordRoute(Model)(req, res);
+      await apiRestRoutes.retrieveRecordRoute(Model, dummyAuthz)(req, res);
 
       // Check response
       assert.strictEqual(res.statusCode, 200);
@@ -346,38 +360,44 @@ describe('apiRestRoutes', () => {
       sinon.assert.calledWith(Model.findById, 10);
     });
 
-    it('returns 404 if not found', async () => {
-      const req = httpMocks.createRequest({ params: { recordId: '10' } });
-      const res = httpMocks.createResponse();
+    it('calls authorizer', async () => {
+      req.params = { recordId: '10' };
+      sandbox.stub(Model, 'findById').resolves(sampleRecord1);
 
+      // Call the route
+      await apiRestRoutes.retrieveRecordRoute(Model, dummyAuthz)(req, res);
+
+      // Assert authz calls are made
+      sinon.assert.calledOnce(dummyAuthz.checkRecord);
+      sinon.assert.calledWith(dummyAuthz.checkRecord,
+        req, 'retrieve', Model, sampleRecord1);
+    });
+
+    it('returns 404 if not found', async () => {
+      req.params = { recordId: '10' };
       sandbox.stub(Model, 'findById').resolves(null);
 
       // Call the route
       await assertThrows(async () => {
-        await apiRestRoutes.retrieveRecordRoute(Model)(req, res);
+        await apiRestRoutes.retrieveRecordRoute(Model, dummyAuthz)(req, res);
       }, 404, 'Record not found.');
     });
   });
 
   describe('#updateRecordRoute', () => {
     it('returns a record', async () => {
-      const req = httpMocks.createRequest({
-        params: { recordId: '10' },
-        body: { title: 'def' }
-      });
-      const res = httpMocks.createResponse();
-
+      req.params = { recordId: '10' };
+      req.body = { title: 'def' };
       const existingRecord = Model.build({
         id: 1,
         title: 'abc',
         timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
       });
       sandbox.stub(existingRecord, 'save').resolves(null);
-
       sandbox.stub(Model, 'findById').resolves(existingRecord);
 
       // Call the route
-      await apiRestRoutes.updateRecordRoute(Model)(req, res);
+      await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
 
       // Check response
       assert.strictEqual(res.statusCode, 200);
@@ -405,18 +425,38 @@ describe('apiRestRoutes', () => {
       assert.strictEqual(existingRecord.title, 'def');
     });
 
-    it('returns 404 if not found', async () => {
-      const req = httpMocks.createRequest({
-        params: { recordId: '10' },
-        body: { title: 'def' }
+    it('calls authorizer', async () => {
+      req.params = { recordId: '10' };
+      req.body = { title: 'def' };
+      const existingRecord = Model.build({
+        id: 1,
+        title: 'abc',
+        timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
       });
-      const res = httpMocks.createResponse();
+      sandbox.stub(existingRecord, 'save').resolves(null);
+      sandbox.stub(Model, 'findById').resolves(existingRecord);
 
+      // Call the route
+      await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
+
+      // Assert authz calls are made
+      sinon.assert.calledOnce(dummyAuthz.checkRecord);
+      sinon.assert.calledWith(dummyAuthz.checkRecord,
+        req, 'update', Model, existingRecord);  
+
+      sinon.assert.calledOnce(dummyAuthz.checkFields);
+      sinon.assert.calledWith(dummyAuthz.checkFields,
+        req, 'update', Model, existingRecord, req.body);  
+    });
+
+    it('returns 404 if not found', async () => {
+      req.params = { recordId: '10' };
+      req.body = { title: 'def' };
       sandbox.stub(Model, 'findById').resolves(null);
 
       // Call the route
       await assertThrows(async () => {
-        await apiRestRoutes.updateRecordRoute(Model)(req, res);
+        await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
       }, 404, 'Record not found.');
     });
   });
