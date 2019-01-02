@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -43,7 +44,36 @@ const enhancer = enhancers(
   )
 );
 
-const store = createStore(reducers, enhancer);
+const authData = _(document.cookie.split(';'))
+  .map(c => c.split('='))
+  .filter(c => c[0] === 'auth_latest')
+  .map(c => ({
+    id: 'latest',
+    data: JSON.parse(atob(c[1]))
+  }))
+  .value();
+
+console.log('authData', authData);
+
+const initialState = {
+  requests: {},
+  requestErrors: {},
+  datastore: {
+    auth: authData,
+    experiences: [],
+    scripts: [],
+    groups: [],
+    profiles: [],
+    trips: [],
+    users: [],
+    players: [],
+    messages: [],
+    relays: [],
+    actions: []
+  }
+};
+
+const store = createStore(reducers, initialState, enhancer);
 
 const app = (
   <Provider store={store}>

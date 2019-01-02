@@ -20,14 +20,16 @@ services:
     # uncomment all volumes to test baked version for deployment
     volumes:
       - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
-      - ./headquarters:/var/app/headquarters
+      - ./headquarters/bin:/var/app/headquarters/bin
+      - ./headquarters/config:/var/app/headquarters/config
+      - ./headquarters/migrations:/var/app/headquarters/migrations
+      - ./headquarters/src:/var/app/headquarters/src
+      - ./headquarters/views:/var/app/headquarters/views
     env_file: [./secrets/env-local]
     environment:
-      # uncomment these if you want to test beta with local node modules
-      - NODE_PATH=/var/npm/beta/node_modules
-      - PATH=/var/npm/beta/node_modules/.bin:$PATH
+      - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: "nodemon --legacy-watch --polling-interval 1000 bin/server.js | pino -c"
+    command: bash -c "nodemon --legacy-watch --polling-interval 1000 bin/server.js | pino -c"
     links: [mysql]
 
   worker:
@@ -35,14 +37,16 @@ services:
     # uncomment all volumes to test baked version for deployment
     volumes:
       - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
-      - ./headquarters:/var/app/headquarters
+      - ./headquarters/bin:/var/app/headquarters/bin
+      - ./headquarters/config:/var/app/headquarters/config
+      - ./headquarters/migrations:/var/app/headquarters/migrations
+      - ./headquarters/src:/var/app/headquarters/src
+      - ./headquarters/views:/var/app/headquarters/views
     env_file: [./secrets/env-local]
     environment:
-      # uncomment these if you want to test beta with local node modules
-      - NODE_PATH=/var/npm/beta/node_modules
-      - PATH=/var/npm/beta/node_modules/.bin:$PATH
+      - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: "nodemon --legacy-watch --polling-interval 1000 bin/worker.js | pino -c"
+    command: bash -c "nodemon --legacy-watch --polling-interval 1000 bin/worker.js | pino -c"
     links: [mysql]
 
   pubsub:
@@ -50,14 +54,16 @@ services:
     # uncomment all volumes to test baked version for deployment
     volumes:
       - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
-      - ./headquarters:/var/app/headquarters
+      - ./headquarters/bin:/var/app/headquarters/bin
+      - ./headquarters/config:/var/app/headquarters/config
+      - ./headquarters/migrations:/var/app/headquarters/migrations
+      - ./headquarters/src:/var/app/headquarters/src
+      - ./headquarters/views:/var/app/headquarters/views
     env_file: [./secrets/env-local]
     environment:
-      # uncomment these if you want to test beta with local node modules
-      - NODE_PATH=/var/npm/beta/node_modules
-      - PATH=/var/npm/beta/node_modules/.bin:$PATH
+      - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: "node bin/pubsub.js | pino -c"
+    command: bash -c "node bin/pubsub.js | pino -c"
 
   mysql:
     image: mysql:5.7

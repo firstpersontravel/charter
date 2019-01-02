@@ -59,12 +59,14 @@ RUN cd /var/bower/travel && bower --allow-root install
 # Install apps directory and static dir
 ADD static /var/app/static
 ADD apps /var/app/apps
+ADD headquarters /var/app/headquarters
 
 # Symlink cached requirements
 RUN ln -nsf /var/npm/fptcore/node_modules /var/app/apps/fptcore
 RUN ln -nsf /var/npm/agency/node_modules /var/app/apps/agency
 RUN ln -nsf /var/npm/travel/node_modules /var/app/apps/travel
 RUN ln -nsf /var/bower/travel/bower_components /var/app/apps/travel
+RUN ln -nsf /var/npm/beta/node_modules /var/app/headquarters
 
 # Link core with symlink
 RUN rm -rf /var/app/apps/agency/node_modules/fptcore && \
@@ -76,6 +78,7 @@ RUN ln -nsf /var/app/apps/fptcore /var/npm/beta/node_modules
 # Run tests
 RUN cd /var/app/apps/fptcore && yarn test
 RUN cd /var/app/apps/agency && yarn test
+RUN cd /var/app/headquarters && yarn test
 
 # Build applications
 RUN cd /var/app/apps/travel && ember build --env production

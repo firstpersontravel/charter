@@ -1,24 +1,6 @@
 import _ from 'lodash';
 import update from 'immutability-helper';
 
-const initialState = {
-  requests: {},
-  requestErrors: {},
-  datastore: {
-    authInfo: [],
-    experiences: [],
-    scripts: [],
-    groups: [],
-    profiles: [],
-    trips: [],
-    users: [],
-    players: [],
-    messages: [],
-    relays: [],
-    actions: []
-  }
-};
-
 function saveRequestHandler(state, action) {
   const updates = {
     requests: { [action.operationName]: { $set: action.status } }
@@ -62,7 +44,7 @@ const handlers = {
   saveRequest: saveRequestHandler
 };
 
-export default function reducer(state = initialState, action) {
+export default function reducer(state, action) {
   if (!handlers[action.type]) {
     return state;
   }

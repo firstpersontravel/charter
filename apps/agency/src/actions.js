@@ -113,19 +113,47 @@ export function listCollection(collectionName, query, opts) {
   };
 }
 
-export function fetchAuthInfo() {
+export function makeAuthRequest(url, params, name) {
+  const reqName = `auth.${name}`;
   return function (dispatch) {
-    dispatch(saveRequest('authInfo', 'pending', null));
-    fetch('/auth/info')
+    dispatch(saveRequest(reqName, 'pending', null));
+    fetch(url, params)
       .then((response) => {
         if (response.status !== 200) {
-          dispatch(saveRequest('authInfo', 'rejected', null));
+          dispatch(saveRequest(reqName, 'rejected', null));
           return;
         }
         response.json().then((data) => {
-          dispatch(saveRequest('authInfo', 'fulfilled', null));
-          dispatch(saveInstances('authInfo', [{ id: 'self', data: data }]));
+          dispatch(saveRequest(reqName, 'fulfilled', null));
+          dispatch(saveInstances('auth', [{ id: name, data: data.data }]));
+          dispatch(saveInstances('auth', [{ id: 'latest', data: data.data }]));
+          document.cookie = `auth_latest=${btoa(JSON.stringify(data.data))};`;
         });
+      });
+  };
+}
+
+export function fetchAuthInfo() {
+  return makeAuthRequest('/auth/info', { method: 'GET' }, 'info');
+}
+
+export function login(email, password) {
+  const params = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password })
+  };
+  return makeAuthRequest('/auth/login', params, 'login');
+}
+
+export function logout() {
+  return function (dispatch) {
+    fetch('/auth/logout', { method: 'POST' })
+      .then((response) => {
+        if (response.status !== 200) {
+          return;
+        }
+        dispatch(clearInstances('auth'));
       });
   };
 }

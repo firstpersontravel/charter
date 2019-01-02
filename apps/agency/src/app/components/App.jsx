@@ -4,15 +4,34 @@ import PropTypes from 'prop-types';
 
 import { getStage } from '../../utils';
 
-function renderNav() {
+function renderNav(authInfo, logout) {
   const stage = getStage();
-  const stageLabel = stage !== 'production' ? stage.toUpperCase() : '';
   const navStageClass = `navbar-${stage}`;
   const navClass = `navbar navbar-expand-sm navbar-light bg-faded ${navStageClass}`;
+
+  if (!authInfo) {
+    return (
+      <nav className={navClass}>
+        <Link activeClassName="active" className="navbar-brand" to="/">
+          FPT MULTIVERSE
+        </Link>
+        <div className="navbar-collapse collapse w-100 order-3">
+          <ul className="navbar-nav ml-auto">
+            <li className="nav-item">
+              <Link activeClassName="" className="btn btn-primary" to="/login">
+                Login
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className={navClass}>
       <Link activeClassName="active" className="navbar-brand" to="/">
-        FPT&nbsp;{stageLabel}
+        FPT MULTIVERSE
       </Link>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span className="navbar-toggler-icon" />
@@ -41,6 +60,17 @@ function renderNav() {
           </li>
         </ul>
       </div>
+      <div className="navbar-collapse collapse w-100 order-3">
+        <ul className="navbar-nav ml-auto">
+          <li className="nav-item">
+            <button
+              className="btn btn-link nav-link"
+              onClick={() => logout()}>
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
     </nav>
   );
 }
@@ -58,18 +88,28 @@ export default class App extends Component {
     this.props.listCollection('users');
   }
 
+  renderContent() {
+    return this.props.children;
+  }
+
   render() {
     return (
       <div>
-        {renderNav()}
-        {this.props.children}
+        {renderNav(this.props.authInfo, this.props.logout)}
+        {this.renderContent()}
       </div>
     );
   }
 }
 
 App.propTypes = {
+  authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
   fetchAuthInfo: PropTypes.func.isRequired,
-  listCollection: PropTypes.func.isRequired
+  listCollection: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired
+};
+
+App.defaultProps = {
+  authInfo: null
 };
