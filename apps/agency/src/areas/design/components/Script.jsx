@@ -79,7 +79,6 @@ function renderCollections(script, currentCollectionName, currentSceneName) {
         {renderCollection(script, currentCollectionName, 'roles')}
         {renderCollection(script, currentCollectionName, 'departures')}
         {renderCollection(script, currentCollectionName, 'variants')}
-        {renderCollection(script, currentCollectionName, 'variant_groups')}
         {renderCollection(script, currentCollectionName, 'scenes')}
       </div>
       <div style={{ marginBottom: '0.5em' }}>
@@ -139,7 +138,7 @@ export default function Script({ script, experience, children, params, location 
           </Link>
           &nbsp;&rsaquo;&nbsp;
           <Link to={`/agency/design/script/${script.id}`}>
-            Version {script.version}
+            Revision {script.revision}
           </Link>
         </div>
       </div>

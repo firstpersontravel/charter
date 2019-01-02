@@ -6,29 +6,41 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import { TextUtil } from 'fptcore';
 
-export default class TripModal extends Component {
-
-  static getDefaultState(script, trip, departureName) {
-    const defaultDepartureName = departureName || 'T1';
-    const existingVariantNames = trip ?
-      trip.variantNames.split(',').filter(Boolean) : [];
-    const variantGroups = (script && script.content.variant_groups) || [];
-    const variantNames = variantGroups.map((g, i) => (
-      existingVariantNames[i] || _.get(_.filter(script.content.variants, {
-        variant_group: g.name
-      })[0], 'name')
-    ));
-    return {
-      departureName: trip ? trip.departureName :
-        defaultDepartureName,
-      variantNames: variantNames,
-      title: trip ? trip.title : ''
-    };
+function getVariantSections(script) {
+  if (!script) {
+    return [];
   }
+  return _(script.content.variants)
+    .map('section')
+    .filter(Boolean)
+    .uniq()
+    .sort()
+    .value();
+}
+
+function getDefaultState(script, trip, departureName) {
+  const defaultDepartureName = departureName || 'T1';
+  const existingVariantNames = trip ?
+    trip.variantNames.split(',').filter(Boolean) : [];
+  const variantSections = getVariantSections(script);
+  const variantNames = variantSections.map((section, i) => (
+    existingVariantNames[i] || _.get(_.filter(script.content.variants, {
+      section: section
+    })[0], 'name')
+  ));
+  return {
+    departureName: trip ? trip.departureName :
+      defaultDepartureName,
+    variantNames: variantNames,
+    title: trip ? trip.title : ''
+  };
+}
+
+export default class TripModal extends Component {
 
   constructor(props) {
     super(props);
-    this.state = TripModal.getDefaultState(
+    this.state = getDefaultState(
       props.script,
       props.trip,
       props.defaultDepartureName);
@@ -39,7 +51,7 @@ export default class TripModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(TripModal.getDefaultState(
+    this.setState(getDefaultState(
       nextProps.script,
       nextProps.trip,
       nextProps.defaultDepartureName));
@@ -68,11 +80,11 @@ export default class TripModal extends Component {
     this.setState({ [fieldName]: event.target.value });
   }
 
-  handleChangeVariant(variantGroupName, event) {
-    const variantGroupIndex = _.findIndex(
-      this.props.script.content.variant_groups, { name: variantGroupName });
+  handleChangeVariant(section, event) {
+    const variantSections = getVariantSections(this.props.script);
+    const sectionIndex = variantSections.indexOf(section);
     const variantNames = _.clone(this.state.variantNames);
-    variantNames[variantGroupIndex] = event.target.value;
+    variantNames[sectionIndex] = event.target.value;
     this.setState({ variantNames: variantNames });
   }
 
@@ -96,27 +108,27 @@ export default class TripModal extends Component {
       </option>
     ));
 
-    const variantGroups = (script && script.content.variant_groups) || [];
-    const variantFields = variantGroups.map((g, i) => {
+    const variantSections = getVariantSections(script);
+    const variantFields = variantSections.map((section, i) => {
       const options = _.filter(script.content.variants, {
-        variant_group: g.name
+        section: section
       });
       const groupOptions = options.map(variant => (
         <option key={variant.name} value={variant.name}>
           {variant.title}
         </option>
       ));
-      const htmlName = `trip_variant_group_${g.name}`;
+      const htmlName = `trip_variant_section_${section}`;
       return (
         <div className="form-group row" key={htmlName}>
           <label className="col-sm-3 col-form-label" htmlFor={htmlName}>
-            {g.title}
+            {TextUtil.titleForKey(section)}
           </label>
           <div className="col-sm-9">
             <select
               className="form-control"
               id={htmlName}
-              onChange={_.curry(this.handleChangeVariant)(g.name)}
+              onChange={_.curry(this.handleChangeVariant)(section)}
               value={this.state.variantNames[i]}>
               {groupOptions}
             </select>

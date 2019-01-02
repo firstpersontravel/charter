@@ -118,7 +118,7 @@ export default class GroupModal extends Component {
         <option
           key={script.id}
           value={script.id}>
-          Version {script.version}
+          Revision {script.revision}
         </option>
       ));
     return (

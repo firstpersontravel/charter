@@ -20,6 +20,5 @@ export const COLLECTION_NAMES = {
   'roles.default_layout': 'layouts',
   'routes.from': 'waypoints',
   'routes.to': 'waypoints',
-  'triggers.scene': 'scenes',
-  'variants.variant_group': 'variant_groups'
+  'triggers.scene': 'scenes'
 };

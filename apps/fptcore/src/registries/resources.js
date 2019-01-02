@@ -19,7 +19,6 @@ var moduleResourceSets = [
   require('../modules/time/resources'),
   require('../modules/trigger/resources'),
   require('../modules/variant/resources'),
-  require('../modules/variant_group/resources'),
   require('../modules/waypoint/resources')
 ];
 
