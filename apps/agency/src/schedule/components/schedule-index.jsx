@@ -218,7 +218,7 @@ export default class ScheduleIndex extends Component {
         <div key={trip.id} className="row">
           <div className="col-sm-4">
             <strong>{departureName}</strong>{' '}
-            <IndexLink to={`/agency/live/${trip.groupId}/trip/${trip.id}`}>
+            <IndexLink to={`/agency/operate/${trip.groupId}/trip/${trip.id}`}>
               {trip.title}
             </IndexLink>
           </div>
@@ -262,12 +262,12 @@ export default class ScheduleIndex extends Component {
       <div key={group.id} className="row" style={{ borderBottom: '2px solid #ddd', paddingBottom: '0.5em', paddingTop: '0.5em' }}>
         <div className="col-sm-3">
           <strong>
-            <IndexLink to={`/agency/live/${group.id}`}>
+            <IndexLink to={`/agency/operate/${group.id}`}>
               {experience && experience.title}
             </IndexLink>
           </strong>
           <br />
-          <IndexLink to={`/agency/live/${group.id}`}>
+          <IndexLink to={`/agency/operate/${group.id}`}>
             {dateShort}
           </IndexLink>
           <br />

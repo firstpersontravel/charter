@@ -112,7 +112,7 @@ export default class UsersUser extends Component {
     const groupLink = group ? (
       <span>
         <Link
-          to={`/agency/live/${trip.groupId}`}>
+          to={`/agency/operate/${trip.groupId}`}>
           Group: {moment(group.date).format('MMM D')}
         </Link>
         {', '}
@@ -122,7 +122,7 @@ export default class UsersUser extends Component {
       <li key={player.id}>
         {groupLink}
         <Link
-          to={`/agency/live/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
+          to={`/agency/operate/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
           Trip: {trip.title},
           Departure: {trip.departureName}
         </Link>

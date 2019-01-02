@@ -19,7 +19,7 @@ function doesTripHaveRole(trip, roleName) {
 function renderScheduleHeader(trip) {
   return (
     <th key={trip.id}>
-      <Link to={`/agency/live/${trip.groupId}/trip/${trip.id}`}>
+      <Link to={`/agency/operate/${trip.groupId}/trip/${trip.id}`}>
         {trip.departureName}: {trip.title}
       </Link>
     </th>

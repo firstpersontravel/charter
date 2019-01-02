@@ -25,7 +25,7 @@ export default function RoleMessages({ params, groupStatus,
     groupStatus.instance.trips, messagesNeedingReply);
   const tripLinks = groupStatus.instance.trips.map((trip => (
     <li key={trip.id}>
-      <Link to={`/agency/live/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
+      <Link to={`/agency/operate/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
         {trip.departureName} {trip.title}
       </Link>
     </li>

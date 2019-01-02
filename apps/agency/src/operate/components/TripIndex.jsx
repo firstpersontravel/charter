@@ -22,7 +22,7 @@ export default class TripIndex extends Component {
     );
     if (onFirstScene) {
       return (
-        `/agency/live/${this.props.params.groupId}` +
+        `/agency/operate/${this.props.params.groupId}` +
         `/trip/${this.props.params.tripId}/values`
       );
     }
@@ -31,7 +31,7 @@ export default class TripIndex extends Component {
       trip.script.content.roles[0]
     );
     return (
-      `/agency/live/${this.props.params.groupId}` +
+      `/agency/operate/${this.props.params.groupId}` +
       `/trip/${this.props.params.tripId}` +
       `/players/${primaryRole.name}`
     );

@@ -192,7 +192,7 @@ export default class GroupMap extends Component {
     return _(activePlayers)
       .map((player) => {
         const playerLink = (
-          <LinkWithContext to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
+          <LinkWithContext to={`/agency/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
             {player.trip.departureName}{' '}
             {player.roleName}
           </LinkWithContext>
@@ -278,7 +278,7 @@ export default class GroupMap extends Component {
     return (
       <div key={player.id}>
         <div>
-          <LinkWithContext to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
+          <LinkWithContext to={`/agency/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
             {player.trip.departureName}{' '}
             {player.roleName}{' '}
             ({player.user.firstName})

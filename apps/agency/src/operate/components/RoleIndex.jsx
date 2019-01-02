@@ -67,7 +67,7 @@ function renderPlayerCell(player, isFirst) {
   const appearanceIsActive = !appearance.if || EvalCore.if(trip.evalContext, appearance.if);
   const pageTitle = page ? page.title : player.currentPageName;
   const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
-  const tripRoleUrl = `/agency/live/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
+  const tripRoleUrl = `/agency/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ? renderMap(trip, player.user) : null;
   const renderedUser = isFirst ? (

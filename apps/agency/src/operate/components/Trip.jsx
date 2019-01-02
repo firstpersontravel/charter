@@ -29,7 +29,7 @@ export default function Trip({ params, tripStatus, children }) {
     <Link
       key={role.name}
       className="dropdown-item"
-      to={`/agency/live/${params.groupId}/trip/${params.tripId}/players/${role.name}`}>
+      to={`/agency/operate/${params.groupId}/trip/${params.tripId}/players/${role.name}`}>
       {role.name}
     </Link>
   )));
@@ -40,7 +40,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/values`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/values`}>
             Prep
           </Link>
         </li>
@@ -48,7 +48,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/schedule`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/schedule`}>
             Timing
           </Link>
         </li>
@@ -56,7 +56,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/scenes`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/scenes`}>
             Scenes
           </Link>
         </li>
@@ -65,7 +65,7 @@ export default function Trip({ params, tripStatus, children }) {
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/players`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/players`}>
             Players
           </Link>
           <div className="dropdown-menu">
@@ -76,7 +76,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/achievements`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/achievements`}>
             Achievements
           </Link>
         </li>
@@ -84,7 +84,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/controls`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/controls`}>
             Controls
           </Link>
         </li>
@@ -92,7 +92,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/live/${params.groupId}/trip/${params.tripId}/gallery`}>
+            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/gallery`}>
             Gallery
           </Link>
         </li>

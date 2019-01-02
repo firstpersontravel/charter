@@ -27,10 +27,10 @@ import PlayerMessagesConnector from './connectors/PlayerMessages';
 import PlayerInterfaceConnector from './connectors/PlayerInterface';
 
 export default (
-  <Route path="live">
+  <Route path="operate">
     <IndexRoute component={IndexConnector} />
     <Route path=":groupId" component={GroupConnector}>
-      <IndexRedirect to="/agency/live/:groupId/all" />
+      <IndexRedirect to="/agency/operate/:groupId/all" />
       <Route path="all" component={GroupAllConnector}>
         <IndexRoute component={GroupOverviewConnector} />
         <Route path="casting" component={GroupPlayersConnector} />
@@ -57,7 +57,7 @@ export default (
             <IndexRoute component={PlayerOverviewConnector} />
             <Route path="messages">
               <IndexRedirect
-                to="/agency/live/:groupId/trip/:tripId/players/:roleName/messages/All" />
+                to="/agency/operate/:groupId/trip/:tripId/players/:roleName/messages/All" />
               <Route
                 path=":withRoleName"
                 component={PlayerMessagesConnector} />

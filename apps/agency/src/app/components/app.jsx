@@ -30,8 +30,8 @@ function renderNav() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/agency/live">
-              Operations
+            <Link activeClassName="active" className="nav-link" to="/agency/operate">
+              Operate
             </Link>
           </li>
           <li className="nav-item">

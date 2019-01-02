@@ -16,7 +16,7 @@ function renderAddUserIcon(player) {
   return (
     <span>
       &nbsp;
-      <Link to={`/agency/live/${player.trip.groupId}/all/casting`}>
+      <Link to={`/agency/operate/${player.trip.groupId}/all/casting`}>
         <span className="text-danger">
           <i className="fa fa-user-plus" />
         </span>
@@ -37,7 +37,7 @@ function renderActor(roleAndActors) {
     <div key={`${roleAndActors.role.name}-${roleAndActors.userId}`} className="constrain-text">
       <IndexLink
         className={pageInfo.statusClass}
-        to={`/agency/live/${actor.trip.groupId}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
+        to={`/agency/operate/${actor.trip.groupId}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
         <strong>
           {roleAndActors.role.name}{userNameIfMultiple}:
         </strong>
@@ -59,7 +59,7 @@ function renderPlayer(player) {
   return (
     <div key={player.id} className="constrain-text">
       <IndexLink
-        to={`/agency/live/${player.trip.groupId}/trip/${player.trip.id}/players/${player.role.name}`}>
+        to={`/agency/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.role.name}`}>
         {player.trip.departureName} {player.role.name}:
         {' '}
         {pageInfo.status}

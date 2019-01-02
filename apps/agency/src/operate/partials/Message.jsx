@@ -110,7 +110,7 @@ export default function Message({ message, trip, updateInstance }) {
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <Link to={`/agency/live/${trip.groupId}/trip/${trip.id}/players/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
+      <Link to={`/agency/operate/${trip.groupId}/trip/${trip.id}/players/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
         {trip.departureName}&nbsp;
         {sentBy.roleName}
       </Link>:&nbsp;

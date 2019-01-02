@@ -131,7 +131,7 @@ export default class TripScenes extends Component {
           <Link
             to={{
               pathname:
-                `/agency/live/${player.trip.groupId}` +
+                `/agency/operate/${player.trip.groupId}` +
                 `/trip/${player.trip.id}/players` +
                 `/${player.roleName}/pages`,
               query: { scene: scene.name }
@@ -215,7 +215,7 @@ export default class TripScenes extends Component {
         Past scenes hidden.&nbsp;
         <Link
           to={{
-            pathname: `/agency/live/${trip.groupId}/trip/${trip.id}/scenes`,
+            pathname: `/agency/operate/${trip.groupId}/trip/${trip.id}/scenes`,
             query: { past: true }
           }}>
           Show all
