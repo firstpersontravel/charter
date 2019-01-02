@@ -1,7 +1,9 @@
 const assert = require('assert');
+const moment = require('moment');
 const request = require('supertest');
 
 const app = require('../../src/app');
+const models = require('../../src/models');
 const TestUtil = require('../util');
 
 describe('API update', () => {
@@ -46,6 +48,72 @@ describe('API update', () => {
           assert.deepStrictEqual(res.body.data.trip.values,
             { outer: { inner: 'value' } });
         });
+    });
+  });
+
+  describe('PATCH /api/messages/:id', () => {
+    let message;
+
+    beforeEach(async () => {
+      const player = await models.Player.find({ 
+        where: { tripId: trip.id }
+      });
+      message = await models.Message.create({
+        tripId: trip.id,
+        sentById: player.id,
+        sentToId: player.id,
+        createdAt: moment.utc(),
+        messageName: 'hi',
+        messageType: 'text',
+        messageContent: 'hi there',
+        isInGallery: false,
+        isArchived: false
+      });
+    });
+
+    it('allows change to permitted fields', () => {
+      const now = moment.utc();
+      const permittedFields = [
+        ['isInGallery', true, true],
+        ['isArchived', true, true],
+        ['readAt', now, now.toISOString()],
+        ['replyReceivedAt', now, now.toISOString()]
+      ];
+      return Promise.all(permittedFields.map(([fieldName, val, valResp]) => {
+        return request(app)
+          .put(`/api/messages/${message.id}`)
+          .send({ [fieldName]: val })
+          .set('Accept', 'application/json')
+          .expect(200)
+          .then(async (res) => {
+            assert.strictEqual(res.body.data.message[fieldName], valResp);
+          });
+      }));
+    });
+
+    it('forbids changes to any other field', () => {
+      const forbiddenFields = [
+        'messageName',
+        'messageType',
+        'messageContent',
+        'sentFromLongitude',
+        'sentFromAccuracy'
+      ];
+      return Promise.all(forbiddenFields.map(fieldName => {
+        return request(app)
+          .put(`/api/messages/${message.id}`)
+          .send({ [fieldName]: 'does not matter' })
+          .set('Accept', 'application/json')
+          .expect(403)
+          .then((res) => {
+            assert.deepStrictEqual(res.body.error, {
+              type: 'ForbiddenError',
+              message:
+                `Action "update" on field "${fieldName}" of Message ` +
+                `#${message.id} by user "default" denied.`
+            });
+          });
+      }));
     });
   });
 });

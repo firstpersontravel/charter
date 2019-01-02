@@ -315,6 +315,9 @@ describe('apiRestRoutes', () => {
       await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
 
       // Assert authz calls are made
+      sinon.assert.calledOnce(dummyAuthz.checkRecord);
+      sinon.assert.calledWith(dummyAuthz.checkRecord,
+        req, 'create', Model, null);
       sinon.assert.calledOnce(dummyAuthz.checkFields);
       sinon.assert.calledWith(dummyAuthz.checkFields,
         req, 'create', Model, null, req.body);
@@ -327,6 +330,15 @@ describe('apiRestRoutes', () => {
       await assertThrows(async () => {
         await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
       }, 400, 'Id is not allowed on create.');
+    });
+
+    it('does not allow creation with unknown field', async () => {
+      req.body = { missing: 123 };
+
+      // Call the route
+      await assertThrows(async () => {
+        await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
+      }, 422, 'Invalid field: "missing".');
     });
   });
 
@@ -453,6 +465,23 @@ describe('apiRestRoutes', () => {
       await assertThrows(async () => {
         await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
       }, 404, 'Record not found.');
+    });
+
+    it('does not allow update with missing field', async () => {
+      req.params = { recordId: '10' };
+      req.body = { bad: 'doggy' };
+      const existingRecord = Model.build({
+        id: 1,
+        title: 'abc',
+        timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
+      });
+      sandbox.stub(existingRecord, 'save').resolves(null);
+      sandbox.stub(Model, 'findById').resolves(existingRecord);
+
+      // Call the route
+      await assertThrows(async () => {
+        await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
+      }, 422, 'Invalid field: "bad".');
     });
   });
 });

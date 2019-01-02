@@ -16,18 +16,19 @@ const {
   textField
 } = require('../sequelize/fields');
 
+const MESSAGE_TYPE_OPTIONS = ['text', 'image', 'audio', 'video'];
 
 /**
  * Message model.
  */
 const Message = database.define('Message', snakeCaseColumns({
   createdAt: datetimeField(),
-  sentFromLatitude: doubleField(),
-  sentFromLongitude: doubleField(),
-  sentFromAccuracy: floatField(),
+  sentFromLatitude: allowNullModifier(doubleField()),
+  sentFromLongitude: allowNullModifier(doubleField()),
+  sentFromAccuracy: allowNullModifier(floatField()),
   messageName: optionalStringField(64),
-  messageType: enumStringField(5, ['text', 'image', 'audio', 'video']),
-  messageContent: textField({ notNull: { msg: 'must be present' } }),
+  messageType: enumStringField(5, MESSAGE_TYPE_OPTIONS),
+  messageContent: textField(),
   isReplyNeeded: booleanField(false),
   readAt: mutableModifier(allowNullModifier(datetimeField())),
   replyReceivedAt: mutableModifier(allowNullModifier(datetimeField())),

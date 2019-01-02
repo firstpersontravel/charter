@@ -89,13 +89,14 @@ apiRouter.use(Raven.errorHandler());
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars
 apiRouter.use(function(err, req, res, next) {
-  const data = Object.assign({
+  config.logger.error({ name: 'error' }, err.stack);
+  const errorStatus = err.status || 500;
+  const errorResponse = Object.assign({
     type: err.type,
     message: err.message
   }, err.data);
-  config.logger.error({ name: 'error' }, err.stack);
-  res.status(err.status || 500);
-  res.json(data);
+  res.status(errorStatus);
+  res.json({ error: errorResponse });
 });
 
 module.exports = apiRouter;

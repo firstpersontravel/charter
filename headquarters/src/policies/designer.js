@@ -73,8 +73,14 @@ const designerCanOperateTrips = {
       Relay: ['isActive']
     };
     const allowedFieldNamesForResource = allowedFieldNames[resource.modelName];
-    if (_.includes(allowedFieldNamesForResource, resource.fieldName)) {
-      if (_.includes(allowedActions, action)) {
+    if (_.includes(allowedActions, action)) {
+      // Must allow action on the generic record (w/o a field name) to get to
+      // the checks on each field name.
+      if (resource.fieldName === null) {
+        return { allowed: true, reason: 'Designers can operate trips.' };
+      }
+      // Allow specific fields only.
+      if (_.includes(allowedFieldNamesForResource, resource.fieldName)) {
         return { allowed: true, reason: 'Designers can operate trips.' };
       }
     }

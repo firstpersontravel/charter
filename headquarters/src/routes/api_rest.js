@@ -32,8 +32,11 @@ function deserializeField(field) {
   return field;
 }
 
-function deserializeFields(fields) {
-  return _.mapValues(fields, function(value) {
+function deserializeFields(model, fields) {
+  return _.mapValues(fields, function(value, key) {
+    if (!model.attributes[key]) {
+      throw errors.validationError(`Invalid field: "${key}".`);
+    }
     return deserializeField(value);
   });
 }
@@ -222,8 +225,9 @@ function listCollectionRoute(model, authz) {
 
 function createRecordRoute(model, authz) {
   return async (req, res) => {
+    authz.checkRecord(req, 'create', model, null);
     authz.checkFields(req, 'create', model, null, req.body);
-    const fields = deserializeFields(req.body);
+    const fields = deserializeFields(model, req.body);
     if (fields.id) {
       throw errors.badRequestError('Id is not allowed on create.');
     }
@@ -248,7 +252,7 @@ function replaceRecordRoute(model, authz) {
     const record = await loadRecord(model, recordId);
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
-    const fields = deserializeFields(req.body);
+    const fields = deserializeFields(model, req.body);
     await updateRecord(record, fields);
     respondWithRecord(res, model, record);
   };
@@ -260,7 +264,7 @@ function updateRecordRoute(model, authz) {
     const record = await loadRecord(model, recordId);
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
-    const fields = mergeFields(record, deserializeFields(req.body));
+    const fields = mergeFields(record, deserializeFields(model, req.body));
     await updateRecord(record, fields);
     respondWithRecord(res, model, record);
   };

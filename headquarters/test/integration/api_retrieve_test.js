@@ -21,6 +21,7 @@ describe('API retrieve', () => {
       return request(app)
         .get(`/api/trips/${trip.id}`)
         .set('Accept', 'application/json')
+        .expect(200)
         .then((res) => {
           assert.deepStrictEqual(res.body, {
             data: {
@@ -54,7 +55,7 @@ describe('API retrieve', () => {
         .set('Accept', 'application/json')
         .expect(404)
         .then((res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             type: 'NotFoundError',
             message: 'Record not found.'
           });

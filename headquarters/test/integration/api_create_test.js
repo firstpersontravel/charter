@@ -39,6 +39,20 @@ describe('API create', () => {
         });
     });
 
+    it('fails with supplied id', () => {
+      return request(app)
+        .post('/api/users')
+        .send({ id: 123, firstName: 'Gabe', lastName: 'Smedresman' })
+        .set('Accept', 'application/json')
+        .expect(400)
+        .then((res) => {
+          assert.deepStrictEqual(res.body.error, {
+            type: 'BadRequestError',
+            message: 'Id is not allowed on create.'
+          });
+        });
+    });
+
     it('fails on invalid fields', () => {
       return request(app)
         .post('/api/users')
@@ -46,8 +60,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then((res) => {
-          // console.log('res.body', res.body);
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             type: 'ValidationError',
             message: 'Invalid fields: firstName, isActive.',
             fields: [
@@ -56,6 +69,24 @@ describe('API create', () => {
             ]
           });
         });
+    });
+
+    it('forbids creating forbidden models', () => {
+      const forbiddenModels = ['Action', 'Message', 'Relay'];
+      return Promise.all(forbiddenModels.map(modelName => {
+        return request(app)
+          .post('/api/' + modelName.toLowerCase() + 's')
+          .send({ fields: 'dont matter' })
+          .set('Accept', 'application/json')
+          .expect(403)
+          .then((res) => {
+            assert.deepStrictEqual(res.body.error, {
+              type: 'ForbiddenError',
+              message: 'Action "create" on new ' + modelName +
+                ' by user "default" denied.'
+            });
+          });
+      }));
     });
   });
 
@@ -99,7 +130,7 @@ describe('API create', () => {
         .expect(422)
         .then((res) => {
           // Test returns an error
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'content',
               message: 'Required param "name" not present.',
@@ -127,7 +158,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then((res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'content',
               message: 'must be an object'
@@ -207,7 +238,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then((res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             message: 'Invalid foreign key.',
             type: 'ValidationError'
           });
@@ -248,7 +279,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'date',
               message: 'must be a date in YYYY-MM-DD format'
@@ -270,7 +301,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'date',
               message: 'must be a date in YYYY-MM-DD format'
@@ -292,7 +323,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'date',
               message: 'must be a date in YYYY-MM-DD format'
@@ -314,7 +345,7 @@ describe('API create', () => {
         .set('Accept', 'application/json')
         .expect(422)
         .then(async (res) => {
-          assert.deepStrictEqual(res.body, {
+          assert.deepStrictEqual(res.body.error, {
             fields: [{ field: 'date', message: 'must be present' }],
             message: 'Invalid fields: date.',
             type: 'ValidationError'

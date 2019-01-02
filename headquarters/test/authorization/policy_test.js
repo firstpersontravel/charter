@@ -99,7 +99,10 @@ describe('Policy', () => {
 
       const res = policy.hasPermission(subject, action, resource, {});
 
-      const expectedMessage = 'adjustment of new Model by tester allowed.';
+      const expectedMessage = (
+        'Action "adjustment" on new Model ' +
+        'by user "tester" allowed.'
+      );
       const expectedResult = Object.assign({}, { message: expectedMessage },
         stubResult);
       assert.deepStrictEqual(res, expectedResult);
@@ -114,7 +117,8 @@ describe('Policy', () => {
 
       const res = policy.hasPermission(subject, action, resource, {});
 
-      const expectedMessage = 'adjustment of Model #3 by tester allowed.';
+      const expectedMessage = 
+        'Action "adjustment" on Model #3 by user "tester" allowed.';
       const expectedResult = Object.assign({}, { message: expectedMessage },
         stubResult);
       assert.deepStrictEqual(res, expectedResult);
@@ -129,7 +133,10 @@ describe('Policy', () => {
 
       const res = policy.hasPermission(subject, action, resource, {});
 
-      const expectedMessage = 'adjustment of Model #3 abc by tester allowed.';
+      const expectedMessage = (
+        'Action "adjustment" on field "abc" of Model #3 ' +
+        'by user "tester" allowed.'
+      );
       const expectedResult = Object.assign({}, { message: expectedMessage },
         stubResult);
       assert.deepStrictEqual(res, expectedResult);

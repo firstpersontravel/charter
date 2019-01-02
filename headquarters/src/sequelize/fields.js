@@ -89,13 +89,13 @@ function stringField(maxLength, validate=null) {
   };
 }
 
-function textField(validate) {
+function textField() {
   return {
     type: TEXT,
     allowNull: false,
     readOnly: true,
     defaultValue: '',
-    validate: validate
+    validate: { notNull: { msg: 'must be present' } }
   };
 }
 

@@ -41,11 +41,12 @@ class Policy {
     const resourceName = resource.record ?
       `${resource.modelName} #${resource.record.id}` :
       `new ${resource.modelName}`;
-    const resourceNameWithField = resourceName +
-      (resource.fieldName ? ` ${resource.fieldName}` : '');
+    const resourceDesc = resource.fieldName ? 
+      `on field "${resource.fieldName}" of ${resourceName}` :
+      `on ${resourceName}`;
     return Object.assign({
       message: (
-        `${action} of ${resourceNameWithField} by ${subject.name} ` +
+        `Action "${action}" ${resourceDesc} by user "${subject.name}" ` +
         `${policyResult.allowed ? 'allowed' : 'denied'}.`
       )
     }, policyResult);
