@@ -1,11 +1,11 @@
 import React from 'react';
 import { Router, Route, IndexRedirect, browserHistory } from 'react-router';
 
-import AppConnector from './areas/app/connectors/app';
-import ScheduleRoute from './areas/schedule/route';
-import LiveRoute from './areas/live/route';
-import UsersRoute from './areas/users/route';
-import DesignRoute from './areas/design/route';
+import AppConnector from './app/connectors/app';
+import ScheduleRoute from './schedule/route';
+import LiveRoute from './live/route';
+import UsersRoute from './users/route';
+import DesignRoute from './design/route';
 
 function InvalidPage() {
   return <div>Page not found</div>;
