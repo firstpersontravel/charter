@@ -1,26 +1,29 @@
 const express = require('express');
 
-const pageActorRoutes = require('../routes/page_actor');
-const pageGalleryRoutes = require('../routes/page_gallery');
-const pagePublicRoutes = require('../routes/page_public');
+const actorRoutes = require('../routes/page_actor');
+const galleryRoutes = require('../routes/page_gallery');
+const shortcutRoutes = require('../routes/page_shortcut');
 const { asyncRoute } = require('./utils');
 
-// Create new router
-const pageRouter = express.Router();
 
 // Public routes
-pageRouter.get('/', asyncRoute(pagePublicRoutes.homeRoute));
-pageRouter.get('/s/:playerId',
-  asyncRoute(pagePublicRoutes.playerShortcutRoute));
+const shortcutRouter = express.Router();
+shortcutRouter.get('/:playerId',
+  asyncRoute(shortcutRoutes.playerShortcutRoute));
 
 // Actor routes
-pageRouter.get('/actor/', asyncRoute(pageActorRoutes.actorsListRoute));
-pageRouter.get('/actor/:userId', asyncRoute(pageActorRoutes.userShowRoute));
-pageRouter.get('/actor/player/:playerId',
-  asyncRoute(pageActorRoutes.playerShowRoute));
+const actorRouter = express.Router();
+actorRouter.get('/', asyncRoute(actorRoutes.actorsListRoute));
+actorRouter.get('/:userId', asyncRoute(actorRoutes.userShowRoute));
+actorRouter.get('/player/:playerId', asyncRoute(actorRoutes.playerShowRoute));
 
 // Gallery routes
-pageRouter.get('/gallery/:year/:month/:day/:alias',
-  asyncRoute(pageGalleryRoutes.galleryRoute));
+const galleryRouter = express.Router();
+galleryRouter.get('/:year/:month/:day/:alias',
+  asyncRoute(galleryRoutes.galleryRoute));
 
-module.exports = pageRouter;
+module.exports = {
+  actorRouter,
+  galleryRouter,
+  shortcutRouter
+};

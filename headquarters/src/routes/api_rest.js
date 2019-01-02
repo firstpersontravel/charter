@@ -16,9 +16,10 @@ function serializeField(field, dataValue) {
   return dataValue;
 }
 
-function serializeRecord(model, record) {
+function serializeRecord(model, record, opts) {
   return _(model.attributes)
     .keys()
+    .filter(key => !_.includes(opts.blacklistFields, key))
     .sort()
     .map(key => ([
       key,
@@ -32,9 +33,9 @@ function deserializeField(field) {
   return field;
 }
 
-function deserializeFields(model, fields) {
+function deserializeFields(model, fields, opts) {
   return _.mapValues(fields, function(value, key) {
-    if (!model.attributes[key]) {
+    if (!model.attributes[key] || _.includes(opts.blacklistFields, key)) {
       throw errors.validationError(`Invalid field: "${key}".`);
     }
     return deserializeField(value);
@@ -52,17 +53,17 @@ function mergeFields(record, fields) {
   });
 }
 
-function respondWithRecord(res, model, record, status = 200) {
-  const item = serializeRecord(model, record);
+function respondWithRecord(res, model, record, opts, status = 200) {
+  const item = serializeRecord(model, record, opts);
   const data = { [model.name.toLowerCase()]: item };
   res.status(status);
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify({ data: data }, null, 2));
 }
 
-function respondWithRecords(res, model, records) {
+function respondWithRecords(res, model, records, opts) {
   const modelNamePlural = inflection.pluralize(model.name.toLowerCase());
-  const items = records.map(record => serializeRecord(model, record));
+  const items = records.map(record => serializeRecord(model, record, opts));
   const data = { [modelNamePlural]: items };
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify({ data: data }, null, 2));
@@ -203,7 +204,7 @@ function whereFromQuery(model, whereQuery) {
   ));
 }
 
-function listCollectionRoute(model, authz) {
+function listCollectionRoute(model, authz, opts={}) {
   return async (req, res) => {
     const offset = Number(req.query.offset || 0);
     const count = Number(req.query.count || LIST_COUNT_DEFAULT);
@@ -219,54 +220,55 @@ function listCollectionRoute(model, authz) {
     for (const record of records) {
       authz.checkRecord(req, 'retrieve', model, record);
     }
-    respondWithRecords(res, model, records);
+    respondWithRecords(res, model, records, opts);
   };
 }
 
-function createRecordRoute(model, authz) {
+function createRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     authz.checkRecord(req, 'create', model, null);
     authz.checkFields(req, 'create', model, null, req.body);
-    const fields = deserializeFields(model, req.body);
+    const fields = deserializeFields(model, req.body, opts);
     if (fields.id) {
       throw errors.badRequestError('Id is not allowed on create.');
     }
     const record = model.build();
     await updateRecord(record, fields);
-    respondWithRecord(res, model, record, 201);
+    respondWithRecord(res, model, record, opts, 201);
   };
 }
 
-function retrieveRecordRoute(model, authz) {
+function retrieveRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
     authz.checkRecord(req, 'retrieve', model, record);
-    respondWithRecord(res, model, record);
+    respondWithRecord(res, model, record, opts);
   };
 }
 
-function replaceRecordRoute(model, authz) {
+function replaceRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
-    const fields = deserializeFields(model, req.body);
+    const fields = deserializeFields(model, req.body, opts);
     await updateRecord(record, fields);
-    respondWithRecord(res, model, record);
+    respondWithRecord(res, model, record, opts);
   };
 }
 
-function updateRecordRoute(model, authz) {
+function updateRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
-    const fields = mergeFields(record, deserializeFields(model, req.body));
-    await updateRecord(record, fields);
-    respondWithRecord(res, model, record);
+    const fields = deserializeFields(model, req.body, opts);
+    const mergedFields = mergeFields(record, fields);
+    await updateRecord(record, mergedFields);
+    respondWithRecord(res, model, record, opts);
   };
 }
 

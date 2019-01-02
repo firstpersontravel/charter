@@ -51,8 +51,9 @@ function getPanel(trip, evalContext, timezone, pageInfo, panel) {
 /**
  * Construct an object of the page
  */
-function getPage(objs, trip, evalContext, player) {
+function getPage(objs, evalContext, player) {
   const script = objs.script;
+  const trip = objs.trip;
   const timezone = objs.experience.timezone;
   const pageInfo = PlayerCore.getPageInfo(script, evalContext, player);
   if (!pageInfo) {
@@ -161,16 +162,23 @@ const userShowRoute = async (req, res) => {
   }
   const players = await models.Player.findAll({
     where: { userId: user.id },
-    include: [{ model: models.Trip, as: 'trip', where: { isArchived: false } }]
+    include: [{
+      model: models.Trip,
+      as: 'trip',
+      where: { isArchived: false }
+    }]
   });
   const playersByDeparture = _(players)
     .sortBy(player => player.trip.departureName)
     .value();
+
   const objsList = await Promise.map(playersByDeparture, (player) => (
     TripUtil.getObjectsForTrip(player.tripId)
   ));
+
   const pages = _(players)
     .map((player, i) => {
+      console.log('i', i, 'player', player.id);
       const objs = objsList[i];
       const evalContext = TripUtil.prepareEvalContext(objs);
       return getPage(objs, evalContext, player);

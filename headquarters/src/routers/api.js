@@ -21,15 +21,14 @@ const apiRouter = express.Router();
 /**
  * Utility function to create a REST collection router
  */
-function createCollectionRouter(model) 
-{
+function createCollectionRouter(model, opts={}) {
   // Create routes
   const routes = {
-    list: apiRestRoutes.listCollectionRoute(model, apiAuthorizor),
-    create: apiRestRoutes.createRecordRoute(model, apiAuthorizor),
-    retrieve: apiRestRoutes.retrieveRecordRoute(model, apiAuthorizor),
-    replace: apiRestRoutes.replaceRecordRoute(model, apiAuthorizor),
-    update: apiRestRoutes.updateRecordRoute(model, apiAuthorizor)
+    list: apiRestRoutes.listCollectionRoute(model, apiAuthorizor, opts),
+    create: apiRestRoutes.createRecordRoute(model, apiAuthorizor, opts),
+    retrieve: apiRestRoutes.retrieveRecordRoute(model, apiAuthorizor, opts),
+    replace: apiRestRoutes.replaceRecordRoute(model, apiAuthorizor, opts),
+    update: apiRestRoutes.updateRecordRoute(model, apiAuthorizor, opts)
   };
   // Create and return router
   const router = express.Router();
@@ -51,7 +50,9 @@ apiRouter.use('/profiles', createCollectionRouter(models.Profile));
 apiRouter.use('/relays', createCollectionRouter(models.Relay));
 apiRouter.use('/scripts', createCollectionRouter(models.Script));
 apiRouter.use('/trips', createCollectionRouter(models.Trip));
-apiRouter.use('/users', createCollectionRouter(models.User));
+apiRouter.use('/users', createCollectionRouter(models.User, {
+  blacklistFields: ['passwordHash']
+}));
 
 // Action routes
 apiRouter.post('/trips/:tripId/actions',

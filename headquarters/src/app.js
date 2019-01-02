@@ -6,8 +6,12 @@ const Raven = require('raven');
 const config = require('./config');
 
 const apiRouter = require('./routers/api');
-const pageRouter = require('./routers/page');
 const twilioRouter = require('./routers/twilio');
+const {
+  galleryRouter,
+  shortcutRouter,
+  actorRouter
+} = require('./routers/page');
 
 // Configure raven
 Raven.config(config.env.SENTRY_DSN).install();
@@ -43,7 +47,9 @@ app.use('/api', apiRouter);
 app.use('/endpoints/twilio', twilioRouter);
 
 // Server-rendered view routers
-app.use('/', pageRouter);
+app.use('/s', shortcutRouter);
+app.use('/actor', actorRouter);
+app.use('/gallery', galleryRouter);
 
 // The error handler must be before any other error middleware
 app.use(Raven.errorHandler());
@@ -52,8 +58,9 @@ app.use(Raven.errorHandler());
 // eslint-disable-next-line no-unused-vars
 app.use(function(err, req, res, next) {
   config.logger.error({ name: 'error' }, err.stack);
+  const errorResponse = { message: err.message };
   res.status(500);
-  res.json({ message: err.message });
+  res.json({ error: errorResponse });
 });
 
 module.exports = app;

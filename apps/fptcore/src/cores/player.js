@@ -27,8 +27,7 @@ PlayerCore.getInitialFields = function(scriptContent, roleName, variantNames) {
 };
 
 PlayerCore.getPageInfo = function(script, evalContext, player) {
-  var page = _.find(script.content.pages,
-    { name: player.currentPageName });
+  var page = _.find(script.content.pages, { name: player.currentPageName });
   if (!page) {
     return null;
   }

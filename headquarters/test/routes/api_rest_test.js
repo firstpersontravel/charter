@@ -256,6 +256,24 @@ describe('apiRestRoutes', () => {
         where: { title: { [Sequelize.Op.or]: ['x', 'y'] } }
       });
     });
+
+    it('hides blacklisted fields', async () => {
+      const opts = {
+        blacklistFields: ['timestamp', 'title']
+      };
+      sandbox.stub(Model, 'findAll').resolves([sampleRecord1, sampleRecord2]);
+
+      // Call the route
+      await (
+        apiRestRoutes.listCollectionRoute(Model, dummyAuthz, opts)(req, res)
+      );
+
+      // Check response
+      assert.strictEqual(res.statusCode, 200);
+      assert.deepStrictEqual(JSON.parse(res._getData()), {
+        data: { models: [{ id: 1, isShiny: false }, { id: 2, isShiny: true }] }
+      });
+    });
   });
 
   describe('#createRecordRoute', () => {
@@ -340,6 +358,16 @@ describe('apiRestRoutes', () => {
         await apiRestRoutes.createRecordRoute(Model, dummyAuthz)(req, res);
       }, 422, 'Invalid field: "missing".');
     });
+
+    it('does not allow creation with blacklisted field', async () => {
+      const opts = { blacklistFields: ['title'] };
+      req.body = { title: 'ghi', timestamp: '2018-01-01T04:05:06Z' };
+
+      // Call the route
+      const route = apiRestRoutes.createRecordRoute(Model, dummyAuthz, opts);
+      await assertThrows(() => route(req, res),
+        422, 'Invalid field: "title".');
+    });
   });
 
   describe('#retrieveRecordRoute', () => {
@@ -365,6 +393,28 @@ describe('apiRestRoutes', () => {
 
       // Assert find call made
       sinon.assert.calledWith(Model.findById, 10);
+    });
+
+    it('omits blacklisted fields', async () => {
+      const opts = { blacklistFields: ['isShiny', 'id' ] };
+      req.params = { recordId: '10' };
+      sandbox.stub(Model, 'findById').resolves(sampleRecord1);
+
+      // Call the route
+      await (
+        apiRestRoutes.retrieveRecordRoute(Model, dummyAuthz, opts)(req, res)
+      );
+
+      // Check response
+      assert.strictEqual(res.statusCode, 200);
+      assert.deepStrictEqual(JSON.parse(res._getData()), {
+        data: {
+          model: {
+            timestamp: '2018-02-04T04:05:06.000Z',
+            title: 'abc'
+          }
+        }
+      });
     });
 
     it('calls authorizer', async () => {
@@ -482,6 +532,24 @@ describe('apiRestRoutes', () => {
       await assertThrows(async () => {
         await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
       }, 422, 'Invalid field: "bad".');
+    });
+
+    it('does not allow update with blacklisted field', async () => {
+      const opts = { blacklistFields: ['timestamp'] };
+      req.params = { recordId: '10' };
+      req.body = { timestamp: '2018-02-04T02:05:06Z' };
+      const existingRecord = Model.build({
+        id: 1,
+        title: 'abc',
+        timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
+      });
+      sandbox.stub(existingRecord, 'save').resolves(null);
+      sandbox.stub(Model, 'findById').resolves(existingRecord);
+
+      // Call the route
+      const route = apiRestRoutes.updateRecordRoute(Model, dummyAuthz, opts);
+      await assertThrows(() => route(req, res),
+        422, 'Invalid field: "timestamp".');
     });
   });
 });

@@ -107,6 +107,27 @@
 
     # build travel app in xcode
 
+### Creating a user
+
+    dc exec server node
+
+    const email = "NEW_EMAIL";
+    const pw = "NEW_PASSWORD";
+
+    const bcrypt = require('bcrypt');
+    const models = require('./src/models');
+
+    bcrypt.hash(pw, 10)
+      .then((hash) => {
+        return models.User.create({
+          email: email@email.com,
+          passwordHash: hash
+        });
+      })
+      .then((user) => {
+        console.log('Created user: ' + user.id);
+      });
+
 ### Todo later:
     
     - https://github.com/mozilla-services/react-jsonschema-form

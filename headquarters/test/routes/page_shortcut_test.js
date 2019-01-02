@@ -4,20 +4,9 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
-const pagePublicRoutes = require('../../src/routes/page_public');
+const pageShortcutRoutes = require('../../src/routes/page_shortcut');
 
-describe('pagePublicRoutes', () => {
-  describe('#homeRoute', () => {
-    it('returns 200', async () => {
-      const req = httpMocks.createRequest();
-      const res = httpMocks.createResponse();
-
-      await pagePublicRoutes.homeRoute(req, res);
-
-      assert.strictEqual(res.statusCode, 200);
-    });
-  });
-
+describe('pageShortcutRoutes', () => {
   describe('#playerShortcutRoute', () => {
     it('redirects', async () => {
       const req = httpMocks.createRequest({ params: { playerId: 1 } });
@@ -31,7 +20,7 @@ describe('pagePublicRoutes', () => {
       };
       sandbox.stub(models.Player, 'findById').resolves(mockPlayer);
 
-      await pagePublicRoutes.playerShortcutRoute(req, res);
+      await pageShortcutRoutes.playerShortcutRoute(req, res);
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 302);
@@ -49,7 +38,7 @@ describe('pagePublicRoutes', () => {
       // Stub response
       sandbox.stub(models.Player, 'findById').resolves(null);
 
-      await pagePublicRoutes.playerShortcutRoute(req, res);
+      await pageShortcutRoutes.playerShortcutRoute(req, res);
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 404);

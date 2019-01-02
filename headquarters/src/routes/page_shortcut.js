@@ -1,9 +1,5 @@
 const models = require('../models');
 
-const homeRoute = async (req, res) => {
-  res.render('public/main', { layout: 'public' });
-};
-
 const playerShortcutRoute = async (req, res) => {
   const playerId = req.params.playerId;
   const player = await models.Player.findById(playerId);
@@ -19,6 +15,5 @@ const playerShortcutRoute = async (req, res) => {
 };
 
 module.exports = {
-  homeRoute,
   playerShortcutRoute
 };
