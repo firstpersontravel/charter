@@ -38,10 +38,7 @@ services:
     volumes:
       - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
       - ./headquarters/bin:/var/app/headquarters/bin
-      - ./headquarters/config:/var/app/headquarters/config
-      - ./headquarters/migrations:/var/app/headquarters/migrations
       - ./headquarters/src:/var/app/headquarters/src
-      - ./headquarters/views:/var/app/headquarters/views
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
@@ -53,12 +50,8 @@ services:
     image: fpt:latest
     # uncomment all volumes to test baked version for deployment
     volumes:
-      - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
       - ./headquarters/bin:/var/app/headquarters/bin
-      - ./headquarters/config:/var/app/headquarters/config
-      - ./headquarters/migrations:/var/app/headquarters/migrations
       - ./headquarters/src:/var/app/headquarters/src
-      - ./headquarters/views:/var/app/headquarters/views
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH

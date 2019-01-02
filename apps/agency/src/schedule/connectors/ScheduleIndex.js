@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createInstance, listCollection, updateInstance, initializeTrip }
   from '../../actions';
 import { instancesStatus } from '../../connector-utils';
-import ScheduleIndex from '../components/schedule-index';
+import ScheduleIndex from '../components/ScheduleIndex';
 
 const mapStateToProps = (state, ownProps) => {
   const groupsStatus = instancesStatus(state, 'groups', {
