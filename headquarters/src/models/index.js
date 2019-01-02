@@ -3,10 +3,12 @@ module.exports = {
   Experience: require('./experience'),
   Group: require('./group'),
   Message: require('./message'),
-  Profile: require('./profile'),
-  Trip: require('./trip'),
+  Organization: require('./organization'),
+  OrganizationRole: require('./organization_role'),
   Player: require('./player'),
+  Profile: require('./profile'),
   Relay: require('./relay'),
   Script: require('./script'),
+  Trip: require('./trip'),
   User: require('./user')
 };
