@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { TimeUtil, TextUtil } from 'fptcore';
 
-import PopoverControl from '../../partials/popover-control';
+import PopoverControl from '../../partials/PopoverControl';
 
 export default class TripSchedule extends Component {
 

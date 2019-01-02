@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { EvalCore } from 'fptcore';
 
-import PopoverControl from '../../partials/popover-control';
+import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../../schedule/utils';
 
 function doesTripHaveRole(trip, roleName) {
