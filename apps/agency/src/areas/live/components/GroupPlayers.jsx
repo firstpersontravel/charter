@@ -82,6 +82,7 @@ export default class GroupPlayers extends Component {
       .map(profile => (
         _.find(this.props.users, { id: profile.userId })
       ))
+      .filter(Boolean)
       .map(user => ({
         value: user.id,
         label: `${user.firstName} ${user.lastName}`

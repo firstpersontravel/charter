@@ -8,7 +8,7 @@ function renderExperience(experience, scripts) {
     <div key={`${experience.id}-${script.id}`}>
       <Link
         to={`/agency/design/script/${script.id}`}>
-        {experience.title} v{script.version}
+        {experience.title} Rev {script.revision}
       </Link>
     </div>
   ));

@@ -12,7 +12,7 @@ export default function ExperienceScripts({ experienceName, experience, scripts 
         to={
           `/agency/design/script/${script.id}`
         }>
-        Version {script.version}
+        Rev. {script.revision}
       </Link>
     </div>
   ));

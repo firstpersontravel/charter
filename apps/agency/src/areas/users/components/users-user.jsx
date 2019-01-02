@@ -39,9 +39,7 @@ export default class UsersUser extends Component {
   }
 
   loadPlayers(userId) {
-    this.props.listCollection('players', {
-      userId: userId
-    });
+    this.props.listCollection('players', { userId: userId });
   }
 
   handleUserToggleArchived() {
@@ -111,13 +109,18 @@ export default class UsersUser extends Component {
   }
 
   renderPlayerRole({ group, player, trip }) {
-    return (
-      <li key={player.id}>
+    const groupLink = group ? (
+      <span>
         <Link
           to={`/agency/live/${trip.groupId}`}>
           Group: {moment(group.date).format('MMM D')}
         </Link>
         {', '}
+      </span>
+    ) : null;
+    return (
+      <li key={player.id}>
+        {groupLink}
         <Link
           to={`/agency/live/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
           Trip: {trip.title},
