@@ -1,10 +1,11 @@
 import React from 'react';
-import { Router, Route, IndexRedirect, browserHistory } from 'react-router';
+import { Router, Route, browserHistory } from 'react-router';
 
 import AppConnector from './app/connectors/app';
 import DesignRoute from './design/route';
-import ScheduleRoute from './schedule/route';
 import OperateRoute from './operate/route';
+import PublicRoute from './public/route';
+import ScheduleRoute from './schedule/route';
 import UsersRoute from './users/route';
 
 function InvalidPage() {
@@ -14,10 +15,10 @@ function InvalidPage() {
 export default (
   <Router history={browserHistory}>
     <Route path="agency" component={AppConnector}>
-      <IndexRedirect to="/agency/schedule" />
+      {PublicRoute}
       {DesignRoute}
-      {ScheduleRoute}
       {OperateRoute}
+      {ScheduleRoute}
       {UsersRoute}
       <Route path="*" component={InvalidPage} />
     </Route>
