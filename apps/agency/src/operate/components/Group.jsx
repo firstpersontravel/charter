@@ -120,14 +120,14 @@ export default class Group extends Component {
       // refresh, and now that all the trip ids are present, a normal
       // refreshLiveData will do the trick.`
       const groupId = this.props.params.groupId;
-      this.props.getInstance('groups', groupId);
+      this.props.retrieveInstance('groups', groupId);
       this.props.listCollection('trips', { groupId: groupId });
       return;
     }
     // if (this.props.groupStatus.instance) {
     //   if (!this.props.groupStatus.instance.script) {
     //     const scriptId = this.props.groupStatus.instance.scriptId;
-    //     this.props.getInstance('scripts', scriptId);
+    //     this.props.retrieveInstance('scripts', scriptId);
     //   }
     // }
     this.updateFayeSubscriptions(tripIds);
@@ -256,7 +256,7 @@ Group.propTypes = {
   params: PropTypes.object.isRequired,
   groupStatus: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
-  getInstance: PropTypes.func.isRequired,
+  retrieveInstance: PropTypes.func.isRequired,
   listCollection: PropTypes.func.isRequired,
   refreshLiveData: PropTypes.func.isRequired
 };

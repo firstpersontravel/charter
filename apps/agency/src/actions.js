@@ -113,9 +113,26 @@ export function listCollection(collectionName, query, opts) {
   };
 }
 
-export function getInstance(collectionName, instanceId) {
+export function fetchAuthInfo() {
+  return function (dispatch) {
+    dispatch(saveRequest('authInfo', 'pending', null));
+    fetch('/auth/info')
+      .then((response) => {
+        if (response.status !== 200) {
+          dispatch(saveRequest('authInfo', 'rejected', null));
+          return;
+        }
+        response.json().then((data) => {
+          dispatch(saveRequest('authInfo', 'fulfilled', null));
+          dispatch(saveInstances('authInfo', [{ id: 'self', data: data }]));
+        });
+      });
+  };
+}
+
+export function retrieveInstance(collectionName, instanceId) {
   if (!instanceId) {
-    throw new Error('instanceId required to getInstance');
+    throw new Error('instanceId required to retrieveInstance');
   }
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {

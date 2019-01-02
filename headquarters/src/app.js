@@ -1,4 +1,5 @@
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
 const Raven = require('raven');
@@ -6,6 +7,7 @@ const Raven = require('raven');
 const config = require('./config');
 
 const apiRouter = require('./routers/api');
+const authRouter = require('./routers/auth');
 const twilioRouter = require('./routers/twilio');
 const {
   galleryRouter,
@@ -22,6 +24,7 @@ app.enable('trust proxy');
 app.use(Raven.requestHandler());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // CORS Headers
 app.use((req, res, next) => {
@@ -40,16 +43,13 @@ app.use((req, res, next) => {
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'public' }));
 app.set('view engine', 'handlebars');
 
-// Add API
-app.use('/api', apiRouter);
-
-// API endpoints
-app.use('/endpoints/twilio', twilioRouter);
-
-// Server-rendered view routers
-app.use('/s', shortcutRouter);
+// Add routers
 app.use('/actor', actorRouter);
+app.use('/api', apiRouter);
+app.use('/auth', authRouter);
+app.use('/endpoints/twilio', twilioRouter);
 app.use('/gallery', galleryRouter);
+app.use('/s', shortcutRouter);
 
 // The error handler must be before any other error middleware
 app.use(Raven.errorHandler());

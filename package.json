@@ -16,6 +16,8 @@
     "watch": "yarn run watch_travel & yarn run watch_agency & yarn run watch_agency_devserver",
     "build_ios": "yarn run build_travel && mkdir -p native/ios/www && cp apps/travel/dist/dist.zip native/ios/www;",
     "upload_secrets": "aws s3 sync secrets s3://fpt-tech/secrets --exclude '*.DS_Store'",
-    "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets"
+    "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets",
+    "migrate": "docker-compose exec server sequelize db:migrate",
+    "migrate:undo": "docker-compose exec server sequelize db:migrate:undo"
   }
 }

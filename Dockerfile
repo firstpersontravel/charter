@@ -1,7 +1,4 @@
-FROM alpine
-
-# development, staging, or production
-ARG stage=development
+FROM node:8.15-alpine
  
 # Update OS
 RUN apk update
@@ -21,13 +18,10 @@ ADD docker/web/conf /etc/nginx/conf.d
 # Install yarn
 RUN echo -e 'http://dl-cdn.alpinelinux.org/alpine/edge/main\nhttp://dl-cdn.alpinelinux.org/alpine/edge/community\nhttp://dl-cdn.alpinelinux.org/alpine/edge/testing' > /etc/apk/repositories
 
-# Install node
-RUN apk add nodejs>8.11.3
-
 RUN apk add --no-cache yarn
 
 # Install app build tools
-RUN yarn global add ember-cli bower webpack@2.2.0-rc.2
+RUN yarn global add ember-cli@2.2.0-beta.6 bower webpack@2.2.0-rc.2
 
 # Install requirements for node-sass :{
 RUN apk add --update python make gcc g++
@@ -54,6 +48,7 @@ RUN cd /var/npm/travel && yarn install
 RUN mkdir -p /var/npm/agency
 ADD apps/agency/package.json /var/npm/agency/package.json
 ADD apps/agency/yarn.lock /var/npm/agency/yarn.lock
+RUN cd /var/npm/agency && yarn add node-sass@latest
 RUN cd /var/npm/agency && yarn install
 
 # Install travel bower components
@@ -83,7 +78,7 @@ RUN cd /var/app/apps/fptcore && yarn test
 RUN cd /var/app/apps/agency && yarn test
 
 # Build applications
-RUN cd /var/app/apps/travel && ember build --env $stage
+RUN cd /var/app/apps/travel && ember build --env production
 RUN cd /var/app/apps/agency && export NODE_ENV=production && webpack
 
 # Set the default directory for our environment

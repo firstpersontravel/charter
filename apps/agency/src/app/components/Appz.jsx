@@ -49,6 +49,7 @@ export default class App extends Component {
 
   componentDidMount() {
     document.title = `${getStage()} - FPT Ops`;
+    this.props.fetchAuthInfo();
     this.props.listCollection('experiences', { isArchived: false });
     this.props.listCollection('groups', { isArchived: false });
     this.props.listCollection('trips', { isArchived: false });
@@ -69,5 +70,6 @@ export default class App extends Component {
 
 App.propTypes = {
   children: PropTypes.node.isRequired,
+  fetchAuthInfo: PropTypes.func.isRequired,
   listCollection: PropTypes.func.isRequired
 };
