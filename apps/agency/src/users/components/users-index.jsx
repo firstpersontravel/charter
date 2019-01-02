@@ -27,7 +27,7 @@ export default class Users extends Component {
     const role = this.props.location.query.role;
     const experienceId = this.props.location.query.experienceId;
     browserHistory.push(
-      `/agency/users${experienceId ? `?experienceId=${experienceId}` : ''}` +
+      `/users${experienceId ? `?experienceId=${experienceId}` : ''}` +
       `${role ? `&role=${role}` : ''}`
     );
   }
@@ -57,7 +57,7 @@ export default class Users extends Component {
             textDecoration: profile.isActive ? '' : 'line-through'
           }}
           to={{
-            pathname: '/agency/users',
+            pathname: '/users',
             query: {
               experienceId: profile.experienceId,
               role: profile.roleName
@@ -72,7 +72,7 @@ export default class Users extends Component {
       <tr key={user.id}>
         <td>
           <Link
-            to={`/agency/users/user/${user.id}`}>
+            to={`/users/user/${user.id}`}>
             {user.firstName} {user.lastName}
           </Link>
         </td>
@@ -90,9 +90,9 @@ export default class Users extends Component {
     if (roleName && experience) {
       return (
         <h3>
-          <Link to="/agency/users">Users</Link>
+          <Link to="/users">Users</Link>
           &nbsp;›&nbsp;
-          <Link to={`/agency/users?experienceId=${experienceId}`}>
+          <Link to={`/users?experienceId=${experienceId}`}>
             {experience.title}
           </Link>
           &nbsp;›&nbsp;
@@ -103,7 +103,7 @@ export default class Users extends Component {
     if (experience) {
       return (
         <h3>
-          <Link to="/agency/users">Users</Link>
+          <Link to="/users">Users</Link>
           &nbsp;›&nbsp;
           {experience.title}
         </h3>
@@ -164,7 +164,7 @@ export default class Users extends Component {
         <div>
           <Link
             to={{
-              pathname: '/agency/users',
+              pathname: '/users',
               query: {
                 role: roleName || undefined,
                 experienceId: experienceId || undefined,

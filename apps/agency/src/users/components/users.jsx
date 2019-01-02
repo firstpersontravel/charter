@@ -12,7 +12,7 @@ function renderRole(experience, roleName, roleProfiles) {
       &rsaquo; <Link
         activeClassName="bold"
         to={{
-          pathname: '/agency/users',
+          pathname: '/users',
           query: { experienceId: experience.id, role: roleName }
         }}>
         {roleName}
@@ -34,7 +34,7 @@ function renderExperienceRoles(roleQuery, experience, profiles) {
     <div key={experience.id} style={{ marginTop: '0.5em' }}>
       <div>
         <strong>
-          <Link to={`/agency/users?experienceId=${experience.id}`}>
+          <Link to={`/users?experienceId=${experience.id}`}>
             {experience.title}
           </Link>
         </strong>
@@ -51,13 +51,13 @@ function renderRolesCol(roleQuery, experiences, profiles) {
     <div className="col-sm-3 d-none d-sm-block">
       <h3>Roles</h3>
       <div>
-        <Link className={roleQuery ? '' : 'bold'} to="/agency/users">
+        <Link className={roleQuery ? '' : 'bold'} to="/users">
           All
         </Link>
       </div>
       {scriptCells}
       <div style={{ marginTop: '0.5em' }}>
-        <Link activeClassName="bold" to="/agency/users?role=Archived">
+        <Link activeClassName="bold" to="/users?role=Archived">
           Archived
         </Link>
       </div>

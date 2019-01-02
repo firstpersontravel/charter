@@ -48,7 +48,7 @@ function renderUser(user) {
   }
   return (
     <Link
-      to={`/agency/users/user/${user.id}`}>
+      to={`/users/user/${user.id}`}>
       {user.firstName} {user.lastName}
     </Link>
   );
@@ -67,7 +67,7 @@ function renderPlayerCell(player, isFirst) {
   const appearanceIsActive = !appearance.if || EvalCore.if(trip.evalContext, appearance.if);
   const pageTitle = page ? page.title : player.currentPageName;
   const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
-  const tripRoleUrl = `/agency/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
+  const tripRoleUrl = `/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ? renderMap(trip, player.user) : null;
   const renderedUser = isFirst ? (

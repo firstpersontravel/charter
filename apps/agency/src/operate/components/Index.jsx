@@ -5,15 +5,15 @@ import { browserHistory } from 'react-router';
 export default class Index extends Component {
   componentWillMount() {
     if (this.props.groupId) {
-      browserHistory.push(`/agency/operate/${this.props.groupId}`);
+      browserHistory.push(`/operate/${this.props.groupId}`);
     } else {
-      browserHistory.push('/agency/');
+      browserHistory.push('/');
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.groupId) {
-      browserHistory.push(`/agency/operate/${nextProps.groupId}`);
+      browserHistory.push(`/operate/${nextProps.groupId}`);
     }
   }
 

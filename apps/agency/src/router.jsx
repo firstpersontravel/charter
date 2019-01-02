@@ -8,19 +8,19 @@ import PublicRoute from './public/route';
 import ScheduleRoute from './schedule/route';
 import UsersRoute from './users/route';
 
-function InvalidPage() {
-  return <div>Page not found</div>;
+function NotFound() {
+  return <div className="container-fluid">Page not found</div>;
 }
 
 export default (
   <Router history={browserHistory}>
-    <Route path="agency" component={AppConnector}>
+    <Route component={AppConnector}>
       {PublicRoute}
       {DesignRoute}
       {OperateRoute}
       {ScheduleRoute}
       {UsersRoute}
-      <Route path="*" component={InvalidPage} />
+      <Route path="*" component={NotFound} />
     </Route>
   </Router>
 );

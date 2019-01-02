@@ -31,7 +31,7 @@ function renderCollection(script, currentCollectionName, collectionName, current
         activeClassName="bold"
         to={{
           pathname: (
-            `/agency/design/script/${script.id}/collection/${collectionName}`
+            `/design/script/${script.id}/collection/${collectionName}`
           ),
           query: currentSceneName ? { scene: currentSceneName } : null
         }}>
@@ -43,7 +43,7 @@ function renderCollection(script, currentCollectionName, collectionName, current
 
 function handleSelectScene(script, sceneName) {
   browserHistory.push(
-    `/agency/design/script/${script.id}` +
+    `/design/script/${script.id}` +
     `${sceneName ? `?scene=${sceneName}` : ''}`
   );
 }
@@ -131,13 +131,13 @@ export default function Script({ script, experience, children, params, location 
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to="/agency/design">Experiences</Link>
+          <Link to="/design">Experiences</Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/design/experience/${experience.name}`}>
+          <Link to={`/design/experience/${experience.name}`}>
             {experience.title}
           </Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/design/script/${script.id}`}>
+          <Link to={`/design/script/${script.id}`}>
             Revision {script.revision}
           </Link>
         </div>

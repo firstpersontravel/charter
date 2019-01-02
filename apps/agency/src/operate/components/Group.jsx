@@ -186,7 +186,7 @@ export default class Group extends Component {
         <Link
           className="nav-link"
           activeClassName="active"
-          to={`/agency/operate/${this.props.params.groupId}/trip/${trip.id}`}>
+          to={`/operate/${this.props.params.groupId}/trip/${trip.id}`}>
           {isArchivedIcon}
           {trip.departureName}
           <span className="d-none d-sm-inline"> {trip.title}</span>
@@ -234,7 +234,7 @@ export default class Group extends Component {
             <Link
               className="nav-link"
               activeClassName="active"
-              to={`/agency/operate/${this.props.params.groupId}/all`}>
+              to={`/operate/${this.props.params.groupId}/all`}>
               {dateShort}
               <br />
               <span style={{ fontSize: '10pt' }}>

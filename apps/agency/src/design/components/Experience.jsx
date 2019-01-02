@@ -7,9 +7,9 @@ export default function Experience({ experienceName, experience, children }) {
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to="/agency/design">Experiences</Link>
+          <Link to="/design">Experiences</Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/agency/design/experience/${experienceName}`}>
+          <Link to={`/design/experience/${experienceName}`}>
             {experience && experience.title}
           </Link>
         </div>

@@ -117,7 +117,7 @@ function renderUser(user) {
     return 'None';
   }
   return (
-    <Link to={`/agency/users/user/${user.id}`}>
+    <Link to={`/users/user/${user.id}`}>
       {user.firstName} {user.lastName}
     </Link>
   );
@@ -137,7 +137,7 @@ function renderVars(player) {
       <div>
         <strong>Role:</strong>
         &nbsp;
-        <Link to={`/agency/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
+        <Link to={`/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
           {player.roleName} ({user ? user.firstName : 'No user'})
         </Link>
         <br />

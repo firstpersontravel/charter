@@ -21,7 +21,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
       <Link
         className="nav-link"
         activeClassName="active"
-        to={`/agency/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/messages`}>
+        to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/messages`}>
         Messages
       </Link>
     </li>
@@ -33,7 +33,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}`}>
+            to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}`}>
             {params.roleName}
           </IndexLink>
         </li>
@@ -42,7 +42,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/pages`}>
+            to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/pages`}>
             Pages
           </Link>
         </li>
@@ -50,7 +50,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/agency/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/interface`}>
+            to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/interface`}>
             Interface
           </Link>
         </li>

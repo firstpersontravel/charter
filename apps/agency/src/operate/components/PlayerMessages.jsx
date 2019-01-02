@@ -80,7 +80,7 @@ export default class PlayerMessages extends Component {
   }
 
   handleCounterpartChange(event) {
-    browserHistory.push(`/agency/operate/${this.props.params.groupId}/trip/${this.props.params.tripId}/players/${this.props.params.roleName}/messages/${event.target.value}`);
+    browserHistory.push(`/operate/${this.props.params.groupId}/trip/${this.props.params.tripId}/players/${this.props.params.roleName}/messages/${event.target.value}`);
   }
 
   handlePendingMessageChange(event) {

@@ -10,7 +10,7 @@ export default function ExperienceScripts({ experienceName, experience, scripts 
     <div key={script.id}>
       <Link
         to={
-          `/agency/design/script/${script.id}`
+          `/design/script/${script.id}`
         }>
         Rev. {script.revision}
       </Link>
@@ -22,7 +22,7 @@ export default function ExperienceScripts({ experienceName, experience, scripts 
         {renderedScripts}
       </div>
       <div className="col-sm-6">
-        <Link to={`/agency/design/experience/${experienceName}/relays`}>
+        <Link to={`/design/experience/${experienceName}/relays`}>
           Relays
         </Link>
       </div>

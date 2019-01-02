@@ -30,7 +30,7 @@ export default (
   <Route path="operate">
     <IndexRoute component={IndexConnector} />
     <Route path=":groupId" component={GroupConnector}>
-      <IndexRedirect to="/agency/operate/:groupId/all" />
+      <IndexRedirect to="/operate/:groupId/all" />
       <Route path="all" component={GroupAllConnector}>
         <IndexRoute component={GroupOverviewConnector} />
         <Route path="casting" component={GroupPlayersConnector} />
@@ -57,7 +57,7 @@ export default (
             <IndexRoute component={PlayerOverviewConnector} />
             <Route path="messages">
               <IndexRedirect
-                to="/agency/operate/:groupId/trip/:tripId/players/:roleName/messages/All" />
+                to="/operate/:groupId/trip/:tripId/players/:roleName/messages/All" />
               <Route
                 path=":withRoleName"
                 component={PlayerMessagesConnector} />

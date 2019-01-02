@@ -7,7 +7,7 @@ function renderExperience(experience, scripts) {
   const scriptItems = scripts.map(script => (
     <div key={`${experience.id}-${script.id}`}>
       <Link
-        to={`/agency/design/script/${script.id}`}>
+        to={`/design/script/${script.id}`}>
         {experience.title} Rev {script.revision}
       </Link>
     </div>
@@ -17,7 +17,7 @@ function renderExperience(experience, scripts) {
       <h4>{experience.title}</h4>
       {scriptItems}
       <Link
-        to={`/agency/design/experience/${experience.name}/relays`}>
+        to={`/design/experience/${experience.name}/relays`}>
         Relays
       </Link>
     </div>
@@ -34,7 +34,7 @@ export default function ExperiencesIndex({ children, experiences, scripts }) {
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to="/agency/design">Experiences</Link>
+          <Link to="/design">Experiences</Link>
         </div>
       </div>
       <hr />

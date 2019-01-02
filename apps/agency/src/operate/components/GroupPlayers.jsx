@@ -19,7 +19,7 @@ function doesTripHaveRole(trip, roleName) {
 function renderScheduleHeader(trip) {
   return (
     <th key={trip.id}>
-      <Link to={`/agency/operate/${trip.groupId}/trip/${trip.id}`}>
+      <Link to={`/operate/${trip.groupId}/trip/${trip.id}`}>
         {trip.departureName}: {trip.title}
       </Link>
     </th>
@@ -92,7 +92,7 @@ export default class GroupPlayers extends Component {
         return (
           <Link
             to={{
-              pathname: '/agency/users',
+              pathname: '/users',
               query: {
                 editing: true,
                 role: roleName,
@@ -108,7 +108,7 @@ export default class GroupPlayers extends Component {
     const userChoicesWithNone = [{ value: '', label: 'Unassigned' }]
       .concat(userChoices);
     const goToUser = (users.length === 1 && users[0]) ? (
-      <Link className="faint" to={`/agency/users/user/${users[0].id}`}>
+      <Link className="faint" to={`/users/user/${users[0].id}`}>
         <i className="fa fa-user" />
       </Link>
     ) : null;

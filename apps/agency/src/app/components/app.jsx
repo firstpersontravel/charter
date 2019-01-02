@@ -11,7 +11,7 @@ function renderNav() {
   const navClass = `navbar navbar-expand-sm navbar-light bg-faded ${navStageClass}`;
   return (
     <nav className={navClass}>
-      <Link activeClassName="active" className="navbar-brand" to="/agency">
+      <Link activeClassName="active" className="navbar-brand" to="/">
         FPT&nbsp;{stageLabel}
       </Link>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
@@ -20,22 +20,22 @@ function renderNav() {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/agency/design">
+            <Link activeClassName="active" className="nav-link" to="/design">
               Design
             </Link>
           </li>
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/agency/schedule">
+            <Link activeClassName="active" className="nav-link" to="/schedule">
               Schedule
             </Link>
           </li>
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/agency/operate">
+            <Link activeClassName="active" className="nav-link" to="/operate">
               Operate
             </Link>
           </li>
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/agency/users">
+            <Link activeClassName="active" className="nav-link" to="/users">
               Users
             </Link>
           </li>

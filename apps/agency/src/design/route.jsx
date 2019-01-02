@@ -16,7 +16,7 @@ import ResourceIndexConnector from './connectors/ResourceIndex';
 
 export default (
   <Route path="design" component={DesignConnector}>
-    <IndexRedirect to="/agency/design/experiences" />
+    <IndexRedirect to="/design/experiences" />
     <Route path="experiences" component={ExperiencesConnector}>
       <IndexRoute component={ExperiencesIndexConnector} />
     </Route>

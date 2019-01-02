@@ -49,7 +49,7 @@ export default class UsersUser extends Component {
   }
 
   handleUserModalClose() {
-    browserHistory.push(`/agency/users/user/${this.props.user.id}`);
+    browserHistory.push(`/users/user/${this.props.user.id}`);
   }
 
   handleUpdateUser(fields) {
@@ -65,7 +65,7 @@ export default class UsersUser extends Component {
   handleProfileModalClose() {
     const query = this.props.location.query;
     browserHistory.push(
-      `/agency/users/user/${this.props.user.id}` +
+      `/users/user/${this.props.user.id}` +
       `${query.archived_profiles ? '?archived_profiles=true' : ''}`
     );
   }
@@ -112,7 +112,7 @@ export default class UsersUser extends Component {
     const groupLink = group ? (
       <span>
         <Link
-          to={`/agency/operate/${trip.groupId}`}>
+          to={`/operate/${trip.groupId}`}>
           Group: {moment(group.date).format('MMM D')}
         </Link>
         {', '}
@@ -122,7 +122,7 @@ export default class UsersUser extends Component {
       <li key={player.id}>
         {groupLink}
         <Link
-          to={`/agency/operate/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
+          to={`/operate/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
           Trip: {trip.title},
           Departure: {trip.departureName}
         </Link>
@@ -185,11 +185,11 @@ export default class UsersUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            <Link to={`/agency/users?experienceId=${experience.id}`}>
+            <Link to={`/users?experienceId=${experience.id}`}>
               {experience.title}
             </Link>
             &nbsp;&bull;&nbsp;
-            <Link to={`/agency/users?experienceId=${experience.id}&role=${role.name}`}>
+            <Link to={`/users?experienceId=${experience.id}&role=${role.name}`}>
               {role.name}
             </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }
@@ -198,7 +198,7 @@ export default class UsersUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/agency/users/user/${this.props.user.id}`,
+              pathname: `/users/user/${this.props.user.id}`,
               query: {
                 editing_profile: profile.id,
                 archived_profiles: this.props.location.query.archived_profiles
@@ -259,7 +259,7 @@ export default class UsersUser extends Component {
         &nbsp;
         <Link
           className="btn btn-sm btn-outline-secondary"
-          to={`/agency/users/user/${user.id}?archived_profiles=true`}>
+          to={`/users/user/${user.id}?archived_profiles=true`}>
           Show archived profiles
         </Link>
       </span>
@@ -267,13 +267,13 @@ export default class UsersUser extends Component {
     return (
       <div className="col-sm-9">
         <h3>
-          <Link to="/agency/users/">Users</Link> &rsaquo;&nbsp;
+          <Link to="/users/">Users</Link> &rsaquo;&nbsp;
           {user.firstName} {user.lastName}
         </h3>
         <p>
           <Link
             className="btn btn-sm btn-outline-secondary"
-            to={`/agency/users/user/${user.id}?editing=true`}>
+            to={`/users/user/${user.id}?editing=true`}>
             Edit
           </Link>
           &nbsp;
@@ -289,7 +289,7 @@ export default class UsersUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/agency/users/user/${user.id}`,
+              pathname: `/users/user/${user.id}`,
               query: {
                 editing_profile: 'new',
                 archived_profiles: this.props.location.query.archived_profiles
