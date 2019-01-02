@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { TextUtil } from 'fptcore';
 
-import PopoverControl from '../../../controls/popover-control';
+import PopoverControl from '../../../areas/partials/popover-control';
 
 export default class TripValues extends Component {
 

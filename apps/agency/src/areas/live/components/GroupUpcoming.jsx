@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import { ActionsRegistry, EventsRegistry, TriggerEventCore } from 'fptcore';
 
-import Param from '../../common/partials/Param';
+import Param from '../../partials/Param';
 
 function renderActionParam(trip, action, paramName) {
   const actionParamsSpec = ActionsRegistry[action.name].params;

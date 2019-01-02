@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { IndexLink } from 'react-router';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
-import AreYouSure from '../../common/partials/AreYouSure';
+import AreYouSure from '../../partials/AreYouSure';
 import TripModal from '../partials/trip-modal';
 import GroupModal from '../partials/group-modal';
 import ScheduleUtils from '../utils';

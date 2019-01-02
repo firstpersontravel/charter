@@ -13,7 +13,7 @@ import {
 
 import { COLLECTION_NAMES } from '../consts';
 import { getItems } from './utils';
-import Param, { renderLink } from '../../common/partials/Param';
+import Param, { renderLink } from '../../partials/Param';
 
 const PROP_ORDERING = [
   'name',

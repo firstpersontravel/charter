@@ -178,7 +178,6 @@ const userShowRoute = async (req, res) => {
 
   const pages = _(players)
     .map((player, i) => {
-      console.log('i', i, 'player', player.id);
       const objs = objsList[i];
       const evalContext = TripUtil.prepareEvalContext(objs);
       return getPage(objs, evalContext, player);
