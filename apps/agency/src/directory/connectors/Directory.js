@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import Users from '../components/users';
+import Directory from '../components/Directory';
 
 const mapStateToProps = (state, ownProps) => ({
   experiences: _.filter(state.datastore.experiences, { isArchived: false }),
@@ -10,4 +10,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(Directory);

@@ -9,12 +9,16 @@ function renderNav(authInfo, logout) {
   const navStageClass = `navbar-${stage}`;
   const navClass = `navbar navbar-expand-sm navbar-light bg-faded ${navStageClass}`;
 
+  const brand = (
+    <Link activeClassName="active" className="navbar-brand" to="/">
+      FPT MULTIVERSE
+    </Link>
+  );
+
   if (!authInfo) {
     return (
       <nav className={navClass}>
-        <Link activeClassName="active" className="navbar-brand" to="/">
-          FPT MULTIVERSE
-        </Link>
+        {brand}
         <div className="navbar-collapse collapse w-100 order-3">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
@@ -30,9 +34,7 @@ function renderNav(authInfo, logout) {
 
   return (
     <nav className={navClass}>
-      <Link activeClassName="active" className="navbar-brand" to="/">
-        FPT MULTIVERSE
-      </Link>
+      {brand}
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span className="navbar-toggler-icon" />
       </button>
@@ -54,8 +56,8 @@ function renderNav(authInfo, logout) {
             </Link>
           </li>
           <li className="nav-item">
-            <Link activeClassName="active" className="nav-link" to="/users">
-              Users
+            <Link activeClassName="active" className="nav-link" to="/directory">
+              Directory
             </Link>
           </li>
         </ul>

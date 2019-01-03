@@ -3,9 +3,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
-import UserModal from '../partials/user-modal';
+import UserModal from '../partials/UserModal';
 
-export default class Users extends Component {
+export default class DirectoryIndex extends Component {
 
   constructor(props) {
     super(props);
@@ -27,7 +27,7 @@ export default class Users extends Component {
     const role = this.props.location.query.role;
     const experienceId = this.props.location.query.experienceId;
     browserHistory.push(
-      `/users${experienceId ? `?experienceId=${experienceId}` : ''}` +
+      `/directory${experienceId ? `?experienceId=${experienceId}` : ''}` +
       `${role ? `&role=${role}` : ''}`
     );
   }
@@ -57,7 +57,7 @@ export default class Users extends Component {
             textDecoration: profile.isActive ? '' : 'line-through'
           }}
           to={{
-            pathname: '/users',
+            pathname: '/directory',
             query: {
               experienceId: profile.experienceId,
               role: profile.roleName
@@ -72,7 +72,7 @@ export default class Users extends Component {
       <tr key={user.id}>
         <td>
           <Link
-            to={`/users/user/${user.id}`}>
+            to={`/directory/user/${user.id}`}>
             {user.firstName} {user.lastName}
           </Link>
         </td>
@@ -90,9 +90,9 @@ export default class Users extends Component {
     if (roleName && experience) {
       return (
         <h3>
-          <Link to="/users">Users</Link>
+          <Link to="/directory">Directory</Link>
           &nbsp;›&nbsp;
-          <Link to={`/users?experienceId=${experienceId}`}>
+          <Link to={`/directory?experienceId=${experienceId}`}>
             {experience.title}
           </Link>
           &nbsp;›&nbsp;
@@ -103,14 +103,14 @@ export default class Users extends Component {
     if (experience) {
       return (
         <h3>
-          <Link to="/users">Users</Link>
+          <Link to="/directory">Directory</Link>
           &nbsp;›&nbsp;
           {experience.title}
         </h3>
       );
     }
     return (
-      <h3>Users</h3>
+      <h3>Directory</h3>
     );
   }
 
@@ -164,7 +164,7 @@ export default class Users extends Component {
         <div>
           <Link
             to={{
-              pathname: '/users',
+              pathname: '/directory',
               query: {
                 role: roleName || undefined,
                 experienceId: experienceId || undefined,
@@ -185,7 +185,7 @@ export default class Users extends Component {
   }
 }
 
-Users.propTypes = {
+DirectoryIndex.propTypes = {
   createInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,

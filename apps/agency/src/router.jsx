@@ -9,7 +9,7 @@ import DesignRoute from './design/route';
 import OperateRoute from './operate/route';
 import PublicRoute from './public/route';
 import ScheduleRoute from './schedule/route';
-import UsersRoute from './users/route';
+import DirectoryRoute from './directory/route';
 
 function NotFound() {
   return <div className="container-fluid">Page not found</div>;
@@ -57,7 +57,7 @@ export default (
         {DesignRoute}
         {OperateRoute}
         {ScheduleRoute}
-        {UsersRoute}
+        {DirectoryRoute}
       </Route>
       <Route path="*" component={NotFound} />
     </Route>

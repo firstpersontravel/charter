@@ -6,10 +6,10 @@ import { Link, browserHistory } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
-import UserModal from '../partials/user-modal';
-import ProfileModal from '../partials/profile-modal';
+import UserModal from '../partials/UserModal';
+import ProfileModal from '../partials/ProfileModal';
 
-export default class UsersUser extends Component {
+export default class DirectoryUser extends Component {
 
   constructor(props) {
     super(props);
@@ -49,7 +49,7 @@ export default class UsersUser extends Component {
   }
 
   handleUserModalClose() {
-    browserHistory.push(`/users/user/${this.props.user.id}`);
+    browserHistory.push(`/directory/user/${this.props.user.id}`);
   }
 
   handleUpdateUser(fields) {
@@ -65,7 +65,7 @@ export default class UsersUser extends Component {
   handleProfileModalClose() {
     const query = this.props.location.query;
     browserHistory.push(
-      `/users/user/${this.props.user.id}` +
+      `/directory/user/${this.props.user.id}` +
       `${query.archived_profiles ? '?archived_profiles=true' : ''}`
     );
   }
@@ -185,11 +185,11 @@ export default class UsersUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            <Link to={`/users?experienceId=${experience.id}`}>
+            <Link to={`/directory?experienceId=${experience.id}`}>
               {experience.title}
             </Link>
             &nbsp;&bull;&nbsp;
-            <Link to={`/users?experienceId=${experience.id}&role=${role.name}`}>
+            <Link to={`/directory?experienceId=${experience.id}&role=${role.name}`}>
               {role.name}
             </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }
@@ -198,7 +198,7 @@ export default class UsersUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/users/user/${this.props.user.id}`,
+              pathname: `/directory/user/${this.props.user.id}`,
               query: {
                 editing_profile: profile.id,
                 archived_profiles: this.props.location.query.archived_profiles
@@ -259,7 +259,7 @@ export default class UsersUser extends Component {
         &nbsp;
         <Link
           className="btn btn-sm btn-outline-secondary"
-          to={`/users/user/${user.id}?archived_profiles=true`}>
+          to={`/directory/user/${user.id}?archived_profiles=true`}>
           Show archived profiles
         </Link>
       </span>
@@ -267,13 +267,13 @@ export default class UsersUser extends Component {
     return (
       <div className="col-sm-9">
         <h3>
-          <Link to="/users/">Users</Link> &rsaquo;&nbsp;
+          <Link to="/directory">Directory</Link> &rsaquo;&nbsp;
           {user.firstName} {user.lastName}
         </h3>
         <p>
           <Link
             className="btn btn-sm btn-outline-secondary"
-            to={`/users/user/${user.id}?editing=true`}>
+            to={`/directory/user/${user.id}?editing=true`}>
             Edit
           </Link>
           &nbsp;
@@ -289,7 +289,7 @@ export default class UsersUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/users/user/${user.id}`,
+              pathname: `/directory/user/${user.id}`,
               query: {
                 editing_profile: 'new',
                 archived_profiles: this.props.location.query.archived_profiles
@@ -316,7 +316,7 @@ export default class UsersUser extends Component {
   }
 }
 
-UsersUser.propTypes = {
+DirectoryUser.propTypes = {
   listCollection: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
@@ -328,6 +328,6 @@ UsersUser.propTypes = {
   profiles: PropTypes.array.isRequired
 };
 
-UsersUser.defaultProps = {
+DirectoryUser.defaultProps = {
   user: null
 };

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import UsersUser from '../components/users-user';
+import DirectoryUser from '../components/DirectoryUser';
 import { createInstance, listCollection, updateInstance }
   from '../../actions';
 
@@ -52,4 +52,4 @@ const mapDispatchToProps = dispatch => ({
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersUser);
+export default connect(mapStateToProps, mapDispatchToProps)(DirectoryUser);

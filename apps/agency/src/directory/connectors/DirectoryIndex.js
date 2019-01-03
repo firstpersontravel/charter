@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import UsersIndex from '../components/users-index';
+import DirectoryIndex from '../components/DirectoryIndex';
 import { createInstance } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -16,4 +16,4 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersIndex);
+export default connect(mapStateToProps, mapDispatchToProps)(DirectoryIndex);
