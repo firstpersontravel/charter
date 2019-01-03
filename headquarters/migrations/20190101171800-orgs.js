@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface) => {
-    await queryInterface.createTable('Organizations', {
+    await queryInterface.createTable('Orgs', {
       id: {
         type: 'INTEGER',
         allowNull: false,
@@ -20,14 +20,14 @@ module.exports = {
         defaultValue: ''
       }
     });
-    await queryInterface.createTable('OrganizationRoles', {
+    await queryInterface.createTable('OrgRoles', {
       id: {
         type: 'INTEGER',
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
       },
-      organization_id: {
+      org_id: {
         type: 'INTEGER',
         allowNull: false
       },
@@ -41,12 +41,12 @@ module.exports = {
         defaultValue: false
       }
     });
-    await queryInterface.sequelize.query('insert into Organizations (name, title) values ("firstpersontravel", "First Person Travel");');
-    await queryInterface.sequelize.query('insert into OrganizationRoles (organization_id, user_id, is_admin) values (1, 1, 1);');
+    await queryInterface.sequelize.query('insert into Orgs (name, title) values ("firstpersontravel", "First Person Travel");');
+    await queryInterface.sequelize.query('insert into OrgRoles (org_id, user_id, is_admin) values (1, 1, 1);');
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('Organizations');
-    await queryInterface.dropTable('OrganizationRoles');
+    await queryInterface.dropTable('Orgs');
+    await queryInterface.dropTable('OrgRoles');
   }
 };

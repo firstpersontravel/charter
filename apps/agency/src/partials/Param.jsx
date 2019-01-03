@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-export function renderLink(organizationName, scriptId, collectionName, resourceName) {
+export function renderLink(orgName, scriptId, collectionName, resourceName) {
   return (
     <Link
       activeClassName="bold"
       to={
-        `/${organizationName}/design/script/${scriptId}` +
+        `/${orgName}/design/script/${scriptId}` +
         `/collection/${collectionName}` +
         `/resource/${resourceName}`
       }>
@@ -16,15 +16,15 @@ export function renderLink(organizationName, scriptId, collectionName, resourceN
   );
 }
 
-export default function Param({ organizationName, scriptId, spec, value }) {
+export default function Param({ orgName, scriptId, spec, value }) {
   if (spec.type === 'reference') {
-    return renderLink(organizationName, scriptId, spec.collection, value);
+    return renderLink(orgName, scriptId, spec.collection, value);
   }
   return value;
 }
 
 Param.propTypes = {
-  organizationName: PropTypes.string.isRequired,
+  orgName: PropTypes.string.isRequired,
   scriptId: PropTypes.number.isRequired,
   spec: PropTypes.object.isRequired,
   value: PropTypes.oneOfType([PropTypes.string]).isRequired

@@ -15,7 +15,7 @@ export default function Trip({ params, tripStatus, children }) {
     !tripStatus.instance.script) {
     return <div>Loading</div>;
   }
-  const organizationName = params.organizationName;
+  const orgName = params.orgName;
   const trip = tripStatus.instance;
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
@@ -30,7 +30,7 @@ export default function Trip({ params, tripStatus, children }) {
     <Link
       key={role.name}
       className="dropdown-item"
-      to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/players/${role.name}`}>
+      to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players/${role.name}`}>
       {role.name}
     </Link>
   )));
@@ -41,7 +41,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/values`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/values`}>
             Prep
           </Link>
         </li>
@@ -49,7 +49,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/schedule`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/schedule`}>
             Timing
           </Link>
         </li>
@@ -57,7 +57,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/scenes`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/scenes`}>
             Scenes
           </Link>
         </li>
@@ -66,7 +66,7 @@ export default function Trip({ params, tripStatus, children }) {
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/players`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players`}>
             Players
           </Link>
           <div className="dropdown-menu">
@@ -77,7 +77,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/achievements`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/achievements`}>
             Achievements
           </Link>
         </li>
@@ -85,7 +85,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/controls`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/controls`}>
             Controls
           </Link>
         </li>
@@ -93,7 +93,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/gallery`}>
+            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/gallery`}>
             Gallery
           </Link>
         </li>

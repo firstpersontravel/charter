@@ -119,10 +119,19 @@ export function makeAuthRequest(url, params, name) {
     dispatch(saveRequest(reqName, 'pending', null));
     fetch(url, params)
       .then((response) => {
+        // Login failure
+        if (response.status === 401) {
+          dispatch(saveRequest(reqName, 'fulfilled', null));
+          dispatch(saveInstances('auth', [{ id: name, data: null }]));
+          dispatch(saveInstances('auth', [{ id: 'latest', data: null }]));
+          return;
+        }
+        // Other network error
         if (response.status !== 200) {
           dispatch(saveRequest(reqName, 'rejected', null));
           return;
         }
+        // Login success
         response.json().then((data) => {
           dispatch(saveRequest(reqName, 'fulfilled', null));
           dispatch(saveInstances('auth', [{ id: name, data: data.data }]));

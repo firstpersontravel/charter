@@ -95,16 +95,16 @@ describe('authRoutes', () => {
   });
 
   describe('#infoRoute', () => {
-    it('returns user and organization info if logged in', async () => {
+    it('returns user and org info if logged in', async () => {
       const mockToken = { sub: 2 };
       const mockUser = { email: 'test@test.com' };
       const mockRoles = [{
         isAdmin: true,
-        organization: { name: 'name', title: 'title' }
+        org: { name: 'name', title: 'title' }
       }];
       sandbox.stub(authMiddleware, 'tokenForReq').resolves(mockToken);
       sandbox.stub(models.User, 'findById').resolves(mockUser);
-      sandbox.stub(models.OrganizationRole, 'findAll').resolves(mockRoles);
+      sandbox.stub(models.OrgRole, 'findAll').resolves(mockRoles);
 
       await authRoutes.infoRoute(req, res);
 
@@ -112,7 +112,7 @@ describe('authRoutes', () => {
       assert.deepStrictEqual(JSON.parse(res._getData()), {
         data: {
           user: { email: 'test@test.com' },
-          organizations: [{ name: 'name', title: 'title' }]
+          orgs: [{ name: 'name', title: 'title' }]
         }
       });
     });

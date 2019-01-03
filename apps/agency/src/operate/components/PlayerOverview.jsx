@@ -11,7 +11,7 @@ import { TimeUtil } from 'fptcore';
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 
-function renderMap(organizationName, player) {
+function renderMap(orgName, player) {
   if (!player.user || !player.user.locationLatitude) {
     return null;
   }
@@ -22,7 +22,7 @@ function renderMap(organizationName, player) {
     <GroupMap
       center={center}
       zoom={15}
-      organizationName={organizationName}
+      orgName={orgName}
       trips={[player.trip]} />
   );
 }
@@ -113,18 +113,18 @@ function renderValues(player) {
   );
 }
 
-function renderUser(organizationName, user) {
+function renderUser(orgName, user) {
   if (!user) {
     return 'None';
   }
   return (
-    <Link to={`/${organizationName}/users/user/${user.id}`}>
+    <Link to={`/${orgName}/users/user/${user.id}`}>
       {user.firstName} {user.lastName}
     </Link>
   );
 }
 
-function renderVars(organizationName, player) {
+function renderVars(orgName, player) {
   const script = player.trip.script;
   const trip = player.trip;
   const user = player.user;
@@ -138,14 +138,14 @@ function renderVars(organizationName, player) {
       <div>
         <strong>Role:</strong>
         &nbsp;
-        <Link to={`/${organizationName}/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
+        <Link to={`/${orgName}/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
           {player.roleName} ({user ? user.firstName : 'No user'})
         </Link>
         <br />
 
         <strong>User:</strong>
         &nbsp;
-        {renderUser(organizationName, user)}
+        {renderUser(orgName, user)}
         <br />
 
         <strong>Current page:</strong>
@@ -166,8 +166,8 @@ function renderVars(organizationName, player) {
 }
 
 export default function PlayerOverview({ params, player }) {
-  const map = renderMap(params.organizationName, player);
-  const vars = renderVars(params.organizationName, player);
+  const map = renderMap(params.orgName, player);
+  const vars = renderVars(params.orgName, player);
   return (
     <div className="row">
       <div className="col-sm-6">

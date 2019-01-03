@@ -14,7 +14,11 @@ import ScheduleRoute from './schedule/route';
 import DirectoryRoute from './directory/route';
 
 function NotFound() {
-  return <div className="container-fluid">Page not found</div>;
+  return (
+    <div className="container-fluid">
+      Page not found
+    </div>
+  );
 }
 
 function NoOrganizations() {
@@ -49,7 +53,7 @@ const ensureUserIsLoggedIn = connectedRouterRedirect({
 const ensureUserIsNotLoggedIn = connectedRouterRedirect({
   redirectPath: (state, ownProps) => {
     const authInfo = getUserInfo(state);
-    const firstOrg = _.get(authInfo, 'organizations[0]');
+    const firstOrg = _.get(authInfo, 'orgs[0]');
     const defaultPath = firstOrg ?
       `/${firstOrg.name}/design/experiences` :
       '/no-organizations';
@@ -72,8 +76,8 @@ export default (
         <Route path="no-organizations" component={PublicConnector}>
           <IndexRoute component={NoOrganizations} />
         </Route>
-        <Route path=":organizationName" component={OrganizationConnector}>
-          <IndexRedirect to="/:organizationName/design/experiences" />
+        <Route path=":orgName" component={OrganizationConnector}>
+          <IndexRedirect to="/:orgName/design/experiences" />
           {DesignRoute}
           {OperateRoute}
           {ScheduleRoute}

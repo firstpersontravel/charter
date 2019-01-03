@@ -7,7 +7,7 @@ import { TextUtil } from 'fptcore';
 
 import { getItems, doesCollectionHaveScene } from './utils';
 
-function renderItem(organizationName, script, collectionName, item, i) {
+function renderItem(orgName, script, collectionName, item, i) {
   const itemName = item.title || item.name;
   return (
     <div
@@ -16,7 +16,7 @@ function renderItem(organizationName, script, collectionName, item, i) {
       <Link
         activeClassName="bold"
         to={
-          `/${organizationName}/design/script/${script.id}` +
+          `/${orgName}/design/script/${script.id}` +
           `/collection/${collectionName}` +
           `/resource/${item.name || i}`
         }>
@@ -27,7 +27,7 @@ function renderItem(organizationName, script, collectionName, item, i) {
 }
 
 export default function Collection({ script, collectionName, children, params, location }) {
-  const organizationName = params.organizationName;
+  const orgName = params.orgName;
   let items = getItems(script, collectionName);
 
   // Get current scene from either the resource (if we're looking at one)
@@ -46,7 +46,7 @@ export default function Collection({ script, collectionName, children, params, l
   }
 
   const renderedItems = items.map((item, i) => (
-    renderItem(organizationName, script, collectionName, item, i)
+    renderItem(orgName, script, collectionName, item, i)
   ));
 
   return (

@@ -88,7 +88,7 @@ function renderActions(message, updateInstance) {
   );
 }
 
-export default function Message({ organizationName, message, trip, updateInstance }) {
+export default function Message({ orgName, message, trip, updateInstance }) {
   if (!trip) {
     return null;
   }
@@ -110,7 +110,7 @@ export default function Message({ organizationName, message, trip, updateInstanc
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <Link to={`/${organizationName}/operate/${trip.groupId}/trip/${trip.id}/players/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
+      <Link to={`/${orgName}/operate/${trip.groupId}/trip/${trip.id}/players/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
         {trip.departureName}&nbsp;
         {sentBy.roleName}
       </Link>:&nbsp;
@@ -124,7 +124,7 @@ export default function Message({ organizationName, message, trip, updateInstanc
 }
 
 Message.propTypes = {
-  organizationName: PropTypes.string.isRequired,
+  orgName: PropTypes.string.isRequired,
   message: PropTypes.object,
   updateInstance: PropTypes.func,
   trip: PropTypes.object

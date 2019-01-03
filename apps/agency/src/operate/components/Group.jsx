@@ -173,7 +173,7 @@ export default class Group extends Component {
   }
 
   renderTripLink(trip) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const isArchivedIcon = trip.isArchived ? (
       <i className="fa fa-archive" style={{ marginRight: '0.25em' }} />
     ) : null;
@@ -187,7 +187,7 @@ export default class Group extends Component {
         <Link
           className="nav-link"
           activeClassName="active"
-          to={`/${organizationName}/operate/${this.props.params.groupId}/trip/${trip.id}`}>
+          to={`/${orgName}/operate/${this.props.params.groupId}/trip/${trip.id}`}>
           {isArchivedIcon}
           {trip.departureName}
           <span className="d-none d-sm-inline"> {trip.title}</span>
@@ -201,7 +201,7 @@ export default class Group extends Component {
   }
 
   render() {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const groupStatus = this.props.groupStatus;
     if (groupStatus.isError) {
       return <div className="container-fluid">Error - please reload</div>;
@@ -236,7 +236,7 @@ export default class Group extends Component {
             <Link
               className="nav-link"
               activeClassName="active"
-              to={`/${organizationName}/operate/${this.props.params.groupId}/all`}>
+              to={`/${orgName}/operate/${this.props.params.groupId}/all`}>
               {dateShort}
               <br />
               <span style={{ fontSize: '10pt' }}>

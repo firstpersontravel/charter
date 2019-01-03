@@ -29,22 +29,22 @@ function renderRight(authInfo, logout) {
   );
 }
 
-function renderBrand(organization) {
-  const name = organization ?
-    `MULTIVERSE | ${organization.title.toUpperCase()}` :
+function renderBrand(org) {
+  const name = org ?
+    `MULTIVERSE | ${org.title.toUpperCase()}` :
     'MULTIVERSE';
   return (
     <Link
       activeClassName="active"
       className="navbar-brand"
-      to={organization ? `/${organization.name}` : '/'}>
+      to={org ? `/${org.name}` : '/'}>
       {name}
     </Link>
   );
 }
 
-function renderMenu(organization) {
-  if (!organization) {
+function renderMenu(org) {
+  if (!org) {
     return null;
   }
   return (
@@ -53,7 +53,7 @@ function renderMenu(organization) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${organization.name}/design`}>
+          to={`/${org.name}/design`}>
           Design
         </Link>
       </li>
@@ -61,7 +61,7 @@ function renderMenu(organization) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${organization.name}/schedule`}>
+          to={`/${org.name}/schedule`}>
           Schedule
         </Link>
       </li>
@@ -69,7 +69,7 @@ function renderMenu(organization) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${organization.name}/operate`}>
+          to={`/${org.name}/operate`}>
           Operate
         </Link>
       </li>
@@ -77,7 +77,7 @@ function renderMenu(organization) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${organization.name}/directory`}>
+          to={`/${org.name}/directory`}>
           Directory
         </Link>
       </li>
@@ -85,7 +85,7 @@ function renderMenu(organization) {
   );
 }
 
-export default function Nav({ authInfo, logout, organization }) {
+export default function Nav({ authInfo, logout, org }) {
   document.title = `${getStage()} - FPT Ops`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
@@ -93,12 +93,12 @@ export default function Nav({ authInfo, logout, organization }) {
 
   return (
     <nav className={navClass}>
-      {renderBrand(organization)}
+      {renderBrand(org)}
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span className="navbar-toggler-icon" />
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        {renderMenu(organization)}
+        {renderMenu(org)}
       </div>
       <div className="navbar-collapse collapse w-100 order-3">
         {renderRight(authInfo, logout)}
@@ -110,10 +110,10 @@ export default function Nav({ authInfo, logout, organization }) {
 Nav.propTypes = {
   authInfo: PropTypes.object,
   logout: PropTypes.func.isRequired,
-  organization: PropTypes.object
+  org: PropTypes.object
 };
 
 Nav.defaultProps = {
   authInfo: null,
-  organization: null
+  org: null
 };

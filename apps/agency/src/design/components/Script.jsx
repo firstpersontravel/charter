@@ -23,15 +23,15 @@ export default class Script extends Component {
   }
 
   handleSelectScene(sceneName) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     browserHistory.push(
-      `/${organizationName}/design/script/${this.props.script.id}` +
+      `/${orgName}/design/script/${this.props.script.id}` +
       `${sceneName ? `?scene=${sceneName}` : ''}`
     );
   }
 
   renderCollection(collectionName) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const script = this.props.script;
     const currentCollectionName = this.props.params.collectionName || '';
     const currentSceneName = this.getCurrentSceneName();
@@ -57,7 +57,7 @@ export default class Script extends Component {
           activeClassName="bold"
           to={{
             pathname: (
-              `/${organizationName}/design/script/${script.id}/collection/${collectionName}`
+              `/${orgName}/design/script/${script.id}/collection/${collectionName}`
             ),
             query: currentSceneName ? { scene: currentSceneName } : null
           }}>
@@ -138,20 +138,20 @@ export default class Script extends Component {
     }
     const script = this.props.script;
     const experience = this.props.experience;
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     // Get current scene from either the resource (if we're looking at one)
     // or the scene name (if we're just browsing the collection from a link).
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-12">
-            <Link to={`/${organizationName}/design`}>Experiences</Link>
+            <Link to={`/${orgName}/design`}>Experiences</Link>
             &nbsp;&rsaquo;&nbsp;
-            <Link to={`/${organizationName}/design/experience/${experience.name}`}>
+            <Link to={`/${orgName}/design/experience/${experience.name}`}>
               {experience.title}
             </Link>
             &nbsp;&rsaquo;&nbsp;
-            <Link to={`/${organizationName}/design/script/${script.id}`}>
+            <Link to={`/${orgName}/design/script/${script.id}`}>
               Revision {script.revision}
             </Link>
           </div>

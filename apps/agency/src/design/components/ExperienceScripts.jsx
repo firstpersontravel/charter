@@ -6,12 +6,12 @@ export default function ExperienceScripts({ experienceName, experience, scripts,
   if (!scripts.length) {
     return <div>Loading!</div>;
   }
-  const organizationName = params.organizationName;
+  const orgName = params.orgName;
   const renderedScripts = scripts.map(script => (
     <div key={script.id}>
       <Link
         to={
-          `/${organizationName}/design/script/${script.id}`
+          `/${orgName}/design/script/${script.id}`
         }>
         Rev. {script.revision}
       </Link>
@@ -23,7 +23,7 @@ export default function ExperienceScripts({ experienceName, experience, scripts,
         {renderedScripts}
       </div>
       <div className="col-sm-6">
-        <Link to={`/${organizationName}/design/experience/${experienceName}/relays`}>
+        <Link to={`/${orgName}/design/experience/${experienceName}/relays`}>
           Relays
         </Link>
       </div>

@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 
 import Message from '../partials/Message';
 
-function renderMessage(organizationName, message, trip, updateInstance) {
+function renderMessage(orgName, message, trip, updateInstance) {
   return (
     <Message
       key={message.id}
       message={message}
       updateInstance={updateInstance}
-      organizationName={organizationName}
+      orgName={orgName}
       trip={trip} />
   );
 }
@@ -29,7 +29,7 @@ export default function GroupReplies({ params, groupStatus,
     .slice(0, 10)
     .map((message) => {
       const trip = _.find(trips, { id: message.tripId });
-      return renderMessage(params.organizationName, message, trip, updateInstance);
+      return renderMessage(params.orgName, message, trip, updateInstance);
     })
     .value();
   return (

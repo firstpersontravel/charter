@@ -14,11 +14,11 @@ export default class GroupOverview extends Component {
     if (player.user) {
       return null;
     }
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     return (
       <span>
         &nbsp;
-        <Link to={`/${organizationName}/operate/${player.trip.groupId}/all/casting`}>
+        <Link to={`/${orgName}/operate/${player.trip.groupId}/all/casting`}>
           <span className="text-danger">
             <i className="fa fa-user-plus" />
           </span>
@@ -28,7 +28,7 @@ export default class GroupOverview extends Component {
   }
 
   renderActor(roleAndActors) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const actor = roleAndActors.actors[0];
     const pageInfo = getPlayerPageInfo(actor);
     if (!pageInfo) {
@@ -40,7 +40,7 @@ export default class GroupOverview extends Component {
       <div key={`${roleAndActors.role.name}-${roleAndActors.userId}`} className="constrain-text">
         <IndexLink
           className={pageInfo.statusClass}
-          to={`/${organizationName}/operate/${actor.trip.groupId}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
+          to={`/${orgName}/operate/${actor.trip.groupId}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
           <strong>
             {roleAndActors.role.name}{userNameIfMultiple}:
           </strong>
@@ -55,7 +55,7 @@ export default class GroupOverview extends Component {
   }
 
   renderPlayer(player) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const pageInfo = getPlayerPageInfo(player);
     if (!pageInfo) {
       return null;
@@ -63,7 +63,7 @@ export default class GroupOverview extends Component {
     return (
       <div key={player.id} className="constrain-text">
         <IndexLink
-          to={`/${organizationName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.role.name}`}>
+          to={`/${orgName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.role.name}`}>
           {player.trip.departureName} {player.role.name}:
           {' '}
           {pageInfo.status}
@@ -123,7 +123,7 @@ export default class GroupOverview extends Component {
         <div className="row">
           <div className="col-md-7">
             <GroupMap
-              organizationName={this.props.params.organizationName}
+              orgName={this.props.params.orgName}
               trips={trips} />
           </div>
           <div className="col-md-5">

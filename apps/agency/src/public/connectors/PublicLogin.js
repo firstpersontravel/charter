@@ -5,8 +5,7 @@ import PublicLogin from '../components/PublicLogin';
 import { fetchAuthInfo, login } from '../../actions';
 
 const mapStateToProps = state => ({
-  authInfoRequest: state.requests['auth.info'],
-  authInfo: _.find(state.datastore.auth, { id: 'latest' }),
+  authInfo: _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data'),
   loginRequest: state.requests['auth.login']
 });
 

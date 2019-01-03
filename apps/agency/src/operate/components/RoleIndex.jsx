@@ -27,7 +27,7 @@ function getAppearanceStart(player) {
   return moment.utc(player.trip.schedule[appearance.start]);
 }
 
-function renderMap(organizationName, trip, user) {
+function renderMap(orgName, trip, user) {
   if (!user || !user.locationLatitude) {
     return <div>No location available</div>;
   }
@@ -36,7 +36,7 @@ function renderMap(organizationName, trip, user) {
     user.locationLongitude);
   return (
     <GroupMap
-      organizationName={organizationName}
+      orgName={orgName}
       center={center}
       zoom={15}
       trips={[trip]} />
@@ -55,7 +55,7 @@ function renderUser(user) {
   );
 }
 
-function renderPlayerCell(organizationName, player, isFirst) {
+function renderPlayerCell(orgName, player, isFirst) {
   const trip = player.trip;
   const page = _.find(player.trip.script.content.pages,
     { name: player.currentPageName });
@@ -68,10 +68,10 @@ function renderPlayerCell(organizationName, player, isFirst) {
   const appearanceIsActive = !appearance.if || EvalCore.if(trip.evalContext, appearance.if);
   const pageTitle = page ? page.title : player.currentPageName;
   const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
-  const tripRoleUrl = `/${organizationName}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
+  const tripRoleUrl = `/${orgName}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
-    renderMap(organizationName, trip, player.user) : null;
+    renderMap(orgName, trip, player.user) : null;
   const renderedUser = isFirst ? (
     <div>
       <strong>User:</strong> {renderUser(player.user)}
@@ -104,7 +104,7 @@ export default function RoleIndex({ params, user, players }) {
   if (!players.length) {
     return <div>Loading</div>;
   }
-  const organizationName = params.organizationName;
+  const orgName = params.orgName;
   const playersSorted = _(players)
     .filter('trip')
     .filter('currentPageName')
@@ -117,7 +117,7 @@ export default function RoleIndex({ params, user, players }) {
     return <div>No players</div>;
   }
   const renderedPlayers = playersSorted.map((player, i) => (
-    renderPlayerCell(organizationName, player, i === 0)
+    renderPlayerCell(orgName, player, i === 0)
   ));
   return (
     <div>

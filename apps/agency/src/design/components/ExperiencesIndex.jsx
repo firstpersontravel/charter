@@ -3,11 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-function renderExperience(organizationName, experience, scripts) {
+function renderExperience(orgName, experience, scripts) {
   const scriptItems = scripts.map(script => (
     <div key={`${experience.id}-${script.id}`}>
       <Link
-        to={`/${organizationName}/design/script/${script.id}`}>
+        to={`/${orgName}/design/script/${script.id}`}>
         {experience.title} Rev {script.revision}
       </Link>
     </div>
@@ -17,7 +17,7 @@ function renderExperience(organizationName, experience, scripts) {
       <h4>{experience.title}</h4>
       {scriptItems}
       <Link
-        to={`/${organizationName}/design/experience/${experience.name}/relays`}>
+        to={`/${orgName}/design/experience/${experience.name}/relays`}>
         Relays
       </Link>
     </div>
@@ -26,9 +26,9 @@ function renderExperience(organizationName, experience, scripts) {
 
 export default function ExperiencesIndex({ children, experiences, scripts,
   params }) {
-  const organizationName = params.organizationName;
+  const orgName = params.orgName;
   const experienceItems = experiences.map(experience => (
-    renderExperience(organizationName, experience, _.filter(scripts, {
+    renderExperience(orgName, experience, _.filter(scripts, {
       experienceId: experience.id
     }))
   ));
@@ -36,7 +36,7 @@ export default function ExperiencesIndex({ children, experiences, scripts,
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to={`/${organizationName}/design`}>Experiences</Link>
+          <Link to={`/${orgName}/design`}>Experiences</Link>
         </div>
       </div>
       <hr />

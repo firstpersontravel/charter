@@ -19,19 +19,19 @@ const DUMMY_HASH = '$2b$10$H2vj6CxZj7NgrAusLS2QdOi4VlyHfFA.oKzjEZlPE1m2CdF63WjcW
  * Get user auth info data from user and org roles.
  */
 async function getUserAuthInfo(user) {
-  const organizationRoles = await models.OrganizationRole.findAll({
+  const orgRoles = await models.OrgRole.findAll({
     where: { userId: user.id },
-    include: [{ model: models.Organization, as: 'organization' }]
+    include: [{ model: models.Org, as: 'org' }]
   });
   return {
     user: {
       id: user.id,
       email: user.email
     },
-    organizations: organizationRoles.map(organizationRole => ({
-      id: organizationRole.organization.id,
-      name: organizationRole.organization.name,
-      title: organizationRole.organization.title
+    orgs: orgRoles.map(orgRole => ({
+      id: orgRole.org.id,
+      name: orgRole.org.name,
+      title: orgRole.org.title
     }))
   };
 }

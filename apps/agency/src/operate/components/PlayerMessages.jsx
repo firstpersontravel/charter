@@ -80,8 +80,8 @@ export default class PlayerMessages extends Component {
   }
 
   handleCounterpartChange(event) {
-    const organizationName = this.props.params.organizationName;
-    browserHistory.push(`/${organizationName}/operate/${this.props.params.groupId}/trip/${this.props.params.tripId}/players/${this.props.params.roleName}/messages/${event.target.value}`);
+    const orgName = this.props.params.orgName;
+    browserHistory.push(`/${orgName}/operate/${this.props.params.groupId}/trip/${this.props.params.tripId}/players/${this.props.params.roleName}/messages/${event.target.value}`);
   }
 
   handlePendingMessageChange(event) {
@@ -148,7 +148,7 @@ export default class PlayerMessages extends Component {
     if (!this.props.messages.length) {
       return <div>No messages</div>;
     }
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     return _.sortBy(this.props.messages, 'createdAt')
       .reverse()
       .map(message => (
@@ -156,7 +156,7 @@ export default class PlayerMessages extends Component {
           key={message.id}
           updateInstance={this.props.updateInstance}
           trip={this.props.player.trip}
-          organizationName={organizationName}
+          orgName={orgName}
           message={message} />
       ));
   }

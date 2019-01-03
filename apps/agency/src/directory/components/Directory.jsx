@@ -9,13 +9,13 @@ export default class Directory extends Component {
     if (!roleProfiles.length) {
       return null;
     }
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     return (
       <div key={roleName} className="constrain-text">
         &rsaquo; <Link
           activeClassName="bold"
           to={{
-            pathname: `/${organizationName}/directory`,
+            pathname: `/${orgName}/directory`,
             query: { experienceId: experience.id, role: roleName }
           }}>
           {roleName}
@@ -26,7 +26,7 @@ export default class Directory extends Component {
   }
 
   renderExperienceRoles(experience) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const profiles = this.props.profiles;
     const experienceProfiles = _.filter(profiles, {
       experienceId: experience.id
@@ -43,7 +43,7 @@ export default class Directory extends Component {
       <div key={experience.id} style={{ marginTop: '0.5em' }}>
         <div>
           <strong>
-            <Link to={`/${organizationName}/directory?experienceId=${experience.id}`}>
+            <Link to={`/${orgName}/directory?experienceId=${experience.id}`}>
               {experience.title}
             </Link>
           </strong>
@@ -54,7 +54,7 @@ export default class Directory extends Component {
   }
 
   renderRolesCol() {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const experiences = this.props.experiences;
     const roleQuery = this.props.location.query.role;
     const scriptCells = experiences.map(experience => (
@@ -66,7 +66,7 @@ export default class Directory extends Component {
         <div>
           <Link
             className={roleQuery ? '' : 'bold'}
-            to={`/${organizationName}/directory`}>
+            to={`/${orgName}/directory`}>
             All
           </Link>
         </div>
@@ -74,7 +74,7 @@ export default class Directory extends Component {
         <div style={{ marginTop: '0.5em' }}>
           <Link
             activeClassName="bold"
-            to={`/${organizationName}/directory?role=Archived`}>
+            to={`/${orgName}/directory?role=Archived`}>
             Archived
           </Link>
         </div>

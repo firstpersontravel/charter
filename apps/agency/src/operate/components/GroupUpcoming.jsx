@@ -44,13 +44,13 @@ function getScheduledGroupTriggers(groupStatus) {
 export default class GroupUpcoming extends Component {
 
   renderActionParam(trip, action, paramName) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const actionParamsSpec = ActionsRegistry[action.name].params;
     return (
       <div className="wrap-text" key={paramName}>
         {paramName}:&nbsp;
         <Param
-          organizationName={organizationName}
+          orgName={orgName}
           scriptId={trip.scriptId}
           spec={actionParamsSpec[paramName]}
           value={action.params[paramName]} />
@@ -59,7 +59,7 @@ export default class GroupUpcoming extends Component {
   }
 
   renderTrigger(trigger, trip) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const timeShort = moment
       .utc(trigger.scheduledAt)
       .tz(trip.experience.timezone)
@@ -72,7 +72,7 @@ export default class GroupUpcoming extends Component {
         <td className={cellClass}>{trip.departureName}</td>
         <td className={cellClass}>{trigger.type}</td>
         <td className={cellClass}>
-          <Link to={`/${organizationName}/design/script/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
+          <Link to={`/${orgName}/design/script/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
             {trigger.name}
           </Link>
         </td>

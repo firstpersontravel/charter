@@ -3,18 +3,19 @@ import PropTypes from 'prop-types';
 
 import Nav from '../../partials/Nav';
 
-export default function Organization({ authInfo, children, logout,
-  organization }) {
+export default function Organization({ authInfo, children, logout, org }) {
   const notFound = (
-    <div>Organization not found.</div>
+    <div className="container-fluid">
+      Organization not found.
+    </div>
   );
-  const inner = organization ? children : notFound;
+  const inner = org ? children : notFound;
   return (
     <div>
       <Nav
         authInfo={authInfo}
         logout={logout}
-        organization={organization} />
+        org={org} />
       {inner}
     </div>
   );
@@ -23,11 +24,11 @@ export default function Organization({ authInfo, children, logout,
 Organization.propTypes = {
   authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
-  organization: PropTypes.object,
+  org: PropTypes.object,
   logout: PropTypes.func.isRequired
 };
 
 Organization.defaultProps = {
-  organization: null,
+  org: null,
   authInfo: null
 };

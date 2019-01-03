@@ -40,10 +40,10 @@ export default class GroupPlayers extends Component {
   }
 
   renderScheduleHeader(trip) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     return (
       <th key={trip.id}>
-        <Link to={`/${organizationName}/operate/${trip.groupId}/trip/${trip.id}`}>
+        <Link to={`/${orgName}/operate/${trip.groupId}/trip/${trip.id}`}>
           {trip.departureName}: {trip.title}
         </Link>
       </th>
@@ -51,7 +51,7 @@ export default class GroupPlayers extends Component {
   }
 
   renderRoleCell(roleName, trips) {
-    const organizationName = this.props.params.organizationName;
+    const orgName = this.props.params.orgName;
     const experience = this.props.groupStatus.instance.experience;
     const script = this.props.groupStatus.instance.script;
     const tripsWithRole = trips
@@ -94,7 +94,7 @@ export default class GroupPlayers extends Component {
         return (
           <Link
             to={{
-              pathname: `/${organizationName}/directory`,
+              pathname: `/${orgName}/directory`,
               query: {
                 editing: true,
                 role: roleName,

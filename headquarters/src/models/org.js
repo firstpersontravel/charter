@@ -6,11 +6,11 @@ const {
 } = require('../sequelize/fields');
 
 /**
- * Organization model.
+ * Org model.
  */
-const Organization = database.define('Organization', snakeCaseColumns({
+const Org = database.define('Org', snakeCaseColumns({
   name: requiredStringField(32, false),
   title: requiredStringField(32, false)
 }));
 
-module.exports = Organization;
+module.exports = Org;

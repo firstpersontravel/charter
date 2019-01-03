@@ -181,7 +181,7 @@ export default class GroupMap extends Component {
   }
 
   getActiveRoutePolylines() {
-    const organizationName = this.props.organizationName;
+    const orgName = this.props.orgName;
     const script = this.props.trips[0].script;
     const LinkWithContext = withContext(Link, this.context);
     const activePlayers = _(this.props.trips)
@@ -193,7 +193,7 @@ export default class GroupMap extends Component {
     return _(activePlayers)
       .map((player) => {
         const playerLink = (
-          <LinkWithContext to={`/${organizationName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
+          <LinkWithContext to={`/${orgName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
             {player.trip.departureName}{' '}
             {player.roleName}
           </LinkWithContext>
@@ -274,13 +274,13 @@ export default class GroupMap extends Component {
   }
 
   renderMarkerPlayerSection(player) {
-    const organizationName = this.props.organizationName;
+    const orgName = this.props.orgName;
     const timezone = this.props.trips[0].experience.timezone;
     const LinkWithContext = withContext(Link, this.context);
     return (
       <div key={player.id}>
         <div>
-          <LinkWithContext to={`/${organizationName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
+          <LinkWithContext to={`/${orgName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
             {player.trip.departureName}{' '}
             {player.roleName}{' '}
             ({player.user.firstName})
@@ -388,7 +388,7 @@ L.Icon.Default.imagePath = '/static/images/';
 GroupMap.propTypes = {
   center: ReactLeafletPropTypes.latlng,
   zoom: PropTypes.number,
-  organizationName: PropTypes.string.isRequired,
+  orgName: PropTypes.string.isRequired,
   trips: PropTypes.array.isRequired
 };
 

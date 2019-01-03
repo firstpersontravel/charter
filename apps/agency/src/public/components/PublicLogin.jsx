@@ -27,18 +27,35 @@ export default class PublicLogin extends Component {
     this.props.login(this.state.email, this.state.password);
   }
 
-  render() {
-    const failedAlert = this.props.loginRequest === 'rejected' ? (
-      <div className="alert alert-warning" role="alert">
-        That email and password was incorrect.
-      </div>
-    ) : null;
+  renderLoginErrorAlert() {
+    if (this.props.loginRequest === 'rejected') {
+      return (
+        <div className="alert alert-danger" role="alert">
+          There was an error while trying to log in.
+        </div>
+      );
+    }
+    return null;
+  }
 
+  renderLoginFailedAlert() {
+    if (this.props.loginRequest === 'fulfilled' && !this.props.authInfo) {
+      return (
+        <div className="alert alert-warning" role="alert">
+          That email and password was incorrect.
+        </div>
+      );
+    }
+    return null;
+  }
+
+  render() {
     return (
       <div className="container-fluid">
         <div className="col-md-6 offset-md-3">
           <h1>Log in</h1>
-          {failedAlert}
+          {this.renderLoginErrorAlert()}
+          {this.renderLoginFailedAlert()}
           <form>
             <div className="form-group">
               <label htmlFor="exampleInputEmail1">Email address</label>
@@ -75,10 +92,12 @@ export default class PublicLogin extends Component {
 }
 
 PublicLogin.propTypes = {
+  authInfo: PropTypes.object,
   login: PropTypes.func.isRequired,
   loginRequest: PropTypes.string
 };
 
 PublicLogin.defaultProps = {
+  authInfo: null,
   loginRequest: null
 };

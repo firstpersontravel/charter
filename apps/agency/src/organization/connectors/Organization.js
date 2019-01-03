@@ -5,13 +5,13 @@ import Organization from '../components/Organization';
 import { logout } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
-  const organizationName = ownProps.params.organizationName;
+  const orgName = ownProps.params.orgName;
   const authInfo = _.get(_.find(state.datastore.auth, { id: 'latest' }),
     'data');
   return {
     authInfo: authInfo,
-    organizationName: organizationName,
-    organization: _.find(authInfo.organizations, { name: organizationName })
+    orgName: orgName,
+    org: _.find(authInfo.orgs, { name: orgName })
   };
 };
 

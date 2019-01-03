@@ -135,7 +135,7 @@ export default class ResourceIndex extends Component {
   }
 
   renderLink(collectionName, resourceName) {
-    return renderLink(this.props.params.organizationName,
+    return renderLink(this.props.params.orgName,
       this.props.script.id, collectionName, resourceName);
   }
 
@@ -247,7 +247,7 @@ export default class ResourceIndex extends Component {
     const paramSpec = ActionsRegistry[actionName].params[paramName];
     return (
       <Param
-        organizationName={this.props.params.organizationName}
+        orgName={this.props.params.orgName}
         scriptId={this.props.script.id}
         spec={paramSpec}
         value={paramValue} />
@@ -381,7 +381,7 @@ export default class ResourceIndex extends Component {
     const paramSpec = event.specParams[paramName];
     return (
       <Param
-        organizationName={this.props.params.organizationName}
+        orgName={this.props.params.orgName}
         scriptId={this.props.script.id}
         spec={paramSpec}
         value={paramValue} />
