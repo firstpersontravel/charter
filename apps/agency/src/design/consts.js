@@ -1,8 +1,9 @@
 export const COLLECTION_NAMES = {
+  'achievements.scene': 'scenes',
+  'appearances.role': 'roles',
   'cues.scene': 'scenes',
   'checkpoints.scene': 'scenes',
   'geofences.center': 'waypoints',
-  'achievements.scene': 'scenes',
   'messages.scene': 'scenes',
   'messages.from': 'roles',
   'messages.to': 'roles',
@@ -12,7 +13,6 @@ export const COLLECTION_NAMES = {
   'pages.waypoint': 'waypoints',
   'pages.appearance': 'appearances',
   'pages.panels.cue': 'cues',
-  'appearances.role': 'roles',
   'relays.as': 'roles',
   'relays.for': 'roles',
   'relays.with': 'roles',
@@ -20,5 +20,6 @@ export const COLLECTION_NAMES = {
   'roles.default_layout': 'layouts',
   'routes.from': 'waypoints',
   'routes.to': 'waypoints',
+  'times.scene': 'scenes',
   'triggers.scene': 'scenes'
 };

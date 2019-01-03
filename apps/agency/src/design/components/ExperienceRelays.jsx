@@ -44,8 +44,13 @@ export default class ExperienceRelays extends React.Component {
     this.fetchRelays(this.props.experience);
   }
 
-  componentDidReceiveProps(nextProps) {
-    this.fetchRelays(nextProps.experience);
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.experience || !this.props.experience) {
+      return;
+    }
+    if (nextProps.experience.id !== this.props.experience.id) {
+      this.fetchRelays(nextProps.experience);
+    }
   }
 
   fetchRelays(experience) {

@@ -8,7 +8,7 @@ export default function Experience({ experienceName, experience, children, param
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to="/design">Experiences</Link>
+          <Link to={`/${orgName}/design`}>Experiences</Link>
           &nbsp;&rsaquo;&nbsp;
           <Link to={`/${orgName}/design/experience/${experienceName}`}>
             {experience && experience.title}

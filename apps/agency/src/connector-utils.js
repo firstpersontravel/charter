@@ -110,7 +110,7 @@ export function assembleGroupStatus(state, groupId) {
     const departures = scriptStatus.instance.content.departures;
     const departureNames = _.map(departures, 'name');
     const tripIds = _(state.datastore.trips)
-      .filter({ groupId: group.id })
+      .filter({ groupId: group.id, isArchived: false })
       .sortBy([trip => departureNames.indexOf(trip.departureName), 'id'])
       .map('id')
       .value();
