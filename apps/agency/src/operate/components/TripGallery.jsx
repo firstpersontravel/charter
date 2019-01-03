@@ -60,18 +60,23 @@ export default class TripGallery extends Component {
   }
 
   componentDidMount() {
-    this.loadData(this.props.tripId);
+    this.loadData(this.props.tripStatus.instance);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.tripId !== this.props.tripId) {
-      this.loadData(nextProps.tripId);
+    if (nextProps.tripStatus.instance.id !==
+        this.props.tripStatus.instance.id) {
+      this.loadData(nextProps.tripStatus.instance);
     }
   }
 
-  loadData(tripId) {
+  loadData(trip) {
+    if (!trip) {
+      return;
+    }
     this.props.listCollection('messages', {
-      tripId: tripId,
+      orgId: trip.orgId,
+      tripId: trip.id,
       messageType: 'image',
       messageName: ''
     });
@@ -133,7 +138,6 @@ export default class TripGallery extends Component {
 
 TripGallery.propTypes = {
   messages: PropTypes.array.isRequired,
-  tripId: PropTypes.number.isRequired,
   tripStatus: PropTypes.object.isRequired,
   listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired

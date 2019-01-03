@@ -6,6 +6,8 @@ import { retrieveInstance, refreshLiveData, listCollection } from '../../actions
 import Group from '../components/Group';
 
 const mapStateToProps = (state, ownProps) => {
+  const authData = _.find(state.datastore.auth, { id: 'latest' }).data;
+  const org = _.find(authData.orgs, { name: ownProps.params.orgName });
   const groupStatus = assembleGroupStatus(state, ownProps.params.groupId);
   const tripIds = _.get(groupStatus, 'instance.tripIds');
   const nextUnappliedAction = _(state.datastore.actions)
@@ -14,6 +16,7 @@ const mapStateToProps = (state, ownProps) => {
     .sortBy('scheduledAt')
     .head();
   return {
+    org: org,
     areRequestsPending: _.some(state.requests, v => v === 'pending'),
     groupStatus: groupStatus,
     nextUnappliedAction: nextUnappliedAction

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { createInstance, listCollection, updateInstance, initializeTrip }
@@ -12,7 +13,9 @@ const mapStateToProps = (state, ownProps) => {
   const tripsStatus = instancesStatus(state, 'trips', {
     isArchived: false
   });
+  const authData = _.find(state.datastore.auth, { id: 'latest' }).data;
   return {
+    org: _.find(authData.orgs, { name: ownProps.params.orgName }),
     experiences: state.datastore.experiences,
     scripts: state.datastore.scripts,
     users: state.datastore.users,

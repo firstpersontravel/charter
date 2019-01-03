@@ -16,10 +16,11 @@ export default class TripValues extends Component {
   }
 
   handleCustomizationUpdate(key, newValue) {
+    const trip = this.props.tripStatus.instance;
     this.props.updateInstance('trips', this.props.params.tripId, {
       customizations: { [key]: newValue }
     });
-    this.props.postAdminAction(this.props.params.tripId, 'notify',
+    this.props.postAdminAction(trip.orgId, trip.id, 'notify',
       { notify_type: 'refresh' }, false);
   }
 
@@ -28,10 +29,11 @@ export default class TripValues extends Component {
   }
 
   handleWaypointUpdate(key, event) {
+    const trip = this.props.tripStatus.instance;
     this.props.updateInstance('trips', this.props.params.tripId, {
       waypointOptions: { [key]: event.target.value }
     });
-    this.props.postAdminAction(this.props.params.tripId, 'notify',
+    this.props.postAdminAction(trip.orgId, trip.id, 'notify',
       { notify_type: 'refresh' }, false);
   }
 

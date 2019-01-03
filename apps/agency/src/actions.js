@@ -228,24 +228,20 @@ export function updateInstance(collectionName, instanceId, fields) {
   };
 }
 
-export function refreshLiveData(tripIds) {
+export function refreshLiveData(orgId, tripIds) {
   return function (dispatch) {
     dispatch(listCollection('users', { isArchived: false }));
-    dispatch(listCollection('trips', { id: tripIds }));
-    dispatch(listCollection('players',
-      { tripId: tripIds }));
+    dispatch(listCollection('trips', { orgId: orgId, id: tripIds }));
+    dispatch(listCollection('players', { orgId: orgId, tripId: tripIds }));
     dispatch(listCollection('actions',
-      { tripId: tripIds, appliedAt: 'null' },
+      { orgId: orgId, tripId: tripIds, appliedAt: 'null' },
       { clear: true }));
     dispatch(listCollection('messages',
-      { tripId: tripIds,
-        sort: '-id',
-        count: 100
-      }));
+      { orgId: orgId, tripId: tripIds, sort: '-id', count: 100 }));
   };
 }
 
-export function postAction(tripId, actionName, actionParams) {
+export function postAction(orgId, tripId, actionName, actionParams) {
   return function (dispatch) {
     const params = {
       method: 'POST',
@@ -255,7 +251,7 @@ export function postAction(tripId, actionName, actionParams) {
     const url = `/api/trips/${tripId}/actions`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
-        dispatch(refreshLiveData([tripId]));
+        dispatch(refreshLiveData([orgId, tripId]));
       })
       .catch((err) => {
         console.error(err.message);
@@ -263,7 +259,7 @@ export function postAction(tripId, actionName, actionParams) {
   };
 }
 
-export function postAdminAction(tripId, actionName, actionParams,
+export function postAdminAction(orgId, tripId, actionName, actionParams,
   shouldRefresh = true) {
   return function (dispatch) {
     const params = {
@@ -275,7 +271,7 @@ export function postAdminAction(tripId, actionName, actionParams,
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         if (shouldRefresh === true) {
-          dispatch(refreshLiveData([tripId]));
+          dispatch(refreshLiveData([orgId, tripId]));
         }
       })
       .catch((err) => {
@@ -284,13 +280,16 @@ export function postAdminAction(tripId, actionName, actionParams,
   };
 }
 
-export function updateRelays(experienceId) {
+export function updateRelays(orgId, experienceId) {
   return function (dispatch) {
     const params = { method: 'POST' };
     const url = `/api/admin/experiences/${experienceId}/update_relays`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
-        dispatch(listCollection('relays', { stage: getStage() }));
+        dispatch(listCollection('relays', {
+          orgId: orgId,
+          stage: getStage()
+        }));
       })
       .catch((err) => {
         console.error(err.message);

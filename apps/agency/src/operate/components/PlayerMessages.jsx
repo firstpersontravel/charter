@@ -63,16 +63,19 @@ export default class PlayerMessages extends Component {
         roleName: params.withRoleName
       });
       this.props.listCollection('messages', {
+        orgId: player1.orgId,
         tripId: params.tripId,
         sentById: [player1.id, player2.id]
       });
     } else {
       // Otherwise, find messages sent to or received by this guy.
       this.props.listCollection('messages', {
+        orgId: player1.orgId,
         tripId: params.tripId,
         sentById: [player1.id]
       });
       this.props.listCollection('messages', {
+        orgId: player1.orgId,
         tripId: params.tripId,
         sentToId: [player1.id]
       });
@@ -91,7 +94,9 @@ export default class PlayerMessages extends Component {
   handleSendPendingMessage(event) {
     event.preventDefault();
     this.setState({ pendingMessage: '' });
-    this.props.postAction(this.props.params.tripId, 'custom_message', {
+    const orgId = this.props.player.orgId;
+    const tripId = this.props.params.tripId;
+    this.props.postAction(orgId, tripId, 'custom_message', {
       from_role_name: this.getActorRoleName(),
       to_role_name: this.getUserRoleName(),
       message_type: 'text',

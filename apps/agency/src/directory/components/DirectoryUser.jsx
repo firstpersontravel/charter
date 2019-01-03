@@ -24,22 +24,23 @@ export default class DirectoryUser extends Component {
   }
 
   componentWillMount() {
-    if (this.props.user) {
-      this.loadPlayers(this.props.user.id);
+    if (this.props.user && this.props.org) {
+      this.loadPlayers(this.props.org.id, this.props.user.id);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.user) {
+    if (!nextProps.user || !nextProps.org) {
       return;
     }
-    if (_.get(nextProps, 'user.id') !== _.get(this.props, 'user.id')) {
-      this.loadPlayers(nextProps.user.id);
+    if (nextProps.user !== this.props.user ||
+        nextProps.org !== this.props.org) {
+      this.loadPlayers(nextProps.org.id, nextProps.user.id);
     }
   }
 
-  loadPlayers(userId) {
-    this.props.listCollection('players', { userId: userId });
+  loadPlayers(orgId, userId) {
+    this.props.listCollection('players', { orgId: orgId, userId: userId });
   }
 
   handleUserToggleArchived() {
@@ -327,6 +328,7 @@ DirectoryUser.propTypes = {
   updateInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   activeRoles: PropTypes.array.isRequired,
+  org: PropTypes.object.isRequired,
   user: PropTypes.object,
   experiences: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,

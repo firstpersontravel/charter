@@ -38,7 +38,8 @@ export default class Group extends Component {
   componentWillMount() {
     // no need to load on mount because the app on load refreshes live
     // data for all active groups
-    this.loadData(_.get(this.props.groupStatus, 'instance.tripIds'));
+    const tripIds = _.get(this.props.groupStatus, 'instance.tripIds');
+    this.loadData(this.props.org, tripIds);
     this.refreshInterval = setInterval(this.autoRefresh, REFRESH_FREQUENCY);
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
   }
@@ -47,7 +48,7 @@ export default class Group extends Component {
     const curTripIds = _.get(this.props.groupStatus, 'instance.tripIds') || [];
     const nextTripIds = _.get(nextProps.groupStatus, 'instance.tripIds') || [];
     if (!_.isEqual(curTripIds.sort(), nextTripIds.sort())) {
-      this.loadData(nextTripIds);
+      this.loadData(nextProps.org, nextTripIds);
     }
     this.checkNextUnappliedAction(nextProps.nextUnappliedAction);
   }
@@ -105,14 +106,15 @@ export default class Group extends Component {
   }
 
   handleRefresh() {
-    this.loadData(_.get(this.props.groupStatus, 'instance.tripIds'));
+    const tripIds = _.get(this.props.groupStatus, 'instance.tripIds');
+    this.loadData(this.props.org, tripIds);
   }
 
   autoRefresh() {
     this.handleRefresh();
   }
 
-  loadData(tripIds) {
+  loadData(org, tripIds) {
     if (!tripIds || !tripIds.length) {
       // If we have no trip ids, it's probably because this group was
       // archived, so the trips are not loaded by default. We still want to
@@ -121,7 +123,7 @@ export default class Group extends Component {
       // refreshLiveData will do the trick.`
       const groupId = this.props.params.groupId;
       this.props.retrieveInstance('groups', groupId);
-      this.props.listCollection('trips', { groupId: groupId });
+      this.props.listCollection('trips', { orgId: org.id, groupId: groupId });
       return;
     }
     // if (this.props.groupStatus.instance) {
@@ -131,7 +133,7 @@ export default class Group extends Component {
     //   }
     // }
     this.updateFayeSubscriptions(tripIds);
-    this.props.refreshLiveData(tripIds);
+    this.props.refreshLiveData(org.id, tripIds);
   }
 
   updateFayeSubscriptions(tripIds) {
@@ -168,7 +170,7 @@ export default class Group extends Component {
     // Reload in a second
     setTimeout(() => {
       console.log('Reloading due to incoming realtime event.');
-      this.props.refreshLiveData([tripId]);
+      this.props.refreshLiveData([this.props.org.id, tripId]);
     }, 1000);
   }
 
@@ -257,6 +259,7 @@ Group.propTypes = {
   children: PropTypes.node.isRequired,
   params: PropTypes.object.isRequired,
   groupStatus: PropTypes.object.isRequired,
+  org: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
   retrieveInstance: PropTypes.func.isRequired,
   listCollection: PropTypes.func.isRequired,

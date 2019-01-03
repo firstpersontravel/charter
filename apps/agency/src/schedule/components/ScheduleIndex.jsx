@@ -43,8 +43,22 @@ export default class ScheduleIndex extends Component {
   }
 
   componentDidMount() {
-    this.props.listCollection('groups', { isArchived: false });
-    this.props.listCollection('trips', { isArchived: false });
+    this.loadData(this.props.org);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.org !== this.props.org) {
+      this.loadData(nextProps.org);
+    }
+  }
+
+  loadData(org) {
+    if (!org) {
+      return;
+    }
+    const filters = { isArchived: false, orgId: org.id };
+    this.props.listCollection('groups', filters);
+    this.props.listCollection('trips', filters);
   }
 
   handleArchiveGroup(group) {
@@ -350,6 +364,7 @@ export default class ScheduleIndex extends Component {
 }
 
 ScheduleIndex.propTypes = {
+  org: PropTypes.object.isRequired,
   params: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
   experiences: PropTypes.array.isRequired,

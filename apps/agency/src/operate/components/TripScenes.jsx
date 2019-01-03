@@ -81,9 +81,9 @@ export default class TripScenes extends Component {
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <a
         style={{ marginLeft: '0.25em', cursor: 'pointer', float: 'right' }}
-        onClick={() => this.props.postAdminAction(trip.id, 'notify', {
-          notify_type: 'refresh'
-        })}>
+        onClick={() => this.props.postAdminAction(
+          trip.orgId, trip.id, 'notify', { notify_type: 'refresh' }
+        )}>
         <i className="fa fa-hand-o-right" /> device
       </a>
     ) : null;

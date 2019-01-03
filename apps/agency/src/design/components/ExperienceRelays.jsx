@@ -58,6 +58,7 @@ export default class ExperienceRelays extends React.Component {
     this.fetchedExperienceId = experience.id;
     this.props.listCollection('relays', {
       stage: getStage(),
+      orgId: experience.orgId,
       experienceId: experience.id
     });
   }

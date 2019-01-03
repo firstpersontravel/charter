@@ -6,7 +6,6 @@ import { assembleTripStatus } from '../../connector-utils';
 import TripGallery from '../components/TripGallery';
 
 const mapStateToProps = (state, ownProps) => ({
-  tripId: Number(ownProps.params.tripId),
   tripStatus: assembleTripStatus(state, ownProps.params.tripId),
   messages: _(state.datastore.messages)
     .filter({

@@ -6,6 +6,8 @@ import { createInstance, listCollection, updateInstance }
   from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
+  const authData = _.find(state.datastore.auth, { id: 'latest' }).data;
+  const org = _.find(authData.orgs, { name: ownProps.params.orgName });
   const user = _.find(state.datastore.users,
     { id: Number(ownProps.params.userId) });
   const profiles = _.filter(state.datastore.profiles,
@@ -38,6 +40,7 @@ const mapStateToProps = (state, ownProps) => {
     .filter(pAndP => pAndP.trip && !pAndP.trip.isArchived);
 
   return {
+    org: org,
     user: user,
     profiles: profiles,
     scripts: state.datastore.scripts,

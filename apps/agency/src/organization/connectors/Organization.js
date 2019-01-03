@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Organization from '../components/Organization';
-import { logout } from '../../actions';
+import { logout, listCollection } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
   const orgName = ownProps.params.orgName;
@@ -16,6 +16,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => ({
+  listCollection: (...args) => dispatch(listCollection(...args)),
   logout: (...args) => dispatch(logout(...args))
 });
 

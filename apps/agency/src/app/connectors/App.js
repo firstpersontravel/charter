@@ -1,13 +1,12 @@
 import { connect } from 'react-redux';
 
 import App from '../components/App';
-import { fetchAuthInfo, listCollection } from '../../actions';
+import { fetchAuthInfo } from '../../actions';
 
 const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
-  fetchAuthInfo: (...args) => dispatch(fetchAuthInfo(...args)),
-  listCollection: (...args) => dispatch(listCollection(...args))
+  fetchAuthInfo: (...args) => dispatch(fetchAuthInfo(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

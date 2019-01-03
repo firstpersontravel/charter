@@ -100,7 +100,7 @@ export default class GroupUpcoming extends Component {
           this.props.updateInstance('actions', action.id, {
             isArchived: !action.isArchived
           });
-          this.props.postAdminAction(trip.id, 'notify', {
+          this.props.postAdminAction(trip.orgId, trip.id, 'notify', {
             notify_type: 'refresh'
           });
         }}>
@@ -117,7 +117,7 @@ export default class GroupUpcoming extends Component {
           this.props.updateInstance('actions', action.id, {
             scheduledAt: moment.utc().toISOString()
           });
-          this.props.postAdminAction(trip.id, 'notify', {
+          this.props.postAdminAction(trip.orgId, trip.id, 'notify', {
             notify_type: 'refresh'
           });
         }}>
