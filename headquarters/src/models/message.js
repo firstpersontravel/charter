@@ -1,5 +1,6 @@
 const database = require('../config').database;
 const Trip = require('./trip');
+const Org = require('./org');
 const Player = require('./player');
 
 const {
@@ -36,6 +37,7 @@ const Message = database.define('Message', snakeCaseColumns({
   isArchived: mutableModifier(booleanField(false))
 }));
 
+Message.belongsTo(Org, belongsToField('org'));
 Message.belongsTo(Trip, belongsToField('trip'));
 Message.belongsTo(Player, belongsToField('sentBy'));
 Message.belongsTo(Player, belongsToField('sentTo'));

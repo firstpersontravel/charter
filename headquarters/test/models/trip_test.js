@@ -7,6 +7,7 @@ describe('Trip', () => {
 
   beforeEach(() => {
     trip = models.Trip.build({
+      orgId: 100,
       experienceId: 3,
       scriptId: 1,
       groupId: 2,
@@ -18,6 +19,11 @@ describe('Trip', () => {
 
   it('validates with all fields present', async () => {
     await trip.validate();
+  });
+
+  it('requires an org', async () => {
+    trip.orgId = null;
+    await assertValidation(trip, { orgId: 'must be present' });
   });
 
   it('requires an experience', async () => {

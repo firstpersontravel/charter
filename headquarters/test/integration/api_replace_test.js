@@ -68,11 +68,12 @@ describe('API replace', () => {
           assert.deepStrictEqual(res.body, {
             data: {
               player: {
+                id: player.id,
+                orgId: 100,
+                tripId: trip.id,
                 currentPageName: '',
                 acknowledgedPageAt: '2018-01-01T00:00:00.000Z',
                 acknowledgedPageName: 'newPage',
-                id: player.id,
-                tripId: trip.id,
                 roleName: 'Dummy',
                 userId: null
               }
@@ -151,6 +152,7 @@ describe('API replace', () => {
 
     beforeEach(async () => {
       action = await models.Action.create({
+        orgId: trip.orgId,
         tripId: trip.id,
         type: 'action',
         name: 'signal_cue',

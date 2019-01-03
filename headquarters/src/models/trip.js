@@ -1,6 +1,7 @@
 const database = require('../config').database;
 const Experience = require('./experience');
 const Group = require('./group');
+const Org = require('./org');
 const Script = require('./script');
 
 const {
@@ -37,6 +38,7 @@ const Trip = database.define('Trip', snakeCaseColumns({
   isArchived: mutableModifier(booleanField(false))
 }));
 
+Trip.belongsTo(Org, belongsToField('org'));
 Trip.belongsTo(Experience, belongsToField('experience'));
 Trip.belongsTo(Script, belongsToField('script'));
 Trip.belongsTo(Group, belongsToField('group'));

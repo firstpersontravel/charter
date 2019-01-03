@@ -176,7 +176,7 @@ describe('apiRestRoutes', () => {
       // Call the route
       await assertThrows(async () => {
         await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
-      }, 400, 'Invalid query parameter: missingField.');
+      }, 400, 'Invalid query parameter: "missingField".');
     });
 
     it('filters by parameters', async () => {
@@ -273,6 +273,35 @@ describe('apiRestRoutes', () => {
       assert.deepStrictEqual(JSON.parse(res._getData()), {
         data: { models: [{ id: 1, isShiny: false }, { id: 2, isShiny: true }] }
       });
+    });
+
+    it('fails if a required filter is not present', async () => {
+      const opts = { requireFilters: ['isShiny'] };
+
+      // Call the route
+      const route = apiRestRoutes.listCollectionRoute(Model, dummyAuthz, opts);
+      await assertThrows(() => route(req, res),
+        400, 'Missing required filter: "isShiny".');
+    });
+
+    it('filters on falsy required filter', async () => {
+      req.query = { isShiny: false };
+      const opts = { requireFilters: ['isShiny'] };
+      sandbox.stub(Model, 'findAll').resolves([]);
+
+      // Call the route
+      await (
+        apiRestRoutes.listCollectionRoute(Model, dummyAuthz, opts)(req, res)
+      );
+
+      // Check response
+      assert.strictEqual(res.statusCode, 200);
+      assert.deepStrictEqual(Model.findAll.firstCall.args, [{
+        limit: 100,
+        offset: 0,
+        order: [['id', 'ASC']],
+        where: { isShiny: false }
+      }]);
     });
   });
 

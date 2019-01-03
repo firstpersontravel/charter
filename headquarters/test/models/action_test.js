@@ -9,17 +9,23 @@ describe('Action', () => {
 
   beforeEach(() => {
     action = models.Action.build({
+      orgId: 100,
+      tripId: 2,
       type: 'action',
       name: 'set_value',
       params: {},
       createdAt: moment.utc(),
-      scheduledAt: moment.utc(),
-      tripId: 2
+      scheduledAt: moment.utc()
     });
   });
 
   it('validates with all fields present', async () => {
     await action.validate();
+  });
+
+  it('requires an org', async () => {
+    action.orgId = null;
+    await assertValidation(action, { orgId: 'must be present' });
   });
 
   it('requires a trip', async () => {

@@ -10,6 +10,7 @@ class TripsController {
     const initialFields = PlayerCore.getInitialFields(scriptContent, role.name,
       variantNames);
     const fields = Object.assign(initialFields, {
+      orgId: trip.orgId,
       tripId: trip.id,
       userId: null,
     });
@@ -33,6 +34,7 @@ class TripsController {
     const scenes = group.script.content.scenes || [];
     const firstScene = scenes[0] || { name: '' };
     const tripFields = Object.assign({
+      orgId: group.orgId,
       experienceId: group.experience.id,
       groupId: group.id,
       scriptId: group.script.id,

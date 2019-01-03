@@ -173,7 +173,7 @@ function _validateValue(type, key, value) {
 function whereValueFromQuery(model, key, value) {
   const attribute = model.attributes[key];
   if (!attribute) {
-    throw errors.badRequestError(`Invalid query parameter: ${key}.`);
+    throw errors.badRequestError(`Invalid query parameter: "${key}".`);
   }
   if (value === 'null') {
     return null;
@@ -198,7 +198,12 @@ function whereValueFromQuery(model, key, value) {
   return value;
 }
 
-function whereFromQuery(model, whereQuery) {
+function whereFromQuery(model, whereQuery, opts) {
+  _.each(opts.requireFilters, (filter) => {
+    if (_.isUndefined(whereQuery[filter])) {
+      throw errors.badRequestError(`Missing required filter: "${filter}".`);
+    }
+  });
   return _.mapValues(whereQuery, (value, key) => (
     whereValueFromQuery(model, key, value)
   ));
@@ -210,7 +215,7 @@ function listCollectionRoute(model, authz, opts={}) {
     const count = Number(req.query.count || LIST_COUNT_DEFAULT);
     const order = orderFromParam(model, req.query.sort);
     const whereQuery = _.omit(req.query, ['sort', 'count', 'offset']);
-    const where = whereFromQuery(model, whereQuery);
+    const where = whereFromQuery(model, whereQuery, opts);
     const records = await model.findAll({
       offset: offset,
       limit: count,

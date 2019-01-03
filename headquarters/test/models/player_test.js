@@ -8,6 +8,7 @@ describe('Player', () => {
 
   beforeEach(() => {
     player = models.Player.build({
+      orgId: 100,
       tripId: 2,
       roleName: 'Role'
     });
@@ -15,6 +16,11 @@ describe('Player', () => {
 
   it('validates with all fields present', async () => {
     await player.validate();
+  });
+
+  it('requires an org', async () => {
+    player.orgId = null;
+    await assertValidation(player, { orgId: 'must be present' });
   });
 
   it('requires a trip', async () => {

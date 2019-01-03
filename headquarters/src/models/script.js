@@ -4,6 +4,7 @@ const { ValidationError } = require('sequelize');
 const { TextUtil, ParamValidators, ResourcesRegistry } = require('fptcore');
 
 const Experience = require('./experience');
+const Org = require('./org');
 const database = require('../config').database;
 
 const {
@@ -91,6 +92,7 @@ const Script = database.define('Script', snakeCaseColumns({
   isArchived: mutableModifier(booleanField(false))
 }));
 
+Script.belongsTo(Org, belongsToField('org'));
 Script.belongsTo(Experience, belongsToField('experience'));
 
 module.exports = Script;

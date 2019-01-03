@@ -1,5 +1,6 @@
 const database = require('../config').database;
 const Experience = require('./experience');
+const Org = require('./org');
 const User = require('./user');
 
 const {
@@ -27,6 +28,7 @@ const Profile = database.define('Profile', snakeCaseColumns({
   isArchived: mutableModifier(booleanField(false))
 }));
 
+Profile.belongsTo(Org, belongsToField('org'));
 Profile.belongsTo(User, belongsToField('user'));
 Profile.belongsTo(Experience, mutableModifier(belongsToField('experience')));
 

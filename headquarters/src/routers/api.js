@@ -21,7 +21,7 @@ const apiRouter = express.Router();
 /**
  * Utility function to create a REST collection router
  */
-function createCollectionRouter(model, opts={}) {
+function createModelRouter(model, opts={}) {
   // Create routes
   const routes = {
     list: apiRestRoutes.listCollectionRoute(model, apiAuthorizor, opts),
@@ -40,19 +40,21 @@ function createCollectionRouter(model, opts={}) {
   return router;
 }
 
-// REST API routers.
-apiRouter.use('/actions', createCollectionRouter(models.Action));
-apiRouter.use('/experiences', createCollectionRouter(models.Experience));
-apiRouter.use('/groups', createCollectionRouter(models.Group));
-apiRouter.use('/messages', createCollectionRouter(models.Message));
-apiRouter.use('/players', createCollectionRouter(models.Player));
-apiRouter.use('/profiles', createCollectionRouter(models.Profile));
-apiRouter.use('/relays', createCollectionRouter(models.Relay));
-apiRouter.use('/scripts', createCollectionRouter(models.Script));
-apiRouter.use('/trips', createCollectionRouter(models.Trip));
-apiRouter.use('/users', createCollectionRouter(models.User, {
-  blacklistFields: ['passwordHash']
-}));
+// REST API routers for Organization-filtered models
+const orgOpts = { requireFilters: ['orgId'] };
+apiRouter.use('/actions', createModelRouter(models.Action, orgOpts));
+apiRouter.use('/experiences', createModelRouter(models.Experience, orgOpts));
+apiRouter.use('/groups', createModelRouter(models.Group, orgOpts));
+apiRouter.use('/messages', createModelRouter(models.Message, orgOpts));
+apiRouter.use('/players', createModelRouter(models.Player, orgOpts));
+apiRouter.use('/profiles', createModelRouter(models.Profile, orgOpts));
+apiRouter.use('/relays', createModelRouter(models.Relay, orgOpts));
+apiRouter.use('/scripts', createModelRouter(models.Script, orgOpts));
+apiRouter.use('/trips', createModelRouter(models.Trip, orgOpts));
+
+// And for users, which are shared
+const userOpts = { blacklistFields: ['passwordHash'] };
+apiRouter.use('/users', createModelRouter(models.User, userOpts));
 
 // Action routes
 apiRouter.post('/trips/:tripId/actions',

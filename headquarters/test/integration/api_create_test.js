@@ -2,7 +2,6 @@ const assert = require('assert');
 const request = require('supertest');
 
 const app = require('../../src/app');
-const models = require('../../src/models');
 const TestUtil = require('../util');
 
 describe('API create', () => {
@@ -102,6 +101,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/scripts')
         .send({
+          orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
@@ -121,6 +121,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/scripts')
         .send({
+          orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
@@ -150,6 +151,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/scripts')
         .send({
+          orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
@@ -172,34 +174,19 @@ describe('API create', () => {
 
   describe('POST /api/trips', () => {
 
-    let script;
     let group;
 
     beforeEach(async () => {
-      const experience = await models.Experience.create({
-        name: 'test',
-        title: 'Test',
-        timezone: 'US/Pacific',
-      });
-      script = await models.Script.create({
-        experienceId: experience.id,
-        revision: 0,
-        contentVersion: 0,
-        content: {}
-      });
-      group = await models.Group.create({
-        experienceId: experience.id,
-        scriptId: script.id,
-        date: '2018-04-02'
-      });
+      group = await TestUtil.createDummyGroup();
     });
 
     it('creates trip', () => {
       return request(app)
         .post('/api/trips')
         .send({
-          experienceId: script.experienceId,
-          scriptId: script.id,
+          orgId: group.orgId,
+          experienceId: group.experienceId,
+          scriptId: group.scriptId,
           groupId: group.id,
           departureName: 'T3',
           galleryName: 'Test',
@@ -222,8 +209,9 @@ describe('API create', () => {
       return request(app)
         .post('/api/trips')
         .send({
-          experienceId: script.experienceId,
-          scriptId: script.id,
+          orgId: group.orgId,
+          experienceId: group.experienceId,
+          scriptId: group.scriptId,
           groupId: 1000,
           departureName: 'T3',
           galleryName: 'Test',
@@ -257,6 +245,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/groups')
         .send({
+          orgId: trip.orgId,
           experienceId: trip.experienceId,
           scriptId: trip.scriptId,
           date: '2018-04-04'
@@ -272,6 +261,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/groups')
         .send({
+          orgId: trip.orgId,
           experienceId: trip.experienceId,
           scriptId: trip.scriptId,
           date: 'abcd'
@@ -294,6 +284,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/groups')
         .send({
+          orgId: trip.orgId,
           experienceId: trip.experienceId,
           scriptId: trip.scriptId,
           date: '2000-40-80'
@@ -316,6 +307,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/groups')
         .send({
+          orgId: trip.orgId,
           experienceId: trip.experienceId,
           scriptId: trip.scriptId,
           date: '2018-01-01T10:00:00Z'
@@ -338,6 +330,7 @@ describe('API create', () => {
       return request(app)
         .post('/api/groups')
         .send({
+          orgId: trip.orgId,
           experienceId: trip.experienceId,
           scriptId: trip.scriptId,
           date: null

@@ -2,29 +2,29 @@ const sinon = require('sinon');
 
 const config = require('../src/config');
 
+const mocks = sinon.sandbox.create();
 const sandbox = sinon.sandbox.create();
 
 function createTestMocks() {
-  sandbox.stub(config, 'getApnProvider').returns({
-    send: sandbox.stub().resolves()
+  mocks.stub(config, 'getApnProvider').returns({
+    send: mocks.stub().resolves()
   });
-  const twilioCallsClient = sandbox.stub().returns({
-    update: sandbox.stub().resolves()
+  const twilioCallsClient = mocks.stub().returns({
+    update: mocks.stub().resolves()
   });
-  twilioCallsClient.create = sandbox.stub().resolves();
+  twilioCallsClient.create = mocks.stub().resolves();
   const twilioStubClient = {
     calls: twilioCallsClient,
-    messages: {
-      create: sandbox.stub().resolves()
-    }
+    messages: { create: mocks.stub().resolves() }
   };
-  sandbox.stub(config, 'getTwilioClient').returns(twilioStubClient);
-  sandbox.stub(config, 'getFayeClient').returns({
-    publish: sandbox.stub().resolves()
+  mocks.stub(config, 'getTwilioClient').returns(twilioStubClient);
+  mocks.stub(config, 'getFayeClient').returns({
+    publish: mocks.stub().resolves()
   });
 }
 
 function teardownTestMocks() {
+  mocks.restore();
   sandbox.restore();
 }
 

@@ -1,4 +1,5 @@
 const database = require('../config').database;
+const Org = require('./org');
 const Trip = require('./trip');
 
 const {
@@ -32,6 +33,7 @@ const Action = database.define('Action', snakeCaseColumns({
   isArchived: mutableModifier(booleanField(false))
 }));
 
+Action.belongsTo(Org, belongsToField('org'));
 Action.belongsTo(Trip, belongsToField('trip'));
 
 module.exports = Action;

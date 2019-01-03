@@ -59,6 +59,7 @@ describe('API update', () => {
         where: { tripId: trip.id }
       });
       message = await models.Message.create({
+        orgId: trip.orgId,
         tripId: trip.id,
         sentById: player.id,
         sentToId: player.id,

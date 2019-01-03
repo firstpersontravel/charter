@@ -1,6 +1,8 @@
 const database = require('../config').database;
+const Org = require('./org');
 
 const {
+  belongsToField,
   booleanField,
   requiredStringField,
   mutableModifier,
@@ -18,5 +20,7 @@ const Experience = database.define('Experience', snakeCaseColumns({
   timezone: mutableModifier(requiredStringField(32)),
   isArchived: mutableModifier(booleanField(false))
 }));
+
+Experience.belongsTo(Org, belongsToField('org'));
 
 module.exports = Experience;

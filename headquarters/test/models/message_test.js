@@ -6,6 +6,7 @@ describe('Message', () => {
 
   beforeEach(() => {
     message = models.Message.build({
+      orgId: 100,
       tripId: 1,
       sentById: 2,
       sentToId: 3,
@@ -18,6 +19,11 @@ describe('Message', () => {
 
   it('validates with all fields present', async () => {
     await message.validate();
+  });
+
+  it('requires an org', async () => {
+    message.orgId = null;
+    await assertValidation(message, { orgId: 'must be present' });
   });
 
   it('requires a trip', async () => {

@@ -6,6 +6,7 @@ describe('Script', () => {
 
   beforeEach(() => {
     script = models.Script.build({
+      orgId: 100,
       experienceId: 1,
       revision: 1,
       contentVersion: 1,
@@ -15,6 +16,11 @@ describe('Script', () => {
 
   it('validates with all fields present', async () => {
     await script.validate();
+  });
+
+  it('requires an org', async () => {
+    script.orgId = null;
+    await assertValidation(script, { orgId: 'must be present' });
   });
 
   it('requires experience', async () => {

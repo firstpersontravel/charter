@@ -40,12 +40,13 @@ describe('TripsController', () => {
       };
       const stubGroup = {
         id: 1,
+        orgId: 200,
         date: '2018-01-01',
         script: stubScript,
         experience: stubExperience
       };
       sandbox.stub(models.Group, 'find').resolves(stubGroup);
-      sandbox.stub(models.Trip, 'create').resolves({ id: 3 });
+      sandbox.stub(models.Trip, 'create').resolves({ id: 3, orgId: 200 });
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
       await TripsController.createTrip(1, 'title', 'T1', ['basic']);
@@ -61,6 +62,7 @@ describe('TripsController', () => {
       // Create trip
       assert.deepStrictEqual(
         models.Trip.create.firstCall.args[0], {
+          orgId: 200,
           date: '2018-01-01',
           currentSceneName: 'SCENE-MAIN',
           groupId: 1,
@@ -82,6 +84,7 @@ describe('TripsController', () => {
       sinon.assert.calledOnce(models.Player.create);
       assert.deepStrictEqual(
         models.Player.create.firstCall.args[0], {
+          orgId: 200,
           currentPageName: '',
           tripId: 3,
           roleName: 'fake',

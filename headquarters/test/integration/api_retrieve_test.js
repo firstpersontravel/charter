@@ -26,18 +26,19 @@ describe('API retrieve', () => {
           assert.deepStrictEqual(res.body, {
             data: {
               trip: {
+                id: trip.id,
+                experienceId: trip.experienceId,
+                scriptId: trip.scriptId,
+                groupId: group.id,
+                orgId: 100,
                 currentSceneName: 'SCENE-MAIN',
                 date: today,
-                experienceId: trip.experienceId,
-                groupId: group.id,
                 history: {},
-                id: trip.id,
                 isArchived: false,
                 lastScheduledTime: null,
                 schedule: {},
                 departureName: 'T1',
                 galleryName: '',
-                scriptId: trip.scriptId,
                 variantNames: '',
                 title: 'test',
                 values: {},

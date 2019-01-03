@@ -6,9 +6,10 @@ describe('Group', () => {
 
   beforeEach(() => {
     group = models.Group.build({
-      date: '2018-03-03',
+      orgId: 100,
       experienceId: 1,
-      scriptId: 2
+      scriptId: 2,
+      date: '2018-03-03'
     });
   });
 
@@ -16,14 +17,19 @@ describe('Group', () => {
     await group.validate();
   });
 
-  it('requires a script', async () => {
-    group.scriptId = null;
-    await assertValidation(group, { scriptId: 'must be present' });
+  it('requires an org', async () => {
+    group.orgId = null;
+    await assertValidation(group, { orgId: 'must be present' });
   });
 
   it('requires an experience', async () => {
     group.experienceId = null;
     await assertValidation(group, { experienceId: 'must be present' });
+  });
+
+  it('requires a script', async () => {
+    group.scriptId = null;
+    await assertValidation(group, { scriptId: 'must be present' });
   });
 
   it('requires a date', async () => {

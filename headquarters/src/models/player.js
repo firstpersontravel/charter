@@ -1,4 +1,6 @@
 const database = require('../config').database;
+
+const Org = require('./org');
 const Trip = require('./trip');
 const User = require('./user');
 
@@ -22,6 +24,7 @@ const Player = database.define('Player', snakeCaseColumns({
   acknowledgedPageAt: mutableModifier(allowNullModifier(datetimeField()))
 }));
 
+Player.belongsTo(Org, belongsToField('org'));
 Player.belongsTo(Trip, belongsToField('trip'));
 Player.belongsTo(User, mutableModifier(allowNullModifier(belongsToField('user'))));
 

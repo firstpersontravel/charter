@@ -1,6 +1,7 @@
 const database = require('../config').database;
 
 const Experience = require('./experience');
+const Org = require('./org');
 
 const {
   belongsToField,
@@ -28,6 +29,7 @@ const Relay = database.define('Relay', snakeCaseColumns({
   isActive: mutableModifier(booleanField(true))
 }));
 
+Relay.belongsTo(Org, belongsToField('org'));
 Relay.belongsTo(Experience, belongsToField('experience'));
 
 module.exports = Relay;
