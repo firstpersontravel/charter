@@ -17,7 +17,7 @@ const {
  */
 const Player = database.define('Player', snakeCaseColumns({
   roleName: requiredStringField(32, false),
-  currentPageName: optionalStringField(64),
+  currentPageName: mutableModifier(optionalStringField(64)),
   acknowledgedPageName: mutableModifier(optionalStringField(64)),
   acknowledgedPageAt: mutableModifier(allowNullModifier(datetimeField()))
 }));

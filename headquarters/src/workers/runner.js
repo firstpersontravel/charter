@@ -39,14 +39,14 @@ class RunnerWorker {
     const now = moment.utc();
     try {
       await this._unsafeRunScheduledAction(action);
-      await action.update({ appliedAt: now });
+      await action.update({ appliedAt: now }, { fields: ['appliedAt'] });
     } catch(err) {
       if (!safe) {
         throw err;
       }
       // Otherwise log failure and continue.
       logger.error(`Error processing ${action.type} ${action.name} #${action.id}:\n\n` + err);
-      await action.update({ failedAt: now });
+      await action.update({ failedAt: now }, { fields: ['failedAt'] });
     }
   }
 

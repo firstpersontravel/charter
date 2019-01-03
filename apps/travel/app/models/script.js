@@ -8,7 +8,7 @@ export default DS.Model.extend({
   version: DS.attr('number'),
   content: DS.attr('obj'),
 
-  timezone: Ember.oneWay('experience.timezone'),
+  timezone: Ember.computed.oneWay('experience.timezone'),
 
   experience: DS.belongsTo('experience', {async: false}),
 

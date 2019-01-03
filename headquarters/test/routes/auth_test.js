@@ -38,12 +38,11 @@ describe('authRoutes', () => {
       const tokenString = res.cookies.fptauth.value;
       const decoded = jwt.verify(tokenString, 'test_secret');
 
-      assert.deepStrictEqual(decoded, {
-        iss: 'fpt',
-        aud: 'web',
-        iat: now.unix(),
-        exp: now.add(7, 'days').unix()
-      });
+      assert.strictEqual(decoded.iss, 'fpt');
+      assert.strictEqual(decoded.aud, 'web');
+      // Issued at and expiration are in range
+      assert(Math.abs(now.unix() - decoded.iat) < 2);
+      assert(Math.abs(now.add(7, 'days').unix() - decoded.exp) < 2);
 
       // Test call made correctly
       sinon.assert.calledOnce(models.User.find);
