@@ -14,6 +14,7 @@ export default class TripIndex extends Component {
   }
 
   getRedirect() {
+    const organizationName = this.props.params.organizationName;
     const trip = this.props.tripStatus.instance;
     const firstSceneName = trip.script.content.scenes[0].name;
     const onFirstScene = (
@@ -22,7 +23,7 @@ export default class TripIndex extends Component {
     );
     if (onFirstScene) {
       return (
-        `/operate/${this.props.params.groupId}` +
+        `/${organizationName}/operate/${this.props.params.groupId}` +
         `/trip/${this.props.params.tripId}/values`
       );
     }
@@ -31,7 +32,7 @@ export default class TripIndex extends Component {
       trip.script.content.roles[0]
     );
     return (
-      `/operate/${this.props.params.groupId}` +
+      `/${organizationName}/operate/${this.props.params.groupId}` +
       `/trip/${this.props.params.tripId}` +
       `/players/${primaryRole.name}`
     );

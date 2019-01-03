@@ -49,7 +49,8 @@ export default class DirectoryUser extends Component {
   }
 
   handleUserModalClose() {
-    browserHistory.push(`/directory/user/${this.props.user.id}`);
+    const organizationName = this.props.params.organizationName;
+    browserHistory.push(`${organizationName}/directory/user/${this.props.user.id}`);
   }
 
   handleUpdateUser(fields) {
@@ -63,9 +64,10 @@ export default class DirectoryUser extends Component {
   }
 
   handleProfileModalClose() {
+    const organizationName = this.props.params.organizationName;
     const query = this.props.location.query;
     browserHistory.push(
-      `/directory/user/${this.props.user.id}` +
+      `/${organizationName}/directory/user/${this.props.user.id}` +
       `${query.archived_profiles ? '?archived_profiles=true' : ''}`
     );
   }
@@ -109,10 +111,11 @@ export default class DirectoryUser extends Component {
   }
 
   renderPlayerRole({ group, player, trip }) {
+    const organizationName = this.props.params.organizationName;
     const groupLink = group ? (
       <span>
         <Link
-          to={`/operate/${trip.groupId}`}>
+          to={`/${organizationName}/operate/${trip.groupId}`}>
           Group: {moment(group.date).format('MMM D')}
         </Link>
         {', '}
@@ -122,7 +125,7 @@ export default class DirectoryUser extends Component {
       <li key={player.id}>
         {groupLink}
         <Link
-          to={`/operate/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
+          to={`/${organizationName}/operate/${trip.groupId}/all/role/${player.roleName}/${this.props.user.id}`}>
           Trip: {trip.title},
           Departure: {trip.departureName}
         </Link>
@@ -147,6 +150,7 @@ export default class DirectoryUser extends Component {
   }
 
   renderProfile(profile) {
+    const organizationName = this.props.params.organizationName;
     const experience = _.find(this.props.experiences, {
       id: profile.experienceId
     });
@@ -185,11 +189,11 @@ export default class DirectoryUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            <Link to={`/directory?experienceId=${experience.id}`}>
+            <Link to={`/${organizationName}/directory?experienceId=${experience.id}`}>
               {experience.title}
             </Link>
             &nbsp;&bull;&nbsp;
-            <Link to={`/directory?experienceId=${experience.id}&role=${role.name}`}>
+            <Link to={`/${organizationName}/directory?experienceId=${experience.id}&role=${role.name}`}>
               {role.name}
             </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }
@@ -198,7 +202,7 @@ export default class DirectoryUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/directory/user/${this.props.user.id}`,
+              pathname: `/${organizationName}//directory/user/${this.props.user.id}`,
               query: {
                 editing_profile: profile.id,
                 archived_profiles: this.props.location.query.archived_profiles
@@ -245,6 +249,7 @@ export default class DirectoryUser extends Component {
     if (!this.props.user) {
       return <div className="col-sm-9">Error</div>;
     }
+    const organizationName = this.props.params.organizationName;
     const editingProfileId = this.props.location.query.editing_profile;
     const editingProfile = editingProfileId ?
       _.find(this.props.profiles, { id: Number(editingProfileId) }) :
@@ -259,7 +264,7 @@ export default class DirectoryUser extends Component {
         &nbsp;
         <Link
           className="btn btn-sm btn-outline-secondary"
-          to={`/directory/user/${user.id}?archived_profiles=true`}>
+          to={`/${organizationName}/directory/user/${user.id}?archived_profiles=true`}>
           Show archived profiles
         </Link>
       </span>
@@ -267,13 +272,13 @@ export default class DirectoryUser extends Component {
     return (
       <div className="col-sm-9">
         <h3>
-          <Link to="/directory">Directory</Link> &rsaquo;&nbsp;
+          <Link to={`/${organizationName}/directory`}>Directory</Link> &rsaquo;&nbsp;
           {user.firstName} {user.lastName}
         </h3>
         <p>
           <Link
             className="btn btn-sm btn-outline-secondary"
-            to={`/directory/user/${user.id}?editing=true`}>
+            to={`/${organizationName}/directory/user/${user.id}?editing=true`}>
             Edit
           </Link>
           &nbsp;
@@ -289,7 +294,7 @@ export default class DirectoryUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/directory/user/${user.id}`,
+              pathname: `/${organizationName}/directory/user/${user.id}`,
               query: {
                 editing_profile: 'new',
                 archived_profiles: this.props.location.query.archived_profiles
@@ -324,6 +329,7 @@ DirectoryUser.propTypes = {
   activeRoles: PropTypes.array.isRequired,
   user: PropTypes.object,
   experiences: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired
 };

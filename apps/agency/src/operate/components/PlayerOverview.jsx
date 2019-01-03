@@ -11,7 +11,7 @@ import { TimeUtil } from 'fptcore';
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 
-function renderMap(player) {
+function renderMap(organizationName, player) {
   if (!player.user || !player.user.locationLatitude) {
     return null;
   }
@@ -22,6 +22,7 @@ function renderMap(player) {
     <GroupMap
       center={center}
       zoom={15}
+      organizationName={organizationName}
       trips={[player.trip]} />
   );
 }
@@ -112,18 +113,18 @@ function renderValues(player) {
   );
 }
 
-function renderUser(user) {
+function renderUser(organizationName, user) {
   if (!user) {
     return 'None';
   }
   return (
-    <Link to={`/users/user/${user.id}`}>
+    <Link to={`/${organizationName}/users/user/${user.id}`}>
       {user.firstName} {user.lastName}
     </Link>
   );
 }
 
-function renderVars(player) {
+function renderVars(organizationName, player) {
   const script = player.trip.script;
   const trip = player.trip;
   const user = player.user;
@@ -137,14 +138,14 @@ function renderVars(player) {
       <div>
         <strong>Role:</strong>
         &nbsp;
-        <Link to={`/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
+        <Link to={`/${organizationName}/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
           {player.roleName} ({user ? user.firstName : 'No user'})
         </Link>
         <br />
 
         <strong>User:</strong>
         &nbsp;
-        {renderUser(user)}
+        {renderUser(organizationName, user)}
         <br />
 
         <strong>Current page:</strong>
@@ -164,9 +165,9 @@ function renderVars(player) {
   );
 }
 
-export default function PlayerOverview({ player }) {
-  const map = renderMap(player);
-  const vars = renderVars(player);
+export default function PlayerOverview({ params, player }) {
+  const map = renderMap(params.organizationName, player);
+  const vars = renderVars(params.organizationName, player);
   return (
     <div className="row">
       <div className="col-sm-6">
@@ -181,5 +182,6 @@ export default function PlayerOverview({ player }) {
 }
 
 PlayerOverview.propTypes = {
+  params: PropTypes.object.isRequired,
   player: PropTypes.object.isRequired
 };

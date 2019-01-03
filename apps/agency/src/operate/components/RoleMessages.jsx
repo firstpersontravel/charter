@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import Message from '../partials/Message';
 
-function renderMessages(trips, messages) {
+function renderMessages(organizationName, trips, messages) {
   if (!messages.length) {
     return <div>No messages needing reply.</div>;
   }
@@ -14,6 +14,7 @@ function renderMessages(trips, messages) {
     .map(message => (
       <Message
         key={message.id}
+        organizationName={organizationName}
         trip={_.find(trips, { id: message.tripId })}
         message={message} />
     ));
@@ -21,11 +22,12 @@ function renderMessages(trips, messages) {
 
 export default function RoleMessages({ params, groupStatus,
     messagesNeedingReply, user }) {
+  const organizationName = params.organizationName;
   const messages = renderMessages(
-    groupStatus.instance.trips, messagesNeedingReply);
+    organizationName, groupStatus.instance.trips, messagesNeedingReply);
   const tripLinks = groupStatus.instance.trips.map((trip => (
     <li key={trip.id}>
-      <Link to={`/operate/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
+      <Link to={`/${organizationName}/operate/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
         {trip.departureName} {trip.title}
       </Link>
     </li>

@@ -3,11 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-function renderExperience(experience, scripts) {
+function renderExperience(organizationName, experience, scripts) {
   const scriptItems = scripts.map(script => (
     <div key={`${experience.id}-${script.id}`}>
       <Link
-        to={`/design/script/${script.id}`}>
+        to={`/${organizationName}/design/script/${script.id}`}>
         {experience.title} Rev {script.revision}
       </Link>
     </div>
@@ -17,16 +17,18 @@ function renderExperience(experience, scripts) {
       <h4>{experience.title}</h4>
       {scriptItems}
       <Link
-        to={`/design/experience/${experience.name}/relays`}>
+        to={`/${organizationName}/design/experience/${experience.name}/relays`}>
         Relays
       </Link>
     </div>
   );
 }
 
-export default function ExperiencesIndex({ children, experiences, scripts }) {
+export default function ExperiencesIndex({ children, experiences, scripts,
+  params }) {
+  const organizationName = params.organizationName;
   const experienceItems = experiences.map(experience => (
-    renderExperience(experience, _.filter(scripts, {
+    renderExperience(organizationName, experience, _.filter(scripts, {
       experienceId: experience.id
     }))
   ));
@@ -34,7 +36,7 @@ export default function ExperiencesIndex({ children, experiences, scripts }) {
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
-          <Link to="/design">Experiences</Link>
+          <Link to={`/${organizationName}/design`}>Experiences</Link>
         </div>
       </div>
       <hr />
@@ -46,7 +48,8 @@ export default function ExperiencesIndex({ children, experiences, scripts }) {
 ExperiencesIndex.propTypes = {
   children: PropTypes.node,
   experiences: PropTypes.array.isRequired,
-  scripts: PropTypes.array.isRequired
+  scripts: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired
 };
 
 ExperiencesIndex.defaultProps = {

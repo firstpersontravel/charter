@@ -2,15 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-export default function ExperienceScripts({ experienceName, experience, scripts }) {
+export default function ExperienceScripts({ experienceName, experience, scripts, params }) {
   if (!scripts.length) {
     return <div>Loading!</div>;
   }
+  const organizationName = params.organizationName;
   const renderedScripts = scripts.map(script => (
     <div key={script.id}>
       <Link
         to={
-          `/design/script/${script.id}`
+          `/${organizationName}/design/script/${script.id}`
         }>
         Rev. {script.revision}
       </Link>
@@ -22,7 +23,7 @@ export default function ExperienceScripts({ experienceName, experience, scripts 
         {renderedScripts}
       </div>
       <div className="col-sm-6">
-        <Link to={`/design/experience/${experienceName}/relays`}>
+        <Link to={`/${organizationName}/design/experience/${experienceName}/relays`}>
           Relays
         </Link>
       </div>
@@ -33,7 +34,8 @@ export default function ExperienceScripts({ experienceName, experience, scripts 
 ExperienceScripts.propTypes = {
   experienceName: PropTypes.string.isRequired,
   experience: PropTypes.object,
-  scripts: PropTypes.array.isRequired
+  scripts: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired
 };
 
 ExperienceScripts.defaultProps = {

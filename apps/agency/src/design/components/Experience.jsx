@@ -2,14 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-export default function Experience({ experienceName, experience, children }) {
+export default function Experience({ experienceName, experience, children, params }) {
+  const organizationName = params.organizationName;
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-12">
           <Link to="/design">Experiences</Link>
           &nbsp;&rsaquo;&nbsp;
-          <Link to={`/design/experience/${experienceName}`}>
+          <Link to={`/${organizationName}/design/experience/${experienceName}`}>
             {experience && experience.title}
           </Link>
         </div>
@@ -23,7 +24,8 @@ export default function Experience({ experienceName, experience, children }) {
 Experience.propTypes = {
   experienceName: PropTypes.string.isRequired,
   experience: PropTypes.object,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  params: PropTypes.object.isRequired
 };
 
 Experience.defaultProps = {

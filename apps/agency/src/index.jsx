@@ -47,13 +47,8 @@ const enhancer = enhancers(
 const authData = _(document.cookie.split(';'))
   .map(c => c.split('='))
   .filter(c => c[0] === 'auth_latest')
-  .map(c => ({
-    id: 'latest',
-    data: JSON.parse(atob(c[1]))
-  }))
+  .map(c => ({ id: 'latest', data: JSON.parse(atob(c[1])) }))
   .value();
-
-console.log('authData', authData);
 
 const initialState = {
   requests: {},

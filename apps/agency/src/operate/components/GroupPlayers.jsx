@@ -16,16 +16,6 @@ function doesTripHaveRole(trip, roleName) {
   return EvalCore.if(trip.evalContext, role.if);
 }
 
-function renderScheduleHeader(trip) {
-  return (
-    <th key={trip.id}>
-      <Link to={`/operate/${trip.groupId}/trip/${trip.id}`}>
-        {trip.departureName}: {trip.title}
-      </Link>
-    </th>
-  );
-}
-
 export default class GroupPlayers extends Component {
 
   constructor(props) {
@@ -49,7 +39,19 @@ export default class GroupPlayers extends Component {
     });
   }
 
+  renderScheduleHeader(trip) {
+    const organizationName = this.props.params.organizationName;
+    return (
+      <th key={trip.id}>
+        <Link to={`/${organizationName}/operate/${trip.groupId}/trip/${trip.id}`}>
+          {trip.departureName}: {trip.title}
+        </Link>
+      </th>
+    );
+  }
+
   renderRoleCell(roleName, trips) {
+    const organizationName = this.props.params.organizationName;
     const experience = this.props.groupStatus.instance.experience;
     const script = this.props.groupStatus.instance.script;
     const tripsWithRole = trips
@@ -92,7 +94,7 @@ export default class GroupPlayers extends Component {
         return (
           <Link
             to={{
-              pathname: '/users',
+              pathname: `/${organizationName}/directory`,
               query: {
                 editing: true,
                 role: roleName,
@@ -155,7 +157,7 @@ export default class GroupPlayers extends Component {
 
   render() {
     const trips = this.props.groupStatus.instance.trips;
-    const headerCells = trips.map(renderScheduleHeader);
+    const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
     const roleRows = this.renderRoleRows(trips);
     return (
       <div className="row">
@@ -179,6 +181,7 @@ export default class GroupPlayers extends Component {
 }
 
 GroupPlayers.propTypes = {
+  params: PropTypes.object.isRequired,
   groupStatus: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,

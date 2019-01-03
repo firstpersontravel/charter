@@ -1,17 +1,13 @@
-import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import App from '../components/App';
-import { fetchAuthInfo, listCollection, logout } from '../../actions';
+import { fetchAuthInfo, listCollection } from '../../actions';
 
-const mapStateToProps = state => ({
-  authInfo: _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data')
-});
+const mapStateToProps = state => ({});
 
 const mapDispatchToProps = dispatch => ({
   fetchAuthInfo: (...args) => dispatch(fetchAuthInfo(...args)),
-  listCollection: (...args) => dispatch(listCollection(...args)),
-  logout: (...args) => dispatch(logout(...args))
+  listCollection: (...args) => dispatch(listCollection(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

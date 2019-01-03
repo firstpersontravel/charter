@@ -25,14 +25,16 @@ export default class DirectoryIndex extends Component {
 
   handleUserModalClose() {
     const role = this.props.location.query.role;
+    const organizationName = this.props.params.organizationName;
     const experienceId = this.props.location.query.experienceId;
     browserHistory.push(
-      `/directory${experienceId ? `?experienceId=${experienceId}` : ''}` +
+      `/${organizationName}/directory${experienceId ? `?experienceId=${experienceId}` : ''}` +
       `${role ? `&role=${role}` : ''}`
     );
   }
 
   renderUser(user) {
+    const organizationName = this.props.params.organizationName;
     const statusIcons = [];
     if (user.locationTimestamp) {
       statusIcons.push(<i key="location" className="fa fa-location-arrow" />);
@@ -57,7 +59,7 @@ export default class DirectoryIndex extends Component {
             textDecoration: profile.isActive ? '' : 'line-through'
           }}
           to={{
-            pathname: '/directory',
+            pathname: `/${organizationName}/directory`,
             query: {
               experienceId: profile.experienceId,
               role: profile.roleName
@@ -72,7 +74,7 @@ export default class DirectoryIndex extends Component {
       <tr key={user.id}>
         <td>
           <Link
-            to={`/directory/user/${user.id}`}>
+            to={`/${organizationName}/directory/user/${user.id}`}>
             {user.firstName} {user.lastName}
           </Link>
         </td>
@@ -83,6 +85,7 @@ export default class DirectoryIndex extends Component {
   }
 
   renderHeader() {
+    const organizationName = this.props.params.organizationName;
     const roleName = this.props.location.query.role;
     const experienceId = this.props.location.query.experienceId;
     const experience = experienceId ?
@@ -90,9 +93,9 @@ export default class DirectoryIndex extends Component {
     if (roleName && experience) {
       return (
         <h3>
-          <Link to="/directory">Directory</Link>
+          <Link to={`/${organizationName}/directory`}>Directory</Link>
           &nbsp;›&nbsp;
-          <Link to={`/directory?experienceId=${experienceId}`}>
+          <Link to={`/${organizationName}/directory?experienceId=${experienceId}`}>
             {experience.title}
           </Link>
           &nbsp;›&nbsp;
@@ -103,7 +106,7 @@ export default class DirectoryIndex extends Component {
     if (experience) {
       return (
         <h3>
-          <Link to="/directory">Directory</Link>
+          <Link to={`/${organizationName}/directory`}>Directory</Link>
           &nbsp;›&nbsp;
           {experience.title}
         </h3>
@@ -115,6 +118,7 @@ export default class DirectoryIndex extends Component {
   }
 
   render() {
+    const organizationName = this.props.params.organizationName;
     const roleName = this.props.location.query.role;
     const experienceId = this.props.location.query.experienceId;
     const userRows = _.filter(this.props.users,
@@ -164,7 +168,7 @@ export default class DirectoryIndex extends Component {
         <div>
           <Link
             to={{
-              pathname: '/directory',
+              pathname: `/${organizationName}/directory`,
               query: {
                 role: roleName || undefined,
                 experienceId: experienceId || undefined,
@@ -190,5 +194,6 @@ DirectoryIndex.propTypes = {
   location: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired,
   experiences: PropTypes.array.isRequired
 };

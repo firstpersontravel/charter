@@ -11,6 +11,7 @@ import { sortForRole } from '../utils';
 export default function GroupAll({ children, params, groupStatus,
   numMessagesNeedingReply, nextUnappliedAction }) {
   // Error or loading cases should be handled by `Group`
+  const organizationName = params.organizationName;
   if (groupStatus.instance.tripIds.length === 0) {
     return <div>No trips</div>;
   }
@@ -41,7 +42,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             key={`${role.name}-${user ? user.id : 0}`}
             className="dropdown-item"
-            to={`/operate/${params.groupId}/all/role/${role.name}/${user ? user.id : 0}`}>
+            to={`/${organizationName}/operate/${params.groupId}/all/role/${role.name}/${user ? user.id : 0}`}>
             {role.name} ({user ? user.firstName : 'No user'})
           </Link>
         ))
@@ -70,7 +71,7 @@ export default function GroupAll({ children, params, groupStatus,
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/all`}>
+            to={`/${organizationName}/operate/${params.groupId}/all`}>
             Overview
           </IndexLink>
         </li>
@@ -78,7 +79,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/all/casting`}>
+            to={`/${organizationName}/operate/${params.groupId}/all/casting`}>
             Casting
           </Link>
         </li>
@@ -87,7 +88,7 @@ export default function GroupAll({ children, params, groupStatus,
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/operate/${params.groupId}/all/role`}>
+            to={`/${organizationName}/operate/${params.groupId}/all/role`}>
             Roles
           </Link>
           <div className="dropdown-menu">
@@ -98,7 +99,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/all/replies`}>
+            to={`/${organizationName}/operate/${params.groupId}/all/replies`}>
             {replyWarning}
             Replies
           </Link>
@@ -107,7 +108,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/all/upcoming`}>
+            to={`/${organizationName}/operate/${params.groupId}/all/upcoming`}>
             {nextActionWarning}
             Upcoming
           </Link>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export default class Login extends Component {
+export default class PublicLogin extends Component {
 
   constructor(props) {
     super(props);
@@ -74,11 +74,11 @@ export default class Login extends Component {
   }
 }
 
-Login.propTypes = {
+PublicLogin.propTypes = {
   login: PropTypes.func.isRequired,
   loginRequest: PropTypes.string
 };
 
-Login.defaultProps = {
+PublicLogin.defaultProps = {
   loginRequest: null
 };

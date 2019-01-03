@@ -1,12 +1,13 @@
 import React from 'react';
 import { Route } from 'react-router';
 
-import HomeConnector from './connectors/Home';
-import LoginConnector from './connectors/Login';
+import PublicConnector from './connectors/Public';
+import PublicHomeConnector from './connectors/PublicHome';
+import PublicLoginConnector from './connectors/PublicLogin';
 
 export default (
-  <Route>
-    <Route path="/" component={HomeConnector} />
-    <Route path="login" component={LoginConnector} />
+  <Route component={PublicConnector}>
+    <Route path="/" component={PublicHomeConnector} />
+    <Route path="login" component={PublicLoginConnector} />
   </Route>
 );

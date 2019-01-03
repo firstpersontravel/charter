@@ -14,6 +14,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
     !playerStatus.instance.trip.script) {
     return <div>Loading</div>;
   }
+  const organizationName = params.organizationName;
   const script = playerStatus.instance.trip.script;
   const hasRelay = !!_.find(script.content.relays, { as: params.roleName });
   const messageTab = hasRelay ? (
@@ -21,7 +22,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
       <Link
         className="nav-link"
         activeClassName="active"
-        to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/messages`}>
+        to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/messages`}>
         Messages
       </Link>
     </li>
@@ -33,7 +34,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}`}>
+            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}`}>
             {params.roleName}
           </IndexLink>
         </li>
@@ -42,7 +43,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/pages`}>
+            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/pages`}>
             Pages
           </Link>
         </li>
@@ -50,7 +51,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/interface`}>
+            to={`/${organizationName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/interface`}>
             Interface
           </Link>
         </li>

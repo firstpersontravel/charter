@@ -16,25 +16,33 @@ function createJwt(user, durationSecs) {
 const DUMMY_HASH = '$2b$10$H2vj6CxZj7NgrAusLS2QdOi4VlyHfFA.oKzjEZlPE1m2CdF63WjcW';
 
 /**
- * Respond with the user info and orgs.
+ * Get user auth info data from user and org roles.
  */
-async function respondWithUserAuthInfo(res, user) {
+async function getUserAuthInfo(user) {
   const organizationRoles = await models.OrganizationRole.findAll({
     where: { userId: user.id },
     include: [{ model: models.Organization, as: 'organization' }]
   });
+  return {
+    user: {
+      id: user.id,
+      email: user.email
+    },
+    organizations: organizationRoles.map(organizationRole => ({
+      id: organizationRole.organization.id,
+      name: organizationRole.organization.name,
+      title: organizationRole.organization.title
+    }))
+  };
+}
+
+/**
+ * Respond with the user info and orgs.
+ */
+async function respondWithUserAuthInfo(res, user) {
+  const data = await getUserAuthInfo(user);
   res.status(200);
-  res.json({
-    data: {
-      user: {
-        email: user.email
-      },
-      organizations: organizationRoles.map(organizationRole => ({
-        name: organizationRole.organization.name,
-        title: organizationRole.organization.title
-      }))
-    }
-  });
+  res.json({ data: data });
 }
 
 /**

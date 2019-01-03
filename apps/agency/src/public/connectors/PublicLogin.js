@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import Login from '../components/Login';
+import PublicLogin from '../components/PublicLogin';
 import { fetchAuthInfo, login } from '../../actions';
 
 const mapStateToProps = state => ({
@@ -15,4 +15,4 @@ const mapDispatchToProps = dispatch => ({
   login: (...args) => dispatch(login(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(PublicLogin);

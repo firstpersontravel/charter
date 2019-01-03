@@ -121,6 +121,7 @@ export default class TripScenes extends Component {
   }
 
   renderScenePlayerColumn(scene, player) {
+    const organizationName = this.props.params.organizationName;
     const pages = _.filter(player.trip.script.content.pages,
       { role: player.roleName, scene: scene.name });
     const renderedPages = pages
@@ -131,7 +132,7 @@ export default class TripScenes extends Component {
           <Link
             to={{
               pathname:
-                `/operate/${player.trip.groupId}` +
+                `/${organizationName}/operate/${player.trip.groupId}` +
                 `/trip/${player.trip.id}/players` +
                 `/${player.roleName}/pages`,
               query: { scene: scene.name }
@@ -191,6 +192,7 @@ export default class TripScenes extends Component {
 
   render() {
     const trip = this.props.trip;
+    const organizationName = this.props.params.organizationName;
     const showPastScenes = this.props.location.query.past === 'true';
     const roles = _(trip.script.content.roles)
       .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
@@ -215,7 +217,7 @@ export default class TripScenes extends Component {
         Past scenes hidden.&nbsp;
         <Link
           to={{
-            pathname: `/operate/${trip.groupId}/trip/${trip.id}/scenes`,
+            pathname: `/${organizationName}/operate/${trip.groupId}/trip/${trip.id}/scenes`,
             query: { past: true }
           }}>
           Show all
@@ -233,6 +235,7 @@ export default class TripScenes extends Component {
 
 TripScenes.propTypes = {
   trip: PropTypes.object,
+  params: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   postAction: PropTypes.func.isRequired,
   postAdminAction: PropTypes.func.isRequired

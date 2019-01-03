@@ -212,13 +212,14 @@ export default class ScheduleIndex extends Component {
         </div>
       </div>
     );
+    const organizationName = this.props.params.organizationName;
     const tripElements = trips
       .filter(trip => trip.departureName === departureName)
       .map(trip => (
         <div key={trip.id} className="row">
           <div className="col-sm-4">
             <strong>{departureName}</strong>{' '}
-            <IndexLink to={`/operate/${trip.groupId}/trip/${trip.id}`}>
+            <IndexLink to={`/${organizationName}/operate/${trip.groupId}/trip/${trip.id}`}>
               {trip.title}
             </IndexLink>
           </div>
@@ -252,6 +253,7 @@ export default class ScheduleIndex extends Component {
   }
 
   renderGroup(group, script, experience, trips) {
+    const organizationName = this.props.params.organizationName;
     const dateShort = moment(group.date).format('MMM D, YYYY');
     const departureNames = _.map(script.content.departures, 'name');
     const scheduleCells = departureNames.map(departureName =>
@@ -262,12 +264,12 @@ export default class ScheduleIndex extends Component {
       <div key={group.id} className="row" style={{ borderBottom: '2px solid #ddd', paddingBottom: '0.5em', paddingTop: '0.5em' }}>
         <div className="col-sm-3">
           <strong>
-            <IndexLink to={`/operate/${group.id}`}>
+            <IndexLink to={`/${organizationName}/operate/${group.id}`}>
               {experience && experience.title}
             </IndexLink>
           </strong>
           <br />
-          <IndexLink to={`/operate/${group.id}`}>
+          <IndexLink to={`/${organizationName}/operate/${group.id}`}>
             {dateShort}
           </IndexLink>
           <br />
@@ -348,6 +350,7 @@ export default class ScheduleIndex extends Component {
 }
 
 ScheduleIndex.propTypes = {
+  params: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
   experiences: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
