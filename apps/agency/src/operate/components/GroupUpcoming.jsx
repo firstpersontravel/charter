@@ -16,8 +16,14 @@ function getScheduledTripTriggers(trip) {
     last_timestamp: now.unix(),
     to_timestamp: inOneHour
   };
+  const actionContext = {
+    scriptContent: trip.script.content,
+    timezone: trip.experience.timezone,
+    evalContext: trip.evalContext,
+    evaluateAt: moment.utc()
+  };
   const triggers = TriggerEventCore.triggersForEvent(event,
-    trip.actionContext);
+    actionContext);
   return triggers.map((trigger) => {
     const triggerEvent = TriggerEventCore.triggerEventForEventType(
       trigger, event.type);

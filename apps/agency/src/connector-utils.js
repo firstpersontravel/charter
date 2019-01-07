@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import moment from 'moment';
 
 import { ContextCore } from 'fptcore';
 
@@ -66,12 +65,6 @@ export function assembleTripStatus(state, tripId) {
       })
     ));
     trip.evalContext = ContextCore.gatherEvalContext(env, trip);
-    trip.actionContext = {
-      scriptContent: script.content,
-      timezone: experience,
-      evalContext: trip.evalContext,
-      evaluateAt: moment.utc()
-    };
   }
   const isLoading = (
     experienceStatus.isLoading ||

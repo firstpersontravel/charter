@@ -251,7 +251,7 @@ export function postAction(orgId, tripId, actionName, actionParams) {
     const url = `/api/trips/${tripId}/actions`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
-        dispatch(refreshLiveData([orgId, tripId]));
+        dispatch(refreshLiveData(orgId, [tripId]));
       })
       .catch((err) => {
         console.error(err.message);
@@ -271,7 +271,7 @@ export function postAdminAction(orgId, tripId, actionName, actionParams,
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         if (shouldRefresh === true) {
-          dispatch(refreshLiveData([orgId, tripId]));
+          dispatch(refreshLiveData(orgId, [tripId]));
         }
       })
       .catch((err) => {
