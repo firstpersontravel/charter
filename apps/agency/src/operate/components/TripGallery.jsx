@@ -60,13 +60,12 @@ export default class TripGallery extends Component {
   }
 
   componentDidMount() {
-    this.loadData(this.props.tripStatus.instance);
+    this.loadData(this.props.trip);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.tripStatus.instance.id !==
-        this.props.tripStatus.instance.id) {
-      this.loadData(nextProps.tripStatus.instance);
+    if (nextProps.trip.id !== this.props.trip.id) {
+      this.loadData(nextProps.trip);
     }
   }
 
@@ -84,7 +83,7 @@ export default class TripGallery extends Component {
 
   editGalleryName(e) {
     e.preventDefault();
-    const trip = this.props.tripStatus.instance;
+    const trip = this.props.trip;
     const defaultGalleryName = _.kebabCase(trip.title);
     // eslint-disable-next-line no-alert
     const newGalleryName = prompt(
@@ -98,7 +97,7 @@ export default class TripGallery extends Component {
   }
 
   renderLink() {
-    const trip = this.props.tripStatus.instance;
+    const trip = this.props.trip;
     const host = (isProduction() && trip.script.host) || defaultHost;
     const [y, m, d] = trip.date.split('-');
     const alias = trip.galleryName || trip.id;
@@ -138,7 +137,7 @@ export default class TripGallery extends Component {
 
 TripGallery.propTypes = {
   messages: PropTypes.array.isRequired,
-  tripStatus: PropTypes.object.isRequired,
+  trip: PropTypes.object.isRequired,
   listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

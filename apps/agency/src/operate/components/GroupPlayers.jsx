@@ -40,10 +40,10 @@ export default class GroupPlayers extends Component {
   }
 
   renderScheduleHeader(trip) {
-    const orgName = this.props.params.orgName;
+    const group = this.props.group;
     return (
       <th key={trip.id}>
-        <Link to={`/${orgName}/operate/${trip.groupId}/trip/${trip.id}`}>
+        <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
           {trip.departureName}: {trip.title}
         </Link>
       </th>
@@ -51,9 +51,9 @@ export default class GroupPlayers extends Component {
   }
 
   renderRoleCell(roleName, trips) {
-    const orgName = this.props.params.orgName;
-    const experience = this.props.groupStatus.instance.experience;
-    const script = this.props.groupStatus.instance.script;
+    const group = this.props.group;
+    const experience = this.props.group.experience;
+    const script = this.props.group.script;
     const tripsWithRole = trips
       .filter(trip => doesTripHaveRole(trip, roleName));
     if (!experience || !script || tripsWithRole.length === 0) {
@@ -94,7 +94,7 @@ export default class GroupPlayers extends Component {
         return (
           <Link
             to={{
-              pathname: `/${orgName}/directory`,
+              pathname: `/${group.org.name}/${group.experience.name}/directory`,
               query: {
                 editing: true,
                 role: roleName,
@@ -110,7 +110,9 @@ export default class GroupPlayers extends Component {
     const userChoicesWithNone = [{ value: '', label: 'Unassigned' }]
       .concat(userChoices);
     const goToUser = (users.length === 1 && users[0]) ? (
-      <Link className="faint" to={`/users/user/${users[0].id}`}>
+      <Link
+        className="faint"
+        to={`/${group.org.name}/${group.experience.name}/directory/${users[0].id}`}>
         <i className="fa fa-user" />
       </Link>
     ) : null;
@@ -146,7 +148,7 @@ export default class GroupPlayers extends Component {
   }
 
   renderRoleRows(trips) {
-    const script = this.props.groupStatus.instance.script;
+    const script = this.props.group.script;
     if (!script) {
       return null;
     }
@@ -156,7 +158,7 @@ export default class GroupPlayers extends Component {
   }
 
   render() {
-    const trips = this.props.groupStatus.instance.trips;
+    const trips = this.props.group.trips;
     const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
     const roleRows = this.renderRoleRows(trips);
     return (
@@ -181,8 +183,7 @@ export default class GroupPlayers extends Component {
 }
 
 GroupPlayers.propTypes = {
-  params: PropTypes.object.isRequired,
-  groupStatus: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   updateInstance: PropTypes.func.isRequired

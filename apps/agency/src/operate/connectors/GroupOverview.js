@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 
-import { assembleGroupStatus } from '../../connector-utils';
+import { lookupGroup } from './utils';
 import GroupOverview from '../components/GroupOverview';
 
 const mapStateToProps = (state, ownProps) => ({
-  groupStatus: assembleGroupStatus(state, ownProps.params.groupId)
+  group: lookupGroup(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({});

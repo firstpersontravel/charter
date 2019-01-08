@@ -63,7 +63,7 @@ describe('TripOpController', () => {
   describe('#createMessage', () => {
     it('creates a message', async () => {
       const now = moment.utc();
-      const objs = { trip: { id: 123 } };
+      const objs = { trip: { id: 123, orgId: 456 } };
       const op = {
         operation: 'createMessage',
         fields: {
@@ -86,6 +86,7 @@ describe('TripOpController', () => {
         createdAt: now.toDate(),
         messageContent: 'hi there',
         messageType: 'text',
+        orgId: 456,
         tripId: 123,
         readAt: null,
         sentById: 1,

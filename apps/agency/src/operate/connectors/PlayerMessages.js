@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { listCollection, postAction, updateInstance } from '../../actions';
-import { assemblePlayerStatus } from '../../connector-utils';
+import { lookupPlayer } from './utils';
 import PlayerMessages from '../components/PlayerMessages';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -28,8 +28,7 @@ const mapStateToProps = (state, ownProps) => ({
     }
     return false;
   }),
-  player: assemblePlayerStatus(state, ownProps.params.tripId,
-    ownProps.params.roleName).instance
+  player: lookupPlayer(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

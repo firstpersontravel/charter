@@ -2,22 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { IndexLink, Link } from 'react-router';
 
-export default function Role({ params, groupStatus, user, children }) {
-  if (groupStatus.isError) {
-    return <div>Error - please refresh</div>;
-  }
-  if (groupStatus.isLoading ||
-      !groupStatus.instance ||
-      !groupStatus.instance.script) {
-    return <div>Loading</div>;
-  }
+export default function Role({ params, user, children }) {
   const orgName = params.orgName;
+  const experienceName = params.experienceName;
   const interfaceTab = user ? (
     <li className="nav-item">
       <Link
         className="nav-link"
         activeClassName="active"
-        to={`/${orgName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}/interface`}>
+        to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}/interface`}>
         Interface
       </Link>
     </li>
@@ -29,7 +22,7 @@ export default function Role({ params, groupStatus, user, children }) {
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}`}>
+            to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}`}>
             {params.roleName} ({user ? user.firstName : 'No user'})
           </IndexLink>
         </li>
@@ -37,7 +30,7 @@ export default function Role({ params, groupStatus, user, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}/messages`}>
+            to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}/messages`}>
             Messages
           </Link>
         </li>
@@ -50,7 +43,6 @@ export default function Role({ params, groupStatus, user, children }) {
 
 Role.propTypes = {
   children: PropTypes.node.isRequired,
-  groupStatus: PropTypes.object.isRequired,
   user: PropTypes.object,
   params: PropTypes.object.isRequired
 };

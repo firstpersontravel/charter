@@ -2,13 +2,13 @@ import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
-import { assembleGroupStatus } from '../../connector-utils';
+import { lookupGroup } from './utils';
 import { postAdminAction, updateInstance } from '../../actions';
 import GroupUpcoming from '../components/GroupUpcoming';
 
 const mapStateToProps = (state, ownProps) => {
-  const groupStatus = assembleGroupStatus(state, ownProps.params.groupId);
-  const tripIds = _.get(groupStatus, 'instance.tripIds') || [];
+  const group = lookupGroup(state, ownProps);
+  const tripIds = _.map(group.trips, 'id');
   // Filter actions by those greater than an hour ago -- to allow
   // some time to unarchive archived actions.
   const oneHourAgo = moment.utc().subtract(1, 'hours');
@@ -18,7 +18,7 @@ const mapStateToProps = (state, ownProps) => {
     .filter(action => moment.utc(action.scheduledAt).isAfter(oneHourAgo))
     .value();
   return {
-    groupStatus: groupStatus,
+    group: group,
     actions: actions
   };
 };

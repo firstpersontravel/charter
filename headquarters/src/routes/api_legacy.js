@@ -77,7 +77,12 @@ async function getTripRoute(req, res) {
           failedAt: null
         }
       }),
-      models.Profile.findAll({ where: { isArchived: false } }),
+      models.Profile.findAll({
+        where: {
+          isArchived: false,
+          experienceId: trip.experienceId
+        }
+      }),
       models.User.findAll({ where: { isArchived: false } })
     ])
   );

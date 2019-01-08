@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 
-import { assembleTripStatus } from '../../connector-utils';
+import { lookupTrip } from './utils';
 import Trip from '../components/Trip';
 
 const mapStateToProps = (state, ownProps) => ({
-  tripStatus: assembleTripStatus(state, ownProps.params.tripId)
+  trip: lookupTrip(state, ownProps)
 });
 
 export default connect(mapStateToProps)(Trip);

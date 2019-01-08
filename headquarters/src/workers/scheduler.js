@@ -39,6 +39,7 @@ class SchedulerWorker {
       const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
       // Construct schdeduled action
       return {
+        orgId: objs.trip.orgId,
         tripId: objs.trip.id,
         type: 'trigger',
         name: trigger.name,
@@ -71,6 +72,7 @@ class SchedulerWorker {
         objs.script.content, actionContext.evalContext);
       if (firstSceneName) {
         actions.push({
+          orgId: objs.trip.orgId,
           tripId: objs.trip.id,
           type: 'action',
           name: 'start_scene',

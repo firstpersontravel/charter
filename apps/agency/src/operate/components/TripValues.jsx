@@ -16,8 +16,8 @@ export default class TripValues extends Component {
   }
 
   handleCustomizationUpdate(key, newValue) {
-    const trip = this.props.tripStatus.instance;
-    this.props.updateInstance('trips', this.props.params.tripId, {
+    const trip = this.props.trip;
+    this.props.updateInstance('trips', this.props.trip.id, {
       customizations: { [key]: newValue }
     });
     this.props.postAdminAction(trip.orgId, trip.id, 'notify',
@@ -29,8 +29,8 @@ export default class TripValues extends Component {
   }
 
   handleWaypointUpdate(key, event) {
-    const trip = this.props.tripStatus.instance;
-    this.props.updateInstance('trips', this.props.params.tripId, {
+    const trip = this.props.trip;
+    this.props.updateInstance('trips', this.props.trip.id, {
       waypointOptions: { [key]: event.target.value }
     });
     this.props.postAdminAction(trip.orgId, trip.id, 'notify',
@@ -82,7 +82,7 @@ export default class TripValues extends Component {
   }
 
   renderWaypointRow(waypoint) {
-    const waypointOptions = this.props.tripStatus.instance.waypointOptions;
+    const waypointOptions = this.props.trip.waypointOptions;
     const currentValue = _.get(waypointOptions, waypoint.name);
     const currentOrDefault = currentValue || waypoint.options[0].name;
     const options = waypoint.options.map(option => (
@@ -105,22 +105,13 @@ export default class TripValues extends Component {
   }
 
   renderWaypointRows() {
-    if (!this.props.tripStatus.instance.script) {
-      return null;
-    }
-    return (this.props.tripStatus.instance.script.content.waypoints || [])
+    return (this.props.trip.script.content.waypoints || [])
       .filter(w => w.options && w.options.length > 1)
       .map(w => this.renderWaypointRow(w));
   }
 
   render() {
-    if (this.props.tripStatus.isError) {
-      return <div>Error</div>;
-    }
-    const trip = this.props.tripStatus.instance;
-    if (!trip) {
-      return <div>Loading</div>;
-    }
+    const trip = this.props.trip;
     const customizations = _(trip.customizations)
       .map((v, k) => ({ key: k, value: v }))
       .value();
@@ -163,8 +154,7 @@ export default class TripValues extends Component {
 }
 
 TripValues.propTypes = {
-  params: PropTypes.object.isRequired,
-  tripStatus: PropTypes.object.isRequired,
+  trip: PropTypes.object.isRequired,
   updateInstance: PropTypes.func.isRequired,
   postAdminAction: PropTypes.func.isRequired
 };

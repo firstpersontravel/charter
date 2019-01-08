@@ -56,6 +56,8 @@ describe('TripActionController', () => {
       const action = { name: 'signal_cue', params: {} };
       await TripActionController.applyAction(trip.id, action);
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
+        orgId: 100,
+        tripId: 1,
         type: 'action',
         appliedAt: null,
         createdAt: now.toDate(),
@@ -63,7 +65,6 @@ describe('TripActionController', () => {
         failedAt: null,
         name: 'set_value',
         params: scheduleAction.params,
-        tripId: 1,
         scheduledAt: inOneHour.toDate(),
         triggerName: ''
       });

@@ -1,30 +1,19 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function getIframeUrl(groupStatus, roleName, user) {
-  const role = _.find(groupStatus.instance.script.content.roles,
-    { name: roleName });
-  if (role.actor) {
-    return user ? `/actor/${user.id}?nogps=1&noack=1` : null;
-  }
-  const players = _(groupStatus.instance.trips)
-    .map('players')
-    .flatten()
-    .filter({ roleName: roleName })
-    .value();
+function getIframeUrl(players, user) {
   if (!players.length) {
     return null;
   }
   const player = players[0];
-  return `/travel/u/${user.id}/p/${player.trip.id}/role/${roleName}?debug=true&nogps=true&mute=true&noack=true`;
+  if (player.role.actor) {
+    return user ? `/actor/${user.id}?nogps=1&noack=1` : null;
+  }
+  return `/travel/u/${user.id}/p/${player.trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;
 }
 
-export default function RoleInterface({ groupStatus, roleName, user }) {
-  if (!user || groupStatus.isLoading) {
-    return <div>Loading</div>;
-  }
-  const iframeUrl = getIframeUrl(groupStatus, roleName, user);
+export default function RoleInterface({ players, user }) {
+  const iframeUrl = getIframeUrl(players, user);
   if (!iframeUrl) {
     return <div>No interface.</div>;
   }
@@ -42,8 +31,7 @@ export default function RoleInterface({ groupStatus, roleName, user }) {
 }
 
 RoleInterface.propTypes = {
-  groupStatus: PropTypes.object.isRequired,
-  roleName: PropTypes.string.isRequired,
+  players: PropTypes.array.isRequired,
   user: PropTypes.object
 };
 

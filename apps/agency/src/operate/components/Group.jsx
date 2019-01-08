@@ -38,15 +38,15 @@ export default class Group extends Component {
   componentWillMount() {
     // no need to load on mount because the app on load refreshes live
     // data for all active groups
-    const tripIds = _.get(this.props.groupStatus, 'instance.tripIds');
+    const tripIds = _.map(this.props.group.trips, 'id');
     this.loadData(this.props.org, tripIds);
     this.refreshInterval = setInterval(this.autoRefresh, REFRESH_FREQUENCY);
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
   }
 
   componentWillReceiveProps(nextProps) {
-    const curTripIds = _.get(this.props.groupStatus, 'instance.tripIds') || [];
-    const nextTripIds = _.get(nextProps.groupStatus, 'instance.tripIds') || [];
+    const curTripIds = _.map(this.props.group.trips, 'id');
+    const nextTripIds = _.map(nextProps.group.trips, 'id');
     if (!_.isEqual(curTripIds.sort(), nextTripIds.sort())) {
       this.loadData(nextProps.org, nextTripIds);
     }
@@ -87,8 +87,7 @@ export default class Group extends Component {
       this.refreshTimeout = null;
       this.nextActionAt = null;
     }
-    const script = _.get(this.props.groupStatus, 'instance.script');
-    const timezone = _.get(script, 'timezone') || 'US/Pacific';
+    const timezone = this.props.group.experience.timezone;
     console.log(
       `next action ${nextUnappliedAction.id} ${scheduledAt.fromNow()} ` +
       `(${scheduledAt.clone().tz(timezone).format('h:mm:ssa z')})`
@@ -106,7 +105,7 @@ export default class Group extends Component {
   }
 
   handleRefresh() {
-    const tripIds = _.get(this.props.groupStatus, 'instance.tripIds');
+    const tripIds = _.map(this.props.group.trips, 'id');
     this.loadData(this.props.org, tripIds);
   }
 
@@ -126,12 +125,6 @@ export default class Group extends Component {
       this.props.listCollection('trips', { orgId: org.id, groupId: groupId });
       return;
     }
-    // if (this.props.groupStatus.instance) {
-    //   if (!this.props.groupStatus.instance.script) {
-    //     const scriptId = this.props.groupStatus.instance.scriptId;
-    //     this.props.retrieveInstance('scripts', scriptId);
-    //   }
-    // }
     this.updateFayeSubscriptions(tripIds);
     this.props.refreshLiveData(org.id, tripIds);
   }
@@ -170,12 +163,11 @@ export default class Group extends Component {
     // Reload in a second
     setTimeout(() => {
       console.log('Reloading due to incoming realtime event.');
-      this.props.refreshLiveData([this.props.org.id, tripId]);
+      this.props.refreshLiveData(this.props.org.id, [tripId]);
     }, 1000);
   }
 
   renderTripLink(trip) {
-    const orgName = this.props.params.orgName;
     const isArchivedIcon = trip.isArchived ? (
       <i className="fa fa-archive" style={{ marginRight: '0.25em' }} />
     ) : null;
@@ -189,7 +181,10 @@ export default class Group extends Component {
         <Link
           className="nav-link"
           activeClassName="active"
-          to={`/${orgName}/operate/${this.props.params.groupId}/trip/${trip.id}`}>
+          to={
+            `/${trip.org.name}/${trip.experience.name}/` +
+            `operate/${this.props.params.groupId}/trip/${trip.id}`
+          }>
           {isArchivedIcon}
           {trip.departureName}
           <span className="d-none d-sm-inline"> {trip.title}</span>
@@ -203,24 +198,25 @@ export default class Group extends Component {
   }
 
   render() {
-    const orgName = this.props.params.orgName;
-    const groupStatus = this.props.groupStatus;
-    if (groupStatus.isError) {
+    const group = this.props.group;
+    if (group.isError) {
       return <div className="container-fluid">Error - please reload</div>;
     }
-    if (groupStatus.isLoading) {
+    if (group.isNull) {
+      return <div className="container-fluid">Group not found</div>;
+    }
+    if (group.script.isNull) {
       return <div className="container-fluid">Loading</div>;
     }
-    const script = _.get(groupStatus, 'instance.script');
-    if (!script) {
-      return <div className="container-fluid">No script</div>;
+    if (group.trips.length === 0) {
+      return <div className="container-fluid">No trips</div>;
     }
-    const dateShort = moment(groupStatus.instance.date).format('MMM D');
+    const dateShort = moment(group.date).format('MMM D');
     const refreshTitle = this.props.areRequestsPending ?
       (<span><i className="fa fa-spin fa-refresh" /> Refreshing</span>) :
       (<span><i className="fa fa-refresh" /> Refresh</span>);
 
-    const tripLinks = _(groupStatus.instance.trips)
+    const tripLinks = _(group.trips)
       .map(trip => this.renderTripLink(trip))
       .value();
 
@@ -238,11 +234,14 @@ export default class Group extends Component {
             <Link
               className="nav-link"
               activeClassName="active"
-              to={`/${orgName}/operate/${this.props.params.groupId}/all`}>
+              to={
+                `/${group.org.name}/${group.experience.name}/` +
+                `operate/${this.props.params.groupId}/all`
+              }>
               {dateShort}
               <br />
               <span style={{ fontSize: '10pt' }}>
-                {groupStatus.instance.experience.title}
+                {group.experience.title}
               </span>
             </Link>
           </li>
@@ -258,7 +257,7 @@ Group.propTypes = {
   areRequestsPending: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
   params: PropTypes.object.isRequired,
-  groupStatus: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
   retrieveInstance: PropTypes.func.isRequired,

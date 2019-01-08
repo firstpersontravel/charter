@@ -1,11 +1,10 @@
 import { connect } from 'react-redux';
 
-import { assemblePlayerStatus } from '../../connector-utils';
+import { lookupPlayer } from './utils';
 import PlayerOverview from '../components/PlayerOverview';
 
 const mapStateToProps = (state, ownProps) => ({
-  player: assemblePlayerStatus(state, ownProps.params.tripId,
-    ownProps.params.roleName).instance
+  player: lookupPlayer(state, ownProps)
 });
 
 export default connect(mapStateToProps)(PlayerOverview);

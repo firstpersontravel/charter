@@ -27,7 +27,7 @@ function getAppearanceStart(player) {
   return moment.utc(player.trip.schedule[appearance.start]);
 }
 
-function renderMap(orgName, trip, user) {
+function renderMap(trip, user) {
   if (!user || !user.locationLatitude) {
     return <div>No location available</div>;
   }
@@ -36,26 +36,26 @@ function renderMap(orgName, trip, user) {
     user.locationLongitude);
   return (
     <GroupMap
-      orgName={orgName}
+      group={trip.group}
       center={center}
       zoom={15}
       trips={[trip]} />
   );
 }
 
-function renderUser(user) {
+function renderUser(player, user) {
   if (!user) {
     return 'None';
   }
   return (
     <Link
-      to={`/users/user/${user.id}`}>
+      to={`/${player.org.name}/${player.experience.name}/directory/${user.id}`}>
       {user.firstName} {user.lastName}
     </Link>
   );
 }
 
-function renderPlayerCell(orgName, player, isFirst) {
+function renderPlayerCell(player, isFirst) {
   const trip = player.trip;
   const page = _.find(player.trip.script.content.pages,
     { name: player.currentPageName });
@@ -68,13 +68,13 @@ function renderPlayerCell(orgName, player, isFirst) {
   const appearanceIsActive = !appearance.if || EvalCore.if(trip.evalContext, appearance.if);
   const pageTitle = page ? page.title : player.currentPageName;
   const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
-  const tripRoleUrl = `/${orgName}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
+  const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
-    renderMap(orgName, trip, player.user) : null;
+    renderMap(trip, player.user) : null;
   const renderedUser = isFirst ? (
     <div>
-      <strong>User:</strong> {renderUser(player.user)}
+      <strong>User:</strong> {renderUser(player, player.user)}
     </div>
   ) : null;
 
@@ -100,13 +100,9 @@ function renderPlayerCell(orgName, player, isFirst) {
   );
 }
 
-export default function RoleIndex({ params, user, players }) {
-  if (!players.length) {
-    return <div>Loading</div>;
-  }
-  const orgName = params.orgName;
+export default function RoleIndex({ user, players }) {
   const playersSorted = _(players)
-    .filter('trip')
+    .filter('trip.script')
     .filter('currentPageName')
     .sortBy((player) => {
       const appearanceStart = getAppearanceStart(player);
@@ -117,7 +113,7 @@ export default function RoleIndex({ params, user, players }) {
     return <div>No players</div>;
   }
   const renderedPlayers = playersSorted.map((player, i) => (
-    renderPlayerCell(orgName, player, i === 0)
+    renderPlayerCell(player, i === 0)
   ));
   return (
     <div>
@@ -128,6 +124,5 @@ export default function RoleIndex({ params, user, players }) {
 
 RoleIndex.propTypes = {
   user: PropTypes.object,
-  params: PropTypes.object.isRequired,
   players: PropTypes.array.isRequired
 };

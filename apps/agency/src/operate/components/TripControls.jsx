@@ -61,10 +61,9 @@ export default class TripControls extends Component {
   }
 
   getCueTriggerContent(cueName) {
-    const script = this.props.trip.script;
-    const context = this.props.trip.evalContext;
     const event = { type: 'cue_signaled', cue: cueName };
-    const triggers = TriggerEventCore.triggersForEvent(script, context, event);
+    const triggers = TriggerEventCore.triggersForEvent(event,
+      this.props.trip.actionContext);
     const renderedTriggers = triggers.map(trigger => (
       <li key={trigger.name}>
         <pre style={{ marginBottom: 0 }}>{trigger.name}:</pre>
@@ -94,7 +93,8 @@ export default class TripControls extends Component {
   }
 
   handleAdminAction(name, params) {
-    this.props.postAdminAction(this.props.trip.id, name, params || {});
+    this.props.postAdminAction(this.props.trip.orgId, this.props.trip.id,
+      name, params || {});
   }
 
   handleNotifyAction(notifyType) {
@@ -140,7 +140,7 @@ export default class TripControls extends Component {
   handleCueApply(event) {
     event.preventDefault();
     this.handleAdminAction('phrase',
-      { action_phrase: `cue ${this.state.pendingCueName}` });
+      { action_phrase: `signal_cue ${this.state.pendingCueName}` });
     this.setState({ pendingCueName: '' });
   }
 

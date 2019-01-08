@@ -16,14 +16,8 @@ function getScheduledTripTriggers(trip) {
     last_timestamp: now.unix(),
     to_timestamp: inOneHour
   };
-  const actionContext = {
-    scriptContent: trip.script.content,
-    timezone: trip.experience.timezone,
-    evalContext: trip.evalContext,
-    evaluateAt: moment.utc()
-  };
   const triggers = TriggerEventCore.triggersForEvent(event,
-    actionContext);
+    trip.actionContext);
   return triggers.map((trigger) => {
     const triggerEvent = TriggerEventCore.triggerEventForEventType(
       trigger, event.type);
@@ -40,8 +34,8 @@ function getScheduledTripTriggers(trip) {
   });
 }
 
-function getScheduledGroupTriggers(groupStatus) {
-  return _(groupStatus.instance.trips)
+function getScheduledGroupTriggers(group) {
+  return _(group.trips)
     .map(trip => getScheduledTripTriggers(trip))
     .flatten()
     .value();
@@ -148,12 +142,9 @@ export default class GroupUpcoming extends Component {
   }
 
   render() {
-    const groupStatus = this.props.groupStatus;
-    const trips = _.get(groupStatus, 'instance.trips') || [];
-    if (!trips.length) {
-      return (<div>No trips</div>);
-    }
-    const scheduledTriggers = getScheduledGroupTriggers(groupStatus);
+    const group = this.props.group;
+    const trips = group.trips;
+    const scheduledTriggers = getScheduledGroupTriggers(group);
     const allUpcoming = []
       .concat(this.props.actions)
       .concat(scheduledTriggers);
@@ -196,7 +187,7 @@ export default class GroupUpcoming extends Component {
 }
 
 GroupUpcoming.propTypes = {
-  groupStatus: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
   postAdminAction: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   actions: PropTypes.array.isRequired,

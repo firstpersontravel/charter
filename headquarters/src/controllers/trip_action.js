@@ -30,12 +30,13 @@ class TripActionController {
     return ActionCore.applyTrigger(trigger, null, actionContext);
   }
   
-  static async _scheduleAction(tripId, action) {
+  static async _scheduleAction(orgId, tripId, action) {
     logger.info(
       action.params,
       `Scheduling action ${action.scheduleAt.fromNow()}: ` + 
       `${action.name}.`);
     const fields = {
+      orgId: orgId,
       tripId: tripId,
       type: 'action',
       name: action.name,
@@ -50,9 +51,9 @@ class TripActionController {
     return await models.Action.create(fields);
   }
 
-  static async _scheduleActions(tripId, actions) {
+  static async _scheduleActions(orgId, tripId, actions) {
     for (let action of actions) {
-      await this._scheduleAction(tripId, action);
+      await this._scheduleAction(orgId, tripId, action);
     }
   }
 
@@ -64,7 +65,8 @@ class TripActionController {
 
   static async _applyResult(objs, result) {
     await this._applyOps(objs, result.resultOps);
-    await this._scheduleActions(objs.trip.id, result.scheduledActions);
+    await this._scheduleActions(objs.trip.orgId, objs.trip.id,
+      result.scheduledActions);
   }
 
   /**

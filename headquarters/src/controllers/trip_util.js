@@ -1,6 +1,7 @@
 const _ = require('lodash');
+const moment = require('moment');
 
-const { ActionPhraseCore, ContextCore } = require('fptcore');
+const { ContextCore } = require('fptcore');
 
 const config = require('../config');
 const models = require('../models');
@@ -73,7 +74,7 @@ class TripUtil {
 
   static async getActionContext(tripId) {
     const objs = await this.getObjectsForTrip(tripId);
-    return this.prepareActionContext(objs);    
+    return this.prepareActionContext(objs, moment.utc());    
   }
 
   /**
@@ -105,15 +106,6 @@ class TripUtil {
       profiles: profiles,
       users: users
     };
-  }
-
-  /**
-   * Expand an action phrase in context.
-   */
-  static async expandActionPhrase(tripId, actionPhrase, evaluateAt) {
-    const context = this.getContext(tripId);
-    return ActionPhraseCore.expandActionPhrase(actionPhrase, evaluateAt,
-      context);
   }
 }
 

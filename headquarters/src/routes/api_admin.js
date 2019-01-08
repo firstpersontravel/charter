@@ -1,5 +1,7 @@
 const moment = require('moment');
 
+const { ActionPhraseCore } = require('fptcore');
+
 const models = require('../models');
 const ExperienceController = require('../controllers/experience');
 const RunnerWorker = require('../workers/runner');
@@ -50,9 +52,11 @@ async function resetRoute(req, res) {
 async function phraseRoute(req, res) {
   const tripId = req.params.tripId;
   const actionPhrase = req.body.action_phrase;
-  const now = moment.utc();
-  const action = await TripUtil.expandActionPhrase(tripId, actionPhrase, now);
-  if (action.scheduleAt.isAfter(now)) {
+  const actionContext = await TripUtil.getActionContext(tripId);
+  const action = ActionPhraseCore.expandActionPhrase(actionPhrase, 
+    actionContext);
+
+  if (action.scheduleAt.isAfter(actionContext.evaluateAt)) {
     await TripActionController.scheduleAction(tripId, action);
   } else {
     await TripActionController.applyAction(tripId, action);

@@ -12,8 +12,7 @@ export function sortForRole(role) {
   return 0;
 }
 
-export function getPlayerPageInfo(player) {
-  const trip = player.trip;
+export function getPlayerPageInfo(trip, player) {
   return PlayerCore.getPageInfo(trip.script, trip.evalContext,
     player);
 }
@@ -52,16 +51,22 @@ function getTripPlayers(trip) {
   return getTripPlayersForRoles(trip, { user: true, actor: false });
 }
 
-function getPlayerSceneSort(player) {
-  const trip = player.trip;
+function getPlayerSceneSort(trip, player) {
   return PlayerCore.getSceneSort(trip.script, trip.evalContext,
     player);
 }
 
 function getUserActors(group, role) {
-  const actors = _.sortBy(
-    getGroupPlayersForRole(group, role.name),
-    getPlayerSceneSort);
+  const groupPlayers = getGroupPlayersForRole(group, role.name);
+  const actors = _(groupPlayers)
+    .sortBy((player) => {
+      if (!player) {
+        return null;
+      }
+      const trip = _.find(group.trips, { id: player.tripId });
+      return getPlayerSceneSort(trip, player);
+    })
+    .value();
   const actorsByUserId = _.groupBy(actors, 'userId');
   const roleHasMultipleUsers = _.keys(actorsByUserId).length > 1;
   return _.map(actorsByUserId, (actorsWithUser, userId) => ({
@@ -81,13 +86,17 @@ function getActors(group) {
     .flatten()
     .filter(roleAndActors => roleAndActors.actors.length > 0)
     .value();
-  return _.sortBy(rolesAndActors, roleAndActors => (
-    getPlayerSceneSort(roleAndActors.actors[0])
-  ));
+  return _.sortBy(rolesAndActors, (roleAndActors) => {
+    const actor = roleAndActors.actors[0];
+    const trip = _.find(group.trips, { id: actor.tripId });
+    return getPlayerSceneSort(trip, actor);
+  });
 }
 
-function isActorByRoleActive(roleAndActors) {
-  const pageInfo = getPlayerPageInfo(roleAndActors.actors[0]);
+function isActorByRoleActive(group, roleAndActors) {
+  const firstActor = roleAndActors.actors[0];
+  const trip = _.find(group.trips, { id: firstActor.tripId });
+  const pageInfo = getPlayerPageInfo(trip, firstActor);
   return pageInfo && pageInfo.appearanceIsActive;
 }
 
@@ -97,8 +106,12 @@ export function sortPlayers(group) {
     players: getTripPlayers(trip)
   }));
   const actorsByRole = getActors(group);
-  const activeActorsByRole = _.filter(actorsByRole, isActorByRoleActive);
-  const inactiveActorsByRole = _.reject(actorsByRole, isActorByRoleActive);
+  const activeActorsByRole = _.filter(actorsByRole, a => (
+    isActorByRoleActive(group, a)
+  ));
+  const inactiveActorsByRole = _.reject(actorsByRole, a => (
+    isActorByRoleActive(group, a)
+  ));
   return {
     playersByTrip: playersByTrip,
     activeActorsByRole: activeActorsByRole,

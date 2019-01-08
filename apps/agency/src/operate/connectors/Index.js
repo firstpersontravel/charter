@@ -1,12 +1,24 @@
-import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Index from '../components/Index';
+import {
+  instanceIncluder,
+  instancesFromDatastore
+} from '../../datastore-utils';
 
-const mapStateToProps = (state, ownProps) => {
-  const trips = _.sortBy(_.filter(state.datastore.trips,
-    { isArchived: false }), 'date');
-  return { groupId: _.get(trips[0], 'groupId') };
-};
+const mapStateToProps = (state, ownProps) => ({
+  groups: instancesFromDatastore(state, {
+    col: 'groups',
+    filter: {
+      isArchived: false,
+      org: { name: ownProps.params.orgName },
+      experience: { name: ownProps.params.experienceName }
+    },
+    include: {
+      org: instanceIncluder('orgs', 'id', 'orgId'),
+      experience: instanceIncluder('experiences', 'id', 'experienceId')
+    }
+  })
+});
 
 export default connect(mapStateToProps)(Index);

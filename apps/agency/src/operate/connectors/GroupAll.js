@@ -2,13 +2,13 @@ import _ from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
 
-import { assembleGroupStatus } from '../../connector-utils';
+import { lookupGroup } from './utils';
 import { getMessagesNeedingReply } from '../utils';
 import GroupAll from '../components/GroupAll';
 
 const mapStateToProps = (state, ownProps) => {
-  const groupStatus = assembleGroupStatus(state, ownProps.params.groupId);
-  const tripIds = _.get(groupStatus, 'instance.tripIds');
+  const group = lookupGroup(state, ownProps);
+  const tripIds = _.map(group.trips, 'id');
   const messagesNeedingReply = getMessagesNeedingReply(
     state, ownProps.params.groupId);
   const nextUnappliedAction = _(state.datastore.actions)
@@ -18,7 +18,7 @@ const mapStateToProps = (state, ownProps) => {
     .sortBy('scheduledAt')
     .head();
   return {
-    groupStatus: groupStatus,
+    group: group,
     nextUnappliedAction: nextUnappliedAction,
     numMessagesNeedingReply: messagesNeedingReply.length
   };

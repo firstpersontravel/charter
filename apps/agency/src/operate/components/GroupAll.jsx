@@ -8,30 +8,30 @@ import { EvalCore } from 'fptcore';
 
 import { sortForRole } from '../utils';
 
-export default function GroupAll({ children, params, groupStatus,
-  numMessagesNeedingReply, nextUnappliedAction }) {
-  // Error or loading cases should be handled by `Group`
-  const orgName = params.orgName;
-  if (groupStatus.instance.tripIds.length === 0) {
-    return <div>No trips</div>;
-  }
-  const script = _.get(groupStatus, 'instance.script');
-  if (!script) {
-    return <div>No script</div>;
-  }
-  const roles = _(script.content.roles)
-    .filter(role => role.user)
-    .sortBy([sortForRole, 'name'])
-    .value();
-  const allPlayers = _(groupStatus.instance.trips)
+function getAllPlayers(trips) {
+  const tripsById = _.fromPairs(_.map(trips, t => [t.id, t]));
+  return _(trips)
     .map('players')
     .flatten()
     .filter(player => (
       !player.role.if ||
-      EvalCore.if(player.trip.evalContext, player.role.if)
+      EvalCore.if(tripsById[player.tripId].evalContext, player.role.if)
     ))
     .filter('currentPageName')
     .value();
+}
+
+export default function GroupAll({ children, group,
+  numMessagesNeedingReply, nextUnappliedAction }) {
+  // Error or loading cases should be handled by `Group`
+  if (group.trips.length === 0) {
+    return <div>No trips</div>;
+  }
+  const roles = _(group.script.content.roles)
+    .filter(role => role.user)
+    .sortBy([sortForRole, 'name'])
+    .value();
+  const allPlayers = getAllPlayers(group.trips);
   const roleLinks = _(roles)
     .map(role => (
       _(allPlayers)
@@ -42,7 +42,10 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             key={`${role.name}-${user ? user.id : 0}`}
             className="dropdown-item"
-            to={`/${orgName}/operate/${params.groupId}/all/role/${role.name}/${user ? user.id : 0}`}>
+            to={
+              `/${group.org.name}/${group.experience.name}` +
+              `/operate/${group.id}` +
+              `/all/role/${role.name}/${user ? user.id : 0}`}>
             {role.name} ({user ? user.firstName : 'No user'})
           </Link>
         ))
@@ -60,7 +63,7 @@ export default function GroupAll({ children, params, groupStatus,
     <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-info">
       {moment
         .utc(nextUnappliedAction.scheduledAt)
-        .tz(groupStatus.instance.experience.timezone)
+        .tz(group.experience.timezone)
         .format('h:mm:ssa')}
     </span>
   ) : null;
@@ -71,7 +74,7 @@ export default function GroupAll({ children, params, groupStatus,
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/all`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all`}>
             Overview
           </IndexLink>
         </li>
@@ -79,7 +82,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/all/casting`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/casting`}>
             Casting
           </Link>
         </li>
@@ -88,7 +91,7 @@ export default function GroupAll({ children, params, groupStatus,
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/${orgName}/operate/${params.groupId}/all/role`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/role`}>
             Roles
           </Link>
           <div className="dropdown-menu">
@@ -99,7 +102,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/all/replies`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/replies`}>
             {replyWarning}
             Replies
           </Link>
@@ -108,7 +111,7 @@ export default function GroupAll({ children, params, groupStatus,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/all/upcoming`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/upcoming`}>
             {nextActionWarning}
             Upcoming
           </Link>
@@ -121,8 +124,7 @@ export default function GroupAll({ children, params, groupStatus,
 
 GroupAll.propTypes = {
   children: PropTypes.node.isRequired,
-  params: PropTypes.object.isRequired,
-  groupStatus: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
   numMessagesNeedingReply: PropTypes.number.isRequired
 };

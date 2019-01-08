@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { postAdminAction } from '../../actions';
-import { assembleTripStatus } from '../../connector-utils';
+import { lookupTrip } from './utils';
 import TripControls from '../components/TripControls';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -16,7 +16,7 @@ const mapStateToProps = (state, ownProps) => ({
     })
     .sortBy('scheduledAt')
     .first(),
-  trip: assembleTripStatus(state, ownProps.params.tripId).instance
+  trip: lookupTrip(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

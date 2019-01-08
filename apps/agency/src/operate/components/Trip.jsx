@@ -7,16 +7,7 @@ import { EvalCore } from 'fptcore';
 
 import { sortForRole } from '../utils';
 
-export default function Trip({ params, tripStatus, children }) {
-  if (tripStatus.isError) {
-    return <div>Error - please refresh</div>;
-  }
-  if (!tripStatus.instance ||
-    !tripStatus.instance.script) {
-    return <div>Loading</div>;
-  }
-  const orgName = params.orgName;
-  const trip = tripStatus.instance;
+export default function Trip({ trip, children }) {
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
     .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
@@ -30,7 +21,7 @@ export default function Trip({ params, tripStatus, children }) {
     <Link
       key={role.name}
       className="dropdown-item"
-      to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players/${role.name}`}>
+      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${role.name}`}>
       {role.name}
     </Link>
   )));
@@ -41,7 +32,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/values`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/values`}>
             Prep
           </Link>
         </li>
@@ -49,7 +40,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/schedule`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/schedule`}>
             Timing
           </Link>
         </li>
@@ -57,7 +48,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/scenes`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/scenes`}>
             Scenes
           </Link>
         </li>
@@ -66,7 +57,7 @@ export default function Trip({ params, tripStatus, children }) {
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players`}>
             Players
           </Link>
           <div className="dropdown-menu">
@@ -77,7 +68,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/achievements`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/achievements`}>
             Achievements
           </Link>
         </li>
@@ -85,7 +76,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/controls`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/controls`}>
             Controls
           </Link>
         </li>
@@ -93,7 +84,7 @@ export default function Trip({ params, tripStatus, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/gallery`}>
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/gallery`}>
             Gallery
           </Link>
         </li>
@@ -104,7 +95,6 @@ export default function Trip({ params, tripStatus, children }) {
 }
 
 Trip.propTypes = {
-  params: PropTypes.object.isRequired,
-  tripStatus: PropTypes.object.isRequired,
+  trip: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired
 };

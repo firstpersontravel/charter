@@ -14,11 +14,15 @@ export default class GroupOverview extends Component {
     if (player.user) {
       return null;
     }
-    const orgName = this.props.params.orgName;
+    const group = this.props.group;
     return (
       <span>
         &nbsp;
-        <Link to={`/${orgName}/operate/${player.trip.groupId}/all/casting`}>
+        <Link
+          to={
+            `/${group.org.name}/${group.experience.name}` +
+            `/operate/${group.id}/all/casting`
+          }>
           <span className="text-danger">
             <i className="fa fa-user-plus" />
           </span>
@@ -28,9 +32,10 @@ export default class GroupOverview extends Component {
   }
 
   renderActor(roleAndActors) {
-    const orgName = this.props.params.orgName;
+    const group = this.props.group;
     const actor = roleAndActors.actors[0];
-    const pageInfo = getPlayerPageInfo(actor);
+    const trip = _.find(group.trips, { id: actor.tripId });
+    const pageInfo = getPlayerPageInfo(trip, actor);
     if (!pageInfo) {
       return null;
     }
@@ -40,12 +45,12 @@ export default class GroupOverview extends Component {
       <div key={`${roleAndActors.role.name}-${roleAndActors.userId}`} className="constrain-text">
         <IndexLink
           className={pageInfo.statusClass}
-          to={`/${orgName}/operate/${actor.trip.groupId}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
           <strong>
             {roleAndActors.role.name}{userNameIfMultiple}:
           </strong>
           {' '}
-          {actor.trip.departureName}
+          {trip.departureName}
           {' '}
           {pageInfo.status}
         </IndexLink>
@@ -55,16 +60,17 @@ export default class GroupOverview extends Component {
   }
 
   renderPlayer(player) {
-    const orgName = this.props.params.orgName;
-    const pageInfo = getPlayerPageInfo(player);
+    const group = this.props.group;
+    const trip = _.find(group.trips, { id: player.tripId });
+    const pageInfo = getPlayerPageInfo(trip, player);
     if (!pageInfo) {
       return null;
     }
     return (
       <div key={player.id} className="constrain-text">
         <IndexLink
-          to={`/${orgName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.role.name}`}>
-          {player.trip.departureName} {player.role.name}:
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/players/${player.role.name}`}>
+          {trip.departureName} {player.role.name}:
           {' '}
           {pageInfo.status}
         </IndexLink>
@@ -84,10 +90,7 @@ export default class GroupOverview extends Component {
   }
 
   renderAllPlayers() {
-    const group = this.props.groupStatus.instance;
-    if (group.trips.length === 0 || !group.script) {
-      return null;
-    }
+    const group = this.props.group;
     const allPlayers = sortPlayers(group);
     const players = allPlayers.playersByTrip.map(p => (
       this.renderTripAndPlayers(p)
@@ -114,17 +117,13 @@ export default class GroupOverview extends Component {
   }
 
   render() {
-    const trips = _.get(this.props.groupStatus, 'instance.trips') || [];
-    if (trips.length === 0) {
-      return <div>No trips</div>;
-    }
     return (
       <div>
         <div className="row">
           <div className="col-md-7">
             <GroupMap
-              orgName={this.props.params.orgName}
-              trips={trips} />
+              group={this.props.group}
+              trips={this.props.group.trips} />
           </div>
           <div className="col-md-5">
             {this.renderAllPlayers()}
@@ -136,6 +135,5 @@ export default class GroupOverview extends Component {
 }
 
 GroupOverview.propTypes = {
-  groupStatus: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired
+  group: PropTypes.object.isRequired
 };

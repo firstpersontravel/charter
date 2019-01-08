@@ -99,7 +99,7 @@ function renderMenu(org, experience) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${org.name}/operate`}>
+          to={`/${org.name}/${experience.name}/operate`}>
           Operate
         </Link>
       </li>

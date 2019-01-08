@@ -21,7 +21,7 @@ export default class TripScenes extends Component {
         return;
       }
     }
-    this.props.postAction(trip.id, actionName, actionParams);
+    this.props.postAction(trip.orgId, trip.id, actionName, actionParams);
   }
 
   renderCueButton(page, panel) {
@@ -59,7 +59,7 @@ export default class TripScenes extends Component {
   }
 
   renderPlayerPage(player, page) {
-    const trip = player.trip;
+    const trip = this.props.trip;
     const isCurrentPage = page.name === player.currentPageName;
     const isAckedPage = player.acknowledgedPageName === page.name;
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
@@ -121,8 +121,8 @@ export default class TripScenes extends Component {
   }
 
   renderScenePlayerColumn(scene, player) {
-    const orgName = this.props.params.orgName;
-    const pages = _.filter(player.trip.script.content.pages,
+    const trip = this.props.trip;
+    const pages = _.filter(trip.script.content.pages,
       { role: player.roleName, scene: scene.name });
     const renderedPages = pages
       .map(page => this.renderPlayerPage(player, page));
@@ -132,8 +132,9 @@ export default class TripScenes extends Component {
           <Link
             to={{
               pathname:
-                `/${orgName}/operate/${player.trip.groupId}` +
-                `/trip/${player.trip.id}/players` +
+                `/${trip.org.name}/${trip.experience.name}` +
+                `/operate/${trip.groupId}` +
+                `/trip/${trip.id}/players` +
                 `/${player.roleName}/pages`,
               query: { scene: scene.name }
             }}>
@@ -192,7 +193,6 @@ export default class TripScenes extends Component {
 
   render() {
     const trip = this.props.trip;
-    const orgName = this.props.params.orgName;
     const showPastScenes = this.props.location.query.past === 'true';
     const roles = _(trip.script.content.roles)
       .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
@@ -217,7 +217,9 @@ export default class TripScenes extends Component {
         Past scenes hidden.&nbsp;
         <Link
           to={{
-            pathname: `/${orgName}/operate/${trip.groupId}/trip/${trip.id}/scenes`,
+            pathname:
+              `/${trip.org.name}/${trip.experience.name}` +
+              `/operate/${trip.groupId}/trip/${trip.id}/scenes`,
             query: { past: true }
           }}>
           Show all
@@ -234,13 +236,8 @@ export default class TripScenes extends Component {
 }
 
 TripScenes.propTypes = {
-  trip: PropTypes.object,
-  params: PropTypes.object.isRequired,
+  trip: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   postAction: PropTypes.func.isRequired,
   postAdminAction: PropTypes.func.isRequired
-};
-
-TripScenes.defaultProps = {
-  trip: null
 };

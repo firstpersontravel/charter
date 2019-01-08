@@ -4,20 +4,19 @@ import PropTypes from 'prop-types';
 
 import Message from '../partials/Message';
 
-function renderMessage(orgName, message, trip, updateInstance) {
+function renderMessage(message, trip, updateInstance) {
   return (
     <Message
       key={message.id}
       message={message}
       updateInstance={updateInstance}
-      orgName={orgName}
       trip={trip} />
   );
 }
 
-export default function GroupReplies({ params, groupStatus,
+export default function GroupReplies({ group,
   messagesNeedingReply, updateInstance }) {
-  const trips = _.get(groupStatus, 'instance.trips') || [];
+  const trips = group.trips;
   if (!messagesNeedingReply.length) {
     return (
       <div className="alert alert-info">No messages needing reply!</div>
@@ -29,7 +28,7 @@ export default function GroupReplies({ params, groupStatus,
     .slice(0, 10)
     .map((message) => {
       const trip = _.find(trips, { id: message.tripId });
-      return renderMessage(params.orgName, message, trip, updateInstance);
+      return renderMessage(message, trip, updateInstance);
     })
     .value();
   return (
@@ -40,8 +39,7 @@ export default function GroupReplies({ params, groupStatus,
 }
 
 GroupReplies.propTypes = {
-  params: PropTypes.object.isRequired,
-  groupStatus: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
   messagesNeedingReply: PropTypes.array.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

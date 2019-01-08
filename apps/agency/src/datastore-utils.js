@@ -32,15 +32,21 @@ function getInstances(state, colName, filters) {
 }
 
 function addIncluders(state, instance, includers) {
-  const includedValues = _.mapValues(includers, (includer, key) => (
-    includer(state, instance)
-  ));
-  const isLoading = instance.isLoading || _.some(includedValues, 'isLoading');
-  const isError = instance.isError || _.some(includedValues, 'isError');
-  return Object.assign({}, instance, includedValues, {
-    isLoading: isLoading,
-    isError: isError
+  const withInclude = _.clone(instance);
+  // Apply includers in turn, since later ones may depend on earlier ones.
+  _.each(includers, (includer, key) => {
+    withInclude[key] = includer(state, withInclude);
+    if (!withInclude[key]) {
+      return;
+    }
+    if (withInclude[key].isLoading) {
+      withInclude.isLoading = true;
+    }
+    if (withInclude[key].isError) {
+      withInclude.isError = true;
+    }
   });
+  return withInclude;
 }
 
 function getInstancesWithIncludes(state, colName, filters, includers) {

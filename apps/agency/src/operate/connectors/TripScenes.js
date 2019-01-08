@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
 
 import { postAction, postAdminAction } from '../../actions';
-import { assembleTripStatus } from '../../connector-utils';
+import { lookupTrip } from './utils';
 import TripScenes from '../components/TripScenes';
 
 const mapStateToProps = (state, ownProps) => ({
-  trip: assembleTripStatus(state, ownProps.params.tripId).instance
+  trip: lookupTrip(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

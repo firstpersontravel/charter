@@ -32,8 +32,8 @@ class ExperienceController {
     });
     for (let departure of script.content.departures) {
       for (let relaySpec of trailheadRelays) {
-        await RelaysController.ensureRelay(experienceId, departure.name,
-          relaySpec, '');
+        await RelaysController.ensureRelay(experience.orgId, experienceId, 
+          departure.name, relaySpec, '');
       }
     }
   }

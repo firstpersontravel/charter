@@ -19,7 +19,10 @@ export default class PlayerMessages extends Component {
   }
 
   componentDidMount() {
-    this.loadData(this.props.params, this.props.player.trip.players);
+    const player = this.props.player;
+    this.loadData(player.tripId, player.roleName,
+      this.props.params.withRoleName,
+      this.props.player.trip.players);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -30,7 +33,10 @@ export default class PlayerMessages extends Component {
       return;
     }
     this.setState({ pendingMessage: '' });
-    this.loadData(nextProps.params, nextProps.player.trip.players);
+    const player = nextProps.player;
+    this.loadData(player.tripId, player.roleName,
+      nextProps.params.withRoleName,
+      nextProps.player.trip.players);
   }
 
   getUserRoleName() {
@@ -47,44 +53,44 @@ export default class PlayerMessages extends Component {
       this.props.params.roleName : this.props.params.withRoleName;
   }
 
-  loadData(params, players) {
+  loadData(tripId, roleName, withRoleName, players) {
     if (players.length === 0) {
       return;
     }
     const player1 = _.find(players, {
-      tripId: parseInt(params.tripId, 10),
-      roleName: params.roleName
+      tripId: parseInt(tripId, 10),
+      roleName: roleName
     });
-    if (params.withRoleName !== 'All') {
+    if (withRoleName !== 'All') {
       // If with role name was provided, find messages sent by either
       // of the two.
       const player2 = _.find(players, {
-        tripId: parseInt(params.tripId, 10),
-        roleName: params.withRoleName
+        tripId: parseInt(tripId, 10),
+        roleName: withRoleName
       });
       this.props.listCollection('messages', {
         orgId: player1.orgId,
-        tripId: params.tripId,
+        tripId: tripId,
         sentById: [player1.id, player2.id]
       });
     } else {
       // Otherwise, find messages sent to or received by this guy.
       this.props.listCollection('messages', {
         orgId: player1.orgId,
-        tripId: params.tripId,
+        tripId: tripId,
         sentById: [player1.id]
       });
       this.props.listCollection('messages', {
         orgId: player1.orgId,
-        tripId: params.tripId,
+        tripId: tripId,
         sentToId: [player1.id]
       });
     }
   }
 
   handleCounterpartChange(event) {
-    const orgName = this.props.params.orgName;
-    browserHistory.push(`/${orgName}/operate/${this.props.params.groupId}/trip/${this.props.params.tripId}/players/${this.props.params.roleName}/messages/${event.target.value}`);
+    const trip = this.props.player.trip;
+    browserHistory.push(`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${this.props.player.roleName}/messages/${event.target.value}`);
   }
 
   handlePendingMessageChange(event) {
@@ -95,7 +101,7 @@ export default class PlayerMessages extends Component {
     event.preventDefault();
     this.setState({ pendingMessage: '' });
     const orgId = this.props.player.orgId;
-    const tripId = this.props.params.tripId;
+    const tripId = this.props.player.tripId;
     this.props.postAction(orgId, tripId, 'custom_message', {
       from_role_name: this.getActorRoleName(),
       to_role_name: this.getUserRoleName(),
@@ -111,9 +117,16 @@ export default class PlayerMessages extends Component {
       this.props.params.withRoleName === 'All' ||
       this.state.pendingMessage === '');
 
-    const relays = _.filter(this.props.player.trip.script.content.relays,
-      { as: this.props.params.roleName });
-    const counterparts = _.uniq(relays.map(relay => relay.with));
+    const script = this.props.player.trip.script;
+    const relays = _.filter(script.content.relays, relay => (
+      relay.as === this.props.params.roleName ||
+      relay.with === this.props.params.roleName
+    ));
+    const counterparts = _(relays)
+      .map(r => [r.as, r.with])
+      .flatten()
+      .uniq()
+      .value();
     const counterpartOptions = counterparts.map(counterpart => (
       <option key={counterpart} value={counterpart}>{counterpart}</option>
     ));
@@ -153,7 +166,6 @@ export default class PlayerMessages extends Component {
     if (!this.props.messages.length) {
       return <div>No messages</div>;
     }
-    const orgName = this.props.params.orgName;
     return _.sortBy(this.props.messages, 'createdAt')
       .reverse()
       .map(message => (
@@ -161,7 +173,6 @@ export default class PlayerMessages extends Component {
           key={message.id}
           updateInstance={this.props.updateInstance}
           trip={this.props.player.trip}
-          orgName={orgName}
           message={message} />
       ));
   }

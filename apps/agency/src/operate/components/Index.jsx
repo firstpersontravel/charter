@@ -4,18 +4,20 @@ import { browserHistory } from 'react-router';
 
 export default class Index extends Component {
   componentWillMount() {
-    const orgName = this.props.params.orgName;
-    if (this.props.groupId) {
-      browserHistory.push(`/${orgName}/operate/${this.props.groupId}`);
-    } else {
-      browserHistory.push(`/${orgName}/schedule`);
+    if (this.props.groups.length) {
+      browserHistory.push(
+        `/${this.props.params.orgName}/${this.props.params.experienceName}` +
+        `/operate/${this.props.groups[0].id}`
+      );
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const orgName = this.props.params.orgName;
-    if (nextProps.groupId) {
-      browserHistory.push(`/${orgName}/operate/${nextProps.groupId}`);
+    if (nextProps.groups.length) {
+      browserHistory.push(
+        `/${this.props.params.orgName}/${this.props.params.experienceName}` +
+        `/operate/${nextProps.groups[0].id}`
+      );
     }
   }
 
@@ -26,9 +28,5 @@ export default class Index extends Component {
 
 Index.propTypes = {
   params: PropTypes.object.isRequired,
-  groupId: PropTypes.number
-};
-
-Index.defaultProps = {
-  groupId: null
+  groups: PropTypes.array.isRequired
 };

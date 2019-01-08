@@ -181,7 +181,7 @@ export default class GroupMap extends Component {
   }
 
   getActiveRoutePolylines() {
-    const orgName = this.props.orgName;
+    const group = this.props.group;
     const script = this.props.trips[0].script;
     const LinkWithContext = withContext(Link, this.context);
     const activePlayers = _(this.props.trips)
@@ -192,9 +192,10 @@ export default class GroupMap extends Component {
 
     return _(activePlayers)
       .map((player) => {
+        const trip = _.find(this.props.trips, { id: player.tripId });
         const playerLink = (
-          <LinkWithContext to={`/${orgName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
-            {player.trip.departureName}{' '}
+          <LinkWithContext to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/players/${player.roleName}`}>
+            {trip.departureName}{' '}
             {player.roleName}
           </LinkWithContext>
         );
@@ -206,7 +207,7 @@ export default class GroupMap extends Component {
         if (page.waypoint) {
           const waypointOption = WaypointCore.optionForWaypoint(
             script.content, page.waypoint,
-            player.trip.waypointOptions);
+            trip.waypointOptions);
           return [
             <Marker
               key={`${player.id}-target`}
@@ -225,7 +226,7 @@ export default class GroupMap extends Component {
         }
         const directions = WaypointCore.directionsForRoute(
           script.content, page.route,
-          player.trip.waypointOptions);
+          trip.waypointOptions);
         const coords = PolylineEncoded.decode(directions.polyline);
         const destination = coords[coords.length - 1];
         const user = player.user;
@@ -274,14 +275,15 @@ export default class GroupMap extends Component {
   }
 
   renderMarkerPlayerSection(player) {
-    const orgName = this.props.orgName;
+    const group = this.props.group;
+    const trip = _.find(this.props.trips, { id: player.tripId });
     const timezone = this.props.trips[0].experience.timezone;
     const LinkWithContext = withContext(Link, this.context);
     return (
       <div key={player.id}>
         <div>
-          <LinkWithContext to={`/${orgName}/operate/${player.trip.groupId}/trip/${player.trip.id}/players/${player.roleName}`}>
-            {player.trip.departureName}{' '}
+          <LinkWithContext to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
+            {trip.departureName}{' '}
             {player.roleName}{' '}
             ({player.user.firstName})
           </LinkWithContext>
@@ -388,7 +390,7 @@ L.Icon.Default.imagePath = '/static/images/';
 GroupMap.propTypes = {
   center: ReactLeafletPropTypes.latlng,
   zoom: PropTypes.number,
-  orgName: PropTypes.string.isRequired,
+  group: PropTypes.object.isRequired,
   trips: PropTypes.array.isRequired
 };
 

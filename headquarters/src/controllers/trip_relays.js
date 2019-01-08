@@ -34,7 +34,7 @@ class TripRelaysController {
   static async ensureRelay(trip, relaySpec) {
     // If it's a trailhead, look for a universal relay.
     if (relaySpec.trailhead) {
-      return await RelaysController.ensureRelay(trip.experienceId,
+      return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
         trip.departureName, relaySpec, '');
     }
     // Otherwise, look up the user phone number for a relay.
@@ -46,7 +46,7 @@ class TripRelaysController {
     }
     // If we have a phone number, then we can ensure a relay exists for that
     // number.
-    return await RelaysController.ensureRelay(trip.experienceId,
+    return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
       trip.departureName, relaySpec, userPhoneNumber);
   }
 

@@ -3,26 +3,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, IndexLink } from 'react-router';
 
-export default function Player({ params, groupStatus, playerStatus, children }) {
-  if (groupStatus.isError ||
-      playerStatus.isError) {
-    return <div>Error - please refresh</div>;
+export default function Player({ player, children }) {
+  if (!player) {
+    return <div>Player not found.</div>;
   }
-  if (groupStatus.isLoading ||
-    !playerStatus.instance ||
-    !playerStatus.instance.trip ||
-    !playerStatus.instance.trip.script) {
-    return <div>Loading</div>;
-  }
-  const orgName = params.orgName;
-  const script = playerStatus.instance.trip.script;
-  const hasRelay = !!_.find(script.content.relays, { as: params.roleName });
+  const trip = player.trip;
+  const script = player.trip.script;
+  const hasRelay = _.some(script.content.relays, r => (
+    r.as === player.roleName || r.with === player.roleName
+  ));
   const messageTab = hasRelay ? (
     <li className="nav-item">
       <Link
         className="nav-link"
         activeClassName="active"
-        to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/messages`}>
+        to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/messages`}>
         Messages
       </Link>
     </li>
@@ -34,8 +29,8 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}`}>
-            {params.roleName}
+            to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
+            {player.roleName}
           </IndexLink>
         </li>
         {messageTab}
@@ -43,7 +38,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/pages`}>
+            to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/pages`}>
             Pages
           </Link>
         </li>
@@ -51,7 +46,7 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/operate/${params.groupId}/trip/${params.tripId}/players/${params.roleName}/interface`}>
+            to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/interface`}>
             Interface
           </Link>
         </li>
@@ -62,8 +57,6 @@ export default function Player({ params, groupStatus, playerStatus, children }) 
 }
 
 Player.propTypes = {
-  groupStatus: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,
-  playerStatus: PropTypes.object.isRequired,
+  player: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired
 };

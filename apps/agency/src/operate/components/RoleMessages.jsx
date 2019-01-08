@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import Message from '../partials/Message';
 
-function renderMessages(orgName, trips, messages) {
+function renderMessages(trips, messages) {
   if (!messages.length) {
     return <div>No messages needing reply.</div>;
   }
@@ -14,20 +14,18 @@ function renderMessages(orgName, trips, messages) {
     .map(message => (
       <Message
         key={message.id}
-        orgName={orgName}
         trip={_.find(trips, { id: message.tripId })}
         message={message} />
     ));
 }
 
-export default function RoleMessages({ params, groupStatus,
+export default function RoleMessages({ params, group,
     messagesNeedingReply, user }) {
-  const orgName = params.orgName;
   const messages = renderMessages(
-    orgName, groupStatus.instance.trips, messagesNeedingReply);
-  const tripLinks = groupStatus.instance.trips.map((trip => (
+    group.trips, messagesNeedingReply);
+  const tripLinks = group.trips.map((trip => (
     <li key={trip.id}>
-      <Link to={`/${orgName}/operate/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
+      <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
         {trip.departureName} {trip.title}
       </Link>
     </li>
@@ -45,7 +43,7 @@ export default function RoleMessages({ params, groupStatus,
 }
 
 RoleMessages.propTypes = {
-  groupStatus: PropTypes.object.isRequired,
+  group: PropTypes.object.isRequired,
   user: PropTypes.object,
   messagesNeedingReply: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired
