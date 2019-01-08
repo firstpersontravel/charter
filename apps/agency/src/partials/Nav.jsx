@@ -73,8 +73,8 @@ function renderBrand(org, experience) {
   return brands;
 }
 
-function renderMenu(org) {
-  if (!org) {
+function renderMenu(org, experience) {
+  if (!org || !experience) {
     return null;
   }
   return (
@@ -83,7 +83,7 @@ function renderMenu(org) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${org.name}/design`}>
+          to={`/${org.name}/${experience.name}/design`}>
           Design
         </Link>
       </li>
@@ -128,7 +128,7 @@ export default function Nav({ authInfo, logout, org, experience }) {
         <span className="navbar-toggler-icon" />
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        {renderMenu(org)}
+        {renderMenu(org, experience)}
       </div>
       <div className="navbar-collapse collapse w-100 order-3">
         {renderRight(authInfo, logout)}

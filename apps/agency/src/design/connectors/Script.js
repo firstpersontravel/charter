@@ -1,20 +1,11 @@
-import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Script from '../components/Script';
+import { lookupScript } from './utils';
 
-const mapStateToProps = (state, ownProps) => {
-  const script = _.find(state.datastore.scripts, {
-    id: Number(ownProps.params.scriptId)
-  });
-  const experience = _.find(state.datastore.experiences, {
-    id: script && script.experienceId
-  });
-  return {
-    script: script,
-    experience: experience
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  script: lookupScript(state, ownProps)
+});
 
 const mapDispatchToProps = dispatch => ({});
 

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
-export function instanceFromDatastore(state, instanceSpec) {
-
+export function latestAuthData(state) {
+  return _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data');
 }
 
 function getInstances(state, collectionName, filters) {
@@ -73,5 +73,21 @@ export function instancesFromDatastore(state, instancesSpec) {
   return Object.assign(filtered, {
     isLoading: isLoading,
     isError: isError
+  });
+}
+
+export function instanceFromDatastore(state, instancesSpec) {
+  const instances = instancesFromDatastore(state, instancesSpec);
+  if (!instances.length) {
+    return {
+      isNull: true,
+      isLoading: instances.isLoading,
+      isError: instances.isError
+    };
+  }
+  return Object.assign({}, instances[0], {
+    isNull: false,
+    isLoading: instances.isLoading,
+    isError: instances.isError
   });
 }

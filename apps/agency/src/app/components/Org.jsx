@@ -21,11 +21,6 @@ export default class Organization extends Component {
     }
     const filters = { isArchived: false, orgId: org.id };
     this.props.listCollection('experiences', filters);
-    this.props.listCollection('groups', filters);
-    this.props.listCollection('trips', filters);
-    this.props.listCollection('scripts', filters);
-    this.props.listCollection('profiles', filters);
-    this.props.listCollection('users', { isArchived: false });
   }
 
   renderNav() {

@@ -23,15 +23,13 @@ export default class Script extends Component {
   }
 
   handleSelectScene(sceneName) {
-    const orgName = this.props.params.orgName;
     browserHistory.push(
-      `/${orgName}/design/script/${this.props.script.id}` +
+      `/${this.props.script.org.name}/${this.props.script.experience.name}/design/script/${this.props.script.id}` +
       `${sceneName ? `?scene=${sceneName}` : ''}`
     );
   }
 
   renderCollection(collectionName) {
-    const orgName = this.props.params.orgName;
     const script = this.props.script;
     const currentCollectionName = this.props.params.collectionName || '';
     const currentSceneName = this.getCurrentSceneName();
@@ -57,7 +55,7 @@ export default class Script extends Component {
           activeClassName="bold"
           to={{
             pathname: (
-              `/${orgName}/design/script/${script.id}/collection/${collectionName}`
+              `/${this.props.script.org.name}/${this.props.script.experience.name}/design/script/${script.id}/collection/${collectionName}`
             ),
             query: currentSceneName ? { scene: currentSceneName } : null
           }}>
@@ -133,27 +131,23 @@ export default class Script extends Component {
   }
 
   render() {
-    if (!this.props.script || !this.props.experience) {
-      return <div className="container-fluid">Loading!</div>;
+    if (this.props.script.isLoading) {
+      return <div className="container-fluid">Loading</div>;
+    }
+    if (this.props.script.isError) {
+      return <div className="container-fluid">Error</div>;
+    }
+    if (this.props.script.isNull) {
+      return <div className="container-fluid">Script not found.</div>;
     }
     const script = this.props.script;
-    const experience = this.props.experience;
-    const orgName = this.props.params.orgName;
     // Get current scene from either the resource (if we're looking at one)
     // or the scene name (if we're just browsing the collection from a link).
     return (
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-12">
-            <Link to={`/${orgName}/design`}>Experiences</Link>
-            &nbsp;&rsaquo;&nbsp;
-            <Link to={`/${orgName}/design/experience/${experience.name}`}>
-              {experience.title}
-            </Link>
-            &nbsp;&rsaquo;&nbsp;
-            <Link to={`/${orgName}/design/script/${script.id}`}>
-              Revision {script.revision}
-            </Link>
+            Editing Revision {script.revision}
           </div>
         </div>
         <hr />
@@ -173,12 +167,6 @@ export default class Script extends Component {
 Script.propTypes = {
   children: PropTypes.node.isRequired,
   location: PropTypes.object.isRequired,
-  script: PropTypes.object,
-  experience: PropTypes.object,
+  script: PropTypes.object.isRequired,
   params: PropTypes.object.isRequired
-};
-
-Script.defaultProps = {
-  script: null,
-  experience: null
 };

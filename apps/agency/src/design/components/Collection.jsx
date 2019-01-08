@@ -7,7 +7,7 @@ import { TextUtil } from 'fptcore';
 
 import { getItems, doesCollectionHaveScene } from './utils';
 
-function renderItem(orgName, script, collectionName, item, i) {
+function renderItem(script, collectionName, item, i) {
   const itemName = item.title || item.name;
   return (
     <div
@@ -16,7 +16,8 @@ function renderItem(orgName, script, collectionName, item, i) {
       <Link
         activeClassName="bold"
         to={
-          `/${orgName}/design/script/${script.id}` +
+          `/${script.org.name}/${script.experience.name}` +
+          `/design/script/${script.id}` +
           `/collection/${collectionName}` +
           `/resource/${item.name || i}`
         }>
@@ -26,8 +27,8 @@ function renderItem(orgName, script, collectionName, item, i) {
   );
 }
 
-export default function Collection({ script, collectionName, children, params, location }) {
-  const orgName = params.orgName;
+export default function Collection({ script, children, params, location }) {
+  const collectionName = params.collectionName;
   let items = getItems(script, collectionName);
 
   // Get current scene from either the resource (if we're looking at one)
@@ -46,7 +47,7 @@ export default function Collection({ script, collectionName, children, params, l
   }
 
   const renderedItems = items.map((item, i) => (
-    renderItem(orgName, script, collectionName, item, i)
+    renderItem(script, collectionName, item, i)
   ));
 
   return (
@@ -65,9 +66,8 @@ export default function Collection({ script, collectionName, children, params, l
 }
 
 Collection.propTypes = {
-  children: PropTypes.node,
-  collectionName: PropTypes.string,
+  children: PropTypes.node.isRequired,
   location: PropTypes.object.isRequired,
-  params: PropTypes.object,
-  script: PropTypes.object
+  params: PropTypes.object.isRequired,
+  script: PropTypes.object.isRequired
 };

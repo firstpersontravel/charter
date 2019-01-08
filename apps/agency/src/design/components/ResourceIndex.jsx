@@ -47,10 +47,18 @@ function sortPropName(propName) {
 
 export default class ResourceIndex extends Component {
 
+  getCollectionName() {
+    return this.props.params.collectionName;
+  }
+
+  getResourceName() {
+    return this.props.params.resourceName;
+  }
+
   getResource() {
-    const collectionName = this.props.collectionName;
+    const collectionName = this.getCollectionName();
     const collection = this.props.script.content[collectionName] || [];
-    return _.find(collection, { name: this.props.resourceName });
+    return _.find(collection, { name: this.getResourceName() });
   }
 
   findReverseResources(reverseRelation, resourceName) {
@@ -81,7 +89,7 @@ export default class ResourceIndex extends Component {
   }
 
   doesParamMatchResource(paramSpec, paramValue) {
-    const collectionName = this.props.collectionName;
+    const collectionName = this.getCollectionName();
     const resource = this.getResource();
     if (paramSpec.type === 'reference') {
       if (paramSpec.collection === collectionName) {
@@ -135,8 +143,7 @@ export default class ResourceIndex extends Component {
   }
 
   renderLink(collectionName, resourceName) {
-    return renderLink(this.props.params.orgName,
-      this.props.script.id, collectionName, resourceName);
+    return renderLink(this.props.script, collectionName, resourceName);
   }
 
   renderReverseRelation(reverseRelation) {
@@ -223,7 +230,7 @@ export default class ResourceIndex extends Component {
   }
 
   renderShallowRefs() {
-    const collectionName = this.props.collectionName;
+    const collectionName = this.getCollectionName();
     const reverseRelations = REVERSE_COLLECTION_NAMES[collectionName];
     if (!reverseRelations) {
       return null;
@@ -247,8 +254,7 @@ export default class ResourceIndex extends Component {
     const paramSpec = ActionsRegistry[actionName].params[paramName];
     return (
       <Param
-        orgName={this.props.params.orgName}
-        scriptId={this.props.script.id}
+        script={this.props.script}
         spec={paramSpec}
         value={paramValue} />
     );
@@ -381,8 +387,7 @@ export default class ResourceIndex extends Component {
     const paramSpec = event.specParams[paramName];
     return (
       <Param
-        orgName={this.props.params.orgName}
-        scriptId={this.props.script.id}
+        scriptId={this.props.script}
         spec={paramSpec}
         value={paramValue} />
     );
@@ -485,8 +490,8 @@ export default class ResourceIndex extends Component {
   }
 
   render() {
-    const collectionName = this.props.collectionName;
-    const resourceName = this.props.resourceName;
+    const collectionName = this.getCollectionName();
+    const resourceName = this.getResourceName();
     const resource = this.getResource();
     if (!resource) {
       return (
@@ -507,7 +512,5 @@ export default class ResourceIndex extends Component {
 
 ResourceIndex.propTypes = {
   script: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,
-  collectionName: PropTypes.string.isRequired,
-  resourceName: PropTypes.string.isRequired
+  params: PropTypes.object.isRequired
 };
