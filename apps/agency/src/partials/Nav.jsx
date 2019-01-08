@@ -29,18 +29,48 @@ function renderRight(authInfo, logout) {
   );
 }
 
-function renderBrand(org) {
-  const name = org ?
-    `MULTIVERSE | ${org.title.toUpperCase()}` :
-    'MULTIVERSE';
-  return (
+function renderBrand(org, experience) {
+  if (!org) {
+    return (
+      <Link
+        key="main"
+        activeClassName="active"
+        className="navbar-brand"
+        style={{ marginRight: '0.25rem' }}
+        to="/">
+        MULTIVERSE
+      </Link>
+    );
+  }
+  const brands = [
     <Link
+      key="org"
       activeClassName="active"
       className="navbar-brand"
-      to={org ? `/${org.name}` : '/'}>
-      {name}
+      style={{ marginRight: '0.25rem' }}
+      to={`/${org.name}`}>
+      {org.title.toUpperCase()}
     </Link>
-  );
+  ];
+  if (experience) {
+    brands.push(
+      <span
+        key="expspacer"
+        className="navbar-brand"
+        style={{ marginRight: '0.25rem' }}>
+        |
+      </span>,
+      <Link
+        key="exp"
+        activeClassName="active"
+        className="navbar-brand"
+        style={{ marginRight: '0.25rem' }}
+        to={`/${org.name}/${experience.name}`}>
+        {experience.title.toUpperCase()}
+      </Link>
+    );
+  }
+  return brands;
 }
 
 function renderMenu(org) {
@@ -85,7 +115,7 @@ function renderMenu(org) {
   );
 }
 
-export default function Nav({ authInfo, logout, org }) {
+export default function Nav({ authInfo, logout, org, experience }) {
   document.title = `${getStage()} - FPT Ops`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
@@ -93,7 +123,7 @@ export default function Nav({ authInfo, logout, org }) {
 
   return (
     <nav className={navClass}>
-      {renderBrand(org)}
+      {renderBrand(org, experience)}
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span className="navbar-toggler-icon" />
       </button>
@@ -110,10 +140,12 @@ export default function Nav({ authInfo, logout, org }) {
 Nav.propTypes = {
   authInfo: PropTypes.object,
   logout: PropTypes.func.isRequired,
-  org: PropTypes.object
+  org: PropTypes.object,
+  experience: PropTypes.object
 };
 
 Nav.defaultProps = {
   authInfo: null,
-  org: null
+  org: null,
+  experience: null
 };

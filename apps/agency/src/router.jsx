@@ -1,13 +1,17 @@
 import _ from 'lodash';
 import React from 'react';
-import { IndexRoute, IndexRedirect, Router, Route, browserHistory } from 'react-router';
+import { IndexRoute, Router, Route, browserHistory } from 'react-router';
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect';
 import locationHelperBuilder from 'redux-auth-wrapper/history3/locationHelper';
 
 import AppConnector from './app/connectors/App';
+import ExperienceConnector from './app/connectors/Experience';
+import ExperienceIndexConnector from './app/connectors/ExperienceIndex';
+import OrgConnector from './app/connectors/Org';
+import OrgIndexConnector from './app/connectors/OrgIndex';
+
 import DesignRoute from './design/route';
 import OperateRoute from './operate/route';
-import OrganizationConnector from './organization/connectors/Organization';
 import PublicConnector from './public/connectors/Public';
 import PublicRoute from './public/route';
 import ScheduleRoute from './schedule/route';
@@ -21,7 +25,7 @@ function NotFound() {
   );
 }
 
-function NoOrganizations() {
+function NoOrgs() {
   return (
     <div className="container-fluid">
       You are not a member of any organizations.
@@ -55,8 +59,7 @@ const ensureUserIsNotLoggedIn = connectedRouterRedirect({
     const authInfo = getUserInfo(state);
     const firstOrg = _.get(authInfo, 'orgs[0]');
     const defaultPath = firstOrg ?
-      `/${firstOrg.name}/design/experiences` :
-      '/no-organizations';
+      `/${firstOrg.name}` : '/no-orgs';
     return locationHelper.getRedirectQueryParam(ownProps) || defaultPath;
   },
   allowRedirectBack: false,
@@ -73,15 +76,18 @@ export default (
         {PublicRoute}
       </Route>
       <Route component={ensureUserIsLoggedIn(emptyRoute)}>
-        <Route path="no-organizations" component={PublicConnector}>
-          <IndexRoute component={NoOrganizations} />
+        <Route path="no-orgs" component={PublicConnector}>
+          <IndexRoute component={NoOrgs} />
         </Route>
-        <Route path=":orgName" component={OrganizationConnector}>
-          <IndexRedirect to="/:orgName/design/experiences" />
+        <Route path=":orgName" component={OrgConnector}>
+          <IndexRoute component={OrgIndexConnector} />
           {DesignRoute}
           {OperateRoute}
           {ScheduleRoute}
           {DirectoryRoute}
+        </Route>
+        <Route path=":orgName/:experienceName" component={ExperienceConnector}>
+          <IndexRoute component={ExperienceIndexConnector} />
         </Route>
       </Route>
       <Route path="*" component={NotFound} />

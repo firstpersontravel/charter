@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import Organization from '../components/Organization';
-import { logout, listCollection } from '../../actions';
+import OrgIndex from '../components/OrgIndex';
 
 const mapStateToProps = (state, ownProps) => {
   const orgName = ownProps.params.orgName;
@@ -15,9 +14,6 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  listCollection: (...args) => dispatch(listCollection(...args)),
-  logout: (...args) => dispatch(logout(...args))
-});
+const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Organization);
+export default connect(mapStateToProps, mapDispatchToProps)(OrgIndex);
