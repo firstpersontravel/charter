@@ -72,7 +72,8 @@ export default class ExperienceRelays extends React.Component {
     if (!this.props.experience) {
       return;
     }
-    this.props.updateRelays(this.props.experience.id);
+    this.props.updateRelays(this.props.experience.orgId,
+      this.props.experience.id);
   }
 
   handleToggleAllActive() {
