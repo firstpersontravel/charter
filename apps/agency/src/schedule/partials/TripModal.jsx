@@ -18,13 +18,14 @@ function getVariantSections(script) {
     .value();
 }
 
-function getDefaultState(script, trip, departureName) {
+function getDefaultState(group, trip, departureName) {
   const defaultDepartureName = departureName || 'T1';
   const existingVariantNames = trip ?
     trip.variantNames.split(',').filter(Boolean) : [];
-  const variantSections = getVariantSections(script);
+  const variantSections = getVariantSections(group && group.script);
+  const variants = group && group.script && group.script.content.variants;
   const variantNames = variantSections.map((section, i) => (
-    existingVariantNames[i] || _.get(_.filter(script.content.variants, {
+    existingVariantNames[i] || _.get(_.filter(variants, {
       section: section
     })[0], 'name')
   ));
@@ -41,7 +42,7 @@ export default class TripModal extends Component {
   constructor(props) {
     super(props);
     this.state = getDefaultState(
-      props.script,
+      props.group,
       props.trip,
       props.defaultDepartureName);
     this.handleConfirm = this.handleConfirm.bind(this);
@@ -52,7 +53,7 @@ export default class TripModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState(getDefaultState(
-      nextProps.script,
+      nextProps.group,
       nextProps.trip,
       nextProps.defaultDepartureName));
   }
@@ -81,7 +82,7 @@ export default class TripModal extends Component {
   }
 
   handleChangeVariant(section, event) {
-    const variantSections = getVariantSections(this.props.script);
+    const variantSections = getVariantSections(this.props.group.script);
     const sectionIndex = variantSections.indexOf(section);
     const variantNames = _.clone(this.state.variantNames);
     variantNames[sectionIndex] = event.target.value;
@@ -89,8 +90,10 @@ export default class TripModal extends Component {
   }
 
   render() {
-    const script = this.props.script;
     const group = this.props.group;
+    if (!group || !group.script) {
+      return null;
+    }
     const trip = this.props.trip;
     const newTitle = group ? `New trip on ${moment(group.date).format('MMM D, YYYY')}` : 'New trip';
     const title = trip ? `Edit ${trip.title}` : newTitle;
@@ -99,7 +102,7 @@ export default class TripModal extends Component {
     const confirmColor = isNew ? 'primary' : 'danger';
     const isValid = this.state.date !== '' && this.state.title !== '';
 
-    const departures = script ? script.content.departures : [];
+    const departures = group.script.content.departures || [];
     const scheduleOptions = departures.map(departure => (
       <option
         key={departure.name}
@@ -108,9 +111,9 @@ export default class TripModal extends Component {
       </option>
     ));
 
-    const variantSections = getVariantSections(script);
+    const variantSections = getVariantSections(group.script);
     const variantFields = variantSections.map((section, i) => {
-      const options = _.filter(script.content.variants, {
+      const options = _.filter(group.script.content.variants, {
         section: section
       });
       const groupOptions = options.map(variant => (
@@ -193,7 +196,6 @@ TripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   defaultDepartureName: PropTypes.string,
   group: PropTypes.object,
-  script: PropTypes.object,
   trip: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
@@ -202,6 +204,5 @@ TripModal.propTypes = {
 TripModal.defaultProps = {
   trip: null,
   group: null,
-  script: null,
   defaultDepartureName: null
 };

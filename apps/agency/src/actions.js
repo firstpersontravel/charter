@@ -68,15 +68,18 @@ function request(collectionName, instanceId, operationName, url, params,
     `${collectionName}.${operationName}`;
   dispatch(saveRequest(requestName, 'pending', null));
   return fetchJsonAssuringSuccess(url, params)
-    .then((data) => {
-      dispatch(saveRequest(requestName, 'fulfilled', null));
-      return data;
-    })
-    .catch((err) => {
-      const errdata = { data: err.data || null, status: err.status || null };
-      dispatch(saveRequest(requestName, 'rejected', errdata));
-      throw err;
-    });
+    .then(
+      (data) => {
+        dispatch(saveRequest(requestName, 'fulfilled', null));
+        return data;
+      },
+      (err) => {
+        console.error('error loading', err);
+        const errdata = { data: err.data || null, status: err.status || null };
+        dispatch(saveRequest(requestName, 'rejected', errdata));
+        throw err;
+      }
+    );
 }
 
 function createQueryString(query) {

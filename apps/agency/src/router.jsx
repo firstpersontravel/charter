@@ -82,12 +82,12 @@ export default (
         <Route path=":orgName" component={OrgConnector}>
           <IndexRoute component={OrgIndexConnector} />
           {OperateRoute}
-          {ScheduleRoute}
           {DirectoryRoute}
         </Route>
         <Route path=":orgName/:experienceName" component={ExperienceConnector}>
           <IndexRoute component={ExperienceIndexConnector} />
           {DesignRoute}
+          {ScheduleRoute}
         </Route>
       </Route>
       <Route path="*" component={NotFound} />

@@ -147,7 +147,7 @@ export default class Script extends Component {
       <div className="container-fluid">
         <div className="row">
           <div className="col-sm-12">
-            Editing Revision {script.revision}
+            Viewing Revision {script.revision}
           </div>
         </div>
         <hr />

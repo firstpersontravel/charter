@@ -1,6 +1,7 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { browserHistory } from 'react-router';
 
 export default function DesignIndex({ scripts }) {
   if (scripts.isLoading) {
@@ -9,16 +10,13 @@ export default function DesignIndex({ scripts }) {
   if (scripts.isError) {
     return <div className="container-fluid">Error</div>;
   }
-  const renderedScripts = scripts.map(script => (
-    <div key={script.id}>
-      <Link to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}`}>
-        Revision {script.revision}
-      </Link>
-    </div>
-  ));
+  const script = _.find(scripts, { isActive: true });
+  if (script) {
+    browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${script.id}`);
+  }
   return (
     <div className="container-fluid">
-      {renderedScripts}
+      Redirecting
     </div>
   );
 }

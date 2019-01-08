@@ -4,41 +4,31 @@ export function latestAuthData(state) {
   return _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data');
 }
 
-function getInstances(state, collectionName, filters) {
-  const collection = state.datastore[collectionName];
+function instanceFromInstances(instances) {
+  if (!instances.length) {
+    return {
+      isNull: true,
+      isLoading: instances.isLoading,
+      isError: instances.isError
+    };
+  }
+  return Object.assign({}, instances[0], {
+    isNull: false,
+    isLoading: instances.isLoading,
+    isError: instances.isError
+  });
+}
+
+function getInstances(state, colName, filters) {
+  const collection = state.datastore[colName];
   const instances = _.filter(collection, filters);
-  const reqList = state.requests[`${collectionName}.list`];
+  const reqList = state.requests[`${colName}.list`];
   const isLoading = reqList === 'pending';
   const isError = reqList === 'rejected';
   return Object.assign(instances, {
-    isNull: false,
     isLoading: isLoading,
     isError: isError
   });
-}
-
-function getInstance(state, collectionName, finders) {
-  const collection = state.datastore[collectionName];
-  const instance = _.find(collection, finders);
-  const reqList = state.requests[`${collectionName}.list`];
-  const isLoading = reqList === 'pending';
-  const isError = reqList === 'rejected';
-  return Object.assign({}, instance, {
-    isNull: false,
-    isLoading: isLoading,
-    isError: isError
-  });
-}
-
-export function instanceIncluder(collectionName, relField, selfField) {
-  return (state, instance) => {
-    const selfValue = instance[selfField];
-    if (!selfValue) {
-      return { isNull: true, isLoading: false, isError: false };
-    }
-    const finders = { [relField]: selfValue };
-    return getInstance(state, collectionName, finders);
-  };
 }
 
 function addIncluders(state, instance, includers) {
@@ -53,41 +43,49 @@ function addIncluders(state, instance, includers) {
   });
 }
 
-export function instancesFromDatastore(state, instancesSpec) {
-  const col = instancesSpec.col;
-  if (!col) {
-    throw new Error('Expected collection.');
-  }
-  const filters = instancesSpec.filter || {};
+function getInstancesWithIncludes(state, colName, filters, includers) {
   const prefilters = _.pickBy(filters, (v, k) => !_.isPlainObject(v));
-  const includers = instancesSpec.include || {};
-  const instances = getInstances(state, col, prefilters);
-  const instancesWithIncludes = _.map(instances, instance => (
+  const instances = getInstances(state, colName, prefilters);
+  const withIncludes = _.map(instances, instance => (
     addIncluders(state, instance, includers)
   ));
-  const filtered = _.filter(instancesWithIncludes, filters);
-  const isLoading = instances.isLoading ||
-    _.some(instancesWithIncludes, 'isLoading');
-  const isError = instances.isError ||
-    _.some(instancesWithIncludes, 'isError');
+  const filtered = _.filter(withIncludes, filters);
+  const isLoading = instances.isLoading || _.some(withIncludes, 'isLoading');
+  const isError = instances.isError || _.some(withIncludes, 'isError');
   return Object.assign(filtered, {
     isLoading: isLoading,
     isError: isError
   });
 }
 
+export function instanceIncluder(colName, relField, selfField, includes) {
+  return (state, instance) => {
+    const selfValue = instance[selfField];
+    if (!selfValue) {
+      return { isNull: true, isLoading: false, isError: false };
+    }
+    const filters = { [relField]: selfValue };
+    return instanceFromInstances(getInstancesWithIncludes(state, colName,
+      filters, includes));
+  };
+}
+
+export function instancesIncluder(colName, relField, selfField, filters,
+  includes) {
+  return (state, instance) => {
+    const selfValue = instance[selfField];
+    const lookup = { [relField]: selfValue };
+    const filtersWithLookup = Object.assign(lookup, filters);
+    return getInstancesWithIncludes(state, colName, filtersWithLookup,
+      includes);
+  };
+}
+
+export function instancesFromDatastore(state, instancesSpec) {
+  return getInstancesWithIncludes(state, instancesSpec.col,
+    instancesSpec.filter, instancesSpec.include);
+}
+
 export function instanceFromDatastore(state, instancesSpec) {
-  const instances = instancesFromDatastore(state, instancesSpec);
-  if (!instances.length) {
-    return {
-      isNull: true,
-      isLoading: instances.isLoading,
-      isError: instances.isError
-    };
-  }
-  return Object.assign({}, instances[0], {
-    isNull: false,
-    isLoading: instances.isLoading,
-    isError: instances.isError
-  });
+  return instanceFromInstances(instancesFromDatastore(state, instancesSpec));
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
-import DesignConnector from './connectors/Design';
 import DesignIndexConnector from './connectors/DesignIndex';
 import ScriptConnector from './connectors/Script';
 import ScriptIndexConnector from './connectors/ScriptIndex';
@@ -11,7 +10,7 @@ import ResourceConnector from './connectors/Resource';
 import ResourceIndexConnector from './connectors/ResourceIndex';
 
 export default (
-  <Route path="design" component={DesignConnector}>
+  <Route path="design">
     <IndexRoute component={DesignIndexConnector} />
     <Route path="script/:scriptId" component={ScriptConnector}>
       <IndexRoute component={ScriptIndexConnector} />

@@ -55,7 +55,7 @@ const initialState = {
   requestErrors: {},
   datastore: {
     auth: authData,
-    orgs: [],
+    orgs: authData.length > 0 ? authData[0].data.orgs : [],
     experiences: [],
     scripts: [],
     groups: [],

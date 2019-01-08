@@ -6,8 +6,8 @@ import { IndexLink } from 'react-router';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
 import AreYouSure from '../../partials/AreYouSure';
-import TripModal from '../partials/trip-modal';
-import GroupModal from '../partials/group-modal';
+import TripModal from '../partials/TripModal';
+import GroupModal from '../partials/GroupModal';
 import ScheduleUtils from '../utils';
 
 export default class ScheduleIndex extends Component {
@@ -26,7 +26,6 @@ export default class ScheduleIndex extends Component {
       defaultGroupScriptId: null,
       defaultGroupExperienceId: null,
       defaultTripGroup: null,
-      defaultTripGroupScript: null,
       defaultTripDepartureName: null
     };
     this.handleArchiveGroup = this.handleArchiveGroup.bind(this);
@@ -40,25 +39,6 @@ export default class ScheduleIndex extends Component {
     this.handleEditTripConfirm = this.handleEditTripConfirm.bind(this);
     this.handleCreateGroup = this.handleCreateGroup.bind(this);
     this.handleEditGroupToggle = this.handleEditGroupToggle.bind(this);
-  }
-
-  componentDidMount() {
-    this.loadData(this.props.org);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.org !== this.props.org) {
-      this.loadData(nextProps.org);
-    }
-  }
-
-  loadData(org) {
-    if (!org) {
-      return;
-    }
-    const filters = { isArchived: false, orgId: org.id };
-    this.props.listCollection('groups', filters);
-    this.props.listCollection('trips', filters);
   }
 
   handleArchiveGroup(group) {
@@ -76,16 +56,9 @@ export default class ScheduleIndex extends Component {
 
   handleArchiveGroupConfirm() {
     const group = this.state.isArchivingGroup;
-    this.props.updateInstance('groups', group.id, {
-      isArchived: true
-    });
-    const trips = _.filter(this.props.tripsStatus.instances,
-      { groupId: group.id });
-
-    trips.forEach(trip => (
-      this.props.updateInstance('trips', trip.id, {
-        isArchived: true
-      })
+    this.props.updateInstance('groups', group.id, { isArchived: true });
+    group.trips.forEach(trip => (
+      this.props.updateInstance('trips', trip.id, { isArchived: true })
     ));
     this.setState({
       isArchiveGroupModalOpen: false,
@@ -108,9 +81,7 @@ export default class ScheduleIndex extends Component {
 
   handleArchiveTripConfirm() {
     const trip = this.state.isArchivingTrip;
-    this.props.updateInstance('trips', trip.id, {
-      isArchived: true
-    });
+    this.props.updateInstance('trips', trip.id, { isArchived: true });
     this.setState({
       isArchiveTripModalOpen: false,
       isArchivingTrip: null
@@ -128,23 +99,16 @@ export default class ScheduleIndex extends Component {
       isTripEditModalOpen: true,
       isEditingTrip: null,
       defaultTripGroup: group,
-      defaultTripScript: _.find(this.props.scripts, { id: group.scriptId }),
       defaultTripDepartureName: defaultDepartureName
     });
   }
 
   handleEditTrip(trip) {
-    const group = _.find(this.props.groupsStatus.instances, {
-      id: trip.groupId
-    });
-    const script = _.find(this.props.scripts, {
-      id: trip.scriptId
-    });
+    const group = _.find(this.props.groups, { id: trip.groupId });
     this.setState({
       isTripEditModalOpen: true,
       isEditingTrip: trip,
       defaultTripGroup: group,
-      defaultTripScript: script,
       defaultTripDepartureName: null
     });
   }
@@ -158,8 +122,9 @@ export default class ScheduleIndex extends Component {
   handleCreateGroup(fields) {
     this.props.createInstance('groups', {
       date: fields.date,
-      scriptId: fields.scriptId,
-      experienceId: fields.experienceId
+      orgId: this.props.org.id,
+      experienceId: this.props.experience.id,
+      scriptId: fields.scriptId
     });
     this.handleEditGroupToggle();
   }
@@ -173,22 +138,20 @@ export default class ScheduleIndex extends Component {
     ));
     const userId = users.length === 1 ? users[0].id : null;
     const fields = Object.assign(
-      { userId: userId },
+      { orgId: experience.orgId, userId: userId },
       PlayerCore.getInitialFields(script.content, role.name, variantNames));
     return fields;
   }
 
   handleEditTripConfirm(group, fields) {
-    const experience = _.find(this.props.experiences, {
-      id: group.experienceId
-    });
-    const script = _.find(this.props.scripts, { id: group.scriptId });
-    const initialFields = TripCore.getInitialFields(script.content, group.date,
-      experience.timezone, fields.variantNames);
+    const initialFields = TripCore.getInitialFields(
+      group.script.content, group.date,
+      group.experience.timezone, fields.variantNames);
     const tripFields = Object.assign(initialFields, {
+      orgId: group.orgId,
+      experienceId: group.experienceId,
       groupId: group.id,
       scriptId: group.scriptId,
-      experienceId: group.experienceId,
       date: group.date,
       title: fields.title,
       galleryName: _.kebabCase(fields.title),
@@ -197,9 +160,9 @@ export default class ScheduleIndex extends Component {
       currentSceneName: '',
       lastScheduledTime: null
     });
-    const playersFields = script.content.roles.map(role => (
-      this.initialFieldsForRole(experience, script, role, fields.departureName,
-        fields.variantNames)
+    const playersFields = group.script.content.roles.map(role => (
+      this.initialFieldsForRole(group.experience, group.script,
+        role, fields.departureName, fields.variantNames)
     ));
     if (this.state.isEditingTrip) {
       // update existing trip
@@ -226,14 +189,13 @@ export default class ScheduleIndex extends Component {
         </div>
       </div>
     );
-    const orgName = this.props.params.orgName;
     const tripElements = trips
       .filter(trip => trip.departureName === departureName)
       .map(trip => (
         <div key={trip.id} className="row">
           <div className="col-sm-4">
             <strong>{departureName}</strong>{' '}
-            <IndexLink to={`/${orgName}/operate/${trip.groupId}/trip/${trip.id}`}>
+            <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
               {trip.title}
             </IndexLink>
           </div>
@@ -266,27 +228,26 @@ export default class ScheduleIndex extends Component {
     );
   }
 
-  renderGroup(group, script, experience, trips) {
-    const orgName = this.props.params.orgName;
+  renderGroup(group) {
+    if (group.script.isNull) {
+      return null;
+    }
     const dateShort = moment(group.date).format('MMM D, YYYY');
-    const departureNames = _.map(script.content.departures, 'name');
+    const departureNames = _.map(group.script.content.departures, 'name');
     const scheduleCells = departureNames.map(departureName =>
       this.renderCellForSchedule(group, departureName,
-        _.filter(trips, { departureName: departureName })));
+        _.filter(group.trips, { departureName: departureName })));
 
     return (
       <div key={group.id} className="row" style={{ borderBottom: '2px solid #ddd', paddingBottom: '0.5em', paddingTop: '0.5em' }}>
         <div className="col-sm-3">
-          <strong>
-            <IndexLink to={`/${orgName}/operate/${group.id}`}>
-              {experience && experience.title}
-            </IndexLink>
-          </strong>
-          <br />
-          <IndexLink to={`/${orgName}/operate/${group.id}`}>
-            {dateShort}
+          <IndexLink
+            to={
+              `/${group.org.name}/${group.experience.name}` +
+              `/operate/${group.id}`
+            }>
+            <h4>{dateShort}</h4>
           </IndexLink>
-          <br />
           <button
             className="btn btn-sm btn-outline-secondary"
             onClick={() => this.handleArchiveGroup(group)}>
@@ -301,26 +262,17 @@ export default class ScheduleIndex extends Component {
   }
 
   render() {
-    if (this.props.scripts.length === 0 ||
-        this.props.tripsStatus.isLoading ||
-        this.props.groupsStatus.isLoading) {
-      return <div>Loading</div>;
+    if (this.props.groups.isLoading) {
+      return <div className="container-fluid">Loading</div>;
     }
-    if (this.props.tripsStatus.isError ||
-        this.props.groupsStatus.isError) {
-      return <div>Error</div>;
+    if (this.props.groups.isError) {
+      return <div className="container-fluid">Error</div>;
     }
-    const groups = this.props.groupsStatus.instances;
-    const groupRows = _.map(groups, (group) => {
-      const script = _.find(this.props.scripts, { id: group.scriptId });
-      const experience = _.find(this.props.experiences, { id: script.experienceId });
-      const trips = _.filter(this.props.tripsStatus.instances, {
-        groupId: group.id
-      });
-      return this.renderGroup(group, script, experience, trips);
-    });
+    const groupRows = _.map(this.props.groups, group => (
+      this.renderGroup(group)
+    ));
     return (
-      <div>
+      <div className="container-fluid">
         {groupRows}
         <div className="row" style={{ marginTop: '1em' }}>
           <div className="col-12">
@@ -334,7 +286,6 @@ export default class ScheduleIndex extends Component {
         <TripModal
           isOpen={this.state.isTripEditModalOpen}
           group={this.state.defaultTripGroup}
-          script={this.state.defaultTripScript}
           trip={this.state.isEditingTrip}
           defaultDepartureName={this.state.defaultTripDepartureName}
           onClose={this.handleEditTripToggle}
@@ -342,10 +293,8 @@ export default class ScheduleIndex extends Component {
         <GroupModal
           isOpen={this.state.isGroupEditModalOpen}
           scripts={this.props.scripts}
-          experiences={this.props.experiences}
           defaultDate={this.state.defaultGroupDate}
           defaultScriptId={this.state.defaultGroupScriptId}
-          defaultExperienceId={this.state.defaultGroupExperienceId}
           onClose={this.handleEditGroupToggle}
           onConfirm={this.handleCreateGroup} />
         <AreYouSure
@@ -365,15 +314,12 @@ export default class ScheduleIndex extends Component {
 
 ScheduleIndex.propTypes = {
   org: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,
+  experience: PropTypes.object.isRequired,
+  groups: PropTypes.array.isRequired,
   scripts: PropTypes.array.isRequired,
-  experiences: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
-  groupsStatus: PropTypes.object.isRequired,
-  tripsStatus: PropTypes.object.isRequired,
   initializeTrip: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
-  listCollection: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };
