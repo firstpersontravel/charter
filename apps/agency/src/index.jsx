@@ -55,6 +55,7 @@ const initialState = {
   requestErrors: {},
   datastore: {
     auth: authData,
+    orgs: [],
     experiences: [],
     scripts: [],
     groups: [],
