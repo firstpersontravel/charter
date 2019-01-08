@@ -22,7 +22,6 @@ export default function OrgIndex({ experiences }) {
   ));
   return (
     <div className="container-fluid">
-      Org Index
       {renderedExperiences}
     </div>
   );

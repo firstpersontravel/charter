@@ -238,10 +238,10 @@ export default class Group extends Component {
                 `/${group.org.name}/${group.experience.name}/` +
                 `operate/${this.props.params.groupId}/all`
               }>
-              {dateShort}
+              Group
               <br />
               <span style={{ fontSize: '10pt' }}>
-                {group.experience.title}
+                {dateShort}
               </span>
             </Link>
           </li>

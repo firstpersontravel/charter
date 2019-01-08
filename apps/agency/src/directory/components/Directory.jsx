@@ -5,18 +5,18 @@ import { Link } from 'react-router';
 
 export default class Directory extends Component {
 
-  renderRole(experience, roleName, roleProfiles) {
+  renderRole(roleName, roleProfiles) {
     if (!roleProfiles.length) {
       return null;
     }
-    const orgName = this.props.params.orgName;
+    const experience = this.props.experience;
     return (
       <div key={roleName} className="constrain-text">
         &rsaquo; <Link
           activeClassName="bold"
           to={{
-            pathname: `/${orgName}/directory`,
-            query: { experienceId: experience.id, role: roleName }
+            pathname: `/${experience.org.name}/${experience.name}/directory`,
+            query: { role: roleName }
           }}>
           {roleName}
         </Link>
@@ -25,56 +25,37 @@ export default class Directory extends Component {
     );
   }
 
-  renderExperienceRoles(experience) {
-    const orgName = this.props.params.orgName;
+  renderRoles() {
     const profiles = this.props.profiles;
-    const experienceProfiles = _.filter(profiles, {
-      experienceId: experience.id
-    });
     const roleNames = _.uniq(_.map(profiles, 'roleName')).sort();
     const renderedRoles = _.filter(roleNames).map((roleName) => {
-      const roleProfiles = _.filter(experienceProfiles, {
+      const roleProfiles = _.filter(profiles, {
         roleName: roleName
       });
-      return this.renderRole(experience, roleName, roleProfiles);
+      return this.renderRole(roleName, roleProfiles);
     });
 
-    return (
-      <div key={experience.id} style={{ marginTop: '0.5em' }}>
-        <div>
-          <strong>
-            <Link to={`/${orgName}/directory?experienceId=${experience.id}`}>
-              {experience.title}
-            </Link>
-          </strong>
-        </div>
-        {renderedRoles}
-      </div>
-    );
+    return renderedRoles;
   }
 
-  renderRolesCol() {
-    const orgName = this.props.params.orgName;
-    const experiences = this.props.experiences;
+  renderRolesSidebar() {
+    const experience = this.props.experience;
     const roleQuery = this.props.location.query.role;
-    const scriptCells = experiences.map(experience => (
-      this.renderExperienceRoles(experience)
-    ));
     return (
       <div className="col-sm-3 d-none d-sm-block">
         <h3>Roles</h3>
         <div>
           <Link
             className={roleQuery ? '' : 'bold'}
-            to={`/${orgName}/directory`}>
+            to={`/${experience.org.name}/${experience.name}/directory`}>
             All
           </Link>
         </div>
-        {scriptCells}
+        {this.renderRoles()}
         <div style={{ marginTop: '0.5em' }}>
           <Link
             activeClassName="bold"
-            to={`/${orgName}/directory?role=Archived`}>
+            to={`/${experience.org.name}/${experience.name}/directory?role=Archived`}>
             Archived
           </Link>
         </div>
@@ -86,7 +67,7 @@ export default class Directory extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          {this.renderRolesCol()}
+          {this.renderRolesSidebar()}
           {this.props.children}
         </div>
       </div>
@@ -97,7 +78,6 @@ export default class Directory extends Component {
 Directory.propTypes = {
   children: PropTypes.node.isRequired,
   location: PropTypes.object.isRequired,
-  experiences: PropTypes.array.isRequired,
-  profiles: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired
+  experience: PropTypes.object.isRequired,
+  profiles: PropTypes.array.isRequired
 };

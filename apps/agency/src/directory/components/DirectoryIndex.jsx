@@ -25,16 +25,14 @@ export default class DirectoryIndex extends Component {
 
   handleUserModalClose() {
     const role = this.props.location.query.role;
-    const orgName = this.props.params.orgName;
-    const experienceId = this.props.location.query.experienceId;
+    const experience = this.props.experience;
     browserHistory.push(
-      `/${orgName}/directory${experienceId ? `?experienceId=${experienceId}` : ''}` +
-      `${role ? `&role=${role}` : ''}`
+      `/${experience.org.name}/${experience.name}/directory` +
+      `${role ? `?role=${role}` : ''}`
     );
   }
 
   renderUser(user) {
-    const orgName = this.props.params.orgName;
     const statusIcons = [];
     if (user.locationTimestamp) {
       statusIcons.push(<i key="location" className="fa fa-location-arrow" />);
@@ -42,11 +40,8 @@ export default class DirectoryIndex extends Component {
     if (user.devicePushToken) {
       statusIcons.push(<i key="comment" className="fa fa-comment" />);
     }
-    const experienceId = this.props.location.query.experienceId;
+    const experience = this.props.experience;
     const profileParams = { userId: user.id };
-    if (experienceId) {
-      profileParams.experienceId = Number(experienceId);
-    }
     const userProfiles = _(this.props.profiles)
       .filter(profileParams)
       .sortBy('isActive')
@@ -59,11 +54,8 @@ export default class DirectoryIndex extends Component {
             textDecoration: profile.isActive ? '' : 'line-through'
           }}
           to={{
-            pathname: `/${orgName}/directory`,
-            query: {
-              experienceId: profile.experienceId,
-              role: profile.roleName
-            }
+            pathname: `/${experience.org.name}/${experience.name}/directory`,
+            query: { role: profile.roleName }
           }}>
           {profile.roleName}
         </Link>
@@ -74,7 +66,7 @@ export default class DirectoryIndex extends Component {
       <tr key={user.id}>
         <td>
           <Link
-            to={`/${orgName}/directory/user/${user.id}`}>
+            to={`/${experience.org.name}/${experience.name}/directory/user/${user.id}`}>
             {user.firstName} {user.lastName}
           </Link>
         </td>
@@ -85,30 +77,14 @@ export default class DirectoryIndex extends Component {
   }
 
   renderHeader() {
-    const orgName = this.props.params.orgName;
     const roleName = this.props.location.query.role;
-    const experienceId = this.props.location.query.experienceId;
-    const experience = experienceId ?
-      _.find(this.props.experiences, { id: Number(experienceId) }) : null;
-    if (roleName && experience) {
+    const experience = this.props.experience;
+    if (roleName) {
       return (
         <h3>
-          <Link to={`/${orgName}/directory`}>Directory</Link>
-          &nbsp;›&nbsp;
-          <Link to={`/${orgName}/directory?experienceId=${experienceId}`}>
-            {experience.title}
-          </Link>
+          <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link>
           &nbsp;›&nbsp;
           {roleName}
-        </h3>
-      );
-    }
-    if (experience) {
-      return (
-        <h3>
-          <Link to={`/${orgName}/directory`}>Directory</Link>
-          &nbsp;›&nbsp;
-          {experience.title}
         </h3>
       );
     }
@@ -118,10 +94,14 @@ export default class DirectoryIndex extends Component {
   }
 
   render() {
-    const orgName = this.props.params.orgName;
+    const experience = this.props.experience;
     const roleName = this.props.location.query.role;
-    const experienceId = this.props.location.query.experienceId;
-    const userRows = _.filter(this.props.users,
+    const users = _(this.props.profiles)
+      .map('user')
+      .filter(u => !u.isNull)
+      .uniqBy('id')
+      .value();
+    const userRows = _.filter(users,
       (user) => {
         if (roleName === 'Archived') {
           return user.isArchived === true;
@@ -132,18 +112,10 @@ export default class DirectoryIndex extends Component {
         const userProfiles = _.filter(this.props.profiles, {
           userId: user.id
         });
-        if (experienceId) {
-          if (!_.find(userProfiles, { experienceId: Number(experienceId) })) {
+        if (roleName) {
+          const roleParams = { roleName: roleName };
+          if (!_.find(userProfiles, roleParams)) {
             return false;
-          }
-          if (roleName) {
-            const roleParams = {
-              experienceId: Number(experienceId),
-              roleName: roleName
-            };
-            if (!_.find(userProfiles, roleParams)) {
-              return false;
-            }
           }
         }
         return true;
@@ -168,10 +140,9 @@ export default class DirectoryIndex extends Component {
         <div>
           <Link
             to={{
-              pathname: `/${orgName}/directory`,
+              pathname: `/${experience.org.name}/${experience.name}/directory`,
               query: {
                 role: roleName || undefined,
-                experienceId: experienceId || undefined,
                 editing: true
               }
             }}
@@ -192,8 +163,6 @@ export default class DirectoryIndex extends Component {
 DirectoryIndex.propTypes = {
   createInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
-  users: PropTypes.array.isRequired,
-  profiles: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired,
-  experiences: PropTypes.array.isRequired
+  experience: PropTypes.object.isRequired,
+  profiles: PropTypes.array.isRequired
 };

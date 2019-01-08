@@ -1,13 +1,12 @@
-import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import DirectoryIndex from '../components/DirectoryIndex';
+import { lookupExperience, lookupProfiles } from './utils';
 import { createInstance } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => ({
-  users: state.datastore.users,
-  experiences: _.filter(state.datastore.experiences, { isArchived: false }),
-  profiles: _.filter(state.datastore.profiles, { isArchived: false })
+  experience: lookupExperience(state, ownProps),
+  profiles: lookupProfiles(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

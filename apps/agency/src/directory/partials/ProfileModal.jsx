@@ -10,7 +10,6 @@ export default class ProfileModal extends Component {
 
   static getDefaultState(profile) {
     return {
-      experienceId: profile ? profile.experienceId : '',
       roleName: profile ? profile.roleName : '',
       departureName: profile ? profile.departureName : '',
       photo: profile ? profile.photo : '',
@@ -27,7 +26,6 @@ export default class ProfileModal extends Component {
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
-    this.handleChangeExperienceId = this.handleChangeExperienceId.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
   }
 
@@ -51,14 +49,6 @@ export default class ProfileModal extends Component {
     this.props.onConfirm(_.assign({}, this.state));
   }
 
-  handleChangeExperienceId(event) {
-    this.setState({
-      experienceId: event.target.value,
-      roleName: '',
-      departureName: ''
-    });
-  }
-
   handleChangeField(fieldName, event) {
     let value = event.target.value;
     if (fieldName === 'phoneNumber') {
@@ -76,9 +66,6 @@ export default class ProfileModal extends Component {
   }
 
   isValid() {
-    if (!this.state.experienceId) {
-      return false;
-    }
     if (!this.state.roleName) {
       return false;
     }
@@ -100,21 +87,12 @@ export default class ProfileModal extends Component {
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
 
-    const experienceOptions = this.props.experiences.map(experience => (
-      <option key={experience.id} value={experience.id}>
-        {experience.title}
-      </option>
-    ));
-    const experience = _.find(this.props.experiences, {
-      id: this.state.experienceId
-    });
-    const script = _.find(this.props.scripts, {
-      experienceId: experience && experience.id,
-      isArchived: false,
-      isActive: true
-    });
-    const roles = script ? script.content.roles : [];
-    const departures = script ? script.content.departures : [];
+    const experience = this.props.experience;
+    if (!experience || !experience.script) {
+      return null;
+    }
+    const roles = experience.script.content.roles || [];
+    const departures = experience.script.content.departures || [];
     const roleOptions = roles.map(role => (
       <option key={role.name} value={role.name}>{role.name}</option>
     ));
@@ -152,18 +130,7 @@ export default class ProfileModal extends Component {
         <ModalBody>
           <form>
             <div className="row">
-              <div className="form-group col-sm-5">
-                <label htmlFor="profile_script_name">Experience</label>
-                <select
-                  className="form-control"
-                  id="profile_script_name"
-                  onChange={this.handleChangeExperienceId}
-                  value={this.state.experienceId}>
-                  <option value="">--</option>
-                  {experienceOptions}
-                </select>
-              </div>
-              <div className="form-group col-sm-4">
+              <div className="form-group col-sm-6">
                 <label htmlFor="profile_role_name">Role</label>
                 <select
                   className="form-control"
@@ -174,7 +141,7 @@ export default class ProfileModal extends Component {
                   {roleOptions}
                 </select>
               </div>
-              <div className="form-group col-sm-3">
+              <div className="form-group col-sm-6">
                 <label htmlFor="profile_departure_name">Departure</label>
                 <select
                   className="form-control"
@@ -253,8 +220,7 @@ export default class ProfileModal extends Component {
 
 ProfileModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  scripts: PropTypes.array.isRequired,
-  experiences: PropTypes.array.isRequired,
+  experience: PropTypes.object.isRequired,
   profile: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
