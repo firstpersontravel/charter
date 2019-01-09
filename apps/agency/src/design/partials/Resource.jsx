@@ -12,7 +12,7 @@ import {
 } from 'fptcore';
 
 import { COLLECTION_NAMES } from '../consts';
-import { getItems } from './utils';
+import { getItems } from '../components/utils';
 import Param, { renderLink } from '../../partials/Param';
 
 const PROP_ORDERING = [
@@ -45,14 +45,14 @@ function sortPropName(propName) {
   return index > -1 ? index : 100000;
 }
 
-export default class ResourceIndex extends Component {
+export default class Resource extends Component {
 
   getCollectionName() {
-    return this.props.params.collectionName;
+    return this.props.collectionName;
   }
 
   getResourceName() {
-    return this.props.params.resourceName;
+    return this.props.resourceName;
   }
 
   getResource() {
@@ -387,7 +387,7 @@ export default class ResourceIndex extends Component {
     const paramSpec = event.specParams[paramName];
     return (
       <Param
-        scriptId={this.props.script}
+        script={this.props.script}
         spec={paramSpec}
         value={paramValue} />
     );
@@ -491,17 +491,14 @@ export default class ResourceIndex extends Component {
 
   render() {
     const collectionName = this.getCollectionName();
-    const resourceName = this.getResourceName();
     const resource = this.getResource();
     if (!resource) {
       return (
         <div>Not found.</div>
       );
     }
-    const title = resource.title || resourceName;
     return (
       <div>
-        <h3>{title}</h3>
         {this.renderFields(collectionName, resource)}
         <hr />
         {this.renderReverseRefs()}
@@ -510,7 +507,8 @@ export default class ResourceIndex extends Component {
   }
 }
 
-ResourceIndex.propTypes = {
+Resource.propTypes = {
   script: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired
+  collectionName: PropTypes.string.isRequired,
+  resourceName: PropTypes.string.isRequired
 };

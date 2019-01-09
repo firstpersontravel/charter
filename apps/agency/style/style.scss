@@ -6,6 +6,10 @@
 $fa-font-path: "~font-awesome/fonts";
 @import "../node_modules/font-awesome/scss/font-awesome";
 
+body {
+  height: 100%;
+}
+
 .bold { font-weight: bold; }
 .strikethrough { text-decoration: line-through; }
 .react-datepicker__input-container { display: block }
@@ -104,6 +108,13 @@ $fa-font-path: "~font-awesome/fonts";
 }
 .leaflet-control-attribution {
   display: none;
+}
+
+.script-editor-container {
+  .script-editor-col {
+    max-height: calc(100% - 100px);
+    overflow-y: scroll;
+  }
 }
 
 @media(min-width: 576px) {

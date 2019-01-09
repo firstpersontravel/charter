@@ -6,8 +6,7 @@ import ScriptConnector from './connectors/Script';
 import ScriptIndexConnector from './connectors/ScriptIndex';
 import CollectionConnector from './connectors/Collection';
 import CollectionIndexConnector from './connectors/CollectionIndex';
-import ResourceConnector from './connectors/Resource';
-import ResourceIndexConnector from './connectors/ResourceIndex';
+import CollectionResourceConnector from './connectors/CollectionResource';
 
 export default (
   <Route path="design">
@@ -16,9 +15,7 @@ export default (
       <IndexRoute component={ScriptIndexConnector} />
       <Route path="collection/:collectionName" component={CollectionConnector}>
         <IndexRoute component={CollectionIndexConnector} />
-        <Route path="resource/:resourceName" component={ResourceConnector}>
-          <IndexRoute component={ResourceIndexConnector} />
-        </Route>
+        <Route path="resource/:resourceName" component={CollectionResourceConnector} />
       </Route>
     </Route>
   </Route>

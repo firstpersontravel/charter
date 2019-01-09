@@ -92,41 +92,90 @@ export default class Script extends Component {
     // Don't show directions
     return (
       <div>
-        <div style={{ marginBottom: '0.5em' }}>
-          <h4>Core</h4>
-          {this.renderCollection('roles')}
-          {this.renderCollection('departures')}
-          {this.renderCollection('variants')}
-          {this.renderCollection('scenes')}
-        </div>
-        <div style={{ marginBottom: '0.5em' }}>
-          <h4>By Role</h4>
-          {this.renderCollection('appearances')}
-          {this.renderCollection('relays')}
-        </div>
-        <div style={{ marginBottom: '0.5em' }}>
-          <h4>Content</h4>
-          {this.renderCollection('layouts')}
-          {this.renderCollection('content_pages')}
-          {this.renderCollection('audio')}
-        </div>
-        <div style={{ marginBottom: '0.5em' }}>
-          <h4>Locations</h4>
-          {this.renderCollection('waypoints')}
-          {this.renderCollection('geofences')}
-          {this.renderCollection('routes')}
-        </div>
-        <div style={{ marginBottom: '0.5em' }}>
-          <h4>By Scene</h4>
-          {this.renderSceneSelector()}
-          {this.renderCollection('pages')}
-          {this.renderCollection('triggers')}
-          {this.renderCollection('messages')}
-          {this.renderCollection('cues')}
-          {this.renderCollection('achievements')}
-          {this.renderCollection('times')}
-          {this.renderCollection('checkpoints')}
-        </div>
+        {this.renderCollection('roles')}
+        {this.renderCollection('departures')}
+        {this.renderCollection('variants')}
+        {this.renderCollection('scenes')}
+        {this.renderCollection('appearances')}
+        {this.renderCollection('relays')}
+        {this.renderCollection('layouts')}
+        {this.renderCollection('content_pages')}
+        {this.renderCollection('audio')}
+        {this.renderCollection('waypoints')}
+        {this.renderCollection('geofences')}
+        {this.renderCollection('routes')}
+        {this.renderSceneSelector()}
+        {this.renderCollection('pages')}
+        {this.renderCollection('triggers')}
+        {this.renderCollection('messages')}
+        {this.renderCollection('cues')}
+        {this.renderCollection('achievements')}
+        {this.renderCollection('times')}
+        {this.renderCollection('checkpoints')}
+      </div>
+    );
+  }
+
+  renderNav() {
+    const script = this.props.script;
+    const sceneLinks = _.map(script.content.scenes, scene => (
+      <Link
+        key={scene.name}
+        className="dropdown-item"
+        to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/scene/${scene.name}`}>
+        {scene.title}
+      </Link>
+    ));
+
+    const sections = [
+      ['roles', 'Roles', ['roles', 'appearances', 'relays']],
+      ['locations', 'Locations', ['waypoints', 'geofences', 'routes']],
+      ['variants', 'Variants', ['departures', 'variants']],
+      ['media', 'Media', ['layouts', 'content_pages', 'audio']]
+    ];
+
+    const sectionLinks = sections.map(section => (
+      <li key={section[0]} className="nav-item">
+        <Link
+          className="nav-link"
+          activeClassName="active"
+          to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/section/${section[0]}`}>
+          {section[1]}
+        </Link>
+      </li>
+    ));
+
+    return (
+      <ul className="nav nav-tabs">
+        <li className="nav-item">
+          <Link
+            className="nav-link"
+            activeClassName="active"
+            to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}`}>
+            All
+          </Link>
+        </li>
+        {sectionLinks}
+        <li className="nav-item dropdown">
+          <Link
+            className="nav-link dropdown-toggle"
+            activeClassName="active"
+            data-toggle="dropdown"
+            to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/scene`}>
+            Scenes
+          </Link>
+          <div className="dropdown-menu">
+            {sceneLinks}
+          </div>
+        </li>
+      </ul>
+    );
+  }
+
+  renderOpts() {
+    return (
+      <div className="float-right">
+        Revision {this.props.script.revision}
       </div>
     );
   }
@@ -141,24 +190,15 @@ export default class Script extends Component {
     if (this.props.script.isNull) {
       return <div className="container-fluid">Script not found.</div>;
     }
-    const script = this.props.script;
-    // Get current scene from either the resource (if we're looking at one)
-    // or the scene name (if we're just browsing the collection from a link).
     return (
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-12">
-            Viewing Revision {script.revision}
-          </div>
-        </div>
-        <hr />
-        <div className="row">
-          <div className="col-sm-2">
+        {this.renderOpts()}
+        {this.renderNav()}
+        <div className="row row-eq-height script-editor-container">
+          <div className="script-editor-col col-2">
             {this.renderCollections()}
           </div>
-          <div className="col-sm-10">
-            {this.props.children}
-          </div>
+          {this.props.children}
         </div>
       </div>
     );

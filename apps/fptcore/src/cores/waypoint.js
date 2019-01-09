@@ -26,34 +26,11 @@ WaypointCore.optionsForWaypoint = function(scriptContent, waypointName) {
 };
 
 /**
- * Look up the directions for a given route and options from context.
- */
-WaypointCore.directionsForRoute = function(scriptContent, routeName,
-  waypointOptions) {
-  var route = _.find(scriptContent.routes || [], { name: routeName });
-  if (!route) {
-    return null;
-  }
-  var fromOption = WaypointCore.optionForWaypoint(scriptContent,
-    route.from, waypointOptions);
-  var toOption = WaypointCore.optionForWaypoint(scriptContent,
-    route.to, waypointOptions);
-  return _.find(scriptContent.directions || [], {
-    route: routeName,
-    from_option: fromOption.name,
-    to_option: toOption.name
-  });
-};
-
-/**
  * Look up a waypoint name and get the chosen option.
  */
 WaypointCore.optionForWaypoint = function(scriptContent, waypointName,
   waypointOptions) {
   var waypoint = _.find(scriptContent.waypoints, { name: waypointName });
-  if (!waypoint.options) {
-    return waypoint;
-  }
   var waypointOptionName = (waypointOptions || {})[waypointName];
   var waypointOption = _.find(waypoint.options, { name: waypointOptionName });
   return waypointOption || waypoint.options[0];

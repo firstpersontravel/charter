@@ -142,3 +142,18 @@ export function lookupGroup(state, ownProps) {
     include: groupIncludesWithTrips
   });
 }
+
+export function lookupDirections(state, ownProps) {
+  return instancesFromDatastore(state, {
+    col: 'assets',
+    filter: {
+      type: 'directions',
+      org: { name: ownProps.params.orgName },
+      experience: { name: ownProps.params.experienceName }
+    },
+    include: {
+      org: instanceIncluder('orgs', 'id', 'orgId'),
+      experience: instanceIncluder('experiences', 'id', 'experienceId')
+    }
+  });
+}

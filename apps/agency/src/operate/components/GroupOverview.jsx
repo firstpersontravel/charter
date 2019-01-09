@@ -123,6 +123,7 @@ export default class GroupOverview extends Component {
           <div className="col-md-7">
             <GroupMap
               group={this.props.group}
+              directions={this.props.directions}
               trips={this.props.group.trips} />
           </div>
           <div className="col-md-5">
@@ -135,5 +136,6 @@ export default class GroupOverview extends Component {
 }
 
 GroupOverview.propTypes = {
-  group: PropTypes.object.isRequired
+  group: PropTypes.object.isRequired,
+  directions: PropTypes.array.isRequired
 };

@@ -83,10 +83,22 @@ export default Ember.Component.extend(WindowHeightMixin, {
   directions: function() {
     if (!this.get('params.route')) { return null; }
     var trip = this.get('trip');
+    var scriptContent = trip.get('script.content');
     var waypointOptions = trip.get('waypointOptions');
     var routeName = this.get('params.route');
-    return fptCore.WaypointCore.directionsForRoute(
-      this.get('trip.script.content'), routeName, waypointOptions);
+    var route = _.find(scriptContent.routes || [], { name: routeName });
+    if (!route) {
+      return null;
+    }
+    var fromOption = fptCore.WaypointCore.optionForWaypoint(scriptContent,
+      route.from, waypointOptions);
+    var toOption = fptCore.WaypointCore.optionForWaypoint(scriptContent,
+      route.to, waypointOptions);
+    return (scriptContent.directions || []).find(direction => (
+      direction.route === routeName &&
+      direction.from_option === fromOption.name &&
+      direction.to_option === toOption.name
+    ));,
   }.property('params'),
 
   toGeofence: function() {

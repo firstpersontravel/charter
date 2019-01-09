@@ -166,13 +166,12 @@ export default class GroupMap extends Component {
   }
 
   getRoutePolylines() {
-    const script = this.props.trips[0].script;
-    const directions = script.content.directions || [];
+    const directions = this.props.directions || [];
     const polylines = directions.map((directionsItem) => {
-      const latlngs = PolylineEncoded.decode(directionsItem.polyline);
+      const latlngs = PolylineEncoded.decode(directionsItem.data.polyline);
       return (
         <Polyline
-          key={`${directionsItem.name}-${directionsItem.polyline}`}
+          key={`${directionsItem.name}-${directionsItem.data.polyline}`}
           positions={latlngs}
           weight={4} />
       );
@@ -224,10 +223,26 @@ export default class GroupMap extends Component {
         if (!page.route) {
           return null;
         }
-        const directions = WaypointCore.directionsForRoute(
-          script.content, page.route,
-          trip.waypointOptions);
-        const coords = PolylineEncoded.decode(directions.polyline);
+
+        const route = _.find(script.content.routes, { name: page.route });
+        if (!route) {
+          return null;
+        }
+        const fromOption = WaypointCore.optionForWaypoint(script.content,
+          route.from, trip.waypointOptions);
+        const toOption = WaypointCore.optionForWaypoint(script.content,
+          route.to, trip.waypointOptions);
+        const directions = _.find(this.props.directions, {
+          data: {
+            route: page.route,
+            from_option: fromOption.name,
+            to_option: toOption.name
+          }
+        });
+        if (!directions) {
+          return null;
+        }
+        const coords = PolylineEncoded.decode(directions.data.polyline);
         const destination = coords[coords.length - 1];
         const user = player.user;
         const userCoords = user &&
@@ -391,10 +406,12 @@ GroupMap.propTypes = {
   center: ReactLeafletPropTypes.latlng,
   zoom: PropTypes.number,
   group: PropTypes.object.isRequired,
+  directions: PropTypes.array,
   trips: PropTypes.array.isRequired
 };
 
 GroupMap.defaultProps = {
   center: null,
-  zoom: null
+  zoom: null,
+  directions: []
 };

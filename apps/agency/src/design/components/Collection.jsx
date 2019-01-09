@@ -3,8 +3,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { TextUtil } from 'fptcore';
-
 import { getItems, doesCollectionHaveScene } from './utils';
 
 function renderItem(script, collectionName, item, i) {
@@ -50,19 +48,14 @@ export default function Collection({ script, children, params, location }) {
     renderItem(script, collectionName, item, i)
   ));
 
-  return (
-    <div>
-      <div className="row">
-        <div className="col-sm-4">
-          <h3>{TextUtil.titleForKey(collectionName)}</h3>
-          {renderedItems}
-        </div>
-        <div className="col-sm-8">
-          {children}
-        </div>
-      </div>
+  return [
+    <div key="col2" className="script-editor-col col-2">
+      {renderedItems}
+    </div>,
+    <div key="col3" className="script-editor-col col-8">
+      {children}
     </div>
-  );
+  ];
 }
 
 Collection.propTypes = {

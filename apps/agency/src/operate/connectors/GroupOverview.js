@@ -1,10 +1,11 @@
 import { connect } from 'react-redux';
 
-import { lookupGroup } from './utils';
+import { lookupDirections, lookupGroup } from './utils';
 import GroupOverview from '../components/GroupOverview';
 
 const mapStateToProps = (state, ownProps) => ({
-  group: lookupGroup(state, ownProps)
+  group: lookupGroup(state, ownProps),
+  directions: lookupDirections(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({});

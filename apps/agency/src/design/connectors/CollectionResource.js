@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import ResourceIndex from '../components/ResourceIndex';
+import CollectionResource from '../components/CollectionResource';
 import { lookupScript } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -9,4 +9,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResourceIndex);
+export default connect(mapStateToProps, mapDispatchToProps)(CollectionResource);

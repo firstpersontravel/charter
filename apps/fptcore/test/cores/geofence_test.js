@@ -11,8 +11,8 @@ describe('GeofenceCore', () => {
         { name: 'dinner', center: 'dinner', distance: 25 }
       ],
       waypoints: [
-        { name: 'cottage', coords: [37.758273, -122.411681] },
-        { name: 'atlas', coords: [37.759010, -122.411497] },
+        { name: 'cottage', options: [{ coords: [37.758273, -122.411681] }] },
+        { name: 'atlas', options: [{ coords: [37.759010, -122.411497] }] },
         {
           name: 'dinner',
           options: [

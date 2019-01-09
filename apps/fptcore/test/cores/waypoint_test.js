@@ -13,7 +13,8 @@ describe('WaypointCore', () => {
 
   const scriptContent = {
     waypoints: [{
-      name: 'waypoint1'
+      name: 'waypoint1',
+      options: [{ name: 'waypoint1' }]
     }, {
       name: 'waypoint_with_options',
       options: [{
@@ -52,35 +53,7 @@ describe('WaypointCore', () => {
     });
   });
 
-  describe('#directionsForRoute', () => {
-
-    it('fetches directions even if no options selected', () => {
-      const result1 = WaypointCore.directionsForRoute(scriptContent,
-        'route', {});
-      assert.deepStrictEqual(result1, scriptContent.directions[0]);
-    });
-
-    it('fetches directions', () => {
-      // Fetches with first selected
-      const result1 = WaypointCore.directionsForRoute(scriptContent, 'route', {
-        waypoint_with_options: 'waypoint2'
-      });
-      assert.deepStrictEqual(result1, scriptContent.directions[0]);
-      // Fetches with second
-      const result2 = WaypointCore.directionsForRoute(scriptContent, 'route', {
-        waypoint_with_options: 'waypoint3'
-      });
-      assert.deepStrictEqual(result2, scriptContent.directions[1]);
-    });
-  });
-
   describe('#optionForWaypoint', () => {
-    it('returns waypoint when no options', () => {
-      const result = WaypointCore.optionForWaypoint(
-        scriptContent, 'waypoint1', {});
-      assert.deepStrictEqual(result, { name: 'waypoint1' });
-    });
-
     it('looks up waypoint option', () => {
       const result = WaypointCore.optionForWaypoint(
         scriptContent, 'waypoint_with_options', {

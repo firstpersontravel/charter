@@ -39,7 +39,7 @@ export default class Group extends Component {
     // no need to load on mount because the app on load refreshes live
     // data for all active groups
     const tripIds = _.map(this.props.group.trips, 'id');
-    this.loadData(this.props.org, tripIds);
+    this.loadData(this.props.org, this.props.group, tripIds);
     this.refreshInterval = setInterval(this.autoRefresh, REFRESH_FREQUENCY);
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
   }
@@ -48,7 +48,7 @@ export default class Group extends Component {
     const curTripIds = _.map(this.props.group.trips, 'id');
     const nextTripIds = _.map(nextProps.group.trips, 'id');
     if (!_.isEqual(curTripIds.sort(), nextTripIds.sort())) {
-      this.loadData(nextProps.org, nextTripIds);
+      this.loadData(nextProps.org, nextProps.group, nextTripIds);
     }
     this.checkNextUnappliedAction(nextProps.nextUnappliedAction);
   }
@@ -113,7 +113,7 @@ export default class Group extends Component {
     this.handleRefresh();
   }
 
-  loadData(org, tripIds) {
+  loadData(org, group, tripIds) {
     if (!tripIds || !tripIds.length) {
       // If we have no trip ids, it's probably because this group was
       // archived, so the trips are not loaded by default. We still want to
@@ -127,6 +127,11 @@ export default class Group extends Component {
     }
     this.updateFayeSubscriptions(tripIds);
     this.props.refreshLiveData(org.id, tripIds);
+    this.props.listCollection('assets', {
+      orgId: org.id,
+      experienceId: group.experienceId,
+      type: 'directions'
+    });
   }
 
   updateFayeSubscriptions(tripIds) {
