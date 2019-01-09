@@ -6,7 +6,7 @@ describe('#cue_signaled', () => {
   it('fires on matching cue', () => {
     const event = { type: 'cue_signaled', cue: 'abc' };
 
-    const res = cueEvents.cue_signaled.matchEvent('abc', event, {});
+    const res = cueEvents.cue_signaled.matchEvent({ cue: 'abc' }, event, {});
 
     assert.strictEqual(res, true);
   });
@@ -14,7 +14,7 @@ describe('#cue_signaled', () => {
   it('does not fire on unmatched cue', () => {
     const event = { type: 'cue_signaled', cue_signaled: 'def' };
 
-    const res = cueEvents.cue_signaled.matchEvent('abc', event, {});
+    const res = cueEvents.cue_signaled.matchEvent({ cue: 'abc' }, event, {});
 
     assert.strictEqual(res, false);
   });

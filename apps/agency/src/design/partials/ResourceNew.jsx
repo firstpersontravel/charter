@@ -83,6 +83,10 @@ const renderers = {
     const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
     const commonClass = spec.common;
     const varietyClass = spec.classes[variety];
+    if (!varietyClass) {
+      console.log(spec);
+      throw new Error('bad variety: ' + variety);
+    }
     const mergedClass = _.merge({}, commonClass, varietyClass);
     return renderers.subresource(script, { class: mergedClass }, value);
   }

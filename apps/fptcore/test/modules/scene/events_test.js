@@ -7,7 +7,8 @@ describe('#scene_started', () => {
     const event = { type: 'scene_started', scene: 'abc' };
     const actionContext = {};
 
-    const res = scene_started.matchEvent('abc', event, actionContext);
+    const res = scene_started.matchEvent({ scene: 'abc' }, event,
+      actionContext);
 
     assert.strictEqual(res, true);
   });
@@ -16,7 +17,8 @@ describe('#scene_started', () => {
     const event = { type: 'scene_started', scene: 'def' };
     const actionContext = {};
 
-    const res = scene_started.matchEvent('abc', event, actionContext);
+    const res = scene_started.matchEvent({ scene: 'abc' }, event,
+      actionContext);
 
     assert.strictEqual(res, false);
   });

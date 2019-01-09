@@ -68,16 +68,13 @@ export default class Resource extends Component {
     });
   }
 
-  doesEventMatchResource(event) {
-    const eventType = Object.keys(event)[0];
-    const eventParams = event[eventType];
-    const eventParamsObj = _.isObject(eventParams) ? eventParams :
-      { self: eventParams };
-    const eventParamsSpec = EventsRegistry[eventType].specParams;
-    return _.some(eventParamsObj, (paramValue, paramName) => {
+  doesEventSpecMatchResource(event) {
+    const eventParamsSpec = EventsRegistry[event.type].specParams;
+    return _.some(event, (paramValue, paramName) => {
       // Check if action param matches this resource
       const paramSpec = eventParamsSpec[paramName];
-      return this.doesParamMatchResource(paramSpec, paramValue);
+      return paramName !== 'type' &&
+        this.doesParamMatchResource(paramSpec, paramValue);
     });
   }
 
@@ -158,7 +155,7 @@ export default class Resource extends Component {
     const referringEvents = _(script.content.triggers)
       .map(trigger => (
         _(trigger.events)
-          .filter(event => this.doesEventMatchResource(event))
+          .filter(event => this.doesEventSpecMatchResource(event))
           .map(event => ({ event: event, trigger: trigger }))
           .value()
       ))

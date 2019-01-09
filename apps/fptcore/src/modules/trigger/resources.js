@@ -75,18 +75,14 @@ Object.assign(actionListParam, { type: 'list', items: actionOrClauseParam });
 
 var eventsClasses = _(EventsRegistry)
   .mapValues(function(eventClass, eventType) {
-    return {
-      properties: _.fromPairs([[eventType, {
-        type: 'object',
-        properties: eventClass.specParams
-      }]])
-    };
+    return { properties: eventClass.specParams };
   })
   .value();
 
-var event = {
+var eventResource = {
   type: 'variegated',
-  key: function(obj) { return Object.keys(obj)[0]; },
+  key: 'type',
+  common: { properties: { type: { type: 'string', required: true } } },
   classes: eventsClasses
 };
 
@@ -102,9 +98,7 @@ function validateActionWithTrigger(action, path, trigger) {
   }
   // Check against required event types if present.
   if (actionClass.requiredEventTypes) {
-    var resourceEventTypes = _.uniq(_.map(trigger.events, function(event) {
-      return Object.keys(event)[0];
-    }));
+    var resourceEventTypes = _.uniq(_.map(trigger.events, 'type'));
     resourceEventTypes.forEach(function(resourceEventType) {
       if (!_.includes(actionClass.requiredEventTypes, resourceEventType)) {
         warnings.push('Action "' + path + '" ("' + action + '") is triggered by event "' + resourceEventType +
@@ -120,7 +114,7 @@ var trigger = {
   properties: {
     name: { type: 'name', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    events: { type: 'list', items: event, required: true },
+    events: { type: 'list', items: eventResource, required: true },
     repeatable: { type: 'boolean', default: true },
     if: { type: 'ifClause' },
     actions: Object.assign({ required: true }, actionListParam)

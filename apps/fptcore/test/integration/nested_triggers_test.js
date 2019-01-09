@@ -27,36 +27,38 @@ const actionContext = {
     ],
     triggers: [{
       name: 'TRIGGER-PICK-APPLES',
-      events: [{ cue_signaled: 'CUE-PICK-APPLES' }],
+      events: [{ type: 'cue_signaled', cue: 'CUE-PICK-APPLES' }],
       actions: ['increment_value apples 5']
     }, {
       name: 'TRIGGER-UNLOAD-APPLES',
       events: [{
-        geofence_entered: { role: 'Farmer', geofence: 'GEOFENCE-FARM' }
+        type: 'geofence_entered',
+        role: 'Farmer',
+        geofence: 'GEOFENCE-FARM'
       }],
       actions: ['set_value apples 0']
     }, {
       name: 'TRIGGER-SUNRISE',
-      events: [{ cue_signaled: 'CUE-SUNRISE' }],
+      events: [{ type: 'cue_signaled', cue: 'CUE-SUNRISE' }],
       actions: ['in 120m, send_message MESSAGE-CROW']
     }, {
       name: 'TRIGGER-GREET-1',
-      events: [{ cue_signaled: 'CUE-GREET' }],
+      events: [{ type: 'cue_signaled', cue: 'CUE-GREET' }],
       actions: ['signal_cue CUE-GREET-REPLY']
     }, {
       name: 'TRIGGER-GREET-2',
-      events: [{ cue_signaled: 'CUE-GREET-REPLY' }],
+      events: [{ type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }],
       actions: ['custom_message Cowboy Farmer text howdy']
     }, {
       name: 'TRIGGER-NAV-1',
-      events: [{ cue_signaled: 'CUE-NAV-1' }],
+      events: [{ type: 'cue_signaled', cue: 'CUE-NAV-1' }],
       actions: [
         'set_value is_navigating true',
         'signal_cue CUE-NAV-2'
       ]
     }, {
       name: 'TRIGGER-NAV-2',
-      events: [{ cue_signaled: 'CUE-NAV-2' }],
+      events: [{ type: 'cue_signaled', cue: 'CUE-NAV-2' }],
       if: 'is_navigating',
       actions: ['custom_message Cowboy Farmer text geewhiz']
     }],
@@ -291,12 +293,12 @@ describe('Integration - Nested Triggers', () => {
         }],
         triggers: [{
           name: 'trigger1',
-          events: [{ cue_signaled: 'end-of-1' }],
+          events: [{ type: 'cue_signaled', cue: 'end-of-1' }],
           scene: 'SCENE-1',
           actions: ['start_scene SCENE-2']
         }, {
           name: 'trigger2',
-          events: [{ scene_started: 'SCENE-2' }],
+          events: [{ type: 'scene_started', scene: 'SCENE-2' }],
           scene: 'SCENE-2',
           actions: ['set_value val true']
         }]

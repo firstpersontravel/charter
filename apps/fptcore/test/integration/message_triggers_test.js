@@ -19,11 +19,11 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ message_sent: { from: 'A', to: 'B' } }],
+          events: [{ type: 'message_sent', from: 'A', to: 'B' }],
           actions: ['set_value trigger true']
         }, {
           name: 'trigger2',
-          events: [{ message_sent: { from: 'A', to: 'B' } }],
+          events: [{ type: 'message_sent', from: 'A', to: 'B' }],
           if: ['trigger'],
           actions: ['set_value SHOULD_NOT_FIRE true']
         }]
@@ -43,7 +43,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ message_sent: { type: 'text' } }],
+          events: [{ type: 'message_sent', medium: 'text' }],
           if: 'contains event.message.content "1234"',
           actions: ['set_value trigger true']
         }]
@@ -56,7 +56,7 @@ describe('Integration - Message Triggers', () => {
       message: {
         from: 'A',
         to: 'B',
-        type: 'text',
+        medium: 'text',
         content: 'the code is 1234!'
       }
     };
@@ -70,7 +70,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ message_sent: { type: 'text' } }],
+          events: [{ type: 'message_sent', medium: 'text' }],
           if: 'contains event.message.content "1234"',
           actions: ['set_value trigger true']
         }]
@@ -83,7 +83,7 @@ describe('Integration - Message Triggers', () => {
       message: {
         from: 'A',
         to: 'B',
-        type: 'text',
+        medium: 'text',
         content: 'the code is 3456!'
       }
     };

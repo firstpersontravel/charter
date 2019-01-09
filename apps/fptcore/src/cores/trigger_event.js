@@ -9,14 +9,13 @@ var TriggerEventCore = {};
  * Test if a single trigger event spec is set off by an event.
  */
 TriggerEventCore.doesEventFireTriggerEvent = function(
-  triggerEvent, event, actionContext
+  spec, event, actionContext
 ) {
   // event type should equal trigger event clause
-  if (!triggerEvent[event.type]) {
+  if (spec.type !== event.type) {
     return false;
   }
   // Get matching function and calculate match.
-  var spec = triggerEvent[event.type];
   return EventsRegistry[event.type].matchEvent(spec, event, actionContext);
 };
 
@@ -24,9 +23,7 @@ TriggerEventCore.doesEventFireTriggerEvent = function(
  * Return the first trigger event
  */
 TriggerEventCore.triggerEventForEventType = function(trigger, eventType) {
-  return _.find(trigger.events, function(triggerEvent) {
-    return !!triggerEvent[eventType];
-  }) || null;
+  return _.find(trigger.events, { type: eventType }) || null;
 };
 
 /**

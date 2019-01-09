@@ -6,7 +6,7 @@ describe('#validateResource', () => {
   it('warns on actions that lack a required triggering event', () => {
     const script = {};
     const trigger = {
-      events: [{ message_sent: { from: 'Role' }}],
+      events: [{ type: 'message_sent', from: 'Role' }],
       actions: ['play_clip CLIP-NAME']
     };
 

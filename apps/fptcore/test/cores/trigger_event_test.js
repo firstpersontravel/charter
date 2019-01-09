@@ -174,7 +174,7 @@ describe('TriggerEventCore', () => {
       const stub = sandbox
         .stub(EventsRegistry.cue_signaled, 'matchEvent')
         .returns(true);
-      const triggerEvent = { cue_signaled: {} };
+      const triggerEvent = { type: 'cue_signaled' };
       const event = { type: 'cue_signaled' };
       const res = TriggerEventCore.doesEventFireTriggerEvent(triggerEvent, 
         event, null);
@@ -190,7 +190,7 @@ describe('TriggerEventCore', () => {
   describe('#triggerEventForEventType', () => {
     it('returns matching event', () => {
       const trigger = {
-        events: [{ thing_happened: { params: true } }]
+        events: [{ type: 'thing_happened', params: true }]
       };
       const eventType = 'thing_happened';
       const res = TriggerEventCore.triggerEventForEventType(trigger,
@@ -200,7 +200,7 @@ describe('TriggerEventCore', () => {
 
     it('skips non-matching event', () => {
       const trigger = {
-        events: [{ thing_happened: { params: true } }]
+        events: [{ type: 'thing_happened', params: true }]
       };
       const eventType = 'other_thing_happened';
       const res = TriggerEventCore.triggerEventForEventType(trigger,
@@ -211,9 +211,9 @@ describe('TriggerEventCore', () => {
     it('goes through multiple events to return matching one', () => {
       const trigger = {
         events: [
-          { this_happened: { params: true } },
-          { that_happened: { params: true } },
-          { another_thing_happened: { params: true } }
+          { type: 'this_happened', params: true },
+          { type: 'that_happened', params: true },
+          { type: 'another_thing_happened', params: true }
         ]
       };
       const eventType = 'that_happened';
@@ -225,7 +225,7 @@ describe('TriggerEventCore', () => {
 
   describe('#doesEventFireTrigger', () => {
     it('detects matching case', () => {
-      const trigger = { events: [{ cue_signaled: {} }] };
+      const trigger = { events: [{ type: 'cue_signaled' }] };
       const event = { type: 'cue_signaled' };
       const stub = sandbox
         .stub(TriggerEventCore, 'triggerEventForEventType')
@@ -242,7 +242,7 @@ describe('TriggerEventCore', () => {
     });
 
     it('detects coarse non-matching case', () => {
-      const trigger = { events: [{ cue_signaled: {} }] };
+      const trigger = { events: [{ type: 'cue_signaled' }] };
       const event = { type: 'cue_signaled' };
       const stub = sandbox
         .stub(TriggerEventCore, 'triggerEventForEventType')
@@ -259,7 +259,7 @@ describe('TriggerEventCore', () => {
     });
 
     it('detects fine non-matching case', () => {
-      const trigger = { events: [{ cue_signaled: {} }] };
+      const trigger = { events: [{ type: 'cue_signaled' }] };
       const event = { type: 'cue_signaled' };
       const stub = sandbox
         .stub(TriggerEventCore, 'triggerEventForEventType')
