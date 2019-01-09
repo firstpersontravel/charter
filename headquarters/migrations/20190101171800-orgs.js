@@ -19,6 +19,9 @@ module.exports = {
         allowNull: false,
         defaultValue: ''
       }
+    }, {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci'
     });
     await queryInterface.createTable('OrgRoles', {
       id: {
@@ -40,6 +43,9 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       }
+    }, {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci'
     });
     await queryInterface.sequelize.query('insert into Orgs (name, title) values ("firstpersontravel", "First Person Travel");');
     await queryInterface.sequelize.query('insert into OrgRoles (org_id, user_id, is_admin) values (1, 1, 1);');

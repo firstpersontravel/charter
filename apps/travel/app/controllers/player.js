@@ -17,10 +17,12 @@ export default Ember.Controller.extend({
   }.observes('location.lastFix').on('init'),
 
   currentPageDidChange: function() {
+    console.log('currentPageDidChange', this.get('model.currentPageName'));
     if (this.get('application.noack')) {
       return;
     }
     Ember.run.next(() => {
+      console.log('acknowledging page', this.get('model.currentPageName'));
       this.send('acknowledgePage', this.get('model.currentPageName'));
     });
   }.observes('model.currentPageName'),

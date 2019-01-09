@@ -5,6 +5,7 @@ module.exports = {
     await queryInterface.addColumn('Scripts', 'revision', {
       type: 'INTEGER',
       allowNull: false,
+      defaultValue: 1,
       after: 'experience_id'
     });
     await queryInterface.renameColumn('Scripts', 'version', 'content_version');

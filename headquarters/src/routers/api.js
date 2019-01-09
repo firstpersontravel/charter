@@ -43,6 +43,7 @@ function createModelRouter(model, opts={}) {
 // REST API routers for Organization-filtered models
 const orgOpts = { requireFilters: ['orgId'] };
 apiRouter.use('/actions', createModelRouter(models.Action, orgOpts));
+apiRouter.use('/assets', createModelRouter(models.Asset, orgOpts));
 apiRouter.use('/experiences', createModelRouter(models.Experience, orgOpts));
 apiRouter.use('/groups', createModelRouter(models.Group, orgOpts));
 apiRouter.use('/messages', createModelRouter(models.Message, orgOpts));

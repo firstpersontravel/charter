@@ -13,7 +13,7 @@ const config = {
   dialect: 'mysql',
   dialectOptions: {
     charset: 'utf8mb4',
-    collate: 'utf8mb4_general_ci'
+    collate: 'utf8mb4_unicode_ci'
   },
   operatorsAliases: false,
   logging: false

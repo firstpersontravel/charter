@@ -125,6 +125,7 @@ export default class Script extends Component {
           {this.renderCollection('cues')}
           {this.renderCollection('achievements')}
           {this.renderCollection('times')}
+          {this.renderCollection('checkpoints')}
         </div>
       </div>
     );

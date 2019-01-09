@@ -33,6 +33,9 @@ module.exports = {
         type: 'TINYINT(1)',
         defaultValue: 0
       }
+    }, {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci'
     });
 
     // Add experience id

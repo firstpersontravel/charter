@@ -18,7 +18,7 @@ const designerCanUpdateScripts = {
     if (!subject.isDesigner) {
       return;
     }
-    const allowedModelNames = ['Experience', 'Script'];
+    const allowedModelNames = ['Experience', 'Script', 'Asset'];
     const allowedActions = ['create', 'update'];
     if (_.includes(allowedModelNames, resource.modelName)) {
       if (_.includes(allowedActions, action)) {

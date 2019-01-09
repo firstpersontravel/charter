@@ -158,37 +158,37 @@ export default Ember.Controller.extend(RealtimeMixin, {
     }
   }.observes('sync.online'),
 
+  prepareActionContext: function(applyAt) {
+    var trip = this.get('model');
+    return {
+      scriptContent: trip.get('script.content'),
+      evalContext: trip.get('evalContext'),
+      timezone: trip.experience.timezone,
+      evaluateAt: applyAt
+    };
+  },
+
   applyAction: function(name, params, applyAt) {
     console.log('applying action', name, params);
-    var trip = this.get('model');
     var action = { name: name, params: params };
-    var script = trip.get('script').toJSON();
-    script.content = JSON.parse(script.content);
-    var context = trip.get('evalContext');
-    var result = fptCore.ActionCore.applyAction(script, context, action, 
-      applyAt);
+    var actionContext = this.prepareActionContext(applyAt);
+    var result = fptCore.ActionCore.applyAction(action, actionContext);
     this.applyResult(result);
   },
 
   applyEvent: function(event, applyAt) {
     console.log('applying event', event);
-    var trip = this.get('model');
-    var script = trip.get('script').toJSON();
-    script.content = JSON.parse(script.content);
-    var context = trip.get('evalContext');
-    var result = fptCore.ActionCore.applyEvent(script, context, event, 
-      applyAt);
+    var actionContext = this.prepareActionContext(applyAt);
+    var result = fptCore.ActionCore.applyEvent(event, actionContext);
     this.applyResult(result);
   },
 
   applyTrigger: function(triggerName, applyAt) {
     console.log('applying trigger', triggerName);
-    var trip = this.get('model');
-    var script = trip.get('script').toJSON();
-    script.content = JSON.parse(script.content);
-    var trigger = script.content.findBy('name', triggerName);
-    var context = trip.get('evalContext');
-    var result = fptCore.ActionCore.applyTrigger(script, context, context, trigger, null, applyAt);
+    var trigger = this.get('model.script.content').findBy('name', triggerName);
+    var actionContext = this.prepareActionContext(applyAt);
+    var result = fptCore.ActionCore.applyTrigger(trigger, null, actionContext,
+      actionContext);
     this.applyResult(result);
   },
 

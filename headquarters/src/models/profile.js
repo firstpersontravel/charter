@@ -29,7 +29,7 @@ const Profile = database.define('Profile', snakeCaseColumns({
 }));
 
 Profile.belongsTo(Org, belongsToField('org'));
+Profile.belongsTo(Experience, belongsToField('experience'));
 Profile.belongsTo(User, belongsToField('user'));
-Profile.belongsTo(Experience, mutableModifier(belongsToField('experience')));
 
 module.exports = Profile;

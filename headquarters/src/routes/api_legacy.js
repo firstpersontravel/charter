@@ -62,8 +62,9 @@ async function getTripRoute(req, res) {
     res.status(404).send('Not Found');
     return;
   }
-  const [players, messages, actions, profiles, users] = (
+  const [assets, players, messages, actions, profiles, users] = (
     await Promise.all([
+      models.Asset.findAll({ where: { experienceId: trip.experienceId } }),
       models.Player.findAll({ where: { tripId: req.params.id } }),
       models.Message.findAll({
         where: { tripId: req.params.id, isArchived: false }
@@ -86,6 +87,13 @@ async function getTripRoute(req, res) {
       models.User.findAll({ where: { isArchived: false } })
     ])
   );
+
+  // Hack for now -- sub in the directions assets data into the script before
+  // sending over.
+  trip.script.content.directions = _(assets)
+    .filter({ type: 'directions' })
+    .map('data')
+    .value();
 
   const objs = players
     .concat(messages)

@@ -1,5 +1,6 @@
 module.exports = {
   Action: require('./action'),
+  Asset: require('./asset'),
   Experience: require('./experience'),
   Group: require('./group'),
   Message: require('./message'),
