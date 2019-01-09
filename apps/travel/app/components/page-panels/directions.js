@@ -98,7 +98,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
       direction.route === routeName &&
       direction.from_option === fromOption.name &&
       direction.to_option === toOption.name
-    ));,
+    ));
   }.property('params'),
 
   toGeofence: function() {
