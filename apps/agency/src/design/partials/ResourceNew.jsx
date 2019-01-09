@@ -57,35 +57,34 @@ const renderers = {
     }
     return (
       <div>
-        {Object.keys(spec.properties).map(key => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={key}>
-            <strong>{key}:</strong>&nbsp;
-            {renderFieldValue(script, spec.properties[key], value[key])}
-          </div>
-        ))}
+        {Object.keys(spec.properties).map((key) => {
+          if (_.isUndefined(value[key]) && _.isUndefined(spec.properties[key].default)) {
+            return null;
+          }
+          return (
+            // eslint-disable-next-line react/no-array-index-key
+            <div key={key}>
+              <strong>{key}:</strong>&nbsp;
+              {renderFieldValue(script, spec.properties[key], value[key])}
+            </div>
+          );
+        })}
       </div>
     );
   },
   subresource: (script, spec, value) => {
-    if (Object.keys(value).length === 0) {
-      return empty;
-    }
     const properties = Object.keys(spec.class.properties);
     if (properties.length === 1 && properties[0] === 'self') {
       return renderFieldValue(script, spec.class.properties.self, value);
     }
-    return (
-      <div>
-        {Object.keys(spec.class.properties).map(key => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={key}>
-            <strong>{key}:</strong>&nbsp;
-            {renderFieldValue(script, spec.class.properties[key], value[key])}
-          </div>
-        ))}
-      </div>
-    );
+    return renderers.object(script, spec.class, value);
+  },
+  variegated: (script, spec, value) => {
+    const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
+    const commonClass = spec.common;
+    const varietyClass = spec.classes[variety];
+    const mergedClass = _.merge({}, commonClass, varietyClass);
+    return renderers.subresource(script, { class: mergedClass }, value);
   }
 };
 
@@ -130,9 +129,12 @@ export default class ResourceNew extends Component {
   renderField(fieldName) {
     const script = this.props.script;
     const resourceClass = this.getResourceClass();
-    const fieldSpec = resourceClass.properties[fieldName];
-    const fieldValue = this.props.resource[fieldName];
-    const fieldRendered = renderFieldValue(script, fieldSpec, fieldValue);
+    const spec = resourceClass.properties[fieldName];
+    const value = this.props.resource[fieldName];
+    if (_.isUndefined(value) && _.isUndefined(spec.default)) {
+      return null;
+    }
+    const fieldRendered = renderFieldValue(script, spec, value);
     return (
       <div key={fieldName}>
         <strong>{fieldName}</strong>:&nbsp;
