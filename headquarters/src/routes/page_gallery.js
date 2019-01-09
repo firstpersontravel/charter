@@ -18,8 +18,8 @@ const galleryRoute = async (req, res) => {
   const messages = await models.Message.findAll({
     where: {
       tripId: trip.id,
-      messageName: '',
-      messageType: 'image',
+      name: '',
+      medium: 'image',
       isArchived: false,
       isInGallery: true
     }
@@ -27,7 +27,7 @@ const galleryRoute = async (req, res) => {
 
   // Gather data items to send to template
   const galleryItems = messages.map(message => ({
-    url: message.messageContent
+    url: message.content
   }));
 
   // Split into rows

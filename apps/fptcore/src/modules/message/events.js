@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var MESSAGE_TYPE_OPTIONS = ['text', 'image', 'audio'];
+var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 var distance = require('../../utils/distance');
 
@@ -9,12 +9,16 @@ module.exports = {
     specParams: {
       from: { required: false, type: 'reference', collection: 'roles' },
       to: { required: false, type: 'reference', collection: 'roles' },
-      type: { required: false, type: 'enum', options: MESSAGE_TYPE_OPTIONS },
+      medium: {
+        required: false,
+        type: 'enum',
+        options: MESSAGE_MEDIUM_OPTIONS
+      },
       contains: { required: false, type: 'string' },
       geofence: { required: false, type: 'reference', collection: 'geofences' }
     },
     matchEvent: function(spec, event, actionContext) {
-      if (spec.type && spec.type !== event.message.type) {
+      if (spec.medium && spec.medium !== event.message.medium) {
         return false;
       }
       if (spec.from && spec.from !== event.message.from) {

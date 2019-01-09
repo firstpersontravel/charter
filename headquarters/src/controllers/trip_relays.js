@@ -118,7 +118,7 @@ class TripRelaysController {
    */
   static async _formatMessageBody(trip, message, includeMeta) {
     if (!includeMeta) {
-      return message.messageContent;
+      return message.content;
     }
     // For text messges, add some debug text if we're sending it to
     // an actor role.
@@ -130,7 +130,7 @@ class TripRelaysController {
       `[${stage}${trip.departureName}] ` +
       `${sentBy.roleName} to ${sentTo.roleName}:`
     );
-    return `${contentPrefix} ${message.messageContent}`;
+    return `${contentPrefix} ${message.content}`;
   }
 
   /**
@@ -152,7 +152,7 @@ class TripRelaysController {
     const script = await trip.getScript();
     const experience = await trip.getExperience();
 
-    if (message.messageType === 'text') {
+    if (message.medium === 'text') {
       // Otherwise send the raw content as-is.
       // Include SMS metadata if this relay is for an actor.
       const forRole = _.find(script.content.roles, { name: relay.forRoleName });
@@ -162,14 +162,14 @@ class TripRelaysController {
     }
 
     // Send media for media message types.
-    if (message.messageType === 'image' ||
-        message.messageType === 'audio' ||
-        message.messageType === 'video') {
-      const ext = message.messageContent.split('.').reverse()[0].toLowerCase();
+    if (message.medium === 'image' ||
+        message.medium === 'audio' ||
+        message.medium === 'video') {
+      const ext = message.content.split('.').reverse()[0].toLowerCase();
       const isAllowedMediaExtension = _.includes(ALLOWED_MEDIA_EXTENSIONS, ext);
       if (isAllowedMediaExtension) {
         const mediaUrl = this._formatMediaUrl(experience.name,
-          message.messageContent);
+          message.content);
         return [null, mediaUrl];
       }
     }

@@ -48,7 +48,7 @@ describe('twilioRoutes', () => {
         params: {
           from_role_name: 'Player',
           to_role_name: 'Actor',
-          message_type: 'text',
+          message_medium: 'text',
           message_content: 'Reply',
           suppress_relay_id: 3
         }

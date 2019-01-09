@@ -64,9 +64,9 @@ describe('API update', () => {
         sentById: player.id,
         sentToId: player.id,
         createdAt: moment.utc(),
-        messageName: 'hi',
-        messageType: 'text',
-        messageContent: 'hi there',
+        name: 'hi',
+        medium: 'text',
+        content: 'hi there',
         isInGallery: false,
         isArchived: false
       });
@@ -94,9 +94,9 @@ describe('API update', () => {
 
     it('forbids changes to any other field', () => {
       const forbiddenFields = [
-        'messageName',
-        'messageType',
-        'messageContent',
+        'name',
+        'medium',
+        'content',
         'sentFromLongitude',
         'sentFromAccuracy'
       ];

@@ -68,7 +68,7 @@ export default Ember.Component.extend({
       });
   }.property(
     'params', 'trip.messages.length',
-    'trip.messages.@each.messageContent'),
+    'trip.messages.@each.content'),
 
   numEarlierMessages: function() {
     var numMessages = this.get('messages.length');
@@ -80,7 +80,7 @@ export default Ember.Component.extend({
     var messages = this.get('messages');
     return messages.slice(Math.max(0, messages.get('length') - displayCount));
   }.property('params', 'messages.length', 'displayCount',
-    'messages.@each.messageContent'),
+    'messages.@each.content'),
 
   didInsertElement: function() {
     this._super();

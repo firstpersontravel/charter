@@ -22,10 +22,10 @@ describe('pageGalleryRoutes', () => {
       
       const mockMessages = [{
         createdAt: '2018-01-01T00:00:00',
-        messageContent: 'test://abc'
+        content: 'test://abc'
       }, {
         createdAt: '2018-01-01T00:30:00',
-        messageContent: 'test://def'
+        content: 'test://def'
       }];
       sandbox.stub(models.Message, 'findAll').resolves(mockMessages);
 
@@ -41,8 +41,8 @@ describe('pageGalleryRoutes', () => {
       assert.deepStrictEqual(models.Message.findAll.firstCall.args, [{
         where: {
           tripId: 1,
-          messageName: '',
-          messageType: 'image',
+          name: '',
+          medium: 'image',
           isArchived: false,
           isInGallery: true
         }

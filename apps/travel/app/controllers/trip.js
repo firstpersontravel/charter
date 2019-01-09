@@ -267,8 +267,8 @@ export default Ember.Controller.extend(RealtimeMixin, {
         delete op.fields.sentToId;
         var msg = this.store.createRecord('message', op.fields);
         uiCallbacks.notifyMessage(msg);
-        console.log('-> msg', op.fields.messageName ||
-          op.fields.messageContent);
+        console.log('-> msg', op.fields.name ||
+          op.fields.content);
         break;
     }
   },

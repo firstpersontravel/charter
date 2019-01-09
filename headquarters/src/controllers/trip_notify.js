@@ -10,13 +10,13 @@ class TripNotifyController {
     if (!config.getFayeClient()) {
       return;
     }
-    logger.info(`Sending ${message.type} to faye channel "${channel}".`);
+    logger.info(`Sending ${message.medium} to faye channel "${channel}".`);
     return await config.getFayeClient()
       .publish(channel, message)
       .then(() => {
       })
       .catch((err) => {
-        logger.error(`Failed to send ${message.type} notification to faye.`);
+        logger.error(`Failed to send ${message.medium} notification to faye.`);
         logger.error(err.message);
       });
   }

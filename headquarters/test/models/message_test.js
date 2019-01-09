@@ -11,9 +11,9 @@ describe('Message', () => {
       sentById: 2,
       sentToId: 3,
       createdAt: '2018-10-04T03:03:03Z',
-      messageName: '',
-      messageType: 'text',
-      messageContent: 'hello there'
+      name: '',
+      medium: 'text',
+      content: 'hello there'
     });
   });
 
@@ -47,25 +47,25 @@ describe('Message', () => {
   });
 
   it('requires a type', async () => {
-    message.messageType = null;
-    await assertValidation(message, { messageType: 'must be present' });
+    message.medium = null;
+    await assertValidation(message, { medium: 'must be present' });
   });
 
   it('requires a valid type', async () => {
-    message.messageType = '3d';
+    message.medium = '3d';
     await assertValidation(message, {
-      messageType: 'must be one of text, image, audio, video'
+      medium: 'must be one of text, image, audio, video'
     });
   });
 
   it('requires content', async () => {
-    message.messageContent = null;
-    await assertValidation(message, { messageContent: 'must be present' });
+    message.content = null;
+    await assertValidation(message, { content: 'must be present' });
   });
 
   it('requires non-empty content', async () => {
-    message.messageContent = '';
-    await assertValidation(message, { messageContent: 'must be present' });
+    message.content = '';
+    await assertValidation(message, { content: 'must be present' });
   });
 
   it('allows location', async () => {

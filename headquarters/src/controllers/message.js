@@ -20,7 +20,7 @@ class MessageController {
    * Send push notifications for a message.
    */
   static async _notifyMessage(message) {
-    if (!_.includes(['text', 'image'], message.messageType)) {
+    if (!_.includes(['text', 'image'], message.medium)) {
       return;
     }
     const sentBy = await message.getSentBy();
@@ -29,8 +29,8 @@ class MessageController {
     if (!sentToUser || !sentToUser.devicePushToken) {
       return;
     }
-    const pushBody = message.messageType === 'text' ?
-      message.messageContent : 'New photo';
+    const pushBody = message.medium === 'text' ?
+      message.content : 'New photo';
     const pushMsg = `${sentBy.roleName}: ${pushBody}`;
     await this._sendPushNotification(pushMsg, sentToUser.devicePushToken);
   }

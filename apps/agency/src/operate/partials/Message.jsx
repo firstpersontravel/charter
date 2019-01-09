@@ -7,22 +7,22 @@ import { Link } from 'react-router';
 import { TextUtil } from 'fptcore';
 
 function renderMessageContent(message) {
-  if (message.messageType === 'image' && message.messageName) {
-    return `[Image: ${TextUtil.titleForTypedKey(message.messageName)}]`;
+  if (message.medium === 'image' && message.name) {
+    return `[Image: ${TextUtil.titleForTypedKey(message.name)}]`;
   }
-  if (message.messageType === 'audio' && message.messageName) {
-    return `[Audio: ${TextUtil.titleForTypedKey(message.messageName)}]`;
+  if (message.medium === 'audio' && message.name) {
+    return `[Audio: ${TextUtil.titleForTypedKey(message.name)}]`;
   }
-  if (message.messageType === 'image') {
+  if (message.medium === 'image') {
     return (
       <img
-        alt={message.messageContent}
+        alt={message.content}
         className="img-fluid"
-        src={message.messageContent}
+        src={message.content}
         style={{ maxHeight: '200px' }} />
     );
   }
-  return message.messageContent;
+  return message.content;
 }
 
 function renderMessageIcon(message, sentBy, sentTo) {
@@ -37,7 +37,7 @@ function renderMessageIcon(message, sentBy, sentTo) {
   } else if (message.isReplyNeeded && !message.replyReceivedAt) {
     textClass = 'text-danger';
     icon = 'fa-exclamation-circle';
-  } else if (message.messageName) {
+  } else if (message.name) {
     icon = 'fa-clock-o';
   } else if (sentBy.role.actor) {
     icon = 'fa-user-o';
@@ -104,7 +104,7 @@ export default function Message({ message, trip, updateInstance }) {
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
   const timeShort = createdAt.tz(trip.experience.timezone).format(timeFormat);
-  const messageContent = renderMessageContent(message);
+  const content = renderMessageContent(message);
   const icon = renderMessageIcon(message, sentBy, sentTo);
   const archivedClass = message.isArchived ? 'message-archived' : '';
   return (
@@ -114,7 +114,7 @@ export default function Message({ message, trip, updateInstance }) {
         {trip.departureName}&nbsp;
         {sentBy.roleName}
       </Link>:&nbsp;
-      {messageContent}
+      {content}
       &nbsp;
       <span className="faint">{timeShort}</span>
       &nbsp;

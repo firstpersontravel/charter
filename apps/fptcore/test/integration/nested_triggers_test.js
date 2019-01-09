@@ -210,7 +210,7 @@ describe('Integration - Nested Triggers', () => {
           from_role_name: 'Cowboy',
           to_role_name: 'Farmer',
           message_content: 'howdy',
-          message_type: 'text'
+          message_medium: 'text'
         },
         _.merge({}, actionContext, {
           evalContext: {
@@ -233,8 +233,8 @@ describe('Integration - Nested Triggers', () => {
       }, {
         operation: 'createMessage',
         fields: {
-          messageType: 'text',
-          messageContent: 'howdy',
+          medium: 'text',
+          content: 'howdy',
           createdAt: now,
           sentById: 3,
           sentToId: 1,
@@ -266,8 +266,8 @@ describe('Integration - Nested Triggers', () => {
       }, {
         operation: 'createMessage',
         fields: {
-          messageType: 'text',
-          messageContent: 'geewhiz',
+          medium: 'text',
+          content: 'geewhiz',
           createdAt: now,
           sentById: 3,
           sentToId: 1,

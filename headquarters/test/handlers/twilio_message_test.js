@@ -50,7 +50,7 @@ describe('TwilioMessageHandler', () => {
           params: {
             from_role_name: 'From',
             message_content: 'incomïng mêssage',
-            message_type: 'text',
+            message_medium: 'text',
             suppress_relay_id: 2,
             to_role_name: 'To'
           }
@@ -72,7 +72,7 @@ describe('TwilioMessageHandler', () => {
           params: {
             from_role_name: 'From',
             message_content: 'http://test/image.jpg',
-            message_type: 'image',
+            message_medium: 'image',
             suppress_relay_id: 2,
             to_role_name: 'To'
           }
@@ -88,10 +88,10 @@ describe('TwilioMessageHandler', () => {
       sinon.assert.calledTwice(TripActionController.applyAction);
       assert.deepStrictEqual(
         TripActionController.applyAction.firstCall.args[1]
-          .params.message_type, 'text');
+          .params.message_medium, 'text');
       assert.deepStrictEqual(
         TripActionController.applyAction.secondCall.args[1]
-          .params.message_type, 'image');
+          .params.message_medium, 'image');
     });
   });
 });

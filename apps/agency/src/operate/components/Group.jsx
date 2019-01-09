@@ -162,7 +162,7 @@ export default class Group extends Component {
   handleFayeMessage(tripId, message) {
     console.log('Got faye message', tripId, message);
     // TODO: use this data to update just the location
-    if (message.type === 'device_state') {
+    if (message.medium === 'device_state') {
       return;
     }
     // Reload in a second

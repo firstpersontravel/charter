@@ -3,7 +3,7 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   classNameBindings: [
     ':messages-item',
-    'messageTypeClass',
+    'mediumClass',
     'messageSenderClass'
   ],
 
@@ -25,16 +25,16 @@ export default Ember.Component.extend({
   },
 
   openLightbox: function() {
-    var type = this.get('message.messageType');
-    var content = this.get('message.messageContent');
+    var type = this.get('message.medium');
+    var content = this.get('message.content');
     if (type === 'image') {
       var url = this.get('trip.script').urlForContentPath(content);
       $.featherlight(url, {closeOnClick: 'anywhere'});
     }    
   },
 
-  messageTypeClass: function() {
-    return 'messages-item-' + this.get('message.messageType');
+  mediumClass: function() {
+    return 'messages-item-' + this.get('message.medium');
   }.property('message'),
 
   messageSenderClass: function() {
@@ -48,9 +48,9 @@ export default Ember.Component.extend({
     return this.get('message.createdAt').clone().local().format('h:mma');
   }.property('message.createdAt'),
 
-  messageContent: function() {
-    var type = this.get('message.messageType');
-    var content = this.get('message.messageContent');
+  content: function() {
+    var type = this.get('message.medium');
+    var content = this.get('message.content');
     if (type === 'text') {
       return this.get('trip').humanizeText(content);
     }
@@ -62,5 +62,5 @@ export default Ember.Component.extend({
     } else {
       return "";
     }
-  }.property('message.messageType', 'message.messageContent')
+  }.property('message.medium', 'message.content')
 });

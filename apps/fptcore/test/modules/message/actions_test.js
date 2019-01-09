@@ -16,7 +16,7 @@ describe('#custom_message', () => {
 
   it('sends text message with content', () => {
     const params = {
-      message_type: 'text',
+      message_medium: 'text',
       message_content: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
@@ -30,8 +30,8 @@ describe('#custom_message', () => {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
-        messageType: 'text',
-        messageContent: 'hi',
+        medium: 'text',
+        content: 'hi',
         sentFromLatitude: null,
         sentFromLongitude: null,
         sentFromAccuracy: null,
@@ -52,7 +52,7 @@ describe('#custom_message', () => {
       }
     });
     const params = {
-      message_type: 'text',
+      message_medium: 'text',
       message_content: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
@@ -65,7 +65,7 @@ describe('#custom_message', () => {
 
   it('sends image message with location', () => {
     const params = {
-      message_type: 'image',
+      message_medium: 'image',
       message_content: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit',
@@ -82,8 +82,8 @@ describe('#custom_message', () => {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
-        messageType: 'image',
-        messageContent: 'url',
+        medium: 'image',
+        content: 'url',
         sentFromLatitude: 38.051112,
         sentFromLongitude: -122.693563,
         sentFromAccuracy: 30,
@@ -96,7 +96,7 @@ describe('#custom_message', () => {
 
   it('sends audio message', () => {
     const params = {
-      message_type: 'audio',
+      message_medium: 'audio',
       message_content: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
@@ -110,8 +110,8 @@ describe('#custom_message', () => {
         sentById: 1,
         sentToId: 2,
         createdAt: now,
-        messageType: 'audio',
-        messageContent: 'url',
+        medium: 'audio',
+        content: 'url',
         sentFromLatitude: null,
         sentFromLongitude: null,
         sentFromAccuracy: null,
@@ -124,7 +124,7 @@ describe('#custom_message', () => {
 
   it('generates an event', () => {
     const params = {
-      message_type: 'audio',
+      message_medium: 'audio',
       message_content: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit',
@@ -140,7 +140,7 @@ describe('#custom_message', () => {
       message: {
         from: 'Ally',
         to: 'Babbit',
-        type: 'audio',
+        medium: 'audio',
         content: 'url'
       },
       location: {
@@ -183,9 +183,9 @@ describe('#send_message', () => {
         sentToId: 2,
         createdAt: now,
         readAt: null,
-        messageName: 'MESSAGE-HELLO',
-        messageType: 'text',
-        messageContent: 'hello'
+        name: 'MESSAGE-HELLO',
+        medium: 'text',
+        content: 'hello'
       }
     }]);
   });
@@ -218,9 +218,9 @@ describe('#send_message', () => {
         sentToId: 2,
         createdAt: now,
         readAt: null,
-        messageName: 'MESSAGE-HELLO',
-        messageType: 'audio',
-        messageContent: 'hi.mp3'
+        name: 'MESSAGE-HELLO',
+        medium: 'audio',
+        content: 'hi.mp3'
       }
     }]);
   });

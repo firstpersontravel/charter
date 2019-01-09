@@ -2,13 +2,13 @@ var _ = require('lodash');
 
 var EvalCore = require('../../cores/eval');
 
-var MESSAGE_TYPE_OPTIONS = ['text', 'image', 'audio'];
+var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 var custom_message = {
   params: {
     from_role_name: { required: true, type: 'reference', collection: 'roles' },
     to_role_name: { required: true, type: 'reference', collection: 'roles' },
-    message_type: { required: true, type: 'enum', options: MESSAGE_TYPE_OPTIONS },
+    message_medium: { required: true, type: 'enum', options: MESSAGE_MEDIUM_OPTIONS },
     message_content: { required: true, type: 'string' },
     location_latitude: { required: false, type: 'number' },
     location_longitude: { required: false, type: 'number' },
@@ -16,7 +16,7 @@ var custom_message = {
     suppress_relay_id: { required: false, type: 'number' }
   },
   phraseForm: [
-    'from_role_name', 'to_role_name', 'message_type', 'message_content'
+    'from_role_name', 'to_role_name', 'message_medium', 'message_content'
   ],
   eventForParams: function(params) {
     return {
@@ -24,7 +24,7 @@ var custom_message = {
       message: {
         from: params.from_role_name,
         to: params.to_role_name,
-        type: params.message_type,
+        medium: params.message_medium,
         content: params.message_content
       },
       location: {
@@ -47,13 +47,13 @@ var custom_message = {
         sentById: actionContext.evalContext[params.from_role_name].id,
         sentToId: actionContext.evalContext[params.to_role_name].id,
         createdAt: actionContext.evaluateAt,
-        messageType: params.message_type,
-        messageContent: params.message_content,
+        medium: params.message_medium,
+        content: params.message_content,
         sentFromLatitude: params.location_latitude || null,
         sentFromLongitude: params.location_longitude || null,
         sentFromAccuracy: params.location_accuracy || null,
         isReplyNeeded: isReplyNeeded,
-        isInGallery: params.message_type === 'image'
+        isInGallery: params.message_medium === 'image'
       }
     }];
   }
@@ -66,11 +66,11 @@ var send_message = {
   },
   phraseForm: ['message_name', 'to_role_name'],
   applyAction: function(params, actionContext) {
-    var messageName = params.message_name;
+    var name = params.message_name;
     var messageData = _.find(actionContext.scriptContent.messages,
-      { name: messageName });
-    var messageType = messageData.type;
-    var messageContent = EvalCore.templateText(actionContext.evalContext,
+      { name: name });
+    var medium = messageData.type;
+    var content = EvalCore.templateText(actionContext.evalContext,
       messageData.content, actionContext.timezone);
     var hasBeenRead = messageData.read === true;
     var fromRoleName = messageData.from;
@@ -85,9 +85,9 @@ var send_message = {
         sentToId: actionContext.evalContext[toRoleName].id,
         createdAt: actionContext.evaluateAt,
         readAt: hasBeenRead ? actionContext.evaluateAt : null,
-        messageName: messageName,
-        messageType: messageType,
-        messageContent: messageContent
+        name: name,
+        medium: medium,
+        content: content
       }
     }];
   }

@@ -69,8 +69,8 @@ describe('TripOpController', () => {
         fields: {
           sentById: 1,
           sentToId: 2,
-          messageType: 'text',
-          messageContent: 'hi there',
+          medium: 'text',
+          content: 'hi there',
           createdAt: now,
         },
         suppressRelayId: 5
@@ -84,8 +84,8 @@ describe('TripOpController', () => {
 
       sinon.assert.calledWith(models.Message.create, {
         createdAt: now.toDate(),
-        messageContent: 'hi there',
-        messageType: 'text',
+        content: 'hi there',
+        medium: 'text',
         orgId: 456,
         tripId: 123,
         readAt: null,

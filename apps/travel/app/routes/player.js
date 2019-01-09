@@ -180,13 +180,13 @@ export default Ember.Route.extend({
     },
 
     sendMessage: function(asRoleName, toRoleName,
-        messageType, messageContent) {
+        medium, content) {
       var lastFix = this.get('location.lastFixPrivate');
       this.makeAction('custom_message', {
         from_role_name: asRoleName,
         to_role_name: toRoleName,
-        message_type: messageType,
-        message_content: messageContent,
+        message_medium: medium,
+        message_content: content,
         location_latitude: lastFix && lastFix.coords.latitude,
         location_longitude: lastFix && lastFix.coords.longitude,
         location_accuracy: lastFix && lastFix.coords.accuracy

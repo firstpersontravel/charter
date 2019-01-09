@@ -9,7 +9,7 @@ function updateInGallery(messageId, isInGallery, updateInstance) {
 }
 
 function renderMessage(message, updateInstance) {
-  const mediaUrl = message.messageContent;
+  const mediaUrl = message.content;
   const cellStyle = {
     float: 'left',
     width: '33%',
@@ -76,8 +76,8 @@ export default class TripGallery extends Component {
     this.props.listCollection('messages', {
       orgId: trip.orgId,
       tripId: trip.id,
-      messageType: 'image',
-      messageName: ''
+      medium: 'image',
+      name: ''
     });
   }
 
