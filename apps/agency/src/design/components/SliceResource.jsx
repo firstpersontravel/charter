@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Resource from '../partials/Resource';
 
-export default function ResourceIndex({ script, params }) {
+export default function SliceResource({ script, params }) {
   return (
     <Resource
       script={script}
@@ -12,7 +12,7 @@ export default function ResourceIndex({ script, params }) {
   );
 }
 
-ResourceIndex.propTypes = {
+SliceResource.propTypes = {
   script: PropTypes.object.isRequired,
   params: PropTypes.object.isRequired
 };

@@ -112,8 +112,11 @@ body {
 
 .script-editor-container {
   .script-editor-col {
-    max-height: calc(100% - 100px);
+    max-height: calc(100% - 130px);
     overflow-y: scroll;
+  }
+  .script-content-slice .list-group-item {
+    padding: 0.25rem 0.75rem;
   }
 }
 

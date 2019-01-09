@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 
-import CollectionIndex from '../components/CollectionIndex';
+import SliceIndex from '../components/SliceIndex';
 
 const mapStateToProps = (state, ownProps) => ({});
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(CollectionIndex);
+export default connect(mapStateToProps, mapDispatchToProps)(SliceIndex);

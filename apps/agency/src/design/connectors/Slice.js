@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import Collection from '../components/Collection';
+import Slice from '../components/Slice';
 import { lookupScript } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -9,4 +9,4 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Collection);
+export default connect(mapStateToProps, mapDispatchToProps)(Slice);

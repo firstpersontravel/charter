@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function CollectionIndex() {
+export default function SliceIndex() {
   return (
     <div>
       ...
@@ -8,4 +8,4 @@ export default function CollectionIndex() {
   );
 }
 
-CollectionIndex.propTypes = {};
+SliceIndex.propTypes = {};

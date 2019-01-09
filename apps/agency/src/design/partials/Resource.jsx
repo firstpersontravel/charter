@@ -12,7 +12,6 @@ import {
 } from 'fptcore';
 
 import { COLLECTION_NAMES } from '../consts';
-import { getItems } from '../components/utils';
 import Param, { renderLink } from '../../partials/Param';
 
 const PROP_ORDERING = [
@@ -67,8 +66,7 @@ export default class Resource extends Component {
     const resourceSubkey = reverseRelationParts.length === 3 ?
       reverseRelationParts[1] : null;
     const reverseProp = reverseRelationParts[reverseRelationParts.length - 1];
-    const reverseCollection = getItems(this.props.script,
-      reverseCollectionName);
+    const reverseCollection = this.props.script[reverseCollectionName];
     // If we're looking for a subkey, do something more complicated
     if (resourceSubkey) {
       return _(reverseCollection)
