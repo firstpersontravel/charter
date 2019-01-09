@@ -90,6 +90,8 @@ const renderers = {
 
 // Aliases
 renderers.name = renderers.string;
+renderers.nestedAttribute = renderers.string;
+renderers.simpleAttribute = renderers.string;
 renderers.ifClause = renderers.string;
 renderers.enum = renderers.string;
 renderers.number = renderers.raw;

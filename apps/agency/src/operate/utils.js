@@ -6,9 +6,6 @@ export function sortForRole(role) {
   if (role.primary) {
     return -1;
   }
-  if (role.minor) {
-    return 1;
-  }
   return 0;
 }
 

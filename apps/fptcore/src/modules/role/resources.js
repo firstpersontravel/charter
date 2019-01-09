@@ -8,8 +8,7 @@ var role = {
     starting_page: { type: 'reference', collection: 'pages' },
     required_values: { type: 'list', items: { type: 'simpleAttribute' } },
     default_layout: { type: 'reference', collection: 'layouts' },
-    primary: { type: 'boolean', default: false },
-    minor: { type: 'boolean', default: false }
+    primary: { type: 'boolean', default: false }
   }
 };
 
