@@ -105,14 +105,14 @@ describe('API create', () => {
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
-          content: { roles: [{ name: 'hi' }] }
+          content: { roles: [{ name: 'hi', title: 'hi' }] }
         })
         .set('Accept', 'application/json')
         .expect(201)
         .then((res) => {
           // Test content created and returned correctly
           assert.deepStrictEqual(res.body.data.script.content, {
-            roles: [{ name: 'hi' }]
+            roles: [{ name: 'hi', title: 'hi' }]
           });
         });
     });
@@ -125,7 +125,7 @@ describe('API create', () => {
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
-          content: { departures: [{ scene: 'TEST' }] }
+          content: { departures: [{ title: 'x', scene: 'TEST' }] }
         })
         .set('Accept', 'application/json')
         .expect(422)
@@ -138,7 +138,7 @@ describe('API create', () => {
               path: 'departures[name=<unknown>]'
             }, {
               field: 'content',
-              message: 'Unexpected param "scene" (expected one of: name).',
+              message: 'Unexpected param "scene" (expected one of: name, title).',
               path: 'departures[name=<unknown>]'
             }],
             message: 'Invalid fields: content.',

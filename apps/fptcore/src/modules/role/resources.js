@@ -1,7 +1,7 @@
 var role = {
   properties: {
     name: { type: 'name', required: true },
-    contact_name: { type: 'string' },
+    title: { type: 'string', required: true },
     actor: { type: 'boolean', default: false },
     user: { type: 'boolean', default: false },
     if: { type: 'ifClause' },

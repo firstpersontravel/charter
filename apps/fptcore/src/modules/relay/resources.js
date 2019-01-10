@@ -1,4 +1,8 @@
 var relay = {
+  title: function(resource) {
+    return 'For ' + resource.for + ' as ' + resource.as + ' with ' +
+      resource.with;
+  },
   properties: {
     name: { type: 'name', required: true },
     for: { type: 'reference', collection: 'roles', required: true },

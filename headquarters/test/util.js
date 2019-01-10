@@ -25,7 +25,8 @@ const dummyScriptFields = {
   contentVersion: 1,
   content: {
     roles: [{
-      name: 'Dummy'
+      name: 'Dummy',
+      title: 'Dummy'
     }],
     scenes: [{
       name: 'SCENE-MAIN',

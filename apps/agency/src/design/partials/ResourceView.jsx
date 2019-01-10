@@ -6,6 +6,9 @@ import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil } from '
 
 import { renderLink } from '../../partials/Param';
 
+// Hide title, field, and name
+const HIDE_FIELD_NAMES = ['name', 'title', 'scene'];
+
 const empty = <em className="faint">Empty</em>;
 
 let renderFieldValue;
@@ -38,15 +41,18 @@ const renderers = {
   actionPhrase: (script, spec, value) => {
     const action = ActionPhraseCore.parseActionPhrase(value);
     const actionClass = ActionsRegistry[action.name];
-    const parts = [action.name];
+    const parts = [{ name: 'name', rendered: action.name }];
     _.each(actionClass.phraseForm, (paramName) => {
       const paramSpec = actionClass.params[paramName];
       const paramValue = action.params[paramName];
-      parts.push(renderFieldValue(script, paramSpec, paramValue));
+      parts.push({
+        name: paramName,
+        rendered: renderFieldValue(script, paramSpec, paramValue)
+      });
     });
     return parts.map(part => (
-      <span style={{ marginRight: '0.25em' }}>
-        {part}
+      <span key={part.name} style={{ marginRight: '0.25em' }}>
+        {part.rendered}
       </span>
     ));
   },
@@ -120,6 +126,7 @@ const renderers = {
 
 // Aliases
 renderers.name = renderers.raw;
+renderers.duration = renderers.raw;
 renderers.lookupable = renderers.raw;
 renderers.nestedAttribute = renderers.raw;
 renderers.simpleAttribute = renderers.raw;
@@ -161,6 +168,10 @@ export default class ResourceView extends Component {
   }
 
   renderField(fieldName) {
+    // Hide title since it's displayed up top.
+    if (_.includes(HIDE_FIELD_NAMES, fieldName)) {
+      return null;
+    }
     const script = this.props.script;
     const resourceClass = this.getResourceClass();
     const spec = resourceClass.properties[fieldName];

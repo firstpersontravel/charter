@@ -24,8 +24,11 @@
     content:
       roles:
         - name: Actor
+          title: Actor
         - name: Player
+          title: Player
         - name: StageManager
+          title: StageManager
       relays:
         - name: relay-1
           for: Actor

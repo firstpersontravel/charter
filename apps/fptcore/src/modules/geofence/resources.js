@@ -1,4 +1,7 @@
 var geofence = {
+  title: function(resource) {
+    return resource.distance + 'm around ' + resource.center;
+  },
   properties: {
     name: { type: 'name', required: true },
     center: { type: 'reference', collection: 'waypoints', required: true },

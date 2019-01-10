@@ -4,7 +4,8 @@ var LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
 
 var layout = {
   properties: {
-    name: { type: 'string', required: true },
+    name: { type: 'name', required: true },
+    title: { type: 'string', required: true },
     type: { type: 'enum', options: LAYOUT_TYPE_OPTIONS, required: true },
     section: { type: 'string' },
     header_panels: {

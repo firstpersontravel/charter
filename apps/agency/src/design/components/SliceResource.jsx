@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { TextUtil } from 'fptcore';
 
 import ResourceView from '../partials/ResourceView';
+import { titleForResource } from './utils';
 
 export default function SliceResource({ script, params }) {
   const collection = script.content[params.collectionName];
@@ -22,7 +23,7 @@ export default function SliceResource({ script, params }) {
           <span className="badge badge-info">
             {TextUtil.titleForKey(resourceType)}
           </span>&nbsp;
-          {resource.title || resource.name}
+          {titleForResource(params.collectionName, resource)}
         </h5>
         <div className="card-body">
           <ResourceView
