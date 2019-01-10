@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
@@ -6,6 +8,8 @@ describe('Script', () => {
 
   beforeEach(() => {
     script = models.Script.build({
+      createdAt: moment.utc(),
+      updatedAt: moment.utc(),
       orgId: 100,
       experienceId: 1,
       revision: 1,

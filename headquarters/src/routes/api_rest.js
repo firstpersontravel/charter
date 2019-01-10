@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 const inflection = require('inflection');
 const Sequelize = require('sequelize');
 
@@ -33,9 +34,13 @@ function deserializeField(field) {
   return field;
 }
 
+const globalReadonlyFields = ['createdAt', 'updatedAt'];
+
 function deserializeFields(model, fields, opts) {
   return _.mapValues(fields, function(value, key) {
-    if (!model.attributes[key] || _.includes(opts.blacklistFields, key)) {
+    if (!model.attributes[key] ||
+        _.includes(opts.blacklistFields, key) ||
+        _.includes(globalReadonlyFields, key)) {
       throw errors.validationError(`Invalid field: "${key}".`);
     }
     return deserializeField(value);
@@ -100,8 +105,21 @@ function apiErrorFromValidationError(err) {
   return errors.validationError(message, { fields: fields });
 }
 
-async function updateRecord(record, fields) {
+async function updateRecord(model, record, fields) {
   record.set(fields);
+
+  const updateFields = Object.keys(fields);
+
+  // Add timestamps.
+  const now = moment.utc();
+  if (record.isNewRecord && model.attributes.createdAt) {
+    record.createdAt = now;
+    updateFields.push('createdAt');
+  }
+  if (model.attributes.updatedAt) {
+    record.updatedAt = now;
+    updateFields.push('updatedAt');
+  }
 
   // Validate fields
   try {
@@ -115,7 +133,7 @@ async function updateRecord(record, fields) {
   }
   // If we're updating, only save supplied fields.
   const isCreating = record.id === null;
-  const saveOpts = isCreating ? {} : { fields: Object.keys(fields) };
+  const saveOpts = isCreating ? {} : { fields: updateFields };
 
   // Save fields
   try {
@@ -238,7 +256,7 @@ function createRecordRoute(model, authz, opts={}) {
       throw errors.badRequestError('Id is not allowed on create.');
     }
     const record = model.build();
-    await updateRecord(record, fields);
+    await updateRecord(model, record, fields);
     respondWithRecord(res, model, record, opts, 201);
   };
 }
@@ -259,7 +277,7 @@ function replaceRecordRoute(model, authz, opts={}) {
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
     const fields = deserializeFields(model, req.body, opts);
-    await updateRecord(record, fields);
+    await updateRecord(model, record, fields);
     respondWithRecord(res, model, record, opts);
   };
 }
@@ -272,7 +290,7 @@ function updateRecordRoute(model, authz, opts={}) {
     authz.checkFields(req, 'update', model, record, req.body);
     const fields = deserializeFields(model, req.body, opts);
     const mergedFields = mergeFields(record, fields);
-    await updateRecord(record, mergedFields);
+    await updateRecord(model, record, mergedFields);
     respondWithRecord(res, model, record, opts);
   };
 }

@@ -19,6 +19,8 @@ const dummyExperienceFields = {
 };
 
 const dummyScriptFields = {
+  createdAt: moment.utc(),
+  updatedAt: moment.utc(),
   orgId: 100,
   experienceId: 1,
   revision: 1,

@@ -10,6 +10,7 @@ const database = require('../config').database;
 const {
   belongsToField,
   booleanField,
+  datetimeField,
   integerField,
   jsonField,
   mutableModifier,
@@ -67,6 +68,8 @@ function validateScriptContent(script) {
  * Script model.
  */
 const Script = database.define('Script', snakeCaseColumns({
+  createdAt: datetimeField(),
+  updatedAt: mutableModifier(datetimeField()),
   revision: integerField(),
   contentVersion: integerField(),
   content: mutableModifier(jsonField(database, 'Script', 'content', {

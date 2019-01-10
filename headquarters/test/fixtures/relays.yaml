@@ -17,6 +17,8 @@
     id: 1
     org: 1
     experience: 1
+    createdAt: 2018-01-01T00:00:00Z
+    updatedAt: 2018-01-01T00:00:00Z
     isActive: true
     isArchived: false
     revision: 1

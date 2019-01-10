@@ -114,6 +114,9 @@ describe('API create', () => {
           assert.deepStrictEqual(res.body.data.script.content, {
             roles: [{ name: 'hi', title: 'hi' }]
           });
+          // Test timestamps were added
+          assert(res.body.data.script.createdAt);
+          assert(res.body.data.script.updatedAt);
         });
     });
 
