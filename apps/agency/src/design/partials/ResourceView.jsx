@@ -40,14 +40,13 @@ const renderers = {
     const resource = _.find(collection, { name: value });
     const title = titleForResource(spec.collection, resource);
     return (
-      <span>
+      <Link to={url} className="btn btn-sm btn-outline-secondary">
         <span className="badge badge-info">
           {TextUtil.titleForKey(TextUtil.singularize(spec.collection))}
-        </span>&nbsp;
-        <Link to={url}>
-          {title}
-        </Link>
-      </span>
+        </span>
+        &nbsp;
+        {title}
+      </Link>
     );
   },
   coords: (script, spec, value) => (

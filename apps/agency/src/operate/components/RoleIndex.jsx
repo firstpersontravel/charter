@@ -49,7 +49,7 @@ function renderUser(player, user) {
   }
   return (
     <Link
-      to={`/${player.org.name}/${player.experience.name}/directory/${user.id}`}>
+      to={`/${player.org.name}/${player.experience.name}/directory/user/${user.id}`}>
       {user.firstName} {user.lastName}
     </Link>
   );
@@ -60,7 +60,11 @@ function renderPlayerCell(player, isFirst) {
   const page = _.find(player.trip.script.content.pages,
     { name: player.currentPageName });
   if (!page) {
-    return null;
+    return (
+      <div key={player.id} className="alert alert-warning">
+        No active page for trip {player.trip.title}.
+      </div>
+    );
   }
   const appearance = _.find(trip.script.content.appearances, {
     name: page.appearance

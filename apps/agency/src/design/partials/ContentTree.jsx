@@ -190,7 +190,7 @@ function walkContentTree(contentTree, path, iteree) {
 }
 
 export default class ContentTree extends Component {
-  renderItem(collectionName, item, path) {
+  renderItem(collectionName, item, path, isInContentList) {
     const resourceName = TextUtil.singularize(collectionName);
     const script = this.props.script;
     const itemTitle = titleForResource(collectionName, item);
@@ -199,7 +199,7 @@ export default class ContentTree extends Component {
     ));
     return (
       <Link
-        className="list-group-item list-group-item-action constrain-text"
+        className={`list-group-item list-group-item-action constrain-text ${isInContentList ? '' : 'disabled'}`}
         key={`${path.join('-')}-${item.name}`}
         activeClassName="active"
         to={
@@ -209,23 +209,27 @@ export default class ContentTree extends Component {
           `/${collectionName}/${item.name}`
         }>
         {prefix}
-        <span className="badge badge-info">{TextUtil.titleForKey(resourceName)}</span> {itemTitle}
+        <span className={`badge ${isInContentList ? 'badge-info' : 'badge-secondary'}`}>
+          {TextUtil.titleForKey(resourceName)}
+        </span> {itemTitle}
       </Link>
     );
   }
 
-  renderContentTree(scriptContent, contentTree) {
+  renderContentTree(scriptContent, contentList, contentTree) {
     const items = [];
 
     walkContentTree(contentTree, [], (path, key) => {
       const [collectionName, resourceName] = key.split('.');
+      const isInContentList = !!contentList[collectionName];
       const collection = scriptContent[collectionName];
       const resource = _.find(collection, { name: resourceName });
       if (!resource) {
         console.log(`Resource not found ${key}`);
         return null;
       }
-      const renderedItem = this.renderItem(collectionName, resource, path);
+      const renderedItem = this.renderItem(collectionName, resource, path,
+        isInContentList);
       items.push(renderedItem);
       return null;
     });
@@ -243,7 +247,7 @@ export default class ContentTree extends Component {
     const scriptContent = this.props.script.content;
     const contentList = getContentList(scriptContent, sliceType, sliceName);
     const contentTree = prepareContentTree(scriptContent, contentList);
-    return this.renderContentTree(scriptContent, contentTree);
+    return this.renderContentTree(scriptContent, contentList, contentTree);
   }
 }
 

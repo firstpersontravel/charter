@@ -15,6 +15,7 @@ export default class OrgExperience extends Component {
     super(props);
     this.handleArchiveExperience = this.handleArchiveExperience.bind(this);
     this.handleUpdateExperience = this.handleUpdateExperience.bind(this);
+    this.handleCreateScript = this.handleCreateScript.bind(this);
   }
 
   componentDidMount() {
@@ -32,9 +33,18 @@ export default class OrgExperience extends Component {
     browserHistory.push(`${this.props.experience.org.name}/${fields.name}`);
   }
 
-  handleArchiveExperience(experienceId) {
+  handleArchiveExperience() {
     this.props.updateInstance('experiences', this.props.experience.id, {
       isArchived: !this.props.experience.isArchived
+    });
+  }
+
+  handleCreateScript() {
+    this.props.createInstance('scripts', {
+      orgId: this.props.experience.orgId,
+      experienceId: this.props.experience.id,
+      revision: 1,
+      contentVersion: 1
     });
   }
 
@@ -65,6 +75,14 @@ export default class OrgExperience extends Component {
         </Link>
       </div>
     ));
+
+    const newScriptBtn = experience.scripts.length > 0 ? null : (
+      <button
+        onClick={this.handleCreateScript}
+        className="btn btn-primary">
+        Create new script
+      </button>
+    );
 
     const activeScript = _.find(experience.scripts, { isActive: true });
     const trailheadSpecs = _.filter(_.get(activeScript, 'content.relays'), {
@@ -135,6 +153,7 @@ export default class OrgExperience extends Component {
               <div className="col-md-3">
                 <h3>Design</h3>
                 {renderedScripts}
+                {newScriptBtn}
               </div>
               <div className="col-md-3">
                 <h3>Schedule</h3>

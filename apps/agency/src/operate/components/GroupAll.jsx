@@ -22,7 +22,7 @@ function getAllPlayers(trips) {
 }
 
 export default function GroupAll({ children, group,
-  numMessagesNeedingReply, nextUnappliedAction }) {
+  numMessagesNeedingReply, nextUnappliedAction, params }) {
   // Error or loading cases should be handled by `Group`
   if (group.trips.length === 0) {
     return <div>No trips</div>;
@@ -32,6 +32,12 @@ export default function GroupAll({ children, group,
     .sortBy([sortForRole, 'name'])
     .value();
   const allPlayers = getAllPlayers(group.trips);
+  const allUsers = _(allPlayers).map('user').value();
+  const userTitle = params.userId !== '0' ?
+    _.get(_.find(allUsers, { id: Number(params.userId) }), 'firstName') :
+    'No user';
+  const roleTitle = (params.roleName && params.userId) ?
+    `Role: ${params.roleName} (${userTitle})` : 'Roles';
   const roleLinks = _(roles)
     .map(role => (
       _(allPlayers)
@@ -92,7 +98,7 @@ export default function GroupAll({ children, group,
             activeClassName="active"
             data-toggle="dropdown"
             to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/role`}>
-            Roles
+            {roleTitle}
           </Link>
           <div className="dropdown-menu">
             {roleLinks}
@@ -124,6 +130,7 @@ export default function GroupAll({ children, group,
 
 GroupAll.propTypes = {
   children: PropTypes.node.isRequired,
+  params: PropTypes.object.isRequired,
   group: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
   numMessagesNeedingReply: PropTypes.number.isRequired

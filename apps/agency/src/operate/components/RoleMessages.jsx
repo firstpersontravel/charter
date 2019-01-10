@@ -7,9 +7,13 @@ import Message from '../partials/Message';
 
 function renderMessages(trips, messages) {
   if (!messages.length) {
-    return <div>No messages needing reply.</div>;
+    return (
+      <div className="alert alert-warning">
+        No messages needing reply.
+      </div>
+    );
   }
-  return _.sortBy(messages, 'createdAt')
+  const renderedMessages = _.sortBy(messages, 'createdAt')
     .reverse()
     .map(message => (
       <Message
@@ -17,6 +21,11 @@ function renderMessages(trips, messages) {
         trip={_.find(trips, { id: message.tripId })}
         message={message} />
     ));
+  return (
+    <div style={{ marginBottom: '1em' }}>
+      {renderedMessages}
+    </div>
+  );
 }
 
 export default function RoleMessages({ params, group,
@@ -33,7 +42,6 @@ export default function RoleMessages({ params, group,
   return (
     <div>
       {messages}
-      <br />
       To send a message, select a trip:
       <ul>
         {tripLinks}

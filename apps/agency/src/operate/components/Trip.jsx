@@ -7,7 +7,7 @@ import { EvalCore } from 'fptcore';
 
 import { sortForRole } from '../utils';
 
-export default function Trip({ trip, children }) {
+export default function Trip({ trip, params, children }) {
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
     .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
@@ -25,6 +25,8 @@ export default function Trip({ trip, children }) {
       {role.name}
     </Link>
   )));
+  const playerTitle = params.roleName ? `Player: ${params.roleName}` :
+    'Players';
   return (
     <div style={{ overflow: 'hidden' }}>
       <ul className="nav nav-tabs">
@@ -58,7 +60,7 @@ export default function Trip({ trip, children }) {
             activeClassName="active"
             data-toggle="dropdown"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players`}>
-            Players
+            {playerTitle}
           </Link>
           <div className="dropdown-menu">
             {roleLinks}
@@ -96,5 +98,6 @@ export default function Trip({ trip, children }) {
 
 Trip.propTypes = {
   trip: PropTypes.object.isRequired,
+  params: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired
 };

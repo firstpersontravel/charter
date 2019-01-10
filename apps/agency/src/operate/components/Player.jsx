@@ -7,6 +7,15 @@ export default function Player({ player, children }) {
   if (!player) {
     return <div>Player not found.</div>;
   }
+  if (player.isLoading) {
+    return <div>Loading</div>;
+  }
+  if (player.isError) {
+    return <div>Error</div>;
+  }
+  if (player.isNull) {
+    return <div>Player not found.</div>;
+  }
   const trip = player.trip;
   const script = player.trip.script;
   const hasRelay = _.some(script.content.relays, r => (
