@@ -234,6 +234,14 @@ export default class ContentTree extends Component {
       return null;
     });
 
+    if (!items.length) {
+      return (
+        <div className="alert alert-info">
+          No content in this area yet.
+        </div>
+      );
+    }
+
     return (
       <ul className="script-content-slice list-group list-group-flush">
         {items}
