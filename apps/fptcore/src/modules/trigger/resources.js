@@ -12,7 +12,7 @@ var actionsClasses = _(ActionsRegistry)
   .mapValues(function(actionClass, actionName) {
     return {
       properties: {
-        self: { type: 'string' }
+        self: { type: 'actionPhrase' }
       },
       validateResource: function(script, resource) {
         var modifierAndAction = ActionPhraseCore.extractModifier(resource);
@@ -111,6 +111,17 @@ function validateActionWithTrigger(action, path, trigger) {
 }
 
 var trigger = {
+  title: function(resource) {
+    if (!resource.events.length) {
+      return 'Untriggerable';
+    }
+    var firstEvent = resource.events[0];
+    var firstEventClass = EventsRegistry[firstEvent.type];
+    if (firstEventClass.title) {
+      return 'On ' + firstEventClass.title(firstEvent);
+    }
+    return 'On ' + firstEvent.type;
+  },
   properties: {
     name: { type: 'name', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },

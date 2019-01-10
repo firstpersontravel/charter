@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ResourcesRegistry, TextUtil } from 'fptcore';
+import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil } from 'fptcore';
 
 import { renderLink } from '../../partials/Param';
 
@@ -14,12 +14,42 @@ const renderers = {
   string: (script, spec, value) => `"${value}"`,
   raw: (script, spec, value) => value,
   boolean: (script, spec, value) => (value ? 'Yes' : 'No'),
-  reference: (script, spec, value) => (
-    value ? renderLink(script, spec.collection, value) : empty
-  ),
+  simpleValue: (script, spec, value) => {
+    if (_.isNumber(value)) {
+      return renderers.raw(script, spec, value);
+    }
+    if (_.isBoolean(value)) {
+      return renderers.boolean(script, spec, value);
+    }
+    return renderers.string(script, spec, value);
+  },
+  reference: (script, spec, value) => {
+    if (!value) {
+      return empty;
+    }
+    if (value === 'null') {
+      return 'None';
+    }
+    return renderLink(script, spec.collection, value);
+  },
   coords: (script, spec, value) => (
     `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`
   ),
+  actionPhrase: (script, spec, value) => {
+    const action = ActionPhraseCore.parseActionPhrase(value);
+    const actionClass = ActionsRegistry[action.name];
+    const parts = [action.name];
+    _.each(actionClass.phraseForm, (paramName) => {
+      const paramSpec = actionClass.params[paramName];
+      const paramValue = action.params[paramName];
+      parts.push(renderFieldValue(script, paramSpec, paramValue));
+    });
+    return parts.map(part => (
+      <span style={{ marginRight: '0.25em' }}>
+        {part}
+      </span>
+    ));
+  },
   list: (script, spec, value) => {
     if (value.length === 0) {
       return empty;
@@ -89,11 +119,13 @@ const renderers = {
 };
 
 // Aliases
-renderers.name = renderers.string;
-renderers.nestedAttribute = renderers.string;
-renderers.simpleAttribute = renderers.string;
-renderers.ifClause = renderers.string;
-renderers.enum = renderers.string;
+renderers.name = renderers.raw;
+renderers.lookupable = renderers.raw;
+renderers.nestedAttribute = renderers.raw;
+renderers.simpleAttribute = renderers.raw;
+renderers.ifClause = renderers.raw;
+renderers.enum = renderers.raw;
+renderers.media = renderers.raw;
 renderers.number = renderers.raw;
 renderers.timeShorthand = renderers.raw;
 
@@ -117,7 +149,7 @@ renderFieldValue = function (script, spec, value) {
   return fieldRenderer(script, spec, value);
 };
 
-export default class ResourceNew extends Component {
+export default class ResourceView extends Component {
 
   getResourceClass() {
     const resourceType = TextUtil.singularize(this.props.collectionName);
@@ -160,7 +192,7 @@ export default class ResourceNew extends Component {
   }
 }
 
-ResourceNew.propTypes = {
+ResourceView.propTypes = {
   script: PropTypes.object.isRequired,
   collectionName: PropTypes.string.isRequired,
   resource: PropTypes.object.isRequired

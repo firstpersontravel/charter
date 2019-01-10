@@ -79,7 +79,7 @@ ActionPhraseCore.expandPlainActionPhrase = function(plainActionPhrase) {
  * Parse an action shorthand (in 3m, do this) into an object containing action
  * name, params, and scheduleAt).
  */
-ActionPhraseCore.expandActionPhrase = function(actionPhrase, actionContext) {
+ActionPhraseCore.parseActionPhrase = function(actionPhrase) {
   // Break out modifier
   var modifierAndAction = ActionPhraseCore.extractModifier(actionPhrase);
   var modifierType = modifierAndAction[0];
@@ -90,14 +90,29 @@ ActionPhraseCore.expandActionPhrase = function(actionPhrase, actionContext) {
   var plainAction = ActionPhraseCore
     .expandPlainActionPhrase(plainActionPhrase);
 
-  // Calculate schedule
-  var scheduleAt = actionContext.evaluateAt;
-  if (modifierType === 'when') {
-    scheduleAt = ActionPhraseCore.timeForShorthand(modifier, actionContext);
-  }
   return {
     name: plainAction.name,
     params: plainAction.params,
+    whenModifier: modifierType === 'when' ? modifier : null
+  };
+};
+
+/**
+ * Parse an action shorthand (in 3m, do this) into an object containing action
+ * name, params, and scheduleAt).
+ */
+ActionPhraseCore.expandActionPhrase = function(actionPhrase, actionContext) {
+  var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+
+  // Calculate schedule
+  var scheduleAt = actionContext.evaluateAt;
+  if (action.whenModifier) {
+    scheduleAt = ActionPhraseCore.timeForShorthand(action.whenModifier, 
+      actionContext);
+  }
+  return {
+    name: action.name,
+    params: action.params,
     scheduleAt: scheduleAt
   };
 };

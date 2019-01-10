@@ -6,6 +6,16 @@ var distance = require('../../utils/distance');
 
 module.exports = {
   message_sent: {
+    title: function(spec) {
+      var parts = [spec.medium || 'message'];
+      if (spec.from) {
+        parts.push('from ' + spec.from);
+      }
+      if (spec.to) {
+        parts.push('to ' + spec.to);
+      }
+      return parts.join(' ');
+    },
     specParams: {
       from: { required: false, type: 'reference', collection: 'roles' },
       to: { required: false, type: 'reference', collection: 'roles' },

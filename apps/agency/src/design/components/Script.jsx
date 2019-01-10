@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
+import { sections } from './utils';
+
 export default class Script extends Component {
   renderNav() {
     const script = this.props.script;
@@ -15,13 +17,6 @@ export default class Script extends Component {
       </Link>
     ));
 
-    const sections = [
-      ['roles', 'Roles'],
-      ['locations', 'Locations'],
-      ['variants', 'Variants'],
-      ['media', 'Media']
-    ];
-
     const sectionLinks = sections.map(section => (
       <li key={section[0]} className="nav-item">
         <Link
@@ -33,6 +28,15 @@ export default class Script extends Component {
       </li>
     ));
 
+    let sceneTitle = 'Scenes';
+    if (this.props.params.sliceType === 'scene') {
+      const sceneName = this.props.params.sliceName;
+      const scene = _.find(script.content.scenes, { name: sceneName });
+      if (scene) {
+        sceneTitle = `Scene: ${scene.title}`;
+      }
+    }
+
     return (
       <ul className="nav nav-tabs">
         {sectionLinks}
@@ -42,7 +46,7 @@ export default class Script extends Component {
             activeClassName="active"
             data-toggle="dropdown"
             to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/scene`}>
-            Scenes
+            {sceneTitle}
           </Link>
           <div className="dropdown-menu">
             {sceneLinks}
@@ -88,5 +92,6 @@ export default class Script extends Component {
 
 Script.propTypes = {
   children: PropTypes.node.isRequired,
-  script: PropTypes.object.isRequired
+  script: PropTypes.object.isRequired,
+  params: PropTypes.object.isRequired
 };
