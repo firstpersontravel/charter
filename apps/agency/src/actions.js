@@ -292,6 +292,7 @@ export function updateRelays(orgId, experienceId) {
       .then((response) => {
         dispatch(listCollection('relays', {
           orgId: orgId,
+          experienceId: experienceId,
           stage: getStage()
         }));
       })

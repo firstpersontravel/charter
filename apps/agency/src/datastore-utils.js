@@ -49,13 +49,16 @@ function addIncluders(state, instance, includers) {
   return withInclude;
 }
 
-function getInstancesWithIncludes(state, colName, filters, includers) {
+function getInstancesWithIncludes(state, colName, filters, sort, includers) {
   const prefilters = _.pickBy(filters, (v, k) => !_.isPlainObject(v));
   const instances = getInstances(state, colName, prefilters);
   const withIncludes = _.map(instances, instance => (
     addIncluders(state, instance, includers)
   ));
-  const filtered = _.filter(withIncludes, filters);
+  const filtered = _(withIncludes)
+    .filter(filters)
+    .sortBy(sort)
+    .value();
   const isLoading = instances.isLoading || _.some(withIncludes, 'isLoading');
   const isError = instances.isError || _.some(withIncludes, 'isError');
   return Object.assign(filtered, {
@@ -72,7 +75,7 @@ export function instanceIncluder(colName, relField, selfField, includes) {
     }
     const filters = { [relField]: selfValue };
     return instanceFromInstances(getInstancesWithIncludes(state, colName,
-      filters, includes));
+      filters, 'id', includes));
   };
 }
 
@@ -83,13 +86,13 @@ export function instancesIncluder(colName, relField, selfField, filters,
     const lookup = { [relField]: selfValue };
     const filtersWithLookup = Object.assign(lookup, filters);
     return getInstancesWithIncludes(state, colName, filtersWithLookup,
-      includes);
+      'id', includes);
   };
 }
 
 export function instancesFromDatastore(state, instancesSpec) {
   return getInstancesWithIncludes(state, instancesSpec.col,
-    instancesSpec.filter, instancesSpec.include);
+    instancesSpec.filter, instancesSpec.sort || 'id', instancesSpec.include);
 }
 
 export function instanceFromDatastore(state, instancesSpec) {

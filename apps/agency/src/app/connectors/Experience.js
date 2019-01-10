@@ -10,14 +10,13 @@ const mapStateToProps = (state, ownProps) => {
     'data');
   const experienceRequest = state.requests['experiences.list'];
   const experienceName = ownProps.params.experienceName;
-  const experience = _.find(state.datastore.experiences, {
-    name: experienceName
-  });
   return {
     authInfo: authInfo,
     experienceName: experienceName,
     experienceRequest: experienceRequest,
-    experience: experience,
+    experience: _.find(state.datastore.experiences, {
+      name: experienceName
+    }),
     org: _.find(authInfo.orgs, { name: orgName })
   };
 };

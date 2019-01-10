@@ -11,6 +11,7 @@ const mapStateToProps = (state, ownProps) => ({
   authInfo: latestAuthData(state),
   experiences: instancesFromDatastore(state, {
     col: 'experiences',
+    sort: 'title',
     filter: { isArchived: false, org: { name: ownProps.params.orgName } },
     include: { org: instanceIncluder('orgs', 'id', 'orgId') }
   })
