@@ -49,8 +49,8 @@ class TripUtil {
     // Only allow custom hosts in production.
     const isDeployed = config.env.STAGE !== 'development';
     const customDomainBase = config.env.SERVER_CUSTOM_DOMAIN_BASE;
-    const customSubdomain = objs.experience.domain || objs.experience.name;
-    const customDomain = `${customSubdomain}.${customDomainBase}`;
+    const defaultCustomDomain = `${objs.experience.name}.${customDomainBase}`;
+    const customDomain = objs.experience.domain || defaultCustomDomain;
     const customHost = isDeployed ? `https://${customDomain}` : '';
     const host = customHost || config.env.SERVER_HOST_PUBLIC;
     const env = { host: host };

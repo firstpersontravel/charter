@@ -6,9 +6,9 @@ import locationHelperBuilder from 'redux-auth-wrapper/history3/locationHelper';
 
 import AppConnector from './app/connectors/App';
 import ExperienceConnector from './app/connectors/Experience';
-import ExperienceIndexConnector from './app/connectors/ExperienceIndex';
 import OrgConnector from './app/connectors/Org';
 import OrgIndexConnector from './app/connectors/OrgIndex';
+import OrgExperienceConnector from './app/connectors/OrgExperience';
 
 import DesignRoute from './design/route';
 import OperateRoute from './operate/route';
@@ -83,7 +83,7 @@ export default (
           <IndexRoute component={OrgIndexConnector} />
         </Route>
         <Route path=":orgName/:experienceName" component={ExperienceConnector}>
-          <IndexRoute component={ExperienceIndexConnector} />
+          <IndexRoute component={OrgExperienceConnector} />
           {DesignRoute}
           {ScheduleRoute}
           {OperateRoute}

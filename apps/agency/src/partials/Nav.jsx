@@ -42,7 +42,7 @@ function renderBrand(org, experience) {
       </Link>
     );
   }
-  const brands = [
+  return (
     <Link
       key="org"
       activeClassName="active"
@@ -51,26 +51,7 @@ function renderBrand(org, experience) {
       to={`/${org.name}`}>
       {org.title.toUpperCase()}
     </Link>
-  ];
-  if (experience) {
-    brands.push(
-      <span
-        key="expspacer"
-        className="navbar-brand"
-        style={{ marginRight: '0.25rem' }}>
-        |
-      </span>,
-      <Link
-        key="exp"
-        activeClassName="active"
-        className="navbar-brand"
-        style={{ marginRight: '0.25rem' }}
-        to={`/${org.name}/${experience.name}`}>
-        {experience.title.toUpperCase()}
-      </Link>
-    );
-  }
-  return brands;
+  );
 }
 
 function renderMenu(org, experience) {
@@ -79,6 +60,15 @@ function renderMenu(org, experience) {
   }
   return (
     <ul className="navbar-nav mr-auto">
+      <li className="nav-item">
+        <Link
+          activeClassName="active"
+          className="nav-link"
+          style={{ whiteSpace: 'nowrap' }}
+          to={`/${org.name}/${experience.name}`}>
+          {experience.title}
+        </Link>
+      </li>
       <li className="nav-item">
         <Link
           activeClassName="active"

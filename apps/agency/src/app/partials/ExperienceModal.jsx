@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-import { getStage } from '../../utils';
-
 export default class ExperienceModal extends Component {
 
   static getDefaultState(experience) {
@@ -45,7 +43,15 @@ export default class ExperienceModal extends Component {
   }
 
   handleChangeField(fieldName, event) {
+    const LOCKED_NAMES = ['theheadlandsgamble', 'tacosyndicate'];
     this.setState({ [fieldName]: event.target.value });
+    if (fieldName === 'title' && this.state.name !== LOCKED_NAMES) {
+      const newName = event.target.value
+        .toLowerCase()
+        .replace(/[\s_]/g, '-')
+        .replace(/[^A-Za-z0-9-]/g, '');
+      this.setState({ name: newName });
+    }
   }
 
   isValid() {
@@ -79,8 +85,7 @@ export default class ExperienceModal extends Component {
     ));
 
     const host = window.location.host;
-    const useSubdomain = getStage() !== 'development';
-    const domain = `${useSubdomain ? `${this.state.name}.` : ''}${host}`;
+    const domain = `${this.state.name || 'yourexperience'}.${host}`;
 
     return (
       <Modal
@@ -92,27 +97,13 @@ export default class ExperienceModal extends Component {
           <form>
             <div className="row">
               <div className="form-group col-12">
-                <label htmlFor="exp_name">
-                  Name (alphanumeric with dashes)
-                </label>
-                <input
-                  type="text"
-                  id="exp_name"
-                  className="form-control"
-                  value={this.state.name}
-                  ref={(input) => { this.firstInput = input; }}
-                  onChange={_.curry(this.handleChangeField)('name')}
-                  placeholder="Name" />
-              </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-12">
                 <label htmlFor="exp_title">Title</label>
                 <input
                   type="text"
                   id="exp_title"
                   className="form-control"
                   value={this.state.title}
+                  ref={(input) => { this.firstInput = input; }}
                   onChange={_.curry(this.handleChangeField)('title')}
                   placeholder="Title" />
               </div>

@@ -1,15 +1,17 @@
 import { connect } from 'react-redux';
 
-import ExperienceIndex from '../components/ExperienceIndex';
-import { listCollection, updateRelays } from '../../actions';
+import OrgExperience from '../components/OrgExperience';
+import { listCollection, updateRelays, updateInstance, createInstance } from '../../actions';
 import {
   instanceIncluder,
   instancesIncluder,
   instanceFromDatastore
 } from '../../datastore-utils';
+import { lookupExperiences } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
   systemActionRequestState: state.requests['system.action'],
+  experiences: lookupExperiences(state, ownProps),
   experience: instanceFromDatastore(state, {
     col: 'experiences',
     filter: { name: ownProps.params.experienceName },
@@ -29,8 +31,10 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  createInstance: (...args) => dispatch(createInstance(...args)),
   listCollection: (...args) => dispatch(listCollection(...args)),
+  updateInstance: (...args) => dispatch(updateInstance(...args)),
   updateRelays: (...args) => dispatch(updateRelays(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ExperienceIndex);
+export default connect(mapStateToProps, mapDispatchToProps)(OrgExperience);

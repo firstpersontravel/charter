@@ -9,6 +9,10 @@ export default class Index extends Component {
         `/${this.props.params.orgName}/${this.props.params.experienceName}` +
         `/operate/${this.props.groups[0].id}`
       );
+    } else {
+      browserHistory.push(
+        `/${this.props.params.orgName}/${this.props.params.experienceName}`
+      );
     }
   }
 

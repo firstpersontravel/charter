@@ -11,6 +11,9 @@ describe('TripUtil', () => {
   describe('#prepareEvalContext', () => {
     it('creates trip context', () => {
       const objs = {
+        experience: {
+          domain: 'test.x.com'
+        },
         script: models.Script.build({
           content: {
             pages: [{
@@ -43,7 +46,7 @@ describe('TripUtil', () => {
           directive: 'Go to the mall.',
           facetime: null,
           id: 123,
-          link: 'http://test/s/123',
+          link: 'https://test.x.com/s/123',
           phone_number: null,
           photo: null,
           skype: null

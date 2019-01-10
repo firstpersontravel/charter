@@ -24,8 +24,7 @@ export default class Experience extends Component {
     }
     this.props.listCollection('experiences', {
       isArchived: false,
-      orgId: org.id,
-      name: experienceName
+      orgId: org.id
     });
     if (!experience) {
       return;
@@ -54,12 +53,11 @@ export default class Experience extends Component {
 
   renderErrorOrLoadingState() {
     let msg;
-    if (!this.props.experienceRequest ||
-        this.props.experienceRequest === 'pending') {
+    if (!this.props.experience && this.props.experienceRequest === 'pending') {
       msg = 'Loading...';
     } else if (this.props.experienceRequest === 'rejected') {
       msg = 'Error loading experience.';
-    } else {
+    } else if (!this.props.experience) {
       msg = 'Experience not found.';
     }
     return (

@@ -11,6 +11,7 @@ const mocks = require('./mocks');
 config.isTesting = true;
 config.env.STAGE = 'test';
 config.env.SERVER_HOST_PUBLIC = 'http://test';
+config.env.SERVER_CUSTOM_DOMAIN_BASE = 'test';
 config.env.PUBSUB_HOST_INTERNAL = 'http://testpubsub';
 config.env.TWILIO_HOST = 'http://twilio.test';
 config.env.TWILIO_MEDIA_HOST = 'http://twilio.media';
