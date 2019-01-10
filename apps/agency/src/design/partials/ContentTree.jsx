@@ -3,68 +3,52 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ActionPhraseCore, TextUtil, TriggerCore } from 'fptcore';
+import { ActionPhraseCore, TextUtil, TriggerCore, EventsRegistry } from 'fptcore';
 
 import { titleForResource } from '../components/utils';
 
-function getContentList(sliceType, sliceName, scriptContent) {
-  if (sliceType === 'scene') {
-    return {
-      scenes: _.filter(scriptContent.scenes, { name: sliceName }),
-      pages: _.filter(scriptContent.pages, { scene: sliceName }),
-      triggers: _.filter(scriptContent.triggers, { scene: sliceName }),
-      messages: _.filter(scriptContent.messages, { scene: sliceName }),
-      cues: _.filter(scriptContent.cues, { scene: sliceName }),
-      achievements: _.filter(scriptContent.achievements, { scene: sliceName }),
-      times: _.filter(scriptContent.times, { scene: sliceName }),
-      checkpoints: _.filter(scriptContent.checkpoints, { scene: sliceName })
-    };
-  }
-  if (sliceType === 'section') {
-    if (sliceName === 'roles') {
-      return {
-        roles: scriptContent.roles,
-        appearances: scriptContent.appearances,
-        relays: scriptContent.relays
-      };
-    }
-    if (sliceName === 'locations') {
-      return {
-        waypoints: scriptContent.waypoints,
-        geofences: scriptContent.geofences,
-        routes: scriptContent.routes
-      };
-    }
-    if (sliceName === 'variants') {
-      return {
-        variants: scriptContent.variants,
-        departures: scriptContent.departures
-      };
-    }
-    if (sliceName === 'media') {
-      return {
-        layouts: scriptContent.layouts,
-        content_pages: scriptContent.content_pages,
-        audio: scriptContent.audio
-      };
-    }
-  }
-  return null;
+const sectionContent = {
+  roles: { roles: {}, appearances: {}, relays: {} },
+  locations: { waypoints: {}, geofences: {}, routes: {} },
+  variants: { variants: {}, departures: {} },
+  media: { layouts: {}, content_pages: {}, audio: {} }
+};
+
+const sliceContent = {
+  scene: sliceName => ({
+    scenes: { name: sliceName },
+    pages: { scene: sliceName },
+    triggers: { scene: sliceName },
+    messages: { scene: sliceName },
+    cues: { scene: sliceName },
+    achievements: { scene: sliceName },
+    times: { scene: sliceName },
+    checkpoints: { scene: sliceName }
+  }),
+  section: sliceName => sectionContent[sliceName]
+};
+
+function getSliceContent(sliceType, sliceName) {
+  return sliceContent[sliceType](sliceName);
 }
 
-function getResourceChildClaims(scriptContent, collectionName, resource) {
+function getContentList(scriptContent, sliceType, sliceName) {
+  const contentMap = getSliceContent(sliceType, sliceName);
+  return _.mapValues(contentMap, (filters, collectionName) => (
+    _.filter(scriptContent[collectionName], filters)
+  ));
+}
+
+function getChildClaims(scriptContent, collectionName, resource) {
   const childClaims = [];
   if (collectionName === 'triggers') {
-    TriggerCore.walkActions(resource.actions, '', (action, path) => {
-      const modifierAndAction = ActionPhraseCore.extractModifier(action);
-      const plainActionPhrase = modifierAndAction[2];
-      const plainAction = ActionPhraseCore.expandPlainActionPhrase(
-        plainActionPhrase);
-      if (plainAction.name === 'signal_cue') {
-        childClaims.push(`cues.${plainAction.params.cue_name}`);
+    TriggerCore.walkActions(resource.actions, '', (actionPhrase, path) => {
+      const action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+      if (action.name === 'signal_cue') {
+        childClaims.push(`cues.${action.params.cue_name}`);
       }
-      if (plainAction.name === 'send_message') {
-        childClaims.push(`messages.${plainAction.params.message_name}`);
+      if (action.name === 'send_message') {
+        childClaims.push(`messages.${action.params.message_name}`);
       }
     }, () => {});
   }
@@ -78,27 +62,45 @@ function getResourceChildClaims(scriptContent, collectionName, resource) {
   return childClaims;
 }
 
-const collectionsWithParents = [
-  'appearances',
-  'relays',
-  'geofences',
-  'routes',
-  'messages',
-  'cues'
-];
+function getEventParent(spec) {
+  const eventClass = EventsRegistry[spec.type];
+  if (!eventClass.parentResourceParam) {
+    return null;
+  }
+  const paramSpec = eventClass.specParams[eventClass.parentResourceParam];
+  if (paramSpec.type !== 'reference') {
+    return null;
+  }
+  const collectionName = paramSpec.collection;
+  const resourceName = spec[eventClass.parentResourceParam];
+  return `${collectionName}.${resourceName}`;
+}
 
-function getResourceParentClaim(collectionName, resource) {
+function getParentClaims(collectionName, resource) {
+  if (collectionName === 'triggers') {
+    return resource.events
+      .map(event => getEventParent(event))
+      .filter(Boolean);
+  }
+  if (collectionName === 'pages') {
+    return resource.appearance ?
+      [`appearances.${resource.appearance}`] :
+      [`roles.${resource.role}`];
+  }
+  if (collectionName === 'pages') {
+    return [`roles.${resource.role}`];
+  }
   if (collectionName === 'appearances') {
-    return `roles.${resource.role}`;
+    return [`roles.${resource.role}`];
   }
   if (collectionName === 'relays') {
-    return `roles.${resource.for}`;
+    return [`roles.${resource.for}`];
   }
   if (collectionName === 'geofences') {
-    return `waypoints.${resource.center}`;
+    return [`waypoints.${resource.center}`];
   }
   if (collectionName === 'routes') {
-    return `waypoints.${resource.from}`;
+    return [`waypoints.${resource.from}`];
   }
   return null;
 }
@@ -115,68 +117,90 @@ function addToList(existing, toAdd) {
 }
 
 function prepareContentTree(scriptContent, contentList) {
-  const children = {};
-  const parents = {};
+  // First gather child claims for complicated cases. childClaims is a dict
+  // of the child object to an array of claimed parent objects.
+  const childClaims = {};
   const collectionNames = Object.keys(contentList);
   _.each(collectionNames, (collectionName) => {
     _.each(contentList[collectionName], (resource) => {
       const selfName = `${collectionName}.${resource.name}`;
-      const parentClaim = getResourceParentClaim(collectionName, resource);
-      if (parentClaim) {
-        parents[selfName] = parentClaim;
-        children[parentClaim] = addToList(children[parentClaim], selfName);
-      }
-      const childClaims = getResourceChildClaims(scriptContent,
-        collectionName, resource);
-      _.each(childClaims, (childClaim) => {
-        parents[childClaim] = selfName;
-        children[selfName] = addToList(children[selfName], childClaim);
+      const claims = getChildClaims(scriptContent, collectionName, resource);
+      _.each(claims, (claim) => {
+        childClaims[claim] = addToList(childClaims[claim], selfName);
       });
     });
   });
-  return _.fromPairs(collectionNames.map((collectionName) => {
-    // If we're a collectionsWithParents, then we're just showing orphans.
-    if (_.includes(collectionsWithParents, collectionName)) {
-      const orphans = _.filter(contentList[collectionName], resource => (
-        !parents[`${collectionName}.${resource.name}`]
-      ));
-      return [collectionName, { orphans: orphans }];
-    }
 
-    // Otherwise we are showing parents with children. Guaranteed not to have
-    // orphans.
-    const parentsAndChildren = _(contentList[collectionName])
-      .map((resource) => {
-        const resChildren = {};
-        const selfName = `${collectionName}.${resource.name}`;
-        _.each(children[selfName], (childName) => {
-          const [childCol, childResName] = childName.split('.');
-          const child = _.find(contentList[childCol], {
-            name: childResName
-          });
-          if (!child) {
-            // Miscategorized somehow
-            return;
-          }
-          resChildren[childCol] = addToList(resChildren[childCol], child);
-        });
-        return { parent: resource, children: resChildren };
-      })
-      .value();
-    return [collectionName, { parents: parentsAndChildren }];
-  }));
+  // Inline get parent functino that looks at memoized child claims first,
+  // then looks up the standard function.
+  function getParent(resourceStr) {
+    // For now just one parent for every object -- THIS should be updated
+    // since a msg could be sent by >1 trigger, a cue by >1 page, etc.
+    if (childClaims[resourceStr]) {
+      return childClaims[resourceStr][0];
+    }
+    const [collectionName, resourceName] = resourceStr.split('.');
+    const resource = _.find(scriptContent[collectionName],
+      { name: resourceName });
+    if (!resource) {
+      return null;
+    }
+    const parents = getParentClaims(collectionName, resource);
+    // Also only handle first parent for now.
+    if (parents && parents.length > 0) {
+      return parents[0];
+    }
+    return null;
+  }
+
+  // Now place each item in the content tree.
+  const contentTree = {};
+  _.each(collectionNames, (collectionName) => {
+    _.each(contentList[collectionName], (resource) => {
+      // For each item, create a path by finding each parent in turn
+      // until there are no more parents.
+      const resourceStr = `${collectionName}.${resource.name}`;
+      const path = [];
+      let cursor = resourceStr;
+      while (cursor) {
+        path.unshift(cursor);
+        cursor = getParent(cursor);
+      }
+
+      // Then iterate through that path in reverse to place each item
+      // in the path in the content tree. If any item isn't in the content
+      // list, no problem, it'll be fetched later.
+      let treeCursor = contentTree;
+      _.each(path, (pathEntry) => {
+        if (!treeCursor[pathEntry]) {
+          treeCursor[pathEntry] = {};
+        }
+        treeCursor = treeCursor[pathEntry];
+      });
+    });
+  });
+  return contentTree;
+}
+
+function walkContentTree(contentTree, path, iteree) {
+  _.each(contentTree, (value, key) => {
+    iteree(path, key);
+    walkContentTree(value, path.concat(key), iteree);
+  });
 }
 
 export default class ContentTree extends Component {
-  renderItem(collectionName, item, parentName) {
+  renderItem(collectionName, item, path) {
     const resourceName = TextUtil.singularize(collectionName);
     const script = this.props.script;
     const itemTitle = titleForResource(collectionName, item);
-    const childPrefix = <span>&mdash;&nbsp;</span>;
+    const prefix = path.map(pathEntry => (
+      <span className="faint" key={pathEntry}>&ndash;&nbsp;</span>
+    ));
     return (
       <Link
         className="list-group-item list-group-item-action constrain-text"
-        key={`${parentName}-${item.name}`}
+        key={`${path.join('-')}-${item.name}`}
         activeClassName="active"
         to={
           `/${script.org.name}/${script.experience.name}` +
@@ -184,46 +208,27 @@ export default class ContentTree extends Component {
           `/${this.props.sliceType}/${this.props.sliceName}` +
           `/${collectionName}/${item.name}`
         }>
-        {parentName ? childPrefix : null}
+        {prefix}
         <span className="badge badge-info">{TextUtil.titleForKey(resourceName)}</span> {itemTitle}
       </Link>
     );
   }
 
-  renderParent(collectionName, parent) {
-    const items = [this.renderItem(collectionName, parent.parent, null)];
-    _.each(Object.keys(parent.children), (childColName) => {
-      _.each(parent.children[childColName], (child) => {
-        items.push(this.renderItem(childColName, child, parent.parent.name));
-      });
-    });
-    return items;
-  }
-
-  renderContentTree(contentTree) {
+  renderContentTree(scriptContent, contentTree) {
     const items = [];
-    const orphanItems = [];
-    _.each(contentTree, (collectionTree, collectionName) => {
-      _.each(collectionTree.parents, (parent) => {
-        const renderedParentItems = this.renderParent(collectionName, parent);
-        items.push(...renderedParentItems);
-      });
-      _.each(collectionTree.orphans, (orphan) => {
-        const renderedOrphan = this.renderItem(collectionName, orphan, 'orphan');
-        orphanItems.push(renderedOrphan);
-      });
-    });
 
-    if (orphanItems.length > 0) {
-      items.push(
-        <div
-          className="list-group-item list-group-item-action disabled"
-          key={'orphanParent'}>
-          Orphaned
-        </div>
-      );
-      items.push(...orphanItems);
-    }
+    walkContentTree(contentTree, [], (path, key) => {
+      const [collectionName, resourceName] = key.split('.');
+      const collection = scriptContent[collectionName];
+      const resource = _.find(collection, { name: resourceName });
+      if (!resource) {
+        console.log(`Resource not found ${key}`);
+        return null;
+      }
+      const renderedItem = this.renderItem(collectionName, resource, path);
+      items.push(renderedItem);
+      return null;
+    });
 
     return (
       <ul className="script-content-slice list-group list-group-flush">
@@ -233,13 +238,12 @@ export default class ContentTree extends Component {
   }
 
   render() {
-    const contentList = getContentList(this.props.sliceType,
-      this.props.sliceName, this.props.script.content);
-
-    const contentTree = prepareContentTree(
-      this.props.script.content, contentList);
-
-    return this.renderContentTree(contentTree);
+    const sliceType = this.props.sliceType;
+    const sliceName = this.props.sliceName;
+    const scriptContent = this.props.script.content;
+    const contentList = getContentList(scriptContent, sliceType, sliceName);
+    const contentTree = prepareContentTree(scriptContent, contentList);
+    return this.renderContentTree(scriptContent, contentTree);
   }
 }
 

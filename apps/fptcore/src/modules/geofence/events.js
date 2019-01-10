@@ -1,5 +1,6 @@
 module.exports = {
   geofence_entered: {
+    parentResourceParam: 'geofence',
     specParams: {
       role: { required: true, type: 'reference', collection: 'roles' },
       geofence: { required: true, type: 'reference', collection: 'geofences' }

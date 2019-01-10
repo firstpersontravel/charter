@@ -1,8 +1,6 @@
 module.exports = {
   cue_signaled: {
-    title: function(spec) {
-      return 'cue_signaled ' + spec.cue;
-    },
+    parentResourceParam: 'cue',
     specParams: {
       cue: { required: true, type: 'reference', collection: 'cues' }
     },

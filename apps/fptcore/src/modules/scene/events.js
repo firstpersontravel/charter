@@ -1,5 +1,6 @@
 module.exports = {
   scene_started: {
+    parentResourceParam: 'scene',
     specParams: {
       scene: { required: true, type: 'reference', collection: 'scenes' }
     },

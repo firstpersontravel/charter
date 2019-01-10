@@ -3,6 +3,7 @@ var ACHIEVEMENT_STYLE_OPTIONS = ['completion', 'choice'];
 var achievement = {
   properties: {
     name: { type: 'name', required: true },
+    title: { type: 'string', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
     style: {
       type: 'enum',

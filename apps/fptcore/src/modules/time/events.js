@@ -18,6 +18,7 @@ function timeForSpec(spec, evalContext) {
 
 module.exports = {
   time_occurred: {
+    parentResourceParam: 'time',
     specParams: {
       time: { required: true, type: 'reference', collection: 'times' },
       before: { required: false, type: 'duration' },

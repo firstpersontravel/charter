@@ -93,23 +93,26 @@ ActionPhraseCore.parseActionPhrase = function(actionPhrase) {
   return {
     name: plainAction.name,
     params: plainAction.params,
-    whenModifier: modifierType === 'when' ? modifier : null
+    when: modifierType === 'when' ? modifier : null
   };
 };
 
 /**
- * Parse an action shorthand (in 3m, do this) into an object containing action
- * name, params, and scheduleAt).
+ * Parse an action when modifier ("in 3m") into a time.
+ */
+ActionPhraseCore.scheduleAtForAction = function(action, actionContext) {
+  if (action.when) {
+    return ActionPhraseCore.timeForShorthand(action.when, actionContext);
+  }
+  return actionContext.evaluateAt;
+};
+
+/**
+ * TOOD get rid of this shortcut.
  */
 ActionPhraseCore.expandActionPhrase = function(actionPhrase, actionContext) {
   var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
-
-  // Calculate schedule
-  var scheduleAt = actionContext.evaluateAt;
-  if (action.whenModifier) {
-    scheduleAt = ActionPhraseCore.timeForShorthand(action.whenModifier, 
-      actionContext);
-  }
+  var scheduleAt = ActionPhraseCore.scheduleAtForAction(action, actionContext);
   return {
     name: action.name,
     params: action.params,

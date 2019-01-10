@@ -15,11 +15,8 @@ var actionsClasses = _(ActionsRegistry)
         self: { type: 'actionPhrase' }
       },
       validateResource: function(script, resource) {
-        var modifierAndAction = ActionPhraseCore.extractModifier(resource);
-        var plainActionPhrase = modifierAndAction[2];
-        var plainAction = ActionPhraseCore.expandPlainActionPhrase(
-          plainActionPhrase);
-        return ParamValidators.validateParams(script, actionClass.params, plainAction.params, '');
+        var action = ActionPhraseCore.parseActionPhrase(resource);
+        return ParamValidators.validateParams(script, actionClass.params, action.params, '');
       }
     };
   })
@@ -28,11 +25,8 @@ var actionsClasses = _(ActionsRegistry)
 var simpleActionParam = {
   type: 'variegated',
   key: function(actionPhrase) {
-    var modifierAndAction = ActionPhraseCore.extractModifier(actionPhrase);
-    var plainActionPhrase = modifierAndAction[2];
-    var plainAction = ActionPhraseCore.expandPlainActionPhrase(
-      plainActionPhrase);
-    return plainAction.name;
+    var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+    return action.name;
   },
   classes: actionsClasses
 };
@@ -86,13 +80,10 @@ var eventResource = {
   classes: eventsClasses
 };
 
-function validateActionWithTrigger(action, path, trigger) {
+function validateActionWithTrigger(actionPhrase, path, trigger) {
   var warnings = [];
-  var modifierAndAction = ActionPhraseCore.extractModifier(action);
-  var plainActionPhrase = modifierAndAction[2];
-  var plainAction = ActionPhraseCore.expandPlainActionPhrase(
-    plainActionPhrase);
-  var actionClass = ActionsRegistry[plainAction.name];
+  var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+  var actionClass = ActionsRegistry[action.name];
   if (!actionClass) {
     return;
   }
@@ -101,7 +92,7 @@ function validateActionWithTrigger(action, path, trigger) {
     var resourceEventTypes = _.uniq(_.map(trigger.events, 'type'));
     resourceEventTypes.forEach(function(resourceEventType) {
       if (!_.includes(actionClass.requiredEventTypes, resourceEventType)) {
-        warnings.push('Action "' + path + '" ("' + action + '") is triggered by event "' + resourceEventType +
+        warnings.push('Action "' + path + '" ("' + actionPhrase + '") is triggered by event "' + resourceEventType +
           '", but requires one of: ' +
           actionClass.requiredEventTypes.join(', ') + '.');
       }
@@ -120,7 +111,7 @@ var trigger = {
     if (firstEventClass.title) {
       return 'On ' + firstEventClass.title(firstEvent);
     }
-    return 'On ' + firstEvent.type;
+    return 'On ' + firstEvent.type.replace(/_/g, ' ');
   },
   properties: {
     name: { type: 'name', required: true },

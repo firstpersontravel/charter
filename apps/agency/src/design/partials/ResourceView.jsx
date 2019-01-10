@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router';
 
 import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil } from 'fptcore';
 
-import { renderLink } from '../../partials/Param';
+import { titleForResource } from '../components/utils';
+import { linkForResource } from '../../partials/Param';
 
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title', 'scene'];
@@ -33,7 +35,20 @@ const renderers = {
     if (value === 'null') {
       return 'None';
     }
-    return renderLink(script, spec.collection, value);
+    const url = linkForResource(script, spec.collection, value);
+    const collection = script.content[spec.collection];
+    const resource = _.find(collection, { name: value });
+    const title = titleForResource(spec.collection, resource);
+    return (
+      <span>
+        <span className="badge badge-info">
+          {TextUtil.titleForKey(TextUtil.singularize(spec.collection))}
+        </span>&nbsp;
+        <Link to={url}>
+          {title}
+        </Link>
+      </span>
+    );
   },
   coords: (script, spec, value) => (
     `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`
