@@ -47,9 +47,12 @@ class TripUtil {
   static prepareEvalContext(objs) {
     const trip = this._assembleTripFields(objs);
     // Only allow custom hosts in production.
-    const host = config.env.STAGE === 'production' ? 
-      (objs.script.host || config.env.SERVER_HOST_PUBLIC) :
-      config.env.SERVER_HOST_PUBLIC;
+    const isDeployed = config.env.STAGE !== 'development';
+    const customDomainBase = config.env.SERVER_CUSTOM_DOMAIN_BASE;
+    const customSubdomain = objs.experience.domain || objs.experience.name;
+    const customDomain = `${customSubdomain}.${customDomainBase}`;
+    const customHost = isDeployed ? `https://${customDomain}` : '';
+    const host = customHost || config.env.SERVER_HOST_PUBLIC;
     const env = { host: host };
     // Create the context.
     return ContextCore.gatherEvalContext(env, trip);

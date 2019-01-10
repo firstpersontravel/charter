@@ -16,7 +16,7 @@ const {
 const Experience = database.define('Experience', snakeCaseColumns({
   name: mutableModifier(requiredStringField(255)),
   title: mutableModifier(requiredStringField(255)),
-  host: mutableModifier(optionalStringField(64)),
+  domain: mutableModifier(optionalStringField(64)),
   timezone: mutableModifier(requiredStringField(32)),
   isArchived: mutableModifier(booleanField(false))
 }));

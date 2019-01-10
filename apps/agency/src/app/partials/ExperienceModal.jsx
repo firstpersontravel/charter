@@ -1,0 +1,174 @@
+import _ from 'lodash';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+
+import { getStage } from '../../utils';
+
+export default class ExperienceModal extends Component {
+
+  static getDefaultState(experience) {
+    return {
+      name: experience ? experience.name : '',
+      title: experience ? experience.title : '',
+      domain: experience ? experience.domain : '',
+      timezone: experience ? experience.timezone : 'US/Pacific'
+    };
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = ExperienceModal.getDefaultState(props.experience);
+    this.handleConfirm = this.handleConfirm.bind(this);
+    this.handleChangeField = this.handleChangeField.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState(ExperienceModal.getDefaultState(nextProps.experience));
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.isOpen && !prevProps.isOpen) {
+      this.firstInput.focus();
+    }
+  }
+
+  handleToggle() {
+    if (this.props.isOpen) {
+      this.props.onClose();
+    }
+  }
+
+  handleConfirm() {
+    this.props.onConfirm(this.state);
+  }
+
+  handleChangeField(fieldName, event) {
+    this.setState({ [fieldName]: event.target.value });
+  }
+
+  isValid() {
+    if (this.state.name === '') {
+      return false;
+    }
+    if (!/^[a-zA-Z0-9-]+$/.test(this.state.name)) {
+      return false;
+    }
+    if (this.state.title === '') {
+      return false;
+    }
+    if (this.state.domain && !/^[a-zA-Z0-9-.]+$/.test(this.state.domain)) {
+      return false;
+    }
+    return true;
+  }
+
+  render() {
+    const experience = this.props.experience;
+    const title = experience ? 'Edit experience' : 'New experience';
+    const isNew = !experience;
+    const confirmLabel = isNew ? 'Create' : 'Update';
+    const isValid = this.isValid();
+
+    const timezones = ['US/Eastern', 'US/Pacific'];
+    const timezoneOptions = timezones.map(timezone => (
+      <option key={timezone} value={timezone}>
+        {timezone}
+      </option>
+    ));
+
+    const host = window.location.host;
+    const useSubdomain = getStage() !== 'development';
+    const domain = `${useSubdomain ? `${this.state.name}.` : ''}${host}`;
+
+    return (
+      <Modal
+        isOpen={this.props.isOpen}
+        toggle={this.handleToggle}
+        zIndex={3000}>
+        <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
+        <ModalBody>
+          <form>
+            <div className="row">
+              <div className="form-group col-12">
+                <label htmlFor="exp_name">
+                  Name (alphanumeric with dashes)
+                </label>
+                <input
+                  type="text"
+                  id="exp_name"
+                  className="form-control"
+                  value={this.state.name}
+                  ref={(input) => { this.firstInput = input; }}
+                  onChange={_.curry(this.handleChangeField)('name')}
+                  placeholder="Name" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-12">
+                <label htmlFor="exp_title">Title</label>
+                <input
+                  type="text"
+                  id="exp_title"
+                  className="form-control"
+                  value={this.state.title}
+                  onChange={_.curry(this.handleChangeField)('title')}
+                  placeholder="Title" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-12">
+                <label htmlFor="exp_host">
+                  Custom domain
+                </label>
+                <input
+                  type="text"
+                  id="exp_host"
+                  className="form-control"
+                  value={this.state.domain}
+                  onChange={_.curry(this.handleChangeField)('domain')}
+                  placeholder={domain} />
+              </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-12">
+                <label htmlFor="exp_timezone">Time zone</label>
+                <select
+                  className="form-control"
+                  id="exp_timezone"
+                  onChange={_.curry(this.handleChangeField)('timezone')}
+                  value={this.state.timezone}>
+                  {timezoneOptions}
+                </select>
+              </div>
+            </div>
+          </form>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            onClick={this.handleConfirm}
+            disabled={!isValid}>
+            {confirmLabel}
+          </Button>
+          &nbsp;
+          <Button color="secondary" onClick={this.handleToggle}>
+            Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
+  }
+}
+
+ExperienceModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  experience: PropTypes.object,
+  onConfirm: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired
+};
+
+ExperienceModal.defaultProps = {
+  experience: null
+};
