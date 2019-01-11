@@ -10,39 +10,17 @@ import { titleForResource } from '../components/utils';
 function getChildClaims(scriptContent, collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
   const resourceClass = ResourcesRegistry[resourceType];
-  if (resourceClass.getChildClaims) {
-    return resourceClass.getChildClaims(resource);
-  }
-  return null;
-  // const childClaims = [];
-  // if (collectionName === 'triggers') {
-  //   TriggerCore.walkActions(resource.actions, '', (actionPhrase, path) => {
-  //     const action = ActionPhraseCore.parseActionPhrase(actionPhrase);
-  //     if (action.name === 'signal_cue') {
-  //       childClaims.push(`cues.${action.params.cue_name}`);
-  //     }
-  //     if (action.name === 'send_message') {
-  //       childClaims.push(`messages.${action.params.message_name}`);
-  //     }
-  //   }, () => {});
-  // }
-  // if (collectionName === 'pages') {
-  //   _.each(resource.panels, (panel) => {
-  //     if (panel.cue) {
-  //       childClaims.push(`cues.${panel.cue}`);
-  //     }
-  //   });
-  // }
-  // return childClaims;
+  return resourceClass.getChildClaims ?
+    resourceClass.getChildClaims(resource) :
+    null;
 }
 
 function getParentClaims(collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
   const resourceClass = ResourcesRegistry[resourceType];
-  if (resourceClass.getParentClaims) {
-    return resourceClass.getParentClaims(resource);
-  }
-  return null;
+  return resourceClass.getParentClaims ?
+    resourceClass.getParentClaims(resource) :
+    null;
 }
 
 function addToList(existing, toAdd) {
