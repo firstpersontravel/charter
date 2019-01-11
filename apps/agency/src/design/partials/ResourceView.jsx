@@ -16,6 +16,19 @@ const empty = <em className="faint">Empty</em>;
 
 let renderFieldValue;
 
+function ifClauseToString(ifClause) {
+  if (_.isString(ifClause)) {
+    return ifClause;
+  }
+  if (_.isArray(ifClause)) {
+    return `(${_.map(ifClause, ifClauseToString).join(' and ')})`;
+  }
+  if (_.isPlainObject(ifClause) && ifClause.or) {
+    return `(${_.map(ifClause.or, ifClauseToString).join(' or ')})`;
+  }
+  return '';
+}
+
 const renderers = {
   string: (script, spec, value) => `"${value}"`,
   raw: (script, spec, value) => value,
@@ -44,6 +57,9 @@ const renderers = {
       <Link to={url}>{title}</Link>
     );
   },
+  ifClause: (script, spec, value) => (
+    ifClauseToString(value)
+  ),
   coords: (script, spec, value) => (
     `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`
   ),
@@ -141,7 +157,6 @@ renderers.duration = renderers.raw;
 renderers.lookupable = renderers.raw;
 renderers.nestedAttribute = renderers.raw;
 renderers.simpleAttribute = renderers.raw;
-renderers.ifClause = renderers.raw;
 renderers.enum = renderers.raw;
 renderers.media = renderers.raw;
 renderers.number = renderers.raw;

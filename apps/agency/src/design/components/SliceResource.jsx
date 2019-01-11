@@ -1,12 +1,17 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { browserHistory } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
 import ResourceView from '../partials/ResourceView';
-import { titleForResource } from './utils';
+import {
+  titleForResource,
+  assembleParentClaims,
+  getParenthoodPaths,
+  getContentList
+} from './utils';
 
 import PopoverControl from '../../partials/PopoverControl';
 
@@ -99,6 +104,99 @@ export default class SliceResource extends Component {
     return titleForResource(collectionName, resource);
   }
 
+  renderParentPath(parentPath) {
+    const script = this.props.script;
+    const sliceType = this.props.params.sliceType;
+    const sliceName = this.props.params.sliceName;
+    const pathItems = _(parentPath)
+      .reverse()
+      .map((resourceStr, i) => {
+        if (i === parentPath.length - 1) {
+          return null;
+        }
+        const [collectionName, resourceName] = resourceStr.split('.');
+        const resourceType = TextUtil.singularize(collectionName);
+        const resource = _.find(script.content[collectionName], {
+          name: resourceName
+        });
+        return (
+          <span key={resourceStr}>
+            <span className="badge badge-secondary">
+              {TextUtil.titleForKey(resourceType)}
+            </span>
+            &nbsp;
+            <Link
+              to={
+                `/${script.org.name}/${script.experience.name}` +
+                `/design/script/${script.revision}` +
+                `/${sliceType}/${sliceName}` +
+                `/${collectionName}/${resourceName}`
+              }>
+              {titleForResource(collectionName, resource)}
+            </Link>
+            &nbsp;&rarr;&nbsp;
+          </span>
+        );
+      })
+      .value();
+    return (
+      <div
+        key={parentPath.join(',')}
+        className="constrain-text"
+        style={{ marginBottom: '0.25em' }}>
+        {pathItems}
+      </div>
+    );
+  }
+
+  renderParentPaths(parenthoodPaths) {
+    if (!parenthoodPaths.length) {
+      return null;
+    }
+    const renderedPaths = parenthoodPaths.map(parenthoodPath => (
+      this.renderParentPath(parenthoodPath)
+    ));
+
+    return (
+      <div style={{ marginBottom: '0.5em' }}>
+        {renderedPaths}
+      </div>
+    );
+  }
+
+  renderChild(childStr) {
+    const script = this.props.script;
+    const sliceType = this.props.params.sliceType;
+    const sliceName = this.props.params.sliceName;
+    const [collectionName, resourceName] = childStr.split('.');
+    const resourceType = TextUtil.singularize(collectionName);
+    const resource = _.find(script.content[collectionName], {
+      name: resourceName
+    });
+    return (
+      <div key={childStr}>
+        &nbsp;&rarr;&nbsp;
+        <span className="badge badge-secondary">
+          {TextUtil.titleForKey(resourceType)}
+        </span>
+        &nbsp;
+        <Link
+          to={
+            `/${script.org.name}/${script.experience.name}` +
+            `/design/script/${script.revision}` +
+            `/${sliceType}/${sliceName}` +
+            `/${collectionName}/${resourceName}`
+          }>
+          {titleForResource(collectionName, resource)}
+        </Link>
+      </div>
+    );
+  }
+
+  renderChildren(childrenStrs) {
+    return childrenStrs.map(childStr => this.renderChild(childStr));
+  }
+
   render() {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
@@ -106,11 +204,26 @@ export default class SliceResource extends Component {
     const resource = this.getResource();
     if (!resource) {
       return (
-        <div>Not found.</div>
+        <div className="alert alert-warning">Not found.</div>
       );
     }
+
+    const sliceType = this.props.params.sliceType;
+    const sliceName = this.props.params.sliceName;
+    const contentList = getContentList(script.content, sliceType, sliceName);
+    const parentClaims = assembleParentClaims(script.content, contentList);
+    const resourceStr = `${collectionName}.${resource.name}`;
+    const parenthoodPaths = getParenthoodPaths(script.content,
+      `${collectionName}.${resource.name}`, parentClaims);
+
+    const childrenStrs = _(parentClaims)
+      .keys()
+      .filter(key => _.includes(parentClaims[key], resourceStr))
+      .value();
+
     return (
       <div>
+        {this.renderParentPaths(parenthoodPaths)}
         <div className="card" style={{ marginBottom: '1em' }}>
           <h5 className="card-header">
             <span className="badge badge-info">
@@ -125,6 +238,7 @@ export default class SliceResource extends Component {
               resource={resource} />
           </div>
         </div>
+        {this.renderChildren(childrenStrs)}
       </div>
     );
   }
