@@ -79,7 +79,8 @@ export default class ContentTree extends Component {
 
     walkContentTree(contentTree, [], (path, key) => {
       const [collectionName, resourceName] = key.split('.');
-      const isInContentList = !!contentList[collectionName];
+      const isInContentList = !!_.find(contentList[collectionName],
+        { name: resourceName });
       const collection = scriptContent[collectionName];
       const resource = _.find(collection, { name: resourceName });
       if (!resource) {
