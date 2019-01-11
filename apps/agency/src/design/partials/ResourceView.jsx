@@ -40,13 +40,7 @@ const renderers = {
     const resource = _.find(collection, { name: value });
     const title = titleForResource(spec.collection, resource);
     return (
-      <Link to={url} className="btn btn-sm btn-outline-secondary">
-        <span className="badge badge-info">
-          {TextUtil.titleForKey(TextUtil.singularize(spec.collection))}
-        </span>
-        &nbsp;
-        {title}
-      </Link>
+      <Link to={url}>{title}</Link>
     );
   },
   coords: (script, spec, value) => (
@@ -55,7 +49,10 @@ const renderers = {
   actionPhrase: (script, spec, value) => {
     const action = ActionPhraseCore.parseActionPhrase(value);
     const actionClass = ActionsRegistry[action.name];
-    const parts = [{ name: 'name', rendered: action.name }];
+    const parts = [{
+      name: 'name',
+      rendered: action.name
+    }];
     _.each(actionClass.phraseForm, (paramName) => {
       const paramSpec = actionClass.params[paramName];
       const paramValue = action.params[paramName];
@@ -65,9 +62,7 @@ const renderers = {
       });
     });
     return parts.map(part => (
-      <span key={part.name} style={{ marginRight: '0.25em' }}>
-        {part.rendered}
-      </span>
+      <span key={part.name}>{part.rendered}&nbsp;</span>
     ));
   },
   list: (script, spec, value) => {
@@ -108,13 +103,14 @@ const renderers = {
     return (
       <div>
         {Object.keys(spec.properties).map((key) => {
-          if (_.isUndefined(value[key]) && _.isUndefined(spec.properties[key].default)) {
+          const keySpec = spec.properties[key];
+          if (_.isUndefined(value[key]) && _.isUndefined(keySpec.default)) {
             return null;
           }
           return (
             // eslint-disable-next-line react/no-array-index-key
             <div key={key}>
-              <strong>{key}:</strong>&nbsp;
+              <strong>{_.upperFirst(key)}:</strong>&nbsp;
               {renderFieldValue(script, spec.properties[key], value[key])}
             </div>
           );
@@ -178,34 +174,26 @@ export default class ResourceView extends Component {
   }
 
   getFieldNames() {
-    return Object.keys(this.getResourceClass().properties);
-  }
-
-  renderField(fieldName) {
-    // Hide title since it's displayed up top.
-    if (_.includes(HIDE_FIELD_NAMES, fieldName)) {
-      return null;
-    }
-    const script = this.props.script;
-    const resourceClass = this.getResourceClass();
-    const spec = resourceClass.properties[fieldName];
-    const value = this.props.resource[fieldName];
-    if (_.isUndefined(value) && _.isUndefined(spec.default)) {
-      return null;
-    }
-    const fieldRendered = renderFieldValue(script, spec, value);
-    return (
-      <div key={fieldName}>
-        <strong>{fieldName}</strong>:&nbsp;
-        {fieldRendered}
-      </div>
-    );
+    return _.without(
+      Object.keys(this.getResourceClass().properties),
+      ...HIDE_FIELD_NAMES);
   }
 
   renderFields() {
-    return this.getFieldNames().map(fieldName => (
-      this.renderField(fieldName)
-    ));
+    const script = this.props.script;
+    const fieldNames = this.getFieldNames();
+    if (!fieldNames.length) {
+      return (
+        <div className="alert alert-info">
+          This resource has no customizable fields.
+        </div>
+      );
+    }
+    const resourceClass = this.getResourceClass();
+    const whitelistedParams = {
+      properties: _.pick(resourceClass.properties, ...fieldNames)
+    };
+    return renderers.object(script, whitelistedParams, this.props.resource);
   }
 
   render() {

@@ -7,38 +7,6 @@ import { ActionPhraseCore, TextUtil, TriggerCore, EventsRegistry } from 'fptcore
 
 import { titleForResource } from '../components/utils';
 
-const sectionContent = {
-  roles: { roles: {}, appearances: {}, relays: {} },
-  locations: { waypoints: {}, geofences: {}, routes: {} },
-  variants: { variants: {}, departures: {} },
-  media: { layouts: {}, content_pages: {}, audio: {} }
-};
-
-const sliceContent = {
-  scene: sliceName => ({
-    scenes: { name: sliceName },
-    pages: { scene: sliceName },
-    triggers: { scene: sliceName },
-    messages: { scene: sliceName },
-    cues: { scene: sliceName },
-    achievements: { scene: sliceName },
-    times: { scene: sliceName },
-    checkpoints: { scene: sliceName }
-  }),
-  section: sliceName => sectionContent[sliceName]
-};
-
-function getSliceContent(sliceType, sliceName) {
-  return sliceContent[sliceType](sliceName);
-}
-
-function getContentList(scriptContent, sliceType, sliceName) {
-  const contentMap = getSliceContent(sliceType, sliceName);
-  return _.mapValues(contentMap, (filters, collectionName) => (
-    _.filter(scriptContent[collectionName], filters)
-  ));
-}
-
 function getChildClaims(scriptContent, collectionName, resource) {
   const childClaims = [];
   if (collectionName === 'triggers') {
@@ -250,10 +218,8 @@ export default class ContentTree extends Component {
   }
 
   render() {
-    const sliceType = this.props.sliceType;
-    const sliceName = this.props.sliceName;
     const scriptContent = this.props.script.content;
-    const contentList = getContentList(scriptContent, sliceType, sliceName);
+    const contentList = this.props.contentList;
     const contentTree = prepareContentTree(scriptContent, contentList);
     return this.renderContentTree(scriptContent, contentList, contentTree);
   }
@@ -262,5 +228,6 @@ export default class ContentTree extends Component {
 ContentTree.propTypes = {
   sliceType: PropTypes.string.isRequired,
   sliceName: PropTypes.string.isRequired,
+  contentList: PropTypes.object.isRequired,
   script: PropTypes.object.isRequired
 };

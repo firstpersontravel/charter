@@ -76,13 +76,15 @@ export default class OrgExperience extends Component {
       </div>
     ));
 
-    const newScriptBtn = experience.scripts.length > 0 ? null : (
+    const hasNoScripts = !experience.scripts.length &&
+      !experience.scripts.isLoading;
+    const newScriptBtn = hasNoScripts ? (
       <button
         onClick={this.handleCreateScript}
         className="btn btn-primary">
         Create new script
       </button>
-    );
+    ) : null;
 
     const activeScript = _.find(experience.scripts, { isActive: true });
     const trailheadSpecs = _.filter(_.get(activeScript, 'content.relays'), {
