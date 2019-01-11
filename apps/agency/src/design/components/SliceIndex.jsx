@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { TextUtil } from 'fptcore';
 
-import { getSliceContent } from './utils';
+import { getSliceContent } from '../utils/section-utils';
 
 function renderCreateResource(collectionName) {
   const resourceName = TextUtil.singularize(collectionName);

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 import ContentTree from '../partials/ContentTree';
 
-import { getContentList, prepareContentTree } from './utils';
+import { prepareContentTree } from '../utils/tree-utils';
+import { getContentList } from '../utils/section-utils';
 
 export default class Slice extends Component {
   constructor(props) {

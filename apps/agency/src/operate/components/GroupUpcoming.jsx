@@ -3,9 +3,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ActionsRegistry, EventsRegistry, TriggerEventCore } from 'fptcore';
-
-import Param from '../../partials/Param';
+import { EventsRegistry, TriggerEventCore } from 'fptcore';
 
 function getScheduledTripTriggers(trip) {
   const now = moment.utc();
@@ -59,22 +57,16 @@ function renderTrigger(trigger, trip) {
   );
 }
 
-export default class GroupUpcoming extends Component {
+function renderActionParam(trip, action, paramName) {
+  return (
+    <div className="wrap-text" key={paramName}>
+      {paramName}:&nbsp;
+      {action.params[paramName]}
+    </div>
+  );
+}
 
-  renderActionParam(trip, action, paramName) {
-    const orgName = this.props.params.orgName;
-    const actionParamsSpec = ActionsRegistry[action.name].params;
-    return (
-      <div className="wrap-text" key={paramName}>
-        {paramName}:&nbsp;
-        <Param
-          orgName={orgName}
-          scriptId={trip.scriptId}
-          spec={actionParamsSpec[paramName]}
-          value={action.params[paramName]} />
-      </div>
-    );
-  }
+export default class GroupUpcoming extends Component {
 
   renderAction(action, trip) {
     const timeShort = moment
@@ -82,7 +74,7 @@ export default class GroupUpcoming extends Component {
       .tz(trip.experience.timezone)
       .format('ddd h:mm:ssa');
     const values = _.keys(action.params).map(k => (
-      this.renderActionParam(trip, action, k)
+      renderActionParam(trip, action, k)
     ));
     const cellClass = action.isArchived ?
       'upcoming-archived' : 'upcoming-unarchived';
@@ -184,6 +176,5 @@ GroupUpcoming.propTypes = {
   group: PropTypes.object.isRequired,
   postAdminAction: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
-  actions: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired
+  actions: PropTypes.array.isRequired
 };

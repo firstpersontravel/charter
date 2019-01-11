@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
-import { titleForResource } from '../components/utils';
+import { titleForResource } from '../utils/text-utils';
 
 function walkContentTree(contentTree, path, iteree) {
   _.each(contentTree, (value, key) => {

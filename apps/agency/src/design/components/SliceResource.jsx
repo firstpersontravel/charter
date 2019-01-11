@@ -6,13 +6,10 @@ import { Link, browserHistory } from 'react-router';
 import { TextUtil } from 'fptcore';
 
 import ResourceView from '../partials/ResourceView';
-import {
-  titleForResource,
-  assembleParentClaims,
-  getParenthoodPaths,
-  getContentList
-} from './utils';
-
+import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
+import { titleForResource } from '../utils/text-utils';
+import { getContentList } from '../utils/section-utils';
+import { assembleReverseReferences } from '../utils/graph-utils';
 import PopoverControl from '../../partials/PopoverControl';
 
 export default class SliceResource extends Component {
@@ -194,7 +191,36 @@ export default class SliceResource extends Component {
   }
 
   renderChildren(childrenStrs) {
-    return childrenStrs.map(childStr => this.renderChild(childStr));
+    if (!childrenStrs.length) {
+      return null;
+    }
+    const renderedChildren = childrenStrs.map(childStr => (
+      this.renderChild(childStr)
+    ));
+
+    return (
+      <div style={{ marginBottom: '0.5em' }}>
+        <div><strong>Children:</strong></div>
+        {renderedChildren}
+      </div>
+    );
+  }
+
+  renderReverseRefs(reverseRefs) {
+    if (!reverseRefs || !reverseRefs.length) {
+      return null;
+    }
+
+    const renderedReverseRefs = reverseRefs.map(reverseRef => (
+      this.renderChild(reverseRef)
+    ));
+
+    return (
+      <div style={{ marginBottom: '0.5em' }}>
+        <div><strong>All references:</strong></div>
+        {renderedReverseRefs}
+      </div>
+    );
   }
 
   render() {
@@ -221,6 +247,9 @@ export default class SliceResource extends Component {
       .filter(key => _.includes(parentClaims[key], resourceStr))
       .value();
 
+    const reverseRefGraph = assembleReverseReferences(script.content);
+    const reverseRefs = reverseRefGraph[resourceStr];
+
     return (
       <div>
         {this.renderParentPaths(parenthoodPaths)}
@@ -239,6 +268,7 @@ export default class SliceResource extends Component {
           </div>
         </div>
         {this.renderChildren(childrenStrs)}
+        {this.renderReverseRefs(reverseRefs)}
       </div>
     );
   }

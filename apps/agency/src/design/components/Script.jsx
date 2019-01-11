@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { sections } from './utils';
+import { sections } from '../utils/section-utils';
 
 export default class Script extends Component {
   constructor(props) {

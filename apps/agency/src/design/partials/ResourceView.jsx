@@ -5,8 +5,8 @@ import { Link } from 'react-router';
 
 import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil } from 'fptcore';
 
-import { titleForResource } from '../components/utils';
-import { linkForResource } from '../../partials/Param';
+import { titleForResource } from '../utils/text-utils';
+import { linkForResource } from '../utils/section-utils';
 // import PopoverControl from '../../partials/PopoverControl';
 
 // Hide title, field, and name
