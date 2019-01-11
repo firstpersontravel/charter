@@ -29,7 +29,7 @@ export function linkForResource(script, collectionName, resourceName) {
   const { sliceType, sliceName } = sliceForResource(collectionName, resource);
   return (
     `/${script.org.name}/${script.experience.name}` +
-    `/design/script/${script.id}` +
+    `/design/script/${script.revision}` +
     `/${sliceType}/${sliceName}` +
     `/${collectionName}/${resourceName}`
   );

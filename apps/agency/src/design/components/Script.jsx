@@ -6,13 +6,41 @@ import { Link } from 'react-router';
 import { sections } from './utils';
 
 export default class Script extends Component {
+  constructor(props) {
+    super(props);
+    this.handleActivateScript = this.handleActivateScript.bind(this);
+  }
+
+  handleActivateScript() {
+    // Activate this script.
+    this.props.updateInstance('scripts', this.props.script.id, {
+      isActive: true
+    });
+
+    // Deactivate other scripts.
+    _.each(this.props.scripts, (otherScript) => {
+      if (otherScript.id === this.props.script.id) {
+        return;
+      }
+      if (otherScript.isActive) {
+        this.props.updateInstance('scripts', otherScript.id, {
+          isActive: false
+        });
+      } else {
+        this.props.updateInstance('scripts', otherScript.id, {
+          isArchived: true
+        });
+      }
+    });
+  }
+
   renderNav() {
     const script = this.props.script;
     const sceneLinks = _.map(script.content.scenes, scene => (
       <Link
         key={scene.name}
         className="dropdown-item"
-        to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/scene/${scene.name}`}>
+        to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`}>
         {scene.title}
       </Link>
     ));
@@ -22,7 +50,7 @@ export default class Script extends Component {
         <Link
           className="nav-link"
           activeClassName="active"
-          to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/section/${section[0]}`}>
+          to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`}>
           {section[1]}
         </Link>
       </li>
@@ -46,7 +74,7 @@ export default class Script extends Component {
             className={`nav-link dropdown-toggle ${hasScenes ? '' : 'disabled'}`}
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/${script.org.name}/${script.experience.name}/design/script/${script.id}/scene`}>
+            to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene`}>
             {sceneTitle}
           </Link>
           <div className="dropdown-menu">
@@ -58,9 +86,44 @@ export default class Script extends Component {
   }
 
   renderOpts() {
+    const script = this.props.script;
+    const maxRevision = Math.max(..._.map(this.props.scripts, 'revision'));
+    const isMaxRevision = script.revision === maxRevision;
+    const activeRevision = _(this.props.scripts)
+      .filter('isActive')
+      .map('revision')
+      .head();
+    const isSuperceded = script.revision < activeRevision;
+    const badgeClass = script.isActive ? 'badge-primary' : 'badge-secondary';
+    const statusText = script.isActive ? 'Active' : 'Draft';
+    const status = (
+      <span
+        style={{ marginLeft: '0.25em' }}
+        className={`badge ${badgeClass}`}>
+        {isSuperceded ? 'Superceded' : statusText}
+      </span>
+    );
+    const makeActiveBtn = !script.isActive && isMaxRevision ? (
+      <button
+        style={{ marginLeft: '0.25em', padding: '0' }}
+        onClick={this.handleActivateScript}
+        className="btn btn-link">
+        Activate
+      </button>
+    ) : null;
+    const goToLatestLink = !isMaxRevision ? (
+      <span style={{ marginLeft: '0.25em', padding: '0' }}>
+        <Link to={`/${script.org.name}/${script.experience.name}/design/script/${maxRevision}`}>
+          Go to {maxRevision}
+        </Link>
+      </span>
+    ) : null;
     return (
       <div style={{ textAlign: 'right', padding: '0.5em' }}>
         Revision {this.props.script.revision}
+        {status}
+        {makeActiveBtn}
+        {goToLatestLink}
       </div>
     );
   }
@@ -78,10 +141,10 @@ export default class Script extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-10">
+          <div className="col-8">
             {this.renderNav()}
           </div>
-          <div className="col-2">
+          <div className="col-4">
             {this.renderOpts()}
           </div>
         </div>
@@ -94,5 +157,7 @@ export default class Script extends Component {
 Script.propTypes = {
   children: PropTypes.node.isRequired,
   script: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired
+  scripts: PropTypes.array.isRequired,
+  params: PropTypes.object.isRequired,
+  updateInstance: PropTypes.func.isRequired
 };

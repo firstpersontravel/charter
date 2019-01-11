@@ -90,6 +90,9 @@ var send_message = {
         content: content
       }
     }];
+  },
+  getChildClaims: function(params) {
+    return ['messages.' + params.message_name];
   }
 };
 

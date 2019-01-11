@@ -10,7 +10,7 @@ function renderCreateResource(collectionName) {
   return (
     <div key={collectionName} style={{ marginBottom: '1em' }}>
       <p>Info about {collectionName}</p>
-      <button className="btn btn-secondary">
+      <button className="btn btn-outline-secondary">
         Create {resourceName}
       </button>
     </div>

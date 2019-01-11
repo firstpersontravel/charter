@@ -10,8 +10,8 @@ import SliceResourceConnector from './connectors/SliceResource';
 export default (
   <Route path="design">
     <IndexRoute component={DesignIndexConnector} />
-    <Route path="script/:scriptId" component={ScriptConnector}>
-      <IndexRedirect to="/:orgName/:experienceName/design/script/:scriptId/section/roles" />
+    <Route path="script/:revision" component={ScriptConnector}>
+      <IndexRedirect to="/:orgName/:experienceName/design/script/:revision/section/roles" />
       <Route path=":sliceType">
         <Route path=":sliceName" component={SliceConnector}>
           <IndexRoute component={SliceIndexConnector} />

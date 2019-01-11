@@ -1,6 +1,7 @@
 import {
   instanceIncluder,
-  instanceFromDatastore
+  instanceFromDatastore,
+  instancesFromDatastore
 } from '../../datastore-utils';
 
 export function lookupScript(state, ownProps) {
@@ -10,7 +11,22 @@ export function lookupScript(state, ownProps) {
       isArchived: false,
       org: { name: ownProps.params.orgName },
       experience: { name: ownProps.params.experienceName },
-      id: Number(ownProps.params.scriptId)
+      revision: Number(ownProps.params.revision)
+    },
+    include: {
+      org: instanceIncluder('orgs', 'id', 'orgId'),
+      experience: instanceIncluder('experiences', 'id', 'experienceId')
+    }
+  });
+}
+
+export function lookupScripts(state, ownProps) {
+  return instancesFromDatastore(state, {
+    col: 'scripts',
+    filter: {
+      isArchived: false,
+      org: { name: ownProps.params.orgName },
+      experience: { name: ownProps.params.experienceName }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),

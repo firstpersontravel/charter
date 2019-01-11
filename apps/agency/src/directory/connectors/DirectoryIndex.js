@@ -10,9 +10,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  createInstance: (collectionName, fields) => {
-    dispatch(createInstance(collectionName, fields));
-  }
+  createInstance: (...args) => dispatch(createInstance(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DirectoryIndex);

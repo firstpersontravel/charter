@@ -7,6 +7,9 @@ var appearance = {
     disabled_message: { type: 'string' },
     start: { type: 'reference', collection: 'times' },
     if: { type: 'ifClause' }
+  },
+  getParentClaims: function(resource) {
+    return ['roles.' + resource.role];
   }
 };
 

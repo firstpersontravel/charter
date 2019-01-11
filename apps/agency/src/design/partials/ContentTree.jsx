@@ -3,72 +3,44 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ActionPhraseCore, TextUtil, TriggerCore, EventsRegistry } from 'fptcore';
+import { TextUtil, ResourcesRegistry } from 'fptcore';
 
 import { titleForResource } from '../components/utils';
 
 function getChildClaims(scriptContent, collectionName, resource) {
-  const childClaims = [];
-  if (collectionName === 'triggers') {
-    TriggerCore.walkActions(resource.actions, '', (actionPhrase, path) => {
-      const action = ActionPhraseCore.parseActionPhrase(actionPhrase);
-      if (action.name === 'signal_cue') {
-        childClaims.push(`cues.${action.params.cue_name}`);
-      }
-      if (action.name === 'send_message') {
-        childClaims.push(`messages.${action.params.message_name}`);
-      }
-    }, () => {});
+  const resourceType = TextUtil.singularize(collectionName);
+  const resourceClass = ResourcesRegistry[resourceType];
+  if (resourceClass.getChildClaims) {
+    return resourceClass.getChildClaims(resource);
   }
-  if (collectionName === 'pages') {
-    _.each(resource.panels, (panel) => {
-      if (panel.cue) {
-        childClaims.push(`cues.${panel.cue}`);
-      }
-    });
-  }
-  return childClaims;
-}
-
-function getEventParent(spec) {
-  const eventClass = EventsRegistry[spec.type];
-  if (!eventClass.parentResourceParam) {
-    return null;
-  }
-  const paramSpec = eventClass.specParams[eventClass.parentResourceParam];
-  if (paramSpec.type !== 'reference') {
-    return null;
-  }
-  const collectionName = paramSpec.collection;
-  const resourceName = spec[eventClass.parentResourceParam];
-  return `${collectionName}.${resourceName}`;
+  return null;
+  // const childClaims = [];
+  // if (collectionName === 'triggers') {
+  //   TriggerCore.walkActions(resource.actions, '', (actionPhrase, path) => {
+  //     const action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+  //     if (action.name === 'signal_cue') {
+  //       childClaims.push(`cues.${action.params.cue_name}`);
+  //     }
+  //     if (action.name === 'send_message') {
+  //       childClaims.push(`messages.${action.params.message_name}`);
+  //     }
+  //   }, () => {});
+  // }
+  // if (collectionName === 'pages') {
+  //   _.each(resource.panels, (panel) => {
+  //     if (panel.cue) {
+  //       childClaims.push(`cues.${panel.cue}`);
+  //     }
+  //   });
+  // }
+  // return childClaims;
 }
 
 function getParentClaims(collectionName, resource) {
-  if (collectionName === 'triggers') {
-    return resource.events
-      .map(event => getEventParent(event))
-      .filter(Boolean);
-  }
-  if (collectionName === 'pages') {
-    return resource.appearance ?
-      [`appearances.${resource.appearance}`] :
-      [`roles.${resource.role}`];
-  }
-  if (collectionName === 'pages') {
-    return [`roles.${resource.role}`];
-  }
-  if (collectionName === 'appearances') {
-    return [`roles.${resource.role}`];
-  }
-  if (collectionName === 'relays') {
-    return [`roles.${resource.for}`];
-  }
-  if (collectionName === 'geofences') {
-    return [`waypoints.${resource.center}`];
-  }
-  if (collectionName === 'routes') {
-    return [`waypoints.${resource.from}`];
+  const resourceType = TextUtil.singularize(collectionName);
+  const resourceClass = ResourcesRegistry[resourceType];
+  if (resourceClass.getParentClaims) {
+    return resourceClass.getParentClaims(resource);
   }
   return null;
 }
@@ -167,12 +139,12 @@ export default class ContentTree extends Component {
     ));
     return (
       <Link
-        className={`list-group-item list-group-item-action constrain-text ${isInContentList ? '' : 'disabled'}`}
+        className={'list-group-item list-group-item-action constrain-text'}
         key={`${path.join('-')}-${item.name}`}
         activeClassName="active"
         to={
           `/${script.org.name}/${script.experience.name}` +
-          `/design/script/${script.id}` +
+          `/design/script/${script.revision}` +
           `/${this.props.sliceType}/${this.props.sliceName}` +
           `/${collectionName}/${item.name}`
         }>

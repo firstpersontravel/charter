@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var SubresourcesRegistry = require('../../registries/subresources');
 
 var page = {
@@ -20,6 +22,19 @@ var page = {
     if (resource.route && resource.waypoint) {
       return ['Page resource cannot have both a route and a waypoint.'];
     }
+  },
+  getParentClaims: function(resource) {
+    return resource.appearance ?
+      ['appearances.' + resource.appearance] :
+      ['roles.' + resource.role];
+  },
+  getChildClaims: function(resource) {
+    return _(resource.panels)
+      .filter('cue')
+      .map(function(panel) {
+        return 'cues.' + panel.cue;
+      })
+      .value();
   }
 };
 

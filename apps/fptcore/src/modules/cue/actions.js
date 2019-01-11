@@ -11,6 +11,9 @@ var signal_cue = {
   },
   applyAction: function(params, actionContext) {
     return null;
+  },
+  getChildClaims: function(params) {
+    return ['cues.' + params.cue_name];
   }
 };
 

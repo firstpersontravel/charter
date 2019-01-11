@@ -12,7 +12,7 @@ export default function DesignIndex({ scripts }) {
   }
   const script = _.find(scripts, { isActive: true });
   if (script) {
-    browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${script.id}`);
+    browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${script.revision}`);
   }
   return (
     <div className="container-fluid">

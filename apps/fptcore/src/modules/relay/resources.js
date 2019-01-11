@@ -1,8 +1,4 @@
 var relay = {
-  title: function(resource) {
-    return 'For ' + resource.for + ' as ' + resource.as + ' with ' +
-      resource.with;
-  },
   properties: {
     name: { type: 'name', required: true },
     for: { type: 'reference', collection: 'roles', required: true },
@@ -15,6 +11,13 @@ var relay = {
     phone_autoreply: { type: 'string' },
     sms_out: { type: 'boolean', default: false },
     sms_in: { type: 'boolean', default: false }
+  },
+  getTitle: function(resource) {
+    return 'For ' + resource.for + ' as ' + resource.as + ' with ' +
+      resource.with;
+  },
+  getParentClaims: function(resource) {
+    return ['roles.' + resource.for];
   }
 };
 

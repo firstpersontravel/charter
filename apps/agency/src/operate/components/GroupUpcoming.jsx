@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
 import { ActionsRegistry, EventsRegistry, TriggerEventCore } from 'fptcore';
@@ -41,6 +40,25 @@ function getScheduledGroupTriggers(group) {
     .value();
 }
 
+function renderTrigger(trigger, trip) {
+  const timeShort = moment
+    .utc(trigger.scheduledAt)
+    .tz(trip.experience.timezone)
+    .format('ddd h:mm:ssa');
+  const cellClass = 'upcoming-unarchived';
+
+  return (
+    <tr key={trigger.id}>
+      <td className={cellClass}>{timeShort}</td>
+      <td className={cellClass}>{trip.departureName}</td>
+      <td className={cellClass}>{trigger.type}</td>
+      <td className={cellClass}>{trigger.name}</td>
+      <td className={cellClass} />
+      <td />
+    </tr>
+  );
+}
+
 export default class GroupUpcoming extends Component {
 
   renderActionParam(trip, action, paramName) {
@@ -55,30 +73,6 @@ export default class GroupUpcoming extends Component {
           spec={actionParamsSpec[paramName]}
           value={action.params[paramName]} />
       </div>
-    );
-  }
-
-  renderTrigger(trigger, trip) {
-    const orgName = this.props.params.orgName;
-    const timeShort = moment
-      .utc(trigger.scheduledAt)
-      .tz(trip.experience.timezone)
-      .format('ddd h:mm:ssa');
-    const cellClass = 'upcoming-unarchived';
-
-    return (
-      <tr key={trigger.id}>
-        <td className={cellClass}>{timeShort}</td>
-        <td className={cellClass}>{trip.departureName}</td>
-        <td className={cellClass}>{trigger.type}</td>
-        <td className={cellClass}>
-          <Link to={`/${orgName}/design/script/${trip.script.id}/collection/triggers/resource/${trigger.name}`}>
-            {trigger.name}
-          </Link>
-        </td>
-        <td className={cellClass} />
-        <td />
-      </tr>
     );
   }
 
@@ -162,7 +156,7 @@ export default class GroupUpcoming extends Component {
         return this.renderAction(action, trip);
       }
       if (action.type === 'trigger') {
-        return this.renderTrigger(action, trip);
+        return renderTrigger(action, trip);
       }
       return null;
     });

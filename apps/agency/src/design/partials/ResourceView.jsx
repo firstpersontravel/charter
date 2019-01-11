@@ -7,6 +7,7 @@ import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil } from '
 
 import { titleForResource } from '../components/utils';
 import { linkForResource } from '../../partials/Param';
+// import PopoverControl from '../../partials/PopoverControl';
 
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title', 'scene'];

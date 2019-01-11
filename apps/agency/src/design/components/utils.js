@@ -43,8 +43,8 @@ export function getContentList(scriptContent, sliceType, sliceName) {
 export function titleForResource(collectionName, resource) {
   const resourceName = TextUtil.singularize(collectionName);
   const resourceClass = ResourcesRegistry[resourceName];
-  if (resourceClass.title) {
-    return `(${resourceClass.title(resource)})`;
+  if (resourceClass.getTitle) {
+    return `(${resourceClass.getTitle(resource)})`;
   }
   return resource.title || 'No title';
 }

@@ -101,18 +101,21 @@ function validateActionWithTrigger(actionPhrase, path, trigger) {
   return warnings;
 }
 
+function getEventParent(eventSpec) {
+  var eventClass = EventsRegistry[eventSpec.type];
+  if (!eventClass.parentResourceParam) {
+    return null;
+  }
+  var paramSpec = eventClass.specParams[eventClass.parentResourceParam];
+  if (paramSpec.type !== 'reference') {
+    return null;
+  }
+  var collectionName = paramSpec.collection;
+  var resourceName = eventSpec[eventClass.parentResourceParam];
+  return collectionName + '.' + resourceName;
+}
+
 var trigger = {
-  title: function(resource) {
-    if (!resource.events.length) {
-      return 'Untriggerable';
-    }
-    var firstEvent = resource.events[0];
-    var firstEventClass = EventsRegistry[firstEvent.type];
-    if (firstEventClass.title) {
-      return 'On ' + firstEventClass.title(firstEvent);
-    }
-    return 'On ' + firstEvent.type.replace(/_/g, ' ');
-  },
   properties: {
     name: { type: 'name', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
@@ -138,6 +141,38 @@ var trigger = {
     TriggerCore.walkActions(resource.actions, 'actions', actionIteree,
       ifIteree);
     return warnings;
+  },
+  getTitle: function(resource) {
+    if (!resource.events.length) {
+      return 'Untriggerable';
+    }
+    var firstEvent = resource.events[0];
+    var firstEventClass = EventsRegistry[firstEvent.type];
+    if (firstEventClass.title) {
+      return 'On ' + firstEventClass.title(firstEvent);
+    }
+    return 'On ' + firstEvent.type.replace(/_/g, ' ');
+  },
+  getParentClaims: function(resource) {
+    return _(resource.events)
+      .map(getEventParent)
+      .filter(Boolean)
+      .value();
+  },
+  getChildClaims: function(resource) {
+    var childClaims = [];
+    TriggerCore.walkActions(resource.actions, '',
+      function(actionPhrase, path) {
+        var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+        var actionClass = ActionsRegistry[action.name];
+        if (actionClass.getChildClaims) {
+          childClaims.push.apply(childClaims, actionClass.getChildClaims(
+            action.params));
+        }
+      },
+      function() {}
+    );
+    return childClaims;
   }
 };
 

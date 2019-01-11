@@ -60,13 +60,30 @@ export default class OrgExperience extends Component {
   render() {
     const experience = this.props.experience;
     const org = experience.org;
-    const renderedScripts = experience.scripts.map(script => (
-      <div key={script.id}>
-        <Link to={`/${org.name}/${experience.name}/design/script/${script.id}`}>
-          Revision {script.revision}
-        </Link>
-      </div>
-    ));
+    const activeRevision = _(experience.scripts)
+      .filter('isActive')
+      .map('revision')
+      .head();
+    const renderedScripts = experience.scripts.map((script) => {
+      const scriptStatus = script.isActive ? 'Active' : 'Draft';
+      const hasBadge = script.isActive || script.revision > activeRevision;
+      const badgeClass = `badge ${script.isActive ? 'badge-primary' : 'badge-secondary'}`;
+      const badge = hasBadge ? (
+        <span
+          style={{ marginLeft: '0.25em' }}
+          className={badgeClass}>
+          {scriptStatus}
+        </span>
+      ) : null;
+      return (
+        <div key={script.id}>
+          <Link to={`/${org.name}/${experience.name}/design/script/${script.revision}`}>
+            Revision {script.revision}
+            {badge}
+          </Link>
+        </div>
+      );
+    });
 
     const renderedGroups = experience.groups.map(group => (
       <div key={group.id}>
