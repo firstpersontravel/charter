@@ -181,9 +181,13 @@ class Renderer {
 
     const filtered = _.filter(collection, (rel) => {
       // Hacky filtering by scene.
-      if (rel.scene &&
-        this.resource.scene &&
+      if (rel.scene && this.resource.scene &&
         rel.scene !== this.resource.scene) {
+        return false;
+      }
+      // Hacky filtering by role for pages / appearances.
+      if (rel.role && this.resource.role &&
+        rel.role !== this.resource.role) {
         return false;
       }
       return true;
