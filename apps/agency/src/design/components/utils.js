@@ -11,7 +11,7 @@ export const sections = [
 const sectionContent = {
   roles: { roles: {}, appearances: {}, relays: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
-  variants: { variants: {}, departures: {} },
+  variants: { variants: {}, departures: {}, times: {} },
   media: { layouts: {}, content_pages: {}, audio: {} }
 };
 
@@ -23,7 +23,6 @@ const sliceContent = {
     messages: { scene: sliceName },
     cues: { scene: sliceName },
     achievements: { scene: sliceName },
-    times: { scene: sliceName },
     checkpoints: { scene: sliceName }
   }),
   section: sliceName => sectionContent[sliceName]

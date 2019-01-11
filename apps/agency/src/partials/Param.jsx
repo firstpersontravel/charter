@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 const sections = {
   roles: ['roles', 'appearances', 'relays'],
   locations: ['waypoints', 'geofences', 'routes'],
-  variants: ['variants', 'departures'],
+  variants: ['variants', 'departures', 'times'],
   media: ['layouts', 'content_pages', 'audio']
 };
 
