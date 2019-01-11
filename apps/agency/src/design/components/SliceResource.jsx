@@ -10,18 +10,20 @@ import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
 import { titleForResource } from '../utils/text-utils';
 import { getContentList } from '../utils/section-utils';
 import { assembleReverseReferences } from '../utils/graph-utils';
-import PopoverControl from '../../partials/PopoverControl';
 
 export default class SliceResource extends Component {
   constructor(props) {
     super(props);
-    this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
+    this.handleResourceDelete = this.handleResourceDelete.bind(this);
+    this.handleResourceUpdate = this.handleResourceUpdate.bind(this);
     this.redirectToRevision = null;
+    this.resourceWasDeleted = null;
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.script.id !== this.props.script.id) {
       this.redirectToRevision = null;
+      this.resourceWasDeleted = null;
     }
     if (this.redirectToRevision) {
       this.checkForNewRevision();
@@ -44,32 +46,42 @@ export default class SliceResource extends Component {
     const resourceName = this.props.params.resourceName;
     const existingRevisions = _.map(this.props.scripts, 'revision');
     if (_.includes(existingRevisions, this.redirectToRevision)) {
+      const wasDeleted = this.resourceWasDeleted;
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
         `/design/script/${this.redirectToRevision}` +
         `/${this.props.params.sliceType}/${this.props.params.sliceName}` +
-        `/${collectionName}/${resourceName}`
+        `${wasDeleted ? '' : `/${collectionName}/${resourceName}}`}`
       );
     }
   }
 
-  handlePropertyUpdate(path, newValue) {
+  handleResourceDelete() {
+    this.handleResourceUpdate(null);
+  }
+
+  handleResourceUpdate(updatedResource) {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
     const resourceName = this.props.params.resourceName;
-    const existingResource = _.cloneDeep(this.getResource());
-    const updatedResource = _.set(existingResource, path, newValue);
     const existingScriptContent = this.props.script.content;
-    const existingCollection = _.clone(existingScriptContent[collectionName]);
+    const existingCollection = existingScriptContent[collectionName];
     const index = _.findIndex(existingCollection, { name: resourceName });
-    const newCollection = _.set(existingCollection, `[${index}]`,
-      updatedResource);
+    const newCollection = _.clone(existingCollection);
+    const shouldDeleteResource = updatedResource === null;
+    if (!shouldDeleteResource) {
+      // Update
+      newCollection[index] = updatedResource;
+    } else {
+      // Remove
+      newCollection.splice(index, 1);
+    }
     const newScriptContent = _.assign({}, existingScriptContent, {
       [collectionName]: newCollection
     });
 
+    // If we're editing the active script, then make a new one
     if (script.isActive) {
-      // If we're editing the active script, then make a new one
       const newRevision = script.revision + 1;
       this.props.createInstance('scripts', {
         orgId: script.orgId,
@@ -80,25 +92,21 @@ export default class SliceResource extends Component {
         isActive: false
       });
       this.redirectToRevision = newRevision;
+      this.resourceWasDeleted = shouldDeleteResource;
     }
 
+    // Otherwise we're updating existing script.
     this.props.updateInstance('scripts', script.id, {
       content: newScriptContent
     });
-  }
-
-  renderTitle() {
-    const collectionName = this.props.params.collectionName;
-    const resource = this.getResource();
-    if (resource.title) {
-      return (
-        <PopoverControl
-          title="Title"
-          onConfirm={_.curry(this.handlePropertyUpdate)('title')}
-          value={resource.title} />
+    // Redirect to slice root if deleted.
+    if (shouldDeleteResource) {
+      browserHistory.push(
+        `/${script.org.name}/${script.experience.name}` +
+        `/design/script/${script.revision}` +
+        `/${this.props.params.sliceType}/${this.props.params.sliceName}`
       );
     }
-    return titleForResource(collectionName, resource);
   }
 
   renderParentPath(parentPath) {
@@ -129,7 +137,7 @@ export default class SliceResource extends Component {
                 `/${sliceType}/${sliceName}` +
                 `/${collectionName}/${resourceName}`
               }>
-              {titleForResource(collectionName, resource)}
+              {titleForResource(script.content, collectionName, resource)}
             </Link>
             &nbsp;&rarr;&nbsp;
           </span>
@@ -184,7 +192,7 @@ export default class SliceResource extends Component {
             `/${sliceType}/${sliceName}` +
             `/${collectionName}/${resourceName}`
           }>
-          {titleForResource(collectionName, resource)}
+          {titleForResource(script.content, collectionName, resource)}
         </Link>
       </div>
     );
@@ -223,10 +231,21 @@ export default class SliceResource extends Component {
     );
   }
 
+  renderResource(canDelete) {
+    return (
+      <ResourceView
+        script={this.props.script}
+        collectionName={this.props.params.collectionName}
+        resource={this.getResource()}
+        canDelete={canDelete}
+        onDelete={this.handleResourceDelete}
+        onUpdate={this.handleResourceUpdate} />
+    );
+  }
+
   render() {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
-    const resourceType = TextUtil.singularize(collectionName);
     const resource = this.getResource();
     if (!resource) {
       return (
@@ -249,24 +268,12 @@ export default class SliceResource extends Component {
 
     const reverseRefGraph = assembleReverseReferences(script.content);
     const reverseRefs = reverseRefGraph[resourceStr];
+    const canDelete = !reverseRefs || !reverseRefs.length;
 
     return (
       <div>
         {this.renderParentPaths(parenthoodPaths)}
-        <div className="card" style={{ marginBottom: '1em' }}>
-          <h5 className="card-header">
-            <span className="badge badge-info">
-              {TextUtil.titleForKey(resourceType)}
-            </span>&nbsp;
-            {this.renderTitle(resource)}
-          </h5>
-          <div className="card-body">
-            <ResourceView
-              script={script}
-              collectionName={collectionName}
-              resource={resource} />
-          </div>
-        </div>
+        {this.renderResource(canDelete)}
         {this.renderChildren(childrenStrs)}
         {this.renderReverseRefs(reverseRefs)}
       </div>

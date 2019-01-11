@@ -1,10 +1,10 @@
 import { TextUtil, ResourcesRegistry } from 'fptcore';
 
-export function titleForResource(collectionName, resource) {
+export function titleForResource(scriptContent, collectionName, resource) {
   const resourceName = TextUtil.singularize(collectionName);
   const resourceClass = ResourcesRegistry[resourceName];
   if (resourceClass.getTitle) {
-    return `(${resourceClass.getTitle(resource)})`;
+    return `(${resourceClass.getTitle(scriptContent, resource)})`;
   }
   return resource.title || 'No title';
 }

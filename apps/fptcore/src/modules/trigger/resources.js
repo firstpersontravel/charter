@@ -76,7 +76,15 @@ var eventsClasses = _(EventsRegistry)
 var eventResource = {
   type: 'variegated',
   key: 'type',
-  common: { properties: { type: { type: 'string', required: true } } },
+  common: {
+    properties: {
+      type: {
+        type: 'enum',
+        options: Object.keys(EventsRegistry),
+        required: true
+      }
+    }
+  },
   classes: eventsClasses
 };
 
@@ -142,14 +150,17 @@ var trigger = {
       ifIteree);
     return warnings;
   },
-  getTitle: function(resource) {
+  getTitle: function(scriptContent, resource) {
     if (!resource.events.length) {
       return 'Untriggerable';
     }
     var firstEvent = resource.events[0];
     var firstEventClass = EventsRegistry[firstEvent.type];
-    if (firstEventClass.title) {
-      return 'On ' + firstEventClass.title(firstEvent);
+    if (firstEventClass.getTitle) {
+      var customTitle = firstEventClass.getTitle(scriptContent, firstEvent);
+      if (customTitle) {
+        return 'On ' + customTitle;
+      }
     }
     return 'On ' + firstEvent.type.replace(/_/g, ' ');
   },

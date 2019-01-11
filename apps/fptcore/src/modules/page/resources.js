@@ -5,8 +5,8 @@ var SubresourcesRegistry = require('../../registries/subresources');
 var page = {
   properties: {
     name: { type: 'string', required: true },
-    scene: { type: 'reference', collection: 'scenes', required: true },
-    role: { type: 'reference', collection: 'roles', required: true },
+    scene: { type: 'reference', collection: 'scenes', required: true, parent: true },
+    role: { type: 'reference', collection: 'roles', required: true, parent: true },
     title: { type: 'string', required: true },
     appearance: { type: 'reference', collection: 'appearances' },
     directive: { type: 'string' },

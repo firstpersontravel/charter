@@ -1,7 +1,12 @@
 var appearance = {
   properties: {
     name: { type: 'name', required: true },
-    role: { type: 'reference', collection: 'roles', required: true },
+    role: {
+      type: 'reference',
+      collection: 'roles',
+      required: true,
+      parent: true
+    },
     title: { type: 'string', required: true },
     intro: { type: 'string' },
     disabled_message: { type: 'string' },

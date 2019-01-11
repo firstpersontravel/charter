@@ -6,7 +6,7 @@ var distance = require('../../utils/distance');
 
 module.exports = {
   message_sent: {
-    title: function(spec) {
+    getTitle: function(scriptContent, spec) {
       var parts = [spec.medium || 'message'];
       if (spec.from) {
         parts.push('from ' + spec.from);

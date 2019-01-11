@@ -12,7 +12,7 @@ var relay = {
     sms_out: { type: 'boolean', default: false },
     sms_in: { type: 'boolean', default: false }
   },
-  getTitle: function(resource) {
+  getTitle: function(scriptContent, resource) {
     return 'For ' + resource.for + ' as ' + resource.as + ' with ' +
       resource.with;
   },

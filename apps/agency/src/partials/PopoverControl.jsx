@@ -150,7 +150,7 @@ export default class PopoverControl extends Component {
 
 PopoverControl.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
   labelClassName: PropTypes.string,
   title: PropTypes.string.isRequired,
   choices: PropTypes.array,

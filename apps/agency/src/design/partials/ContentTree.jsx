@@ -51,7 +51,7 @@ export default class ContentTree extends Component {
   renderItem(collectionName, item, path, isInContentList) {
     const resourceName = TextUtil.singularize(collectionName);
     const script = this.props.script;
-    const itemTitle = titleForResource(collectionName, item);
+    const itemTitle = titleForResource(script.content, collectionName, item);
     const prefix = path.map(pathEntry => (
       <span className="faint" key={pathEntry}>&ndash;&nbsp;</span>
     ));

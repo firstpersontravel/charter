@@ -9,7 +9,11 @@ import { getContentList } from '../utils/section-utils';
 export default class Slice extends Component {
   constructor(props) {
     super(props);
-    this.state = { search: '' };
+    this.state = {
+      search: '',
+      contentList: null,
+      contentTree: null
+    };
     this.handleChangeSearch = this.handleChangeSearch.bind(this);
   }
 
@@ -28,9 +32,13 @@ export default class Slice extends Component {
   prepareContentTree(props) {
     const sliceType = props.params.sliceType;
     const sliceName = props.params.sliceName;
-    const scriptContent = this.props.script.content;
-    this.contentList = getContentList(scriptContent, sliceType, sliceName);
-    this.contentTree = prepareContentTree(scriptContent, this.contentList);
+    const scriptContent = props.script.content;
+    const contentList = getContentList(scriptContent, sliceType, sliceName);
+    const contentTree = prepareContentTree(scriptContent, contentList);
+    this.setState({
+      contentList: contentList,
+      contentTree: contentTree
+    });
   }
 
   handleChangeSearch(e) {
@@ -61,8 +69,8 @@ export default class Slice extends Component {
             <ContentTree
               sliceType={this.props.params.sliceType}
               sliceName={this.props.params.sliceName}
-              contentList={this.contentList}
-              contentTree={this.contentTree}
+              contentList={this.state.contentList}
+              contentTree={this.state.contentTree}
               search={this.state.search}
               script={this.props.script} />
           </div>

@@ -1,20 +1,21 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 
-import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil } from 'fptcore';
+import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
-import { linkForResource } from '../utils/section-utils';
-// import PopoverControl from '../../partials/PopoverControl';
+import PopoverControl from '../../partials/PopoverControl';
 
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title', 'scene'];
 
 const empty = <em className="faint">Empty</em>;
-
-let renderFieldValue;
+const highlight = (
+  <span className="text-danger">
+    &nbsp;<i className="fa fa-exclamation-circle" />
+  </span>
+);
 
 function ifClauseToString(ifClause) {
   if (_.isString(ifClause)) {
@@ -29,60 +30,212 @@ function ifClauseToString(ifClause) {
   return '';
 }
 
-const renderers = {
-  string: (script, spec, value) => `"${value}"`,
-  raw: (script, spec, value) => value,
-  boolean: (script, spec, value) => (value ? 'Yes' : 'No'),
-  simpleValue: (script, spec, value) => {
-    if (_.isNumber(value)) {
-      return renderers.raw(script, spec, value);
+class Renderer {
+  constructor(script, resource, onUpdate) {
+    this.script = script;
+    this.resource = resource;
+    this.onUpdate = onUpdate;
+  }
+
+  internalStringlike(spec, value, name, path, opts, validate, clean) {
+    const validateFunc = validate || (val => true);
+    const cleanFunc = clean || (val => val);
+    const label = value || empty;
+    if (opts && opts.editable === false) {
+      return value;
     }
-    if (_.isBoolean(value)) {
-      return renderers.boolean(script, spec, value);
-    }
-    return renderers.string(script, spec, value);
-  },
-  reference: (script, spec, value) => {
-    if (!value) {
-      return empty;
-    }
-    if (value === 'null') {
-      return 'None';
-    }
-    const url = linkForResource(script, spec.collection, value);
-    const collection = script.content[spec.collection];
-    const resource = _.find(collection, { name: value });
-    const title = titleForResource(spec.collection, resource);
     return (
-      <Link to={url}>{title}</Link>
+      <PopoverControl
+        title={name}
+        validate={validateFunc}
+        onConfirm={val => this.onUpdate(path, cleanFunc(val))}
+        label={label}
+        value={value || ''} />
     );
-  },
-  ifClause: (script, spec, value) => (
-    ifClauseToString(value)
-  ),
-  coords: (script, spec, value) => (
-    `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`
-  ),
-  actionPhrase: (script, spec, value) => {
+  }
+
+  internalEnumlike(spec, value, name, path, opts, choices, clean, label) {
+    const cleanFunc = clean || (val => val);
+    if (opts && opts.editable === false) {
+      return value;
+    }
+    // Special hack for 'type' params.
+    const onUpdate = (val) => {
+      // Special handling of type
+      if (_.endsWith(path, '.type')) {
+        // Clear out other values.
+        this.onUpdate(path.replace(/\.type$/, ''), { type: cleanFunc(val) });
+        return;
+      }
+      this.onUpdate(path, cleanFunc(val));
+    };
+    return (
+      <PopoverControl
+        title={name}
+        choices={choices}
+        onConfirm={onUpdate}
+        label={label || value || empty}
+        value={value || choices[0].value} />
+    );
+  }
+
+  internalClear(spec, value, path) {
+    const shouldAllowClear = !spec.required &&
+      !spec.parent &&
+      !_.isUndefined(value) &&
+      !_.isNull(value);
+    if (!shouldAllowClear) {
+      return null;
+    }
+    return (
+      <span>
+        &nbsp;
+        <i
+          className="fa fa-close faint"
+          onClick={() => this.onUpdate(path, null)} />
+      </span>
+    );
+  }
+
+  renderFieldValue(spec, value, name, path, opts) {
+    const fieldType = spec.type;
+    const rendererKey = `render${_.upperFirst(fieldType)}`;
+    if (!this[rendererKey]) {
+      return `??? (${fieldType})`;
+    }
+    const fieldRenderer = this[rendererKey].bind(this);
+    return fieldRenderer(spec, value, name, path, opts);
+  }
+
+  renderNumber(spec, value, name, path, opts) {
+    const validate = (val => !isNaN(Number(val)));
+    const clean = (val => Number(val));
+    return this.internalStringlike(spec, value, name, path, opts, validate,
+      clean);
+  }
+
+  renderString(spec, value, name, path, opts) {
+    return this.internalStringlike(spec, value, name, path, opts);
+  }
+
+  renderSimpleValue(spec, value, name, path, opts) {
+    const existing = value.toString();
+    const validate = val => true;
+    const clean = (val) => {
+      if (val === 'true') { return true; }
+      if (val === 'false') { return true; }
+      if (!isNaN(Number(val))) { return Number(val); }
+      return val;
+    };
+    return this.internalStringlike(spec, existing, name, path, opts, validate,
+      clean);
+  }
+
+  // Aliases
+  renderName(...args) { return this.renderString(...args); }
+  renderDuration(...args) { return this.renderString(...args); }
+  renderLookupable(...args) { return this.renderString(...args); }
+  renderNestedAttribute(...args) { return this.renderString(...args); }
+  renderSimpleAttribute(...args) { return this.renderString(...args); }
+  renderMedia(...args) { return this.renderString(...args); }
+  renderTimeShorthand(...args) { return this.renderString(...args); }
+
+  renderEnum(spec, value, name, path, opts) {
+    const choices = spec.options.map(opt => ({ value: opt, label: opt }));
+    return this.internalEnumlike(spec, value, name, path, opts, choices);
+  }
+
+  renderBoolean(spec, value, name, path, opts) {
+    const choices = ['Yes', 'No'];
+    // eslint-disable-next-line no-nested-ternary
+    const existing = value ? 'Yes' : 'No';
+    const label = _.isUndefined(value) ? empty : existing;
+    const clean = val => val === 'Yes';
+    return this.internalEnumlike(spec, existing, name, path, opts, choices,
+      clean, label);
+  }
+
+  renderReference(spec, value, name, path, opts) {
+    let label = empty;
+    const collection = this.script.content[spec.collection];
+    const resource = _.find(collection, { name: value });
+    if (resource) {
+      const title = titleForResource(this.script.content, spec.collection,
+        resource);
+      label = (
+        <span>
+          <span className="badge badge-secondary">
+            {TextUtil.titleForKey(TextUtil.singularize(spec.collection))}
+          </span>&nbsp;
+          {title}
+        </span>
+      );
+    } else if (value === 'null') {
+      label = 'None';
+    }
+
+    // If the reference is a parent, then can't change after creation.
+    if (spec.parent || (opts && opts.editable === false)) {
+      return label;
+    }
+
+    const filtered = _.filter(collection, (rel) => {
+      // Hacky filtering by scene.
+      if (rel.scene &&
+        this.resource.scene &&
+        rel.scene !== this.resource.scene) {
+        return false;
+      }
+      return true;
+    });
+    const existing = value || '';
+    const clean = (val => (val === '' ? null : val));
+    const nullChoices = [{ value: '', label: '---' }];
+    if (spec.allowNull) {
+      nullChoices.push({ value: 'null', label: 'None' });
+    }
+    const choices = nullChoices.concat(filtered.map(rel => ({
+      value: rel.name,
+      label: titleForResource(this.script.content, spec.collection, rel)
+    })));
+
+    return this.internalEnumlike(spec, existing, name, path, opts, choices,
+      clean, label);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  renderIfClause(spec, value, name, path, opts) {
+    return ifClauseToString(value) || empty;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  renderCoords(spec, value, name, path, opts) {
+    return `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`;
+  }
+
+  renderActionPhrase(spec, value, name, path, opts) {
     const action = ActionPhraseCore.parseActionPhrase(value);
     const actionClass = ActionsRegistry[action.name];
     const parts = [{
       name: 'name',
       rendered: action.name
     }];
-    _.each(actionClass.phraseForm, (paramName) => {
+    _.each(actionClass.phraseForm, (paramName, i) => {
       const paramSpec = actionClass.params[paramName];
       const paramValue = action.params[paramName];
       parts.push({
         name: paramName,
-        rendered: renderFieldValue(script, paramSpec, paramValue)
+        // Can't edit action phrases for now
+        rendered: this.renderFieldValue(paramSpec, paramValue, paramName,
+          `${path}<${i}>`, { editable: false })
       });
     });
     return parts.map(part => (
       <span key={part.name}>{part.rendered}&nbsp;</span>
     ));
-  },
-  list: (script, spec, value) => {
+  }
+
+  renderList(spec, value, name, path, opts) {
     if (value.length === 0) {
       return empty;
     }
@@ -91,98 +244,105 @@ const renderers = {
         {value.map((item, i) => (
           // eslint-disable-next-line react/no-array-index-key
           <li key={i}>
-            {renderFieldValue(script, spec.items, item)}
+            {this.renderFieldValue(spec.items, item, `${name} Item`,
+              `${path}[${i}]`)}
           </li>
         ))}
       </ul>
     );
-  },
-  dictionary: (script, spec, value) => {
+  }
+
+  renderDictionary(spec, value, name, path, opts) {
     if (Object.keys(value).length === 0) {
       return empty;
     }
+    const items = _.map(value, (val, key) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <li key={key}>
+        {this.renderFieldValue(spec.keys, key, `${name} Key`,
+          'INVALID', { editable: false })}:&nbsp;
+        {this.renderFieldValue(spec.values, val, `${name} Value`,
+          `${path}[${key}]`)}
+        {this.internalClear(spec, val, `${path}[${key}]`)}
+      </li>
+    ));
     return (
       <ul>
-        {Object.keys(value).map(key => (
-          // eslint-disable-next-line react/no-array-index-key
-          <li key={key}>
-            {renderFieldValue(script, spec.keys, key)}:&nbsp;
-            {renderFieldValue(script, spec.values, value[key])}
-          </li>
-        ))}
+        {items}
       </ul>
     );
-  },
-  object: (script, spec, value) => {
+  }
+
+  renderObject(spec, value, name, path, opts) {
     if (Object.keys(value).length === 0) {
       return empty;
     }
+    const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
+      'variegated'];
+    const items = _.map(spec.properties, (keySpec, key) => {
+      const itemPath = `${path}${path ? '.' : ''}${key}`;
+      const allowClear = !_.includes(COMPLEX_TYPES, keySpec.type);
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <div key={key}>
+          <strong>{_.startCase(key)}:</strong>&nbsp;
+          {this.renderFieldValue(keySpec, value[key], _.startCase(key),
+            itemPath)}
+          {allowClear ?
+            this.internalClear(keySpec, value[key], itemPath) : null}
+          {!value[key] && keySpec.required ? highlight : null}
+        </div>
+      );
+    });
     return (
       <div>
-        {Object.keys(spec.properties).map((key) => {
-          const keySpec = spec.properties[key];
-          if (_.isUndefined(value[key]) && _.isUndefined(keySpec.default)) {
-            return null;
-          }
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <div key={key}>
-              <strong>{_.upperFirst(key)}:</strong>&nbsp;
-              {renderFieldValue(script, spec.properties[key], value[key])}
-            </div>
-          );
-        })}
+        {items}
       </div>
     );
-  },
-  subresource: (script, spec, value) => {
+  }
+
+  renderSubresource(spec, value, name, path, opts) {
     const properties = Object.keys(spec.class.properties);
     if (properties.length === 1 && properties[0] === 'self') {
-      return renderFieldValue(script, spec.class.properties.self, value);
+      return this.renderFieldValue(spec.class.properties.self, value,
+        name, path);
     }
-    return renderers.object(script, spec.class, value);
-  },
-  variegated: (script, spec, value) => {
+    return this.renderObject(spec.class, value, name, path);
+  }
+
+  renderVariegated(spec, value, name, path, opts) {
     const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
     const commonClass = spec.common;
     const varietyClass = spec.classes[variety];
     const mergedClass = _.merge({}, commonClass, varietyClass);
-    return renderers.subresource(script, { class: mergedClass }, value);
+    return this.renderSubresource({ class: mergedClass }, value, name, path);
   }
-};
-
-// Aliases
-renderers.name = renderers.raw;
-renderers.duration = renderers.raw;
-renderers.lookupable = renderers.raw;
-renderers.nestedAttribute = renderers.raw;
-renderers.simpleAttribute = renderers.raw;
-renderers.enum = renderers.raw;
-renderers.media = renderers.raw;
-renderers.number = renderers.raw;
-renderers.timeShorthand = renderers.raw;
-
-renderFieldValue = function (script, spec, value) {
-  const fieldType = spec.type;
-  const fieldRenderer = renderers[fieldType];
-  if (!fieldRenderer) {
-    return `??? (${fieldType})`;
-  }
-  if (_.isUndefined(value)) {
-    if (!_.isUndefined(spec.default)) {
-      return (
-        <em className="faint">
-          {fieldRenderer(script, spec, spec.default)}
-          &nbsp;by default
-        </em>
-      );
-    }
-    return empty;
-  }
-  return fieldRenderer(script, spec, value);
-};
+}
 
 export default class ResourceView extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      hasPendingChanges: false,
+      pendingResource: _.cloneDeep(props.resource),
+      errors: null
+    };
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleRevertChanges = this.handleRevertChanges.bind(this);
+    this.handleApplyChanges = this.handleApplyChanges.bind(this);
+    this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.resource !== this.props.resource) {
+      this.setState({
+        hasPendingChanges: false,
+        pendingResource: _.cloneDeep(nextProps.resource),
+        errors: null
+      });
+    }
+  }
 
   getResourceClass() {
     const resourceType = TextUtil.singularize(this.props.collectionName);
@@ -193,6 +353,113 @@ export default class ResourceView extends Component {
     return _.without(
       Object.keys(this.getResourceClass().properties),
       ...HIDE_FIELD_NAMES);
+  }
+
+  handleApplyChanges() {
+    if (this.state.errors && this.state.errors.length > 0) {
+      return;
+    }
+    this.props.onUpdate(this.state.pendingResource);
+  }
+
+  handleRevertChanges() {
+    this.setState({
+      hasPendingChanges: false,
+      pendingResource: _.cloneDeep(this.props.resource),
+      errors: null
+    });
+  }
+
+  handleDelete() {
+    if (!this.props.canDelete) {
+      return;
+    }
+    this.props.onDelete();
+  }
+
+  handlePropertyUpdate(path, newValue) {
+    console.log('handlePropertyUpdate', path, newValue);
+    const newResource = _.cloneDeep(this.state.pendingResource);
+    if (newValue !== null) {
+      _.set(newResource, path, newValue);
+    } else {
+      _.unset(newResource, path);
+    }
+    const errors = ParamValidators.validateResource(
+      this.props.script, this.getResourceClass(),
+      newResource, '');
+    this.setState({
+      pendingResource: newResource,
+      hasPendingChanges: true,
+      errors: errors
+    });
+  }
+
+  renderHeader() {
+    const resourceType = TextUtil.singularize(this.props.collectionName);
+    const resource = this.props.resource;
+
+    const hasPendingChanges = this.state.hasPendingChanges;
+    const hasErrors = this.state.errors && this.state.errors.length > 0;
+    const canDelete = this.props.canDelete && !hasPendingChanges;
+    const canApply = hasPendingChanges && !hasErrors;
+
+    const deleteBtnClass = `btn btn-sm btn-outline-secondary ${canDelete ? '' : 'disabled'}`;
+    const deleteBtn = (
+      <button
+        className={deleteBtnClass}
+        onClick={this.handleDelete}>
+        <i className="fa fa-trash-o" />&nbsp;
+        Delete
+      </button>
+    );
+    const revertBtn = (
+      <button
+        className="btn btn-sm btn-secondary"
+        style={{ marginRight: '0.25em' }}
+        onClick={this.handleRevertChanges}>
+        <i className="fa fa-undo" />&nbsp;
+        Revert changes
+      </button>
+    );
+    const applyBtn = (
+      <button
+        className={`btn btn-sm btn-primary ${canApply ? '' : 'disabled'}`}
+        style={{ marginRight: '0.25em' }}
+        onClick={this.handleApplyChanges}>
+        <i className="fa fa-check" />&nbsp;
+        Apply changes
+      </button>
+    );
+
+    return (
+      <h5 className="card-header">
+        <div style={{ float: 'right' }}>
+          {hasPendingChanges ? revertBtn : null}
+          {hasPendingChanges ? applyBtn : null}
+          {hasPendingChanges ? null : deleteBtn}
+        </div>
+        <span className="badge badge-info">
+          {TextUtil.titleForKey(resourceType)}
+        </span>&nbsp;
+        {this.renderTitle(resource)}
+      </h5>
+    );
+  }
+
+  renderTitle() {
+    const script = this.props.script;
+    const collectionName = this.props.collectionName;
+    const resource = this.state.pendingResource;
+    if (resource.title) {
+      return (
+        <PopoverControl
+          title="Title"
+          onConfirm={_.curry(this.handlePropertyUpdate)('title')}
+          value={resource.title} />
+      );
+    }
+    return titleForResource(script.content, collectionName, resource);
   }
 
   renderFields() {
@@ -209,13 +476,34 @@ export default class ResourceView extends Component {
     const whitelistedParams = {
       properties: _.pick(resourceClass.properties, ...fieldNames)
     };
-    return renderers.object(script, whitelistedParams, this.props.resource);
+    const renderer = new Renderer(script, this.props.resource,
+      this.handlePropertyUpdate);
+    return renderer.renderObject(whitelistedParams, this.state.pendingResource,
+      '', '');
+  }
+
+  renderErrors() {
+    if (!this.state.errors || this.state.errors.length === 0) {
+      return null;
+    }
+    const renderedErrors = this.state.errors.map(err => (
+      <div key={err}>{err}</div>
+    ));
+    return (
+      <div className="alert alert-danger">
+        {renderedErrors}
+      </div>
+    );
   }
 
   render() {
     return (
-      <div>
-        {this.renderFields()}
+      <div className="card" style={{ marginBottom: '1em' }}>
+        {this.renderHeader()}
+        <div className="card-body">
+          {this.renderErrors()}
+          {this.renderFields()}
+        </div>
       </div>
     );
   }
@@ -224,5 +512,8 @@ export default class ResourceView extends Component {
 ResourceView.propTypes = {
   script: PropTypes.object.isRequired,
   collectionName: PropTypes.string.isRequired,
-  resource: PropTypes.object.isRequired
+  resource: PropTypes.object.isRequired,
+  canDelete: PropTypes.bool.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired
 };

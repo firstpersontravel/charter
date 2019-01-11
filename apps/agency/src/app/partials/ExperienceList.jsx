@@ -54,7 +54,7 @@ export default class ExperienceList extends Component {
             className="list-group-item list-group-item-action"
             activeClassName="active"
             to={`/${this.props.org.name}?creating=true`}>
-            <i className="fa fa-add" />
+            <i className="fa fa-plus" />&nbsp;
             New experience
           </Link>
         </div>

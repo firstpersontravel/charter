@@ -2,13 +2,6 @@ var PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
 var PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
 var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'quest'];
 
-var PANEL_COMMON_CLASS = {
-  properties: {
-    type: { type: 'string', required: true },
-    if: { type: 'ifClause' }
-  }
-};
-
 var PANEL_CLASSES = {
   audio_foreground: {
     properties: {
@@ -108,6 +101,17 @@ var PANEL_CLASSES = {
       text: { type: 'string', required: true },
       value_ref: { type: 'simpleAttribute', required: true }
     }
+  }
+};
+
+var PANEL_COMMON_CLASS = {
+  properties: {
+    type: {
+      type: 'enum',
+      options: Object.keys(PANEL_CLASSES),
+      required: true
+    },
+    if: { type: 'ifClause' }
   }
 };
 
