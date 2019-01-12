@@ -120,7 +120,7 @@ export default class Script extends Component {
     ) : null;
     return (
       <div style={{ textAlign: 'right', padding: '0.5em' }}>
-        Revision {this.props.script.revision}
+        Rev. {this.props.script.revision}
         {status}
         {makeActiveBtn}
         {goToLatestLink}
@@ -141,10 +141,10 @@ export default class Script extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-8">
+          <div className="col-9">
             {this.renderNav()}
           </div>
-          <div className="col-4">
+          <div className="col-3">
             {this.renderOpts()}
           </div>
         </div>

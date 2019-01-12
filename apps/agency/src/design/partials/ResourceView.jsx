@@ -77,9 +77,11 @@ class Renderer {
     return (
       <span>
         &nbsp;
-        <i
-          className="fa fa-close faint"
-          onClick={() => this.onUpdate(path, null)} />
+        <button
+          className="btn-unstyled clear-btn faint"
+          onClick={() => this.onUpdate(path, null)}>
+          <i className="fa fa-close" />
+        </button>
       </span>
     );
   }
@@ -314,11 +316,13 @@ export default class ResourceView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isConfirmingDelete: false,
       hasPendingChanges: false,
       pendingResource: _.cloneDeep(props.resource),
       errors: null
     };
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleDeleteConfirm = this.handleDeleteConfirm.bind(this);
     this.handleRevertChanges = this.handleRevertChanges.bind(this);
     this.handleApplyChanges = this.handleApplyChanges.bind(this);
     this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
@@ -327,6 +331,7 @@ export default class ResourceView extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.resource !== this.props.resource) {
       this.setState({
+        isConfirmingDelete: false,
         hasPendingChanges: false,
         pendingResource: _.cloneDeep(nextProps.resource),
         errors: null
@@ -364,6 +369,13 @@ export default class ResourceView extends Component {
     if (!this.props.canDelete) {
       return;
     }
+    this.setState({ isConfirmingDelete: true });
+  }
+
+  handleDeleteConfirm() {
+    if (!this.props.canDelete) {
+      return;
+    }
     this.props.onDelete();
   }
 
@@ -398,11 +410,22 @@ export default class ResourceView extends Component {
     const deleteBtn = (
       <button
         className={deleteBtnClass}
-        onClick={this.handleDelete}>
+        onClick={(this.handleDelete)}>
         <i className="fa fa-trash-o" />&nbsp;
-        Delete
+        {canDelete ? 'Delete' : 'Can\'t delete'}
       </button>
     );
+    const confirmDeleteBtn = (
+      <button
+        className="btn btn-sm btn-danger"
+        onClick={this.handleDeleteConfirm}>
+        <i className="fa fa-trash-o" />&nbsp;
+        Confirm delete
+      </button>
+    );
+    const deleteBtnToShow = this.state.isConfirmingDelete ?
+      confirmDeleteBtn : deleteBtn;
+
     const revertBtn = (
       <button
         className="btn btn-sm btn-secondary"
@@ -427,7 +450,7 @@ export default class ResourceView extends Component {
         <div style={{ float: 'right' }}>
           {hasPendingChanges ? revertBtn : null}
           {hasPendingChanges ? applyBtn : null}
-          {hasPendingChanges ? null : deleteBtn}
+          {hasPendingChanges ? null : deleteBtnToShow}
         </div>
         <span className="badge badge-info">
           {TextUtil.titleForKey(resourceType)}

@@ -31,6 +31,22 @@ body {
     text-align: left;
     display: inline;
 }
+
+.popover-control .btn-unstyled {
+  max-width: 85%;
+  display: inline-block;
+  &:hover {
+    background: #eee;
+  }
+}
+
+.clear-btn {
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .popover {
     max-width: 350px;
     textarea {

@@ -16,17 +16,21 @@ export default class SliceResource extends Component {
     super(props);
     this.handleResourceDelete = this.handleResourceDelete.bind(this);
     this.handleResourceUpdate = this.handleResourceUpdate.bind(this);
-    this.redirectToRevision = null;
-    this.resourceWasDeleted = null;
+    this.state = {
+      redirectToRevision: null,
+      resourceWasDeleted: null
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.script.id !== this.props.script.id) {
-      this.redirectToRevision = null;
-      this.resourceWasDeleted = null;
+    if (this.state.redirectToRevision) {
+      this.checkForNewRevision(nextProps);
     }
-    if (this.redirectToRevision) {
-      this.checkForNewRevision();
+    if (nextProps.script.id !== this.props.script.id) {
+      this.setState({
+        redirectToRevision: null,
+        resourceWasDeleted: null
+      });
     }
   }
 
@@ -37,20 +41,17 @@ export default class SliceResource extends Component {
     return _.find(collection, { name: resourceName });
   }
 
-  checkForNewRevision() {
-    if (!this.redirectToRevision) {
-      return;
-    }
-    const script = this.props.script;
-    const collectionName = this.props.params.collectionName;
-    const resourceName = this.props.params.resourceName;
-    const existingRevisions = _.map(this.props.scripts, 'revision');
-    if (_.includes(existingRevisions, this.redirectToRevision)) {
-      const wasDeleted = this.resourceWasDeleted;
+  checkForNewRevision(props) {
+    const script = props.script;
+    const collectionName = props.params.collectionName;
+    const resourceName = props.params.resourceName;
+    const existingRevisions = _.map(props.scripts, 'revision');
+    if (_.includes(existingRevisions, this.state.redirectToRevision)) {
+      const wasDeleted = this.state.resourceWasDeleted;
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
-        `/design/script/${this.redirectToRevision}` +
-        `/${this.props.params.sliceType}/${this.props.params.sliceName}` +
+        `/design/script/${this.state.redirectToRevision}` +
+        `/${props.params.sliceType}/${props.params.sliceName}` +
         `${wasDeleted ? '' : `/${collectionName}/${resourceName}}`}`
       );
     }
@@ -91,8 +92,11 @@ export default class SliceResource extends Component {
         content: newScriptContent,
         isActive: false
       });
-      this.redirectToRevision = newRevision;
-      this.resourceWasDeleted = shouldDeleteResource;
+      this.setState({
+        redirectToRevision: newRevision,
+        resourceWasDeleted: shouldDeleteResource
+      });
+      return;
     }
 
     // Otherwise we're updating existing script.
@@ -126,17 +130,18 @@ export default class SliceResource extends Component {
         });
         return (
           <span key={resourceStr}>
-            <span className="badge badge-secondary">
-              {TextUtil.titleForKey(resourceType)}
-            </span>
-            &nbsp;
             <Link
+              className="text-dark"
               to={
                 `/${script.org.name}/${script.experience.name}` +
                 `/design/script/${script.revision}` +
                 `/${sliceType}/${sliceName}` +
                 `/${collectionName}/${resourceName}`
               }>
+              <span className="badge badge-secondary">
+                {TextUtil.titleForKey(resourceType)}
+              </span>
+              &nbsp;
               {titleForResource(script.content, collectionName, resource)}
             </Link>
             &nbsp;&rarr;&nbsp;
@@ -181,17 +186,18 @@ export default class SliceResource extends Component {
     return (
       <div key={childStr}>
         &nbsp;&rarr;&nbsp;
-        <span className="badge badge-secondary">
-          {TextUtil.titleForKey(resourceType)}
-        </span>
-        &nbsp;
         <Link
+          className="text-dark"
           to={
             `/${script.org.name}/${script.experience.name}` +
             `/design/script/${script.revision}` +
             `/${sliceType}/${sliceName}` +
             `/${collectionName}/${resourceName}`
           }>
+          <span className="badge badge-secondary">
+            {TextUtil.titleForKey(resourceType)}
+          </span>
+          &nbsp;
           {titleForResource(script.content, collectionName, resource)}
         </Link>
       </div>
@@ -283,6 +289,7 @@ export default class SliceResource extends Component {
 
 SliceResource.propTypes = {
   script: PropTypes.object.isRequired,
+  // eslint-disable-next-line react/no-unused-prop-types
   scripts: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,
   createInstance: PropTypes.func.isRequired,
