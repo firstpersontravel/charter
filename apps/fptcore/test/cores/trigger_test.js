@@ -125,10 +125,7 @@ describe('TriggerCore', () => {
 
     it('handles complex nested if', () => {
       const clause = {
-        if: [
-          'val1',
-          'val2'
-        ],
+        if: 'val1 and val2',
         actions: {
           if: 'val3',
           actions: ['cue ALLTRUE'],

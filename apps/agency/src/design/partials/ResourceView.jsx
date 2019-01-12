@@ -17,19 +17,6 @@ const highlight = (
   </span>
 );
 
-function ifClauseToString(ifClause) {
-  if (_.isString(ifClause)) {
-    return ifClause;
-  }
-  if (_.isArray(ifClause)) {
-    return `(${_.map(ifClause, ifClauseToString).join(' and ')})`;
-  }
-  if (_.isPlainObject(ifClause) && ifClause.or) {
-    return `(${_.map(ifClause.or, ifClauseToString).join(' or ')})`;
-  }
-  return '';
-}
-
 class Renderer {
   constructor(script, resource, onUpdate) {
     this.script = script;
@@ -140,6 +127,15 @@ class Renderer {
   renderMedia(...args) { return this.renderString(...args); }
   renderTimeShorthand(...args) { return this.renderString(...args); }
 
+  renderIfClause(spec, value, name, path, opts) {
+    return this.renderString(spec, value, name, path, opts);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  renderCoords(spec, value, name, path, opts) {
+    return `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`;
+  }
+
   renderEnum(spec, value, name, path, opts) {
     const choices = spec.options.map(opt => ({ value: opt, label: opt }));
     return this.internalEnumlike(spec, value, name, path, opts, choices);
@@ -207,16 +203,6 @@ class Renderer {
       clean, label);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  renderIfClause(spec, value, name, path, opts) {
-    return ifClauseToString(value) || empty;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  renderCoords(spec, value, name, path, opts) {
-    return `${value[0].toFixed(3)}, ${value[1].toFixed(3)}`;
-  }
-
   renderActionPhrase(spec, value, name, path, opts) {
     const action = ActionPhraseCore.parseActionPhrase(value);
     const actionClass = ActionsRegistry[action.name];
@@ -240,7 +226,7 @@ class Renderer {
   }
 
   renderList(spec, value, name, path, opts) {
-    if (value.length === 0) {
+    if (!value || value.length === 0) {
       return empty;
     }
     return (

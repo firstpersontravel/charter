@@ -25,47 +25,145 @@ EvalCore.IF_COMMANDS = {
   }
 };
 
-EvalCore.simpleIf = function (evalContext, ifStatement) {
-  var ifParts = TextUtil.splitWords(ifStatement);
-  var isNegated = ifParts[0] === 'not';
-  if (isNegated) {
-    ifParts = ifParts.slice(1);
+EvalCore.parseParens = function(str) {
+  var i = 0;
+  var quoted = false;
+  var trailingWhiteSpace = str[str.length - 1] === ' ';
+  function parenClause() {
+    var arr = [];
+    var startIndex = i;
+    function addWord() {
+      if (i - 1 > startIndex) {
+        arr.push(str.slice(startIndex, i - 1));
+      }
+    }
+    while (i < str.length) {
+      var c = str[i++];
+      if (c === '"') {
+        quoted = !quoted;
+      }
+      if (quoted) {
+        continue;
+      }
+      switch(c) {
+      case ' ':
+        addWord();
+        startIndex = i;
+        continue;
+      case '(':
+        arr.push(parenClause());
+        startIndex = i;
+        continue;
+      case ')':
+        addWord();
+        return arr;
+      }
+    }
+    if (!trailingWhiteSpace) {
+      i = i + 1;
+      addWord();
+    }
+    return arr;
   }
-  var ifCommand = ifParts.length > 1 ? ifParts[0] : 'istrue';
-  var ifArgs = ifParts.length > 1 ? ifParts.slice(1) : ifParts;
+  return parenClause();
+};
+
+EvalCore.breakWordList = function(words, breakBy) {
+  var broken = [[]];
+  _.each(words, function(word) {
+    if (word === breakBy) {
+      broken.push([]);
+    } else {
+      broken[broken.length - 1].push(word);
+    }
+  });
+  return broken;
+};
+
+EvalCore.evalWords = function(evalContext, words) {
+  if (!_.isArray(words)) {
+    throw new Error('Expected array.');
+  }
+  if (!_.every(words, _.isString)) {
+    throw new Error('Expected array of strings.');
+  }
+  var isNegated = words[0] === 'not';
+  if (isNegated) {
+    words = words.slice(1);
+  }
+  var ifCommand = words.length > 1 ? words[0] : 'istrue';
+  var ifArgs = words.length > 1 ? words.slice(1) : words;
   var ifValues = ifArgs.map(function(item) {
     return EvalCore.lookupRef(evalContext, item);
   });
   var ifFunc = EvalCore.IF_COMMANDS[ifCommand];
   if (!ifFunc) {
-    throw new Error('Invalid if command ' + ifCommand);
+    throw new Error('Invalid if command ' + ifCommand + '.');
   }
   var isResult = ifFunc.apply(null, ifValues);
   var finalResult = isNegated ? !isResult : isResult;
   return finalResult;
 };
 
+function isStringOrList(i) {
+  return _.isString(i) || _.isArray(i);
+}
+
+EvalCore.evalNestedWords = function(evalContext, wordsOrLists) {
+  if (!_.isArray(wordsOrLists)) {
+    throw new Error('Expected array.');
+  }
+  if (!_.every(wordsOrLists, isStringOrList)) {
+    throw new Error('Expected array of strings or lists.');
+  }
+  // Blank is false
+  if (wordsOrLists.length === 0) {
+    return false;
+  }
+  // If only one entry, just evaluate it.
+  if (wordsOrLists.length === 1 && _.isArray(wordsOrLists[0])) {
+    return EvalCore.evalNestedWords(evalContext, wordsOrLists[0]);
+  }
+
+  // Break by ors first.
+  var hasOr = _.some(wordsOrLists, function(i) { return i === 'or'; });
+  if (hasOr) {
+    var brokenByOr = EvalCore.breakWordList(wordsOrLists, 'or');
+    var resultsToOr = _.map(brokenByOr, function(part) {
+      return EvalCore.evalNestedWords(evalContext, part);
+    });
+    return _.some(resultsToOr);
+  }
+
+  // Then ands.
+  var hasAnd = _.some(wordsOrLists, function(i) { return i === 'and'; });
+  if (hasAnd) {
+    var brokenByAnd = EvalCore.breakWordList(wordsOrLists, 'and');
+    var resultsToAnd = _.map(brokenByAnd, function(part) {
+      return EvalCore.evalNestedWords(evalContext, part);
+    });
+    return _.every(resultsToAnd);
+  }
+  
+  // We should be left with just some plain words. If there are any lists left,
+  // we don't know how to parse them.
+  var hasLists = _.some(wordsOrLists, _.isArray);
+  if (hasLists) {
+    throw new Error('Lists must be joined by "or" or "and".');
+  }
+
+  // Parse words.
+  return EvalCore.evalWords(evalContext, wordsOrLists);
+};
+
+EvalCore.simpleIf = function (evalContext, ifStatement) {
+  var ifParts = TextUtil.splitWords(ifStatement);
+  return EvalCore.evalWords(evalContext, ifParts);
+};
+
 EvalCore.if = function (evalContext, ifStatement) {
-  // If it's an array, join with AND
-  if (_.isArray(ifStatement)) {
-    return ifStatement.reduce(function(prev, ifItem) {
-      return prev && EvalCore.if(evalContext, ifItem);
-    }, true);
-  }
-
-  // If it's an {or: [...array...]} object, join with OR
-  if (_.isPlainObject(ifStatement) && ifStatement.or) {
-    return ifStatement.or.reduce(function(prev, ifEl) {
-      return prev || EvalCore.if(evalContext, ifEl);
-    }, false);
-  }
-
-  if (!_.isString(ifStatement)) {
-    throw new Error('Illegal type for ifStatement ' + typeof ifStatement);
-  }
-
-  // Now it's one item.
-  return EvalCore.simpleIf(evalContext, ifStatement);
+  var nestedWords = EvalCore.parseParens(ifStatement);
+  return EvalCore.evalNestedWords(evalContext, nestedWords);
 };
 
 EvalCore.constants = { true: true, false: false, null: null };

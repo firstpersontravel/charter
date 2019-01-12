@@ -157,7 +157,9 @@ ParamValidators.reference = function(script, name, spec, param) {
 };
 
 ParamValidators.ifClause = function(script, name, spec, param) {
-  // TODO SHOULD DO MORE VALIDATION HERE
+  if (!_.isString(param)) {
+    return ['If param "' + name + '" ("' + param + '") should be a string.'];
+  }
 };
 
 ParamValidators.dictionary = function(script, name, spec, param) {
