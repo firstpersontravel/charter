@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router';
 
-import { ActionPhraseCore, ActionsRegistry, ResourcesRegistry, TextUtil, ParamValidators } from 'fptcore';
+import { ResourcesRegistry, TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
+import { getChildResourceTypes } from '../utils/graph-utils';
 import PopoverControl from '../../partials/PopoverControl';
 
 // Hide title, field, and name
@@ -26,7 +28,7 @@ function stringOrYesNo(val) {
 
 function internalEmpty(spec) {
   let label = 'Empty';
-  if (spec.default) {
+  if (!_.isUndefined(spec.default)) {
     label = `${stringOrYesNo(spec.default)} by default`;
   }
   return (
@@ -35,9 +37,10 @@ function internalEmpty(spec) {
 }
 
 class Renderer {
-  constructor(script, resource, onUpdate) {
+  constructor(script, resource, isNew, onUpdate) {
     this.script = script;
     this.resource = resource;
+    this.isNew = isNew;
     this.onUpdate = onUpdate;
   }
 
@@ -196,7 +199,8 @@ class Renderer {
     }
 
     // If the reference is a parent, then can't change after creation.
-    if (spec.parent || (opts && opts.editable === false)) {
+    if ((spec.parent && !this.isNew) ||
+        (opts && opts.editable === false)) {
       return label;
     }
 
@@ -226,28 +230,6 @@ class Renderer {
 
     return this.internalEnumlike(spec, existing, name, path, opts, choices,
       clean, label);
-  }
-
-  renderActionPhrase(spec, value, name, path, opts) {
-    const action = ActionPhraseCore.parseActionPhrase(value);
-    const actionClass = ActionsRegistry[action.name];
-    const parts = [{
-      name: 'name',
-      rendered: action.name
-    }];
-    _.each(actionClass.phraseForm, (paramName, i) => {
-      const paramSpec = actionClass.params[paramName];
-      const paramValue = action.params[paramName];
-      parts.push({
-        name: paramName,
-        // Can't edit action phrases for now
-        rendered: this.renderFieldValue(paramSpec, paramValue, paramName,
-          `${path}<${i}>`, { editable: false })
-      });
-    });
-    return parts.map(part => (
-      <span key={part.name}>{part.rendered}&nbsp;</span>
-    ));
   }
 
   renderList(spec, value, name, path, opts) {
@@ -331,11 +313,15 @@ export default class ResourceView extends Component {
 
   constructor(props) {
     super(props);
+    const pendingResource = _.cloneDeep(props.resource);
     this.state = {
       isConfirmingDelete: false,
       hasPendingChanges: false,
-      pendingResource: _.cloneDeep(props.resource),
-      errors: null
+      pendingResource: pendingResource,
+      errors: ParamValidators.validateResource(
+        props.script,
+        ResourcesRegistry[TextUtil.singularize(props.collectionName)],
+        pendingResource, '')
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleDeleteConfirm = this.handleDeleteConfirm.bind(this);
@@ -346,18 +332,21 @@ export default class ResourceView extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.resource !== this.props.resource) {
+      const pendingResource = _.cloneDeep(nextProps.resource);
       this.setState({
         isConfirmingDelete: false,
         hasPendingChanges: false,
-        pendingResource: _.cloneDeep(nextProps.resource),
-        errors: null
+        pendingResource: pendingResource,
+        errors: ParamValidators.validateResource(
+          nextProps.script,
+          ResourcesRegistry[TextUtil.singularize(nextProps.collectionName)],
+          pendingResource, '')
       });
     }
   }
 
   getResourceClass() {
-    const resourceType = TextUtil.singularize(this.props.collectionName);
-    return ResourcesRegistry[resourceType];
+    return ResourcesRegistry[TextUtil.singularize(this.props.collectionName)];
   }
 
   getFieldNames() {
@@ -367,6 +356,9 @@ export default class ResourceView extends Component {
   }
 
   handleApplyChanges() {
+    // if (!this.state.hasPendingChanges) {
+    //   return;
+    // }
     if (this.state.errors && this.state.errors.length > 0) {
       return;
     }
@@ -403,24 +395,27 @@ export default class ResourceView extends Component {
     } else {
       _.unset(newResource, path);
     }
-    const errors = ParamValidators.validateResource(
-      this.props.script, this.getResourceClass(),
-      newResource, '');
     this.setState({
       pendingResource: newResource,
       hasPendingChanges: true,
-      errors: errors
+      errors: ParamValidators.validateResource(
+        this.props.script,
+        ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
+        newResource, '')
     });
   }
 
   renderHeader() {
     const resourceType = TextUtil.singularize(this.props.collectionName);
     const resource = this.props.resource;
+    const script = this.props.script;
 
+    const isNew = this.props.isNew;
     const hasPendingChanges = this.state.hasPendingChanges;
     const hasErrors = this.state.errors && this.state.errors.length > 0;
     const canDelete = this.props.canDelete && !hasPendingChanges;
-    const canApply = hasPendingChanges && !hasErrors;
+    const showApply = hasPendingChanges || isNew;
+    const canApply = !hasErrors;
 
     const deleteBtnClass = `btn btn-sm btn-outline-secondary ${canDelete ? '' : 'disabled'}`;
     const deleteBtn = (
@@ -442,31 +437,47 @@ export default class ResourceView extends Component {
     const deleteBtnToShow = this.state.isConfirmingDelete ?
       confirmDeleteBtn : deleteBtn;
 
+    const cancelBtn = (
+      <Link
+        to={
+          `/${script.org.name}/${script.experience.name}` +
+          `/design/script/${script.revision}` +
+          `/${this.props.sliceType}/${this.props.sliceName}`
+        }
+        style={{ marginRight: '0.25em' }}
+        className="btn btn-sm btn-outline-secondary">
+        <i className="fa fa-trash-o" />&nbsp;
+        Cancel
+      </Link>
+    );
+
     const revertBtn = (
       <button
         className="btn btn-sm btn-secondary"
         style={{ marginRight: '0.25em' }}
         onClick={this.handleRevertChanges}>
         <i className="fa fa-undo" />&nbsp;
-        Revert changes
+        Revert
       </button>
     );
+
     const applyBtn = (
       <button
         className={`btn btn-sm btn-primary ${canApply ? '' : 'disabled'}`}
         style={{ marginRight: '0.25em' }}
         onClick={this.handleApplyChanges}>
-        <i className="fa fa-check" />&nbsp;
-        Apply changes
+        <i className={`fa ${isNew ? 'fa-plus' : 'fa-check'}`} />&nbsp;
+        {isNew ? 'Create' : 'Apply'}
       </button>
     );
 
     return (
       <h5 className="card-header">
         <div style={{ float: 'right' }}>
-          {hasPendingChanges ? revertBtn : null}
-          {hasPendingChanges ? applyBtn : null}
-          {hasPendingChanges ? null : deleteBtnToShow}
+          {isNew ? cancelBtn : null}
+          {(hasPendingChanges && !isNew) ? revertBtn : null}
+          {showApply ? applyBtn : null}
+          {(!hasPendingChanges && !isNew) ? deleteBtnToShow : null}
         </div>
         <span className="badge badge-info">
           {TextUtil.titleForKey(resourceType)}
@@ -484,9 +495,15 @@ export default class ResourceView extends Component {
       return (
         <PopoverControl
           title="Title"
+          validate={val => !!val}
           onConfirm={_.curry(this.handlePropertyUpdate)('title')}
-          value={resource.title} />
+          label={resource.title}
+          value={this.props.isNew ? '' : resource.title} />
       );
+    }
+    if (this.props.isNew) {
+      const resourceType = TextUtil.singularize(collectionName);
+      return `New ${resourceType}`;
     }
     return titleForResource(script.content, collectionName, resource);
   }
@@ -505,8 +522,8 @@ export default class ResourceView extends Component {
     const whitelistedParams = {
       properties: _.pick(resourceClass.properties, ...fieldNames)
     };
-    const renderer = new Renderer(script, this.props.resource,
-      this.handlePropertyUpdate);
+    const renderer = new Renderer(script, this.state.pendingResource,
+      this.props.isNew, this.handlePropertyUpdate);
     return renderer.renderObject(whitelistedParams, this.state.pendingResource,
       '', '');
   }
@@ -515,12 +532,51 @@ export default class ResourceView extends Component {
     if (!this.state.errors || this.state.errors.length === 0) {
       return null;
     }
-    const renderedErrors = this.state.errors.map(err => (
-      <div key={err}>{err}</div>
-    ));
+    const renderedErrors = this.state.errors
+      // Filter out not present errors since those are shown by the UI
+      // as exclamation points. TODO: we should have error classes!
+      .filter(err => _.indexOf(err, 'not present') !== -1)
+      .map(err => (
+        <div key={err}>{err}</div>
+      ));
+    if (!renderedErrors.length) {
+      return null;
+    }
     return (
       <div className="alert alert-danger">
         {renderedErrors}
+      </div>
+    );
+  }
+
+  renderFooter() {
+    if (this.props.isNew) {
+      return null;
+    }
+    const script = this.props.script;
+    const collectionName = this.props.collectionName;
+    const resourceName = TextUtil.singularize(collectionName);
+    const childResourceTypes = getChildResourceTypes(collectionName);
+    if (!childResourceTypes.length) {
+      return null;
+    }
+    const createChildBtns = childResourceTypes.map(childResourceType => (
+      <Link
+        key={childResourceType}
+        style={{ marginRight: '0.5em' }}
+        className="btn btn-outline-secondary"
+        to={
+          `/${script.org.name}/${script.experience.name}` +
+          `/design/script/${script.revision}` +
+          `/${this.props.sliceType}/${this.props.sliceName}` +
+          `/${TextUtil.pluralize(childResourceType)}/new` +
+          `?${resourceName}=${this.props.resource.name}`}>
+          Create {childResourceType}
+      </Link>
+    ));
+    return (
+      <div className="card-footer">
+        {createChildBtns}
       </div>
     );
   }
@@ -533,6 +589,7 @@ export default class ResourceView extends Component {
           {this.renderErrors()}
           {this.renderFields()}
         </div>
+        {this.renderFooter()}
       </div>
     );
   }
@@ -540,7 +597,10 @@ export default class ResourceView extends Component {
 
 ResourceView.propTypes = {
   script: PropTypes.object.isRequired,
+  sliceType: PropTypes.string.isRequired,
+  sliceName: PropTypes.string.isRequired,
   collectionName: PropTypes.string.isRequired,
+  isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,
   canDelete: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,

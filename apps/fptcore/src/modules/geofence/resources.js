@@ -3,7 +3,12 @@ var _ = require('lodash');
 var geofence = {
   properties: {
     name: { type: 'name', required: true },
-    center: { type: 'reference', collection: 'waypoints', required: true },
+    center: {
+      type: 'reference',
+      collection: 'waypoints',
+      required: true,
+      parent: true
+    },
     distance: { type: 'number', required: true }
   },
   getTitle: function(scriptContent, resource) {

@@ -116,7 +116,7 @@ ActionCore.applyTrigger = function(trigger, event, actionContext,
 
   // Add event to context for consideration for if logic. Figure out which
   // actions should be called, either now or later.
-  var nextActions = ActionCore.actionsForTrigger(
+  var nextActions = ActionCore.unpackedActionsForTrigger(
     trigger, event, actionContextWhenTriggered);
 
   // Either call or schedule each action.
@@ -134,12 +134,15 @@ ActionCore.applyTrigger = function(trigger, event, actionContext,
  * Calculate actions for a trigger and event -- include the trigger name
  * and event in the action result.
  */
-ActionCore.actionsForTrigger = function(trigger, event, actionContext) {
+ActionCore.unpackedActionsForTrigger = function(trigger, event,
+  actionContext) {
   var contextWithEvent = ActionCore.addEventToContext(event, actionContext);
   return TriggerCore
-    .actionsForTrigger(trigger, contextWithEvent)
-    .map(function(action) {
-      return Object.assign(action, {
+    .packedActionsForTrigger(trigger, contextWithEvent)
+    .map(function(packedAction) {
+      var unpackedAction = ActionPhraseCore.unpackAction(packedAction,
+        actionContext);
+      return Object.assign(unpackedAction, {
         triggerName: trigger.name,
         event: event
       });
@@ -150,18 +153,16 @@ ActionCore.actionsForTrigger = function(trigger, event, actionContext) {
  * Generate a result for a given action, either schedule it for later, or
  * apply it now.
  */
-ActionCore.applyOrScheduleAction = function(action, actionContext) {
-  if (action.when) {
-    var scheduleAt = ActionPhraseCore.scheduleAtForAction(action,
-      actionContext);
+ActionCore.applyOrScheduleAction = function(unpackedAction, actionContext) {
+  if (unpackedAction.scheduleAt.isAfter(actionContext.evaluateAt)) {
     return {
       nextContext: actionContext,
       resultOps: [],
-      scheduledActions: [Object.assign({}, action, { scheduleAt: scheduleAt })]
+      scheduledActions: [unpackedAction]
     };
   }
   // Otherwise apply them now, including any nested triggers!
-  return ActionCore.applyAction(action, actionContext);
+  return ActionCore.applyAction(unpackedAction, actionContext);
 };
 
 module.exports = ActionCore;

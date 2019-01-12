@@ -146,30 +146,31 @@ describe('ActionCore', () => {
     });
   });
 
-  describe('#actionsForTrigger', () => {
+  describe('#unpackedActionsForTrigger', () => {
     it('returns actions with added event and trigger info', () => {
-      sandbox.stub(TriggerCore, 'actionsForTrigger').callsFake(() => {
-        return [{ name: 'fake', params: {} }];
+      sandbox.stub(TriggerCore, 'packedActionsForTrigger').callsFake(() => {
+        return [{ name: 'fake', param1: 1 }];
       });
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const actionContext = { evalContext: {} };
+      const actionContext = { evalContext: {}, evaluateAt: now };
 
-      const result = ActionCore.actionsForTrigger(trigger, event,
+      const result = ActionCore.unpackedActionsForTrigger(trigger, event,
         actionContext);
 
       assert.deepStrictEqual(result, [{
         name: 'fake',
-        params: {},
+        params: { param1: 1 },
+        scheduleAt: now,
         triggerName: trigger.name,
         event: event
       }]);
 
-      // Ensure TriggerCore.actionsForTrigger was called with the event
+      // Ensure TriggerCore.packedActionsForTrigger was called with the event
       // added to the context -- for when triggers have if statements
       // that depend on the contextual event.
       assert.deepStrictEqual(
-        TriggerCore.actionsForTrigger.firstCall.args, [
+        TriggerCore.packedActionsForTrigger.firstCall.args, [
           trigger,
           _.merge({}, actionContext, { evalContext: { event: event } })
         ]);
@@ -191,19 +192,21 @@ describe('ActionCore', () => {
     });
 
     it('schedule action if scheduled in the future', () => {
-      const action = { name: 'signal_cue', params: {}, when: 'in 24h' };
+      const unpackedAction = { 
+        name: 'signal_cue',
+        params: { cue_name: 'cue' },
+        scheduleAt: now.clone().add(24, 'hours'),
+        triggerName: '123',
+        event: {}
+      };
       sandbox.stub(ActionCore, 'applyAction').returns({});
-      const result = ActionCore.applyOrScheduleAction(action, actionContext);
+      const result = ActionCore.applyOrScheduleAction(
+        unpackedAction, actionContext);
 
       assert.deepStrictEqual(result, {
         nextContext: actionContext,
         resultOps: [],
-        scheduledActions: [{
-          name: action.name,
-          params: action.params,
-          when: 'in 24h',
-          scheduleAt: now.clone().add(24, 'hours')
-        }]
+        scheduledActions: [unpackedAction]
       });
       sinon.assert.notCalled(ActionCore.applyAction);
     });
@@ -213,7 +216,7 @@ describe('ActionCore', () => {
     const actionContext = { evalContext: {}, evaluateAt: now };
 
     it('returns history op even if no actions', () => {
-      sandbox.stub(ActionCore, 'actionsForTrigger').returns([]);
+      sandbox.stub(ActionCore, 'unpackedActionsForTrigger').returns([]);
 
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
@@ -230,7 +233,7 @@ describe('ActionCore', () => {
     });
 
     it('returns immediate result', () => {
-      sandbox.stub(ActionCore, 'actionsForTrigger')
+      sandbox.stub(ActionCore, 'unpackedActionsForTrigger')
         .returns([{ name: 'add',  params: {}, scheduleAt: now }]);
 
       const trigger = { name: 'trigger' };
@@ -255,15 +258,15 @@ describe('ActionCore', () => {
     it('returns scheduled result', () => {
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const scheduledAction = {
+      const unpackedAction = {
         name: 'add',
         params: {},
-        when: 'in 1h',
+        scheduleAt: now.clone().add(1, 'hours'),
         triggerName: 'trigger',
         event: event
       };
-      sandbox.stub(ActionCore, 'actionsForTrigger')
-        .returns([scheduledAction]);
+      sandbox.stub(ActionCore, 'unpackedActionsForTrigger')
+        .returns([unpackedAction]);
 
       const res = ActionCore.applyTrigger(trigger, event,
         actionContext, actionContext);
@@ -275,14 +278,7 @@ describe('ActionCore', () => {
         operation: 'updateTripHistory',
         history: { trigger: now.toISOString() }
       }]);
-      assert.deepStrictEqual(res.scheduledActions, [{
-        name: scheduledAction.name,
-        params: scheduledAction.params,
-        when: 'in 1h',
-        triggerName: scheduledAction.triggerName,
-        event: scheduledAction.event,
-        scheduleAt: now.clone().add(1, 'hours')
-      }]);
+      assert.deepStrictEqual(res.scheduledActions, [unpackedAction]);
     });
   });
 });

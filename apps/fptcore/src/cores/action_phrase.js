@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var moment = require('moment-timezone');
 
 var ActionsRegistry = require('../registries/actions');
@@ -76,8 +77,8 @@ ActionPhraseCore.expandPlainActionPhrase = function(plainActionPhrase) {
 };
 
 /**
- * Parse an action shorthand (in 3m, do this) into an object containing action
- * name, params, and scheduleAt).
+ * Parse an action shorthand (in 3m, do this) into an object containing a
+ * packed action: name, params, and when shorthand.
  */
 ActionPhraseCore.parseActionPhrase = function(actionPhrase) {
   // Break out modifier
@@ -87,24 +88,37 @@ ActionPhraseCore.parseActionPhrase = function(actionPhrase) {
   
   // Parse action into and params
   var plainActionPhrase = modifierAndAction[2];
-  var plainAction = ActionPhraseCore
-    .expandPlainActionPhrase(plainActionPhrase);
+  var plainAction = ActionPhraseCore.expandPlainActionPhrase(
+    plainActionPhrase);
 
-  return {
-    name: plainAction.name,
-    params: plainAction.params,
-    when: modifierType === 'when' ? modifier : null
-  };
+  return Object.assign(
+    { name: plainAction.name },
+    plainAction.params,
+    (modifierType === 'when') ? { when: modifier } : null
+  );
 };
 
 /**
  * Parse an action when modifier ("in 3m") into a time.
  */
-ActionPhraseCore.scheduleAtForAction = function(action, actionContext) {
-  if (action.when) {
-    return ActionPhraseCore.timeForShorthand(action.when, actionContext);
-  }
-  return actionContext.evaluateAt;
+ActionPhraseCore.scheduleAtForWhen = function(when, actionContext) {
+  return when ?
+    ActionPhraseCore.timeForShorthand(when, actionContext) :
+    actionContext.evaluateAt;
+};
+
+/**
+ * Parse an action when modifier ("in 3m") into a time.
+ */
+ActionPhraseCore.unpackAction = function(action, actionContext) {
+  var params = _.omit(action, 'name', 'when');
+  var scheduleAt = ActionPhraseCore.scheduleAtForWhen(action.when,
+    actionContext);
+  return {
+    name: action.name,
+    params: params,
+    scheduleAt: scheduleAt
+  };
 };
 
 module.exports = ActionPhraseCore;

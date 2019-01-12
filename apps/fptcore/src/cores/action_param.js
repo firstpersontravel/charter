@@ -36,6 +36,9 @@ ActionParamCore.prepareParam = function(paramSpec, param, actionContext) {
 
 ActionParamCore.prepareParams = function(paramsSpec, params, actionContext) {
   return _.mapValues(params, function(param, key) {
+    if (!paramsSpec[key]) {
+      throw new Error('Invalid param ' + key);
+    }
     var spec = paramsSpec[key];
     return ActionParamCore.prepareParam(spec, param, actionContext);
   });

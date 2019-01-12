@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
-import { TextUtil } from 'fptcore';
+import { TextUtil, ResourcesRegistry } from 'fptcore';
 
 import ResourceView from '../partials/ResourceView';
 import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
@@ -11,14 +11,14 @@ import { titleForResource } from '../utils/text-utils';
 import { getContentList, urlForResource } from '../utils/section-utils';
 import { assembleReverseReferences } from '../utils/graph-utils';
 
-export default class SliceResource extends Component {
+export default class ResourceShow extends Component {
   constructor(props) {
     super(props);
     this.handleResourceDelete = this.handleResourceDelete.bind(this);
     this.handleResourceUpdate = this.handleResourceUpdate.bind(this);
     this.state = {
       redirectToRevision: null,
-      resourceWasDeleted: null
+      redirectToResource: null
     };
   }
 
@@ -29,32 +29,86 @@ export default class SliceResource extends Component {
     if (nextProps.script.id !== this.props.script.id) {
       this.setState({
         redirectToRevision: null,
-        resourceWasDeleted: null
+        redirectToResource: null
       });
     }
+  }
+
+  getNewResourceName() {
+    const collectionName = this.props.params.collectionName;
+    const resourceType = TextUtil.singularize(collectionName);
+    const idChars = 'abcdefghijklmnopqrstuvwxyz';
+    const newId = _.range(6).map(i => (
+      idChars.charAt(Math.floor(Math.random() * idChars.length))
+    )).join('');
+    return `${resourceType}-${newId}`;
+  }
+
+  getNewResourceFields() {
+    const collectionName = this.props.params.collectionName;
+    const resourceType = TextUtil.singularize(collectionName);
+    const resourceClass = ResourcesRegistry[resourceType];
+    const fields = { name: this.getNewResourceName() };
+    if (resourceClass.properties.title) {
+      fields.title = `New ${resourceType}`;
+    }
+    _.each(this.props.location.query, (val, key) => {
+      if (resourceClass.properties[key]) {
+        fields[key] = val;
+      }
+    });
+    return fields;
   }
 
   getResource() {
     const collectionName = this.props.params.collectionName;
     const collection = this.props.script.content[collectionName];
     const resourceName = this.props.params.resourceName;
+    if (this.isNewResource()) {
+      return this.getNewResourceFields();
+    }
     return _.find(collection, { name: resourceName });
+  }
+
+  getScriptContentWithUpdatedResource(updatedResource) {
+    const collectionName = this.props.params.collectionName;
+    const resourceName = this.props.params.resourceName;
+    const existingScriptContent = this.props.script.content;
+    const existingCollection = existingScriptContent[collectionName] || [];
+    const index = _.findIndex(existingCollection, { name: resourceName });
+    const newCollection = _.clone(existingCollection);
+    const shouldDeleteResource = updatedResource === null;
+    if (shouldDeleteResource) {
+      // Remove
+      newCollection.splice(index, 1);
+    } else if (this.isNewResource()) {
+      // Create
+      newCollection.push(updatedResource);
+    } else {
+      // Update
+      newCollection[index] = updatedResource;
+    }
+    const newScriptContent = _.assign({}, existingScriptContent, {
+      [collectionName]: newCollection
+    });
+    return newScriptContent;
   }
 
   checkForNewRevision(props) {
     const script = props.script;
-    const collectionName = props.params.collectionName;
-    const resourceName = props.params.resourceName;
     const existingRevisions = _.map(props.scripts, 'revision');
     if (_.includes(existingRevisions, this.state.redirectToRevision)) {
-      const wasDeleted = this.state.resourceWasDeleted;
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
         `/design/script/${this.state.redirectToRevision}` +
         `/${props.params.sliceType}/${props.params.sliceName}` +
-        `${wasDeleted ? '' : `/${collectionName}/${resourceName}`}`
+        `/${this.state.redirectToResource}`
       );
     }
+  }
+
+  isNewResource() {
+    return this.props.params.resourceName === 'new';
   }
 
   handleResourceDelete() {
@@ -63,23 +117,11 @@ export default class SliceResource extends Component {
 
   handleResourceUpdate(updatedResource) {
     const script = this.props.script;
-    const collectionName = this.props.params.collectionName;
-    const resourceName = this.props.params.resourceName;
-    const existingScriptContent = this.props.script.content;
-    const existingCollection = existingScriptContent[collectionName];
-    const index = _.findIndex(existingCollection, { name: resourceName });
-    const newCollection = _.clone(existingCollection);
     const shouldDeleteResource = updatedResource === null;
-    if (!shouldDeleteResource) {
-      // Update
-      newCollection[index] = updatedResource;
-    } else {
-      // Remove
-      newCollection.splice(index, 1);
-    }
-    const newScriptContent = _.assign({}, existingScriptContent, {
-      [collectionName]: newCollection
-    });
+    const redirectToResource = shouldDeleteResource ? '' :
+      `${this.props.params.collectionName}/${updatedResource.name}`;
+    const newScriptContent = this.getScriptContentWithUpdatedResource(
+      updatedResource);
 
     // If we're editing the active script, then make a new one
     if (script.isActive) {
@@ -94,7 +136,7 @@ export default class SliceResource extends Component {
       });
       this.setState({
         redirectToRevision: newRevision,
-        resourceWasDeleted: shouldDeleteResource
+        redirectToResource: redirectToResource
       });
       return;
     }
@@ -104,11 +146,12 @@ export default class SliceResource extends Component {
       content: newScriptContent
     });
     // Redirect to slice root if deleted.
-    if (shouldDeleteResource) {
+    if (shouldDeleteResource || this.isNewResource()) {
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
         `/design/script/${script.revision}` +
-        `/${this.props.params.sliceType}/${this.props.params.sliceName}`
+        `/${this.props.params.sliceType}/${this.props.params.sliceName}` +
+        `/${redirectToResource}`
       );
     }
   }
@@ -234,7 +277,10 @@ export default class SliceResource extends Component {
     return (
       <ResourceView
         script={this.props.script}
+        sliceType={this.props.params.sliceType}
+        sliceName={this.props.params.sliceName}
         collectionName={this.props.params.collectionName}
+        isNew={this.isNewResource()}
         resource={this.getResource()}
         canDelete={canDelete}
         onDelete={this.handleResourceDelete}
@@ -245,6 +291,13 @@ export default class SliceResource extends Component {
   render() {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
+    if (!ResourcesRegistry[TextUtil.singularize(collectionName)]) {
+      return (
+        <div className="alert alert-warning">
+          Invalid collection.
+        </div>
+      );
+    }
     const resource = this.getResource();
     if (!resource) {
       return (
@@ -280,7 +333,8 @@ export default class SliceResource extends Component {
   }
 }
 
-SliceResource.propTypes = {
+ResourceShow.propTypes = {
+  location: PropTypes.object.isRequired,
   script: PropTypes.object.isRequired,
   // eslint-disable-next-line react/no-unused-prop-types
   scripts: PropTypes.array.isRequired,

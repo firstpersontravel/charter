@@ -11,7 +11,7 @@ describe('TriggerCore', () => {
     sandbox.restore();
   });
 
-  describe('#actionsForClause', () => {
+  describe('#packedActionsForClause', () => {
     const actionContext = { evalContext: { valueA: true, valueB: false } };
     const simpleAction = { name: 'act', params: {} };
     const otherAction = { name: 'other', params: {} };
@@ -20,19 +20,19 @@ describe('TriggerCore', () => {
 
     it('handles simple list', () => {
       const clause = {actions: [simpleAction]};
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
     it('handles single passing if', () => {
       const clause = {if: 'valueA', actions: [simpleAction]};
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
     it('handles single failing if', () => {
       const clause = {if: 'not valueA', actions: [simpleAction]};
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, []);
     });
 
@@ -42,7 +42,7 @@ describe('TriggerCore', () => {
         actions: [simpleAction],
         else: [otherAction]
       };
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [otherAction]);
     });
 
@@ -55,7 +55,7 @@ describe('TriggerCore', () => {
           else: [otherAction]
         }]
       };
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [otherAction]);
     });
 
@@ -69,7 +69,7 @@ describe('TriggerCore', () => {
           else: [otherAction]
         }]
       };
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [thirdAction]);
     });
 
@@ -82,7 +82,7 @@ describe('TriggerCore', () => {
           { if: 'not valueB', actions: [thirdAction] }
         ]
       };
-      const res = TriggerCore.actionsForClause(clause, actionContext);
+      const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction, thirdAction]);
     });
 
@@ -100,27 +100,27 @@ describe('TriggerCore', () => {
         else: [fourthAction]
       };
       assert.deepStrictEqual(
-        TriggerCore.actionsForClause(
+        TriggerCore.packedActionsForClause(
           clause, { evalContext: { a: true } }
         ), [simpleAction]);
       assert.deepStrictEqual(
-        TriggerCore.actionsForClause(
+        TriggerCore.packedActionsForClause(
           clause, { evalContext: { a: true, b: true } }
         ), [simpleAction]);
       assert.deepStrictEqual(
-        TriggerCore.actionsForClause(
+        TriggerCore.packedActionsForClause(
           clause, { evalContext: { b: true } }
         ), [otherAction]);
       assert.deepStrictEqual(
-        TriggerCore.actionsForClause(
+        TriggerCore.packedActionsForClause(
           clause, { evalContext: { b: true, c: true } }
         ), [otherAction]);
       assert.deepStrictEqual(
-        TriggerCore.actionsForClause(
+        TriggerCore.packedActionsForClause(
           clause, { evalContext: { c: true } }
         ), [thirdAction]);
       assert.deepStrictEqual(
-        TriggerCore.actionsForClause(
+        TriggerCore.packedActionsForClause(
           clause, { evalContext: {} }
         ), [fourthAction]);
     });
@@ -139,15 +139,15 @@ describe('TriggerCore', () => {
       const actionContextAll = {
         evalContext: { val1: true, val2: true, val3: true }
       };
-      assert.deepStrictEqual(TriggerCore.actionsForClause(
+      assert.deepStrictEqual(TriggerCore.packedActionsForClause(
         clause, actionContextAll), [cue1]);
 
       const actionContext12 = { evalContext: { val1: true, val2: true } };
-      assert.deepStrictEqual(TriggerCore.actionsForClause(
+      assert.deepStrictEqual(TriggerCore.packedActionsForClause(
         clause, actionContext12), [cue2]);
 
       const actionContext3 = { evalContext: { val3: true } };
-      assert.deepStrictEqual(TriggerCore.actionsForClause(
+      assert.deepStrictEqual(TriggerCore.packedActionsForClause(
         clause, actionContext3), []);
     });
   });

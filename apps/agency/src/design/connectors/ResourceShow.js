@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import SliceResource from '../components/SliceResource';
+import ResourceShow from '../components/ResourceShow';
 import { createInstance, updateInstance } from '../../actions';
 import { lookupScript, lookupScripts } from './utils';
 
@@ -14,4 +14,4 @@ const mapDispatchToProps = dispatch => ({
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SliceResource);
+export default connect(mapStateToProps, mapDispatchToProps)(ResourceShow);

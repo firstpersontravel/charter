@@ -5,7 +5,7 @@ import DesignIndexConnector from './connectors/DesignIndex';
 import ScriptConnector from './connectors/Script';
 import SliceConnector from './connectors/Slice';
 import SliceIndexConnector from './connectors/SliceIndex';
-import SliceResourceConnector from './connectors/SliceResource';
+import ResourceShowConnector from './connectors/ResourceShow';
 
 export default (
   <Route path="design">
@@ -15,7 +15,9 @@ export default (
       <Route path=":sliceType">
         <Route path=":sliceName" component={SliceConnector}>
           <IndexRoute component={SliceIndexConnector} />
-          <Route path=":collectionName/:resourceName" component={SliceResourceConnector} />
+          <Route path=":collectionName">
+            <Route path=":resourceName" component={ResourceShowConnector} />
+          </Route>
         </Route>
       </Route>
     </Route>

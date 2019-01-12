@@ -80,3 +80,16 @@ export function assembleReverseReferences(scriptContent) {
   });
   return graph;
 }
+
+export function getChildResourceTypes(collectionName) {
+  return _(ResourcesRegistry)
+    .keys()
+    .filter(childResourceType => (
+      _.some(ResourcesRegistry[childResourceType].properties, property => (
+        property.type === 'reference' &&
+        property.collection === collectionName &&
+        property.parent
+      ))
+    ))
+    .value();
+}

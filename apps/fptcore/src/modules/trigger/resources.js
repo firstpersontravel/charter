@@ -4,21 +4,9 @@ var ActionsRegistry = require('../../registries/actions');
 var EventsRegistry = require('../../registries/events');
 var TriggerCore = require('../../cores/trigger');
 
-// TODO: don't parse the action string here -- have it be in the json
-// as name/params.
-var actionsClasses = _(ActionsRegistry)
-  .mapValues(function(actionClass, actionName) {
-    return {
-      properties: {
-        params: {
-          type: 'object',
-          properties: actionClass.params,
-          required: true
-        }
-      }
-    };
-  })
-  .value();
+var actionsClasses = _.mapValues(ActionsRegistry, function(actionClass) {
+  return { properties: actionClass.params };
+});
 
 var singleActionParam = {
   type: 'variegated',
@@ -39,9 +27,7 @@ var singleActionParam = {
 };
 
 var singleActionResource = {
-  properties: {
-    self: singleActionParam
-  }
+  properties: { self: singleActionParam }
 };
 
 // Filled in later to avoid circular dependency
@@ -156,7 +142,7 @@ var trigger = {
     var ifIteree = function(ifClause, path) {
 
     };
-    TriggerCore.walkActions(resource.actions, 'actions', actionIteree,
+    TriggerCore.walkPackedActions(resource.actions, 'actions', actionIteree,
       ifIteree);
     return warnings;
   },
@@ -182,12 +168,12 @@ var trigger = {
   },
   getChildClaims: function(resource) {
     var childClaims = [];
-    TriggerCore.walkActions(resource.actions, '',
+    TriggerCore.walkPackedActions(resource.actions, '',
       function(action, path) {
         var actionClass = ActionsRegistry[action.name];
         if (actionClass.getChildClaims) {
-          childClaims.push.apply(childClaims, actionClass.getChildClaims(
-            action.params));
+          var actionChildClaims = actionClass.getChildClaims(action);
+          childClaims.push.apply(childClaims, actionChildClaims);
         }
       },
       function() {}

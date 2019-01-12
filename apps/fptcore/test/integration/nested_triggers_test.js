@@ -28,10 +28,7 @@ const actionContext = {
     triggers: [{
       name: 'TRIGGER-PICK-APPLES',
       events: [{ type: 'cue_signaled', cue: 'CUE-PICK-APPLES' }],
-      actions: [{
-        name: 'increment_value',
-        params: { value_ref: 'apples', delta: 5 }
-      }],
+      actions: [{ name: 'increment_value', value_ref: 'apples', delta: 5 }],
     }, {
       name: 'TRIGGER-UNLOAD-APPLES',
       events: [{
@@ -39,49 +36,51 @@ const actionContext = {
         role: 'Farmer',
         geofence: 'GEOFENCE-FARM'
       }],
-      actions: [{ name: 'set_value', params: {
-        value_ref: 'apples', new_value_ref: '0'
-      } }]
+      actions: [{ name: 'set_value', value_ref: 'apples', new_value_ref: '0' }]
     }, {
       name: 'TRIGGER-SUNRISE',
       events: [{ type: 'cue_signaled', cue: 'CUE-SUNRISE' }],
-      actions: [{ when: 'in 120m', name: 'send_message', params: {
+      actions: [{
+        when: 'in 120m',
+        name: 'send_message',
         message_name: 'MESSAGE-CROW'
-      } }]
+      }]
     }, {
       name: 'TRIGGER-GREET-1',
       events: [{ type: 'cue_signaled', cue: 'CUE-GREET' }],
-      actions: [{ name: 'signal_cue', params: {
-        cue_name: 'CUE-GREET-REPLY'
-      } }]
+      actions: [{ name: 'signal_cue', cue_name: 'CUE-GREET-REPLY' }]
     }, {
       name: 'TRIGGER-GREET-2',
       events: [{ type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }],
-      actions: [{ name: 'custom_message', params: {
+      actions: [{
+        name: 'custom_message',
         from_role_name: 'Cowboy',
         to_role_name: 'Farmer',
         message_medium: 'text',
         message_content: 'howdy'
-      } }]
+      }]
     }, {
       name: 'TRIGGER-NAV-1',
       events: [{ type: 'cue_signaled', cue: 'CUE-NAV-1' }],
-      actions: [{ name: 'set_value', params: {
+      actions: [{
+        name: 'set_value',
         value_ref: 'is_navigating',
         new_value_ref: 'true'
-      } }, {
-        name: 'signal_cue', params: { cue_name: 'CUE-NAV-2' }
+      }, {
+        name: 'signal_cue',
+        cue_name: 'CUE-NAV-2'
       }]
     }, {
       name: 'TRIGGER-NAV-2',
       events: [{ type: 'cue_signaled', cue: 'CUE-NAV-2' }],
       if: 'is_navigating',
-      actions: [{ name: 'custom_message', params: {
+      actions: [{
+        name: 'custom_message',
         from_role_name: 'Cowboy',
         to_role_name: 'Farmer',
         message_medium: 'text',
         message_content: 'geewhiz'
-      } }]
+      }]
     }],
     scenes: [{ name: 'MAIN' }],
     pages: [
@@ -125,11 +124,11 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies page change', () => {
-    const action = {
+    const unpackedAction = {
       name: 'send_to_page',
       params: { role_name: 'Farmer', page_name: 'BACK-HOME' }
     };
-    const result = ActionCore.applyAction(action, actionContext);
+    const result = ActionCore.applyAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.Farmer.currentPageName,
       'BACK-HOME');
@@ -141,12 +140,12 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies cue triggering action immediately', () => {
-    const action = {
+    const unpackedAction = {
       name: 'signal_cue',
       params: { cue_name: 'CUE-PICK-APPLES' }
     };
 
-    const result = ActionCore.applyAction(action, actionContext);
+    const result = ActionCore.applyAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
@@ -179,9 +178,12 @@ describe('Integration - Nested Triggers', () => {
 
   it('applies cue triggering action later', () => {
     const inTwoHours = now.clone().add(2, 'hours');
-    const action = { name: 'signal_cue', params: { cue_name: 'CUE-SUNRISE' } };
+    const unpackedAction = {
+      name: 'signal_cue',
+      params: { cue_name: 'CUE-SUNRISE' }
+    };
 
-    const result = ActionCore.applyAction(action, actionContext);
+    const result = ActionCore.applyAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
@@ -203,9 +205,12 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies nested triggers', () => {
-    const action = { name: 'signal_cue', params: { cue_name: 'CUE-GREET' } };
+    const unpackedAction = {
+      name: 'signal_cue',
+      params: { cue_name: 'CUE-GREET' }
+    };
 
-    const result = ActionCore.applyAction(action, actionContext);
+    const result = ActionCore.applyAction(unpackedAction, actionContext);
 
     // Test intermediate action calls
     // First cue should have been called with no event
@@ -272,9 +277,12 @@ describe('Integration - Nested Triggers', () => {
   });
 
   it('applies nested triggers requiring intermediate context', () => {
-    const action = { name: 'signal_cue', params: { cue_name: 'CUE-NAV-1' } };
+    const unpackedAction = {
+      name: 'signal_cue',
+      params: { cue_name: 'CUE-NAV-1' }
+    };
 
-    const result = ActionCore.applyAction(action, actionContext);
+    const result = ActionCore.applyAction(unpackedAction, actionContext);
 
     assert.deepStrictEqual(result.resultOps,
       [{
@@ -316,15 +324,16 @@ describe('Integration - Nested Triggers', () => {
           name: 'trigger1',
           events: [{ type: 'cue_signaled', cue: 'end-of-1' }],
           scene: 'SCENE-1',
-          actions: [{ name: 'start_scene', params: { scene_name: 'SCENE-2' } }]
+          actions: [{ name: 'start_scene', scene_name: 'SCENE-2' }]
         }, {
           name: 'trigger2',
           events: [{ type: 'scene_started', scene: 'SCENE-2' }],
           scene: 'SCENE-2',
-          actions: [{ name: 'set_value', params: {
+          actions: [{
+            name: 'set_value',
             value_ref: 'val',
             new_value_ref: 'true'
-          } }]
+          }]
         }]
       },
       evalContext: { currentSceneName: 'SCENE-1' },

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { IndexLink, Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
@@ -74,14 +74,48 @@ export default class ContentTree extends Component {
     );
   }
 
-  renderContentTree(scriptContent, contentList, contentTree) {
+  renderNewItem(collectionName) {
+    const script = this.props.script;
+    const resourceType = TextUtil.singularize(collectionName);
+    return (
+      <li key={collectionName}>
+        <IndexLink
+          className={'list-group-item list-group-item-action constrain-text'}
+          activeClassName="active"
+          to={
+            `/${script.org.name}/${script.experience.name}` +
+            `/design/script/${script.revision}` +
+            `/${this.props.sliceType}/${this.props.sliceName}` +
+            `/${collectionName}/new`
+          }>
+          <span className="faint">+</span>&nbsp;
+          <span className="badge badge-info">
+            {TextUtil.titleForKey(resourceType)}
+          </span>&nbsp;<span className="faint">Add {resourceType}</span>
+        </IndexLink>
+      </li>
+    );
+  }
+
+  renderNewItems() {
+    const collectionNames = Object.keys(this.props.contentList);
+    return collectionNames.map(collectionName => (
+      this.renderNewItem(collectionName)
+    ));
+  }
+
+  render() {
+    const script = this.props.script;
+    const contentList = this.props.contentList;
+    const contentTree = this.props.contentTree;
+
     const items = [];
 
     walkContentTree(contentTree, [], (path, key) => {
       const [collectionName, resourceName] = key.split('.');
       const isInContentList = !!_.find(contentList[collectionName],
         { name: resourceName });
-      const collection = scriptContent[collectionName];
+      const collection = script.content[collectionName];
       const resource = _.find(collection, { name: resourceName });
       if (!resource) {
         console.log(`Resource not found ${key}`);
@@ -96,33 +130,32 @@ export default class ContentTree extends Component {
       return null;
     });
 
+    let noContentHeader;
     if (!items.length) {
       if (this.props.search) {
-        return (
+        noContentHeader = (
           <div className="alert alert-info">
             No items matching &quot;{this.props.search}&quot;.
           </div>
         );
+      } else {
+        noContentHeader = (
+          <div className="alert alert-info">
+            No content in this area yet.
+          </div>
+        );
       }
-      return (
-        <div className="alert alert-info">
-          No content in this area yet.
-        </div>
-      );
     }
 
     return (
-      <ul className="script-content-slice list-group list-group-flush">
-        {items}
-      </ul>
+      <div>
+        {noContentHeader}
+        <ul className="script-content-slice list-group list-group-flush">
+          {items}
+          {this.renderNewItems()}
+        </ul>
+      </div>
     );
-  }
-
-  render() {
-    const scriptContent = this.props.script.content;
-    const contentList = this.props.contentList;
-    const contentTree = this.props.contentTree;
-    return this.renderContentTree(scriptContent, contentList, contentTree);
   }
 }
 

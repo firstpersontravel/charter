@@ -13,8 +13,20 @@ var relay = {
     sms_in: { type: 'boolean', default: false }
   },
   getTitle: function(scriptContent, resource) {
-    return 'For ' + resource.for + ' as ' + resource.as + ' with ' +
-      resource.with;
+    var parts = [];
+    if (resource.for) {
+      parts.push('for ' + resource.for);
+    }
+    if (resource.as) {
+      parts.push(' as ' + resource.as);
+    }
+    if (resource.with) {
+      parts.push(resource.with);
+    }
+    if (!parts.length) {
+      return 'new';
+    }
+    return parts.join(' ');
   },
   getParentClaims: function(resource) {
     return ['roles.' + resource.for];

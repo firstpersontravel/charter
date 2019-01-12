@@ -7,7 +7,8 @@ var TriggerCore = {};
 /**
  * Walk the trigger actions and call the iterees for each child.
  */
-TriggerCore.walkActions = function(actions, path, actionIteree, ifIteree) {
+TriggerCore.walkPackedActions = function(actions, path, actionIteree,
+  ifIteree) {
   if (!actions) {
     return;
   }
@@ -28,23 +29,22 @@ TriggerCore.walkActions = function(actions, path, actionIteree, ifIteree) {
     if (action.if) {
       ifIteree(action.if, indexPath + '.if');
     }
-    TriggerCore.walkActions(action.actions, indexPath + '.actions', 
+    TriggerCore.walkPackedActions(action.actions, indexPath + '.actions', 
       actionIteree, ifIteree);
     (action.elseifs || []).forEach(function(elseif, j) {
       var elseifPath = indexPath + '.elseifs[' + j + ']';
       ifIteree(elseif.if, elseifPath + '.if');
-      TriggerCore.walkActions(elseif.actions, elseifPath + '.actions',
+      TriggerCore.walkPackedActions(elseif.actions, elseifPath + '.actions',
         actionIteree, ifIteree);
     });
-    TriggerCore.walkActions(action.else, indexPath + '.else', actionIteree,
-      ifIteree);
+    TriggerCore.walkPackedActions(action.else, indexPath + '.else', actionIteree, ifIteree);
   });
 };
 
 /**
  * Get the right set of actions for a conditional clause
  */
-TriggerCore.actionsForConditional = function(clause, actionContext) {
+TriggerCore.packedActionsForConditional = function(clause, actionContext) {
   // If no if statement, then pick from actions.
   if (!clause.if) {
     return clause.actions;
@@ -72,9 +72,9 @@ TriggerCore.actionsForConditional = function(clause, actionContext) {
 /**
  * Get executable actions for a given trigger or subclause.
  */
-TriggerCore.actionsForClause = function(clause, actionContext) {
+TriggerCore.packedActionsForClause = function(clause, actionContext) {
   // Figure out which if clause is active
-  var actions = TriggerCore.actionsForConditional(clause, actionContext);
+  var actions = TriggerCore.packedActionsForConditional(clause, actionContext);
 
   // Ensure an array is returned
   if (!_.isArray(actions)) {
@@ -88,7 +88,7 @@ TriggerCore.actionsForClause = function(clause, actionContext) {
     }
     // Detect subclauses
     if (action.actions) {
-      return TriggerCore.actionsForClause(action, actionContext);
+      return TriggerCore.packedActionsForClause(action, actionContext);
     }
     // Otherwise it's a simple action.
     return [action];
@@ -98,8 +98,8 @@ TriggerCore.actionsForClause = function(clause, actionContext) {
 /**
  * Get executable actions for a given trigger.
  */
-TriggerCore.actionsForTrigger = function(trigger, actionContext) {
-  return TriggerCore.actionsForClause(trigger, actionContext);
+TriggerCore.packedActionsForTrigger = function(trigger, actionContext) {
+  return TriggerCore.packedActionsForClause(trigger, actionContext);
 };
 
 module.exports = TriggerCore;
