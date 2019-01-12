@@ -10,12 +10,29 @@ import PopoverControl from '../../partials/PopoverControl';
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title', 'scene'];
 
-const empty = <em className="faint">Empty</em>;
+const booleanLabels = ['No', 'Yes'];
 const highlight = (
   <span className="text-danger">
     &nbsp;<i className="fa fa-exclamation-circle" />
   </span>
 );
+
+function stringOrYesNo(val) {
+  if (_.isBoolean(val)) {
+    return booleanLabels[Number(val)];
+  }
+  return val.toString();
+}
+
+function internalEmpty(spec) {
+  let label = 'Empty';
+  if (spec.default) {
+    label = `${stringOrYesNo(spec.default)} by default`;
+  }
+  return (
+    <em className="faint">{label}</em>
+  );
+}
 
 class Renderer {
   constructor(script, resource, onUpdate) {
@@ -27,7 +44,7 @@ class Renderer {
   internalStringlike(spec, value, name, path, opts, validate, clean) {
     const validateFunc = validate || (val => true);
     const cleanFunc = clean || (val => val);
-    const label = value || empty;
+    const label = value || internalEmpty(spec);
     if (opts && opts.editable === false) {
       return value;
     }
@@ -48,10 +65,16 @@ class Renderer {
     }
     // Special hack for 'type' params.
     const onUpdate = (val) => {
-      // Special handling of type
-      if (_.endsWith(path, '.type')) {
+      // Special handling of event type,
+      if (_.startsWith(path, 'events') && _.endsWith(path, '.type')) {
         // Clear out other values.
         this.onUpdate(path.replace(/\.type$/, ''), { type: cleanFunc(val) });
+        return;
+      }
+      // And special handling of action name.
+      if (_.startsWith(path, 'actions') && _.endsWith(path, '.name')) {
+        // Clear out other values.
+        this.onUpdate(path.replace(/\.name$/, ''), { name: cleanFunc(val) });
         return;
       }
       this.onUpdate(path, cleanFunc(val));
@@ -61,7 +84,7 @@ class Renderer {
         title={name}
         choices={choices}
         onConfirm={onUpdate}
-        label={label || value || empty}
+        label={label || value || internalEmpty(spec)}
         value={value || choices[0].value} />
     );
   }
@@ -147,14 +170,14 @@ class Renderer {
     const choices = ['Yes', 'No'];
     // eslint-disable-next-line no-nested-ternary
     const existing = value ? 'Yes' : 'No';
-    const label = _.isUndefined(value) ? empty : existing;
+    const label = _.isUndefined(value) ? internalEmpty(spec) : existing;
     const clean = val => val === 'Yes';
     return this.internalEnumlike(spec, existing, name, path, opts, choices,
       clean, label);
   }
 
   renderReference(spec, value, name, path, opts) {
-    let label = empty;
+    let label = internalEmpty(spec);
     const collection = this.script.content[spec.collection];
     const resource = _.find(collection, { name: value });
     if (resource) {
@@ -228,26 +251,21 @@ class Renderer {
   }
 
   renderList(spec, value, name, path, opts) {
-    if (!value || value.length === 0) {
-      return empty;
-    }
+    const items = _.map(value, (item, i) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <li key={i}>
+        {this.renderFieldValue(spec.items, item, `${name} Item`,
+          `${path}[${i}]`)}
+      </li>
+    ));
     return (
       <ul>
-        {value.map((item, i) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <li key={i}>
-            {this.renderFieldValue(spec.items, item, `${name} Item`,
-              `${path}[${i}]`)}
-          </li>
-        ))}
+        {items}
       </ul>
     );
   }
 
   renderDictionary(spec, value, name, path, opts) {
-    if (Object.keys(value).length === 0) {
-      return empty;
-    }
     const items = _.map(value, (val, key) => (
       // eslint-disable-next-line react/no-array-index-key
       <li key={key}>
@@ -266,23 +284,21 @@ class Renderer {
   }
 
   renderObject(spec, value, name, path, opts) {
-    if (Object.keys(value).length === 0) {
-      return empty;
-    }
     const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
       'variegated'];
     const items = _.map(spec.properties, (keySpec, key) => {
       const itemPath = `${path}${path ? '.' : ''}${key}`;
       const allowClear = !_.includes(COMPLEX_TYPES, keySpec.type);
+      const itemValue = _.get(value, key);
       return (
         // eslint-disable-next-line react/no-array-index-key
         <div key={key}>
           <strong>{_.startCase(key)}:</strong>&nbsp;
-          {this.renderFieldValue(keySpec, value[key], _.startCase(key),
+          {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
             itemPath)}
           {allowClear ?
-            this.internalClear(keySpec, value[key], itemPath) : null}
-          {!value[key] && keySpec.required ? highlight : null}
+            this.internalClear(keySpec, itemValue, itemPath) : null}
+          {!itemValue && keySpec.required ? highlight : null}
         </div>
       );
     });
