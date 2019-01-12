@@ -9,6 +9,7 @@ import {
 const mapStateToProps = (state, ownProps) => ({
   groups: instancesFromDatastore(state, {
     col: 'groups',
+    sort: 'id',
     filter: {
       isArchived: false,
       org: { name: ownProps.params.orgName },

@@ -11,7 +11,7 @@ export default class GroupModal extends Component {
     const defaults = {
       date: propDefaults.date || moment.utc(),
       scriptId: propDefaults.scriptId ||
-        _.get(scripts[0], 'id')
+        _.get(_.find(scripts, 'isActive'), 'id')
     };
     return {
       date: group ? moment.utc(group.date) : defaults.date,
@@ -83,11 +83,15 @@ export default class GroupModal extends Component {
       this.state.date !== ''
     );
 
-    const scriptOptions = this.props.scripts.map(script => (
+    const scripts = this.props.scripts;
+    const activeRev = _.get(_.find(scripts, 'isActive'), 'revision');
+    const scriptOptions = scripts.map(script => (
       <option
         key={script.id}
         value={script.id}>
-        Revision {script.revision}
+        Rev. {script.revision}
+        &nbsp;({ // eslint-disable-next-line no-nested-ternary
+          script.isActive ? 'Active' : (script.revision >= activeRev ? 'Draft' : 'Superceded')})
       </option>
     ));
 

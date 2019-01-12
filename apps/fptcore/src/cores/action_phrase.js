@@ -107,17 +107,4 @@ ActionPhraseCore.scheduleAtForAction = function(action, actionContext) {
   return actionContext.evaluateAt;
 };
 
-/**
- * TOOD get rid of this shortcut.
- */
-ActionPhraseCore.expandActionPhrase = function(actionPhrase, actionContext) {
-  var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
-  var scheduleAt = ActionPhraseCore.scheduleAtForAction(action, actionContext);
-  return {
-    name: action.name,
-    params: action.params,
-    scheduleAt: scheduleAt
-  };
-};
-
 module.exports = ActionPhraseCore;

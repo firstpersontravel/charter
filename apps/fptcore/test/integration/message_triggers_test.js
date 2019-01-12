@@ -20,12 +20,18 @@ describe('Integration - Message Triggers', () => {
         triggers: [{
           name: 'trigger1',
           events: [{ type: 'message_sent', from: 'A', to: 'B' }],
-          actions: ['set_value trigger true']
+          actions: [{ name: 'set_value', params: {
+            value_ref: 'trigger',
+            new_value_ref: 'true'
+          } }]
         }, {
           name: 'trigger2',
           events: [{ type: 'message_sent', from: 'A', to: 'B' }],
           if: ['trigger'],
-          actions: ['set_value SHOULD_NOT_FIRE true']
+          actions: [{ name: 'set_value', params: {
+            value_ref: 'SHOULD_NOT_FIRE',
+            new_value_ref: 'true'
+          } }]
         }]
       },
       evalContext: {},
@@ -45,7 +51,10 @@ describe('Integration - Message Triggers', () => {
           name: 'trigger1',
           events: [{ type: 'message_sent', medium: 'text' }],
           if: 'contains event.message.content "1234"',
-          actions: ['set_value trigger true']
+          actions: [{ name: 'set_value', params: {
+            value_ref: 'trigger',
+            new_value_ref: 'true'
+          } }]
         }]
       },
       evalContext: {},
@@ -72,7 +81,10 @@ describe('Integration - Message Triggers', () => {
           name: 'trigger1',
           events: [{ type: 'message_sent', medium: 'text' }],
           if: 'contains event.message.content "1234"',
-          actions: ['set_value trigger true']
+          actions: [{ name: 'set_value', params: {
+            value_ref: 'trigger',
+            new_value_ref: 'true'
+          } }]
         }]
       },
       evalContext: {},

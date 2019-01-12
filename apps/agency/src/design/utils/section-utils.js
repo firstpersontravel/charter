@@ -51,7 +51,7 @@ function sliceForResource(collectionName, resource) {
   return { sliceType: 'section', sliceName: section };
 }
 
-export function linkForResource(script, collectionName, resourceName) {
+export function urlForResource(script, collectionName, resourceName) {
   const collection = script.content[collectionName];
   const resource = _.find(collection, { name: resourceName });
   const { sliceType, sliceName } = sliceForResource(collectionName, resource);

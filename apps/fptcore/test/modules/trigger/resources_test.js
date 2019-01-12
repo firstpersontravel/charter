@@ -7,13 +7,13 @@ describe('#validateResource', () => {
     const script = {};
     const trigger = {
       events: [{ type: 'message_sent', from: 'Role' }],
-      actions: ['play_clip CLIP-NAME']
+      actions: [{ name: 'play_clip', params: { clip_name: 'CLIP-NAME' } }]
     };
 
     const res = triggerResources.trigger.validateResource(script, trigger);
 
     assert.deepStrictEqual(res, [
-      'Action "actions[0]" ("play_clip CLIP-NAME") is triggered by event "message_sent", but requires one of: call_received, call_answered, query_responded.'
+      'Action "actions[0]" ("play_clip") is triggered by event "message_sent", but requires one of: call_received, call_answered, query_responded.'
     ]);
   });
 });

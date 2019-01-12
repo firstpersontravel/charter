@@ -11,139 +11,143 @@ describe('TriggerCore', () => {
     sandbox.restore();
   });
 
-  describe('#actionPhrasesForClause', () => {
+  describe('#actionsForClause', () => {
     const actionContext = { evalContext: { valueA: true, valueB: false } };
-
-    it('handles single item', () => {
-      const clause = {actions: 'action'};
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['action']);
-    });
+    const simpleAction = { name: 'act', params: {} };
+    const otherAction = { name: 'other', params: {} };
+    const thirdAction = { name: 'third', params: {} };
+    const fourthAction = { name: 'fourth', params: {} };
 
     it('handles simple list', () => {
-      const clause = {actions: ['action']};
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['action']);
+      const clause = {actions: [simpleAction]};
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, [simpleAction]);
     });
 
     it('handles single passing if', () => {
-      const clause = {if: 'valueA', actions: ['action']};
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['action']);
+      const clause = {if: 'valueA', actions: [simpleAction]};
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, [simpleAction]);
     });
 
     it('handles single failing if', () => {
-      const clause = {if: 'not valueA', actions: ['action']};
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, []);
+      const clause = {if: 'not valueA', actions: [simpleAction]};
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, []);
     });
 
     it('handles single failing if with else', () => {
-      const clause = {if: 'valueB', actions: ['action'], else: ['other']};
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['other']);
+      const clause = {
+        if: 'valueB',
+        actions: [simpleAction],
+        else: [otherAction]
+      };
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, [otherAction]);
     });
 
     it('handles nested actions', () => {
       const clause = {
         if: 'not valueB',
-        actions: {
+        actions: [{
           if: 'valueB',
-          actions: ['final'],
-          else: ['other']
-        }
+          actions: [thirdAction],
+          else: [otherAction]
+        }]
       };
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['other']);
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, [otherAction]);
     });
 
     it('handles nested else', () => {
       const clause = {
         if: 'valueB',
         actions: ['action'],
-        else: {
+        else: [{
           if: 'valueA',
-          actions: 'final',
-          else: ['other']
-        }
+          actions: [thirdAction],
+          else: [otherAction]
+        }]
       };
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['final']);
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, [thirdAction]);
     });
 
     it('handles list of clauses', () => {
       const clause = {
         if: 'valueA',
         actions: [
-          'action',
-          { if: 'valueB', actions: 'action2' },
-          { if: 'not valueB', actions: ['action3'] }
+          simpleAction,
+          { if: 'valueB', actions: [otherAction] },
+          { if: 'not valueB', actions: [thirdAction] }
         ]
       };
-      const res = TriggerCore.actionPhrasesForClause(clause, actionContext);
-      assert.deepEqual(res, ['action', 'action3']);
+      const res = TriggerCore.actionsForClause(clause, actionContext);
+      assert.deepStrictEqual(res, [simpleAction, thirdAction]);
     });
 
     it('handles else ifs', () => {
       const clause = {
         if: 'a',
-        actions: ['action1'],
+        actions: [simpleAction],
         elseifs: [{
           if: 'b',
-          actions: ['action2']
+          actions: [otherAction]
         }, {
           if: 'c',
-          actions: ['action3']
+          actions: [thirdAction]
         }],
-        else: ['other']
+        else: [fourthAction]
       };
-      assert.deepEqual(
-        TriggerCore.actionPhrasesForClause(
+      assert.deepStrictEqual(
+        TriggerCore.actionsForClause(
           clause, { evalContext: { a: true } }
-        ), ['action1']);
-      assert.deepEqual(
-        TriggerCore.actionPhrasesForClause(
+        ), [simpleAction]);
+      assert.deepStrictEqual(
+        TriggerCore.actionsForClause(
           clause, { evalContext: { a: true, b: true } }
-        ), ['action1']);
-      assert.deepEqual(
-        TriggerCore.actionPhrasesForClause(
+        ), [simpleAction]);
+      assert.deepStrictEqual(
+        TriggerCore.actionsForClause(
           clause, { evalContext: { b: true } }
-        ), ['action2']);
-      assert.deepEqual(
-        TriggerCore.actionPhrasesForClause(
+        ), [otherAction]);
+      assert.deepStrictEqual(
+        TriggerCore.actionsForClause(
           clause, { evalContext: { b: true, c: true } }
-        ), ['action2']);
-      assert.deepEqual(
-        TriggerCore.actionPhrasesForClause(
+        ), [otherAction]);
+      assert.deepStrictEqual(
+        TriggerCore.actionsForClause(
           clause, { evalContext: { c: true } }
-        ), ['action3']);
-      assert.deepEqual(
-        TriggerCore.actionPhrasesForClause(
+        ), [thirdAction]);
+      assert.deepStrictEqual(
+        TriggerCore.actionsForClause(
           clause, { evalContext: {} }
-        ), ['other']);
+        ), [fourthAction]);
     });
 
     it('handles complex nested if', () => {
+      const cue1 = { name: 'cue', params: { cue_name: 'ALLTRUE' } };
+      const cue2 = { name: 'cue', params: { cue_name: 'NOT' } };
       const clause = {
         if: 'val1 and val2',
-        actions: {
+        actions: [{
           if: 'val3',
-          actions: ['cue ALLTRUE'],
-          else: ['cue 12NOT3']
-        }
+          actions: [cue1],
+          else: [cue2]
+        }]
       };
       const actionContextAll = {
         evalContext: { val1: true, val2: true, val3: true }
       };
-      assert.deepEqual(TriggerCore.actionPhrasesForClause(
-        clause, actionContextAll), ['cue ALLTRUE']);
+      assert.deepStrictEqual(TriggerCore.actionsForClause(
+        clause, actionContextAll), [cue1]);
 
       const actionContext12 = { evalContext: { val1: true, val2: true } };
-      assert.deepEqual(TriggerCore.actionPhrasesForClause(
-        clause, actionContext12), ['cue 12NOT3']);
+      assert.deepStrictEqual(TriggerCore.actionsForClause(
+        clause, actionContext12), [cue2]);
 
       const actionContext3 = { evalContext: { val3: true } };
-      assert.deepEqual(TriggerCore.actionPhrasesForClause(
+      assert.deepStrictEqual(TriggerCore.actionsForClause(
         clause, actionContext3), []);
     });
   });

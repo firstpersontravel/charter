@@ -28,7 +28,10 @@ const actionContext = {
     triggers: [{
       name: 'TRIGGER-PICK-APPLES',
       events: [{ type: 'cue_signaled', cue: 'CUE-PICK-APPLES' }],
-      actions: ['increment_value apples 5']
+      actions: [{
+        name: 'increment_value',
+        params: { value_ref: 'apples', delta: 5 }
+      }],
     }, {
       name: 'TRIGGER-UNLOAD-APPLES',
       events: [{
@@ -36,31 +39,49 @@ const actionContext = {
         role: 'Farmer',
         geofence: 'GEOFENCE-FARM'
       }],
-      actions: ['set_value apples 0']
+      actions: [{ name: 'set_value', params: {
+        value_ref: 'apples', new_value_ref: '0'
+      } }]
     }, {
       name: 'TRIGGER-SUNRISE',
       events: [{ type: 'cue_signaled', cue: 'CUE-SUNRISE' }],
-      actions: ['in 120m, send_message MESSAGE-CROW']
+      actions: [{ when: 'in 120m', name: 'send_message', params: {
+        message_name: 'MESSAGE-CROW'
+      } }]
     }, {
       name: 'TRIGGER-GREET-1',
       events: [{ type: 'cue_signaled', cue: 'CUE-GREET' }],
-      actions: ['signal_cue CUE-GREET-REPLY']
+      actions: [{ name: 'signal_cue', params: {
+        cue_name: 'CUE-GREET-REPLY'
+      } }]
     }, {
       name: 'TRIGGER-GREET-2',
       events: [{ type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }],
-      actions: ['custom_message Cowboy Farmer text howdy']
+      actions: [{ name: 'custom_message', params: {
+        from_role_name: 'Cowboy',
+        to_role_name: 'Farmer',
+        message_medium: 'text',
+        message_content: 'howdy'
+      } }]
     }, {
       name: 'TRIGGER-NAV-1',
       events: [{ type: 'cue_signaled', cue: 'CUE-NAV-1' }],
-      actions: [
-        'set_value is_navigating true',
-        'signal_cue CUE-NAV-2'
-      ]
+      actions: [{ name: 'set_value', params: {
+        value_ref: 'is_navigating',
+        new_value_ref: 'true'
+      } }, {
+        name: 'signal_cue', params: { cue_name: 'CUE-NAV-2' }
+      }]
     }, {
       name: 'TRIGGER-NAV-2',
       events: [{ type: 'cue_signaled', cue: 'CUE-NAV-2' }],
       if: 'is_navigating',
-      actions: ['custom_message Cowboy Farmer text geewhiz']
+      actions: [{ name: 'custom_message', params: {
+        from_role_name: 'Cowboy',
+        to_role_name: 'Farmer',
+        message_medium: 'text',
+        message_content: 'geewhiz'
+      } }]
     }],
     scenes: [{ name: 'MAIN' }],
     pages: [
@@ -295,12 +316,15 @@ describe('Integration - Nested Triggers', () => {
           name: 'trigger1',
           events: [{ type: 'cue_signaled', cue: 'end-of-1' }],
           scene: 'SCENE-1',
-          actions: ['start_scene SCENE-2']
+          actions: [{ name: 'start_scene', params: { scene_name: 'SCENE-2' } }]
         }, {
           name: 'trigger2',
           events: [{ type: 'scene_started', scene: 'SCENE-2' }],
           scene: 'SCENE-2',
-          actions: ['set_value val true']
+          actions: [{ name: 'set_value', params: {
+            value_ref: 'val',
+            new_value_ref: 'true'
+          } }]
         }]
       },
       evalContext: { currentSceneName: 'SCENE-1' },

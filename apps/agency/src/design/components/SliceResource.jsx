@@ -8,7 +8,7 @@ import { TextUtil } from 'fptcore';
 import ResourceView from '../partials/ResourceView';
 import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
 import { titleForResource } from '../utils/text-utils';
-import { getContentList } from '../utils/section-utils';
+import { getContentList, urlForResource } from '../utils/section-utils';
 import { assembleReverseReferences } from '../utils/graph-utils';
 
 export default class SliceResource extends Component {
@@ -52,7 +52,7 @@ export default class SliceResource extends Component {
         `/${script.org.name}/${script.experience.name}` +
         `/design/script/${this.state.redirectToRevision}` +
         `/${props.params.sliceType}/${props.params.sliceName}` +
-        `${wasDeleted ? '' : `/${collectionName}/${resourceName}}`}`
+        `${wasDeleted ? '' : `/${collectionName}/${resourceName}`}`
       );
     }
   }
@@ -176,8 +176,6 @@ export default class SliceResource extends Component {
 
   renderChild(childStr) {
     const script = this.props.script;
-    const sliceType = this.props.params.sliceType;
-    const sliceName = this.props.params.sliceName;
     const [collectionName, resourceName] = childStr.split('.');
     const resourceType = TextUtil.singularize(collectionName);
     const resource = _.find(script.content[collectionName], {
@@ -188,12 +186,7 @@ export default class SliceResource extends Component {
         &nbsp;&rarr;&nbsp;
         <Link
           className="text-dark"
-          to={
-            `/${script.org.name}/${script.experience.name}` +
-            `/design/script/${script.revision}` +
-            `/${sliceType}/${sliceName}` +
-            `/${collectionName}/${resourceName}`
-          }>
+          to={urlForResource(script, collectionName, resourceName)}>
           <span className="badge badge-secondary">
             {TextUtil.titleForKey(resourceType)}
           </span>

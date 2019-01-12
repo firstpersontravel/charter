@@ -10,6 +10,13 @@ body {
   height: 100%;
 }
 
+.btn-group-xs > .btn, .btn-xs {
+  padding: .25rem .4rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: .2rem;
+}
+
 .bold { font-weight: bold; }
 .strikethrough { text-decoration: line-through; }
 .react-datepicker__input-container { display: block }

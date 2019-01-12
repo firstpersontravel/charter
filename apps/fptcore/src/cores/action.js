@@ -1,6 +1,7 @@
 var _ = require('lodash');
 
 var ActionParamCore = require('./action_param');
+var ActionPhraseCore = require('./action_phrase');
 var ActionResultCore = require('./action_result');
 var ActionsRegistry = require('../registries/actions');
 var TriggerCore = require('./trigger');
@@ -150,12 +151,13 @@ ActionCore.actionsForTrigger = function(trigger, event, actionContext) {
  * apply it now.
  */
 ActionCore.applyOrScheduleAction = function(action, actionContext) {
-  // Schedule actions if they have a later time.
-  if (action.scheduleAt.isAfter(actionContext.evaluateAt)) {
+  if (action.when) {
+    var scheduleAt = ActionPhraseCore.scheduleAtForAction(action,
+      actionContext);
     return {
       nextContext: actionContext,
       resultOps: [],
-      scheduledActions: [action]
+      scheduledActions: [Object.assign({}, action, { scheduleAt: scheduleAt })]
     };
   }
   // Otherwise apply them now, including any nested triggers!

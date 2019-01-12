@@ -1,8 +1,6 @@
 import _ from 'lodash';
 
 import {
-  ActionPhraseCore,
-  ActionsRegistry,
   ResourcesRegistry,
   TextUtil
 } from 'fptcore';
@@ -17,11 +15,6 @@ const walkers = {
         walkers[paramSpec.type](paramSpec, value[key], iteree);
       }
     });
-  },
-  actionPhrase: (spec, value, iteree) => {
-    const action = ActionPhraseCore.parseActionPhrase(value);
-    const actionClass = ActionsRegistry[action.name];
-    walkers.params(actionClass.params, action.params, iteree);
   },
   list: (spec, value, iteree) => {
     _.each(value, (item) => {

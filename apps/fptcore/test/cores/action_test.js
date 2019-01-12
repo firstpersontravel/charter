@@ -191,14 +191,19 @@ describe('ActionCore', () => {
     });
 
     it('schedule action if scheduled in the future', () => {
-      const action = { scheduleAt: now.clone().add(1, 'days') };
+      const action = { name: 'signal_cue', params: {}, when: 'in 24h' };
       sandbox.stub(ActionCore, 'applyAction').returns({});
       const result = ActionCore.applyOrScheduleAction(action, actionContext);
 
-      assert.deepEqual(result, {
+      assert.deepStrictEqual(result, {
         nextContext: actionContext,
         resultOps: [],
-        scheduledActions: [action]
+        scheduledActions: [{
+          name: action.name,
+          params: action.params,
+          when: 'in 24h',
+          scheduleAt: now.clone().add(24, 'hours')
+        }]
       });
       sinon.assert.notCalled(ActionCore.applyAction);
     });
@@ -253,7 +258,7 @@ describe('ActionCore', () => {
       const scheduledAction = {
         name: 'add',
         params: {},
-        scheduleAt: now.clone().add(1, 'hours'),
+        when: 'in 1h',
         triggerName: 'trigger',
         event: event
       };
@@ -270,7 +275,14 @@ describe('ActionCore', () => {
         operation: 'updateTripHistory',
         history: { trigger: now.toISOString() }
       }]);
-      assert.deepStrictEqual(res.scheduledActions, [scheduledAction]);
+      assert.deepStrictEqual(res.scheduledActions, [{
+        name: scheduledAction.name,
+        params: scheduledAction.params,
+        when: 'in 1h',
+        triggerName: scheduledAction.triggerName,
+        event: scheduledAction.event,
+        scheduleAt: now.clone().add(1, 'hours')
+      }]);
     });
   });
 });

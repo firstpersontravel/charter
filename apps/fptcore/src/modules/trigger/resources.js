@@ -1,9 +1,7 @@
 var _ = require('lodash');
 
-var ActionPhraseCore = require('../../cores/action_phrase');
 var ActionsRegistry = require('../../registries/actions');
 var EventsRegistry = require('../../registries/events');
-var ParamValidators = require('../../utils/param_validators');
 var TriggerCore = require('../../cores/trigger');
 
 // TODO: don't parse the action string here -- have it be in the json
@@ -12,26 +10,39 @@ var actionsClasses = _(ActionsRegistry)
   .mapValues(function(actionClass, actionName) {
     return {
       properties: {
-        self: { type: 'actionPhrase' }
-      },
-      validateResource: function(script, resource) {
-        var action = ActionPhraseCore.parseActionPhrase(resource);
-        return ParamValidators.validateParams(script, actionClass.params, action.params, '');
+        params: {
+          type: 'object',
+          properties: actionClass.params,
+          required: true
+        }
       }
     };
   })
   .value();
 
-var simpleActionParam = {
+var singleActionParam = {
   type: 'variegated',
-  key: function(actionPhrase) {
-    var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
-    return action.name;
+  key: 'name',
+  common: {
+    properties: {
+      name: {
+        type: 'enum',
+        options: Object.keys(ActionsRegistry),
+        required: true
+      },
+      when: {
+        type: 'string'
+      }
+    }
   },
   classes: actionsClasses
 };
 
-var simpleActionResource = { properties: { self: simpleActionParam } };
+var singleActionResource = {
+  properties: {
+    self: singleActionParam
+  }
+};
 
 // Filled in later to avoid circular dependency
 var actionListParam = {};
@@ -44,7 +55,7 @@ var elseIfParam = {
   }
 };
 
-var actionClauseResource = {
+var conditionalActionResource = {
   properties: {
     if: { type: 'ifClause' },
     actions: actionListParam,
@@ -56,11 +67,11 @@ var actionClauseResource = {
 var actionOrClauseParam = {
   type: 'variegated',
   key: function(obj) {
-    return _.isString(obj) ? 'simpleAction' : 'actionClause';
+    return obj.name ? 'singleAction' : 'conditionalAction';
   },
   classes: {
-    simpleAction: simpleActionResource,
-    actionClause: actionClauseResource
+    singleAction: singleActionResource,
+    conditionalAction: conditionalActionResource
   }
 };
 
@@ -88,9 +99,8 @@ var eventResource = {
   classes: eventsClasses
 };
 
-function validateActionWithTrigger(actionPhrase, path, trigger) {
+function validateActionWithTrigger(action, path, trigger) {
   var warnings = [];
-  var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
   var actionClass = ActionsRegistry[action.name];
   if (!actionClass) {
     return;
@@ -100,7 +110,7 @@ function validateActionWithTrigger(actionPhrase, path, trigger) {
     var resourceEventTypes = _.uniq(_.map(trigger.events, 'type'));
     resourceEventTypes.forEach(function(resourceEventType) {
       if (!_.includes(actionClass.requiredEventTypes, resourceEventType)) {
-        warnings.push('Action "' + path + '" ("' + actionPhrase + '") is triggered by event "' + resourceEventType +
+        warnings.push('Action "' + path + '" ("' + action.name + '") is triggered by event "' + resourceEventType +
           '", but requires one of: ' +
           actionClass.requiredEventTypes.join(', ') + '.');
       }
@@ -173,8 +183,7 @@ var trigger = {
   getChildClaims: function(resource) {
     var childClaims = [];
     TriggerCore.walkActions(resource.actions, '',
-      function(actionPhrase, path) {
-        var action = ActionPhraseCore.parseActionPhrase(actionPhrase);
+      function(action, path) {
         var actionClass = ActionsRegistry[action.name];
         if (actionClass.getChildClaims) {
           childClaims.push.apply(childClaims, actionClass.getChildClaims(

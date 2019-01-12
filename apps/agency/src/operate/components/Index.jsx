@@ -5,9 +5,10 @@ import { browserHistory } from 'react-router';
 export default class Index extends Component {
   componentWillMount() {
     if (this.props.groups.length) {
+      const group = this.props.groups[this.props.groups.length - 1];
       browserHistory.push(
         `/${this.props.params.orgName}/${this.props.params.experienceName}` +
-        `/operate/${this.props.groups[0].id}`
+        `/operate/${group.id}`
       );
     } else {
       browserHistory.push(
@@ -18,9 +19,10 @@ export default class Index extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.groups.length) {
+      const group = nextProps.groups[nextProps.groups.length - 1];
       browserHistory.push(
         `/${this.props.params.orgName}/${this.props.params.experienceName}` +
-        `/operate/${nextProps.groups[0].id}`
+        `/operate/${group.id}`
       );
     }
   }

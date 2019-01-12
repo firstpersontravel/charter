@@ -10,12 +10,6 @@ ParamValidators.string = function(script, name, spec, param) {
   }
 };
 
-ParamValidators.actionPhrase = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['Action phrase param "' + name + '" should be a string.'];
-  }
-};
-
 ParamValidators.simpleValue = function(script, name, spec, param) {
   if (!_.isString(param) && !_.isNumber(param) && !_.isBoolean(param)) {
     return [

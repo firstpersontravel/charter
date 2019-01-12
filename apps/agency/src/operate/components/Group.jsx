@@ -47,7 +47,8 @@ export default class Group extends Component {
   componentWillReceiveProps(nextProps) {
     const curTripIds = _.map(this.props.group.trips, 'id');
     const nextTripIds = _.map(nextProps.group.trips, 'id');
-    if (!_.isEqual(curTripIds.sort(), nextTripIds.sort())) {
+    if (!_.isEqual(curTripIds.sort(), nextTripIds.sort()) ||
+        this.props.group.id !== nextProps.group.id) {
       this.loadData(nextProps.org, nextProps.group, nextTripIds);
     }
     this.checkNextUnappliedAction(nextProps.nextUnappliedAction);
@@ -106,7 +107,7 @@ export default class Group extends Component {
 
   handleRefresh() {
     const tripIds = _.map(this.props.group.trips, 'id');
-    this.loadData(this.props.org, tripIds);
+    this.loadData(this.props.org, this.props.group, tripIds);
   }
 
   autoRefresh() {
@@ -127,6 +128,7 @@ export default class Group extends Component {
     }
     this.updateFayeSubscriptions(tripIds);
     this.props.refreshLiveData(org.id, tripIds);
+    this.props.retrieveInstance('scripts', group.scriptId);
     this.props.listCollection('assets', {
       orgId: org.id,
       experienceId: group.experienceId,

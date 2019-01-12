@@ -53,11 +53,16 @@ async function phraseRoute(req, res) {
   const tripId = req.params.tripId;
   const actionPhrase = req.body.action_phrase;
   const actionContext = await TripUtil.getActionContext(tripId);
-  const action = ActionPhraseCore.expandActionPhrase(actionPhrase, 
+  const action = ActionPhraseCore.parseActionPhrase(actionPhrase, 
     actionContext);
-
-  if (action.scheduleAt.isAfter(actionContext.evaluateAt)) {
-    await TripActionController.scheduleAction(tripId, action);
+  if (action.when) {
+    const scheduleAt = ActionPhraseCore.scheduleAtForAction(action,
+      actionContext);
+    await TripActionController.scheduleAction(tripId, {
+      name: action.name,
+      params: action.params,
+      scheduleAt: scheduleAt
+    });
   } else {
     await TripActionController.applyAction(tripId, action);
   }

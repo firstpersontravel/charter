@@ -101,60 +101,91 @@ describe('ActionPhraseCore', () => {
     });
   });
 
-  describe('#expandActionPhrase', () => {
+  describe('#parseActionPhrase', () => {
     it('parses simple cue', () => {
-      var res = ActionPhraseCore.expandActionPhrase(
+      var res = ActionPhraseCore.parseActionPhrase(
         'signal_cue cue_name', actionContext);
       assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
-      assertOffset(res.scheduleAt, now, 0);
+      assert.strictEqual(res.when, null);
     });
 
     it('parses simple send_to_page', () => {
-      var res = ActionPhraseCore.expandActionPhrase(
+      var res = ActionPhraseCore.parseActionPhrase(
         'send_to_page Patrick PAGE1', actionContext);
       assert.equal(res.name, 'send_to_page');
       assert.deepEqual(res.params,
         { role_name: 'Patrick', page_name: 'PAGE1' });
-      assertOffset(res.scheduleAt, now, 0);
+      assert.strictEqual(res.when, null);
     });
 
     it('parses action with var string', () => {
-      var res = ActionPhraseCore.expandActionPhrase(
+      var res = ActionPhraseCore.parseActionPhrase(
         'set_state Role "nav window"', actionContext);
       assert.equal(res.name, 'set_state');
       assert.deepEqual(res.params,
         { role_name: 'Role', new_value: '"nav window"' });
+      assert.strictEqual(res.when, null);
     });
 
     it('parses action with relative time modifier', () => {
-      var res = ActionPhraseCore.expandActionPhrase(
+      var res = ActionPhraseCore.parseActionPhrase(
         'in 3m, signal_cue cue_name', actionContext);
       assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
-      assertOffset(res.scheduleAt, now, 180);
+      assert.strictEqual(res.when, 'in 3m');
     });
 
     it('parses action with absolute time modifier', () => {
-      var res = ActionPhraseCore.expandActionPhrase(
+      var res = ActionPhraseCore.parseActionPhrase(
         'at time134p, signal_cue cue_name', actionContext);
       assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
-      assertOffset(res.scheduleAt, time134p, 0);
+      assert.strictEqual(res.when, 'at time134p');
     });
 
     it('parses action with complex time modifier', () => {
-      var res = ActionPhraseCore.expandActionPhrase(
+      var res = ActionPhraseCore.parseActionPhrase(
         '10m AFTER  time134p, signal_cue cue_name', actionContext);
       assert.equal(res.name, 'signal_cue');
       assert.deepEqual(res.params, { cue_name: 'cue_name' });
-      assertOffset(res.scheduleAt, time134p, 600);
+      assert.strictEqual(res.when, '10m AFTER  time134p');
 
-      var res2 = ActionPhraseCore.expandActionPhrase(
+      var res2 = ActionPhraseCore.parseActionPhrase(
         '10s  before time134p , signal_cue cue_name', actionContext);
       assert.equal(res2.name, 'signal_cue');
       assert.deepEqual(res2.params, { cue_name: 'cue_name' });
-      assertOffset(res2.scheduleAt, time134p, -10);
+      assert.strictEqual(res2.when, '10s  before time134p');
+    });
+  });
+
+  describe('#scheduleAtForAction', () => {
+    it('returns now when no modifier', () => {
+      var res = ActionPhraseCore.scheduleAtForAction(
+        { when: null }, actionContext);
+      assertOffset(res, now, 0);
+    });
+
+    it('parses action with relative time modifier', () => {
+      var res = ActionPhraseCore.scheduleAtForAction(
+        { when: 'in 3m' }, actionContext);
+      assertOffset(res, now, 180);
+    });
+
+    it('parses action with absolute time modifier', () => {
+      var res = ActionPhraseCore.scheduleAtForAction(
+        { when: 'at time134p' }, actionContext);
+      assertOffset(res, time134p, 0);
+    });
+
+    it('parses action with complex time modifier', () => {
+      var res = ActionPhraseCore.scheduleAtForAction(
+        { when: '10m AFTER  time134p' }, actionContext);
+      assertOffset(res, time134p, 600);
+
+      var res2 = ActionPhraseCore.scheduleAtForAction(
+        { when: '10s  before time134p' }, actionContext);
+      assertOffset(res2, time134p, -10);
     });
   });
 

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 
 import { sections } from '../utils/section-utils';
 
@@ -9,6 +9,7 @@ export default class Script extends Component {
   constructor(props) {
     super(props);
     this.handleActivateScript = this.handleActivateScript.bind(this);
+    this.handleRevertScript = this.handleRevertScript.bind(this);
   }
 
   handleActivateScript() {
@@ -32,6 +33,17 @@ export default class Script extends Component {
         });
       }
     });
+  }
+
+  handleRevertScript() {
+    const activeScript = _.find(this.props.scripts, { isActive: true });
+    if (!activeScript) {
+      return;
+    }
+    this.props.updateInstance('scripts', this.props.script.id, {
+      isArchived: true
+    });
+    browserHistory.push(`/${activeScript.org.name}/${activeScript.experience.name}/design/script/${activeScript.revision}/${this.props.params.sliceType}/${this.props.params.sliceName}`);
   }
 
   renderNav() {
@@ -89,10 +101,8 @@ export default class Script extends Component {
     const script = this.props.script;
     const maxRevision = Math.max(..._.map(this.props.scripts, 'revision'));
     const isMaxRevision = script.revision === maxRevision;
-    const activeRevision = _(this.props.scripts)
-      .filter('isActive')
-      .map('revision')
-      .head();
+    const activeRevision = _.get(_.find(this.props.scripts,
+      { isActive: true }), 'revision') || 0;
     const isSuperceded = script.revision < activeRevision;
     const badgeClass = script.isActive ? 'badge-primary' : 'badge-secondary';
     const statusText = script.isActive ? 'Active' : 'Draft';
@@ -103,13 +113,32 @@ export default class Script extends Component {
         {isSuperceded ? 'Superceded' : statusText}
       </span>
     );
-    const makeActiveBtn = !script.isActive && isMaxRevision ? (
+
+    const revertBtn = activeRevision ? (
       <button
-        style={{ marginLeft: '0.25em', padding: '0' }}
+        style={{ marginLeft: '0.25em' }}
+        onClick={this.handleRevertScript}
+        className="btn btn-xs btn-outline-secondary">
+        <i className="fa fa-undo" />&nbsp;
+        Revert to {activeRevision}
+      </button>
+    ) : null;
+
+    const activateBtn = (
+      <button
+        style={{ marginLeft: '0.25em' }}
         onClick={this.handleActivateScript}
-        className="btn btn-link">
+        className="btn btn-xs btn-outline-secondary">
+        <i className="fa fa-check" />&nbsp;
         Activate
       </button>
+    );
+
+    const activateBtns = !script.isActive && isMaxRevision ? (
+      <span>
+        {revertBtn}
+        {activateBtn}
+      </span>
     ) : null;
     const goToLatestLink = !isMaxRevision ? (
       <span style={{ marginLeft: '0.25em', padding: '0' }}>
@@ -119,10 +148,10 @@ export default class Script extends Component {
       </span>
     ) : null;
     return (
-      <div style={{ textAlign: 'right', padding: '0.5em' }}>
+      <div style={{ float: 'right', padding: '0.5em' }}>
         Rev. {this.props.script.revision}
         {status}
-        {makeActiveBtn}
+        {activateBtns}
         {goToLatestLink}
       </div>
     );
@@ -140,14 +169,8 @@ export default class Script extends Component {
     }
     return (
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-9">
-            {this.renderNav()}
-          </div>
-          <div className="col-3">
-            {this.renderOpts()}
-          </div>
-        </div>
+        {this.renderOpts()}
+        {this.renderNav()}
         {this.props.children}
       </div>
     );

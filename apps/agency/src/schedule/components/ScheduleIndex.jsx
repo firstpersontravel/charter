@@ -247,6 +247,7 @@ export default class ScheduleIndex extends Component {
               `/operate/${group.id}`
             }>
             <h4>{dateShort}</h4>
+            <div>Rev. {group.script.revision}</div>
           </IndexLink>
           <button
             className="btn btn-sm btn-outline-secondary"

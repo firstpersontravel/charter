@@ -1,6 +1,5 @@
 var _ = require('lodash');
 
-var ActionPhraseCore = require('./action_phrase');
 var EvalCore = require('./eval');
 
 var TriggerCore = {};
@@ -12,31 +11,40 @@ TriggerCore.walkActions = function(actions, path, actionIteree, ifIteree) {
   if (!actions) {
     return;
   }
+  if (!_.isArray(actions)) {
+    throw new Error('Expected actions to be an array, was ' + typeof actions +
+      '.');
+  }
   actions.forEach(function(action, i) {
+    if (!_.isPlainObject(action)) {
+      throw new Error('Expected action to be object, was ' + typeof action +
+        '.');
+    }
     var indexPath = path + '[' + i + ']';
-    if (_.isString(action)) {
+    if (action.name) {
       actionIteree(action, indexPath);
       return;
     }
-    if (_.isPlainObject(action)) {
-      if (action.if) {
-        ifIteree(action.if, indexPath + '.if');
-      }
-      TriggerCore.walkActions(action.actions, indexPath + '.actions', 
-        actionIteree, ifIteree);
-      (action.elseifs || []).forEach(function(elseif, j) {
-        var elseifPath = indexPath + '.elseifs[' + j + ']';
-        ifIteree(elseif.if, elseifPath + '.if');
-        TriggerCore.walkActions(elseif.actions, elseifPath + '.actions',
-          actionIteree, ifIteree);
-      });
-      TriggerCore.walkActions(action.else, indexPath + '.else', actionIteree,
-        ifIteree);
+    if (action.if) {
+      ifIteree(action.if, indexPath + '.if');
     }
+    TriggerCore.walkActions(action.actions, indexPath + '.actions', 
+      actionIteree, ifIteree);
+    (action.elseifs || []).forEach(function(elseif, j) {
+      var elseifPath = indexPath + '.elseifs[' + j + ']';
+      ifIteree(elseif.if, elseifPath + '.if');
+      TriggerCore.walkActions(elseif.actions, elseifPath + '.actions',
+        actionIteree, ifIteree);
+    });
+    TriggerCore.walkActions(action.else, indexPath + '.else', actionIteree,
+      ifIteree);
   });
 };
 
-TriggerCore.activeActionPhrasesForClause = function(clause, actionContext) {
+/**
+ * Get the right set of actions for a conditional clause
+ */
+TriggerCore.actionsForConditional = function(clause, actionContext) {
   // If no if statement, then pick from actions.
   if (!clause.if) {
     return clause.actions;
@@ -64,31 +72,23 @@ TriggerCore.activeActionPhrasesForClause = function(clause, actionContext) {
 /**
  * Get executable actions for a given trigger or subclause.
  */
-TriggerCore.actionPhrasesForClause = function(clause, actionContext) {
+TriggerCore.actionsForClause = function(clause, actionContext) {
   // Figure out which if clause is active
-  var actions = TriggerCore.activeActionPhrasesForClause(clause,
-    actionContext);
+  var actions = TriggerCore.actionsForConditional(clause, actionContext);
 
-  // Detect nothing
-  if (!actions) {
-    return [];
+  // Ensure an array is returned
+  if (!_.isArray(actions)) {
+    throw new Error('Expected actions to be an array.');
   }
 
-  // Detect subclauses
-  if (typeof actions === 'object' && actions.actions) {
-    return TriggerCore.actionPhrasesForClause(actions, actionContext);
-  }
-
-  // Detect single actions
-  if (typeof actions === 'string') {
-    return [actions];
-  }
-
-  // For arrays, each item is either a single action or a subclause.
+  // Scan each item is and expand subclauses.
   return _.flatten(actions.map(function(action) {
+    if (!_.isPlainObject(action)) {
+      throw new Error('Expected action to be an object.');
+    }
     // Detect subclauses
-    if (typeof action === 'object' && action.actions) {
-      return TriggerCore.actionPhrasesForClause(action, actionContext);
+    if (action.actions) {
+      return TriggerCore.actionsForClause(action, actionContext);
     }
     // Otherwise it's a simple action.
     return [action];
@@ -99,14 +99,7 @@ TriggerCore.actionPhrasesForClause = function(clause, actionContext) {
  * Get executable actions for a given trigger.
  */
 TriggerCore.actionsForTrigger = function(trigger, actionContext) {
-  var actionPhrases = TriggerCore.actionPhrasesForClause(
-    trigger, actionContext);
-
-  var actions = actionPhrases
-    .map(function(actionPhrase) {
-      return ActionPhraseCore.expandActionPhrase(actionPhrase, actionContext);
-    });
-  return actions;
+  return TriggerCore.actionsForClause(trigger, actionContext);
 };
 
 module.exports = TriggerCore;
