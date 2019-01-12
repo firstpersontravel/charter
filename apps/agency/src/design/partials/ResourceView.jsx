@@ -7,6 +7,7 @@ import { ResourcesRegistry, TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { getChildResourceTypes } from '../utils/graph-utils';
+import { getSliceContent } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
 
 // Hide title, field, and name
@@ -549,18 +550,18 @@ export default class ResourceView extends Component {
     );
   }
 
-  renderFooter() {
-    if (this.props.isNew) {
-      return null;
-    }
+  renderCreateChildResourceBtn(childResourceType) {
     const script = this.props.script;
     const collectionName = this.props.collectionName;
-    const resourceName = TextUtil.singularize(collectionName);
-    const childResourceTypes = getChildResourceTypes(collectionName);
-    if (!childResourceTypes.length) {
-      return null;
-    }
-    const createChildBtns = childResourceTypes.map(childResourceType => (
+    const resourceClass = ResourcesRegistry[childResourceType];
+    const childParentField = _(resourceClass.properties)
+      .keys()
+      .find(key => (
+        resourceClass.properties[key].type === 'reference' &&
+        resourceClass.properties[key].collection === collectionName &&
+        resourceClass.properties[key].parent
+      ));
+    return (
       <Link
         key={childResourceType}
         style={{ marginRight: '0.5em' }}
@@ -570,10 +571,30 @@ export default class ResourceView extends Component {
           `/design/script/${script.revision}` +
           `/${this.props.sliceType}/${this.props.sliceName}` +
           `/${TextUtil.pluralize(childResourceType)}/new` +
-          `?${resourceName}=${this.props.resource.name}`}>
+          `?${childParentField}=${this.props.resource.name}`}>
           Create {childResourceType}
       </Link>
-    ));
+    );
+  }
+
+  renderFooter() {
+    if (this.props.isNew) {
+      return null;
+    }
+    const collectionName = this.props.collectionName;
+    const sliceContentList = getSliceContent(this.props.sliceType,
+      this.props.sliceName);
+    const childResourceTypes = getChildResourceTypes(collectionName);
+    if (!childResourceTypes.length) {
+      return null;
+    }
+    const createChildBtns = childResourceTypes
+      .filter(childResourceType => (
+        !!sliceContentList[TextUtil.pluralize(childResourceType)]
+      ))
+      .map(childResourceType => (
+        this.renderCreateChildResourceBtn(childResourceType)
+      ));
     return (
       <div className="card-footer">
         {createChildBtns}

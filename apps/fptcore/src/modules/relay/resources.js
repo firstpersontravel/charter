@@ -1,7 +1,12 @@
 var relay = {
   properties: {
     name: { type: 'name', required: true },
-    for: { type: 'reference', collection: 'roles', required: true },
+    for: {
+      type: 'reference',
+      collection: 'roles',
+      required: true,
+      parent: true
+    },
     with: { type: 'reference', collection: 'roles', required: true },
     as: { type: 'reference', collection: 'roles', required: true },
     trailhead: { type: 'boolean', default: false },
