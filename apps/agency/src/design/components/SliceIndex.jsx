@@ -7,13 +7,6 @@ import { TextUtil } from 'fptcore';
 import { getSliceContent } from '../utils/section-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
-  // Can't create scenes in scene slice.
-  if ((
-    sliceType === 'scene' &&
-    sliceName !== 'all' &&
-    collectionName === 'scenes')) {
-    return null;
-  }
   const resourceName = TextUtil.singularize(collectionName);
   return (
     <div key={collectionName} style={{ marginBottom: '1em' }}>

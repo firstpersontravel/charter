@@ -317,7 +317,6 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
     var param = isPassthrough ? params : params[paramName];
     var paramNameWithPrefix = prefix + paramName;
     if (!paramSpec) {
-      console.log('paramsSpec', paramsSpec);
       throw new Error('Empty param spec for param "' + paramNameWithPrefix + '".');
     }
     if (_.isUndefined(param)) {

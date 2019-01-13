@@ -7,7 +7,7 @@ from cStringIO import StringIO
 
 from termcolor import colored
 from fabric.api import require, run, sudo, local, env, settings, hide, cd, \
-    prefix, quiet
+    prefix, quiet, get
 from fabric.contrib.files import put, upload_template
 from fabric.contrib.console import confirm
 from fabric.utils import puts
@@ -585,7 +585,6 @@ def db_migrate():
     with cd(env.hq_path):
         run('export $(cat ../env | xargs) && ./node_modules/.bin/sequelize db:migrate')
 
-
 def install_node_requirements():
     # with cd(env.repo_path):
     #     run('npm install')
@@ -754,3 +753,17 @@ def app_graceful_restart():
     sudo("kill -HUP `cat /var/run/nginx.pid` || sudo service nginx start")
     with cd(env.app_path):
         run('%(pm2_path)s startOrReload %(pm2_config)s' % env)
+
+
+#######################################################
+########## DB tasks ###################################
+#######################################################
+
+@roles('app')
+def db_load_from_remote():
+    local_path = '~/Downloads/%s_backup.sql' % env.stage
+    with cd(env.hq_path):
+        run('export $(cat ../env | xargs) && mysqldump -h $DATABASE_HOST -p$DATABASE_PASSWORD -u $DATABASE_USER $DATABASE_NAME > /home/deploy/backup.sql')
+    get(remote_path='/home/deploy/backup.sql',
+        local_path=local_path)
+    local('mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4306 galaxy < %s' % local_path)

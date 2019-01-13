@@ -19,7 +19,6 @@ const sliceContent = {
     sliceName === 'all' ? {
       scenes: {}
     } : {
-      scenes: { name: sliceName },
       pages: { scene: sliceName },
       triggers: { scene: sliceName },
       messages: { scene: sliceName },

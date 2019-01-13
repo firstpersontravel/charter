@@ -54,10 +54,11 @@ export default class ResourceShow extends Component {
     if (resourceClass.properties.title) {
       fields.title = `New ${resourceType}`;
     }
-    if (resourceClass.properties.scene &&
-        sliceType === 'scene' &&
-        sliceName !== 'all') {
+    if (resourceClass.properties.scene && sliceType === 'scene') {
       fields.scene = sliceName;
+    }
+    if (_.isFunction(resourceClass.getDefaultFields)) {
+      Object.assign(fields, resourceClass.getDefaultFields());
     }
     _.each(this.props.location.query, (val, key) => {
       if (resourceClass.properties[key]) {

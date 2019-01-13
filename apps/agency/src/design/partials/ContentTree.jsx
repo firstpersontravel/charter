@@ -75,13 +75,6 @@ export default class ContentTree extends Component {
   }
 
   renderNewItem(collectionName) {
-    // Can't create scenes in scene slice.
-    if ((
-      this.props.sliceType === 'scene' &&
-      this.props.sliceName !== 'all' &&
-      collectionName === 'scenes')) {
-      return null;
-    }
     const script = this.props.script;
     const resourceType = TextUtil.singularize(collectionName);
     return (

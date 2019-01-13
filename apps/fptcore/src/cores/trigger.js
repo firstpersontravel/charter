@@ -22,22 +22,30 @@ TriggerCore.walkPackedActions = function(actions, path, actionIteree,
         '.');
     }
     var indexPath = path + '[' + i + ']';
-    if (action.name) {
+    if (action.name && action.name !== 'conditional') {
       actionIteree(action, indexPath);
       return;
     }
     if (action.if) {
       ifIteree(action.if, indexPath + '.if');
     }
-    TriggerCore.walkPackedActions(action.actions, indexPath + '.actions', 
-      actionIteree, ifIteree);
-    (action.elseifs || []).forEach(function(elseif, j) {
-      var elseifPath = indexPath + '.elseifs[' + j + ']';
-      ifIteree(elseif.if, elseifPath + '.if');
-      TriggerCore.walkPackedActions(elseif.actions, elseifPath + '.actions',
+    if (action.actions) {
+      TriggerCore.walkPackedActions(action.actions, indexPath + '.actions', 
         actionIteree, ifIteree);
-    });
-    TriggerCore.walkPackedActions(action.else, indexPath + '.else', actionIteree, ifIteree);
+    }
+    if (action.elseifs) {
+      action.elseifs
+        .forEach(function(elseif, j) {
+          var elseifPath = indexPath + '.elseifs[' + j + ']';
+          ifIteree(elseif.if, elseifPath + '.if');
+          TriggerCore.walkPackedActions(elseif.actions,
+            elseifPath + '.actions', actionIteree, ifIteree);
+        });
+    }
+    if (action.else) {
+      TriggerCore.walkPackedActions(action.else, indexPath + '.else',
+        actionIteree, ifIteree);
+    }
   });
 };
 
@@ -86,8 +94,8 @@ TriggerCore.packedActionsForClause = function(clause, actionContext) {
     if (!_.isPlainObject(action)) {
       throw new Error('Expected action to be an object.');
     }
-    // Detect subclauses
-    if (action.name === 'conditional' || action.actions) {
+    // Detect conditional clauses
+    if (action.name === 'conditional' || action.if) {
       return TriggerCore.packedActionsForClause(action, actionContext);
     }
     // Otherwise it's a simple action.

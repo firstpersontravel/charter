@@ -40,7 +40,7 @@ var elseIfParam = {
 var conditionalActionResource = {
   properties: {
     name: { type: 'enum', options: ACTION_NAME_OPTIONS, required: true },
-    if: { type: 'ifClause' },
+    if: { type: 'ifClause', required: true },
     actions: actionListParam,
     elseifs: { type: 'list', items: elseIfParam },
     else: actionListParam
@@ -123,7 +123,7 @@ var trigger = {
     events: { type: 'list', items: eventResource, required: true },
     repeatable: { type: 'boolean', default: true },
     if: { type: 'ifClause' },
-    actions: Object.assign({ required: true }, actionListParam)
+    actions: actionListParam
   },
   validateResource: function(script, resource) {
     // Iterate over actions and ifs to provide trigger-specific validation that
@@ -156,6 +156,12 @@ var trigger = {
       }
     }
     return 'On ' + firstEvent.type.replace(/_/g, ' ');
+  },
+  getDefaultFields: function() {
+    return {
+      events: [],
+      actions: []
+    };
   },
   getParentClaims: function(resource) {
     return _(resource.events)
