@@ -9,10 +9,16 @@ module.exports = {
     getTitle: function(scriptContent, spec) {
       var parts = [spec.medium || 'message'];
       if (spec.from) {
-        parts.push('from ' + spec.from);
+        var fromRole = _.find(scriptContent.roles, { name: spec.from });
+        if (fromRole) {
+          parts.push('from ' + fromRole.title);
+        }
       }
       if (spec.to) {
-        parts.push('to ' + spec.to);
+        var toRole = _.find(scriptContent.roles, { name: spec.to });
+        if (toRole) {
+          parts.push('to ' + toRole.title);
+        }
       }
       return parts.join(' ');
     },

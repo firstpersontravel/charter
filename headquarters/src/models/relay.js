@@ -20,7 +20,7 @@ const RELAY_STAGE_OPTIONS = ['test', 'development', 'staging', 'production'];
  */
 const Relay = database.define('Relay', snakeCaseColumns({
   stage: enumStringField(32, RELAY_STAGE_OPTIONS),
-  departureName: requiredStringField(10),
+  departureName: requiredStringField(32),
   forRoleName: requiredStringField(32),
   asRoleName: requiredStringField(32),
   withRoleName: requiredStringField(32),

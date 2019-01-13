@@ -23,15 +23,21 @@ var relay = {
     var parts = [];
     if (resource.for) {
       var forRole = _.find(scriptContent.roles, { name: resource.for });
-      parts.push('for ' + forRole.title);
+      if (forRole) {
+        parts.push('for ' + forRole.title);
+      }
     }
     if (resource.as) {
       var asRole = _.find(scriptContent.roles, { name: resource.as });
-      parts.push(' as ' + asRole.title);
+      if (asRole) {
+        parts.push(' as ' + asRole.title);
+      }
     }
     if (resource.with) {
       var withRole = _.find(scriptContent.roles, { name: resource.with });
-      parts.push(' with ' + withRole.title);
+      if (withRole) {
+        parts.push(' with ' + withRole.title);
+      }
     }
     if (!parts.length) {
       return 'new';
