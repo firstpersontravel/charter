@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var relay = {
   properties: {
     name: { type: 'name', required: true },
@@ -20,13 +22,16 @@ var relay = {
   getTitle: function(scriptContent, resource) {
     var parts = [];
     if (resource.for) {
-      parts.push('for ' + resource.for);
+      var forRole = _.find(scriptContent.roles, { name: resource.for });
+      parts.push('for ' + forRole.title);
     }
     if (resource.as) {
-      parts.push(' as ' + resource.as);
+      var asRole = _.find(scriptContent.roles, { name: resource.as });
+      parts.push(' as ' + asRole.title);
     }
     if (resource.with) {
-      parts.push(resource.with);
+      var withRole = _.find(scriptContent.roles, { name: resource.with });
+      parts.push(' with ' + withRole.title);
     }
     if (!parts.length) {
       return 'new';
