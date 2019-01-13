@@ -20,9 +20,14 @@ describe('ParamValidators', () => {
     });
 
     it('warns if not a string', () => {
-      err(
-        ParamValidators.string({}, 's', {}, []),
+      err(ParamValidators.string({}, 's', {}, []),
         'String param "s" should be a string.');
+    });
+
+    it('warns if required and blank', () => {
+      ok(ParamValidators.string({}, 's', { required: true }, 'val'));
+      err(ParamValidators.string({}, 's', { required: true }, ''),
+        'String param "s" should not be blank.');
     });
   });
 
@@ -39,6 +44,12 @@ describe('ParamValidators', () => {
         'Simple param "s" should be a string, number or boolean.');
       err(ParamValidators.simpleValue({}, 's', {}, {a: 2}),
         'Simple param "s" should be a string, number or boolean.');
+    });
+
+    it('warns if required and blank', () => {
+      ok(ParamValidators.simpleValue({}, 's', { required: true }, 'val'));
+      err(ParamValidators.simpleValue({}, 's', { required: true }, ''),
+        'Simple param "s" should not be blank.');
     });
   });
 
@@ -142,9 +153,14 @@ describe('ParamValidators', () => {
 
     it('warns if not valid extension', () => {
       const spec = { extensions: ['mp4', 'jpg'] };
-      err(
-        ParamValidators.media({}, 's', spec, 'gabe.mp3'),
+      err(ParamValidators.media({}, 's', spec, 'gabe.mp3'),
         'Media param "s" should have one of the following extensions: mp4, jpg.');
+    });
+
+    it('warns if required and blank', () => {
+      ok(ParamValidators.media({}, 's', { required: true }, 'val'));
+      err(ParamValidators.media({}, 's', { required: true }, ''),
+        'Media param "s" should not be blank.');
     });
   });
 

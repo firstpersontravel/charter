@@ -8,7 +8,7 @@ ParamValidators.string = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['String param "' + name + '" should be a string.'];
   }
-  if (spec.required && !param) {
+  if (spec.required && param === '') {
     return ['String param "' + name + '" should not be blank.'];
   }
 };
@@ -19,7 +19,7 @@ ParamValidators.simpleValue = function(script, name, spec, param) {
       'Simple param "' + name + '" should be a string, number or boolean.'
     ];
   }
-  if (spec.required && !param) {
+  if (spec.required && _.isString(param) && param === '') {
     return ['Simple param "' + name + '" should not be blank.'];
   }
 };
@@ -27,9 +27,6 @@ ParamValidators.simpleValue = function(script, name, spec, param) {
 ParamValidators.number = function(script, name, spec, param) {
   if (isNaN(Number(param))) {
     return ['Number param "' + name + '" should be a number.'];
-  }
-  if (spec.required && _.isNull(param)) {
-    return ['Number param "' + name + '" should be present.'];
   }
 };
 
@@ -73,6 +70,9 @@ ParamValidators.media = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['Media param "' + name + '" should be a string.'];
   }
+  if (spec.required && !param) {
+    return ['Media param "' + name + '" should not be blank.'];
+  }
   // TODO: validate URL or media path
   if (spec.extensions) {
     var matchesExtension = _.some(spec.extensions, function(ext) {
@@ -109,6 +109,9 @@ ParamValidators.simpleAttribute = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['Simple attribute param "' + name + '" should be a string.'];
   }
+  if (!param) {
+    return ['Simple attribute param "' + name + '" should not be blank.'];
+  }
   if (!/[A-Za-z]/.test(param[0])) {
     return ['Simple attribute param "' + name + '" ("' + param + '") should start with a letter.'];
   }
@@ -120,6 +123,9 @@ ParamValidators.simpleAttribute = function(script, name, spec, param) {
 ParamValidators.nestedAttribute = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['Nested attribute param "' + name + '" should be a string.'];
+  }
+  if (!param) {
+    return ['Nested attribute param "' + name + '" should not be blank.'];
   }
   if (!/[A-Za-z]/.test(param[0])) {
     return ['Nested attribute param "' + name + '" ("' + param + '") should start with a letter.'];
@@ -133,6 +139,9 @@ ParamValidators.lookupable = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['Lookupable param "' + name + '" ("' + param + '") should be a string.'];
   }
+  if (!param) {
+    return ['Lookupable attribute param "' + name + '" should not be blank.'];
+  }
   if (!/^['"]?[\w\d_.]+['"]?$/.test(param)) {
     return ['Lookupable param "' + name + '" ("' + param + '") should be alphanumeric with underscores and periods.'];
   }
@@ -144,6 +153,9 @@ ParamValidators.reference = function(script, name, spec, param) {
   }
   if (!_.isString(param)) {
     return ['Reference param "' + name + '" ("' + param + '") should be a string.'];
+  }
+  if (!param) {
+    return ['Reference attribute param "' + name + '" should not be blank.'];
   }
   if (!/[a-zA-Z]/.test(param[0])) {
     return ['Reference param "' + name + '" ("' + param + '") should start with a letter.'];
@@ -162,6 +174,9 @@ ParamValidators.reference = function(script, name, spec, param) {
 ParamValidators.ifClause = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['If param "' + name + '" ("' + param + '") should be a string.'];
+  }
+  if (!param) {
+    return ['If param "' + name + '" should not be blank.'];
   }
 };
 
