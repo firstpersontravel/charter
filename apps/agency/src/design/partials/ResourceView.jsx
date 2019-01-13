@@ -37,12 +37,36 @@ function internalEmpty(spec) {
   );
 }
 
+const newItemsForSpecType = {
+  string: '',
+  simpleValue: '',
+  number: 0,
+  boolean: null,
+  enum: '',
+  duration: '',
+  name: '',
+  media: '',
+  coords: '',
+  timeShorthand: '',
+  simpleAttribute: '',
+  nestedAttribute: '',
+  lookupable: '',
+  reference: '',
+  ifClause: '',
+  dictionary: {},
+  list: [],
+  object: {},
+  subresource: {},
+  variegated: {}
+};
+
 class Renderer {
-  constructor(script, resource, isNew, onUpdate) {
+  constructor(script, resource, isNew, onPropUpdate, onArrayUpdate) {
     this.script = script;
     this.resource = resource;
     this.isNew = isNew;
-    this.onUpdate = onUpdate;
+    this.onPropUpdate = onPropUpdate;
+    this.onArrayUpdate = onArrayUpdate;
   }
 
   internalStringlike(spec, value, name, path, opts, validate, clean) {
@@ -56,7 +80,7 @@ class Renderer {
       <PopoverControl
         title={name}
         validate={validateFunc}
-        onConfirm={val => this.onUpdate(path, cleanFunc(val))}
+        onConfirm={val => this.onPropUpdate(path, cleanFunc(val))}
         label={label}
         value={value || ''} />
     );
@@ -68,26 +92,26 @@ class Renderer {
       return value;
     }
     // Special hack for 'type' params.
-    const onUpdate = (val) => {
+    const onEnumUpdate = (val) => {
       // Special handling of event type,
       if (_.startsWith(path, 'events') && _.endsWith(path, '.type')) {
         // Clear out other values.
-        this.onUpdate(path.replace(/\.type$/, ''), { type: cleanFunc(val) });
+        this.onPropUpdate(path.replace(/\.type$/, ''), { type: cleanFunc(val) });
         return;
       }
       // And special handling of action name.
       if (_.startsWith(path, 'actions') && _.endsWith(path, '.name')) {
         // Clear out other values.
-        this.onUpdate(path.replace(/\.name$/, ''), { name: cleanFunc(val) });
+        this.onPropUpdate(path.replace(/\.name$/, ''), { name: cleanFunc(val) });
         return;
       }
-      this.onUpdate(path, cleanFunc(val));
+      this.onPropUpdate(path, cleanFunc(val));
     };
     return (
       <PopoverControl
         title={name}
         choices={choices}
-        onConfirm={onUpdate}
+        onConfirm={onEnumUpdate}
         label={label || value || internalEmpty(spec)}
         value={value || choices[0].value} />
     );
@@ -106,7 +130,7 @@ class Renderer {
         &nbsp;
         <button
           className="btn-unstyled clear-btn faint"
-          onClick={() => this.onUpdate(path, null)}>
+          onClick={() => this.onPropUpdate(path, null)}>
           <i className="fa fa-close" />
         </button>
       </span>
@@ -234,17 +258,44 @@ class Renderer {
   }
 
   renderList(spec, value, name, path, opts) {
-    const items = _.map(value, (item, i) => (
-      // eslint-disable-next-line react/no-array-index-key
-      <li key={i}>
-        {this.renderFieldValue(spec.items, item, `${name} Item`,
-          `${path}[${i}]`)}
-      </li>
-    ));
+    const items = _.map(value, (item, i) => {
+      const itemPath = `${path}[${i}]`;
+      const rmBtn = (
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => this.onArrayUpdate(path, i, null)}>
+          <i className="fa fa-minus" />
+        </button>
+      );
+      return (
+        // eslint-disable-next-line react/no-array-index-key
+        <div key={i}>
+          <div style={{ float: 'left' }}>
+            {rmBtn}
+          </div>
+          <div style={{ marginLeft: '2em' }}>
+            {this.renderFieldValue(spec.items, item, `${name} Item`, itemPath)}
+          </div>
+        </div>
+      );
+    });
+    const newIndex = value ? value.length : 0;
+    const newPath = `${path}[${newIndex}]`;
+    const newItem = newItemsForSpecType[spec.items.type];
+    const newItemBtn = (
+      <div>
+        <button
+          className="btn btn-sm btn-outline-secondary"
+          onClick={() => this.onPropUpdate(newPath, newItem)}>
+          <i className="fa fa-plus" />
+        </button>
+      </div>
+    );
     return (
-      <ul>
+      <div>
         {items}
-      </ul>
+        {newItemBtn}
+      </div>
     );
   }
 
@@ -329,6 +380,7 @@ export default class ResourceView extends Component {
     this.handleRevertChanges = this.handleRevertChanges.bind(this);
     this.handleApplyChanges = this.handleApplyChanges.bind(this);
     this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
+    this.handleArrayUpdate = this.handleArrayUpdate.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -357,9 +409,6 @@ export default class ResourceView extends Component {
   }
 
   handleApplyChanges() {
-    // if (!this.state.hasPendingChanges) {
-    //   return;
-    // }
     if (this.state.errors && this.state.errors.length > 0) {
       return;
     }
@@ -388,14 +437,7 @@ export default class ResourceView extends Component {
     this.props.onDelete();
   }
 
-  handlePropertyUpdate(path, newValue) {
-    console.log('handlePropertyUpdate', path, newValue);
-    const newResource = _.cloneDeep(this.state.pendingResource);
-    if (newValue !== null) {
-      _.set(newResource, path, newValue);
-    } else {
-      _.unset(newResource, path);
-    }
+  handleResourceUpdate(newResource) {
     this.setState({
       pendingResource: newResource,
       hasPendingChanges: true,
@@ -404,6 +446,31 @@ export default class ResourceView extends Component {
         ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
         newResource, '')
     });
+  }
+
+  handleArrayUpdate(path, index, newValue) {
+    console.log('handleArrayUpdate', path, index, newValue);
+    // updates can be handled by prop update
+    if (newValue !== null) {
+      this.handlePropertyUpdate(`${path}[${index}]`, newValue);
+      return;
+    }
+    // deletes must be done by splice
+    const newResource = _.cloneDeep(this.state.pendingResource);
+    const arr = _.get(newResource, path);
+    arr.splice(index, 1);
+    this.handleResourceUpdate(newResource);
+  }
+
+  handlePropertyUpdate(path, newValue) {
+    console.log('handlePropertyUpdate', path, newValue);
+    const newResource = _.cloneDeep(this.state.pendingResource);
+    if (newValue !== null) {
+      _.set(newResource, path, newValue);
+    } else {
+      _.unset(newResource, path);
+    }
+    this.handleResourceUpdate(newResource);
   }
 
   renderHeader() {
@@ -524,7 +591,7 @@ export default class ResourceView extends Component {
       properties: _.pick(resourceClass.properties, ...fieldNames)
     };
     const renderer = new Renderer(script, this.state.pendingResource,
-      this.props.isNew, this.handlePropertyUpdate);
+      this.props.isNew, this.handlePropertyUpdate, this.handleArrayUpdate);
     return renderer.renderObject(whitelistedParams, this.state.pendingResource,
       '', '');
   }
