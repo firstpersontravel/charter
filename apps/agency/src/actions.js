@@ -163,6 +163,7 @@ export function login(email, password) {
 
 export function logout() {
   return function (dispatch) {
+    document.cookie = 'auth_latest=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     fetch('/auth/logout', { method: 'POST' })
       .then((response) => {
         if (response.status !== 200) {
