@@ -15,15 +15,19 @@ const sectionContent = {
 };
 
 const sliceContent = {
-  scene: sliceName => ({
-    scenes: { name: sliceName },
-    pages: { scene: sliceName },
-    triggers: { scene: sliceName },
-    messages: { scene: sliceName },
-    cues: { scene: sliceName },
-    achievements: { scene: sliceName },
-    checkpoints: { scene: sliceName }
-  }),
+  scene: sliceName => (
+    sliceName === 'all' ? {
+      scenes: {}
+    } : {
+      scenes: { name: sliceName },
+      pages: { scene: sliceName },
+      triggers: { scene: sliceName },
+      messages: { scene: sliceName },
+      cues: { scene: sliceName },
+      achievements: { scene: sliceName },
+      checkpoints: { scene: sliceName }
+    }
+  ),
   section: sliceName => sectionContent[sliceName]
 };
 

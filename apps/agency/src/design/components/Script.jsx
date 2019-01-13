@@ -72,9 +72,13 @@ export default class Script extends Component {
     let sceneTitle = 'Scenes';
     if (this.props.params.sliceType === 'scene') {
       const sceneName = this.props.params.sliceName;
-      const scene = _.find(script.content.scenes, { name: sceneName });
-      if (scene) {
-        sceneTitle = `Scene: ${scene.title}`;
+      if (sceneName === 'all') {
+        sceneTitle = 'Scenes Index';
+      } else {
+        const scene = _.find(script.content.scenes, { name: sceneName });
+        if (scene) {
+          sceneTitle = `Scene: ${scene.title}`;
+        }
       }
     }
 
@@ -90,6 +94,13 @@ export default class Script extends Component {
             {sceneTitle}
           </Link>
           <div className="dropdown-menu">
+            <li className="nav-item">
+              <Link
+                className="dropdown-item"
+                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/all`}>
+                Index
+              </Link>
+            </li>
             {sceneLinks}
           </div>
         </li>
