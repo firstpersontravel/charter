@@ -8,6 +8,9 @@ ParamValidators.string = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['String param "' + name + '" should be a string.'];
   }
+  if (spec.required && !param) {
+    return ['String param "' + name + '" should not be blank.'];
+  }
 };
 
 ParamValidators.simpleValue = function(script, name, spec, param) {
@@ -16,11 +19,17 @@ ParamValidators.simpleValue = function(script, name, spec, param) {
       'Simple param "' + name + '" should be a string, number or boolean.'
     ];
   }
+  if (spec.required && !param) {
+    return ['Simple param "' + name + '" should not be blank.'];
+  }
 };
 
 ParamValidators.number = function(script, name, spec, param) {
   if (isNaN(Number(param))) {
     return ['Number param "' + name + '" should be a number.'];
+  }
+  if (spec.required && _.isNull(param)) {
+    return ['Number param "' + name + '" should be present.'];
   }
 };
 

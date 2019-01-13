@@ -36,7 +36,8 @@ const walkers = {
   object: (spec, value, iteree) => {
     _.each(spec.properties, (propSpec, key) => {
       if (walkers[propSpec.type]) {
-        walkers[propSpec.type](propSpec, key === 'self' ? value : value[key], iteree);
+        const propValue = key === 'self' ? value : value && value[key];
+        walkers[propSpec.type](propSpec, propValue, iteree);
       }
     });
   },
