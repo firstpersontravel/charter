@@ -114,7 +114,7 @@ export default function RoleIndex({ user, players }) {
     })
     .value();
   if (!playersSorted.length) {
-    return <div>No players</div>;
+    return <div>No players with active interfaces.</div>;
   }
   const renderedPlayers = playersSorted.map((player, i) => (
     renderPlayerCell(player, i === 0)

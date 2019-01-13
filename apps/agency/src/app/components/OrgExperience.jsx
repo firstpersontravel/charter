@@ -78,7 +78,7 @@ export default class OrgExperience extends Component {
       return (
         <div key={script.id}>
           <Link to={`/${org.name}/${experience.name}/design/script/${script.revision}`}>
-            Revision {script.revision}
+            Rev. {script.revision}
             {badge}
           </Link>
         </div>
@@ -118,10 +118,11 @@ export default class OrgExperience extends Component {
       if (!relay) {
         hasUnallocated = true;
       }
+      const forRole = _.find(activeScript.content.roles,
+        { name: trailhead.for });
       return (
         <div key={trailhead.name}>
-          {trailhead.for} with {trailhead.with}:<br />
-          {relay ?
+          {forRole.title}: {relay ?
             TextUtil.formatPhone(relay.relayPhoneNumber) :
             'No number allocated.'}
         </div>

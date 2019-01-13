@@ -10,6 +10,7 @@ export default class Script extends Component {
     super(props);
     this.handleActivateScript = this.handleActivateScript.bind(this);
     this.handleRevertScript = this.handleRevertScript.bind(this);
+    this.handleLockScript = this.handleLockScript.bind(this);
   }
 
   handleActivateScript() {
@@ -32,6 +33,12 @@ export default class Script extends Component {
           isArchived: true
         });
       }
+    });
+  }
+
+  handleLockScript() {
+    this.props.updateInstance('scripts', this.props.script.id, {
+      isLocked: !this.props.script.isLocked
     });
   }
 
@@ -111,16 +118,27 @@ export default class Script extends Component {
     const isMaxRevision = script.revision === maxRevision;
     const activeRevision = _.get(_.find(this.props.scripts,
       { isActive: true }), 'revision') || 0;
-    const isSuperceded = script.revision < activeRevision;
-    const badgeClass = script.isActive ? 'badge-primary' : 'badge-secondary';
-    const statusText = script.isActive ? 'Active' : 'Draft';
-    const status = (
-      <span
-        style={{ marginLeft: '0.25em' }}
-        className={`badge ${badgeClass}`}>
-        {isSuperceded ? 'Superceded' : statusText}
-      </span>
-    );
+    const badges = [];
+
+    if (script.isActive) {
+      badges.push(
+        <span
+          key="active"
+          style={{ marginLeft: '0.25em' }} className="badge badge-primary">
+          Active
+        </span>
+      );
+    }
+
+    if (script.isLocked) {
+      badges.push(
+        <span
+          key="active"
+          style={{ marginLeft: '0.25em' }} className="badge badge-warning">
+          Locked
+        </span>
+      );
+    }
 
     const revertBtn = activeRevision ? (
       <button
@@ -142,12 +160,23 @@ export default class Script extends Component {
       </button>
     );
 
+    const lockBtn = (
+      <button
+        style={{ marginLeft: '0.25em' }}
+        onClick={this.handleLockScript}
+        className="btn btn-xs btn-outline-secondary">
+        <i className={`fa ${script.isLocked ? 'fa-unlock' : 'fa-lock'}`} />&nbsp;
+        {script.isLocked ? 'Unlock' : 'Lock'}
+      </button>
+    );
+
     const activateBtns = !script.isActive && isMaxRevision ? (
       <span>
         {revertBtn}
         {activateBtn}
       </span>
     ) : null;
+
     const goToLatestLink = !isMaxRevision ? (
       <span style={{ marginLeft: '0.25em', padding: '0' }}>
         <Link to={`/${script.org.name}/${script.experience.name}/design/script/${maxRevision}`}>
@@ -155,11 +184,13 @@ export default class Script extends Component {
         </Link>
       </span>
     ) : null;
+
     return (
       <div style={{ float: 'right', padding: '0.5em' }}>
         Rev. {this.props.script.revision}
-        {status}
+        {badges}
         {activateBtns}
+        {script.isActive ? lockBtn : null}
         {goToLatestLink}
       </div>
     );

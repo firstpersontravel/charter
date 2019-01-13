@@ -15,6 +15,7 @@ export default function Role({ params, user, children }) {
       </Link>
     </li>
   ) : null;
+
   return (
     <div>
       <ul className="nav nav-tabs">
@@ -23,7 +24,7 @@ export default function Role({ params, user, children }) {
             className="nav-link"
             activeClassName="active"
             to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}`}>
-            {params.roleName} ({user ? user.firstName : 'No user'})
+            Overview
           </IndexLink>
         </li>
         <li className="nav-item">

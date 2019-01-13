@@ -143,7 +143,7 @@ function renderVars(orgName, player) {
         <strong>Role:</strong>
         &nbsp;
         <Link to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
-          {player.roleName} ({user ? user.firstName : 'No user'})
+          {player.role.title} ({user ? user.firstName : 'No user'})
         </Link>
         <br />
 

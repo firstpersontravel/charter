@@ -44,7 +44,7 @@ export default class GroupPlayers extends Component {
     return (
       <th key={trip.id}>
         <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
-          {trip.departureName}: {trip.title}
+          {trip.departureName ? `${trip.departureName}: ` : ''}{trip.title}
         </Link>
       </th>
     );
@@ -130,18 +130,18 @@ export default class GroupPlayers extends Component {
     );
   }
 
-  renderRoleRow(trips, roleName) {
+  renderRoleRow(trips, role) {
     const tripRoleCells = trips.map(trip => (
-      <td key={`${roleName}-${trip.id}`}>
-        {this.renderRoleCell(roleName, [trip])}
+      <td key={`${role.name}-${trip.id}`}>
+        {this.renderRoleCell(role.name, [trip])}
       </td>
     ));
     return (
-      <tr key={roleName}>
-        <td>{roleName}</td>
+      <tr key={role.name}>
+        <td>{role.title}</td>
         {tripRoleCells}
-        <td key={`${roleName}-all`}>
-          {this.renderRoleCell(roleName, trips)}
+        <td key={`${role.name}-all`}>
+          {this.renderRoleCell(role.name, trips)}
         </td>
       </tr>
     );
@@ -154,7 +154,7 @@ export default class GroupPlayers extends Component {
     }
     return script.content.roles
       .filter(role => role.user)
-      .map(role => this.renderRoleRow(trips, role.name));
+      .map(role => this.renderRoleRow(trips, role));
   }
 
   render() {

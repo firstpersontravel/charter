@@ -30,10 +30,13 @@ class ExperienceController {
     const trailheadRelays = _.filter(script.content.relays, {
       trailhead: true
     });
-    for (let departure of script.content.departures) {
-      for (let relaySpec of trailheadRelays) {
+    const departures = script.content.departures;
+    const departureNames = departures.length > 0 ?
+      _.map(departures, 'name') : [''];
+    for (const departureName of departureNames) {
+      for (const relaySpec of trailheadRelays) {
         await RelaysController.ensureRelay(experience.orgId, experienceId, 
-          departure.name, relaySpec, '');
+          departureName, relaySpec, '');
       }
     }
   }

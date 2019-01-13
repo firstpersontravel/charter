@@ -19,7 +19,7 @@ function getVariantSections(script) {
 }
 
 function getDefaultState(group, trip, departureName) {
-  const defaultDepartureName = departureName || 'T1';
+  const defaultDepartureName = departureName || '';
   const existingVariantNames = trip ?
     trip.variantNames.split(',').filter(Boolean) : [];
   const variantSections = getVariantSections(group && group.script);
@@ -30,8 +30,7 @@ function getDefaultState(group, trip, departureName) {
     })[0], 'name')
   ));
   return {
-    departureName: trip ? trip.departureName :
-      defaultDepartureName,
+    departureName: trip ? trip.departureName : defaultDepartureName,
     variantNames: variantNames,
     title: trip ? trip.title : ''
   };
@@ -103,13 +102,29 @@ export default class TripModal extends Component {
     const isValid = this.state.date !== '' && this.state.title !== '';
 
     const departures = group.script.content.departures || [];
-    const scheduleOptions = departures.map(departure => (
+    const departureOptions = departures.map(departure => (
       <option
         key={departure.name}
         value={departure.name}>
         {TextUtil.titleForKey(departure.name)}
       </option>
     ));
+    const departureField = departures.length > 0 ? (
+      <div className="form-group row">
+        <label className="col-sm-3 col-form-label" htmlFor="trip_sched">
+          Departure
+        </label>
+        <div className="col-sm-9">
+          <select
+            className="form-control"
+            id="trip_sched"
+            onChange={_.curry(this.handleChangeField)('departureName')}
+            value={this.state.departureName}>
+            {departureOptions}
+          </select>
+        </div>
+      </div>
+    ) : null;
 
     const variantSections = getVariantSections(group.script);
     const variantFields = variantSections.map((section, i) => {
@@ -158,20 +173,7 @@ export default class TripModal extends Component {
                   placeholder="Title" />
               </div>
             </div>
-            <div className="form-group row">
-              <label className="col-sm-3 col-form-label" htmlFor="trip_sched">
-                Departure
-              </label>
-              <div className="col-sm-9">
-                <select
-                  className="form-control"
-                  id="trip_sched"
-                  onChange={_.curry(this.handleChangeField)('departureName')}
-                  value={this.state.departureName}>
-                  {scheduleOptions}
-                </select>
-              </div>
-            </div>
+            {departureField}
             {variantFields}
           </form>
         </ModalBody>

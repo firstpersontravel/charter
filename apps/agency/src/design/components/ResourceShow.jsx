@@ -132,15 +132,14 @@ export default class ResourceShow extends Component {
       updatedResource);
 
     // If we're editing the active script, then make a new one
-    if (script.isActive) {
+    if (script.isLocked) {
       const newRevision = script.revision + 1;
       this.props.createInstance('scripts', {
         orgId: script.orgId,
         experienceId: script.experienceId,
         revision: newRevision,
         contentVersion: 1,
-        content: newScriptContent,
-        isActive: false
+        content: newScriptContent
       });
       this.setState({
         redirectToRevision: newRevision,

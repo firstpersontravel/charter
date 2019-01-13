@@ -39,7 +39,7 @@ export default function Player({ player, children }) {
             className="nav-link"
             activeClassName="active"
             to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
-            {player.roleName}
+            Overview
           </IndexLink>
         </li>
         {messageTab}

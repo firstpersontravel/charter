@@ -173,7 +173,7 @@ export default class TripScenes extends Component {
           scene_name: scene.name
         })}
         className={`wrap-text btn btn-block btn-sm ${btnClass}`}>
-        Start {scene.name}
+        Start {scene.title}
       </button>
     );
     return (

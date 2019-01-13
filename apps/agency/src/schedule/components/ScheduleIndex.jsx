@@ -176,7 +176,7 @@ export default class ScheduleIndex extends Component {
     this.handleEditTripToggle();
   }
 
-  renderCellForSchedule(group, departureName, trips) {
+  renderCellForDeparture(group, departureName, trips) {
     const addButton = (
       <div key={departureName} className="row">
         <div className="col-sm-9">
@@ -233,10 +233,13 @@ export default class ScheduleIndex extends Component {
       return null;
     }
     const dateShort = moment(group.date).format('MMM D, YYYY');
-    const departureNames = _.map(group.script.content.departures, 'name');
-    const scheduleCells = departureNames.map(departureName =>
-      this.renderCellForSchedule(group, departureName,
-        _.filter(group.trips, { departureName: departureName })));
+    const departures = group.script.content.departures;
+    const departureNames = departures.length > 0 ?
+      _.map(departures, 'name') : [''];
+    const departureCells = departureNames.map((departureName) => {
+      const depTrips = _.filter(group.trips, { departureName: departureName });
+      return this.renderCellForDeparture(group, departureName, depTrips);
+    });
 
     return (
       <div key={group.id} className="row" style={{ borderBottom: '2px solid #ddd', paddingBottom: '0.5em', paddingTop: '0.5em' }}>
@@ -247,8 +250,8 @@ export default class ScheduleIndex extends Component {
               `/operate/${group.id}`
             }>
             <h4>{dateShort}</h4>
-            <div>Rev. {group.script.revision}</div>
           </IndexLink>
+          <div>Script rev. {group.script.revision}</div>
           <button
             className="btn btn-sm btn-outline-secondary"
             onClick={() => this.handleArchiveGroup(group)}>
@@ -256,7 +259,7 @@ export default class ScheduleIndex extends Component {
           </button>
         </div>
         <div className="col-sm-9">
-          {scheduleCells}
+          {departureCells}
         </div>
       </div>
     );

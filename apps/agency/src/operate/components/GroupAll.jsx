@@ -17,7 +17,6 @@ function getAllPlayers(trips) {
       !player.role.if ||
       EvalCore.if(tripsById[player.tripId].evalContext, player.role.if)
     ))
-    .filter('currentPageName')
     .value();
 }
 
@@ -33,11 +32,16 @@ export default function GroupAll({ children, group,
     .value();
   const allPlayers = getAllPlayers(group.trips);
   const allUsers = _(allPlayers).map('user').value();
-  const userTitle = params.userId !== '0' ?
-    _.get(_.find(allUsers, { id: Number(params.userId) }), 'firstName') :
-    'No user';
-  const roleTitle = (params.roleName && params.userId) ?
-    `Role: ${params.roleName} (${userTitle})` : 'Roles';
+  let roleTitle = 'Roles';
+  if (params.roleName && params.userId) {
+    const role = _.find(group.script.content.roles, {
+      name: params.roleName
+    });
+    const userTitle = params.userId !== '0' ?
+      _.get(_.find(allUsers, { id: Number(params.userId) }), 'firstName') :
+      'No user';
+    roleTitle = `Role: ${role.title} (${userTitle})`;
+  }
   const roleLinks = _(roles)
     .map(role => (
       _(allPlayers)
@@ -52,7 +56,7 @@ export default function GroupAll({ children, group,
               `/${group.org.name}/${group.experience.name}` +
               `/operate/${group.id}` +
               `/all/role/${role.name}/${user ? user.id : 0}`}>
-            {role.name} ({user ? user.firstName : 'No user'})
+            {role.title} ({user ? user.firstName : 'No user'})
           </Link>
         ))
         .flatten()
@@ -89,7 +93,7 @@ export default function GroupAll({ children, group,
             className="nav-link"
             activeClassName="active"
             to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/casting`}>
-            Casting
+            Users
           </Link>
         </li>
         <li className="nav-item dropdown">

@@ -11,10 +11,6 @@ export default function Trip({ trip, params, children }) {
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
     .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
-    .filter(role => (
-      _.get(_.find(trip.players, { roleName: role.name }),
-        'currentPageName')
-    ))
     .sortBy([sortForRole, 'name'])
     .value();
   const roleLinks = roles.map((role => (
@@ -22,11 +18,14 @@ export default function Trip({ trip, params, children }) {
       key={role.name}
       className="dropdown-item"
       to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${role.name}`}>
-      {role.name}
+      {role.title}
     </Link>
   )));
-  const playerTitle = params.roleName ? `Player: ${params.roleName}` :
-    'Players';
+  let playerTitle = 'Players';
+  if (params.roleName) {
+    const role = _.find(trip.script.content.roles, { name: params.roleName });
+    playerTitle = `Player: ${role.title}`;
+  }
   return (
     <div style={{ overflow: 'hidden' }}>
       <ul className="nav nav-tabs">

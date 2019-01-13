@@ -12,8 +12,7 @@ describe('Trip', () => {
       scriptId: 1,
       groupId: 2,
       title: 'Trip',
-      date: '2018-01-01',
-      departureName: 'Main'
+      date: '2018-01-01'
     });
   });
 
@@ -51,9 +50,9 @@ describe('Trip', () => {
     await assertValidation(trip, { title: 'must be present' });
   });
 
-  it('requires a departure', async () => {
-    trip.departureName = '';
-    await assertValidation(trip, { departureName: 'must be present' });
+  it('allows a departure', async () => {
+    trip.departureName = 'departureName';
+    await trip.validate();
   });
 
   it('allows values', async () => {
