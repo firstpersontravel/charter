@@ -603,7 +603,7 @@ export default class ResourceView extends Component {
     const renderedErrors = this.state.errors
       // Filter out not present errors since those are shown by the UI
       // as exclamation points. TODO: we should have error classes!
-      .filter(err => _.indexOf(err, 'not present') !== -1)
+      // .filter(err => _.indexOf(err, 'not present') !== -1)
       .map(err => (
         <div key={err}>{err}</div>
       ));

@@ -46,11 +46,18 @@ export default class ResourceShow extends Component {
 
   getNewResourceFields() {
     const collectionName = this.props.params.collectionName;
+    const sliceType = this.props.params.sliceType;
+    const sliceName = this.props.params.sliceName;
     const resourceType = TextUtil.singularize(collectionName);
     const resourceClass = ResourcesRegistry[resourceType];
     const fields = { name: this.getNewResourceName() };
     if (resourceClass.properties.title) {
       fields.title = `New ${resourceType}`;
+    }
+    if (resourceClass.properties.scene &&
+        sliceType === 'scene' &&
+        sliceName !== 'all') {
+      fields.scene = sliceName;
     }
     _.each(this.props.location.query, (val, key) => {
       if (resourceClass.properties[key]) {
