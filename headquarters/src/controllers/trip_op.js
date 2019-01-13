@@ -34,6 +34,7 @@ class TripOpController {
   static async createMessage(objs, op) {
     const fields = Object.assign({}, op.fields, {
       orgId: objs.trip.orgId,
+      experienceId: objs.trip.experienceId,
       tripId: objs.trip.id,
       createdAt: op.fields.createdAt.toDate(),
       readAt: op.fields.readAt ? op.fields.readAt.toDate() : null

@@ -23,7 +23,7 @@ const {
 const Trip = database.define('Trip', snakeCaseColumns({
   title: mutableModifier(requiredStringField(255)),
   date: dateField('date'),
-  departureName: mutableModifier(requiredStringField(10)),
+  departureName: mutableModifier(requiredStringField(32)),
   variantNames: mutableModifier(optionalStringField(255)),
   currentSceneName: mutableModifier(optionalStringField(64)),
   customizations: mutableModifier(

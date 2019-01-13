@@ -69,7 +69,7 @@ var send_message = {
     var name = params.message_name;
     var messageData = _.find(actionContext.scriptContent.messages,
       { name: name });
-    var medium = messageData.type;
+    var medium = messageData.medium;
     var content = EvalCore.templateText(actionContext.evalContext,
       messageData.content, actionContext.timezone);
     var hasBeenRead = messageData.read === true;

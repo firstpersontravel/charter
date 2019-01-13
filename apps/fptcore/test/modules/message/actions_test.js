@@ -161,7 +161,7 @@ describe('#send_message', () => {
       scriptContent: {
         messages: [{
           name: 'MESSAGE-HELLO',
-          type: 'text',
+          medium: 'text',
           from: 'Ally',
           to: 'Babbit',
           content: 'hello'
@@ -196,7 +196,7 @@ describe('#send_message', () => {
       scriptContent: {
         messages: [{
           name: 'MESSAGE-HELLO',
-          type: 'audio',
+          medium: 'audio',
           from: 'Ally',
           to: 'Babbit',
           content: '{{Ally.audio_path}}'

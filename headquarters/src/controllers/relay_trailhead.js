@@ -63,6 +63,8 @@ class RelayTrailheadController {
     const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {
+        orgId: script.orgId,
+        experienceId: script.experience.id,
         scriptId: script.id,
         date: localTime.format('YYYY-MM-DD'),
         isArchived: false
@@ -82,6 +84,7 @@ class RelayTrailheadController {
     const [trailheadProfile, ] = await models.Profile.findOrCreate({
       where: {
         userId: trailheadUser.id,
+        orgId: script.orgId,
         experienceId: script.experience.id,
         roleName: trailheadRelay.forRoleName,
         isArchived: false

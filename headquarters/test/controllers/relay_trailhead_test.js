@@ -17,6 +17,7 @@ const mockTrailhead = {
 const mockTrip = { id: 100 };
 const mockScript = {
   id: 10,
+  orgId: 9,
   experience: {
     id: 20,
     name: 'script',
@@ -133,6 +134,8 @@ describe('RelayTrailheadController', () => {
       // Test calls
       sinon.assert.calledWith(models.Group.findOrCreate, {
         where: {
+          orgId: 9,
+          experienceId: 20,
           scriptId: 10,
           date: moment.utc()
             .tz(mockScript.experience.timezone)
@@ -146,6 +149,7 @@ describe('RelayTrailheadController', () => {
       });
       sinon.assert.calledWith(models.Profile.findOrCreate, {
         where: {
+          orgId: 9,
           isArchived: false,
           roleName: 'Player',
           experienceId: 20,
