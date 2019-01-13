@@ -8,10 +8,11 @@ const mapStateToProps = (state, ownProps) => {
   const orgName = ownProps.params.orgName;
   const authInfo = _.get(_.find(state.datastore.auth, { id: 'latest' }),
     'data');
+  const org = _.find(state.datastore.orgs, { name: orgName });
   return {
     authInfo: authInfo,
     orgName: orgName,
-    org: _.find(authInfo.orgs, { name: orgName })
+    org: org
   };
 };
 

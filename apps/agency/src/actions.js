@@ -139,7 +139,9 @@ export function makeAuthRequest(url, params, name) {
           dispatch(saveRequest(reqName, 'fulfilled', null));
           dispatch(saveInstances('auth', [{ id: name, data: data.data }]));
           dispatch(saveInstances('auth', [{ id: 'latest', data: data.data }]));
-          dispatch(saveInstances('orgs', data.data.orgs));
+          if (data.data) {
+            dispatch(saveInstances('orgs', data.data.orgs));
+          }
           document.cookie = `auth_latest=${btoa(JSON.stringify(data.data))};`;
         });
       });

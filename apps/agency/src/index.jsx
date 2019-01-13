@@ -50,12 +50,14 @@ const authData = _(document.cookie.split(';'))
   .map(c => ({ id: 'latest', data: JSON.parse(atob(c[1])) }))
   .value();
 
+const authOrgs = _.get(authData[0], 'data.orgs') || [];
+
 const initialState = {
   requests: {},
   requestErrors: {},
   datastore: {
     auth: authData,
-    orgs: authData.length > 0 ? authData[0].data.orgs : [],
+    orgs: authOrgs,
     assets: [],
     experiences: [],
     scripts: [],
