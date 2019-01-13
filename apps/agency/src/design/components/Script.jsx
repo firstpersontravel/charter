@@ -68,7 +68,6 @@ export default class Script extends Component {
       </li>
     ));
 
-    const hasScenes = !!_.get(script, 'content.scenes.length');
     let sceneTitle = 'Scenes';
     if (this.props.params.sliceType === 'scene') {
       const sceneName = this.props.params.sliceName;
@@ -87,7 +86,7 @@ export default class Script extends Component {
         {sectionLinks}
         <li className="nav-item dropdown">
           <Link
-            className={`nav-link dropdown-toggle ${hasScenes ? '' : 'disabled'}`}
+            className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
             to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene`}>
