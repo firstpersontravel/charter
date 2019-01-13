@@ -131,20 +131,12 @@ export default class ContentTree extends Component {
     });
 
     let noContentHeader;
-    if (!items.length) {
-      if (this.props.search) {
-        noContentHeader = (
-          <div className="alert alert-info">
-            No items matching &quot;{this.props.search}&quot;.
-          </div>
-        );
-      } else {
-        noContentHeader = (
-          <div className="alert alert-info">
-            No content in this area yet.
-          </div>
-        );
-      }
+    if (!items.length && this.props.search) {
+      noContentHeader = (
+        <div className="alert alert-info">
+          No items matching &quot;{this.props.search}&quot;.
+        </div>
+      );
     }
 
     return (
