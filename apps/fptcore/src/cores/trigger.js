@@ -87,7 +87,7 @@ TriggerCore.packedActionsForClause = function(clause, actionContext) {
       throw new Error('Expected action to be an object.');
     }
     // Detect subclauses
-    if (action.actions) {
+    if (action.name === 'conditional' || action.actions) {
       return TriggerCore.packedActionsForClause(action, actionContext);
     }
     // Otherwise it's a simple action.

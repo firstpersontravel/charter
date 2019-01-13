@@ -8,19 +8,15 @@ var actionsClasses = _.mapValues(ActionsRegistry, function(actionClass) {
   return { properties: actionClass.params };
 });
 
+var ACTION_NAME_OPTIONS = Object.keys(ActionsRegistry).concat(['conditional']);
+
 var singleActionParam = {
   type: 'variegated',
   key: 'name',
   common: {
     properties: {
-      name: {
-        type: 'enum',
-        options: Object.keys(ActionsRegistry),
-        required: true
-      },
-      when: {
-        type: 'string'
-      }
+      name: { type: 'enum', options: ACTION_NAME_OPTIONS, required: true },
+      when: { type: 'string' }
     }
   },
   classes: actionsClasses
@@ -43,6 +39,7 @@ var elseIfParam = {
 
 var conditionalActionResource = {
   properties: {
+    name: { type: 'enum', options: ACTION_NAME_OPTIONS, required: true },
     if: { type: 'ifClause' },
     actions: actionListParam,
     elseifs: { type: 'list', items: elseIfParam },
@@ -53,7 +50,7 @@ var conditionalActionResource = {
 var actionOrClauseParam = {
   type: 'variegated',
   key: function(obj) {
-    return obj.name ? 'singleAction' : 'conditionalAction';
+    return obj.name === 'conditional' ? 'conditionalAction' : 'singleAction';
   },
   classes: {
     singleAction: singleActionResource,

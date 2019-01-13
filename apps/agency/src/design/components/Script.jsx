@@ -93,13 +93,11 @@ export default class Script extends Component {
             {sceneTitle}
           </Link>
           <div className="dropdown-menu">
-            <li className="nav-item">
-              <Link
-                className="dropdown-item"
-                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/all`}>
-                Index
-              </Link>
-            </li>
+            <Link
+              className="dropdown-item"
+              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/all`}>
+              Index
+            </Link>
             {sceneLinks}
           </div>
         </li>
