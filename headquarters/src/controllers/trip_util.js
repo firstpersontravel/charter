@@ -92,11 +92,14 @@ class TripUtil {
         { model: models.Experience, as: 'experience' }
       ]
     });
+    if (!trip) {
+      throw new Error('Trip not found.');
+    }
     const players = await models.Player.findAll({
       where: { tripId: tripId }
     });
     const profiles = await models.Profile.findAll({
-      where: { experienceId: trip.experience.id }
+      where: { experienceId: trip.experienceId }
     });
     const users = await models.User.findAll({
       where: { id: _.map(players, 'dataValues.userId').filter(Boolean) }
