@@ -1,13 +1,12 @@
 import { connect } from 'react-redux';
 
-import { lookupGroup } from './utils';
-import { getMessagesNeedingReply } from '../utils';
+import { lookupGroup, lookupMessages } from './utils';
 import { updateInstance } from '../../actions';
 import GroupReplies from '../components/GroupReplies';
 
 const mapStateToProps = (state, ownProps) => ({
   group: lookupGroup(state, ownProps),
-  messagesNeedingReply: getMessagesNeedingReply(state, ownProps.params.groupId)
+  messages: lookupMessages(state, ownProps, 10)
 });
 
 const mapDispatchToProps = dispatch => ({

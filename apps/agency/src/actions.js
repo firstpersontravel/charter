@@ -170,6 +170,8 @@ export function logout() {
           return;
         }
         dispatch(clearInstances('auth'));
+        // Reload
+        window.location.href = '/';
       });
   };
 }

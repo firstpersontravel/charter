@@ -114,7 +114,7 @@ export default function GroupAll({ children, group,
             activeClassName="active"
             to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/replies`}>
             {replyWarning}
-            Replies
+            Messages
           </Link>
         </li>
         <li className="nav-item">

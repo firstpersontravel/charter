@@ -49,19 +49,30 @@ function addIncluders(state, instance, includers) {
   return withInclude;
 }
 
-function getInstancesWithIncludes(state, colName, filters, sort, includers) {
-  const prefilters = _.pickBy(filters, (v, k) => !_.isPlainObject(v));
+function getInstancesWithIncludes(state, spec) {
+  // Can invoke either with a spec or with positional args.
+  const colName = spec.col;
+  const filters = spec.filter;
+  const sort = spec.sort || 'id';
+  const limit = spec.limit || null;
+  const includers = spec.include;
+
+  const selfFilter = filters.self || (() => true);
+  const propFilters = _.omit(filters, 'self');
+  const prefilters = _.pickBy(propFilters, (v, k) => !_.isPlainObject(v));
   const instances = getInstances(state, colName, prefilters);
   const withIncludes = _.map(instances, instance => (
     addIncluders(state, instance, includers)
   ));
   const filtered = _(withIncludes)
-    .filter(filters)
-    .sortBy(sort)
+    .filter(propFilters)
+    .filter(selfFilter)
+    .sortBy(_.isArray(sort) ? [sort] : sort)
     .value();
+  const limited = limit ? filtered.slice(0, limit) : filtered;
   const isLoading = instances.isLoading || _.some(withIncludes, 'isLoading');
   const isError = instances.isError || _.some(withIncludes, 'isError');
-  return Object.assign(filtered, {
+  return Object.assign(limited, {
     isLoading: isLoading,
     isError: isError
   });
@@ -71,11 +82,23 @@ export function instanceIncluder(colName, relField, selfField, includes) {
   return (state, instance) => {
     const selfValue = instance[selfField];
     if (!selfValue) {
+      console.warn(`Null ${selfField} value on ${colName} id ${instance.id}.`);
       return { isNull: true, isLoading: false, isError: false };
     }
     const filters = { [relField]: selfValue };
-    return instanceFromInstances(getInstancesWithIncludes(state, colName,
-      filters, 'id', includes));
+    const foundInstances = getInstancesWithIncludes(state, {
+      col: colName,
+      filter: filters,
+      include: includes
+    });
+    const foundInstance = instanceFromInstances(foundInstances);
+    if (foundInstance.isNull) {
+      console.warn(
+        `Could not find ${colName} where ` +
+        `${relField} = ${selfValue}.`
+      );
+    }
+    return foundInstance;
   };
 }
 
@@ -85,14 +108,16 @@ export function instancesIncluder(colName, relField, selfField, filters,
     const selfValue = instance[selfField];
     const lookup = { [relField]: selfValue };
     const filtersWithLookup = Object.assign(lookup, filters);
-    return getInstancesWithIncludes(state, colName, filtersWithLookup,
-      'id', includes);
+    return getInstancesWithIncludes(state, {
+      col: colName,
+      filter: filtersWithLookup,
+      include: includes
+    });
   };
 }
 
 export function instancesFromDatastore(state, instancesSpec) {
-  return getInstancesWithIncludes(state, instancesSpec.col,
-    instancesSpec.filter, instancesSpec.sort || 'id', instancesSpec.include);
+  return getInstancesWithIncludes(state, instancesSpec);
 }
 
 export function instanceFromDatastore(state, instancesSpec) {

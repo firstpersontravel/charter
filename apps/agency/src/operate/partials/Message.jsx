@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -88,18 +87,15 @@ function renderActions(message, updateInstance) {
   );
 }
 
-export default function Message({ message, trip, updateInstance }) {
-  if (!trip) {
+export default function Message({ message, updateInstance, isInTripContext,
+  isInRoleContext }) {
+  if (!message.trip) {
     return null;
   }
-  const sentBy = _.find(trip.players, { id: message.sentById });
-  if (!sentBy) {
-    return null;
-  }
-  const sentByRole = _.find(trip.script.content.roles,
-    { name: sentBy.roleName });
-  const sentTo = _.find(trip.players, { id: message.sentToId });
-  const userPlayer = sentByRole.actor ? sentTo : sentBy;
+  const trip = message.trip;
+  const sentTo = message.sentTo;
+  const sentBy = message.sentBy;
+  const userPlayer = sentBy.role.actor ? sentTo : sentBy;
   const actorPlayer = userPlayer === sentBy ? sentTo : sentBy;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
@@ -107,16 +103,54 @@ export default function Message({ message, trip, updateInstance }) {
   const content = renderMessageContent(message);
   const icon = renderMessageIcon(message, sentBy, sentTo);
   const archivedClass = message.isArchived ? 'message-archived' : '';
+  const shouldShowRespond = !message.sentTo.role.user &&
+    !message.reponseReceivedAt;
+  const respondBtn = shouldShowRespond ? (
+    <Link
+      className="btn btn-xs btn-outline-secondary"
+      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${actorPlayer.roleName}/messages/${userPlayer.roleName}`}>
+      Respond to {userPlayer.role.title}
+    </Link>
+  ) : null;
+
+  const tripPrefix = (
+    <Link
+      style={{ marginRight: '0.25em' }}
+      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
+      {trip.departureName ? trip.departureName : trip.title}
+    </Link>
+  );
+
+  const includeSentBy = true;
+  const sentByLabel = (
+    <span>
+      <Link to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${sentBy.roleName}/messages/${sentTo.roleName}`}>
+        {sentBy.role.title}
+      </Link>
+    </span>
+  );
+
+  const includeSentTo = !isInRoleContext;
+  const sentToLabel = (
+    <span>
+      &nbsp;to <Link
+        to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${sentTo.roleName}/messages/${sentBy.roleName}`}>
+        {sentTo.role.title}
+      </Link>
+    </span>
+  );
+
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <Link to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${userPlayer.roleName}/messages/${actorPlayer.roleName}`}>
-        {trip.departureName}&nbsp;
-        {sentBy.roleName}
-      </Link>:&nbsp;
+      {isInTripContext ? null : tripPrefix}
+      {includeSentBy ? sentByLabel : null}
+      {includeSentTo ? sentToLabel : null}:&nbsp;
       {content}
       &nbsp;
       <span className="faint">{timeShort}</span>
+      &nbsp;
+      {respondBtn}
       &nbsp;
       {renderActions(message, updateInstance)}
     </div>
@@ -124,7 +158,14 @@ export default function Message({ message, trip, updateInstance }) {
 }
 
 Message.propTypes = {
-  message: PropTypes.object,
+  message: PropTypes.object.isRequired,
   updateInstance: PropTypes.func,
-  trip: PropTypes.object
+  isInTripContext: PropTypes.bool,
+  isInRoleContext: PropTypes.string
+};
+
+Message.defaultProps = {
+  updateInstance: null,
+  isInTripContext: false,
+  isInRoleContext: null
 };

@@ -8,6 +8,16 @@ import PopoverControl from '../../partials/PopoverControl';
 
 const booleanLabels = ['No', 'Yes'];
 
+function isEmpty(warnings) {
+  if (!warnings) {
+    return true;
+  }
+  if (warnings.length === 0) {
+    return true;
+  }
+  return false;
+}
+
 function stringOrYesNo(val) {
   if (_.isBoolean(val)) {
     return booleanLabels[Number(val)];
@@ -64,11 +74,14 @@ export default class FieldRenderer {
     if (opts && opts.editable === false) {
       return value;
     }
+    // Special overrides just for dictionary keys
+    const onConfirm = (opts && opts.onConfirm) ||
+      (val => this.onPropUpdate(path, cleanFunc(val)));
     return (
       <PopoverControl
         title={name}
         validate={validateFunc}
-        onConfirm={val => this.onPropUpdate(path, cleanFunc(val))}
+        onConfirm={onConfirm}
         label={label}
         value={value || ''} />
     );
@@ -81,6 +94,11 @@ export default class FieldRenderer {
     }
     // Special hack for 'type' params.
     const onEnumUpdate = (val) => {
+      // Special overrides just for dictionary keys
+      if (opts && opts.onConfirm) {
+        opts.onConfirm(val);
+        return;
+      }
       // Special handling of event type,
       if (_.startsWith(path, 'events') && _.endsWith(path, '.type')) {
         // Clear out other values.
@@ -161,49 +179,65 @@ export default class FieldRenderer {
 
   // Aliases
   renderName(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.name(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderDuration(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.duration(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderLookupable(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.lookupable(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderNestedAttribute(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.nestedAttribute(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderSimpleAttribute(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.simpleAttribute(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderMedia(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.media(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderTimeShorthand(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.timeShorthand(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderIfClause(spec, value, name, path, opts) {
-    const validate = val => true;
+    const validate = val => (
+      isEmpty(ParamValidators.ifClause(this.script, name, spec, val))
+    );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
@@ -342,18 +376,36 @@ export default class FieldRenderer {
   renderDictionary(spec, value, name, path, opts) {
     const items = _.map(value, (val, key) => (
       // eslint-disable-next-line react/no-array-index-key
-      <li key={key}>
+      <div key={key}>
+        <button className="btn btn-xs btn-outline-secondary">
+          <i className="fa fa-minus" />
+        </button>
+        &nbsp;
         {this.renderFieldValue(spec.keys, key, `${name} Key`,
           'INVALID', { editable: false })}:&nbsp;
         {this.renderFieldValue(spec.values, val, `${name} Value`,
           `${path}[${key}]`)}
         {this.internalClear(spec, val, `${path}[${key}]`)}
-      </li>
+      </div>
     ));
+    const newItem = newItemsForSpecType[spec.values.type];
+    const newItemBtn = (
+      <div>
+        <button className="btn btn-xs btn-outline-secondary disabled">
+          <i className="fa fa-plus" />
+        </button>
+        &nbsp;
+        {this.renderFieldValue(spec.keys, 'New item', `${name} New Key`,
+          'INVALID', { onConfirm: (val) => {
+            this.onPropUpdate(`${path}[${val}]`, newItem);
+          } })}
+      </div>
+    );
     return (
-      <ul>
+      <div>
         {items}
-      </ul>
+        {newItemBtn}
+      </div>
     );
   }
 

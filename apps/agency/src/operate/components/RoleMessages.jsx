@@ -9,7 +9,7 @@ function renderMessages(trips, messages) {
   if (!messages.length) {
     return (
       <div className="alert alert-warning">
-        No messages needing reply.
+        No messages.
       </div>
     );
   }
@@ -18,7 +18,6 @@ function renderMessages(trips, messages) {
     .map(message => (
       <Message
         key={message.id}
-        trip={_.find(trips, { id: message.tripId })}
         message={message} />
     ));
   return (
@@ -28,20 +27,18 @@ function renderMessages(trips, messages) {
   );
 }
 
-export default function RoleMessages({ params, group,
-    messagesNeedingReply, user }) {
-  const messages = renderMessages(
-    group.trips, messagesNeedingReply);
+export default function RoleMessages({ params, group, messages, user }) {
+  const renderedMessages = renderMessages(group.trips, messages);
   const tripLinks = group.trips.map((trip => (
     <li key={trip.id}>
       <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${params.roleName}/messages`}>
-        {trip.departureName} {trip.title}
+        {trip.departureName ? `${trip.departureName} ` : ''}{trip.title}
       </Link>
     </li>
   )));
   return (
     <div>
-      {messages}
+      {renderedMessages}
       To send a message, select a trip:
       <ul>
         {tripLinks}
@@ -53,7 +50,7 @@ export default function RoleMessages({ params, group,
 RoleMessages.propTypes = {
   group: PropTypes.object.isRequired,
   user: PropTypes.object,
-  messagesNeedingReply: PropTypes.array.isRequired,
+  messages: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired
 };
 

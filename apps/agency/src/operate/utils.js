@@ -116,31 +116,8 @@ export function sortPlayers(group) {
   };
 }
 
-export function getMessagesNeedingReply(state, groupId, roleName) {
-  const trips = _.filter(state.datastore.trips,
-    { groupId: Number(groupId), isArchived: false });
-  const tripIds = _.map(trips, 'id');
-  return state.datastore.messages
-    .filter((message) => {
-      if (!_.includes(tripIds, message.tripId)) {
-        return false;
-      }
-      if (!message.isReplyNeeded || message.replyReceivedAt) {
-        return false;
-      }
-      // If not role name, then return all messages needing reply.
-      if (!roleName) {
-        return true;
-      }
-      const sentTo = _.find(state.datastore.players,
-        { id: message.sentToId });
-      return roleName === sentTo.roleName;
-    });
-}
-
 export default {
   sortForRole: sortForRole,
   getPlayerPageInfo: getPlayerPageInfo,
-  getMessagesNeedingReply: getMessagesNeedingReply,
   sortPlayers: sortPlayers
 };

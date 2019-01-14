@@ -7,9 +7,6 @@ export default function Player({ player, children }) {
   if (!player) {
     return <div>Player not found.</div>;
   }
-  if (player.isLoading) {
-    return <div>Loading</div>;
-  }
   if (player.isError) {
     return <div>Error</div>;
   }

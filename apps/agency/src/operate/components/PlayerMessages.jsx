@@ -39,20 +39,6 @@ export default class PlayerMessages extends Component {
       nextProps.player.trip.players);
   }
 
-  getUserRoleName() {
-    const script = this.props.player.trip.script;
-    const role = _.find(script.content.roles,
-      { name: this.props.params.roleName });
-    return role.actor ? this.props.params.withRoleName :
-      this.props.params.roleName;
-  }
-
-  getActorRoleName() {
-    const userRoleName = this.getUserRoleName();
-    return userRoleName === this.props.params.withRoleName ?
-      this.props.params.roleName : this.props.params.withRoleName;
-  }
-
   loadData(tripId, roleName, withRoleName, players) {
     if (players.length === 0) {
       return;
@@ -103,33 +89,48 @@ export default class PlayerMessages extends Component {
     const orgId = this.props.player.orgId;
     const tripId = this.props.player.tripId;
     this.props.postAction(orgId, tripId, 'custom_message', {
-      from_role_name: this.getActorRoleName(),
-      to_role_name: this.getUserRoleName(),
+      from_role_name: this.props.params.roleName,
+      to_role_name: this.props.params.withRoleName,
       message_medium: 'text',
       message_content: this.state.pendingMessage
     });
   }
 
   renderSend() {
-    const userRoleName = this.getUserRoleName();
-    const actorRoleName = this.getActorRoleName();
-    const isSendDisabled = (
-      this.props.params.withRoleName === 'All' ||
-      this.state.pendingMessage === '');
-
+    // const userRoleName = this.getUserRoleName();
+    // const actorRoleName = this.getActorRoleName();
     const script = this.props.player.trip.script;
+    const selfRoleName = this.props.params.roleName;
+    const selfRole = _.find(script.content.roles, { name: selfRoleName });
+    const hasWithRole = this.props.params.withRoleName !== 'All';
+    const withRoleName = this.props.params.withRoleName;
+    const withRole = _.find(script.content.roles, { name: withRoleName });
+    const sendPlaceholder = hasWithRole ?
+      `Send message from ${selfRole.title} to ${withRole.title}` :
+      `Send message from ${selfRole.title}`;
+    const sendLabel = hasWithRole ? `Send to ${withRole.title}` : 'Send';
+    const isSendDisabled = !hasWithRole || this.state.pendingMessage === '';
+
     const relays = _.filter(script.content.relays, relay => (
-      relay.as === this.props.params.roleName ||
-      relay.with === this.props.params.roleName
+      relay.as === selfRoleName || relay.with === selfRoleName
     ));
-    const counterparts = _(relays)
+    const counterpartRoleNames = _(relays)
       .map(r => [r.as, r.with])
       .flatten()
       .uniq()
       .value();
-    const counterpartOptions = counterparts.map(counterpart => (
-      <option key={counterpart} value={counterpart}>{counterpart}</option>
-    ));
+    const counterpartRoleOptions = counterpartRoleNames
+      .filter(counterpart => counterpart !== selfRoleName)
+      .map((counterpart) => {
+        const counterpartRole = _.find(script.content.roles, {
+          name: counterpart
+        });
+        return (
+          <option key={counterpart} value={counterpart}>
+            {counterpartRole.title}
+          </option>
+        );
+      });
 
     return (
       <form className="row" onSubmit={this.handleSendPendingMessage}>
@@ -139,24 +140,24 @@ export default class PlayerMessages extends Component {
             value={this.props.params.withRoleName}
             onChange={this.handleCounterpartChange}>
             <option value="All">All</option>
-            {counterpartOptions}
+            {counterpartRoleOptions}
           </select>
         </div>
         <div className="form-group col-sm-6">
           <input
             type="text"
-            disabled={this.props.params.withRoleName === 'All'}
+            disabled={!hasWithRole}
             className="form-control"
             id="inputPassword2"
             value={this.state.pendingMessage}
             onChange={this.handlePendingMessageChange}
-            placeholder={`Send message from ${actorRoleName} to ${userRoleName}`} />
+            placeholder={sendPlaceholder} />
         </div>
         <div className="col-sm-3">
           <button
             type="submit"
             disabled={isSendDisabled}
-            className="btn btn-block btn-primary">Send</button>
+            className="btn btn-block btn-primary">{sendLabel}</button>
         </div>
       </form>
     );
@@ -166,24 +167,23 @@ export default class PlayerMessages extends Component {
     if (!this.props.messages.length) {
       return <div>No messages</div>;
     }
-    return _.sortBy(this.props.messages, 'createdAt')
-      .reverse()
-      .map(message => (
-        <Message
-          key={message.id}
-          updateInstance={this.props.updateInstance}
-          trip={this.props.player.trip}
-          message={message} />
-      ));
+    return this.props.messages.map(message => (
+      <Message
+        key={message.id}
+        isInTripContext
+        isInRoleContext={this.props.player.roleName}
+        updateInstance={this.props.updateInstance}
+        message={message} />
+    ));
   }
 
   render() {
-    const messagesRendererd = this.renderMessages();
+    const messagesRendered = this.renderMessages();
     const sendRendered = this.renderSend();
     return (
       <div>
         {sendRendered}
-        {messagesRendererd}
+        {messagesRendered}
       </div>
     );
   }

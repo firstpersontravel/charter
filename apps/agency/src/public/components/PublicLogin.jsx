@@ -61,6 +61,7 @@ export default class PublicLogin extends Component {
               <label htmlFor="exampleInputEmail1">Email address</label>
               <input
                 type="email"
+                name="email"
                 className="form-control"
                 id="exampleInputEmail1"
                 value={this.state.email}
@@ -71,6 +72,7 @@ export default class PublicLogin extends Component {
               <label htmlFor="exampleInputPassword1">Password</label>
               <input
                 type="password"
+                name="password"
                 className="form-control"
                 id="exampleInputPassword1"
                 value={this.state.password}

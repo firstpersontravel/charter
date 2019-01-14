@@ -143,6 +143,50 @@ export function lookupGroup(state, ownProps) {
   });
 }
 
+function msgFilterForParams(params) {
+  // If we're specifying two roles, find all messages between those roles.
+  if (params.roleName &&
+      params.withRoleName &&
+      params.withRoleName !== 'All') {
+    const betweenRoleNames = [params.roleName, params.withRoleName];
+    return msg => (
+      _.includes(betweenRoleNames, msg.sentBy.roleName) &&
+      _.includes(betweenRoleNames, msg.sentTo.roleName)
+    );
+  }
+  // If we're specifying one role, find all messages to and from that role
+  if (params.roleName) {
+    return msg => (
+      msg.sentBy.roleName === params.roleName ||
+      msg.sentTo.roleName === params.roleName
+    );
+  }
+  // If no roles are specified, return all.
+  return msg => true;
+}
+
+export function lookupMessages(state, ownProps, limit = null, filters = null) {
+  const selfFilter = msgFilterForParams(ownProps.params);
+  const allFilters = Object.assign({
+    trip: { groupId: Number(ownProps.params.groupId) },
+    self: selfFilter
+  }, filters);
+  return instancesFromDatastore(state, {
+    col: 'messages',
+    filter: allFilters,
+    sort: msg => -msg.id,
+    limit: limit,
+    include: {
+      trip: instanceIncluder('trips', 'id', 'tripId', {
+        org: instanceIncluder('orgs', 'id', 'orgId'),
+        experience: instanceIncluder('experiences', 'id', 'experienceId')
+      }),
+      sentBy: instanceIncluder('players', 'id', 'sentById', playerIncludes),
+      sentTo: instanceIncluder('players', 'id', 'sentToId', playerIncludes)
+    }
+  });
+}
+
 export function lookupDirections(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'assets',
