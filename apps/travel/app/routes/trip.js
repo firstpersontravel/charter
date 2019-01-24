@@ -17,7 +17,6 @@ export default Ember.Route.extend({
 
   setupController: function(controller, context) {
     this._super(controller, context);
-    var script = this.context.get('script');
     var experience = this.context.get('experience');
     var envName = this.get('environment.environmentName');
     if (envName !== 'production') {

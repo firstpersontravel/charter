@@ -27,7 +27,8 @@ class TripActionController {
 
   static _getResultsForTriggerAndObjs(objs, trigger, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.applyTrigger(trigger, null, actionContext);
+    return ActionCore.applyTrigger(trigger, null, actionContext,
+      actionContext);
   }
   
   static async _scheduleAction(orgId, tripId, action) {

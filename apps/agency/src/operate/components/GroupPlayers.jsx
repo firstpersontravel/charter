@@ -112,7 +112,7 @@ export default class GroupPlayers extends Component {
     const goToUser = (users.length === 1 && users[0]) ? (
       <Link
         className="faint"
-        to={`/${group.org.name}/${group.experience.name}/directory/${users[0].id}`}>
+        to={`/${group.org.name}/${group.experience.name}/directory/user/${users[0].id}`}>
         <i className="fa fa-user" />
       </Link>
     ) : null;

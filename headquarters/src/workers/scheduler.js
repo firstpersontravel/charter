@@ -1,7 +1,7 @@
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-const { TriggerEventCore, Events, SceneCore } = require('fptcore');
+const { TriggerEventCore, EventsRegistry, SceneCore } = require('fptcore');
 
 const config = require('../config');
 const models = require('../models');
@@ -34,8 +34,8 @@ class SchedulerWorker {
       const timeOccurredTriggerEvent = (
         TriggerEventCore.triggerEventForEventType(trigger, 'time_occurred')
       );
-      const intendedAt = Events.time_occurred.timeForSpec(
-        timeOccurredTriggerEvent.time_occurred, actionContext.evalContext);
+      const intendedAt = EventsRegistry.time_occurred.timeForSpec(
+        timeOccurredTriggerEvent, actionContext.evalContext);
       const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
       // Construct schdeduled action
       return {
@@ -85,7 +85,8 @@ class SchedulerWorker {
     }
 
     for (let action of actions) {
-      logger.info(action, `Scheduling ${action.type} ${action.name}.`);
+      logger.info({ action: action },
+        `Scheduling ${action.type} ${action.name}.`);
       await models.Action.create(action);
     }
   }
@@ -103,10 +104,13 @@ class SchedulerWorker {
             { [Sequelize.Op.lte]: threshold.toDate() },
           ]
         }
-      }
+      },
+      include: [{
+        model: models.Experience, as: 'experience'
+      }]
     });
     for (const trip of trips) {
-      logger.info('Checking trip', trip.id, 'up to', threshold);
+      logger.info(`Checking ${trip.experience.title} "${trip.title}" up to ${threshold}`);
       await this._scheduleTripActions(trip.id, threshold);
       await trip.update({ lastScheduledTime: threshold.toDate() });
     }

@@ -117,16 +117,10 @@
     const bcrypt = require('bcrypt');
     const models = require('./src/models');
 
-    bcrypt.hash(pw, 10)
-      .then((hash) => {
-        return models.User.create({
-          email: email@email.com,
-          passwordHash: hash
-        });
-      })
-      .then((user) => {
-        console.log('Created user: ' + user.id);
-      });
+    // Creating a user
+    bcrypt.hash(pw, 10).then((hash) => {
+      console.log('Password hash: ' + hash);
+    });
 
 ### Todo later:
     

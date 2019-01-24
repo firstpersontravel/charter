@@ -86,7 +86,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     var scriptContent = trip.get('script.content');
     var waypointOptions = trip.get('waypointOptions');
     var routeName = this.get('params.route');
-    var route = _.find(scriptContent.routes || [], { name: routeName });
+    var route = (scriptContent.routes || []).findBy('name', routeName);
     if (!route) {
       return null;
     }

@@ -45,7 +45,7 @@ class RunnerWorker {
         throw err;
       }
       // Otherwise log failure and continue.
-      logger.error(`Error processing ${action.type} ${action.name} #${action.id}:\n\n` + err);
+      logger.error(`Error processing ${action.type} ${action.name} #${action.id}:\n\n` + err.stack);
       await action.update({ failedAt: now }, { fields: ['failedAt'] });
     }
   }
