@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var moment = require('moment');
 
 var TimeUtil = require('../../utils/time');
@@ -43,6 +44,19 @@ module.exports = {
       }
       // Otherwise, we're in the range!
       return true;
+    },
+    getTitle: function(scriptContent, spec) {
+      var time = _.find(scriptContent.times, { name: spec.time });
+      if (!time) {
+        return null;
+      }
+      if (spec.before) {
+        return spec.before + ' before "' + time.title + '"';
+      }
+      if (spec.after) {
+        return spec.after + ' after "' + time.title + '"';
+      }
+      return 'at "' + time.title + '"';
     }
   }
 };

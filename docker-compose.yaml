@@ -63,3 +63,15 @@ services:
     environment: [MYSQL_ROOT_PASSWORD=root]
     volumes: ["./docker/mysql:/docker-entrypoint-initdb.d"]
     ports: ["4306:3306"]
+
+  # ngrok:
+  #   image: wernight/ngrok
+  #   ports:
+  #     - "0.0.0.0:5000:5000"
+  #   links:
+  #     - "web"
+  #   environment:
+  #     - NGROK_AUTH=<>
+  #     - NGROK_SUBDOMAIN=<>
+  #     - NGROK_REGION=eu
+  #     - NGROK_PORT=web:5000

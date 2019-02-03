@@ -198,7 +198,11 @@ export default class ResourceShow extends Component {
           </span>
         );
       })
+      .filter(Boolean)
       .value();
+    if (!pathItems.length) {
+      return null;
+    }
     return (
       <div
         key={parentPath.join(',')}
@@ -213,10 +217,15 @@ export default class ResourceShow extends Component {
     if (!parenthoodPaths.length) {
       return null;
     }
-    const renderedPaths = parenthoodPaths.map(parenthoodPath => (
-      this.renderParentPath(parenthoodPath)
-    ));
-
+    const renderedPaths = _(parenthoodPaths)
+      .map(parenthoodPath => (
+        this.renderParentPath(parenthoodPath)
+      ))
+      .filter(Boolean)
+      .value();
+    if (!renderedPaths.length) {
+      return null;
+    }
     return (
       <div style={{ marginBottom: '0.5em' }}>
         {renderedPaths}

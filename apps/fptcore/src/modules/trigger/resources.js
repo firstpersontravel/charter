@@ -152,7 +152,7 @@ var trigger = {
     if (firstEventClass.getTitle) {
       var customTitle = firstEventClass.getTitle(scriptContent, firstEvent);
       if (customTitle) {
-        return 'On ' + customTitle;
+        return customTitle;
       }
     }
     return 'On ' + firstEvent.type.replace(/_/g, ' ');

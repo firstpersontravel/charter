@@ -7,6 +7,7 @@ module.exports = {
   ContextCore: require('./cores/context'),
   EvalCore: require('./cores/eval'),
   EventsRegistry: require('./registries/events'),
+  GeofenceCore: require('./cores/geofence'),
   ParamValidators: require('./utils/param_validators'),
   PlayerCore: require('./cores/player'),
   ResourcesRegistry: require('./registries/resources'),
