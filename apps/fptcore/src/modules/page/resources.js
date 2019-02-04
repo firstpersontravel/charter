@@ -1,4 +1,4 @@
-var _ = require('lodash');
+// var _ = require('lodash');
 
 var SubresourcesRegistry = require('../../registries/subresources');
 
@@ -29,12 +29,12 @@ var page = {
       ['roles.' + resource.role];
   },
   getChildClaims: function(resource) {
-    return _(resource.panels)
-      .filter('cue')
-      .map(function(panel) {
-        return 'cues.' + panel.cue;
-      })
-      .value();
+    // return _(resource.panels)
+    //   .filter('cue')
+    //   .map(function(panel) {
+    //     return 'cues.' + panel.cue;
+    //   })
+    //   .value();
   }
 };
 

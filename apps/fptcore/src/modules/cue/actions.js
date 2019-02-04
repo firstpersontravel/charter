@@ -13,7 +13,7 @@ var signal_cue = {
     return null;
   },
   getChildClaims: function(params) {
-    return ['cues.' + params.cue_name];
+    // return ['cues.' + params.cue_name];
   }
 };
 
