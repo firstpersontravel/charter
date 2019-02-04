@@ -16,14 +16,33 @@ function renderRight(authInfo, logout) {
       </ul>
     );
   }
+
+  const orgLinks = authInfo.orgs.map(org => (
+    <Link
+      key={org.id}
+      className="btn btn-link dropdown-item"
+      to={`/${org.name}`}>
+      {org.title}
+    </Link>
+  ));
+
   return (
     <ul className="navbar-nav ml-auto">
       <li className="nav-item">
-        <button
-          className="btn btn-link nav-link"
-          onClick={() => logout()}>
-          Logout
-        </button>
+
+        <div className="dropdown">
+          <button className="btn btn-unstyled dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {authInfo.user.email}
+          </button>
+          <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {orgLinks}
+            <button
+              className="btn btn-link dropdown-item"
+              onClick={() => logout()}>
+              Logout
+            </button>
+          </div>
+        </div>
       </li>
     </ul>
   );

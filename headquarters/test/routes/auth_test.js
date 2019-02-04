@@ -2,6 +2,7 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const moment = require('moment');
 const sinon = require('sinon');
+const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 const { sandbox } = require('../mocks');
@@ -46,8 +47,11 @@ describe('authRoutes', () => {
 
       // Test call made correctly
       sinon.assert.calledOnce(models.User.find);
-      sinon.assert.calledWith(models.User.find, { where: { 
-        email: 'gabe@test.com' }
+      sinon.assert.calledWith(models.User.find, {
+        where: {
+          email: 'gabe@test.com',
+          passwordHash: { [Sequelize.Op.not]: '' }
+        }
       });
     });
 
@@ -63,8 +67,11 @@ describe('authRoutes', () => {
 
       // Test call made correctly
       sinon.assert.calledOnce(models.User.find);
-      sinon.assert.calledWith(models.User.find, { where: { 
-        email: 'gabe@test.com' }
+      sinon.assert.calledWith(models.User.find, {
+        where: { 
+          email: 'gabe@test.com',
+          passwordHash: { [Sequelize.Op.not]: '' }
+        }
       });
     });
 

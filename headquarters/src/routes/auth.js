@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Sequelize = require('sequelize');
 
 const config = require('../config');
 const models = require('../models');
@@ -51,7 +52,12 @@ async function respondWithUserAuthInfo(res, user) {
 const loginRoute = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = await models.User.find({ where: { email: email } });
+  const user = await models.User.find({
+    where: {
+      email: email,
+      passwordHash: { [Sequelize.Op.not]: '' }
+    }
+  });
   const matchHash = (user && user.passwordHash) || DUMMY_HASH;
   const isMatch = await bcrypt.compare(password, matchHash);
   if (!isMatch) {

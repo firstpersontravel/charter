@@ -78,6 +78,8 @@
 - model: User
   data:
     id: 1
+    org: 1
+    experience: 1
     firstName: tester1
     phoneNumber: '1111111111'
 
@@ -85,6 +87,8 @@
 - model: User
   data:
     id: 2
+    org: 1
+    experience: 1
     firstName: actor2
     phoneNumber: '2222222222'
 

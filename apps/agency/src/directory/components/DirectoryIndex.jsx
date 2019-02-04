@@ -15,6 +15,8 @@ export default class DirectoryIndex extends Component {
 
   handleCreateUser(fields) {
     this.props.createInstance('users', {
+      orgId: this.props.experience.orgId,
+      experienceId: this.props.experience.id,
       firstName: fields.firstName,
       lastName: fields.lastName,
       phoneNumber: fields.phoneNumber,
@@ -96,13 +98,8 @@ export default class DirectoryIndex extends Component {
   render() {
     const experience = this.props.experience;
     const roleName = this.props.location.query.role;
-    const users = _(this.props.profiles)
-      .map('user')
-      .filter(u => !u.isNull)
-      .uniqBy('id')
-      .value();
-    const userRows = _.filter(users,
-      (user) => {
+    const userRows = _(this.props.users)
+      .filter((user) => {
         if (roleName === 'Archived') {
           return user.isArchived === true;
         }
@@ -120,7 +117,8 @@ export default class DirectoryIndex extends Component {
         }
         return true;
       })
-      .map(user => this.renderUser(user));
+      .map(user => this.renderUser(user))
+      .value();
     const header = this.renderHeader();
     return (
       <div className="col-sm-9">
@@ -164,5 +162,6 @@ DirectoryIndex.propTypes = {
   createInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   experience: PropTypes.object.isRequired,
-  profiles: PropTypes.array.isRequired
+  profiles: PropTypes.array.isRequired,
+  users: PropTypes.array.isRequired
 };

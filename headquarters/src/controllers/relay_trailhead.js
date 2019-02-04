@@ -76,7 +76,12 @@ class RelayTrailheadController {
 
     // Look for a user, or create if doesn't exist.
     const [trailheadUser, ] = await models.User.findOrCreate({
-      where: { isActive: true, phoneNumber: fromNumber },
+      where: {
+        orgId: trailheadRelay.orgId,
+        experienceId: trailheadRelay.experienceId,
+        isActive: true,
+        phoneNumber: fromNumber
+      },
       defaults: { firstName: `${script.experience.title} Player` }
     });
 
@@ -84,8 +89,8 @@ class RelayTrailheadController {
     const [trailheadProfile, ] = await models.Profile.findOrCreate({
       where: {
         userId: trailheadUser.id,
-        orgId: script.orgId,
-        experienceId: script.experience.id,
+        orgId: trailheadRelay.orgId,
+        experienceId: trailheadRelay.experienceId,
         roleName: trailheadRelay.forRoleName,
         isArchived: false
       },

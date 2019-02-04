@@ -54,7 +54,10 @@ apiRouter.use('/scripts', createModelRouter(models.Script, orgOpts));
 apiRouter.use('/trips', createModelRouter(models.Trip, orgOpts));
 
 // And for users, which are shared
-const userOpts = { blacklistFields: ['passwordHash'] };
+const userOpts = {
+  requireFilters: ['orgId'],
+  blacklistFields: ['passwordHash']
+};
 apiRouter.use('/users', createModelRouter(models.User, userOpts));
 
 // Action routes

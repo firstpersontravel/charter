@@ -6,16 +6,29 @@ const TestUtil = require('../util');
 
 describe('API create', () => {
   describe('POST /api/users', () => {
+    let experience;
+
+    beforeEach(async () => {
+      experience = await TestUtil.createDummyExperience();
+    });
+
     it('creates user', () => {
       return request(app)
         .post('/api/users')
-        .send({ firstName: 'Gabe', lastName: 'Smedresman' })
+        .send({
+          experienceId: experience.id,
+          orgId: experience.orgId,
+          firstName: 'Gabe',
+          lastName: 'Smedresman'
+        })
         .set('Accept', 'application/json')
         .expect(201)
         .then((res) => {
           assert.deepStrictEqual(res.body, {
             data: {
               user: {
+                experienceId: experience.id,
+                orgId: experience.orgId,
                 deviceBattery: null,
                 deviceId: '',
                 deviceLastActive: null,
@@ -41,7 +54,13 @@ describe('API create', () => {
     it('fails with supplied id', () => {
       return request(app)
         .post('/api/users')
-        .send({ id: 123, firstName: 'Gabe', lastName: 'Smedresman' })
+        .send({
+          id: 123,
+          experienceId: experience.id,
+          orgId: experience.orgId,
+          firstName: 'Gabe',
+          lastName: 'Smedresman'
+        })
         .set('Accept', 'application/json')
         .expect(400)
         .then((res) => {
@@ -55,7 +74,12 @@ describe('API create', () => {
     it('fails on invalid fields', () => {
       return request(app)
         .post('/api/users')
-        .send({ lastName: '123', isActive: 2 })
+        .send({
+          experienceId: experience.id,
+          orgId: experience.orgId,
+          lastName: '123',
+          isActive: 2
+        })
         .set('Accept', 'application/json')
         .expect(422)
         .then((res) => {

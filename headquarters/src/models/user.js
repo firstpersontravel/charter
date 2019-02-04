@@ -1,7 +1,10 @@
 const database = require('../config').database;
+const Org = require('./org');
+const Experience = require('./experience');
 
 const {
   allowNullModifier,
+  belongsToField,
   booleanField,
   datetimeField,
   doubleField,
@@ -33,5 +36,8 @@ const User = database.define('User', snakeCaseColumns({
   deviceTimestamp: mutableModifier(allowNullModifier(datetimeField())),
   isArchived: mutableModifier(booleanField(false))
 }));
+
+User.belongsTo(Org, belongsToField('org'));
+User.belongsTo(Experience, belongsToField('experience'));
 
 module.exports = User;

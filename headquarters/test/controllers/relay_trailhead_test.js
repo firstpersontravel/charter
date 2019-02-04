@@ -10,6 +10,8 @@ const TripRelaysController = require('../../src/controllers/trip_relays');
 const TripsController = require('../../src/controllers/trips');
 
 const mockTrailhead = {
+  orgId: 9,
+  experienceId: 20,
   forRoleName: 'Player',
   experienceIe: 10,
   departureName: 'Main'
@@ -144,7 +146,12 @@ describe('RelayTrailheadController', () => {
         }
       });
       sinon.assert.calledWith(models.User.findOrCreate, {
-        where: { isActive: true, phoneNumber: '123' },
+        where: {
+          orgId: 9,
+          experienceId: 20,
+          isActive: true,
+          phoneNumber: '123'
+        },
         defaults: { firstName: 'Script Player' }
       });
       sinon.assert.calledWith(models.Profile.findOrCreate, {

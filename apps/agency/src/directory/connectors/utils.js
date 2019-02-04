@@ -25,6 +25,16 @@ export function lookupExperience(state, ownProps) {
   });
 }
 
+export function lookupUsers(state, ownProps) {
+  return instancesFromDatastore(state, {
+    col: 'users',
+    filter: { experience: { name: ownProps.params.experienceName } },
+    include: {
+      experience: instanceIncluder('experiences', 'id', 'experienceId')
+    }
+  });
+}
+
 export function lookupProfiles(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'profiles',

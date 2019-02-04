@@ -38,7 +38,7 @@ export default class Experience extends Component {
     this.props.listCollection('trips', filters);
     this.props.listCollection('scripts', filters);
     this.props.listCollection('profiles', filters);
-    this.props.listCollection('users', { isArchived: false });
+    this.props.listCollection('users', filters);
   }
 
   renderNav() {
