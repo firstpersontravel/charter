@@ -34,3 +34,33 @@ export function lookupScripts(state, ownProps) {
     }
   });
 }
+
+export function lookupAssets(state, ownProps) {
+  return instancesFromDatastore(state, {
+    col: 'assets',
+    filter: {
+      isArchived: false,
+      org: { name: ownProps.params.orgName },
+      experience: { name: ownProps.params.experienceName }
+    },
+    include: {
+      org: instanceIncluder('orgs', 'id', 'orgId'),
+      experience: instanceIncluder('experiences', 'id', 'experienceId')
+    }
+  });
+}
+
+export function lookupAsset(state, ownProps) {
+  return instanceFromDatastore(state, {
+    col: 'assets',
+    filter: {
+      name: ownProps.params.assetName,
+      org: { name: ownProps.params.orgName },
+      experience: { name: ownProps.params.experienceName }
+    },
+    include: {
+      org: instanceIncluder('orgs', 'id', 'orgId'),
+      experience: instanceIncluder('experiences', 'id', 'experienceId')
+    }
+  });
+}

@@ -108,6 +108,14 @@ export default class Script extends Component {
             {sceneLinks}
           </div>
         </li>
+        <li className="nav-item">
+          <Link
+            className="nav-link"
+            activeClassName="active"
+            to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/assets`}>
+            Assets
+          </Link>
+        </li>
       </ul>
     );
   }
