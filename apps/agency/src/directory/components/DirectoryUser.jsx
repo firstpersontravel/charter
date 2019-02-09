@@ -136,10 +136,6 @@ export default class DirectoryUser extends Component {
       <div key={profile.id}>
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
-            <Link to={`/${experience.org.name}/${experience.name}/directory`}>
-              {experience.title}
-            </Link>
-            &nbsp;&bull;&nbsp;
             <Link to={`/${experience.org.name}/${experience.name}/directory?role=${role.name}`}>
               {role.name}
             </Link>

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { getStage } from '../utils';
 
 function renderRight(authInfo, logout) {
-  if (!authInfo) {
+  if (!authInfo || !authInfo.user) {
     return (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
@@ -17,7 +17,7 @@ function renderRight(authInfo, logout) {
     );
   }
 
-  const orgLinks = authInfo.orgs.map(org => (
+  const orgLinks = (authInfo.orgs || []).map(org => (
     <Link
       key={org.id}
       className="btn btn-link dropdown-item"
