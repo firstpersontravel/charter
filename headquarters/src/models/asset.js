@@ -26,6 +26,7 @@ const COORD_SCHEMA = {
   maxItems: 2
 };
 
+// Schema for directions type asset
 const DIRECTIONS_SCHEMA = {
   type: 'object',
   properties: {
@@ -55,8 +56,34 @@ const DIRECTIONS_SCHEMA = {
   additionalProperties: false
 };
 
+const ALLOWED_EXTENSIONS = {
+  audio: ['mp3', 'm4a'],
+  video: ['mp4'],
+  image: ['jpg', 'jpeg', 'png']
+};
+
+// Schema for media assets
+function createMediaAssetSchema(exts) {
+  return {
+    type: 'object',
+    properties: {
+      path: {
+        type: 'string',
+        pattern: `\\.(${exts.join('|')})$`
+      },
+      url: STRING_SCHEMA
+    },
+    required: ['path', 'url'],
+    additionalProperties: false
+  };
+}
+
+
 const ASSET_DATA_SCHEMAS = {
-  directions: DIRECTIONS_SCHEMA
+  directions: DIRECTIONS_SCHEMA,
+  audio: createMediaAssetSchema(ALLOWED_EXTENSIONS.audio),
+  video: createMediaAssetSchema(ALLOWED_EXTENSIONS.video),
+  image: createMediaAssetSchema(ALLOWED_EXTENSIONS.image)
 };
 
 function assetValidator(type) {

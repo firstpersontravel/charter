@@ -4,6 +4,21 @@ const moment = require('moment');
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
+function createMediaAsset(type, path) {
+  return models.Asset.build({
+    orgId: 100,
+    experienceId: 2,
+    type: type,
+    name: 'test',
+    data: {
+      path: path,
+      url: `https://aws.com/${path}`
+    },
+    createdAt: moment.utc(),
+    updatedAt: moment.utc()
+  });
+}
+
 describe('Asset', () => {
 
   it('prohibits invalid type', async () => {
@@ -17,7 +32,7 @@ describe('Asset', () => {
       updatedAt: moment.utc()
     });
     await assertValidation(invalidAsset, {
-      type: 'must be one of directions'
+      type: 'must be one of directions, audio, video, image'
     });
   });
 
@@ -75,6 +90,13 @@ describe('Asset', () => {
       });
     });
 
+    it('forbids extra data property', async () => {
+      directionsAsset.data = _.assign(directionsAsset.data, { extra: 'hi' });
+      await assertValidation(directionsAsset, {
+        directions: 'data additionalProperty "extra" exists in instance when not allowed'
+      });
+    });
+
     it('requires polyline', async () => {
       directionsAsset.data = _.assign(directionsAsset.data, { polyline: undefined });
       await assertValidation(directionsAsset, {
@@ -86,6 +108,94 @@ describe('Asset', () => {
       directionsAsset.data = _.assign(directionsAsset.data, { steps: [] });
       await assertValidation(directionsAsset, {
         directions: 'data.steps does not meet minimum length of 1'
+      });
+    });
+  });
+
+  describe('audio', () => {
+    it('validates with all fields present', async () => {
+      await createMediaAsset('audio', 'a/b/c.mp3').validate();
+    });
+
+    it('requires path', async () => {
+      const audioAsset = createMediaAsset('audio', 'a/b/c.mp4');
+      audioAsset.data = { path: null, url: 'test' };
+      await assertValidation(audioAsset, {
+        audio: 'data.path is not of a type(s) string'
+      });
+    });
+
+    it('requires url', async () => {
+      const audioAsset = createMediaAsset('audio', 'a/b/c.mp4');
+      audioAsset.data = { path: 'abc.mp3', url: null };
+      await assertValidation(audioAsset, {
+        audio: 'data.url is not of a type(s) string'
+      });
+    });
+
+    it('disallows mp4', async () => {
+      const audioAsset = createMediaAsset('audio', 'a/b/c.mp4');
+      await assertValidation(audioAsset, {
+        audio: 'data.path does not match pattern "\\\\.(mp3|m4a)$"'
+      });
+    });
+  });
+
+  describe('video', () => {
+    it('validates with all fields present', async () => {
+      await createMediaAsset('video', 'a/b/c.mp4').validate();
+    });
+
+    it('requires path', async () => {
+      const videoAsset = createMediaAsset('video', 'a/b/c.mp4');
+      videoAsset.data = { path: null, url: 'test' };
+      await assertValidation(videoAsset, {
+        video: 'data.path is not of a type(s) string'
+      });
+    });
+
+    it('requires url', async () => {
+      const videoAsset = createMediaAsset('video', 'a/b/c.mp4');
+      videoAsset.data = { path: 'abc.mp4', url: null };
+      await assertValidation(videoAsset, {
+        video: 'data.url is not of a type(s) string'
+      });
+    });
+
+    it('disallows png', async () => {
+      const videoAsset = createMediaAsset('video', 'a/b/c.png');
+      await assertValidation(videoAsset, {
+        video: 'data.path does not match pattern "\\\\.(mp4)$"'
+      });
+    });
+  });
+
+  describe('image', () => {
+    it('validates with all fields present', async () => {
+      await createMediaAsset('image', 'a/b/c.png').validate();
+      await createMediaAsset('image', 'a/b/c.jpg').validate();
+    });
+
+    it('requires path', async () => {
+      const imageAsset = createMediaAsset('image', 'a/b/c.png');
+      imageAsset.data = { path: null, url: 'test' };
+      await assertValidation(imageAsset, {
+        image: 'data.path is not of a type(s) string'
+      });
+    });
+
+    it('requires url', async () => {
+      const imageAsset = createMediaAsset('image', 'a/b/c.png');
+      imageAsset.data = { path: 'abc.png', url: null };
+      await assertValidation(imageAsset, {
+        image: 'data.url is not of a type(s) string'
+      });
+    });
+
+    it('disallows m4a', async () => {
+      const imageAsset = createMediaAsset('image', 'a/b/c.m4a');
+      await assertValidation(imageAsset, {
+        image: 'data.path does not match pattern "\\\\.(jpg|jpeg|png)$"'
       });
     });
   });
