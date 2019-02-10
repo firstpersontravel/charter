@@ -124,7 +124,6 @@
 
 ### Todo later:
     
-    - https://github.com/mozilla-services/react-jsonschema-form
     - https://github.com/parcel-bundler/parcel
     - https://thecode.pub/easy-deploy-your-docker-applications-to-aws-using-ecs-and-fargate-a988a1cc842f
     - http://vilkeliskis.com/blog/2016/02/10/bootstrapping-docker-with-terraform.html

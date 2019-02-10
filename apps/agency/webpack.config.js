@@ -1,17 +1,21 @@
+const _ = require('lodash');
 const path = require('path');
 const webpack = require('webpack');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const nodeEnv = isProduction ? 'production' : 'development';
 
+const env = {
+  NODE_ENV: nodeEnv,
+  GOOGLE_API_KEY: process.env.FRONTEND_GOOGLE_API_KEY,
+  SENTRY_DSN: process.env.FRONTEND_SENTRY_DSN,
+  SENTRY_ENVIRONMENT: process.env.FRONTEND_SENTRY_ENVIRONMENT,
+  S3_CONTENT_BUCKET: process.env.S3_CONTENT_BUCKET
+};
+
 const plugins = [
   new webpack.DefinePlugin({
-    'process.env': {
-      NODE_ENV: JSON.stringify(nodeEnv),
-      GOOGLE_API_KEY: JSON.stringify(process.env.FRONTEND_GOOGLE_API_KEY),
-      SENTRY_DSN: JSON.stringify(process.env.FRONTEND_SENTRY_DSN),
-      SENTRY_ENVIRONMENT: JSON.stringify(process.env.FRONTEND_SENTRY_ENVIRONMENT)
-    }
+    'process.env': _.mapValues(env, v => JSON.stringify(v))
   })
 ];
 

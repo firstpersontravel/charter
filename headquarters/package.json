@@ -26,6 +26,7 @@
     "mysql2": "^1.5.3",
     "pino": "^4.10.3",
     "raven": "^2.6.4",
+    "react-s3-uploader": "^4.8.0",
     "sequelize": "^4.37.5",
     "sequelize-cli": "^4.0.0",
     "twilio": "^3.11.0"

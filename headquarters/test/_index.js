@@ -16,6 +16,7 @@ config.env.PUBSUB_HOST_INTERNAL = 'http://testpubsub';
 config.env.TWILIO_HOST = 'http://twilio.test';
 config.env.TWILIO_MEDIA_HOST = 'http://twilio.media';
 config.env.JWT_SECRET = 'test_secret';
+config.env.S3_CONTENT_BUCKET = 'test_bucket';
 
 // Disable logs in tests
 if (!config.env.SHOW_TEST_LOGS) {

@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
 const Raven = require('raven');
+const s3Router = require('react-s3-uploader/s3router');
 
 const config = require('./config');
 
@@ -50,6 +51,13 @@ app.use('/auth', authRouter);
 app.use('/endpoints/twilio', twilioRouter);
 app.use('/gallery', galleryRouter);
 app.use('/s', shortcutRouter);
+
+// S3 signing url
+app.use('/s3', s3Router({
+  bucket: config.env.S3_CONTENT_BUCKET,
+  ACL: 'public-read',
+  uniquePrefix: false
+}));
 
 // The error handler must be before any other error middleware
 app.use(Raven.errorHandler());
