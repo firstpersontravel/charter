@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 export const sections = [
   ['roles', 'Roles'],
-  ['locations', 'Locations'],
+  ['locations', 'Location'],
   ['variants', 'Variants'],
   ['media', 'Media']
 ];

@@ -190,7 +190,7 @@ export default function AssetsForRoute({ script, resource, assets,
   const img = numDirections > 0 ? (
     <StaticMapImg
       className="card-img-top"
-      size="600x150"
+      size="1000x250"
       polylines={polylines} />
   ) : null;
 

@@ -67,7 +67,9 @@ function assetValidator(type) {
     const schema = ASSET_DATA_SCHEMAS[this.type];
     const validator = new jsonschema.Validator();
     const options = { propertyName: 'data' };
-    const result = validator.validate(this.data, schema, options);
+    const data = this.dataValues.data;
+    const dataObj = typeof data === 'string' ? JSON.parse(data) : data;
+    const result = validator.validate(dataObj, schema, options);
     if (!result.valid) {
       const errorMessages = result.errors
         .map(e => `${e.property} ${e.message}`)

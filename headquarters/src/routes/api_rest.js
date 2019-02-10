@@ -3,7 +3,10 @@ const moment = require('moment');
 const inflection = require('inflection');
 const Sequelize = require('sequelize');
 
+const config = require('../config');
 const errors = require('../errors');
+
+const logger = config.logger.child({ name: 'routes.api_rest' });
 
 const LIST_COUNT_DEFAULT = 100;
 
@@ -142,6 +145,7 @@ async function updateRecord(model, record, fields) {
     if (err.name === 'SequelizeForeignKeyConstraintError') {
       throw errors.validationError('Invalid foreign key.', {});      
     } else {
+      logger.error(err.stack);
       throw errors.internalError(err.message, {});
     }
   }
