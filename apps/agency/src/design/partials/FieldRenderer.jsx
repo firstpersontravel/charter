@@ -8,6 +8,9 @@ import { titleForResource } from '../utils/text-utils';
 import { urlForResource } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
 
+const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
+  'variegated'];
+
 const booleanLabels = ['No', 'Yes'];
 
 function isEmpty(warnings) {
@@ -267,7 +270,9 @@ export default class FieldRenderer {
 
   renderEnum(spec, value, name, path, opts) {
     const choices = spec.options.map(opt => ({ value: opt, label: opt }));
-    return this.internalEnumlike(spec, value, name, path, opts, choices);
+    const label = <span style={{ whiteSpace: 'nowrap' }}>{value}</span>;
+    return this.internalEnumlike(spec, value, name, path, opts, choices, null,
+      label);
   }
 
   renderBoolean(spec, value, name, path, opts) {
@@ -425,50 +430,69 @@ export default class FieldRenderer {
     );
   }
 
-  renderObject(spec, value, name, path, opts) {
-    const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
-      'variegated'];
-    const items = _.map(spec.properties, (keySpec, key) => {
-      const itemPath = `${path}${path ? '.' : ''}${key}`;
-      const isSimpleType = !_.includes(COMPLEX_TYPES, keySpec.type);
-      const itemValue = _.get(value, key);
-      let invalidWarning = null;
-      if (isSimpleType) {
-        if (_.isNull(itemValue) || _.isUndefined(itemValue)) {
-          if (keySpec.required) {
-            invalidWarning = (
-              <i
-                style={{ marginLeft: '0.25em' }}
-                className="fa fa-exclamation-circle text-danger" />
-            );
-          }
-        } else {
-          const validatorErrors = ParamValidators[keySpec.type](this.script,
-            name, keySpec, itemValue);
-          if (validatorErrors && validatorErrors.length > 0) {
-            invalidWarning = (
-              <i
-                style={{ marginLeft: '0.25em' }}
-                className="fa fa-exclamation-circle text-danger" />
-            );
-          }
+  internalObjectKey(spec, value, name, path, opts, keySpec, key) {
+    const isInline = _.get(spec, 'display.form') === 'inline';
+    const inlineStyle = { display: 'inline-block', marginRight: '0.25em' };
+
+    const itemStyle = isInline ? inlineStyle : {};
+    const itemPath = `${path}${path ? '.' : ''}${key}`;
+    const isSimpleType = !_.includes(COMPLEX_TYPES, keySpec.type);
+    const itemValue = _.get(value, key);
+
+    let invalidWarning = null;
+    if (isSimpleType) {
+      if (_.isNull(itemValue) || _.isUndefined(itemValue)) {
+        if (keySpec.required) {
+          invalidWarning = (
+            <i
+              style={{ marginLeft: '0.25em' }}
+              className="fa fa-exclamation-circle text-danger" />
+          );
+        }
+      } else {
+        const validatorErrors = ParamValidators[keySpec.type](this.script,
+          name, keySpec, itemValue);
+        if (validatorErrors && validatorErrors.length > 0) {
+          invalidWarning = (
+            <i
+              style={{ marginLeft: '0.25em' }}
+              className="fa fa-exclamation-circle text-danger" />
+          );
         }
       }
-      return (
-        // eslint-disable-next-line react/no-array-index-key
-        <div key={key}>
-          <strong>{_.startCase(key)}:</strong>&nbsp;
-          {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
-            itemPath)}
-          {isSimpleType ?
-            this.internalClear(keySpec, itemValue, itemPath) : null}
-          {invalidWarning}
-        </div>
-      );
-    });
+    }
+
+    const shouldShowLabel = (
+      _.get(keySpec, 'display.label') !== 'primary' &&
+      _.get(keySpec, 'display.hidden') !== true
+    );
+    const labelText = keySpec.title || _.startCase(key);
+    const label = shouldShowLabel ? (
+      <strong style={{ marginRight: '0.25em' }}>
+        {labelText}:
+      </strong>
+    ) : null;
+
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <div key={key} style={itemStyle}>
+        {label}
+        {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
+          itemPath)}
+        {isSimpleType ?
+          this.internalClear(keySpec, itemValue, itemPath) : null}
+        {invalidWarning}
+      </div>
+    );
+  }
+
+  renderObject(spec, value, name, path, opts) {
+    const renderedItems = _.map(spec.properties, (keySpec, key) => (
+      this.internalObjectKey(spec, value, name, path, opts, keySpec, key)
+    ));
     return (
       <div>
-        {items}
+        {renderedItems}
       </div>
     );
   }
@@ -479,7 +503,7 @@ export default class FieldRenderer {
       return this.renderFieldValue(spec.class.properties.self, value,
         name, path);
     }
-    return this.renderObject(spec.class, value, name, path);
+    return this.renderObject(spec.class, value, name, path, opts);
   }
 
   renderVariegated(spec, value, name, path, opts) {
@@ -487,6 +511,7 @@ export default class FieldRenderer {
     const commonClass = spec.common;
     const varietyClass = spec.classes[variety];
     const mergedClass = _.merge({}, commonClass, varietyClass);
-    return this.renderSubresource({ class: mergedClass }, value, name, path);
+    return this.renderSubresource({ class: mergedClass }, value, name, path,
+      opts);
   }
 }

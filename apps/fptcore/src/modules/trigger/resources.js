@@ -14,8 +14,14 @@ var singleActionParam = {
   type: 'variegated',
   key: 'name',
   common: {
+    display: { form: 'inline' },
     properties: {
-      name: { type: 'enum', options: ACTION_NAME_OPTIONS, required: true },
+      name: {
+        display: { label: 'primary' },
+        type: 'enum',
+        options: ACTION_NAME_OPTIONS,
+        required: true
+      },
       when: { type: 'string' }
     }
   },
@@ -71,8 +77,10 @@ var eventResource = {
   type: 'variegated',
   key: 'type',
   common: {
+    display: { form: 'inline' },
     properties: {
       type: {
+        display: { label: 'primary' },
         type: 'enum',
         options: Object.keys(EventsRegistry),
         required: true
