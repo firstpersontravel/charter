@@ -12,6 +12,7 @@ module.exports = {
   PlayerCore: require('./cores/player'),
   ResourcesRegistry: require('./registries/resources'),
   SceneCore: require('./cores/scene'),
+  SubresourcesRegistry: require('./registries/subresources'),
   TextUtil: require('./utils/text'),
   TimeUtil: require('./utils/time'),
   TripCore: require('./cores/trip'),

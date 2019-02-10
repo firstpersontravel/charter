@@ -136,7 +136,7 @@ describe('apiRestRoutes', () => {
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
-        limit: 100,
+        limit: 250,
         offset: 1,
         order: [['id', 'ASC']],
         where: {}
@@ -152,7 +152,7 @@ describe('apiRestRoutes', () => {
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
-        limit: 100,
+        limit: 250,
         offset: 1,
         order: [['title', 'DESC']],
         where: {}
@@ -198,7 +198,7 @@ describe('apiRestRoutes', () => {
 
         // Assert find call made
         assert.deepStrictEqual(Model.findAll.firstCall.args, [{
-          limit: 100,
+          limit: 250,
           offset: 0,
           order: [['id', 'ASC']],
           where: { [fieldName]: whereValue }
@@ -234,7 +234,7 @@ describe('apiRestRoutes', () => {
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
-        limit: 100,
+        limit: 250,
         offset: 1,
         order: [['id', 'ASC']],
         where: { title: { [Sequelize.Op.or]: ['x', 'y'] } }
@@ -250,7 +250,7 @@ describe('apiRestRoutes', () => {
 
       // Assert find call made
       sinon.assert.calledWith(Model.findAll, {
-        limit: 100,
+        limit: 250,
         offset: 1,
         order: [['id', 'ASC']],
         where: { title: { [Sequelize.Op.or]: ['x', 'y'] } }
@@ -297,7 +297,7 @@ describe('apiRestRoutes', () => {
       // Check response
       assert.strictEqual(res.statusCode, 200);
       assert.deepStrictEqual(Model.findAll.firstCall.args, [{
-        limit: 100,
+        limit: 250,
         offset: 0,
         order: [['id', 'ASC']],
         where: { isShiny: false }

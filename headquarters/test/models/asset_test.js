@@ -4,13 +4,14 @@ const moment = require('moment');
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
-function createMediaAsset(type, path) {
+function createMediaAsset(medium, path) {
   return models.Asset.build({
     orgId: 100,
     experienceId: 2,
-    type: type,
+    type: 'media',
     name: 'test',
     data: {
+      medium: medium,
       path: path,
       url: `https://aws.com/${path}`
     },
@@ -32,7 +33,7 @@ describe('Asset', () => {
       updatedAt: moment.utc()
     });
     await assertValidation(invalidAsset, {
-      type: 'must be one of directions, audio, video, image'
+      type: 'must be one of directions, media'
     });
   });
 
@@ -112,90 +113,46 @@ describe('Asset', () => {
     });
   });
 
-  describe('audio', () => {
-    it('validates with all fields present', async () => {
+  describe('media', () => {
+    it('validates with correct extension', async () => {
       await createMediaAsset('audio', 'a/b/c.mp3').validate();
+      await createMediaAsset('video', 'a/b/c.MP4').validate();
+      await createMediaAsset('image', 'a/b/c.jpEg').validate();
+    });
+
+    it('requires valid medium', async () => {
+      const mediaAsset = createMediaAsset('audio', 'a.mp3');
+      mediaAsset.data = { path: 'a.mp3', url: 'test', medium: 'argh' };
+      await assertValidation(mediaAsset, {
+        media: 'data.medium is not one of enum values: audio,video,image'
+      });      
     });
 
     it('requires path', async () => {
-      const audioAsset = createMediaAsset('audio', 'a/b/c.mp4');
-      audioAsset.data = { path: null, url: 'test' };
-      await assertValidation(audioAsset, {
-        audio: 'data.path is not of a type(s) string'
+      const mediaAsset = createMediaAsset('audio', 'a/b/c.mp3');
+      mediaAsset.data = { path: null, url: 'test', medium: 'audio' };
+      await assertValidation(mediaAsset, {
+        media: 'data.path is not of a type(s) string'
       });
     });
 
     it('requires url', async () => {
-      const audioAsset = createMediaAsset('audio', 'a/b/c.mp4');
-      audioAsset.data = { path: 'abc.mp3', url: null };
-      await assertValidation(audioAsset, {
-        audio: 'data.url is not of a type(s) string'
+      const mediaAsset = createMediaAsset('video', 'a/b/c.mp4');
+      mediaAsset.data = { path: 'abc.mp4', url: null, medium: 'video' };
+      await assertValidation(mediaAsset, {
+        media: 'data.url is not of a type(s) string'
       });
     });
 
-    it('disallows mp4', async () => {
-      const audioAsset = createMediaAsset('audio', 'a/b/c.mp4');
-      await assertValidation(audioAsset, {
-        audio: 'data.path does not match pattern "\\\\.(mp3|m4a)$"'
+    it('disallows incorrect extension', async () => {
+      await assertValidation(createMediaAsset('audio', 'a/b/c.mp4'), {
+        media: 'data.path for audio must have one of the following extensions: mp3, m4a'
       });
-    });
-  });
-
-  describe('video', () => {
-    it('validates with all fields present', async () => {
-      await createMediaAsset('video', 'a/b/c.mp4').validate();
-    });
-
-    it('requires path', async () => {
-      const videoAsset = createMediaAsset('video', 'a/b/c.mp4');
-      videoAsset.data = { path: null, url: 'test' };
-      await assertValidation(videoAsset, {
-        video: 'data.path is not of a type(s) string'
+      await assertValidation(createMediaAsset('video', 'a/b/c.abc'), {
+        media: 'data.path for video must have one of the following extensions: mp4'
       });
-    });
-
-    it('requires url', async () => {
-      const videoAsset = createMediaAsset('video', 'a/b/c.mp4');
-      videoAsset.data = { path: 'abc.mp4', url: null };
-      await assertValidation(videoAsset, {
-        video: 'data.url is not of a type(s) string'
-      });
-    });
-
-    it('disallows png', async () => {
-      const videoAsset = createMediaAsset('video', 'a/b/c.png');
-      await assertValidation(videoAsset, {
-        video: 'data.path does not match pattern "\\\\.(mp4)$"'
-      });
-    });
-  });
-
-  describe('image', () => {
-    it('validates with all fields present', async () => {
-      await createMediaAsset('image', 'a/b/c.png').validate();
-      await createMediaAsset('image', 'a/b/c.jpg').validate();
-    });
-
-    it('requires path', async () => {
-      const imageAsset = createMediaAsset('image', 'a/b/c.png');
-      imageAsset.data = { path: null, url: 'test' };
-      await assertValidation(imageAsset, {
-        image: 'data.path is not of a type(s) string'
-      });
-    });
-
-    it('requires url', async () => {
-      const imageAsset = createMediaAsset('image', 'a/b/c.png');
-      imageAsset.data = { path: 'abc.png', url: null };
-      await assertValidation(imageAsset, {
-        image: 'data.url is not of a type(s) string'
-      });
-    });
-
-    it('disallows m4a', async () => {
-      const imageAsset = createMediaAsset('image', 'a/b/c.m4a');
-      await assertValidation(imageAsset, {
-        image: 'data.path does not match pattern "\\\\.(jpg|jpeg|png)$"'
+      await assertValidation(createMediaAsset('image', 'a/b/c.mp4'), {
+        media: 'data.path for image must have one of the following extensions: jpg, jpeg, png'
       });
     });
   });

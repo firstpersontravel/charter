@@ -8,7 +8,7 @@ const errors = require('../errors');
 
 const logger = config.logger.child({ name: 'routes.api_rest' });
 
-const LIST_COUNT_DEFAULT = 100;
+const LIST_COUNT_DEFAULT = 250;
 
 /**
  * Serialization / deserialization functions

@@ -178,7 +178,7 @@ function RouteOptions(script, route, directions, createInstance, updateInstance)
   );
 }
 
-export default function AssetsForRoute({ script, resource, assets,
+export default function RouteAssets({ script, resource, assets,
   createInstance, updateInstance }) {
   const directions = _(assets)
     .filter({ type: 'directions' })
@@ -207,7 +207,7 @@ export default function AssetsForRoute({ script, resource, assets,
   );
 }
 
-AssetsForRoute.propTypes = {
+RouteAssets.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   assets: PropTypes.array.isRequired,

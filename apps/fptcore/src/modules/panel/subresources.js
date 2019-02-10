@@ -5,7 +5,7 @@ var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'quest'];
 var PANEL_CLASSES = {
   audio_foreground: {
     properties: {
-      path: { type: 'media' }
+      path: { type: 'media', medium: 'audio' }
     }
   },
   button: {
@@ -54,7 +54,7 @@ var PANEL_CLASSES = {
   },
   image: {
     properties: {
-      path: { type: 'media', required: true },
+      path: { type: 'media', medium: 'image', required: true },
       style: { type: 'enum', options: PANEL_IMAGE_STYLE_OPTIONS }
     }
   },
@@ -92,8 +92,8 @@ var PANEL_CLASSES = {
   },
   video: {
     properties: {
-      path: { type: 'media', required: true },
-      poster: { type: 'media' }
+      path: { type: 'media', medium: 'video', required: true },
+      poster: { type: 'media', medium: 'image' }
     }
   },
   yesno: {
