@@ -2,11 +2,12 @@ import { connect } from 'react-redux';
 
 import ResourceShow from '../components/ResourceShow';
 import { createInstance, updateInstance } from '../../actions';
-import { lookupScript, lookupScripts } from './utils';
+import { lookupAssets, lookupScript, lookupScripts } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
   script: lookupScript(state, ownProps),
-  scripts: lookupScripts(state, ownProps)
+  scripts: lookupScripts(state, ownProps),
+  assets: lookupAssets(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

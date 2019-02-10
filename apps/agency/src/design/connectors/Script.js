@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import Script from '../components/Script';
-import { updateInstance } from '../../actions';
+import { listCollection, updateInstance } from '../../actions';
 import { lookupScript, lookupScripts } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -10,6 +10,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  listCollection: (...args) => dispatch(listCollection(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 

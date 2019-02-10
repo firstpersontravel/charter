@@ -14,7 +14,8 @@
   "globals": {
     "describe": true,
     "it": true,
-    "window": true
+    "window": true,
+    "google": true
   },
   "rules": {
     "object-shorthand": [2, "never"],

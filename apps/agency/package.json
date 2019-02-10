@@ -9,6 +9,7 @@
     "build": "webpack"
   },
   "dependencies": {
+    "@sentry/browser": "^4.5.3",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",

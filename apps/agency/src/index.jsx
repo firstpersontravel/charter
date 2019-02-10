@@ -5,10 +5,16 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import * as Sentry from '@sentry/browser';
 // import createLogger from 'redux-logger';
 
 import Router from './router';
 import reducers from './reducers';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.SENTRY_ENVIRONMENT
+});
 
 // const loggerMiddleware = createLogger();
 

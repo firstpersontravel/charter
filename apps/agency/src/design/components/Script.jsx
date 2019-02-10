@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
 import { sections } from '../utils/section-utils';
+import { withLoader } from '../../loader-utils';
 
-export default class Script extends Component {
+class Script extends Component {
   constructor(props) {
     super(props);
     this.handleActivateScript = this.handleActivateScript.bind(this);
@@ -107,14 +108,6 @@ export default class Script extends Component {
             </Link>
             {sceneLinks}
           </div>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="nav-link"
-            activeClassName="active"
-            to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/assets`}>
-            Assets
-          </Link>
         </li>
       </ul>
     );
@@ -231,3 +224,10 @@ Script.propTypes = {
   params: PropTypes.object.isRequired,
   updateInstance: PropTypes.func.isRequired
 };
+
+export default withLoader(Script, ['script.id'], (props) => {
+  props.listCollection('assets', {
+    experienceId: props.script.experienceId,
+    orgId: props.script.orgId
+  });
+});

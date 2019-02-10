@@ -2,6 +2,18 @@ const path = require('path');
 const webpack = require('webpack');
 
 const isProduction = process.env.NODE_ENV === 'production';
+const nodeEnv = isProduction ? 'production' : 'development';
+
+const plugins = [
+  new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: JSON.stringify(nodeEnv),
+      GOOGLE_API_KEY: JSON.stringify(process.env.FRONTEND_GOOGLE_API_KEY),
+      SENTRY_DSN: JSON.stringify(process.env.FRONTEND_SENTRY_DSN),
+      SENTRY_ENVIRONMENT: JSON.stringify(process.env.FRONTEND_SENTRY_ENVIRONMENT)
+    }
+  })
+];
 
 const prodPlugins = [
   new webpack.optimize.UglifyJsPlugin({
@@ -9,13 +21,10 @@ const prodPlugins = [
     compress: {
       warnings: false
     }
-  }),
-  new webpack.DefinePlugin({
-    'process.env': {
-      NODE_ENV: JSON.stringify('production')
-    }
   })
 ];
+
+const allPlugins = (isProduction ? prodPlugins : []).concat(plugins);
 
 module.exports = {
   devtool: isProduction ? 'source-map' : 'cheap-source-map',
@@ -40,7 +49,7 @@ module.exports = {
     uriparser: 'empty',
     child_process: 'empty'
   },
-  plugins: isProduction ? prodPlugins : [],
+  plugins: allPlugins,
   module: {
     rules: [{
     //   enforce: 'pre',

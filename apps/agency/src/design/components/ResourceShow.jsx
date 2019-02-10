@@ -6,10 +6,14 @@ import { Link, browserHistory } from 'react-router';
 import { TextUtil, ResourcesRegistry } from 'fptcore';
 
 import ResourceView from '../partials/ResourceView';
+import ResourceExtras from '../partials/ResourceExtras';
 import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
 import { titleForResource } from '../utils/text-utils';
 import { getContentList, urlForResource } from '../utils/section-utils';
 import { assembleReverseReferences } from '../utils/graph-utils';
+
+// Characters for resource ids.
+const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz';
 
 export default class ResourceShow extends Component {
   constructor(props) {
@@ -34,12 +38,16 @@ export default class ResourceShow extends Component {
     }
   }
 
-  getNewResourceName() {
+  getResourceType() {
     const collectionName = this.props.params.collectionName;
     const resourceType = TextUtil.singularize(collectionName);
-    const idChars = 'abcdefghijklmnopqrstuvwxyz';
+    return resourceType;
+  }
+
+  getNewResourceName() {
+    const resourceType = this.getResourceType();
     const newId = _.range(6).map(i => (
-      idChars.charAt(Math.floor(Math.random() * idChars.length))
+      ID_CHARS.charAt(Math.floor(Math.random() * ID_CHARS.length))
     )).join('');
     return `${resourceType}-${newId}`;
   }
@@ -304,6 +312,18 @@ export default class ResourceShow extends Component {
     );
   }
 
+  renderAssets() {
+    return (
+      <ResourceExtras
+        assets={this.props.assets}
+        resourceType={this.getResourceType()}
+        resource={this.getResource()}
+        script={this.props.script}
+        createInstance={this.props.createInstance}
+        updateInstance={this.props.updateInstance} />
+    );
+  }
+
   render() {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
@@ -342,6 +362,7 @@ export default class ResourceShow extends Component {
       <div>
         {this.renderParentPaths(parenthoodPaths)}
         {this.renderResource(canDelete)}
+        {this.renderAssets()}
         {this.renderChildren(childrenStrs)}
         {this.renderReverseRefs(reverseRefs)}
       </div>
@@ -350,6 +371,7 @@ export default class ResourceShow extends Component {
 }
 
 ResourceShow.propTypes = {
+  assets: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
   script: PropTypes.object.isRequired,
   // eslint-disable-next-line react/no-unused-prop-types

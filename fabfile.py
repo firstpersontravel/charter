@@ -713,7 +713,7 @@ def copy_environment():
 @roles('app')
 def build_apps():
     with cd(env.release_path):
-        run('yarn run build')
+        run('export $(cat ./env | xargs) && yarn run build')
 
 
 #######################################################

@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
+import { Link } from 'react-router';
 
 import { TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
+import { urlForResource } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
 
 const booleanLabels = ['No', 'Yes'];
@@ -282,6 +284,15 @@ export default class FieldRenderer {
     let label = internalEmpty(spec);
     const collection = this.script.content[spec.collection];
     const resource = _.find(collection, { name: value });
+
+    const link = resource ? (
+      <Link
+        style={{ marginLeft: '0.25em' }}
+        to={urlForResource(this.script, spec.collection, value)}>
+        <i className="fa fa-external-link" />
+      </Link>
+    ) : null;
+
     if (resource) {
       const title = titleForResource(this.script.content, spec.collection,
         resource);
@@ -300,7 +311,7 @@ export default class FieldRenderer {
     // If the reference is a parent, then can't change after creation.
     if ((spec.parent && !this.isNew) ||
         (opts && opts.editable === false)) {
-      return label;
+      return <span>{label}{link}</span>;
     }
 
     const filtered = _.filter(collection, (rel) => {
@@ -327,8 +338,13 @@ export default class FieldRenderer {
       label: titleForResource(this.script.content, spec.collection, rel)
     })));
 
-    return this.internalEnumlike(spec, existing, name, path, opts, choices,
-      clean, label);
+    return (
+      <span>
+        {this.internalEnumlike(spec, existing, name, path, opts, choices,
+          clean, label)}
+        {link}
+      </span>
+    );
   }
 
   renderList(spec, value, name, path, opts) {
