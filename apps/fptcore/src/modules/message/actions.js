@@ -10,10 +10,10 @@ var custom_message = {
     to_role_name: { required: true, type: 'reference', collection: 'roles' },
     message_medium: { required: true, type: 'enum', options: MESSAGE_MEDIUM_OPTIONS },
     message_content: { required: true, type: 'string' },
-    location_latitude: { required: false, type: 'number' },
-    location_longitude: { required: false, type: 'number' },
-    location_accuracy: { required: false, type: 'number' },
-    suppress_relay_id: { required: false, type: 'number' }
+    location_latitude: { required: false, type: 'number', display: { hidden: true } },
+    location_longitude: { required: false, type: 'number', display: { hidden: true } },
+    location_accuracy: { required: false, type: 'number', display: { hidden: true } },
+    suppress_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
   phraseForm: [
     'from_role_name', 'to_role_name', 'message_medium', 'message_content'
@@ -61,8 +61,18 @@ var custom_message = {
 
 var send_message = {
   params: {
-    message_name: { required: true, type: 'reference', collection: 'messages' },
-    to_role_name: { required: false, type: 'reference', collection: 'roles' }
+    message_name: {
+      required: true,
+      type: 'reference',
+      collection: 'messages',
+      display: { primary: true }
+    },
+    to_role_name: {
+      required: false,
+      type: 'reference',
+      collection: 'roles',
+      display: { hidden: true }
+    }
   },
   phraseForm: ['message_name', 'to_role_name'],
   applyAction: function(params, actionContext) {

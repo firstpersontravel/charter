@@ -278,7 +278,7 @@ ParamValidators.variegated = function(script, name, spec, param) {
   var commonClass = spec.common;
   var variedClass = spec.classes[variety];
   var mergedClass = _.merge({}, commonClass, variedClass);
-  var prefix = name + '{' + keyName + '=' + variety + '}.';
+  var prefix = name + '.';
   return ParamValidators.validateResource(script, mergedClass, param, prefix);
 };
 
@@ -315,7 +315,9 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
   paramNames.forEach(function(paramName) {
     var paramSpec = paramsSpec[paramName];
     var param = isPassthrough ? params : params[paramName];
-    var paramNameWithPrefix = prefix + paramName;
+    var paramNameWithPrefix = isPassthrough
+      ? prefix.replace(/\.$/, '')
+      : prefix + paramName;
     if (!paramSpec) {
       throw new Error('Empty param spec for param "' + paramNameWithPrefix + '".');
     }

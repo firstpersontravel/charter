@@ -5,6 +5,7 @@ import { Link, browserHistory } from 'react-router';
 
 import { TextUtil, ResourcesRegistry } from 'fptcore';
 
+import ResourceBadge from '../partials/ResourceBadge';
 import ResourceView from '../partials/ResourceView';
 import ResourceExtras from '../partials/ResourceExtras';
 import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
@@ -196,9 +197,7 @@ export default class ResourceShow extends Component {
                 `/${sliceType}/${sliceName}` +
                 `/${collectionName}/${resourceName}`
               }>
-              <span className="badge badge-secondary">
-                {TextUtil.titleForKey(resourceType)}
-              </span>
+              <ResourceBadge resourceType={resourceType} />
               &nbsp;
               {titleForResource(script.content, collectionName, resource)}
             </Link>
@@ -254,9 +253,7 @@ export default class ResourceShow extends Component {
         <Link
           className="text-dark"
           to={urlForResource(script, collectionName, resourceName)}>
-          <span className="badge badge-secondary">
-            {TextUtil.titleForKey(resourceType)}
-          </span>
+          <ResourceBadge resourceType={resourceType} />
           &nbsp;
           {titleForResource(script.content, collectionName, resource)}
         </Link>

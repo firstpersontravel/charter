@@ -1,7 +1,12 @@
 var send_to_page = {
   phraseForm: ['role_name', 'page_name'],
   params: {
-    role_name: { required: true, type: 'reference', collection: 'roles' },
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles',
+      display: { primary: true }
+    },
     page_name: { required: true, type: 'reference', collection: 'pages',
       allowNull: true }
   },

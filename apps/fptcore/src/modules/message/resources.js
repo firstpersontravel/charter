@@ -9,7 +9,7 @@ var message = {
     from: { type: 'reference', collection: 'roles', required: true },
     to: { type: 'reference', collection: 'roles' },
     content: { type: 'string', required: true },
-    read: { type: 'boolean', default: false }
+    read: { type: 'boolean', default: false, display: { hidden: true } }
   }
 };
 

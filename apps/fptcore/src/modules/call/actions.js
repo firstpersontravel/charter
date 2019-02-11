@@ -31,12 +31,21 @@ var add_to_call = {
 
 var initiate_call = {
   params: {
-    to_role_name: { required: true, type: 'reference', collection: 'roles' },
-    as_role_name: { required: true, type: 'reference', collection: 'roles' },
+    to_role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles'
+    },
+    as_role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles'
+    },
     detect_voicemail: {
       required: false,
       type: 'enum',
-      options: ['detect_voicemail']
+      options: ['detect_voicemail'],
+      display: { hidden: true }
     }
   },
   phraseForm: ['to_role_name', 'as_role_name', 'detect_voicemail'],

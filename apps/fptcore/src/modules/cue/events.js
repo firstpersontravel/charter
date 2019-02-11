@@ -4,7 +4,12 @@ module.exports = {
   cue_signaled: {
     parentResourceParam: 'cue',
     specParams: {
-      cue: { required: true, type: 'reference', collection: 'cues' }
+      cue: {
+        required: true,
+        type: 'reference',
+        collection: 'cues',
+        display: { primary: true }
+      }
     },
     matchEvent: function(spec, event, actionContext) {
       return spec.cue === event.cue;

@@ -3,7 +3,12 @@ var moment = require('moment');
 
 var pause_audio = {
   params: {
-    role_name: { required: true, type: 'reference', collection: 'roles' }
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles',
+      display: { primary: true }
+    }
   },
   phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {
@@ -27,7 +32,12 @@ var pause_audio = {
 
 var play_audio = {
   params: {
-    role_name: { required: true, type: 'reference', collection: 'roles' },
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles',
+      display: { primary: true }
+    },
     audio_name: { required: true, type: 'reference', collection: 'audio' }
   },
   phraseForm: ['role_name', 'audio_name'],
@@ -57,7 +67,12 @@ var play_audio = {
 
 var resume_audio = {
   params: {
-    role_name: { required: true, type: 'reference', collection: 'roles' }
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles',
+      display: { primary: true }
+    }
   },
   phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {
@@ -83,7 +98,12 @@ var resume_audio = {
 
 var stop_audio = {
   params: {
-    role_name: { required: true, type: 'reference', collection: 'roles' }
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles',
+      display: { primary: true }
+    }
   },
   phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {

@@ -532,25 +532,25 @@ describe('ParamValidators', () => {
     it('warns if invalid items in common class', () => {
       const invalid = { family: 'snake', name: false, isVenomous: true };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'String param "s{family=snake}.name" should be a string.');
+        'String param "s.name" should be a string.');
     });
 
     it('warns if invalid items in varied class', () => {
       const invalid = { family: 'snake', isVenomous: 'abc' };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Boolean param "s{family=snake}.isVenomous" ("abc") should be true or false.');
+        'Boolean param "s.isVenomous" ("abc") should be true or false.');
     });
 
     it('warns if extra items', () => {
       const invalid = { family: 'snake', isVenomous: false, extra: 'hi' };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Unexpected param "s{family=snake}.extra" (expected one of: family, name, isVenomous).');
+        'Unexpected param "s.extra" (expected one of: family, name, isVenomous).');
     });
 
     it('warns if has items from non-chosen variety', () => {
       const invalid = { family: 'snake', isVenomous: false, numFins: 3 };
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Unexpected param "s{family=snake}.numFins" (expected one of: family, name, isVenomous).');
+        'Unexpected param "s.numFins" (expected one of: family, name, isVenomous).');
     });
   });
 

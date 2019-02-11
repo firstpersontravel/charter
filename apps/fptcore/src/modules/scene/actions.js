@@ -9,7 +9,12 @@ var start_scene = {
     };
   },
   params: {
-    scene_name: { required: true, type: 'reference', collection: 'scenes' }
+    scene_name: {
+      required: true,
+      type: 'reference',
+      collection: 'scenes',
+      display: { primary: true }
+    }
   },
   applyAction: function(params, actionContext) {
     var newSceneName = params.scene_name;

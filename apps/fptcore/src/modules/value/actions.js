@@ -4,8 +4,17 @@ var EvalCore = require('../../cores/eval');
 
 var set_value = {
   params: {
-    value_ref: { required: true, type: 'simpleAttribute' },
-    new_value_ref: { required: true, type: 'lookupable' }
+    value_ref: {
+      required: true,
+      type: 'simpleAttribute',
+      title: 'Name',
+      display: { primary: true }
+    },
+    new_value_ref: {
+      required: true,
+      type: 'lookupable',
+      title: 'New Value'
+    }
   },
   phraseForm: ['value_ref', 'new_value_ref'],
   applyAction: function(params, actionContext) {

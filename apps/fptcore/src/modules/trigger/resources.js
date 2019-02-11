@@ -17,12 +17,19 @@ var singleActionParam = {
     display: { form: 'inline' },
     properties: {
       name: {
-        display: { label: 'primary' },
+        display: { primary: true, placeholder: 'Action' },
         type: 'enum',
         options: ACTION_NAME_OPTIONS,
         required: true
       },
-      when: { type: 'string' }
+      when: {
+        type: 'string',
+        display: {
+          primary: true,
+          last: true,
+          placeholder: 'Immediately'
+        }
+      }
     }
   },
   classes: actionsClasses
@@ -45,7 +52,12 @@ var elseIfParam = {
 
 var conditionalActionResource = {
   properties: {
-    name: { type: 'enum', options: ACTION_NAME_OPTIONS, required: true },
+    name: {
+      type: 'enum',
+      options: ACTION_NAME_OPTIONS,
+      required: true,
+      display: { primary: true, placeholder: 'Action' }
+    },
     if: { type: 'ifClause', required: true },
     actions: actionListParam,
     elseifs: { type: 'list', items: elseIfParam },
@@ -80,7 +92,7 @@ var eventResource = {
     display: { form: 'inline' },
     properties: {
       type: {
-        display: { label: 'primary' },
+        display: { primary: true },
         type: 'enum',
         options: Object.keys(EventsRegistry),
         required: true

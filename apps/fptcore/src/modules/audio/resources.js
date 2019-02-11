@@ -3,7 +3,7 @@ var audio = {
     name: { type: 'name', required: true },
     title: { type: 'string' },
     duration: { type: 'number', required: true },
-    path: { type: 'media', required: true, extensions: ['m4a', 'mp3'] }
+    path: { type: 'media', required: true, medium: 'audio' }
   }
 };
 

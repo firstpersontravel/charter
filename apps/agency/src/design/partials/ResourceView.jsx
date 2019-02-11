@@ -9,6 +9,7 @@ import { titleForResource } from '../utils/text-utils';
 import { getChildResourceTypes } from '../utils/graph-utils';
 import { getSliceContent } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
+import ResourceBadge from './ResourceBadge';
 import FieldRenderer from './FieldRenderer';
 
 // Hide title, field, and name
@@ -200,9 +201,8 @@ export default class ResourceView extends Component {
           {showApply ? applyBtn : null}
           {(!hasPendingChanges && !isNew) ? deleteBtnToShow : null}
         </div>
-        <span className="badge badge-info">
-          {TextUtil.titleForKey(resourceType)}
-        </span>&nbsp;
+        <ResourceBadge resourceType={resourceType} />
+        &nbsp;
         {this.renderTitle(resource)}
       </h5>
     );

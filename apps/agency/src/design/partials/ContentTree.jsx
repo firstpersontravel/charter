@@ -6,6 +6,7 @@ import { IndexLink, Link } from 'react-router';
 import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
+import ResourceBadge from './ResourceBadge';
 
 function walkContentTree(contentTree, path, iteree) {
   _.each(contentTree, (value, key) => {
@@ -49,7 +50,7 @@ export default class ContentTree extends Component {
   }
 
   renderItem(collectionName, item, path, isInContentList) {
-    const resourceName = TextUtil.singularize(collectionName);
+    const resourceType = TextUtil.singularize(collectionName);
     const script = this.props.script;
     const itemTitle = titleForResource(script.content, collectionName, item);
     const prefix = path.map(pathEntry => (
@@ -67,9 +68,7 @@ export default class ContentTree extends Component {
           `/${collectionName}/${item.name}`
         }>
         {prefix}
-        <span className={`badge ${isInContentList ? 'badge-info' : 'badge-secondary'}`}>
-          {TextUtil.titleForKey(resourceName)}
-        </span> {itemTitle}
+        <ResourceBadge resourceType={resourceType} /> {itemTitle}
       </Link>
     );
   }
@@ -89,9 +88,9 @@ export default class ContentTree extends Component {
             `/${collectionName}/new`
           }>
           <span className="faint">+</span>&nbsp;
-          <span className="badge badge-info">
-            {TextUtil.titleForKey(resourceType)}
-          </span>&nbsp;<span className="faint">Add {resourceType}</span>
+          <ResourceBadge resourceType={resourceType} />
+          &nbsp;
+          <span className="faint">Add {resourceType}</span>
         </IndexLink>
       </li>
     );

@@ -2,8 +2,8 @@ module.exports = {
   query_responded: {
     specParams: {
       query: { required: true, type: 'string' },
-      partial: { required: false, type: 'boolean' },
-      final: { required: false, type: 'boolean' }
+      partial: { required: false, type: 'boolean', display: { hidden: true } },
+      final: { required: false, type: 'boolean', display: { hidden: true } }
     },
     matchEvent: function(spec, event, actionContext) {
       if (spec.partial === true && event.partial === false) {

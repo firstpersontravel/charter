@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
-import { Link } from 'react-router';
 
 import { TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
-import { urlForResource } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
+import ResourceBadge from './ResourceBadge';
 
 const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
   'variegated'];
@@ -31,13 +30,28 @@ function stringOrYesNo(val) {
 }
 
 function internalEmpty(spec) {
-  let label = 'Empty';
+  let label = _.get(spec, 'display.placeholder') || 'Empty';
+  if (spec.type === 'ifClause') {
+    label = 'Always';
+  }
   if (!_.isUndefined(spec.default)) {
     label = `${stringOrYesNo(spec.default)} by default`;
   }
   return (
     <em className="faint">{label}</em>
   );
+}
+
+function labelForSpec(spec, key) {
+  if (spec.title) {
+    return spec.title;
+  }
+  let simpleKey = key.replace('_name', '');
+  if (spec.type === 'reference') {
+    const resourceType = TextUtil.singularize(spec.collection);
+    simpleKey = simpleKey.replace(`_${resourceType}`, '');
+  }
+  return _.startCase(simpleKey);
 }
 
 const newItemsForSpecType = {
@@ -270,7 +284,11 @@ export default class FieldRenderer {
 
   renderEnum(spec, value, name, path, opts) {
     const choices = spec.options.map(opt => ({ value: opt, label: opt }));
-    const label = <span style={{ whiteSpace: 'nowrap' }}>{value}</span>;
+    const label = (
+      <span style={{ whiteSpace: 'nowrap' }}>
+        {value || internalEmpty(spec)}
+      </span>
+    );
     return this.internalEnumlike(spec, value, name, path, opts, choices, null,
       label);
   }
@@ -290,23 +308,14 @@ export default class FieldRenderer {
     const collection = this.script.content[spec.collection];
     const resource = _.find(collection, { name: value });
 
-    const link = resource ? (
-      <Link
-        style={{ marginLeft: '0.25em' }}
-        to={urlForResource(this.script, spec.collection, value)}>
-        <i className="fa fa-external-link" />
-      </Link>
-    ) : null;
-
     if (resource) {
+      const resourceType = TextUtil.singularize(spec.collection);
       const title = titleForResource(this.script.content, spec.collection,
         resource);
       label = (
-        <span>
-          <span className="badge badge-secondary">
-            {TextUtil.titleForKey(TextUtil.singularize(spec.collection))}
-          </span>&nbsp;
-          {title}
+        <span style={{ whiteSpace: 'nowrap' }}>
+          <ResourceBadge resourceType={resourceType} />
+          &nbsp;{title}
         </span>
       );
     } else if (value === 'null') {
@@ -316,7 +325,7 @@ export default class FieldRenderer {
     // If the reference is a parent, then can't change after creation.
     if ((spec.parent && !this.isNew) ||
         (opts && opts.editable === false)) {
-      return <span>{label}{link}</span>;
+      return label;
     }
 
     const filtered = _.filter(collection, (rel) => {
@@ -343,13 +352,8 @@ export default class FieldRenderer {
       label: titleForResource(this.script.content, spec.collection, rel)
     })));
 
-    return (
-      <span>
-        {this.internalEnumlike(spec, existing, name, path, opts, choices,
-          clean, label)}
-        {link}
-      </span>
-    );
+    return this.internalEnumlike(spec, existing, name, path, opts, choices,
+      clean, label);
   }
 
   renderList(spec, value, name, path, opts) {
@@ -374,11 +378,13 @@ export default class FieldRenderer {
         </div>
       );
     });
+    const listIsEmpty = !value || value.length === 0;
     const newIndex = value ? value.length : 0;
     const newPath = `${path}[${newIndex}]`;
     const newItem = newItemsForSpecType[spec.items.type];
+    const newBtnStyle = { display: listIsEmpty ? 'inline' : 'block' };
     const newItemBtn = (
-      <div>
+      <div style={newBtnStyle}>
         <button
           className="btn btn-sm btn-outline-secondary"
           onClick={() => this.onPropUpdate(newPath, newItem)}>
@@ -387,7 +393,7 @@ export default class FieldRenderer {
       </div>
     );
     return (
-      <div>
+      <div style={newBtnStyle}>
         {items}
         {newItemBtn}
       </div>
@@ -398,7 +404,9 @@ export default class FieldRenderer {
     const items = _.map(value, (val, key) => (
       // eslint-disable-next-line react/no-array-index-key
       <div key={key}>
-        <button className="btn btn-xs btn-outline-secondary">
+        <button
+          onClick={() => this.onPropUpdate(`${path}[${key}]`, null)}
+          className="btn btn-xs btn-outline-secondary">
           <i className="fa fa-minus" />
         </button>
         &nbsp;
@@ -431,8 +439,12 @@ export default class FieldRenderer {
   }
 
   internalObjectKey(spec, value, name, path, opts, keySpec, key) {
+    if (_.get(keySpec, 'display.hidden')) {
+      return null;
+    }
+
     const isInline = _.get(spec, 'display.form') === 'inline';
-    const inlineStyle = { display: 'inline-block', marginRight: '0.25em' };
+    const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
 
     const itemStyle = isInline ? inlineStyle : {};
     const itemPath = `${path}${path ? '.' : ''}${key}`;
@@ -462,11 +474,8 @@ export default class FieldRenderer {
       }
     }
 
-    const shouldShowLabel = (
-      _.get(keySpec, 'display.label') !== 'primary' &&
-      _.get(keySpec, 'display.hidden') !== true
-    );
-    const labelText = keySpec.title || _.startCase(key);
+    const shouldShowLabel = !_.get(keySpec, 'display.primary');
+    const labelText = labelForSpec(keySpec, key);
     const label = shouldShowLabel ? (
       <strong style={{ marginRight: '0.25em' }}>
         {labelText}:
@@ -487,8 +496,12 @@ export default class FieldRenderer {
   }
 
   renderObject(spec, value, name, path, opts) {
-    const renderedItems = _.map(spec.properties, (keySpec, key) => (
-      this.internalObjectKey(spec, value, name, path, opts, keySpec, key)
+    const props = _(Object.keys(spec.properties))
+      .sortBy(key => !!_.get(spec.properties[key], 'display.last'))
+      .value();
+    const renderedItems = _.map(props, key => (
+      this.internalObjectKey(spec, value, name, path, opts,
+        spec.properties[key], key)
     ));
     return (
       <div>

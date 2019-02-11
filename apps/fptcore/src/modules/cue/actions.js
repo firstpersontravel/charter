@@ -1,6 +1,11 @@
 var signal_cue = {
   params: {
-    cue_name: { required: true, type: 'reference', collection: 'cues' }
+    cue_name: {
+      required: true,
+      type: 'reference',
+      collection: 'cues',
+      display: { primary: true }
+    }
   },
   phraseForm: ['cue_name'],
   eventForParams: function(params) {
