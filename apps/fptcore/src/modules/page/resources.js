@@ -10,7 +10,12 @@ var page = {
     title: { type: 'string', required: true },
     appearance: { type: 'reference', collection: 'appearances' },
     directive: { type: 'string' },
-    layout: { type: 'reference', collection: 'layouts', allowNull: true },
+    layout: {
+      type: 'reference',
+      collection: 'layouts',
+      allowNull: true,
+      display: { hidden: true }
+    },
     waypoint: { type: 'reference', collection: 'waypoints' },
     route: { type: 'reference', collection: 'routes' },
     panels: {

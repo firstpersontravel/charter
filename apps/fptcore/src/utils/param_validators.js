@@ -1,5 +1,6 @@
 var _ = require('lodash');
 
+var EvalCore = require('../cores/eval');
 var TimeUtil = require('../utils/time');
 
 var ParamValidators = {};
@@ -177,6 +178,11 @@ ParamValidators.ifClause = function(script, name, spec, param) {
   }
   if (!param) {
     return ['If param "' + name + '" should not be blank.'];
+  }
+  try {
+    EvalCore.if({}, param);
+  } catch (err) {
+    return [err.message];
   }
 };
 

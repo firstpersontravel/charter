@@ -89,7 +89,11 @@ export default class FieldRenderer {
   internalStringlike(spec, value, name, path, opts, validate, clean) {
     const validateFunc = validate || (val => true);
     const cleanFunc = clean || (val => val);
-    const label = value || internalEmpty(spec);
+    const allowNewlines = !!_.get(spec, 'display.allowNewlines');
+    const textLabel = allowNewlines ? (
+      <div style={{ whiteSpace: 'pre' }}>{value}</div>
+    ) : value;
+    const label = value ? textLabel : internalEmpty(spec);
     if (opts && opts.editable === false) {
       return value;
     }

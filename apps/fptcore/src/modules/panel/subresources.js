@@ -86,7 +86,11 @@ var PANEL_CLASSES = {
   },
   text: {
     properties: {
-      text: { type: 'string', required: true },
+      text: {
+        type: 'string',
+        required: true,
+        display: { allowNewlines: true }
+      },
       style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
     }
   },
