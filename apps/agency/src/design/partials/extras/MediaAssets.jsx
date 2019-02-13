@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactS3Uploader from 'react-s3-uploader';
 
-import { SubresourcesRegistry } from 'fptcore';
+import { ResourcesRegistry, SubresourcesRegistry } from 'fptcore';
 
 const MEDIA_MIME_TYPES = {
   image: 'image/*',
@@ -12,22 +12,23 @@ const MEDIA_MIME_TYPES = {
   audio: 'audio/*'
 };
 
-function extractPanelPaths(panel) {
-  const panelClasses = SubresourcesRegistry.panel.properties.self.classes;
-  const panelClass = panelClasses[panel.type];
-  const props = Object.keys(panelClass.properties);
+function extractMediaPaths(resourceClass, resource) {
+  const props = Object.keys(resourceClass.properties);
   return props
-    .filter(key => panelClass.properties[key].type === 'media')
+    .filter(key => resourceClass.properties[key].type === 'media')
     .map(key => ({
-      medium: panelClass.properties[key].medium,
-      path: panel[key]
+      medium: resourceClass.properties[key].medium,
+      path: resource[key]
     }));
 }
 
+function extractPanelPaths(panel) {
+  const panelClasses = SubresourcesRegistry.panel.properties.self.classes;
+  const panelClass = panelClasses[panel.type];
+  return extractMediaPaths(panelClass, panel);
+}
+
 function extraMediaReferences(resourceType, resource) {
-  if (resourceType === 'audio') {
-    return [{ medium: 'audio', path: resource.path }];
-  }
   if (resourceType === 'page' || resourceType === 'content_page') {
     return _(resource.panels)
       .map(panel => extractPanelPaths(panel))
@@ -39,7 +40,8 @@ function extraMediaReferences(resourceType, resource) {
       return [{ medium: resource.medium, path: resource.content }];
     }
   }
-  return [];
+  const resourceClass = ResourcesRegistry[resourceType];
+  return extractMediaPaths(resourceClass, resource);
 }
 
 class MediaAsset extends Component {
@@ -195,7 +197,8 @@ MediaAsset.propTypes = {
 
 export default function MediaAssets({ script, resourceType, resource, assets,
   createInstance, updateInstance }) {
-  const mediaReferences = extraMediaReferences(resourceType, resource);
+  const mediaReferences = extraMediaReferences(resourceType, resource)
+    .filter(ref => !!ref.path);
   if (mediaReferences.length === 0) {
     return null;
   }

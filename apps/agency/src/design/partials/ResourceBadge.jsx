@@ -65,7 +65,7 @@ const RESOURCE_ICONS = {
   cue: 'bell',
   departure: 'space-shuttle',
   geofence: 'map-pin',
-  layout: 'phone',
+  layout: 'mobile-phone',
   message: 'envelope',
   page: 'sticky-note',
   panel: 'sticky-note',

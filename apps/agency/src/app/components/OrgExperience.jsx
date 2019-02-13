@@ -145,7 +145,7 @@ export default class OrgExperience extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-sm-3">
+          <div className="col-sm-3 d-none d-sm-block">
             <ExperienceList
               location={this.props.location}
               org={this.props.experience.org}

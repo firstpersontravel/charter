@@ -15,7 +15,7 @@ var relay = {
     admin_out: { type: 'boolean', default: false },
     phone_out: { type: 'boolean', default: false },
     phone_in: { type: 'boolean', default: false },
-    phone_autoreply: { type: 'string' },
+    phone_autoreply: { type: 'media', medium: 'audio' },
     sms_out: { type: 'boolean', default: false },
     sms_in: { type: 'boolean', default: false }
   },

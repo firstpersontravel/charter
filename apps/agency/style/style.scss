@@ -134,16 +134,25 @@ body {
 }
 
 .script-editor-container {
-  .script-editor-tree {
-    max-height: calc(100% - 180px);
-    overflow-y: scroll;
-  }
-  .script-editor-resource {
-    max-height: calc(100% - 130px);
-    overflow-y: scroll; 
-  }
   .script-content-slice .list-group-item {
     padding: 0.25rem 0.75rem;
+  }
+}
+
+@media(max-width: 575px) {
+  .row { display: block; }
+}
+
+@media(min-width: 576px) {
+  .script-editor-container {
+    .script-editor-tree {
+      max-height: calc(100% - 180px);
+      overflow-y: scroll;
+    }
+    .script-editor-resource {
+      max-height: calc(100% - 130px);
+      overflow-y: scroll; 
+    }
   }
 }
 
@@ -153,6 +162,7 @@ body {
     margin-top: 0.5em;
   }
 }
+
 @media(max-width: 575px) {
   .leaflet-container {
     height: 200px;

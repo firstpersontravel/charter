@@ -13,7 +13,7 @@ import ResourceBadge from './ResourceBadge';
 import FieldRenderer from './FieldRenderer';
 
 // Hide title, field, and name
-const HIDE_FIELD_NAMES = ['name', 'title', 'scene'];
+const HIDE_FIELD_NAMES = ['name', 'title'];
 
 export default class ResourceView extends Component {
 
@@ -315,6 +315,9 @@ export default class ResourceView extends Component {
       .map(childResourceType => (
         this.renderCreateChildResourceBtn(childResourceType)
       ));
+    if (!createChildBtns.length) {
+      return null;
+    }
     return (
       <div className="card-footer">
         {createChildBtns}

@@ -326,9 +326,7 @@ export default class FieldRenderer {
       label = 'None';
     }
 
-    // If the reference is a parent, then can't change after creation.
-    if ((spec.parent && !this.isNew) ||
-        (opts && opts.editable === false)) {
+    if (opts && opts.editable === false) {
       return label;
     }
 

@@ -50,7 +50,7 @@ export default class Slice extends Component {
   render() {
     return (
       <div className="row row-eq-height script-editor-container">
-        <div className="script-editor-col col-4">
+        <div className="script-editor-col col-sm-4">
           <div
             className="input-group script-editor-tree-search"
             style={{ marginBottom: '0.5em' }}>
@@ -75,7 +75,7 @@ export default class Slice extends Component {
               script={this.props.script} />
           </div>
         </div>
-        <div className="script-editor-resource col-8">
+        <div className="script-editor-resource col-sm-8">
           {this.props.children}
         </div>
       </div>

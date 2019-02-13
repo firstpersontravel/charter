@@ -29,7 +29,12 @@ var set_value = {
 
 var increment_value = {
   params: {
-    value_ref: { required: true, type: 'simpleAttribute' },
+    value_ref: {
+      required: true,
+      type: 'simpleAttribute',
+      title: 'Name',
+      display: { primary: true }
+    },
     delta: { required: false, type: 'number' }
   },
   phraseForm: ['value_ref', 'delta'],
