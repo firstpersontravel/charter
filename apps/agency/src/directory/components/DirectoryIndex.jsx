@@ -13,6 +13,28 @@ export default class DirectoryIndex extends Component {
     this.handleUserModalClose = this.handleUserModalClose.bind(this);
   }
 
+  getUsers() {
+    const roleName = this.props.location.query.role;
+    return this.props.users.filter((user) => {
+      if (roleName === 'Archived') {
+        return user.isArchived === true;
+      }
+      if (user.isArchived) {
+        return false;
+      }
+      const userProfiles = _.filter(this.props.profiles, {
+        userId: user.id
+      });
+      if (roleName) {
+        const roleParams = { roleName: roleName };
+        if (!_.find(userProfiles, roleParams)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
   handleCreateUser(fields) {
     this.props.createInstance('users', {
       orgId: this.props.experience.orgId,
@@ -59,7 +81,7 @@ export default class DirectoryIndex extends Component {
             pathname: `/${experience.org.name}/${experience.name}/directory`,
             query: { role: profile.roleName }
           }}>
-          {profile.roleName}
+          {profile.role.title}
         </Link>
         &nbsp;
       </span>
@@ -81,12 +103,13 @@ export default class DirectoryIndex extends Component {
   renderHeader() {
     const roleName = this.props.location.query.role;
     const experience = this.props.experience;
-    if (roleName) {
+    if (roleName && experience.script) {
+      const role = _.find(experience.script.content.roles, { name: roleName });
       return (
         <h3>
           <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link>
           &nbsp;›&nbsp;
-          {roleName}
+          {role.title}
         </h3>
       );
     }
@@ -98,27 +121,8 @@ export default class DirectoryIndex extends Component {
   render() {
     const experience = this.props.experience;
     const roleName = this.props.location.query.role;
-    const userRows = _(this.props.users)
-      .filter((user) => {
-        if (roleName === 'Archived') {
-          return user.isArchived === true;
-        }
-        if (user.isArchived) {
-          return false;
-        }
-        const userProfiles = _.filter(this.props.profiles, {
-          userId: user.id
-        });
-        if (roleName) {
-          const roleParams = { roleName: roleName };
-          if (!_.find(userProfiles, roleParams)) {
-            return false;
-          }
-        }
-        return true;
-      })
-      .map(user => this.renderUser(user))
-      .value();
+    const users = this.getUsers();
+    const userRows = users.map(user => this.renderUser(user));
     const header = this.renderHeader();
     return (
       <div className="col-sm-9">

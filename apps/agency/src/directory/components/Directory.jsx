@@ -9,6 +9,10 @@ export default class Directory extends Component {
     if (!roleProfiles.length) {
       return null;
     }
+    const role = roleProfiles[0].role;
+    if (!role) {
+      return null;
+    }
     const experience = this.props.experience;
     return (
       <div key={roleName} className="constrain-text">
@@ -18,7 +22,7 @@ export default class Directory extends Component {
             pathname: `/${experience.org.name}/${experience.name}/directory`,
             query: { role: roleName }
           }}>
-          {roleName}
+          {role.title}
         </Link>
          &nbsp;({roleProfiles.length})
       </div>

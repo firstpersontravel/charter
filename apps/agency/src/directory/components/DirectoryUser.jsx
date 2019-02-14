@@ -137,7 +137,7 @@ export default class DirectoryUser extends Component {
         <div>
           <span className={isActive ? 'bold' : 'strikethrough'}>
             <Link to={`/${experience.org.name}/${experience.name}/directory?role=${role.name}`}>
-              {role.name}
+              {role.title}
             </Link>
             {profile.departureName ? ` ${profile.departureName}` : null }
           </span>
@@ -232,7 +232,7 @@ export default class DirectoryUser extends Component {
         </p>
         {userFields}
         {profilesList}
-        <div>
+        <div style={{ marginTop: '0.5em' }}>
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{

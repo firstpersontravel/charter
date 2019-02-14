@@ -35,6 +35,18 @@ export function lookupUsers(state, ownProps) {
   });
 }
 
+function getProfileRole(state, instance) {
+  const script = _.find(state.datastore.scripts, {
+    experienceId: instance.experienceId,
+    isActive: true
+  });
+  if (!script) {
+    return null;
+  }
+  const role = _.find(script.content.roles, { name: instance.roleName });
+  return role;
+}
+
 export function lookupProfiles(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'profiles',
@@ -43,7 +55,8 @@ export function lookupProfiles(state, ownProps) {
       experience: instanceIncluder('experiences', 'id', 'experienceId', {
         script: getExperienceActiveScript
       }),
-      user: instanceIncluder('users', 'id', 'userId')
+      user: instanceIncluder('users', 'id', 'userId'),
+      role: getProfileRole
     }
   });
 }
