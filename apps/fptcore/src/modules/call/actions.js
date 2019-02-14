@@ -8,21 +8,22 @@ var add_to_call = {
     role_name: { required: true, type: 'reference', collection: 'roles' }
   },
   applyAction: function (params, actionContext) {
+    var evt = actionContext.evalContext.event || {};
     // If triggered by an incoming call
-    if (actionContext.evalContext.event.type === 'call_received') {
+    if (evt.type === 'call_received') {
       return [{
         operation: 'twiml',
         clause: 'dial',
-        fromRoleName: actionContext.evalContext.event.from,
+        fromRoleName: evt.from,
         toRoleName: params.role_name
       }];
     }
     // If triggered by an outgoing call
-    if (actionContext.evalContext.event.type === 'call_answered') {
+    if (evt.type === 'call_answered') {
       return [{
         operation: 'twiml',
         clause: 'dial',
-        fromRoleName: actionContext.evalContext.event.to,
+        fromRoleName: evt.to,
         toRoleName: params.role_name
       }];
     }

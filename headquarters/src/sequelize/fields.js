@@ -27,7 +27,7 @@ function allowNullModifier(field) {
     delete field.foreignKey.validate;
   } else {
     field.allowNull = true;
-    delete field.validate.allowNull;
+    delete field.validate.notNull;
   }
   return field;
 }
@@ -182,12 +182,12 @@ const defaultJsonValidation = {
       return;
     }
     if (typeof value === 'string') {
-      if (value[0] !== '{') {
+      if (value[0] !== '{' && value !== '') {
         throw new Error('must be an object');
       }
     } else {
       if (!_.isObject(value)) {
-        throw new Error('must be an object');
+        throw new Error(`must be an object, was ${typeof value}`);
       }
     }
   }
@@ -219,7 +219,7 @@ function jsonField(db, modelName, fieldName, options) {
     readOnly: true,
     get: function() {
       var currentValue = this.getDataValue(fieldName);
-      if (currentValue === '') {
+      if (currentValue === null || currentValue === '') {
         this.dataValues[fieldName] = {};
       } else if (typeof currentValue == 'string') {
         this.dataValues[fieldName] = JSON.parse(currentValue);
@@ -227,7 +227,13 @@ function jsonField(db, modelName, fieldName, options) {
       return this.dataValues[fieldName];
     },
     set: function(value) {
-      this.setDataValue(fieldName, stringify(value, {space: 2}));
+      let str = value;
+      if (value === null || value === undefined || value === '') {
+        str = '';
+      } else {
+        str = stringify(value, { space: 2 });
+      }
+      this.setDataValue(fieldName, str);
     },
     validate: Object.assign({}, defaultJsonValidation, options.extraValidate),
     defaultValue: JSON.stringify(options.defaultValue || {})

@@ -53,20 +53,16 @@ async function phraseRoute(req, res) {
   const tripId = req.params.tripId;
   const actionPhrase = req.body.action_phrase;
   const actionContext = await TripUtil.getActionContext(tripId);
-  const action = ActionPhraseCore.parseActionPhrase(actionPhrase, 
+  const packedAction = ActionPhraseCore.parseActionPhrase(actionPhrase, 
     actionContext);
-  if (action.when) {
-    const scheduleAt = ActionPhraseCore.unpackAction(action,
-      actionContext);
-    await TripActionController.scheduleAction(tripId, {
-      name: action.name,
-      params: action.params,
-      scheduleAt: scheduleAt
-    });
+  const unpackedAction = ActionPhraseCore.unpackAction(packedAction,
+    actionContext);
+  if (packedAction.when) {
+    await TripActionController.scheduleAction(tripId, unpackedAction);
   } else {
-    await TripActionController.applyAction(tripId, action);
+    await TripActionController.applyAction(tripId, unpackedAction);
   }
-  await TripNotifyController.notifyAction(tripId, action);
+  await TripNotifyController.notifyAction(tripId, unpackedAction);
   res.json({ data: { ok: true } });
 }
 

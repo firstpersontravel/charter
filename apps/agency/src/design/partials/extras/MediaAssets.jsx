@@ -87,7 +87,6 @@ class MediaAsset extends Component {
     const bucket = process.env.S3_CONTENT_BUCKET;
     const fullPath = this.getFullPath();
     const publicUrl = `https://${bucket}.s3.amazonaws.com/${fullPath}`;
-    console.log('publicUrl', publicUrl);
     this.updateAsset(publicUrl);
   }
 

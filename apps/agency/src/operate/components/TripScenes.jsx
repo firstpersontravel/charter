@@ -4,12 +4,24 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { EvalCore } from 'fptcore';
+import { ResourcesRegistry, EvalCore } from 'fptcore';
 
 import { sortForRole } from '../utils';
 import { isProduction } from '../../utils';
 
 export default class TripScenes extends Component {
+
+  getPlayersForScene(scene) {
+    return _(this.props.trip.players)
+      .filter(player => (
+        _.find(this.props.trip.script.content.pages, {
+          role: player.roleName,
+          scene: scene.name
+        })
+      ))
+      .sortBy(player => sortForRole(player.role))
+      .value();
+  }
 
   handleAction(actionName, actionParams) {
     const trip = this.props.trip;
@@ -120,14 +132,14 @@ export default class TripScenes extends Component {
     );
   }
 
-  renderScenePlayerColumn(scene, player) {
+  renderScenePlayerColumn(scene, player, colWidth) {
     const trip = this.props.trip;
     const pages = _.filter(trip.script.content.pages,
       { role: player.roleName, scene: scene.name });
     const renderedPages = pages
       .map(page => this.renderPlayerPage(player, page));
     return (
-      <div className="col-sm-4" key={player.id}>
+      <div className={`col-sm-${colWidth}`} key={player.id}>
         <h4>
           <Link
             to={{
@@ -150,23 +162,45 @@ export default class TripScenes extends Component {
     );
   }
 
-  renderSceneRow(scene, players) {
+  renderTriggerBtn(scene, trigger) {
+    const trip = this.props.trip;
+    const triggerResourceClass = ResourcesRegistry.trigger;
+    const isCurrentScene = scene.name === this.props.trip.currentSceneName;
+    const hasBeenTriggered = !!trip.history[trigger.name];
+    const canTrigger = !!isCurrentScene;
+    // const isForbidden = (
+    //   (trigger.repeatable === false && hasBeenTriggered) ||
+    //   (trigger.if && !EvalCore.if(trip.evalContext, trigger.if))
+    // );
+    const style = {
+      marginTop: 0,
+      marginBottom: '0.25em',
+      textDecoration: hasBeenTriggered ? 'line-through' : ''
+    };
+    return (
+      <button
+        key={trigger.name}
+        disabled={!canTrigger}
+        onClick={() => this.props.postAdminAction(
+          trip.orgId, trip.id, 'trigger', { trigger_name: trigger.name })}
+        style={style}
+        className="constrain-text btn btn-block btn-xs btn-outline-secondary">
+        {triggerResourceClass.getTitle(trip.script.content, trigger)}
+      </button>
+    );
+  }
+
+  renderSceneRow(scene, colWidth) {
+    const players = this.getPlayersForScene(scene);
     const isCurrentScene = scene.name === this.props.trip.currentSceneName;
     const titleClass = isCurrentScene ? 'text-primary' : '';
     const sceneClass = isCurrentScene ? 'row-current-scene' : '';
-    const columns = _(players)
-      .filter(player => (
-        _.find(this.props.trip.script.content.pages, {
-          role: player.roleName,
-          scene: scene.name
-        })
-      ))
-      .map(player => (
-        this.renderScenePlayerColumn(scene, player)
-      ))
-      .value();
+    const columns = players.map(player => (
+      this.renderScenePlayerColumn(scene, player, colWidth)
+    ));
     const btnClass = isProduction() ? 'btn-outline-danger' :
       'btn-outline-secondary';
+
     const startSceneButton = isCurrentScene ? null : (
       <button
         onClick={() => this.handleAction('start_scene', {
@@ -176,16 +210,29 @@ export default class TripScenes extends Component {
         Start {scene.title}
       </button>
     );
+
+    const trip = this.props.trip;
+    const triggers = _(trip.script.content.triggers)
+      .filter({ scene: scene.name })
+      .value();
+
+    const triggerBtns = triggers.map(trigger => (
+      this.renderTriggerBtn(scene, trigger)
+    ));
+
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="col-sm-2">
           <h3 className={titleClass}>{scene.title}</h3>
           {startSceneButton}
         </div>
-        <div className="col-sm-10">
+        <div className="col-sm-8">
           <div className="row">
             {columns}
           </div>
+        </div>
+        <div className="col-sm-2">
+          {triggerBtns}
         </div>
       </div>
     );
@@ -194,14 +241,6 @@ export default class TripScenes extends Component {
   render() {
     const trip = this.props.trip;
     const showPastScenes = this.props.location.query.past === 'true';
-    const roles = _(trip.script.content.roles)
-      .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
-      .sortBy([sortForRole, 'name'])
-      .value();
-    const players = _(roles)
-      .map(role => _.find(trip.players, { roleName: role.name }))
-      .filter('currentPageName')
-      .value();
     const scenes = trip.script.content.scenes || [];
     const indexOfCurrentScene = _.findIndex(scenes, {
       name: trip.currentSceneName
@@ -209,8 +248,13 @@ export default class TripScenes extends Component {
     const scenesToShow = showPastScenes ? scenes : scenes.filter((
       (scene, i) => (i >= indexOfCurrentScene)
     ));
+
+    const maxPlayersInScene = Math.max(...scenesToShow
+      .map(scene => this.getPlayersForScene(scene).length)) || 1;
+    const colWidth = Math.floor(12 / maxPlayersInScene);
+
     const renderedScenes = scenesToShow.map(scene => (
-      this.renderSceneRow(scene, players)
+      this.renderSceneRow(scene, colWidth)
     ));
     const pastScenesAlert = showPastScenes ? null : (
       <div className="alert alert-info">

@@ -175,7 +175,7 @@ var trigger = {
         return customTitle;
       }
     }
-    return 'On ' + firstEvent.type.replace(/_/g, ' ');
+    return firstEvent.type.replace(/_/g, ' ');
   },
   getDefaultFields: function() {
     return {

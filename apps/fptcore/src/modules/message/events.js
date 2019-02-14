@@ -11,7 +11,7 @@ module.exports = {
       if (spec.from) {
         var fromRole = _.find(scriptContent.roles, { name: spec.from });
         if (fromRole) {
-          parts.push('from ' + fromRole.title);
+          parts.push(fromRole.title);
         }
       }
       if (spec.to) {

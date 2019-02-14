@@ -239,7 +239,7 @@ export function updateInstance(collectionName, instanceId, fields) {
 
 export function refreshLiveData(orgId, tripIds) {
   return function (dispatch) {
-    dispatch(listCollection('users', { isArchived: false }));
+    dispatch(listCollection('users', { orgId: orgId, isArchived: false }));
     dispatch(listCollection('trips', { orgId: orgId, id: tripIds }));
     dispatch(listCollection('players', { orgId: orgId, tripId: tripIds }));
     dispatch(listCollection('actions',

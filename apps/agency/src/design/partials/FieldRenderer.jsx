@@ -91,7 +91,7 @@ export default class FieldRenderer {
     const cleanFunc = clean || (val => val);
     const allowNewlines = !!_.get(spec, 'display.allowNewlines');
     const textLabel = allowNewlines ? (
-      <div style={{ whiteSpace: 'pre' }}>{value}</div>
+      <div style={{ whiteSpace: 'pre-wrap' }}>{value}</div>
     ) : value;
     const label = value ? textLabel : internalEmpty(spec);
     if (opts && opts.editable === false) {

@@ -43,6 +43,23 @@ describe('TripOpController', () => {
     });
   });
 
+  describe('#updateTripHistory', () => {
+    it('applies a history change to a trip', async () => {
+      const objs = {
+        trip: { history: { t1: 123 }, update: sandbox.stub().resolves() }
+      };
+      const op = {
+        operation: 'updateTripHistory',
+        history: { t2: 456 }
+      };
+
+      await TripOpController.applyOp(objs, op);
+
+      const newHistory = { t1: 123, t2: 456 };
+      sinon.assert.calledWith(objs.trip.update, { history: newHistory });
+    });
+  });
+
   describe('#updatePlayerFields', () => {
     it('applies a deep value change to a player', async () => {
       const objs = {

@@ -22,7 +22,7 @@ class TripOpController {
 
   static async updateTripHistory(objs, op) {
     return await objs.trip.update({
-      history: Object.assign(objs.trip.history, op.values)
+      history: Object.assign(objs.trip.history, op.history)
     });
   }
 

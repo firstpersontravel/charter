@@ -68,9 +68,11 @@ apiRouter.post('/trips/:tripId/events',
 apiRouter.post('/users/:userId/device_state',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
 
-// Admin routes
+// Experience admin routes
 apiRouter.post('/admin/experiences/:experienceId/update_relays',
   asyncRoute(apiAdminRoutes.updateRelaysRoute));
+
+// Trip admin routes
 apiRouter.post('/admin/trips/:tripId/notify',
   asyncRoute(apiAdminRoutes.notifyRoute));
 apiRouter.post('/admin/trips/:tripId/fast_forward',

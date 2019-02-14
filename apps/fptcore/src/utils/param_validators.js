@@ -361,7 +361,6 @@ ParamValidators.validateParams = function(script, paramsSpec, params, prefix) {
 ParamValidators.validateResource = function(script, resourceClass, resource,
   prefix) {
   if (!resourceClass.properties) {
-    console.log('resourceClass', resourceClass);
     throw new Error('Invalid resource: expected properties.');
   }
   var warnings = ParamValidators.validateParams(script,
