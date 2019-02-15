@@ -1,6 +1,7 @@
 roles:
   - name: Driver
     title: Driver
+    starting_page: Start
 
 scenes:
   - name: main
@@ -27,7 +28,7 @@ waypoints:
       - name: sr
         title: Santa Rosa
         coords: [38.439097, -122.715336]
-      - name: bodega bay
+      - name: bodegabay
         title: Bodega bay
         coords: [38.334410, -123.044989]
 
@@ -42,21 +43,23 @@ geofences:
 
 routes:
   - name: Drive1
-    from: sf
+    from: start
     to: midpoint
     mode: driving
+    title: First drive
 
   - name: Drive2
     from: midpoint
     to: end
     mode: driving
+    title: Second drive
 
 pages:
   - scene: main
     role: Driver
     name: Start
     title: Start in San Francisco
-    waypoint: sf
+    waypoint: start
     panels:
       - type: button
         text: Start yer engines!
@@ -65,6 +68,7 @@ pages:
   - scene: main
     role: Driver
     name: Drive1
+    title: First drive
     route: Drive1
     panels:
       - type: directions
@@ -88,6 +92,7 @@ pages:
     role: Driver
     name: Drive2
     route: Drive2
+    title: Second drive
     panels:
       - type: directions
         route: Drive2
@@ -105,31 +110,38 @@ pages:
 
 cues:
   - name: CUE-EMBARKED-1
+    title: Embarked
     scene: main
 
   - name: CUE-ARRIVED-1
+    title: Arrived at midpoint
     scene: main
 
   - name: CUE-EMBARKED-2
+    title: Embarked for end
+    scene: main
+
+  - name: CUE-ARRIVED-2
+    title: Arrived at end
     scene: main
 
 triggers:
-  - events: [{ type: cue_signaled, cue: CUE-EMBARKED-1 }]
+  - name: embarked1
+    events: [{ type: cue_signaled, cue: CUE-EMBARKED-1 }]
     scene: main
-    actions:
-      - send_to_page Driver Drive1
+    actions: [{ name: send_to_page, role_name: Driver, page_name: Drive1 }]
 
-  - events: [{ type: cue_signaled, cue: CUE-ARRIVED-1 }]
+  - name: arrived1
+    events: [{ type: cue_signaled, cue: CUE-ARRIVED-1 }]
     scene: main
-    actions:
-      - send_to_page Driver Break
+    actions: [{ name: send_to_page, role_name: Driver, page_name: Break }]
 
-  - events: [{ type: cue_signaled, cue: CUE-EMBARKED-2 }]
+  - name: embarked2
+    events: [{ type: cue_signaled, cue: CUE-EMBARKED-2 }]
     scene: main
-    actions:
-      - send_to_page Driver Drive2
+    actions: [{ name: send_to_page, role_name: Driver, page_name: Drive2 }]
 
-  - events: [{ type: cue_signaled, cue: CUE-ARRIVED-2 }]
+  - name: arrived2
+    events: [{ type: cue_signaled, cue: CUE-ARRIVED-2 }]
     scene: main
-    actions:
-      - send_to_page Driver End
+    actions: [{ name: send_to_page, role_name: Driver, page_name: End }]

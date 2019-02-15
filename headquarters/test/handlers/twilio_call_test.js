@@ -190,6 +190,12 @@ describe('TwilioCallHandler', () => {
     it.skip('plays voicemail if no twiml was gathered', async () => {});
   });
 
+  describe('#handleCallResponse', () => {
+    it.skip('returns twiml if final', () => {});
+
+    it.skip('interrupts call if partial', () => {});
+  });
+
   describe('#_interruptCall', () => {
     it('sends interrupt to twilio', async () => {
       const twimlSentinel = new twilio.twiml.VoiceResponse();
