@@ -18,6 +18,17 @@ const dummyExperienceFields = {
   timezone: 'US/Pacific',
 };
 
+const dummyContent = {
+  roles: [{
+    name: 'Dummy',
+    title: 'Dummy'
+  }],
+  scenes: [{
+    name: 'SCENE-MAIN',
+    title: 'Main'
+  }]
+};
+
 const dummyScriptFields = {
   createdAt: moment.utc(),
   updatedAt: moment.utc(),
@@ -25,16 +36,6 @@ const dummyScriptFields = {
   experienceId: 1,
   revision: 1,
   contentVersion: 1,
-  content: {
-    roles: [{
-      name: 'Dummy',
-      title: 'Dummy'
-    }],
-    scenes: [{
-      name: 'SCENE-MAIN',
-      title: 'Main'
-    }]
-  },
   isActive: true,
   isArchived: false
 };
@@ -49,13 +50,36 @@ async function createDummyExperience() {
 }
 
 async function createDummyScript() {
+  return await createScriptWithContent(dummyContent);
+}
+
+async function createScriptWithContent(scriptContent) {
   await createDummyExperience();
-  return await models.Script.create(dummyScriptFields);
+  const scriptFields = Object.assign({}, dummyScriptFields, {
+    content: scriptContent
+  });
+
+  const script = models.Script.build(scriptFields);
+
+  try {
+    await script.validate();
+  } catch (err) {
+    if (_.get(err, 'errors[0].__raw.errors')) {
+      const errorStrs = err.errors[0].__raw.errors
+        .map(e => `${e.path}: ${e.message}`)
+        .join(' ');
+      throw new Error(errorStrs);
+    }
+    throw err;
+  }
+
+  await script.save();
+  return script;
 }
 
 async function createDummyTrip() {
   const script = await createDummyScript();
-  return createDummyTripForScript(script);
+  return await createDummyTripForScript(script);
 }
 
 async function createDummyGroup() {
@@ -81,7 +105,7 @@ async function createDummyGroupForScript(script) {
 
 async function createDummyTripForScript(script, variantNames) {
   const group = await createDummyGroupForScript(script);
-  const departureName = _.get(script, 'content.departures[0].name') || 'T1';
+  const departureName = _.get(script, 'content.departures[0].name') || '';
   return await TripsController.createTrip(
     group.id, 'test', departureName, variantNames || []);
 }
@@ -93,7 +117,8 @@ const TestUtil = {
   createDummyOrg,
   createDummyTrip,
   createDummyTripForScript,
-  createDummyScript
+  createDummyScript,
+  createScriptWithContent
 };
 
 module.exports = TestUtil;

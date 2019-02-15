@@ -15,7 +15,8 @@ function createTestMocks() {
   twilioCallsClient.create = mocks.stub().resolves();
   const twilioStubClient = {
     calls: twilioCallsClient,
-    messages: { create: mocks.stub().resolves() }
+    messages: { create: mocks.stub().resolves() },
+    incomingPhoneNumbers: { list: mocks.stub().resolves() }
   };
   mocks.stub(config, 'getTwilioClient').returns(twilioStubClient);
   mocks.stub(config, 'getFayeClient').returns({

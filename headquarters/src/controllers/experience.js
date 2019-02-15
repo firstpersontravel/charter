@@ -27,18 +27,22 @@ class ExperienceController {
     const script = await this.findActiveScript(experience.id);
 
     // Create only trailhead relays
-    const trailheadRelays = _.filter(script.content.relays, {
+    const trailheadRelaySpecs = _.filter(script.content.relays, {
       trailhead: true
     });
-    const departures = script.content.departures;
+    const departures = script.content.departures || [];
     const departureNames = departures.length > 0 ?
       _.map(departures, 'name') : [''];
+
+    const trailheadRelays = [];
     for (const departureName of departureNames) {
-      for (const relaySpec of trailheadRelays) {
-        await RelaysController.ensureRelay(experience.orgId, experienceId, 
-          departureName, relaySpec, '');
+      for (const relaySpec of trailheadRelaySpecs) {
+        const relay = await RelaysController.ensureRelay(experience.orgId,
+          experienceId, departureName, relaySpec, '');
+        trailheadRelays.push(relay);
       }
     }
+    return trailheadRelays.filter(Boolean);
   }
 }
 

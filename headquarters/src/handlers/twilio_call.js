@@ -144,6 +144,7 @@ class TwilioCallHandler {
     const relay = await models.Relay.findById(relayId);
     const twimlRes = await this._triggerEventAndGatherTwiml(tripId, relay,
       event);
+
     if (isPartial) {
       // If we're partial, only respond if we get a signal from the script
       if (twimlRes.response.children.length > 0) {

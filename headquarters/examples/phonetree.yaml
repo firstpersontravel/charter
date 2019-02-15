@@ -1,0 +1,50 @@
+roles:
+  - name: Player
+    title: Player
+    actor: false
+    user: true
+
+  - name: PhoneTree
+    title: PhoneTree
+    actor: false
+    user: false
+
+relays:
+  - name: relay-1
+    for: Player
+    as: Player
+    with: PhoneTree
+    phone_in: true
+    trailhead: true
+
+scenes:
+  - name: SCENE-MAIN
+    title: Main
+
+clips:
+  - name: CLIP-PHONETREE-1
+    transcript: Greetings!! Would you like a refreshing beverage?
+    query:
+      name: QUERY-BEVERAGE
+      hints: [yes, no]
+
+  - name: CLIP-PHONETREE-1-YES
+    transcript: Here you go!
+
+  - name: CLIP-PHONETREE-1-NO
+    transcript: Next time!
+
+triggers:
+  - name: t1
+    events: [{type: call_received, from: Player, to: PhoneTree}]
+    scene: SCENE-MAIN
+    actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1' }]
+
+  - name: t2
+    events: [{type: query_responded, query: QUERY-BEVERAGE}]
+    scene: SCENE-MAIN
+    actions:
+      - name: conditional  
+        if: contains event.response "yes"
+        actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-YES' }]
+        else: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-NO' }]

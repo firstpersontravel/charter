@@ -1,0 +1,130 @@
+layouts:
+  - name: tablet
+    type: tabs
+    section: tabs
+    header_panels:
+      - type: text
+        style: quest
+        text: "{{Player.directive}}"
+        if: Player.directive
+    
+content_pages:
+  - name: nav
+    section: tabs
+    title: Navigation
+    panels:
+      - type: outlet
+        name: main
+  - name: messages
+    section: tabs
+    title: Messages
+    panels:
+      - type: messages_browse
+        title: Messages
+
+roles:
+  - name: Player
+    title: Player
+    actor: false
+    user: true
+    starting_page: PAGE-START
+    default_layout: tablet
+
+  - name: Guide
+    title: Guide
+    actor: false
+    user: false
+
+scenes:
+  - name: SCENE-MAIN
+    title: Main
+
+pages:
+  - name: PAGE-START
+    title: Start at house
+    role: Player
+    scene: SCENE-MAIN
+    directive: Walk to Atlas
+    panels:
+      - type: directions
+        geofence: GEOFENCE-ATLAS
+        waypoint: WAYPOINT-ATLAS
+        cue: CUE-ATLAS-ARRIVE
+
+  - name: PAGE-ATLAS
+    title: At Atlas Cafe
+    role: Player
+    scene: SCENE-MAIN
+    directive: Enjoy Atlas Cafe!
+    waypoint: WAYPOINT-ATLAS
+
+waypoints:
+  - name: WAYPOINT-COTTAGE
+    title: Cottage
+    coords: [37.758273, -122.411681]
+  - name: WAYPOINT-ATLAS
+    title: Atlas Cafe
+    coords: [37.759010, -122.411497]
+  - name: WAYPOINT-BON-NENE
+    title: Bon Nene
+    coords: [37.757528, -122.411499]
+
+geofences:
+  - name: GEOFENCE-ATLAS
+    center: WAYPOINT-ATLAS
+    distance: 50
+  - name: GEOFENCE-BON-NENE
+    center: WAYPOINT-BON-NENE
+    distance: 20
+
+cues:
+  - {name: CUE-ATLAS-ARRIVE, scene: SCENE-MAIN}
+
+triggers:
+  - events: {cue_signaled: CUE-ATLAS-ARRIVE}
+    scene: SCENE-MAIN
+    actions:
+      - send_message MESSAGE-ATLAS-WELCOME
+      - send_to_page Player PAGE-ATLAS
+
+  - events:
+      message_sent:
+        medium: image
+        from: Player
+        to: Guide
+        geofence: GEOFENCE-ATLAS
+    scene: SCENE-MAIN
+    actions:
+      - in 10s, send_message MESSAGE-ATLAS-REC
+      - increment_value points 5
+
+  - events:
+      geofence_entered:
+        role: Player
+        geofence: GEOFENCE-BON-NENE
+    scene: SCENE-MAIN
+    actions:
+      - send_message MESSAGE-BON-NENE-WELCOME
+      - increment_value points 10
+
+messages:
+  - name: MESSAGE-ATLAS-WELCOME
+    scene: SCENE-MAIN
+    medium: text
+    from: Guide
+    to: Player
+    content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
+
+  - name: MESSAGE-ATLAS-REC
+    scene: SCENE-MAIN
+    medium: text
+    from: Guide
+    to: Player
+    content: Try the trout sandwich.
+
+  - name: MESSAGE-BON-NENE-WELCOME
+    scene: SCENE-MAIN
+    medium: text
+    from: Guide
+    to: Player
+    content: The mushroom spaghetti bowl is amazing.

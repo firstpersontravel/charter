@@ -43,9 +43,7 @@ var play_clip = {
     }
 
     // Otherwise just return the play/say clause.
-    return [
-      Object.assign({operation: 'twiml'}, playClause)
-    ];
+    return [Object.assign({operation: 'twiml'}, playClause)];
   }
 };
 

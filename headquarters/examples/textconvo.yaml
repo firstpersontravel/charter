@@ -1,0 +1,72 @@
+roles:
+  - name: Knight
+    title: Knight
+    actor: false
+    user: true
+
+  - name: Sage
+    title: Sage
+    actor: false
+    user: false
+
+relays:
+  - for: Knight
+    with: Sage
+    trailhead: true
+    sms_in: true
+    sms_out: true
+
+messages:
+  - name: MESSAGE-HELLO
+    scene: SCENE-MAIN
+    medium: text
+    from: Sage
+    to: Knight
+    content: Why hello there, fine sir/lady/being! What is your name?
+
+  - name: MESSAGE-HELLO-RUDE
+    scene: SCENE-MAIN
+    medium: text
+    from: Sage
+    to: Knight
+    content: How rude, not even a greeting! What is your name?
+
+  - name: MESSAGE-RETURN-GREETING
+    scene: SCENE-MAIN
+    medium: text
+    from: Sage
+    to: Knight
+    content: Greetings, {{player_name}}. You may now await your righteous quest.
+
+  - name: MESSAGE-QUEST
+    scene: SCENE-MAIN
+    medium: text
+    from: Sage
+    to: Knight
+    content: Your quest is... the holy grail!
+
+scenes:
+  - name: SCENE-MAIN
+    title: Main
+
+triggers:
+  - events: {message_sent: {from: Knight, to: Sage, medium: text}}
+    scene: SCENE-MAIN
+    if: not game_started
+    actions:
+      - set_value game_started true
+      - if:
+          or:
+            - contains event.message.content "hello"
+            - contains event.message.content "hi"
+            - contains event.message.content "hey"
+        actions: send_message MESSAGE-HELLO
+        else: send_message MESSAGE-HELLO-RUDE
+
+  - events: {message_sent: {from: Knight, to: Sage, medium: text}}
+    scene: SCENE-MAIN
+    if: game_started
+    actions:
+      - set_value player_name event.message.content
+      - send_message MESSAGE-RETURN-GREETING
+      - in 10s, send_message MESSAGE-QUEST

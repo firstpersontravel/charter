@@ -1,0 +1,135 @@
+roles:
+  - name: Driver
+    title: Driver
+
+scenes:
+  - name: main
+    title: Main
+
+waypoints:
+  - name: start
+    title: Starting point
+    options:
+      - name: sf
+        title: San Francisco
+        coords: [37.776040, -122.427428]
+
+  - name: midpoint
+    title: Midpoint
+    options:
+      - name: petaluma
+        title: Petaluma
+        coords: [38.239191, -122.634324]
+
+  - name: end
+    title: End
+    options:
+      - name: sr
+        title: Santa Rosa
+        coords: [38.439097, -122.715336]
+      - name: bodega bay
+        title: Bodega bay
+        coords: [38.334410, -123.044989]
+
+geofences:
+  - name: GEOFENCE-MIDPOINT
+    center: midpoint
+    distance: 100
+
+  - name: GEOFENCE-END
+    center: end
+    distance: 100
+
+routes:
+  - name: Drive1
+    from: sf
+    to: midpoint
+    mode: driving
+
+  - name: Drive2
+    from: midpoint
+    to: end
+    mode: driving
+
+pages:
+  - scene: main
+    role: Driver
+    name: Start
+    title: Start in San Francisco
+    waypoint: sf
+    panels:
+      - type: button
+        text: Start yer engines!
+        cue: CUE-EMBARKED-1
+
+  - scene: main
+    role: Driver
+    name: Drive1
+    route: Drive1
+    panels:
+      - type: directions
+        route: Drive1
+        geofence: GEOFENCE-MIDPOINT
+        cue: CUE-ARRIVED-1
+
+  - scene: main
+    role: Driver
+    name: Break
+    title: Lunch break
+    waypoint: midpoint
+    panels:
+      - type: text
+        text: Lunch break time.
+      - type: button
+        text: Ready to head out!
+        cue: CUE-EMBARKED-2
+
+  - scene: main
+    role: Driver
+    name: Drive2
+    route: Drive2
+    panels:
+      - type: directions
+        route: Drive2
+        geofence: GEOFENCE-END
+        cue: CUE-ARRIVED-2
+
+  - scene: main
+    role: Driver
+    name: End
+    title: End
+    waypoint: end
+    panels:
+      - type: text
+        text: You completed your road trip!
+
+cues:
+  - name: CUE-EMBARKED-1
+    scene: main
+
+  - name: CUE-ARRIVED-1
+    scene: main
+
+  - name: CUE-EMBARKED-2
+    scene: main
+
+triggers:
+  - events: [{ type: cue_signaled, cue: CUE-EMBARKED-1 }]
+    scene: main
+    actions:
+      - send_to_page Driver Drive1
+
+  - events: [{ type: cue_signaled, cue: CUE-ARRIVED-1 }]
+    scene: main
+    actions:
+      - send_to_page Driver Break
+
+  - events: [{ type: cue_signaled, cue: CUE-EMBARKED-2 }]
+    scene: main
+    actions:
+      - send_to_page Driver Drive2
+
+  - events: [{ type: cue_signaled, cue: CUE-ARRIVED-2 }]
+    scene: main
+    actions:
+      - send_to_page Driver End

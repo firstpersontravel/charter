@@ -37,7 +37,7 @@ describe('API retrieve', () => {
                 isArchived: false,
                 lastScheduledTime: null,
                 schedule: {},
-                departureName: 'T1',
+                departureName: '',
                 galleryName: '',
                 variantNames: '',
                 title: 'test',
