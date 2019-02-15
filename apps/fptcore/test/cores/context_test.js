@@ -84,13 +84,11 @@ describe('ContextCore', () => {
   describe('#gatherEvalContext', () => {
     it('gathers all context', () => {
       const trip = {
+        script: { content: {} },
         currentSceneName: 'SCENE-01',
-        schedule: {
-          'TIME-123': '2017-02-16T21:44:02Z'
-        },
-        history: {
-          'CUE-123': '2017-02-16T21:44:02Z'
-        },
+        schedule: { 'TIME-123': '2017-02-16T21:44:02Z' },
+        history: { 'CUE-123': '2017-02-16T21:44:02Z' },
+        waypointOptions: { 'WAYPOINT-1': 'OPTION-1' },
         customizations: { model: 'deluxe' },
         values: { abc: '123' },
         players: [{
@@ -114,6 +112,7 @@ describe('ContextCore', () => {
         currentSceneName: 'SCENE-01',
         schedule: trip.schedule,
         history: trip.history,
+        waypointOptions: trip.waypointOptions,
         model: 'deluxe',
         abc: '123',
         Sarai: saraiValues,

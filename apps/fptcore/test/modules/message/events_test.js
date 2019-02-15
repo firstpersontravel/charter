@@ -52,9 +52,17 @@ describe('#message_sent', () => {
   const geoClause = { type: 'image', geofence: 'cottage' };
 
   const geoActionContext = {
+    evalContext: {
+      waypointOptions: {}
+    },
     scriptContent: {
       geofences: [{ name: 'cottage', center: 'cottage', distance: 50 }],
-      waypoints: [{ name: 'cottage', coords: [37.758273, -122.411681] }]
+      waypoints: [{
+        name: 'cottage',
+        options: [{
+          coords: [37.758273, -122.411681]
+        }]
+      }]
     }
   };
 
