@@ -85,7 +85,7 @@ export default class ExperienceModal extends Component {
     ));
 
     const host = window.location.host;
-    const domain = `${this.state.name || 'yourexperience'}.${host}`;
+    const placeholderDomain = host;
 
     return (
       <Modal
@@ -110,20 +110,6 @@ export default class ExperienceModal extends Component {
             </div>
             <div className="row">
               <div className="form-group col-12">
-                <label htmlFor="exp_host">
-                  Custom domain
-                </label>
-                <input
-                  type="text"
-                  id="exp_host"
-                  className="form-control"
-                  value={this.state.domain}
-                  onChange={_.curry(this.handleChangeField)('domain')}
-                  placeholder={domain} />
-              </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-12">
                 <label htmlFor="exp_timezone">Time zone</label>
                 <select
                   className="form-control"
@@ -132,6 +118,20 @@ export default class ExperienceModal extends Component {
                   value={this.state.timezone}>
                   {timezoneOptions}
                 </select>
+              </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-12">
+                <label htmlFor="exp_host">
+                  Custom domain (advanced; requires setup)
+                </label>
+                <input
+                  type="text"
+                  id="exp_host"
+                  className="form-control"
+                  value={this.state.domain}
+                  onChange={_.curry(this.handleChangeField)('domain')}
+                  placeholder={placeholderDomain} />
               </div>
             </div>
           </form>

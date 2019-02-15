@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import { createInstance } from '../../actions';
+import { createExample, createInstance } from '../../actions';
 import {
   latestAuthData
 } from '../../datastore-utils';
@@ -15,7 +15,8 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  createInstance: (...args) => dispatch(createInstance(...args))
+  createInstance: (...args) => dispatch(createInstance(...args)),
+  createExample: (...args) => dispatch(createExample(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrgIndex);

@@ -1,6 +1,7 @@
 const express = require('express');
 
 const actorRoutes = require('../routes/page_actor');
+const contentRoutes = require('../routes/page_content');
 const galleryRoutes = require('../routes/page_gallery');
 const shortcutRoutes = require('../routes/page_shortcut');
 const { asyncRoute } = require('./utils');
@@ -22,8 +23,14 @@ const galleryRouter = express.Router();
 galleryRouter.get('/:year/:month/:day/:alias',
   asyncRoute(galleryRoutes.galleryRoute));
 
+// Content routes
+const contentRouter = express.Router();
+contentRouter.get('/examples/:exampleName',
+  asyncRoute(contentRoutes.exampleRoute));
+
 module.exports = {
   actorRouter,
+  contentRouter,
   galleryRouter,
   shortcutRouter
 };

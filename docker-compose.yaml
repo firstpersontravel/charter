@@ -22,6 +22,7 @@ services:
       - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
       - ./headquarters/bin:/var/app/headquarters/bin
       - ./headquarters/config:/var/app/headquarters/config
+      - ./headquarters/examples:/var/app/headquarters/examples
       - ./headquarters/migrations:/var/app/headquarters/migrations
       - ./headquarters/src:/var/app/headquarters/src
       - ./headquarters/views:/var/app/headquarters/views

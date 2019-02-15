@@ -323,3 +323,29 @@ export function initializeTrip(fields, playersFields) {
       });
   };
 }
+
+export function createExample(orgId, example, scriptContent) {
+  return function (dispatch) {
+    const experienceFields = {
+      orgId: orgId,
+      name: example.name,
+      title: example.title,
+      timezone: 'US/Pacific'
+    };
+    createInstance('experiences', experienceFields)(dispatch)
+      .then((data) => {
+        const scriptFields = {
+          orgId: orgId,
+          experienceId: data.id,
+          revision: 1,
+          contentVersion: 1,
+          content: scriptContent,
+          isActive: true
+        };
+        return createInstance('scripts', scriptFields)(dispatch);
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  };
+}

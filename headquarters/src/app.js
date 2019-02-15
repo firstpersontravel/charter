@@ -11,9 +11,10 @@ const apiRouter = require('./routers/api');
 const authRouter = require('./routers/auth');
 const twilioRouter = require('./routers/twilio');
 const {
+  actorRouter,
+  contentRouter,
   galleryRouter,
-  shortcutRouter,
-  actorRouter
+  shortcutRouter
 } = require('./routers/page');
 
 // Configure raven
@@ -48,6 +49,7 @@ app.set('view engine', 'handlebars');
 app.use('/actor', actorRouter);
 app.use('/api', apiRouter);
 app.use('/auth', authRouter);
+app.use('/content', contentRouter);
 app.use('/endpoints/twilio', twilioRouter);
 app.use('/gallery', galleryRouter);
 app.use('/s', shortcutRouter);
