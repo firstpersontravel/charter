@@ -10,7 +10,9 @@ roles:
     user: false
 
 relays:
-  - for: Knight
+  - name: main
+    for: Knight
+    as: Knight
     with: Sage
     trailhead: true
     sms_in: true
@@ -18,6 +20,7 @@ relays:
 
 messages:
   - name: MESSAGE-HELLO
+    title: Hello
     scene: SCENE-MAIN
     medium: text
     from: Sage
@@ -25,6 +28,7 @@ messages:
     content: Why hello there, fine sir/lady/being! What is your name?
 
   - name: MESSAGE-HELLO-RUDE
+    title: Rude
     scene: SCENE-MAIN
     medium: text
     from: Sage
@@ -33,6 +37,7 @@ messages:
 
   - name: MESSAGE-RETURN-GREETING
     scene: SCENE-MAIN
+    title: Greet
     medium: text
     from: Sage
     to: Knight
@@ -40,6 +45,7 @@ messages:
 
   - name: MESSAGE-QUEST
     scene: SCENE-MAIN
+    title: Quest
     medium: text
     from: Sage
     to: Knight
@@ -50,23 +56,22 @@ scenes:
     title: Main
 
 triggers:
-  - events: {message_sent: {from: Knight, to: Sage, medium: text}}
+  - name: hello
+    events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
     if: not game_started
     actions:
-      - set_value game_started true
-      - if:
-          or:
-            - contains event.message.content "hello"
-            - contains event.message.content "hi"
-            - contains event.message.content "hey"
-        actions: send_message MESSAGE-HELLO
-        else: send_message MESSAGE-HELLO-RUDE
+      - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
+      - name: conditional
+        if: contains event.message.content "hello" or contains event.message.content "hi" or contains event.message.content "hey"
+        actions: [{ name: send_message, message_name: MESSAGE-HELLO }]
+        else: [{ name: send_message, message_name: MESSAGE-HELLO-RUDE }]
 
-  - events: {message_sent: {from: Knight, to: Sage, medium: text}}
+  - name: getname
+    events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
     if: game_started
     actions:
-      - set_value player_name event.message.content
-      - send_message MESSAGE-RETURN-GREETING
-      - in 10s, send_message MESSAGE-QUEST
+      - { name: set_value, value_ref: player_name, new_value_ref: event.message.content }
+      - { name: send_message, message_name: MESSAGE-RETURN-GREETING }
+      - { name: send_message, message_name: MESSAGE-QUEST, when: in 10s }
