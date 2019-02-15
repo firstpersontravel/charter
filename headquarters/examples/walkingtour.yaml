@@ -1,5 +1,6 @@
 layouts:
   - name: tablet
+    title: Tablet
     type: tabs
     section: tabs
     header_panels:
@@ -61,13 +62,22 @@ pages:
 waypoints:
   - name: WAYPOINT-COTTAGE
     title: Cottage
-    coords: [37.758273, -122.411681]
+    options:
+      - name: cottage
+        title: Cottage
+        coords: [37.758273, -122.411681]
   - name: WAYPOINT-ATLAS
     title: Atlas Cafe
-    coords: [37.759010, -122.411497]
+    options:
+      - name: atlas
+        title: Atlas Cafe
+        coords: [37.759010, -122.411497]
   - name: WAYPOINT-BON-NENE
     title: Bon Nene
-    coords: [37.757528, -122.411499]
+    options:
+      - name: bonnene
+        title: Bon Nene
+        coords: [37.757528, -122.411499]
 
 geofences:
   - name: GEOFENCE-ATLAS
@@ -78,37 +88,41 @@ geofences:
     distance: 20
 
 cues:
-  - {name: CUE-ATLAS-ARRIVE, scene: SCENE-MAIN}
+  - { name: CUE-ATLAS-ARRIVE, scene: SCENE-MAIN, title: Atlas Cafe Arrived }
 
 triggers:
-  - events: {cue_signaled: CUE-ATLAS-ARRIVE}
+  - name: atlas
+    events: [{ type: cue_signaled, cue: CUE-ATLAS-ARRIVE }]
     scene: SCENE-MAIN
     actions:
-      - send_message MESSAGE-ATLAS-WELCOME
-      - send_to_page Player PAGE-ATLAS
+      - { name: send_message, message_name: MESSAGE-ATLAS-WELCOME }
+      - { name: send_to_page, role_name: Player, page_name: PAGE-ATLAS }
 
-  - events:
-      message_sent:
+  - name: msg
+    events:
+      - type: message_sent
         medium: image
         from: Player
         to: Guide
         geofence: GEOFENCE-ATLAS
     scene: SCENE-MAIN
     actions:
-      - in 10s, send_message MESSAGE-ATLAS-REC
-      - increment_value points 5
+      - { name: send_message, message_name: MESSAGE-ATLAS-REC, when: in 10s }
+      - { name: increment_value, value_ref: points, delta: 5 }
 
-  - events:
-      geofence_entered:
+  - name: geofence
+    events:
+      - type: geofence_entered
         role: Player
         geofence: GEOFENCE-BON-NENE
     scene: SCENE-MAIN
     actions:
-      - send_message MESSAGE-BON-NENE-WELCOME
-      - increment_value points 10
+      - { name: send_message, message_name: MESSAGE-BON-NENE-WELCOME }
+      - { name: increment_value, value_ref: points, delta: 10 }
 
 messages:
   - name: MESSAGE-ATLAS-WELCOME
+    title: Welcome
     scene: SCENE-MAIN
     medium: text
     from: Guide
@@ -116,6 +130,7 @@ messages:
     content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
 
   - name: MESSAGE-ATLAS-REC
+    title: Atlas
     scene: SCENE-MAIN
     medium: text
     from: Guide
@@ -123,6 +138,7 @@ messages:
     content: Try the trout sandwich.
 
   - name: MESSAGE-BON-NENE-WELCOME
+    title: Bon Nene
     scene: SCENE-MAIN
     medium: text
     from: Guide

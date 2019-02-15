@@ -25,7 +25,8 @@ describe('TripUtil', () => {
         trip: models.Trip.build({
           currentSceneName: 'SCENE-1',
           schedule: { 'TIME-1': 'time' },
-          history: { 'CUE-1': 'time' }
+          history: { 'CUE-1': 'time' },
+          waypointOptions: { 'WAYPOINT-1': 'OPTION-2' }
         }),
         players: [models.Player.build({
           roleName: 'Role',
@@ -40,6 +41,7 @@ describe('TripUtil', () => {
         currentSceneName: 'SCENE-1',
         schedule: { 'TIME-1': 'time' },
         history: { 'CUE-1': 'time' },
+        waypointOptions: { 'WAYPOINT-1': 'OPTION-2' },
         Role: {
           contact_name: null,
           currentPageName: 'PAGE-1',

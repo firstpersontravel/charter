@@ -35,6 +35,7 @@ ContextCore.gatherEvalContext = function (env, trip) {
   // Gather core values
   var context = _.assign({}, trip.customizations, trip.values, {
     currentSceneName: trip.currentSceneName,
+    waypointOptions: trip.waypointOptions,
     schedule: trip.schedule,
     history: trip.history
   });

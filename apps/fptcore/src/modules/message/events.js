@@ -2,6 +2,7 @@ var _ = require('lodash');
 
 var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
+var WaypointCore = require('../../cores/waypoint');
 var distance = require('../../utils/distance');
 
 module.exports = {
@@ -53,13 +54,18 @@ module.exports = {
         if (!event.location.latitude || !event.location.longitude) {
           return false;
         }
+
         var geofence = _.find(actionContext.scriptContent.geofences,
           { name: spec.geofence });
-        var waypoint = _.find(actionContext.scriptContent.waypoints,
-          { name: geofence.center });
+
+        var waypointOption = WaypointCore.optionForWaypoint(
+          actionContext.scriptContent, geofence.center,
+          actionContext.evalContext.waypointOptions);
+
         var dist = distance(
           event.location.latitude, event.location.longitude,
-          waypoint.coords[0], waypoint.coords[1]);
+          waypointOption.coords[0], waypointOption.coords[1]);
+
         // Don't let accuracy get wider than 15 meters, since that'd cause
         // erroneous triggers.
         var maxAccuracy = 15;
