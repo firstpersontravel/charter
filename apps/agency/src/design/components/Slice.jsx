@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 
 import ContentTree from '../partials/ContentTree';
+import ResponsiveListGroup from '../partials/ResponsiveListGroup';
 
 import { prepareContentTree } from '../utils/tree-utils';
 import { sections, getContentList } from '../utils/section-utils';
@@ -51,31 +51,22 @@ export default class Slice extends Component {
 
   renderSidenav() {
     const script = this.props.script;
-    const sceneLinks = _.map(script.content.scenes, scene => (
-      <Link
-        key={scene.name}
-        className="list-group-item"
-        activeClassName="active"
-        to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`}>
-        {scene.title}
-      </Link>
-    ));
+    const sceneLinks = _.map(script.content.scenes, scene => ({
+      key: scene.name,
+      url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`,
+      label: scene.title
+    }));
 
-    const sectionLinks = sections.map(section => (
-      <Link
-        key={section[0]}
-        className="list-group-item"
-        activeClassName="active"
-        to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`}>
-        {section[1]}
-      </Link>
-    ));
+    const sectionLinks = sections.map(section => ({
+      key: section[0],
+      url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`,
+      label: section[1]
+    }));
+
+    const items = sectionLinks.concat(sceneLinks);
 
     return (
-      <div className="list-group list-group-flush">
-        {sectionLinks}
-        {sceneLinks}
-      </div>
+      <ResponsiveListGroup items={items} />
     );
   }
 

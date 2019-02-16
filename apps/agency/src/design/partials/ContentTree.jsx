@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { IndexLink, Link } from 'react-router';
+import { Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from './ResourceBadge';
+// import ResponsiveListGroup from './ResponsiveListGroup';
 
 function walkContentTree(contentTree, path, iteree) {
   _.each(contentTree, (value, key) => {
@@ -77,7 +78,7 @@ export default class ContentTree extends Component {
     const script = this.props.script;
     const resourceType = TextUtil.singularize(collectionName);
     return (
-      <IndexLink
+      <Link
         key={collectionName}
         className={'list-group-item list-group-item-action constrain-text'}
         activeClassName="active"
@@ -93,7 +94,7 @@ export default class ContentTree extends Component {
           resourceType={resourceType} />
         &nbsp;
         <span className="faint">Add {resourceType}</span>
-      </IndexLink>
+      </Link>
     );
   }
 

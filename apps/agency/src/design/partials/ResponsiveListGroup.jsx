@@ -1,0 +1,63 @@
+import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import { Link, browserHistory } from 'react-router';
+
+function selectItem(e) {
+  browserHistory.push(e.target.value);
+}
+
+function renderSelect(items) {
+  const selectedItem = _.get(_.find(items, item => (
+    _.startsWith(window.location.pathname, item.url)
+  )), 'url');
+  const renderedOptions = items.map(item => (
+    <option key={item.key} value={item.url}>
+      {item.label}
+    </option>
+  ));
+  return (
+    <div className="d-sm-none">
+      <select
+        className="form-control"
+        value={selectedItem}
+        onChange={selectItem}>
+        {renderedOptions}
+      </select>
+    </div>
+  );
+}
+
+function renderGroup(items) {
+  const renderedItems = items.map(item => (
+    <Link
+      className="list-group-item list-group-item-action constrain-text"
+      activeClassName="active"
+      key={item.key}
+      to={item.url}>
+      {item.label}
+    </Link>
+  ));
+  return (
+    <div className="list-group list-group-flush d-none d-sm-block">
+      {renderedItems}
+    </div>
+  );
+}
+
+export default function ResponsiveListGroup({ items }) {
+  return (
+    <div>
+      {renderSelect(items)}
+      {renderGroup(items)}
+    </div>
+  );
+}
+
+ResponsiveListGroup.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired
+  })).isRequired
+};
