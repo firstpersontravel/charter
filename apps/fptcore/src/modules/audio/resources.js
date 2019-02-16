@@ -1,4 +1,7 @@
 var audio = {
+  help: {
+    summary: 'An audio clip is a sound that can be referred to and played on different devices.'
+  },
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string' },

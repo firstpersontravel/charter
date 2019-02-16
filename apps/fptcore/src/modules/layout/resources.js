@@ -3,6 +3,9 @@ var SubresourcesRegistry = require('../../registries/subresources');
 var LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
 
 var layout = {
+  help: {
+    summary: 'A layout is a combination of panels that create a user interface.'
+  },
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

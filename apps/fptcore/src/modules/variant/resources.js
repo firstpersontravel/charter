@@ -1,4 +1,7 @@
 var variant = {
+  help: {
+    summary: 'A variant defines a variation in trip values.'
+  },
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

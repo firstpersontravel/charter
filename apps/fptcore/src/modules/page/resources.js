@@ -3,6 +3,9 @@
 var SubresourcesRegistry = require('../../registries/subresources');
 
 var page = {
+  help: {
+    summary: 'A page is a user interface that can be displayed to a player. It is comprised of panels, each of which is a unit of functionality.'
+  },
   properties: {
     name: { type: 'string', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true, parent: true },

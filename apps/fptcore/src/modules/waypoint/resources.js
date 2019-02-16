@@ -1,4 +1,7 @@
 var waypoint = {
+  help: {
+    summary: 'A waypoint defines a location used by the trip. Each waypoint has multiple options that can be set for each trip.'
+  },
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

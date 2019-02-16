@@ -1,6 +1,9 @@
 var _ = require('lodash');
 
 var relay = {
+  help: {
+    summary: 'A relay defines a text or phone interface from one player to another.'
+  },
   properties: {
     name: { type: 'name', required: true },
     for: {

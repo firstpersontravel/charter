@@ -1,26 +1,30 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { TextUtil } from 'fptcore';
+import { ResourcesRegistry, TextUtil } from 'fptcore';
 
 import { getSliceContent } from '../utils/section-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
-  const resourceName = TextUtil.singularize(collectionName);
+  const resourceType = TextUtil.singularize(collectionName);
+  const resourceClass = ResourcesRegistry[resourceType];
+  const helpText = _.get(resourceClass, 'help.summary');
   return (
-    <div key={collectionName} style={{ marginBottom: '1em' }}>
+    <p key={collectionName} style={{ marginBottom: '1em' }}>
+      {helpText}
+      &nbsp;
       <Link
         to={
           `/${script.org.name}/${script.experience.name}` +
           `/design/script/${script.revision}` +
           `/${sliceType}/${sliceName}` +
           `/${collectionName}/new`
-        }
-        className="btn btn-outline-secondary">
-        Create {resourceName}
+        }>
+        Add {TextUtil.titleForKey(resourceType).toLowerCase()}
       </Link>
-    </div>
+    </p>
   );
 }
 

@@ -1,4 +1,7 @@
 var appearance = {
+  help: {
+    summary: 'An appearance is an section of involvement of a trip player. It is used to organize different interactions when a user is taking part in multiple trips at the same time.'
+  },
   properties: {
     name: { type: 'name', required: true },
     role: {

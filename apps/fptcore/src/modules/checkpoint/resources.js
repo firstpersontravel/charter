@@ -1,4 +1,7 @@
 var checkpoint = {
+  help: {
+    summary: 'A checkpoint is a saved place marker in a trip that can be quickly reset to for testing purposes.'
+  },
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

@@ -1,6 +1,9 @@
 var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 var message = {
+  help: {
+    summary: 'A message is text or media that can be sent from one player to another.'
+  },
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
