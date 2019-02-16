@@ -1,13 +1,12 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from './ResourceBadge';
-// import ResponsiveListGroup from './ResponsiveListGroup';
+import ResponsiveListGroup from './ResponsiveListGroup';
 
 function walkContentTree(contentTree, path, iteree) {
   _.each(contentTree, (value, key) => {
@@ -57,45 +56,47 @@ export default class ContentTree extends Component {
     const prefix = path.map(pathEntry => (
       <span className="faint" key={pathEntry}>&ndash;&nbsp;</span>
     ));
-    return (
-      <Link
-        className={'list-group-item list-group-item-action constrain-text'}
-        key={`${path.join('-')}-${item.name}`}
-        activeClassName="active"
-        to={
-          `/${script.org.name}/${script.experience.name}` +
-          `/design/script/${script.revision}` +
-          `/${this.props.sliceType}/${this.props.sliceName}` +
-          `/${collectionName}/${item.name}`
-        }>
-        {prefix}
-        <ResourceBadge resourceType={resourceType} /> {itemTitle}
-      </Link>
-    );
+    return ({
+      key: `${path.join('-')}-${item.name}`,
+      url: (
+        `/${script.org.name}/${script.experience.name}` +
+        `/design/script/${script.revision}` +
+        `/${this.props.sliceType}/${this.props.sliceName}` +
+        `/${collectionName}/${item.name}`
+      ),
+      text: `${TextUtil.titleForKey(resourceType)}: ${itemTitle}`,
+      label: (
+        <span>
+          {prefix}
+          <ResourceBadge resourceType={resourceType} /> {itemTitle}
+        </span>
+      )
+    });
   }
 
   renderNewItem(collectionName) {
     const script = this.props.script;
     const resourceType = TextUtil.singularize(collectionName);
-    return (
-      <Link
-        key={collectionName}
-        className={'list-group-item list-group-item-action constrain-text'}
-        activeClassName="active"
-        to={
-          `/${script.org.name}/${script.experience.name}` +
-          `/design/script/${script.revision}` +
-          `/${this.props.sliceType}/${this.props.sliceName}` +
-          `/${collectionName}/new`
-        }>
-        <span className="faint">+</span>&nbsp;
-        <ResourceBadge
-          style={{ opacity: '0.5' }}
-          resourceType={resourceType} />
-        &nbsp;
-        <span className="faint">Add {resourceType}</span>
-      </Link>
-    );
+    return ({
+      key: collectionName,
+      url: (
+        `/${script.org.name}/${script.experience.name}` +
+        `/design/script/${script.revision}` +
+        `/${this.props.sliceType}/${this.props.sliceName}` +
+        `/${collectionName}/new`
+      ),
+      text: `Add ${resourceType}`,
+      label: (
+        <span>
+          <span className="faint">+</span>&nbsp;
+          <ResourceBadge
+            style={{ opacity: '0.5' }}
+            resourceType={resourceType} />
+          &nbsp;
+          <span className="faint">Add {resourceType}</span>
+        </span>
+      )
+    });
   }
 
   renderNewItems() {
@@ -140,13 +141,12 @@ export default class ContentTree extends Component {
       );
     }
 
+    const allItems = items.concat(this.renderNewItems());
+
     return (
       <div>
         {noContentHeader}
-        <div className="script-content-slice list-group list-group-flush">
-          {items}
-          {this.renderNewItems()}
-        </div>
+        <ResponsiveListGroup items={allItems} />
       </div>
     );
   }

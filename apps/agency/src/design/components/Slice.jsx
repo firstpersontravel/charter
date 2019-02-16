@@ -54,13 +54,15 @@ export default class Slice extends Component {
     const sceneLinks = _.map(script.content.scenes, scene => ({
       key: scene.name,
       url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`,
-      label: scene.title
+      label: scene.title,
+      text: scene.title
     }));
 
     const sectionLinks = sections.map(section => ({
       key: section[0],
       url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`,
-      label: section[1]
+      label: section[1],
+      text: section[1]
     }));
 
     const items = sectionLinks.concat(sceneLinks);

@@ -14,11 +14,11 @@ function renderSelect(items) {
   )), 'url');
   const renderedOptions = items.map(item => (
     <option key={item.key} value={item.url}>
-      {item.label}
+      {item.text}
     </option>
   ));
   return (
-    <div className="d-sm-none">
+    <div className="d-sm-none" style={{ marginBottom: '0.5em' }}>
       <select
         className="form-control"
         value={selectedItem}
@@ -57,7 +57,8 @@ export default function ResponsiveListGroup({ items }) {
 
 ResponsiveListGroup.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
+    label: PropTypes.node.isRequired,
+    text: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
   })).isRequired
 };
