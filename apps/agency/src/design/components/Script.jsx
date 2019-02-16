@@ -12,6 +12,7 @@ class Script extends Component {
     this.handleActivateScript = this.handleActivateScript.bind(this);
     this.handleRevertScript = this.handleRevertScript.bind(this);
     this.handleLockScript = this.handleLockScript.bind(this);
+    this.handleNewDraft = this.handleNewDraft.bind(this);
   }
 
   handleActivateScript() {
@@ -36,6 +37,22 @@ class Script extends Component {
       }
     });
   }
+
+  handleNewDraft() {
+    const script = this.props.script;
+    const maxRevision = Math.max(..._.map(this.props.scripts, 'revision'));
+    const nextRevision = maxRevision + 1;
+    this.props.createInstance('scripts', {
+      orgId: script.orgId,
+      experienceId: script.experienceId,
+      content: script.content,
+      contentVersion: script.contentVersion,
+      revision: nextRevision,
+      isActive: false
+    });
+    browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${nextRevision}/${this.props.params.sliceType}/${this.props.params.sliceName}`);
+  }
+
 
   handleLockScript() {
     this.props.updateInstance('scripts', this.props.script.id, {
@@ -152,6 +169,16 @@ class Script extends Component {
       </button>
     );
 
+    const newDraftBtn = (
+      <button
+        style={{ marginLeft: '0.25em' }}
+        onClick={this.handleNewDraft}
+        className="btn btn-xs btn-outline-secondary">
+        <i className="fa fa-pencil" />&nbsp;
+        New draft
+      </button>
+    );
+
     const lockBtn = (
       <button
         style={{ marginLeft: '0.25em' }}
@@ -169,6 +196,9 @@ class Script extends Component {
       </span>
     ) : null;
 
+    const newDraftBtns = script.isActive || script.isLocked ?
+      newDraftBtn : null;
+
     const goToLatestLink = !isMaxRevision ? (
       <span style={{ marginLeft: '0.25em', padding: '0' }}>
         <Link to={`/${script.org.name}/${script.experience.name}/design/script/${maxRevision}`}>
@@ -183,13 +213,29 @@ class Script extends Component {
           className="container-fluid"
           style={{
             margin: 0,
-            padding: '0.25em 1em'
+            padding: '0.5em 1em'
           }}>
-          Rev. {this.props.script.revision}
-          {badges}
-          {activateBtns}
-          {script.isActive ? lockBtn : null}
-          {goToLatestLink}
+          <div style={{ float: 'right' }}>
+            Rev. {this.props.script.revision}
+            {badges}
+            {activateBtns}
+            {script.isActive ? lockBtn : null}
+            {newDraftBtns}
+            {goToLatestLink}
+          </div>
+          <div>
+            <Link
+              activeClassName="bold"
+              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/overview`}>
+              Design
+            </Link>
+            &nbsp;|&nbsp;
+            <Link
+              activeClassName="bold"
+              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/test`}>
+              Test
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -221,6 +267,7 @@ Script.propTypes = {
   script: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,
+  createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };
 
