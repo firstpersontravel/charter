@@ -11,7 +11,7 @@ export default (
   <Route path="design">
     <IndexRoute component={DesignIndexConnector} />
     <Route path="script/:revision" component={ScriptConnector}>
-      <IndexRedirect to="/:orgName/:experienceName/design/script/:revision/section/roles" />
+      <IndexRedirect to="/:orgName/:experienceName/design/script/:revision/section/overview" />
       <Route path=":sliceType">
         <Route path=":sliceName" component={SliceConnector}>
           <IndexRoute component={SliceIndexConnector} />

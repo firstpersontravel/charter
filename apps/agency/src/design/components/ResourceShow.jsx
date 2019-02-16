@@ -60,9 +60,6 @@ export default class ResourceShow extends Component {
     const resourceType = TextUtil.singularize(collectionName);
     const resourceClass = ResourcesRegistry[resourceType];
     const fields = { name: this.getNewResourceName() };
-    if (resourceClass.properties.title) {
-      fields.title = `New ${resourceType}`;
-    }
     if (resourceClass.properties.scene && sliceType === 'scene') {
       fields.scene = sliceName;
     }

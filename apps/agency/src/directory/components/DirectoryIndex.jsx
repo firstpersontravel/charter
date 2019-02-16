@@ -81,7 +81,7 @@ export default class DirectoryIndex extends Component {
             pathname: `/${experience.org.name}/${experience.name}/directory`,
             query: { role: profile.roleName }
           }}>
-          {profile.role.title}
+          {_.get(profile, 'role.title')}
         </Link>
         &nbsp;
       </span>
@@ -105,11 +105,13 @@ export default class DirectoryIndex extends Component {
     const experience = this.props.experience;
     if (roleName && experience.script) {
       const role = _.find(experience.script.content.roles, { name: roleName });
+      const roleTitle = roleName === 'Archived' ? 'Archived' :
+        (role && role.title);
       return (
         <h3>
           <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link>
           &nbsp;›&nbsp;
-          {role.title}
+          {roleTitle}
         </h3>
       );
     }

@@ -80,17 +80,17 @@ const RESOURCE_ICONS = {
   waypoint: 'map-pin'
 };
 
-export default function ResourceBadge({ resourceType }) {
-  const style = COLORS[resourceType] ? {
-    backgroundColor: COLORS[resourceType]
-  } : null;
+export default function ResourceBadge({ resourceType, style, ...props }) {
+  const styleWithColor = Object.assign({
+    backgroundColor: COLORS[resourceType] || '#cccccc'
+  }, style);
   const resourceIcon = RESOURCE_ICONS[resourceType] ? (
     <i
       style={{ marginRight: '0.25em' }}
       className={`fa fa-${RESOURCE_ICONS[resourceType]}`} />
   ) : null;
   return (
-    <span style={style} className="badge badge-secondary">
+    <span style={styleWithColor} className="badge badge-secondary" {...props}>
       {resourceIcon}
       {TextUtil.titleForKey(resourceType)}
     </span>
@@ -98,5 +98,10 @@ export default function ResourceBadge({ resourceType }) {
 }
 
 ResourceBadge.propTypes = {
+  style: PropTypes.object,
   resourceType: PropTypes.string.isRequired
+};
+
+ResourceBadge.defaultProps = {
+  style: {}
 };

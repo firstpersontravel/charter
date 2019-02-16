@@ -211,19 +211,25 @@ export default class ResourceView extends Component {
   renderTitle() {
     const script = this.props.script;
     const collectionName = this.props.collectionName;
+    const resourceType = TextUtil.singularize(collectionName);
+    const resourceClass = this.getResourceClass();
     const resource = this.state.pendingResource;
-    if (resource.title) {
+    const emptyTitle = (
+      <span className="faint">
+        New {TextUtil.titleForKey(resourceType).toLowerCase()}
+      </span>
+    );
+    if (resourceClass.properties.title) {
       return (
         <PopoverControl
           title="Title"
           validate={val => !!val}
           onConfirm={_.curry(this.handlePropertyUpdate)('title')}
-          label={resource.title}
-          value={this.props.isNew ? '' : resource.title} />
+          label={resource.title || emptyTitle}
+          value={resource.title || ''} />
       );
     }
     if (this.props.isNew) {
-      const resourceType = TextUtil.singularize(collectionName);
       return `New ${resourceType}`;
     }
     return titleForResource(script.content, collectionName, resource);

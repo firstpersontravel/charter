@@ -79,13 +79,9 @@ class Script extends Component {
     let sceneTitle = 'Scenes';
     if (this.props.params.sliceType === 'scene') {
       const sceneName = this.props.params.sliceName;
-      if (sceneName === 'all') {
-        sceneTitle = 'Scenes Index';
-      } else {
-        const scene = _.find(script.content.scenes, { name: sceneName });
-        if (scene) {
-          sceneTitle = `Scene: ${scene.title}`;
-        }
+      const scene = _.find(script.content.scenes, { name: sceneName });
+      if (scene) {
+        sceneTitle = `Scene: ${scene.title}`;
       }
     }
 
@@ -101,11 +97,6 @@ class Script extends Component {
             {sceneTitle}
           </Link>
           <div className="dropdown-menu">
-            <Link
-              className="dropdown-item"
-              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/all`}>
-              Index
-            </Link>
             {sceneLinks}
           </div>
         </li>
@@ -187,12 +178,19 @@ class Script extends Component {
     ) : null;
 
     return (
-      <div style={{ float: 'right', padding: '0.5em' }}>
-        Rev. {this.props.script.revision}
-        {badges}
-        {activateBtns}
-        {script.isActive ? lockBtn : null}
-        {goToLatestLink}
+      <div style={{ backgroundColor: '#eee' }}>
+        <div
+          className="container-fluid"
+          style={{
+            margin: 0,
+            padding: '0.25em 1em'
+          }}>
+          Rev. {this.props.script.revision}
+          {badges}
+          {activateBtns}
+          {script.isActive ? lockBtn : null}
+          {goToLatestLink}
+        </div>
       </div>
     );
   }
@@ -208,10 +206,11 @@ class Script extends Component {
       return <div className="container-fluid">Script not found.</div>;
     }
     return (
-      <div className="container-fluid">
+      <div>
         {this.renderOpts()}
-        {this.renderNav()}
-        {this.props.children}
+        <div className="container-fluid">
+          {this.props.children}
+        </div>
       </div>
     );
   }

@@ -1,10 +1,12 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router';
 
 import ContentTree from '../partials/ContentTree';
 
 import { prepareContentTree } from '../utils/tree-utils';
-import { getContentList } from '../utils/section-utils';
+import { sections, getContentList } from '../utils/section-utils';
 
 export default class Slice extends Component {
   constructor(props) {
@@ -47,24 +49,45 @@ export default class Slice extends Component {
     });
   }
 
+  renderSidenav() {
+    const script = this.props.script;
+    const sceneLinks = _.map(script.content.scenes, scene => (
+      <Link
+        key={scene.name}
+        className="list-group-item"
+        activeClassName="active"
+        to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`}>
+        {scene.title}
+      </Link>
+    ));
+
+    const sectionLinks = sections.map(section => (
+      <Link
+        key={section[0]}
+        className="list-group-item"
+        activeClassName="active"
+        to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`}>
+        {section[1]}
+      </Link>
+    ));
+
+    return (
+      <div className="list-group list-group-flush">
+        {sectionLinks}
+        {sceneLinks}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className="row row-eq-height script-editor-container">
-        <div className="script-editor-col col-sm-4">
-          <div
-            className="input-group script-editor-tree-search"
-            style={{ marginBottom: '0.5em' }}>
-            <input
-              className="form-control py-2 border-right-0 border"
-              type="search"
-              value={this.state.search}
-              onChange={this.handleChangeSearch} />
-            <span className="input-group-append">
-              <div className="input-group-text bg-transparent">
-                <i className="fa fa-search" />
-              </div>
-            </span>
+        <div className="script-editor-col col-sm-2">
+          <div className="script-editor-nav">
+            {this.renderSidenav()}
           </div>
+        </div>
+        <div className="script-editor-col col-sm-3">
           <div className="script-editor-tree">
             <ContentTree
               sliceType={this.props.params.sliceType}
@@ -75,7 +98,7 @@ export default class Slice extends Component {
               script={this.props.script} />
           </div>
         </div>
-        <div className="script-editor-resource col-sm-8">
+        <div className="script-editor-resource col-sm-7">
           {this.props.children}
         </div>
       </div>

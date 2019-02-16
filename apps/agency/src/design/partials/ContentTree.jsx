@@ -77,22 +77,23 @@ export default class ContentTree extends Component {
     const script = this.props.script;
     const resourceType = TextUtil.singularize(collectionName);
     return (
-      <li key={collectionName}>
-        <IndexLink
-          className={'list-group-item list-group-item-action constrain-text'}
-          activeClassName="active"
-          to={
-            `/${script.org.name}/${script.experience.name}` +
-            `/design/script/${script.revision}` +
-            `/${this.props.sliceType}/${this.props.sliceName}` +
-            `/${collectionName}/new`
-          }>
-          <span className="faint">+</span>&nbsp;
-          <ResourceBadge resourceType={resourceType} />
-          &nbsp;
-          <span className="faint">Add {resourceType}</span>
-        </IndexLink>
-      </li>
+      <IndexLink
+        key={collectionName}
+        className={'list-group-item list-group-item-action constrain-text'}
+        activeClassName="active"
+        to={
+          `/${script.org.name}/${script.experience.name}` +
+          `/design/script/${script.revision}` +
+          `/${this.props.sliceType}/${this.props.sliceName}` +
+          `/${collectionName}/new`
+        }>
+        <span className="faint">+</span>&nbsp;
+        <ResourceBadge
+          style={{ opacity: '0.5' }}
+          resourceType={resourceType} />
+        &nbsp;
+        <span className="faint">Add {resourceType}</span>
+      </IndexLink>
     );
   }
 
@@ -141,10 +142,10 @@ export default class ContentTree extends Component {
     return (
       <div>
         {noContentHeader}
-        <ul className="script-content-slice list-group list-group-flush">
+        <div className="script-content-slice list-group list-group-flush">
           {items}
           {this.renderNewItems()}
-        </ul>
+        </div>
       </div>
     );
   }

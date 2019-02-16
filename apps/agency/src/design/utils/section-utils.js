@@ -1,32 +1,30 @@
 import _ from 'lodash';
 
 export const sections = [
-  ['roles', 'Roles'],
+  ['overview', 'Overview'],
+  ['messaging', 'Messaging'],
   ['locations', 'Location'],
   ['variants', 'Variants'],
   ['media', 'Media']
 ];
 
 const sectionContent = {
-  roles: { roles: {}, appearances: {}, relays: {} },
+  overview: { scenes: {}, roles: {}, appearances: {} },
+  messaging: { relays: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
   variants: { variants: {}, departures: {}, times: {} },
   media: { layouts: {}, content_pages: {}, audio: {} }
 };
 
 const sliceContent = {
-  scene: sliceName => (
-    sliceName === 'all' ? {
-      scenes: {}
-    } : {
-      pages: { scene: sliceName },
-      triggers: { scene: sliceName },
-      messages: { scene: sliceName },
-      cues: { scene: sliceName },
-      achievements: { scene: sliceName },
-      checkpoints: { scene: sliceName }
-    }
-  ),
+  scene: sliceName => ({
+    pages: { scene: sliceName },
+    triggers: { scene: sliceName },
+    messages: { scene: sliceName },
+    cues: { scene: sliceName },
+    achievements: { scene: sliceName },
+    checkpoints: { scene: sliceName }
+  }),
   section: sliceName => sectionContent[sliceName]
 };
 
