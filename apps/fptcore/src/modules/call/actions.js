@@ -1,4 +1,5 @@
 var add_to_call = {
+  help: { summary: 'Add a player to a conference call.' },
   phraseForm: ['role_name'],
   requiredEventTypes: [
     'call_received', // type: call_received, from: role
@@ -31,6 +32,7 @@ var add_to_call = {
 };
 
 var initiate_call = {
+  help: { summary: 'Initiate a call from one player to another.' },
   params: {
     to_role_name: {
       required: true,

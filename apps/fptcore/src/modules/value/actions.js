@@ -3,6 +3,7 @@ var _ = require('lodash');
 var EvalCore = require('../../cores/eval');
 
 var set_value = {
+  help: { summary: 'Update a value in the trip state to either a constant number or string, or to match another value by reference.' },
   params: {
     value_ref: {
       required: true,
@@ -28,6 +29,7 @@ var set_value = {
 };
 
 var increment_value = {
+  help: { summary: 'Increment the numerical value of a value by reference.' },
   params: {
     value_ref: {
       required: true,

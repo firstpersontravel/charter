@@ -2,6 +2,7 @@ var _ = require('lodash');
 var moment = require('moment');
 
 var pause_audio = {
+  help: { summary: 'Pause currently playing audio.' },
   params: {
     role_name: {
       required: true,
@@ -31,6 +32,7 @@ var pause_audio = {
 };
 
 var play_audio = {
+  help: { summary: 'Start playing audio for a certain role.' },
   params: {
     role_name: {
       required: true,
@@ -66,6 +68,7 @@ var play_audio = {
 };
 
 var resume_audio = {
+  help: { summary: 'Resume currently paused audio.' },
   params: {
     role_name: {
       required: true,
@@ -97,6 +100,7 @@ var resume_audio = {
 };
 
 var stop_audio = {
+  help: { summary: 'Stop audio and reset audio state.' },
   params: {
     role_name: {
       required: true,

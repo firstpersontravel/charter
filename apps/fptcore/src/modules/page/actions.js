@@ -1,4 +1,5 @@
 var send_to_page = {
+  help: { summary: 'Set a player to a page.' },
   phraseForm: ['role_name', 'page_name'],
   params: {
     role_name: {

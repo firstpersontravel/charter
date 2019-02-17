@@ -30,3 +30,15 @@ moduleResourceSets.forEach(function(moduleResourceSet) {
 });
 
 module.exports = ResourcesRegistry;
+
+// var ModulesRegistry = require('../registries/modules');
+
+// var ResourcesRegistry = {};
+
+// Object.values(ModulesRegistry).forEach(function(module) {
+//   Object.keys(module.resources).forEach(function(resourceType) {
+//     ResourcesRegistry[resourceType] = module.resources[resourceType];
+//   });
+// });
+
+// module.exports = ResourcesRegistry;

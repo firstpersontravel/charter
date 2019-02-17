@@ -19,3 +19,15 @@ moduleActionSets.forEach(function(moduleActionSet) {
 });
 
 module.exports = ActionsRegistry;
+
+// var ModulesRegistry = require('../registries/modules');
+
+// var ActionsRegistry = {};
+
+// Object.values(ModulesRegistry).forEach(function(module) {
+//   Object.keys(module.actions).forEach(function(actionName) {
+//     ActionsRegistry[actionName] = module.actions[actionName];
+//   });
+// });
+
+// module.exports = ActionsRegistry;

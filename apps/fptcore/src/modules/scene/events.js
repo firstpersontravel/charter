@@ -1,5 +1,6 @@
 module.exports = {
   scene_started: {
+    help: { summary: 'Occurs when a scene has been started.' },
     parentResourceParam: 'scene',
     specParams: {
       scene: {

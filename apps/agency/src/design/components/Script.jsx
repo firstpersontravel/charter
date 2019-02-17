@@ -243,6 +243,12 @@ class Script extends Component {
               to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/test`}>
               Test
             </Link>
+            &nbsp;|&nbsp;
+            <Link
+              activeClassName="bold"
+              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/reference`}>
+              Reference
+            </Link>
           </div>
         </div>
       </div>

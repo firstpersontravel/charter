@@ -3,6 +3,7 @@ var _ = require('lodash');
 var EvalCore = require('../../cores/eval');
 
 var play_clip = {
+  help: { summary: 'Play a clip on an active phone call.' },
   phraseForm: ['clip_name'],
   requiredEventTypes: [
     'call_received', // type: call_received, from: role

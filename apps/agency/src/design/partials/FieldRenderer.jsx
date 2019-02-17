@@ -4,6 +4,7 @@ import React from 'react';
 import { TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
+import { labelForSpec } from '../utils/spec-utils';
 import PopoverControl from '../../partials/PopoverControl';
 import ResourceBadge from './ResourceBadge';
 
@@ -40,18 +41,6 @@ function internalEmpty(spec) {
   return (
     <em className="faint">{label}</em>
   );
-}
-
-function labelForSpec(spec, key) {
-  if (spec.title) {
-    return spec.title;
-  }
-  let simpleKey = key.replace('_name', '');
-  if (spec.type === 'reference') {
-    const resourceType = TextUtil.singularize(spec.collection);
-    simpleKey = simpleKey.replace(`_${resourceType}`, '');
-  }
-  return _.startCase(simpleKey);
 }
 
 const newItemsForSpecType = {

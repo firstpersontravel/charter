@@ -12,3 +12,15 @@ moduleSubresourceSets.forEach(function(moduleSubresourceSet) {
 });
 
 module.exports = SubresourcesRegistry;
+
+// var ModulesRegistry = require('../registries/modules');
+
+// var SubresourcesRegistry = {};
+
+// Object.values(ModulesRegistry).forEach(function(module) {
+//   Object.keys(module.subresources).forEach(function(resourceType) {
+//     SubresourcesRegistry[resourceType] = module.subresources[resourceType];
+//   });
+// });
+
+// module.exports = SubresourcesRegistry;

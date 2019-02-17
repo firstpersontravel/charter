@@ -1,4 +1,5 @@
 var signal_cue = {
+  help: { summary: 'Signal a cue.' },
   params: {
     cue_name: {
       required: true,

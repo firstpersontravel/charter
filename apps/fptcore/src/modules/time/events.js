@@ -19,6 +19,7 @@ function timeForSpec(spec, evalContext) {
 
 module.exports = {
   time_occurred: {
+    help: { summary: 'Occurs when the current time reaches a scheduled time.' },
     parentResourceParam: 'time',
     specParams: {
       time: { required: true, type: 'reference', collection: 'times' },

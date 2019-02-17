@@ -8,6 +8,7 @@ module.exports = {
   EvalCore: require('./cores/eval'),
   EventsRegistry: require('./registries/events'),
   GeofenceCore: require('./cores/geofence'),
+  ModulesRegistry: require('./registries/modules'),
   ParamValidators: require('./utils/param_validators'),
   PlayerCore: require('./cores/player'),
   ResourcesRegistry: require('./registries/resources'),

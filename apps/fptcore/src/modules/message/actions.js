@@ -5,6 +5,7 @@ var EvalCore = require('../../cores/eval');
 var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 var custom_message = {
+  help: { summary: 'Send a text or media message from one player to another.' },
   params: {
     from_role_name: { required: true, type: 'reference', collection: 'roles' },
     to_role_name: { required: true, type: 'reference', collection: 'roles' },
@@ -60,6 +61,7 @@ var custom_message = {
 };
 
 var send_message = {
+  help: { summary: 'Send a pre-defined message from one player to another.' },
   params: {
     message_name: {
       required: true,

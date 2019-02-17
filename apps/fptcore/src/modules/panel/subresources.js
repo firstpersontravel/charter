@@ -1,14 +1,18 @@
+var _ = require('lodash');
+
 var PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
 var PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
 var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'quest'];
 
 var PANEL_CLASSES = {
   audio_foreground: {
+    help: { summary: 'Displays an audio message that can be played at will.' },
     properties: {
       path: { type: 'media', medium: 'audio' }
     }
   },
   button: {
+    help: { summary: 'Displays a button. When pressed, a cue will be signaled.' },
     properties: {
       text: { type: 'string', required: true },
       cue: { type: 'reference', collection: 'cues', required: true },
@@ -17,6 +21,7 @@ var PANEL_CLASSES = {
   },
   choice: {
     properties: {
+      help: { summary: 'Displays a multiple choice option. When selected by a user, the curresponding value in the trip state will be updated.' },
       text: { type: 'string', required: true },
       value_ref: { type: 'simpleAttribute', required: true },
       choices: {
@@ -33,12 +38,14 @@ var PANEL_CLASSES = {
     }
   },
   content_browse: {
+    help: { summary: 'Displays an index page of content. The user can browse through all visible content pages matching the given section.' },
     properties: {
       title: { type: 'string', required: true },
       section: { type: 'string', required: true }
     }
   },
   directions: {
+    help: { summary: 'Displays live directions for the given route.' },
     properties: {
       route: { type: 'reference', collection: 'routes' },
       waypoint: { type: 'reference', collection: 'waypoints' },
@@ -53,17 +60,20 @@ var PANEL_CLASSES = {
     }
   },
   image: {
+    help: { summary: 'Displays an image.' },
     properties: {
       path: { type: 'media', medium: 'image', required: true },
       style: { type: 'enum', options: PANEL_IMAGE_STYLE_OPTIONS }
     }
   },
   messages_browse: {
+    help: { summary: 'Displays a browsable interface of all messages for a player.' },
     properties: {
       title: { type: 'string', required: true }
     }
   },
   messages: {
+    help: { summary: 'Displays a browsable interface of all messages between a set of players.' },
     properties: {
       title: { type: 'string' },
       as: { type: 'reference', collection: 'roles', required: true },
@@ -71,6 +81,7 @@ var PANEL_CLASSES = {
     }
   },
   numberpad: {
+    help: { summary: 'Displays a numberpad.' },
     properties: {
       submit: { type: 'string' },
       placeholder: { type: 'string' },
@@ -80,11 +91,13 @@ var PANEL_CLASSES = {
     }
   },
   outlet: {
+    help: { summary: 'For internal use.' },
     properties: {
       name: { type: 'string', required: true }
     }
   },
   text: {
+    help: { summary: 'Displays simple text.' },
     properties: {
       text: {
         type: 'string',
@@ -95,12 +108,14 @@ var PANEL_CLASSES = {
     }
   },
   video: {
+    help: { summary: 'Displays a video.' },
     properties: {
       path: { type: 'media', medium: 'video', required: true },
       poster: { type: 'media', medium: 'image' }
     }
   },
   yesno: {
+    help: { summary: 'Displays a yes/no choice. When updated, the corresponding value in the trip state will be updated.' },
     properties: {
       text: { type: 'string', required: true },
       value_ref: { type: 'simpleAttribute', required: true }
@@ -130,6 +145,11 @@ var panel = {
   }
 };
 
-module.exports = {
-  panel: panel
-};
+var panelSubresources = Object.assign(
+  { panel: panel },
+  _.mapKeys(PANEL_CLASSES, function(value, key) {
+    return key + '_panel';
+  })
+);
+
+module.exports = panelSubresources;

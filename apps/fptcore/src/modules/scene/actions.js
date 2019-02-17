@@ -1,6 +1,7 @@
 var _ = require('lodash');
 
 var start_scene = {
+  help: { summary: 'Update the current scene.' },
   phraseForm: ['scene_name'],
   eventForParams: function(params) {
     return {

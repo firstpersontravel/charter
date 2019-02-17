@@ -17,3 +17,15 @@ moduleEventSets.forEach(function(moduleEventSet) {
 });
 
 module.exports = EventsRegistry;
+
+// var ModulesRegistry = require('../registries/modules');
+
+// var EventsRegistry = {};
+
+// Object.values(ModulesRegistry).forEach(function(module) {
+//   Object.keys(module.events).forEach(function(eventType) {
+//     EventsRegistry[eventType] = module.events[eventType];
+//   });
+// });
+
+// module.exports = EventsRegistry;

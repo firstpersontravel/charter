@@ -1,4 +1,5 @@
 var set_state = {
+  help: { summary: 'Send an ephemeral signal to a player. This is deprecated.' },
   phraseForm: ['role_name', 'new_value'],
   params: {
     role_name: {

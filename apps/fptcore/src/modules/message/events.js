@@ -7,6 +7,7 @@ var distance = require('../../utils/distance');
 
 module.exports = {
   message_sent: {
+    help: { summary: 'Occurs when a message has been sent.' },
     getTitle: function(scriptContent, spec) {
       var parts = [spec.medium || 'message'];
       if (spec.from) {
