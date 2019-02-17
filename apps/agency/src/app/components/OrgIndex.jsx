@@ -37,18 +37,21 @@ export default class OrgIndex extends Component {
     }
     this.setState({ creatingExample: example.name });
     fetch(`/content/examples/${example.name}`)
-      .then(r => r.json())
-      .then((data) => {
-        this.props.createExample(this.props.org.id, example, data);
-        this.setState({ creatingExample: null });
+      .then((r) => {
+        if (r.status !== 200) {
+          throw new Error(`Status was ${r.status}`);
+        }
+        return r
+          .json()
+          .then((data) => {
+            this.props.createExample(this.props.org.id, example, data);
+            this.setState({ creatingExample: null });
+          });
       })
       .catch((err) => {
         console.error(`Error creating example: ${err.message}.`);
         this.setState({ creatingExample: null });
       });
-    // this.props.createInstance('experiences', {
-    //   orgId: this.props.org.id
-    // });
   }
 
   renderExamples() {
