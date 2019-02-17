@@ -77,7 +77,7 @@ export default class OrgExperience extends Component {
       ) : null;
       return (
         <div key={script.id}>
-          <Link to={`/${org.name}/${experience.name}/design/script/${script.revision}`}>
+          <Link to={`/${org.name}/${experience.name}/script/${script.revision}`}>
             Rev. {script.revision}
             {badge}
           </Link>

@@ -163,8 +163,8 @@ export default class ResourceView extends Component {
       <Link
         to={
           `/${script.org.name}/${script.experience.name}` +
-          `/design/script/${script.revision}` +
-          `/${this.props.sliceType}/${this.props.sliceName}`
+          `/script/${script.revision}` +
+          `/design/${this.props.sliceType}/${this.props.sliceName}`
         }
         style={{ marginRight: '0.25em' }}
         className="btn btn-sm btn-outline-secondary">
@@ -294,8 +294,8 @@ export default class ResourceView extends Component {
         className="btn btn-outline-secondary"
         to={
           `/${script.org.name}/${script.experience.name}` +
-          `/design/script/${script.revision}` +
-          `/${this.props.sliceType}/${this.props.sliceName}` +
+          `/script/${script.revision}` +
+          `/design/${this.props.sliceType}/${this.props.sliceName}` +
           `/${TextUtil.pluralize(childResourceType)}/new` +
           `?${childParentField}=${this.props.resource.name}`}>
           Create {childResourceType}

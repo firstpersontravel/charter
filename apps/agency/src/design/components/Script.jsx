@@ -50,7 +50,7 @@ class Script extends Component {
       revision: nextRevision,
       isActive: false
     });
-    browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${nextRevision}/${this.props.params.sliceType}/${this.props.params.sliceName}`);
+    browserHistory.push(`/${script.org.name}/${script.experience.name}/script/${nextRevision}/design/${this.props.params.sliceType}/${this.props.params.sliceName}`);
   }
 
 
@@ -68,7 +68,11 @@ class Script extends Component {
     this.props.updateInstance('scripts', this.props.script.id, {
       isArchived: true
     });
-    browserHistory.push(`/${activeScript.org.name}/${activeScript.experience.name}/design/script/${activeScript.revision}/${this.props.params.sliceType}/${this.props.params.sliceName}`);
+    browserHistory.push(
+      `/${activeScript.org.name}/${activeScript.experience.name}` +
+      `/script/${activeScript.revision}` +
+      `/design/${this.props.params.sliceType}/${this.props.params.sliceName}`
+    );
   }
 
   renderNav() {
@@ -77,7 +81,7 @@ class Script extends Component {
       <Link
         key={scene.name}
         className="dropdown-item"
-        to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`}>
+        to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene/${scene.name}`}>
         {scene.title}
       </Link>
     ));
@@ -87,7 +91,7 @@ class Script extends Component {
         <Link
           className="nav-link"
           activeClassName="active"
-          to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`}>
+          to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/section/${section[0]}`}>
           {section[1]}
         </Link>
       </li>
@@ -110,7 +114,7 @@ class Script extends Component {
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene`}>
+            to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene`}>
             {sceneTitle}
           </Link>
           <div className="dropdown-menu">
@@ -209,7 +213,7 @@ class Script extends Component {
 
     const goToLatestLink = !isMaxRevision ? (
       <span style={{ marginLeft: '0.5em', padding: '0' }}>
-        <Link to={`/${script.org.name}/${script.experience.name}/design/script/${maxRevision}`}>
+        <Link to={`/${script.org.name}/${script.experience.name}/script/${maxRevision}/design`}>
           Go to {maxRevision}
         </Link>
       </span>
@@ -227,19 +231,19 @@ class Script extends Component {
             <div className="col-sm-6">
               <Link
                 activeClassName="bold"
-                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/overview`}>
+                to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`}>
                 Design
               </Link>
               &nbsp;|&nbsp;
               <Link
                 activeClassName="bold"
-                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/test`}>
+                to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/test`}>
                 Test
               </Link>
               &nbsp;|&nbsp;
               <Link
                 activeClassName="bold"
-                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/reference`}>
+                to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/reference`}>
                 Reference
               </Link>
             </div>

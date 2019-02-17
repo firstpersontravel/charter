@@ -10,17 +10,20 @@ import TestConnector from './connectors/Test';
 import ResourceShowConnector from './connectors/ResourceShow';
 
 export default (
-  <Route path="design">
+  <Route path="script">
     <IndexRoute component={DesignIndexConnector} />
-    <Route path="script/:revision" component={ScriptConnector}>
-      <IndexRedirect to="/:orgName/:experienceName/design/script/:revision/section/overview" />
+    <Route path=":revision" component={ScriptConnector}>
+      <IndexRedirect to="/:orgName/:experienceName/script/:revision/design" />
       <Route path="test" component={TestConnector} />
       <Route path="reference" component={ReferenceConnector} />
-      <Route path=":sliceType">
-        <Route path=":sliceName" component={SliceConnector}>
-          <IndexRoute component={SliceIndexConnector} />
-          <Route path=":collectionName">
-            <Route path=":resourceName" component={ResourceShowConnector} />
+      <Route path="design">
+        <IndexRedirect to="/:orgName/:experienceName/script/:revision/design/section/overview" />
+        <Route path=":sliceType">
+          <Route path=":sliceName" component={SliceConnector}>
+            <IndexRoute component={SliceIndexConnector} />
+            <Route path=":collectionName">
+              <Route path=":resourceName" component={ResourceShowConnector} />
+            </Route>
           </Route>
         </Route>
       </Route>

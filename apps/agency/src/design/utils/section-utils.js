@@ -58,8 +58,8 @@ export function urlForResource(script, collectionName, resourceName) {
   const { sliceType, sliceName } = sliceForResource(collectionName, resource);
   return (
     `/${script.org.name}/${script.experience.name}` +
-    `/design/script/${script.revision}` +
-    `/${sliceType}/${sliceName}` +
+    `/script/${script.revision}` +
+    `/design/${sliceType}/${sliceName}` +
     `/${collectionName}/${resourceName}`
   );
 }

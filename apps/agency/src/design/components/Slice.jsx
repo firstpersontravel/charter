@@ -53,7 +53,7 @@ export default class Slice extends Component {
     const script = this.props.script;
     const sceneLinks = _.map(script.content.scenes, scene => ({
       key: scene.name,
-      url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`,
+      url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene/${scene.name}`,
       label: (
         <span>
           <i style={{ width: '1.5em' }} className="fa fa-puzzle-piece" />&nbsp;{scene.title}
@@ -64,7 +64,7 @@ export default class Slice extends Component {
 
     const sectionLinks = sections.map(section => ({
       key: section[0],
-      url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`,
+      url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/section/${section[0]}`,
       label: (
         <span>
           <i style={{ width: '1.5em' }} className={`fa fa-${section[2]}`} />&nbsp;{section[1]}

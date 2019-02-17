@@ -60,8 +60,8 @@ export default class ContentTree extends Component {
       key: `${path.join('-')}-${item.name}`,
       url: (
         `/${script.org.name}/${script.experience.name}` +
-        `/design/script/${script.revision}` +
-        `/${this.props.sliceType}/${this.props.sliceName}` +
+        `/script/${script.revision}` +
+        `/design/${this.props.sliceType}/${this.props.sliceName}` +
         `/${collectionName}/${item.name}`
       ),
       text: `${TextUtil.titleForKey(resourceType)}: ${itemTitle}`,
@@ -81,8 +81,8 @@ export default class ContentTree extends Component {
       key: collectionName,
       url: (
         `/${script.org.name}/${script.experience.name}` +
-        `/design/script/${script.revision}` +
-        `/${this.props.sliceType}/${this.props.sliceName}` +
+        `/script/${script.revision}` +
+        `/design/${this.props.sliceType}/${this.props.sliceName}` +
         `/${collectionName}/new`
       ),
       text: `Add ${resourceType}`,

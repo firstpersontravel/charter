@@ -92,8 +92,8 @@ function renderMenu(org, experience) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${org.name}/${experience.name}/design`}>
-          Design
+          to={`/${org.name}/${experience.name}/script`}>
+          Script
         </Link>
       </li>
       <li className="nav-item">

@@ -16,7 +16,7 @@ export default function DesignIndex({ scripts }) {
     .reverse()
     .head();
   if (script) {
-    browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${script.revision}`);
+    browserHistory.push(`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`);
   }
   return (
     <div className="container-fluid">

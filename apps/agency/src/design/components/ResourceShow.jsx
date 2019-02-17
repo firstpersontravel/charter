@@ -114,8 +114,8 @@ export default class ResourceShow extends Component {
     if (_.includes(existingRevisions, this.state.redirectToRevision)) {
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
-        `/design/script/${this.state.redirectToRevision}` +
-        `/${props.params.sliceType}/${props.params.sliceName}` +
+        `/script/${this.state.redirectToRevision}` +
+        `/design/${props.params.sliceType}/${props.params.sliceName}` +
         `/${this.state.redirectToResource}`
       );
     }
@@ -162,8 +162,8 @@ export default class ResourceShow extends Component {
     if (shouldDeleteResource || this.isNewResource()) {
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
-        `/design/script/${script.revision}` +
-        `/${this.props.params.sliceType}/${this.props.params.sliceName}` +
+        `/script/${script.revision}` +
+        `/design/${this.props.params.sliceType}/${this.props.params.sliceName}` +
         `/${redirectToResource}`
       );
     }
@@ -190,8 +190,8 @@ export default class ResourceShow extends Component {
               className="text-dark"
               to={
                 `/${script.org.name}/${script.experience.name}` +
-                `/design/script/${script.revision}` +
-                `/${sliceType}/${sliceName}` +
+                `/script/${script.revision}` +
+                `/design/${sliceType}/${sliceName}` +
                 `/${collectionName}/${resourceName}`
               }>
               <ResourceBadge resourceType={resourceType} />

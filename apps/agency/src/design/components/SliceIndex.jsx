@@ -18,8 +18,8 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
       <Link
         to={
           `/${script.org.name}/${script.experience.name}` +
-          `/design/script/${script.revision}` +
-          `/${sliceType}/${sliceName}` +
+          `/script/${script.revision}` +
+          `/design/${sliceType}/${sliceName}` +
           `/${collectionName}/new`
         }>
         Add {TextUtil.titleForKey(resourceType).toLowerCase()}
