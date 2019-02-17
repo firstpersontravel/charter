@@ -10,7 +10,11 @@ export default function DesignIndex({ scripts }) {
   if (scripts.isError) {
     return <div className="container-fluid">Error</div>;
   }
-  const script = _.find(scripts, { isActive: true });
+  const script = _(scripts)
+    .filter({ isArchived: false })
+    .sortBy('revision')
+    .reverse()
+    .head();
   if (script) {
     browserHistory.push(`/${script.org.name}/${script.experience.name}/design/script/${script.revision}`);
   }

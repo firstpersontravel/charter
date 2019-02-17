@@ -133,8 +133,16 @@ class Script extends Component {
       badges.push(
         <span
           key="active"
-          style={{ marginLeft: '0.25em' }} className="badge badge-primary">
+          style={{ marginLeft: '0.5em' }} className="badge badge-primary">
           Active
+        </span>
+      );
+    } else if (script.revision === maxRevision) {
+      badges.push(
+        <span
+          key="draft"
+          style={{ marginLeft: '0.5em' }} className="badge badge-secondary">
+          Draft
         </span>
       );
     }
@@ -143,7 +151,7 @@ class Script extends Component {
       badges.push(
         <span
           key="active"
-          style={{ marginLeft: '0.25em' }} className="badge badge-warning">
+          style={{ marginLeft: '0.5em' }} className="badge badge-warning">
           Locked
         </span>
       );
@@ -151,7 +159,7 @@ class Script extends Component {
 
     const revertBtn = activeRevision ? (
       <button
-        style={{ marginLeft: '0.25em' }}
+        style={{ marginLeft: '0.5em' }}
         onClick={this.handleRevertScript}
         className="btn btn-xs btn-outline-secondary">
         <i className="fa fa-undo" />&nbsp;
@@ -161,7 +169,7 @@ class Script extends Component {
 
     const activateBtn = (
       <button
-        style={{ marginLeft: '0.25em' }}
+        style={{ marginLeft: '0.5em' }}
         onClick={this.handleActivateScript}
         className="btn btn-xs btn-outline-secondary">
         <i className="fa fa-check" />&nbsp;
@@ -171,7 +179,7 @@ class Script extends Component {
 
     const newDraftBtn = (
       <button
-        style={{ marginLeft: '0.25em' }}
+        style={{ marginLeft: '0.5em' }}
         onClick={this.handleNewDraft}
         className="btn btn-xs btn-outline-secondary">
         <i className="fa fa-pencil" />&nbsp;
@@ -181,7 +189,7 @@ class Script extends Component {
 
     const lockBtn = (
       <button
-        style={{ marginLeft: '0.25em' }}
+        style={{ marginLeft: '0.5em' }}
         onClick={this.handleLockScript}
         className="btn btn-xs btn-outline-secondary">
         <i className={`fa ${script.isLocked ? 'fa-unlock' : 'fa-lock'}`} />&nbsp;
@@ -196,11 +204,11 @@ class Script extends Component {
       </span>
     ) : null;
 
-    const newDraftBtns = script.isActive || script.isLocked ?
+    const newDraftBtns = isMaxRevision && (script.isActive || script.isLocked) ?
       newDraftBtn : null;
 
     const goToLatestLink = !isMaxRevision ? (
-      <span style={{ marginLeft: '0.25em', padding: '0' }}>
+      <span style={{ marginLeft: '0.5em', padding: '0' }}>
         <Link to={`/${script.org.name}/${script.experience.name}/design/script/${maxRevision}`}>
           Go to {maxRevision}
         </Link>
