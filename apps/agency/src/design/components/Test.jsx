@@ -6,7 +6,7 @@ export default class Test extends Component {
   render() {
     return (
       <span>
-        testing!
+        Coming soon...
       </span>
     );
   }
