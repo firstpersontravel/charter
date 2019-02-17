@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-export default function Test({ script }) {
-  return (
-    <span>
-      testing!
-    </span>
-  );
+// eslint-disable-next-line react/prefer-stateless-function
+export default class Test extends Component {
+  render() {
+    return (
+      <span>
+        testing!
+      </span>
+    );
+  }
 }
 
 Test.propTypes = {

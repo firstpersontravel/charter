@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
 export const sections = [
-  ['overview', 'Overview'],
-  ['messaging', 'Messaging'],
-  ['locations', 'Location'],
-  ['variants', 'Variants'],
-  ['media', 'Media']
+  ['overview', 'Overview', 'map'],
+  ['messaging', 'Messaging', 'comment'],
+  ['locations', 'Location', 'map-pin'],
+  ['variants', 'Variants', 'space-shuttle'],
+  ['media', 'Media', 'file-image-o']
 ];
 
 const sectionContent = {

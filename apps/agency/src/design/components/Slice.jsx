@@ -54,14 +54,22 @@ export default class Slice extends Component {
     const sceneLinks = _.map(script.content.scenes, scene => ({
       key: scene.name,
       url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/scene/${scene.name}`,
-      label: scene.title,
+      label: (
+        <span>
+          <i style={{ width: '1.5em' }} className="fa fa-puzzle-piece" />&nbsp;{scene.title}
+        </span>
+      ),
       text: scene.title
     }));
 
     const sectionLinks = sections.map(section => ({
       key: section[0],
       url: `/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/${section[0]}`,
-      label: section[1],
+      label: (
+        <span>
+          <i style={{ width: '1.5em' }} className={`fa fa-${section[2]}`} />&nbsp;{section[1]}
+        </span>
+      ),
       text: section[1]
     }));
 
