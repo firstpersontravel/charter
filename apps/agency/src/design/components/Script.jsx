@@ -223,32 +223,34 @@ class Script extends Component {
             margin: 0,
             padding: '0.5em 1em'
           }}>
-          <div style={{ float: 'right' }}>
-            Rev. {this.props.script.revision}
-            {badges}
-            {activateBtns}
-            {script.isActive ? lockBtn : null}
-            {newDraftBtns}
-            {goToLatestLink}
-          </div>
-          <div>
-            <Link
-              activeClassName="bold"
-              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/overview`}>
-              Design
-            </Link>
-            &nbsp;|&nbsp;
-            <Link
-              activeClassName="bold"
-              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/test`}>
-              Test
-            </Link>
-            &nbsp;|&nbsp;
-            <Link
-              activeClassName="bold"
-              to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/reference`}>
-              Reference
-            </Link>
+          <div className="row">
+            <div className="col-sm-6">
+              <Link
+                activeClassName="bold"
+                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/section/overview`}>
+                Design
+              </Link>
+              &nbsp;|&nbsp;
+              <Link
+                activeClassName="bold"
+                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/test`}>
+                Test
+              </Link>
+              &nbsp;|&nbsp;
+              <Link
+                activeClassName="bold"
+                to={`/${script.org.name}/${script.experience.name}/design/script/${script.revision}/reference`}>
+                Reference
+              </Link>
+            </div>
+            <div className="col-sm-6 align-right-sm">
+              Rev. {this.props.script.revision}
+              {badges}
+              {activateBtns}
+              {script.isActive ? lockBtn : null}
+              {newDraftBtns}
+              {goToLatestLink}
+            </div>
           </div>
         </div>
       </div>

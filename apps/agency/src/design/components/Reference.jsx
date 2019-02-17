@@ -21,7 +21,7 @@ function renderSidebar() {
     renderSidebarModule(moduleName, ModulesRegistry[moduleName])
   ));
   return (
-    <div className="col-2 script-editor-full-height">
+    <div className="col-sm-2 script-editor-full-height d-none d-sm-block">
       {renderedModules}
     </div>
   );
@@ -68,7 +68,7 @@ function labelForSpecType(spec, key) {
     const resourceType = TextUtil.singularize(spec.collection);
     return (
       <a className="text-dark" href={`#r_${resourceType}`}>
-        <ResourceBadge resourceType={resourceType} /> Reference
+        <ResourceBadge resourceType={resourceType} />
       </a>
     );
   }
@@ -87,6 +87,7 @@ function renderResourceField(key, spec) {
     <tr key={key}>
       <td style={specStyle}>{labelForSpec(spec, key)}</td>
       <td>{labelForSpecType(spec, key)}</td>
+      <td />
     </tr>
   );
 }
@@ -100,11 +101,12 @@ function renderFields(properties) {
     renderResourceField(key, properties[key])
   ));
   return (
-    <table style={{ width: '60%' }} className="table table-sm table-bordered table-striped">
+    <table className="table table-sm table-bordered table-striped">
       <thead>
         <tr>
           <th>Field</th>
           <th>Type</th>
+          <th>Description</th>
         </tr>
       </thead>
       <tbody>
@@ -200,7 +202,7 @@ function renderMain() {
     renderModule(moduleName, ModulesRegistry[moduleName])
   ));
   return (
-    <div className="col-10 script-editor-full-height">
+    <div className="col-sm-10 script-editor-full-height">
       {renderedModules}
     </div>
   );
