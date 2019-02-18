@@ -1,41 +1,31 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link, browserHistory } from 'react-router';
 
-import ExperienceList from '../partials/ExperienceList';
-
-const EXAMPLES = [{
-  name: 'phonetree',
-  title: 'Phone tree',
-  desc: 'An interactive phone tree. The player dials a number and hears a question. They respond by voice to direct the conversation.',
-  demo: 'Demonstrates relays, clips, and queries.'
-}, {
-  name: 'roadtrip',
-  title: 'Road trip',
-  desc: 'A road trip across California with multiple stops and driving directions.',
-  demo: 'Demonstrates routes, geofences, directions, waypoints and pages.'
-}, {
-  name: 'textconvo',
-  title: 'Text convo',
-  desc: 'An interactive conversation via texting. An automated role responds to player texts.',
-  demo: 'Demonstrates relays, conditional actions, if statements, and messages.'
-}, {
-  name: 'walkingtour',
-  title: 'Walking tour',
-  desc: 'A walking tour through two restaurants, with dish selections at each stop.',
-  demo: 'Demonstrates messages, images, geofences, and directions.'
-}];
+import Examples from '../examples';
+import ExperienceModal from '../partials/ExperienceModal';
 
 export default class OrgIndex extends Component {
   constructor(props) {
     super(props);
-    this.state = { creatingExample: null };
+    this.handleCreateExperience = this.handleCreateExperience.bind(this);
+    this.handleExperienceModalClose = this.handleExperienceModalClose
+      .bind(this);
   }
 
-  handleCreateExample(example) {
-    if (this.state.creatingExample) {
-      return;
-    }
-    this.setState({ creatingExample: example.name });
+  getCreatingExample() {
+    const creatingExampleName = this.props.location.query.creating;
+    const creatingExample = _.find(Examples, { name: creatingExampleName });
+    return creatingExample;
+  }
+
+  handleExperienceModalClose() {
+    browserHistory.push(`/${this.props.org.name}`);
+  }
+
+  handleCreateExperience(fields) {
+    const example = this.getCreatingExample();
     fetch(`/content/examples/${example.name}`)
       .then((r) => {
         if (r.status !== 200) {
@@ -44,62 +34,102 @@ export default class OrgIndex extends Component {
         return r
           .json()
           .then((data) => {
-            this.props.createExample(this.props.org.id, example, data);
-            this.setState({ creatingExample: null });
+            this.props.createExample(this.props.org.id, fields, example, data);
+            browserHistory.push(`/${this.props.org.name}/${fields.name}`);
           });
       })
       .catch((err) => {
         console.error(`Error creating example: ${err.message}.`);
-        this.setState({ creatingExample: null });
       });
   }
 
-  renderExamples() {
-    const renderedExamples = EXAMPLES.map(example => (
-      <div key={example.name} className="card">
-        <h5 className="card-header">{example.title}</h5>
-        <div className="card-body">
+  renderExample(example) {
+    return (
+      <div key={example.name} className="card" style={{ marginBottom: '1em' }} >
+        <h5 className="card-header d-none d-sm-block">{example.title}</h5>
+        <div className="card-body d-none d-sm-block">
           <p className="card-text">{example.desc}</p>
           <p className="card-text">{example.demo}</p>
         </div>
         <div className="card-footer">
-          <button
-            disabled={!!this.state.creatingExample}
-            onClick={() => this.handleCreateExample(example)}
-            className="btn btn-block btn-primary">
-            {this.state.creatingExample === example.name ? 'Creating' : 'Create'} {example.title.toLowerCase()}
-          </button>
+          <Link
+            className="btn btn-block btn-secondary"
+            to={`/${this.props.org.name}?creating=${example.name}`}>
+            <i className="fa fa-plus" />&nbsp;
+            Create {example.title.toLowerCase()}
+          </Link>
         </div>
       </div>
-    ));
+    );
+  }
+
+  renderExperience(experience) {
     return (
-      <div className="card-group">
-        {renderedExamples}
+      <div key={experience.id} className="card" style={{ marginBottom: '1em' }} >
+        <h5 className="card-header d-none d-sm-block">{experience.title}</h5>
+        <div className="card-body d-none d-sm-block">
+          <p className="card-text">
+            <Link
+              to={`/${this.props.org.name}/${experience.name}/script`}>
+              Edit script
+            </Link>
+          </p>
+          <p className="card-text">
+            <Link
+              to={`/${this.props.org.name}/${experience.name}/operate`}>
+              Schedule and operate
+            </Link>
+          </p>
+          <p className="card-text">
+            <Link
+              to={`/${this.props.org.name}/${experience.name}/directory`}>
+              Browse users
+            </Link>
+          </p>
+        </div>
+        <div className="card-footer">
+          <Link
+            to={`/${this.props.org.name}/${experience.name}`}
+            className="btn btn-block btn-primary">
+            Go to {experience.title}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  renderExamples() {
+    const renderedExperiences = this.props.experiences.map(experience => (
+      this.renderExperience(experience)
+    ));
+    const renderedExamples = Examples.map(example => (
+      this.renderExample(example)
+    ));
+    const items = [].concat(renderedExperiences).concat(renderedExamples);
+    return (
+      <div className="card-deck">
+        {items}
       </div>
     );
   }
 
   render() {
+    const creatingExample = this.getCreatingExample();
     return (
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-3">
-            <ExperienceList
-              location={this.props.location}
-              org={this.props.org}
-              experiences={this.props.experiences}
-              createInstance={this.props.createInstance} />
-          </div>
-          <div className="col-sm-9">
-            <h1>Welcome to the Multiverse!</h1>
-            <p>
-              This toolkit will help you create the immersive experience of
-              your dreams. To get started, you can try out one of the below
-              examples.
-            </p>
-            {this.renderExamples()}
-          </div>
-        </div>
+        <h1>Welcome to the Multiverse!</h1>
+        <p>
+          This toolkit will help you create the immersive experience of
+          your dreams. To get started, you can try out one of the below
+          examples.
+        </p>
+        {this.renderExamples()}
+
+        <ExperienceModal
+          isOpen={!!creatingExample}
+          example={creatingExample}
+          onClose={this.handleExperienceModalClose}
+          onConfirm={this.handleCreateExperience} />
       </div>
     );
   }
@@ -109,6 +139,5 @@ OrgIndex.propTypes = {
   location: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   experiences: PropTypes.array.isRequired,
-  createExample: PropTypes.func.isRequired,
-  createInstance: PropTypes.func.isRequired
+  createExample: PropTypes.func.isRequired
 };

@@ -34,25 +34,6 @@ function getScheduledGroupTriggers(group) {
     .value();
 }
 
-function renderTrigger(trigger, trip) {
-  const timeShort = moment
-    .utc(trigger.scheduledAt)
-    .tz(trip.experience.timezone)
-    .format('ddd h:mm:ssa');
-  const cellClass = 'upcoming-unarchived';
-
-  return (
-    <tr key={trigger.id}>
-      <td className={cellClass}>{timeShort}</td>
-      <td className={cellClass}>{trip.departureName}</td>
-      <td className={cellClass}>{trigger.type}</td>
-      <td className={cellClass}>{trigger.name}</td>
-      <td className={cellClass} />
-      <td />
-    </tr>
-  );
-}
-
 function renderActionParam(trip, action, paramName) {
   return (
     <div className="wrap-text" key={paramName}>
@@ -63,6 +44,36 @@ function renderActionParam(trip, action, paramName) {
 }
 
 export default class GroupUpcoming extends Component {
+  renderTrigger(trigger, trip) {
+    const timeShort = moment
+      .utc(trigger.scheduledAt)
+      .tz(trip.experience.timezone)
+      .format('ddd h:mm:ssa');
+    const cellClass = 'upcoming-unarchived';
+
+    const applyNowButton = (
+      <button
+        className="btn btn-sm btn-outline-secondary"
+        onClick={() => {
+          this.props.postAdminAction(trip.orgId, trip.id, 'trigger', {
+            trigger_name: trigger.name
+          });
+        }}>
+        Apply now
+      </button>
+    );
+
+    return (
+      <tr key={trigger.id}>
+        <td className={cellClass}>{timeShort}</td>
+        <td className={cellClass}>{trip.departureName}</td>
+        <td className={cellClass}>{trigger.type}</td>
+        <td className={cellClass}>{trigger.name}</td>
+        <td className={cellClass} />
+        <td className={cellClass}>{applyNowButton}</td>
+      </tr>
+    );
+  }
 
   renderAction(action, trip) {
     const timeShort = moment
@@ -144,7 +155,7 @@ export default class GroupUpcoming extends Component {
         return this.renderAction(action, trip);
       }
       if (action.type === 'trigger') {
-        return renderTrigger(action, trip);
+        return this.renderTrigger(action, trip);
       }
       return null;
     });

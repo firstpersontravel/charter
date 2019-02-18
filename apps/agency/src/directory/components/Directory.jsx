@@ -68,6 +68,11 @@ export default class Directory extends Component {
   }
 
   render() {
+    if (this.props.profiles.isLoading) {
+      return (
+        <div className="container-fluid">Loading</div>
+      );
+    }
     return (
       <div className="container-fluid">
         <div className="row">

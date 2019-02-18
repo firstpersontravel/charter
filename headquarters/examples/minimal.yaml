@@ -1,0 +1,8 @@
+roles:
+  - name: player
+    title: Player
+    user: true
+
+scenes:
+  - name: first
+    title: First scene

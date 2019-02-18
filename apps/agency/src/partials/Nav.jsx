@@ -82,7 +82,7 @@ function renderMenu(org, experience, experiences) {
     </Link>
   ));
 
-  const experienceDropdown = (
+  const experienceDropdown = experiences.length > 0 ? (
     <li className="nav-item dropdown">
       <div
         style={{ cursor: 'pointer' }}
@@ -93,14 +93,9 @@ function renderMenu(org, experience, experiences) {
       </div>
       <div className="dropdown-menu" aria-labelledby="experiencesDropdown">
         {experienceLinks}
-        <Link
-          className="btn btn-link dropdown-item"
-          to={`/${org.name}?creating=true`}>
-          New experience
-        </Link>
       </div>
     </li>
-  );
+  ) : null;
 
 
   if (!org || !experience) {

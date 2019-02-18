@@ -121,6 +121,10 @@ export default class DirectoryIndex extends Component {
   }
 
   render() {
+    if (this.props.users.isLoading ||
+        this.props.profiles.isLoading) {
+      return 'Loading';
+    }
     const experience = this.props.experience;
     const roleName = this.props.location.query.role;
     const users = this.getUsers();

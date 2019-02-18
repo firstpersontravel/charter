@@ -324,14 +324,9 @@ export function initializeTrip(fields, playersFields) {
   };
 }
 
-export function createExample(orgId, example, scriptContent) {
+export function createExample(orgId, fields, example, scriptContent) {
   return function (dispatch) {
-    const experienceFields = {
-      orgId: orgId,
-      name: example.name,
-      title: example.title,
-      timezone: 'US/Pacific'
-    };
+    const experienceFields = Object.assign({}, fields, { orgId: orgId });
     createInstance('experiences', experienceFields)(dispatch)
       .then((data) => {
         const scriptFields = {

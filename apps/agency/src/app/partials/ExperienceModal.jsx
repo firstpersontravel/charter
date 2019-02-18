@@ -5,25 +5,35 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 export default class ExperienceModal extends Component {
 
-  static getDefaultState(experience) {
+  static getDefaultState(experience, example) {
+    if (experience) {
+      return {
+        name: experience.name,
+        title: experience.title,
+        domain: experience.domain,
+        timezone: experience.timezone
+      };
+    }
     return {
-      name: experience ? experience.name : '',
-      title: experience ? experience.title : '',
-      domain: experience ? experience.domain : '',
-      timezone: experience ? experience.timezone : 'US/Pacific'
+      name: example ? example.name : '',
+      title: example ? example.title : '',
+      domain: '',
+      timezone: 'US/Pacific'
     };
   }
 
   constructor(props) {
     super(props);
-    this.state = ExperienceModal.getDefaultState(props.experience);
+    this.state = ExperienceModal.getDefaultState(props.experience,
+      props.example);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(ExperienceModal.getDefaultState(nextProps.experience));
+    this.setState(ExperienceModal.getDefaultState(nextProps.experience,
+      nextProps.example));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -72,7 +82,10 @@ export default class ExperienceModal extends Component {
 
   render() {
     const experience = this.props.experience;
-    const title = experience ? 'Edit experience' : 'New experience';
+    const example = this.props.example;
+    const exampleTitle = example ? example.title.toLowerCase() : 'experience';
+    const title = experience ? 'Edit experience' :
+      `New ${exampleTitle}`;
     const isNew = !experience;
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
@@ -86,6 +99,22 @@ export default class ExperienceModal extends Component {
 
     const host = window.location.host;
     const placeholderDomain = host;
+    const domainRow = isNew ? null : (
+      <div className="row">
+        <div className="form-group col-12">
+          <label htmlFor="exp_host">
+            Custom domain (advanced; requires setup)
+          </label>
+          <input
+            type="text"
+            id="exp_host"
+            className="form-control"
+            value={this.state.domain}
+            onChange={_.curry(this.handleChangeField)('domain')}
+            placeholder={placeholderDomain} />
+        </div>
+      </div>
+    );
 
     return (
       <Modal
@@ -120,20 +149,7 @@ export default class ExperienceModal extends Component {
                 </select>
               </div>
             </div>
-            <div className="row">
-              <div className="form-group col-12">
-                <label htmlFor="exp_host">
-                  Custom domain (advanced; requires setup)
-                </label>
-                <input
-                  type="text"
-                  id="exp_host"
-                  className="form-control"
-                  value={this.state.domain}
-                  onChange={_.curry(this.handleChangeField)('domain')}
-                  placeholder={placeholderDomain} />
-              </div>
-            </div>
+            {domainRow}
           </form>
         </ModalBody>
         <ModalFooter>
@@ -156,10 +172,12 @@ export default class ExperienceModal extends Component {
 ExperienceModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   experience: PropTypes.object,
+  example: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };
 
 ExperienceModal.defaultProps = {
-  experience: null
+  experience: null,
+  example: null
 };
