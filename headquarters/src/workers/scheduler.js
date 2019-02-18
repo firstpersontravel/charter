@@ -15,15 +15,12 @@ class SchedulerWorker {
    */
   static _getTimeOccuranceActions(objs, actionContext, threshold) {
     const now = moment.utc();
-    const lastDate = objs.trip.lastScheduledTime;
-    const lastTimestamp = lastDate ? moment.utc(lastDate).unix() : null;
     const toTimestamp = threshold.unix();
 
     // Create time occurred event
     const timeOccurredEvent = {
       type: 'time_occurred',
-      last_timestamp: lastTimestamp,
-      to_timestamp: toTimestamp
+      timestamp: toTimestamp
     };
 
     const triggers = TriggerEventCore.triggersForEvent(timeOccurredEvent,

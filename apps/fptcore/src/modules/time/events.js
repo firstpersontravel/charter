@@ -32,15 +32,8 @@ module.exports = {
       if (!specTime) {
         return false;
       }
-      // If there is a last timestemp that was checked, ignore any triggers
-      // before that time, since those will have already been triggered.
-      if (event.last_timestamp) {
-        if (specTime.isSameOrBefore(moment.unix(event.last_timestamp))) {
-          return false;
-        }
-      }
       // If it's after where we're checking up to, skip it... for now.
-      if (specTime.isAfter(moment.unix(event.to_timestamp))) {
+      if (specTime.isAfter(moment.unix(event.timestamp))) {
         return false;
       }
       // Otherwise, we're in the range!

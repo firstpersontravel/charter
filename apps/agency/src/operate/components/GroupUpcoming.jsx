@@ -8,11 +8,7 @@ import { EventsRegistry, TriggerEventCore } from 'fptcore';
 function getScheduledTripTriggers(trip) {
   const now = moment.utc();
   const inOneHour = now.clone().add(1, 'hour');
-  const event = {
-    type: 'time_occurred',
-    last_timestamp: now.unix(),
-    to_timestamp: inOneHour
-  };
+  const event = { type: 'time_occurred', timestamp: inOneHour };
   const triggers = TriggerEventCore.triggersForEvent(event,
     trip.actionContext);
   return triggers.map((trigger) => {

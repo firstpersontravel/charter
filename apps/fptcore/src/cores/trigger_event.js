@@ -37,9 +37,23 @@ TriggerEventCore.doesEventFireTrigger = function(trigger, event,
   }
   var triggerEvent = TriggerEventCore.triggerEventForEventType(
     trigger, event.type);
+
+  // If trigger isn't caused by this event, skip
   if (!triggerEvent) {
     return false;
   }
+
+  // Special case: if event is a time occurred event, treat the event
+  // as non-repeatable *always*.
+  var treatAsNonrepeatable = event.type === 'time_occurred';
+  var hasFiredAlready = (
+    actionContext.evalContext.history &&
+    actionContext.evalContext.history[trigger.name]
+  );
+  if (treatAsNonrepeatable && hasFiredAlready) {
+    return false;
+  }
+
   return TriggerEventCore.doesEventFireTriggerEvent(
     triggerEvent, event, actionContext);
 };

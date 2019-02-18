@@ -224,6 +224,8 @@ describe('TriggerEventCore', () => {
   });
 
   describe('#doesEventFireTrigger', () => {
+    const actionContext = { evalContext: {} };
+
     it('detects matching case', () => {
       const trigger = { events: [{ type: 'cue_signaled' }] };
       const event = { type: 'cue_signaled' };
@@ -234,11 +236,12 @@ describe('TriggerEventCore', () => {
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(true);
 
-      const res = TriggerEventCore.doesEventFireTrigger(trigger, event, {});
+      const res = TriggerEventCore.doesEventFireTrigger(trigger, event,
+        actionContext);
       assert.strictEqual(res, true);
 
       sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.calledWith(stub2, trigger.events[0], event, {});
+      sinon.assert.calledWith(stub2, trigger.events[0], event, actionContext);
     });
 
     it('detects coarse non-matching case', () => {
@@ -251,7 +254,8 @@ describe('TriggerEventCore', () => {
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(false);
 
-      const res = TriggerEventCore.doesEventFireTrigger(trigger, event, {});
+      const res = TriggerEventCore.doesEventFireTrigger(trigger, event,
+        actionContext);
       assert.strictEqual(res, false);
 
       sinon.assert.calledWith(stub, trigger, event.type);
@@ -268,12 +272,12 @@ describe('TriggerEventCore', () => {
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(false);
 
-      const res = TriggerEventCore
-        .doesEventFireTrigger(trigger, event, {});
+      const res = TriggerEventCore.doesEventFireTrigger(trigger, event,
+        actionContext);
       assert.strictEqual(res, false);
 
       sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.calledWith(stub2, trigger.events[0], event, {});
+      sinon.assert.calledWith(stub2, trigger.events[0], event, actionContext);
     });
   });
 
