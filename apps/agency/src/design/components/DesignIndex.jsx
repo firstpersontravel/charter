@@ -1,15 +1,9 @@
 import _ from 'lodash';
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { browserHistory } from 'react-router';
 
-export default function DesignIndex({ scripts }) {
-  if (scripts.isLoading) {
-    return <div className="container-fluid">Loading</div>;
-  }
-  if (scripts.isError) {
-    return <div className="container-fluid">Error</div>;
-  }
+function redirectIfReady(scripts) {
   const script = _(scripts)
     .filter({ isArchived: false })
     .sortBy('revision')
@@ -18,11 +12,30 @@ export default function DesignIndex({ scripts }) {
   if (script) {
     browserHistory.push(`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`);
   }
-  return (
-    <div className="container-fluid">
-      Redirecting
-    </div>
-  );
+}
+
+export default class DesignIndex extends Component {
+  componentWillMount() {
+    redirectIfReady(this.props.scripts);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    redirectIfReady(nextProps.scripts);
+  }
+
+  render() {
+    if (this.props.scripts.length === 0 && this.props.scripts.isLoading) {
+      return <div className="container-fluid">Loading</div>;
+    }
+    if (this.props.scripts.isError) {
+      return <div className="container-fluid">Error</div>;
+    }
+    return (
+      <div className="container-fluid">
+        Redirecting
+      </div>
+    );
+  }
 }
 
 DesignIndex.propTypes = {

@@ -2,52 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Nav from '../../partials/Nav';
+import { withLoader } from '../../loader-utils';
 
-export default class Experience extends Component {
-
-  componentDidMount() {
-    this.loadExperienceData(this.props.org, this.props.experienceName,
-      this.props.experience);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.org !== this.props.org ||
-        nextProps.experienceName !== this.props.experienceName) {
-      this.loadExperienceData(nextProps.org, nextProps.experienceName,
-        nextProps.experience);
-    }
-  }
-
-  loadExperienceData(org, experienceName, experience) {
-    if (!org) {
-      return;
-    }
-    this.props.listCollection('experiences', {
-      isArchived: false,
-      orgId: org.id
-    });
-    if (!experience) {
-      return;
-    }
-    const filters = {
-      isArchived: false,
-      orgId: org.id,
-      experienceId: experience.id
-    };
-    this.props.listCollection('groups', filters);
-    this.props.listCollection('trips', filters);
-    this.props.listCollection('scripts', filters);
-    this.props.listCollection('profiles', filters);
-    this.props.listCollection('users', filters);
-  }
-
+class Experience extends Component {
   renderNav() {
     return (
       <Nav
         authInfo={this.props.authInfo}
         logout={this.props.logout}
         org={this.props.org}
-        experience={this.props.experience} />
+        experience={this.props.experience}
+        experiences={this.props.experiences} />
     );
   }
 
@@ -87,10 +52,9 @@ Experience.propTypes = {
   authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
   experienceRequest: PropTypes.string,
-  experienceName: PropTypes.string.isRequired,
   experience: PropTypes.object,
+  experiences: PropTypes.array.isRequired,
   org: PropTypes.object,
-  listCollection: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired
 };
 
@@ -100,3 +64,26 @@ Experience.defaultProps = {
   org: null,
   authInfo: null
 };
+
+export default withLoader(Experience, ['org.id', 'experience.id'], (props) => {
+  if (!props.org) {
+    return;
+  }
+  props.listCollection('experiences', {
+    isArchived: false,
+    orgId: props.org.id
+  });
+  if (!props.experience) {
+    return;
+  }
+  const filters = {
+    isArchived: false,
+    orgId: props.org.id,
+    experienceId: props.experience.id
+  };
+  props.listCollection('groups', filters);
+  props.listCollection('trips', filters);
+  props.listCollection('scripts', filters);
+  props.listCollection('profiles', filters);
+  props.listCollection('users', filters);
+});

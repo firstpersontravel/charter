@@ -3,8 +3,42 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
+import ExperienceModal from '../../app/partials/ExperienceModal';
+import AreYouSure from '../../partials/AreYouSure';
 import { sections } from '../utils/section-utils';
 import { withLoader } from '../../loader-utils';
+
+function getBadgesForScript(script, maxRevision) {
+  const badges = [];
+  if (script.isActive) {
+    badges.push(
+      <span
+        key="active"
+        style={{ marginLeft: '0.5em' }} className="badge badge-primary">
+        Active
+      </span>
+    );
+  } else if (script.revision === maxRevision) {
+    badges.push(
+      <span
+        key="draft"
+        style={{ marginLeft: '0.5em' }} className="badge badge-secondary">
+        Draft
+      </span>
+    );
+  }
+
+  if (script.isLocked) {
+    badges.push(
+      <span
+        key="locked"
+        style={{ marginLeft: '0.5em' }} className="badge badge-warning">
+        Locked
+      </span>
+    );
+  }
+  return badges;
+}
 
 class Script extends Component {
   constructor(props) {
@@ -13,6 +47,12 @@ class Script extends Component {
     this.handleRevertScript = this.handleRevertScript.bind(this);
     this.handleLockScript = this.handleLockScript.bind(this);
     this.handleNewDraft = this.handleNewDraft.bind(this);
+    this.handleUpdateExperience = this.handleUpdateExperience.bind(this);
+    this.handleArchiveExperienceToggle = this.handleArchiveExperienceToggle
+      .bind(this);
+    this.handleArchiveExperienceConfirm = this.handleArchiveExperienceConfirm
+      .bind(this);
+    this.state = { isArchiveExperienceModalOpen: false };
   }
 
   handleActivateScript() {
@@ -53,7 +93,6 @@ class Script extends Component {
     browserHistory.push(`/${script.org.name}/${script.experience.name}/script/${nextRevision}/design/${this.props.params.sliceType}/${this.props.params.sliceName}`);
   }
 
-
   handleLockScript() {
     this.props.updateInstance('scripts', this.props.script.id, {
       isLocked: !this.props.script.isLocked
@@ -72,6 +111,29 @@ class Script extends Component {
       `/${activeScript.org.name}/${activeScript.experience.name}` +
       `/script/${activeScript.revision}` +
       `/design/${this.props.params.sliceType}/${this.props.params.sliceName}`
+    );
+  }
+
+  handleArchiveExperienceToggle() {
+    this.setState({
+      isArchiveExperienceModalOpen: !this.state.isArchiveExperienceModalOpen
+    });
+  }
+
+  handleArchiveExperienceConfirm() {
+    const experience = this.props.script.experience;
+    this.props.updateInstance('experiences', experience.id, {
+      isArchived: true
+    });
+    browserHistory.push(`${this.props.params.orgName}`);
+  }
+
+  handleUpdateExperience(fields) {
+    const experience = this.props.script.experience;
+    this.props.updateInstance('experiences', experience.id, fields);
+    browserHistory.push(
+      `${this.props.params.orgName}/${fields.name}` +
+      `/script/${this.props.script.revision}`
     );
   }
 
@@ -131,36 +193,7 @@ class Script extends Component {
     const isMaxRevision = script.revision === maxRevision;
     const activeRevision = _.get(_.find(this.props.scripts,
       { isActive: true }), 'revision') || 0;
-    const badges = [];
-
-    if (script.isActive) {
-      badges.push(
-        <span
-          key="active"
-          style={{ marginLeft: '0.5em' }} className="badge badge-primary">
-          Active
-        </span>
-      );
-    } else if (script.revision === maxRevision) {
-      badges.push(
-        <span
-          key="draft"
-          style={{ marginLeft: '0.5em' }} className="badge badge-secondary">
-          Draft
-        </span>
-      );
-    }
-
-    if (script.isLocked) {
-      badges.push(
-        <span
-          key="active"
-          style={{ marginLeft: '0.5em' }} className="badge badge-warning">
-          Locked
-        </span>
-      );
-    }
-
+    const badges = getBadgesForScript(script);
     const revertBtn = activeRevision ? (
       <button
         style={{ marginLeft: '0.5em' }}
@@ -219,6 +252,36 @@ class Script extends Component {
       </span>
     ) : null;
 
+    const scriptRevisions = this.props.scripts.map(s => (
+      <Link
+        key={s.id}
+        className="dropdown-item"
+        to={`/${script.org.name}/${script.experience.name}/script/${s.revision}/design`}>
+        Rev {s.revision} {getBadgesForScript(s, maxRevision)}
+      </Link>
+    ));
+
+    const expOpts = (
+      <div className="dropdown" style={{ cursor: 'pointer', marginLeft: '0.5em', display: 'inline' }}>
+        <span id="expDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i className="fa fa-gear" />
+        </span>
+        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="expDropdown">
+          <Link
+            className="dropdown-item"
+            to={`${window.location.pathname}?editing=true`}>
+            Edit experience
+          </Link>
+          <button
+            className="dropdown-item"
+            onClick={this.handleArchiveExperienceToggle}
+            type="button">
+            Archive experience
+          </button>
+        </div>
+      </div>
+    );
+
     return (
       <div style={{ backgroundColor: '#eee' }}>
         <div
@@ -248,12 +311,18 @@ class Script extends Component {
               </Link>
             </div>
             <div className="col-sm-6 align-right-sm">
-              Rev. {this.props.script.revision}
+              <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Rev. {this.props.script.revision}
+              </button>
+              <div className="dropdown-menu" aria-labelledby="scriptRevs">
+                {scriptRevisions}
+              </div>
               {badges}
               {activateBtns}
               {script.isActive ? lockBtn : null}
               {newDraftBtns}
               {goToLatestLink}
+              {expOpts}
             </div>
           </div>
         </div>
@@ -271,12 +340,27 @@ class Script extends Component {
     if (this.props.script.isNull) {
       return <div className="container-fluid">Script not found.</div>;
     }
+
+    const isEditingExperience = !!this.props.location.query.editing;
+
     return (
       <div>
         {this.renderOpts()}
         <div className="container-fluid">
           {this.props.children}
         </div>
+
+        <ExperienceModal
+          isOpen={isEditingExperience}
+          experience={this.props.script.experience}
+          onClose={() => browserHistory.push(window.location.pathname)}
+          onConfirm={this.handleUpdateExperience} />
+
+        <AreYouSure
+          isOpen={this.state.isArchiveExperienceModalOpen}
+          onToggle={this.handleArchiveExperienceToggle}
+          onConfirm={this.handleArchiveExperienceConfirm}
+          message="Are you sure you want to archive this experience?" />
       </div>
     );
   }
@@ -287,6 +371,7 @@ Script.propTypes = {
   script: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

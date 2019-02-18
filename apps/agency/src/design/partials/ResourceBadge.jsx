@@ -59,7 +59,7 @@ const RESOURCE_ICONS = {
   achievement: 'trophy',
   appearance: 'calendar',
   audio: 'music',
-  checkpoint: '',
+  checkpoint: 'floppy-o',
   clip: 'volume-control-phone',
   content_page: 'sticky-note',
   cue: 'bell',
@@ -85,14 +85,14 @@ export default function ResourceBadge({ resourceType, style, ...props }) {
     backgroundColor: COLORS[resourceType] || '#cccccc'
   }, style);
   const resourceIcon = RESOURCE_ICONS[resourceType] ? (
-    <i
-      style={{ marginRight: '0.25em' }}
-      className={`fa fa-${RESOURCE_ICONS[resourceType]}`} />
+    <i className={`fa fa-${RESOURCE_ICONS[resourceType]}`} />
   ) : null;
   return (
     <span style={styleWithColor} className="badge badge-secondary" {...props}>
       {resourceIcon}
-      {TextUtil.titleForKey(resourceType)}
+      <span className="d-inline d-sm-none d-md-inline">
+        {' '}{TextUtil.titleForKey(resourceType)}
+      </span>
     </span>
   );
 }

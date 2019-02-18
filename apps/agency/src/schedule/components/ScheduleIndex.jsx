@@ -5,12 +5,15 @@ import PropTypes from 'prop-types';
 import { IndexLink } from 'react-router';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
+
+import { withLoader } from '../../loader-utils';
 import AreYouSure from '../../partials/AreYouSure';
 import TripModal from '../partials/TripModal';
 import GroupModal from '../partials/GroupModal';
 import ScheduleUtils from '../utils';
+import { getStage } from '../../utils';
 
-export default class ScheduleIndex extends Component {
+class ScheduleIndex extends Component {
 
   constructor(props) {
     super(props);
@@ -233,7 +236,7 @@ export default class ScheduleIndex extends Component {
       return null;
     }
     const dateShort = moment(group.date).format('MMM D, YYYY');
-    const departures = group.script.content.departures;
+    const departures = group.script.content.departures || [];
     const departureNames = departures.length > 0 ?
       _.map(departures, 'name') : [''];
     const departureCells = departureNames.map((departureName) => {
@@ -265,6 +268,55 @@ export default class ScheduleIndex extends Component {
     );
   }
 
+  renderTrailhead() {
+    const activeScript = _.find(this.props.scripts, { isActive: true });
+    const trailheadSpecs = _.filter(_.get(activeScript, 'content.relays'), {
+      trailhead: true
+    });
+    if (!trailheadSpecs.length) {
+      return null;
+    }
+    let hasUnallocated = false;
+    const renderedTrailheads = trailheadSpecs.map((trailhead) => {
+      const relay = _.find(this.props.experience.relays, {
+        forRoleName: trailhead.for,
+        asRoleName: trailhead.as,
+        withRoleName: trailhead.with,
+        userPhoneNumber: ''
+      });
+      if (!relay) {
+        hasUnallocated = true;
+      }
+      const forRole = _.find(activeScript.content.roles,
+        { name: trailhead.for });
+      return (
+        <span key={trailhead.name}>
+          {forRole.title}: {relay ?
+            TextUtil.formatPhone(relay.relayPhoneNumber) :
+            '(not yet allocated)'}
+        </span>
+      );
+    });
+
+    const allocateRelaysBtn = hasUnallocated ? (
+      <button
+        style={{ marginLeft: '1em' }}
+        disabled={this.props.systemActionRequestState === 'pending'}
+        className="btn btn-primary"
+        onClick={() => this.props.updateRelays(
+          this.props.org.id, this.props.experience.id)}>
+        Allocate phone numbers
+      </button>
+    ) : null;
+
+    return (
+      <div className="alert alert-info">
+        Trips can be started through calls or texts to trailhead numbers. {renderedTrailheads}
+        {allocateRelaysBtn}
+      </div>
+    );
+  }
+
   render() {
     if (this.props.groups.isLoading) {
       return <div className="container-fluid">Loading</div>;
@@ -277,6 +329,7 @@ export default class ScheduleIndex extends Component {
     ));
     return (
       <div className="container-fluid">
+        {this.renderTrailhead()}
         {groupRows}
         <div className="row" style={{ marginTop: '1em' }}>
           <div className="col-12">
@@ -325,5 +378,35 @@ ScheduleIndex.propTypes = {
   profiles: PropTypes.array.isRequired,
   initializeTrip: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
-  updateInstance: PropTypes.func.isRequired
+  updateInstance: PropTypes.func.isRequired,
+  updateRelays: PropTypes.func.isRequired,
+  systemActionRequestState: PropTypes.string
 };
+
+ScheduleIndex.defaultProps = {
+  systemActionRequestState: null
+};
+
+export default withLoader(ScheduleIndex, ['experience.id'], (props) => {
+  props.listCollection('scripts', {
+    isArchived: false,
+    experienceId: props.experience.id,
+    orgId: props.experience.orgId
+  });
+  props.listCollection('trips', {
+    isArchived: false,
+    experienceId: props.experience.id,
+    orgId: props.experience.orgId
+  });
+  props.listCollection('groups', {
+    isArchived: false,
+    experienceId: props.experience.id,
+    orgId: props.experience.orgId
+  });
+  props.listCollection('relays', {
+    orgId: props.experience.orgId,
+    experienceId: props.experience.id,
+    stage: getStage(),
+    userPhoneNumber: ''
+  });
+});

@@ -2,33 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Nav from '../../partials/Nav';
+import { withLoader } from '../../loader-utils';
 
-export default class Organization extends Component {
-
-  componentDidMount() {
-    this.loadOrgData(this.props.org);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.org !== this.props.org) {
-      this.loadOrgData(nextProps.org);
-    }
-  }
-
-  loadOrgData(org) {
-    if (!org) {
-      return;
-    }
-    const filters = { isArchived: false, orgId: org.id };
-    this.props.listCollection('experiences', filters);
-  }
-
+class Organization extends Component {
   renderNav() {
     return (
       <Nav
         authInfo={this.props.authInfo}
         logout={this.props.logout}
-        org={this.props.org} />
+        org={this.props.org}
+        experiences={this.props.experiences} />
     );
   }
 
@@ -59,8 +42,8 @@ export default class Organization extends Component {
 Organization.propTypes = {
   authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
+  experiences: PropTypes.array.isRequired,
   org: PropTypes.object,
-  listCollection: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired
 };
 
@@ -68,3 +51,13 @@ Organization.defaultProps = {
   org: null,
   authInfo: null
 };
+
+export default withLoader(Organization, ['org.id'], (props) => {
+  if (!props.org) {
+    return;
+  }
+  props.listCollection('experiences', {
+    isArchived: false,
+    orgId: props.org.id
+  });
+});

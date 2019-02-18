@@ -15,40 +15,7 @@ function walkContentTree(contentTree, path, iteree) {
   });
 }
 
-function traverse(obj, iteree) {
-  _.forIn(obj, (val, key) => {
-    iteree(key, val);
-    if (_.isArray(val)) {
-      val.forEach((el) => {
-        if (_.isObject(el)) {
-          traverse(el, iteree);
-        }
-      });
-    }
-    if (_.isObject(key)) {
-      traverse(obj[key], iteree);
-    }
-  });
-}
-
 export default class ContentTree extends Component {
-
-  doesResourceMatchSearch(resource) {
-    if (!this.props.search) {
-      return true;
-    }
-    const search = new RegExp(this.props.search, 'i');
-    let match = false;
-    traverse(resource, (key, val) => {
-      if (_.isString(val)) {
-        if (search.test(val)) {
-          match = true;
-        }
-      }
-    });
-    return match;
-  }
-
   renderItem(collectionName, item, path, isInContentList) {
     const resourceType = TextUtil.singularize(collectionName);
     const script = this.props.script;
@@ -123,31 +90,16 @@ export default class ContentTree extends Component {
         console.log(`Resource not found ${key}`);
         return null;
       }
-      if (!this.doesResourceMatchSearch(resource)) {
-        return null;
-      }
       const renderedItem = this.renderItem(collectionName, resource, path,
         isInContentList);
       items.push(renderedItem);
       return null;
     });
 
-    let noContentHeader;
-    if (!items.length && this.props.search) {
-      noContentHeader = (
-        <div className="alert alert-info">
-          No items matching &quot;{this.props.search}&quot;.
-        </div>
-      );
-    }
-
     const allItems = items.concat(this.renderNewItems());
 
     return (
-      <div>
-        {noContentHeader}
-        <ResponsiveListGroup items={allItems} />
-      </div>
+      <ResponsiveListGroup items={allItems} />
     );
   }
 }
@@ -157,6 +109,5 @@ ContentTree.propTypes = {
   sliceName: PropTypes.string.isRequired,
   contentList: PropTypes.object.isRequired,
   contentTree: PropTypes.object.isRequired,
-  search: PropTypes.string.isRequired,
   script: PropTypes.object.isRequired
 };

@@ -12,11 +12,9 @@ export default class Slice extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: '',
       contentList: null,
       contentTree: null
     };
-    this.handleChangeSearch = this.handleChangeSearch.bind(this);
   }
 
   componentWillMount() {
@@ -24,10 +22,6 @@ export default class Slice extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.params.sliceType !== this.props.params.sliceType ||
-        nextProps.params.sliceName !== this.props.params.sliceName) {
-      this.setState({ search: '' });
-    }
     this.prepareContentTree(nextProps);
   }
 
@@ -43,12 +37,6 @@ export default class Slice extends Component {
     });
   }
 
-  handleChangeSearch(e) {
-    this.setState({
-      search: e.target.value
-    });
-  }
-
   renderSidenav() {
     const script = this.props.script;
     const sceneLinks = _.map(script.content.scenes, scene => ({
@@ -56,7 +44,10 @@ export default class Slice extends Component {
       url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene/${scene.name}`,
       label: (
         <span>
-          <i style={{ width: '1.5em' }} className="fa fa-puzzle-piece" />&nbsp;{scene.title}
+          <i
+            style={{ width: '1.5em' }}
+            className="d-none d-md-inline fa fa-puzzle-piece" />
+          &nbsp;{scene.title}
         </span>
       ),
       text: scene.title
@@ -67,7 +58,10 @@ export default class Slice extends Component {
       url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/section/${section[0]}`,
       label: (
         <span>
-          <i style={{ width: '1.5em' }} className={`fa fa-${section[2]}`} />&nbsp;{section[1]}
+          <i
+            style={{ width: '1.5em' }}
+            className={`d-none d-md-inline fa fa-${section[2]}`} />
+          &nbsp;{section[1]}
         </span>
       ),
       text: section[1]
@@ -95,7 +89,6 @@ export default class Slice extends Component {
               sliceName={this.props.params.sliceName}
               contentList={this.state.contentList}
               contentTree={this.state.contentTree}
-              search={this.state.search}
               script={this.props.script} />
           </div>
         </div>

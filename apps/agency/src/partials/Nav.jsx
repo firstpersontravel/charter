@@ -29,12 +29,11 @@ function renderRight(authInfo, logout) {
   return (
     <ul className="navbar-nav ml-auto">
       <li className="nav-item">
-
         <div className="dropdown">
           <button className="btn btn-unstyled dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             {authInfo.user.email}
           </button>
-          <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
             {orgLinks}
             <button
               className="btn btn-link dropdown-item"
@@ -73,21 +72,47 @@ function renderBrand(org, experience) {
   );
 }
 
-function renderMenu(org, experience) {
+function renderMenu(org, experience, experiences) {
+  const experienceLinks = experiences.map(exp => (
+    <Link
+      key={exp.id}
+      className="btn btn-link dropdown-item"
+      to={`/${org.name}/${exp.name}`}>
+      {exp.title}
+    </Link>
+  ));
+
+  const experienceDropdown = (
+    <li className="nav-item dropdown">
+      <div
+        style={{ cursor: 'pointer' }}
+        className="text-dark bold nav-link dropdown-toggle constrain-text"
+        id="experiencesDropdown"
+        data-toggle="dropdown">
+        {experience ? experience.title : 'Experiences'}
+      </div>
+      <div className="dropdown-menu" aria-labelledby="experiencesDropdown">
+        {experienceLinks}
+        <Link
+          className="btn btn-link dropdown-item"
+          to={`/${org.name}?creating=true`}>
+          New experience
+        </Link>
+      </div>
+    </li>
+  );
+
+
   if (!org || !experience) {
-    return null;
+    return (
+      <ul className="navbar-nav mr-auto">
+        {experienceDropdown}
+      </ul>
+    );
   }
   return (
     <ul className="navbar-nav mr-auto">
-      <li className="nav-item">
-        <Link
-          activeClassName="active"
-          className="nav-link"
-          style={{ whiteSpace: 'nowrap' }}
-          to={`/${org.name}/${experience.name}`}>
-          {experience.title}
-        </Link>
-      </li>
+      {experienceDropdown}
       <li className="nav-item">
         <Link
           activeClassName="active"
@@ -100,16 +125,8 @@ function renderMenu(org, experience) {
         <Link
           activeClassName="active"
           className="nav-link"
-          to={`/${org.name}/${experience.name}/schedule`}>
-          Schedule
-        </Link>
-      </li>
-      <li className="nav-item">
-        <Link
-          activeClassName="active"
-          className="nav-link"
           to={`/${org.name}/${experience.name}/operate`}>
-          Operate
+          Operations
         </Link>
       </li>
       <li className="nav-item">
@@ -117,14 +134,16 @@ function renderMenu(org, experience) {
           activeClassName="active"
           className="nav-link"
           to={`/${org.name}/${experience.name}/directory`}>
-          Directory
+          Users
         </Link>
       </li>
     </ul>
   );
 }
 
-export default function Nav({ authInfo, logout, org, experience }) {
+export default function Nav({
+  authInfo, logout, org, experience, experiences
+}) {
   document.title = `${getStage()} - FPT Ops`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
@@ -137,7 +156,7 @@ export default function Nav({ authInfo, logout, org, experience }) {
         <span className="navbar-toggler-icon" />
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        {renderMenu(org, experience)}
+        {renderMenu(org, experience, experiences)}
       </div>
       <div className="navbar-collapse collapse w-100 order-3">
         {renderRight(authInfo, logout)}
@@ -150,7 +169,8 @@ Nav.propTypes = {
   authInfo: PropTypes.object,
   logout: PropTypes.func.isRequired,
   org: PropTypes.object,
-  experience: PropTypes.object
+  experience: PropTypes.object,
+  experiences: PropTypes.array.isRequired
 };
 
 Nav.defaultProps = {
