@@ -16,6 +16,17 @@ import { assembleReverseReferences } from '../utils/graph-utils';
 // Characters for resource ids.
 const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz';
 
+function defaultFieldsForClass(resourceClass) {
+  const fields = {};
+  Object.keys(resourceClass.properties).forEach((key) => {
+    const spec = resourceClass.properties[key];
+    if (!_.isUndefined(spec.default)) {
+      fields[key] = spec.default;
+    }
+  });
+  return fields;
+}
+
 export default class ResourceShow extends Component {
   constructor(props) {
     super(props);
@@ -59,12 +70,11 @@ export default class ResourceShow extends Component {
     const sliceName = this.props.params.sliceName;
     const resourceType = TextUtil.singularize(collectionName);
     const resourceClass = ResourcesRegistry[resourceType];
-    const fields = { name: this.getNewResourceName() };
+    const fields = Object.assign({
+      name: this.getNewResourceName()
+    }, defaultFieldsForClass(resourceClass));
     if (resourceClass.properties.scene && sliceType === 'scene') {
       fields.scene = sliceName;
-    }
-    if (_.isFunction(resourceClass.getDefaultFields)) {
-      Object.assign(fields, resourceClass.getDefaultFields());
     }
     _.each(this.props.location.query, (val, key) => {
       if (resourceClass.properties[key]) {

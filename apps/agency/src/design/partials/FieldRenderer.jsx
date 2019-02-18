@@ -430,8 +430,17 @@ export default class FieldRenderer {
   }
 
   internalObjectKey(spec, value, name, path, opts, keySpec, key) {
+    // Hide hidden fields
     if (_.get(keySpec, 'display.hidden')) {
       return null;
+    }
+    // Hide optional references if no objects exist in that reference.
+    if (keySpec.type === 'reference' && !keySpec.required && !value[key]) {
+      const collectionName = keySpec.collection;
+      const collection = this.script.content[collectionName];
+      if (!collection || !collection.length) {
+        return null;
+      }
     }
 
     const isInline = _.get(spec, 'display.form') === 'inline';

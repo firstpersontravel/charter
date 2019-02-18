@@ -77,7 +77,11 @@ var actionOrClauseParam = {
 };
 
 // Filled in now to avoid a circular dependency
-Object.assign(actionListParam, { type: 'list', items: actionOrClauseParam });
+Object.assign(actionListParam, {
+  type: 'list',
+  default: [{}],
+  items: actionOrClauseParam
+});
 
 var eventsClasses = _(EventsRegistry)
   .mapValues(function(eventClass, eventType) {
@@ -143,7 +147,12 @@ var trigger = {
   properties: {
     name: { type: 'name', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    events: { type: 'list', items: eventResource, required: true },
+    events: {
+      type: 'list',
+      items: eventResource,
+      required: true,
+      default: [{}]
+    },
     repeatable: { type: 'boolean', default: true },
     if: { type: 'ifClause' },
     actions: actionListParam
@@ -179,12 +188,6 @@ var trigger = {
       }
     }
     return firstEvent.type.replace(/_/g, ' ');
-  },
-  getDefaultFields: function() {
-    return {
-      events: [],
-      actions: []
-    };
   },
   getParentClaims: function(resource) {
     return _(resource.events)

@@ -514,7 +514,7 @@ describe('ParamValidators', () => {
     it('warns if missing key', () => {
       const invalid = {};
       err(ParamValidators.variegated({}, 's', spec, invalid),
-        'Variegated param "s" should have a "family" property.');
+        'Required param "s[family]" not present.');
     });
 
     it('warns if non-string key', () => {

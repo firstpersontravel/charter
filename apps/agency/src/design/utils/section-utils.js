@@ -1,7 +1,8 @@
 import _ from 'lodash';
 
 export const sections = [
-  ['overview', 'Overview', 'map'],
+  ['roles', 'Roles', 'user'],
+  ['scenes', 'Scenes', 'map'],
   ['messaging', 'Messaging', 'comment'],
   ['locations', 'Location', 'map-pin'],
   ['variants', 'Variants', 'space-shuttle'],
@@ -9,7 +10,8 @@ export const sections = [
 ];
 
 const sectionContent = {
-  overview: { scenes: {}, roles: {}, appearances: {} },
+  roles: { roles: {}, appearances: {} },
+  scenes: { scenes: {} },
   messaging: { relays: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
   variants: { variants: {}, departures: {}, times: {} },
@@ -29,6 +31,9 @@ const sliceContent = {
 };
 
 export function getSliceContent(sliceType, sliceName) {
+  if (!sliceContent[sliceType]) {
+    return null;
+  }
   return sliceContent[sliceType](sliceName);
 }
 

@@ -11,12 +11,14 @@ var achievement = {
     style: {
       type: 'enum',
       options: ACHIEVEMENT_STYLE_OPTIONS,
+      default: 'completion',
       required: true
     },
     test: { type: 'ifClause', required: true },
     titles: {
       type: 'dictionary',
       required: true,
+      default: { 'true': '', 'false': '' },
       keys: { type: 'string' },
       values: { type: 'string' }
     },

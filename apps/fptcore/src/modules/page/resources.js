@@ -23,6 +23,7 @@ var page = {
     route: { type: 'reference', collection: 'routes' },
     panels: {
       type: 'list',
+      default: [{}],
       items: { type: 'subresource', class: SubresourcesRegistry.panel }
     }
   },

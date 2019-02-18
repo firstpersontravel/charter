@@ -269,8 +269,7 @@ ParamValidators.variegated = function(script, name, spec, param) {
   var keyName = _.isFunction(spec.key) ? 'key' : spec.key;
   var variety = _.isFunction(spec.key) ? spec.key(param) : param[spec.key];
   if (!variety) {
-    return ['Variegated param "' + name + '" should have a "' + keyName +
-      '" property.'];
+    return ['Required param "' + name + '[' + keyName + ']" not present.'];
   }
   if (!_.isString(variety)) {
     return ['Variegated param "' + name + '" property "' + keyName +

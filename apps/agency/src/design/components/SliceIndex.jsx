@@ -30,6 +30,9 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
 
 export default function SliceIndex({ script, params }) {
   const sliceContent = getSliceContent(params.sliceType, params.sliceName);
+  if (!sliceContent) {
+    return 'Invalid section.';
+  }
   const collectionNames = Object.keys(sliceContent);
   const renderedCreateItems = collectionNames.map(collectionName => (
     renderCreateResource(script, params.sliceType, params.sliceName,

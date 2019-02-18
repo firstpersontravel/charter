@@ -7,6 +7,7 @@ var waypoint = {
     title: { type: 'string', required: true },
     options: {
       type: 'list',
+      default: [{}],
       items: {
         type: 'object',
         properties: {

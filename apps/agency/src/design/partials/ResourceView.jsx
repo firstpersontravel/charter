@@ -219,14 +219,22 @@ export default class ResourceView extends Component {
         New {TextUtil.titleForKey(resourceType).toLowerCase()}
       </span>
     );
+    const emptyWarning = resource.title ? null : (
+      <i
+        style={{ marginLeft: '0.25em' }}
+        className="text-danger fa fa-exclamation-circle" />
+    );
     if (resourceClass.properties.title) {
       return (
-        <PopoverControl
-          title="Title"
-          validate={val => !!val}
-          onConfirm={_.curry(this.handlePropertyUpdate)('title')}
-          label={resource.title || emptyTitle}
-          value={resource.title || ''} />
+        <span>
+          <PopoverControl
+            title="Title"
+            validate={val => !!val}
+            onConfirm={_.curry(this.handlePropertyUpdate)('title')}
+            label={resource.title || emptyTitle}
+            value={resource.title || ''} />
+          {emptyWarning}
+        </span>
       );
     }
     if (this.props.isNew) {
@@ -262,7 +270,15 @@ export default class ResourceView extends Component {
     const renderedErrors = this.state.errors
       // Filter out not present errors since those are shown by the UI
       // as exclamation points. TODO: we should have error classes!
-      // .filter(err => _.indexOf(err, 'not present') !== -1)
+      .filter((err) => {
+        if (
+          _.startsWith(err, 'Required param') &&
+          _.endsWith(err, 'not present.')
+        ) {
+          return false;
+        }
+        return true;
+      })
       .map(err => (
         <div key={err}>{err}</div>
       ));

@@ -6,3 +6,8 @@ roles:
 scenes:
   - name: first
     title: First scene
+
+variants:
+  - name: default
+    title: All trips
+    default: true
