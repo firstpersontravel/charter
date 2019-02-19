@@ -12,8 +12,8 @@ var relay = {
       required: true,
       parent: true
     },
-    with: { type: 'reference', collection: 'roles', required: true },
     as: { type: 'reference', collection: 'roles', required: true },
+    with: { type: 'reference', collection: 'roles', required: true },
     trailhead: { type: 'boolean', default: false },
     admin_out: { type: 'boolean', default: false },
     phone_out: { type: 'boolean', default: false },

@@ -5,13 +5,20 @@ import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
 function selectItem(e) {
+  if (!e.target.value) {
+    return;
+  }
   browserHistory.push(e.target.value);
 }
 
 function renderSelect(items) {
-  const selectedItem = _.get(_.find(items, item => (
+  const selectedItem = _.find(items, item => (
     _.startsWith(window.location.pathname, item.url)
-  )), 'url');
+  ));
+  const selectedUrl = _.get(selectedItem, 'url') || '';
+  const emptyOption = selectedUrl ? null : (
+    <option value="">---</option>
+  );
   const renderedOptions = items.map(item => (
     <option key={item.key} value={item.url}>
       {item.text}
@@ -21,8 +28,9 @@ function renderSelect(items) {
     <div className="d-sm-none" style={{ marginBottom: '0.5em' }}>
       <select
         className="form-control"
-        value={selectedItem}
+        value={selectedUrl}
         onChange={selectItem}>
+        {emptyOption}
         {renderedOptions}
       </select>
     </div>

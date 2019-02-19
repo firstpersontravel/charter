@@ -8,6 +8,7 @@ import { TextUtil, ResourcesRegistry } from 'fptcore';
 import ResourceBadge from '../partials/ResourceBadge';
 import ResourceView from '../partials/ResourceView';
 import ResourceExtras from '../partials/ResourceExtras';
+import ResourceVisual, { hasVisual } from '../partials/ResourceVisual';
 import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
 import { titleForResource } from '../utils/text-utils';
 import { getContentList, urlForResource } from '../utils/section-utils';
@@ -316,7 +317,7 @@ export default class ResourceShow extends Component {
     );
   }
 
-  renderAssets() {
+  renderExtras() {
     return (
       <ResourceExtras
         assets={this.props.assets}
@@ -328,10 +329,25 @@ export default class ResourceShow extends Component {
     );
   }
 
+  renderVisual() {
+    if (!hasVisual(this.getResourceType())) {
+      return null;
+    }
+    return (
+      <div className="col-sm-4">
+        <ResourceVisual
+          resourceType={this.getResourceType()}
+          resource={this.getResource()}
+          script={this.props.script} />
+      </div>
+    );
+  }
+
   render() {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
-    if (!ResourcesRegistry[TextUtil.singularize(collectionName)]) {
+    const resourceType = TextUtil.singularize(collectionName);
+    if (!ResourcesRegistry[resourceType]) {
       return (
         <div className="alert alert-warning">
           Invalid collection.
@@ -361,14 +377,19 @@ export default class ResourceShow extends Component {
     const reverseRefGraph = assembleReverseReferences(script.content);
     const reverseRefs = reverseRefGraph[resourceStr];
     const canDelete = !reverseRefs || !reverseRefs.length;
-
+    const mainClassName = hasVisual(resourceType) ? 'col-sm-8' : 'col';
     return (
       <div>
         {this.renderParentPaths(parenthoodPaths)}
-        {this.renderResource(canDelete)}
-        {this.renderAssets()}
-        {this.renderChildren(childrenStrs)}
-        {this.renderReverseRefs(reverseRefs)}
+        <div className="row">
+          <div className={mainClassName}>
+            {this.renderResource(canDelete)}
+            {this.renderExtras()}
+            {this.renderChildren(childrenStrs)}
+            {this.renderReverseRefs(reverseRefs)}
+          </div>
+          {this.renderVisual()}
+        </div>
       </div>
     );
   }

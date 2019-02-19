@@ -10,7 +10,7 @@ export function lookupScript(state, ownProps) {
     filter: {
       isArchived: false,
       org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName },
+      experience: { name: ownProps.params.experienceName, isArchived: false },
       revision: Number(ownProps.params.revision)
     },
     include: {
@@ -26,7 +26,7 @@ export function lookupScripts(state, ownProps) {
     filter: {
       isArchived: false,
       org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName }
+      experience: { name: ownProps.params.experienceName, isArchived: false }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),

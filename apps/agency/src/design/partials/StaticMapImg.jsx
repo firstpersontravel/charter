@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const BASE_URL = 'https://maps.googleapis.com/maps/api/staticmap';
 
-export default function StaticMapImg({ size, polylines, markers, ...props }) {
+export default function StaticMapImg({ size, polylines, markers, paths, ...props }) {
   let mapUrl = `${BASE_URL}?key=${process.env.GOOGLE_API_KEY}&size=${size}`;
 
   if (polylines) {
@@ -18,6 +18,11 @@ export default function StaticMapImg({ size, polylines, markers, ...props }) {
     mapUrl += `&${markerParams}`;
   }
 
+  if (paths) {
+    const pathParams = paths.join('&');
+    mapUrl += `&${pathParams}`;
+  }
+
   return (
     <img
       src={mapUrl}
@@ -29,10 +34,12 @@ export default function StaticMapImg({ size, polylines, markers, ...props }) {
 StaticMapImg.propTypes = {
   polylines: PropTypes.array,
   markers: PropTypes.array,
+  paths: PropTypes.array,
   size: PropTypes.string.isRequired
 };
 
 StaticMapImg.defaultProps = {
   polylines: [],
-  markers: []
+  markers: [],
+  paths: []
 };

@@ -46,7 +46,7 @@ export default class Slice extends Component {
         <span>
           <i
             style={{ width: '1.5em' }}
-            className="d-none d-md-inline fa fa-puzzle-piece" />
+            className="d-none d-md-inline-block fa fa-puzzle-piece" />
           &nbsp;{scene.title}
         </span>
       ),
@@ -60,7 +60,7 @@ export default class Slice extends Component {
         <span>
           <i
             style={{ width: '1.5em' }}
-            className={`d-none d-md-inline fa fa-${section[2]}`} />
+            className={`d-none d-md-inline-block fa fa-${section[2]}`} />
           &nbsp;{section[1]}
         </span>
       ),
