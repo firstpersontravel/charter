@@ -49,13 +49,20 @@ class RelaysController {
       .filter(num => num.smsUrl.indexOf(config.env.TWILIO_HOST) === 0)
       .map(num => num.phoneNumber.replace('+1', ''))
       .value();
-    // Find all relays that are either global or for this user -- that's what
-    // we can't overlap.
-    const existingRelays = await models.Relay.findAll({
-      where: {
+    let overlaps;
+    if (userPhoneNumber === '') {
+      // If we're trying to create a new trailhead, don't overlap with
+      // anything at all.
+      overlaps = {};
+    } else {
+      // If we're assigning a number for a specific user, then find all global
+      // relays or relays for that user, and ensure we don't overlap.
+      overlaps = {
         userPhoneNumber: { [Sequelize.Op.or]: ['', userPhoneNumber] }
-      }
-    });
+      };
+    }
+    const existingRelays = await models.Relay.findAll({ where: overlaps });
+
     // Look through existing numbers for one that is available.
     for (const envExistingNumber of envExistingNumbers) {
       // If there are no existing relays with this relay number, then it's
