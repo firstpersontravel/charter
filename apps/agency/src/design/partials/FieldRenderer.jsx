@@ -32,10 +32,11 @@ function stringOrYesNo(val) {
 
 function internalEmpty(spec) {
   let label = _.get(spec, 'display.placeholder') || 'Empty';
-  if (spec.type === 'ifClause') {
+  if (spec.type === 'media') {
+    label = 'Enter a path (i.e. "sound.mp3", "img.jpg"). Save, then upload content.';
+  } else if (spec.type === 'ifClause') {
     label = 'Always';
-  }
-  if (!_.isUndefined(spec.default)) {
+  } else if (!_.isUndefined(spec.default)) {
     label = `${stringOrYesNo(spec.default)} by default`;
   }
   return (
