@@ -165,11 +165,12 @@ Nav.propTypes = {
   logout: PropTypes.func.isRequired,
   org: PropTypes.object,
   experience: PropTypes.object,
-  experiences: PropTypes.array.isRequired
+  experiences: PropTypes.array
 };
 
 Nav.defaultProps = {
   authInfo: null,
   org: null,
-  experience: null
+  experience: null,
+  experiences: []
 };
