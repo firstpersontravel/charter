@@ -136,12 +136,21 @@ class TripRelaysController {
   /**
    * Format a media url.
    */
-  static _formatMediaUrl(experienceName, url) {
+  static async _getMediaUrl(experience, url) {
     if (_.startsWith(url, 'http')) {
       return url;
     }
-    const mediaHost = config.env.TWILIO_MEDIA_HOST;
-    return `${mediaHost}/${experienceName}/${url}`;
+    const asset = await models.Asset.find({
+      where: {
+        experienceId: experience.id,
+        type: 'media',
+        name: url
+      }
+    });
+    if (!asset) {
+      return null;
+    }
+    return asset.data.url;
   }
 
   /**
@@ -168,8 +177,7 @@ class TripRelaysController {
       const ext = message.content.split('.').reverse()[0].toLowerCase();
       const isAllowedMediaExtension = _.includes(ALLOWED_MEDIA_EXTENSIONS, ext);
       if (isAllowedMediaExtension) {
-        const mediaUrl = this._formatMediaUrl(experience.name,
-          message.content);
+        const mediaUrl = await this._getMediaUrl(experience, message.content);
         return [null, mediaUrl];
       }
     }
