@@ -686,8 +686,8 @@ def deploy():
 def _deploy():
     "Just deploy new code."
     create_release()
-    build_apps()
     copy_environment()
+    build_apps()
     update_to_latest_release()
     db_migrate()
 
