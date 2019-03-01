@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Experience from '../components/Experience';
-import { lookupExperiences } from './utils';
+import { lookupExperiences, lookupGroups } from './utils';
 import { logout, listCollection } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
@@ -17,7 +17,8 @@ const mapStateToProps = (state, ownProps) => {
     experienceRequest: experienceRequest,
     experience: _.find(state.datastore.experiences, { name: experienceName }),
     experiences: lookupExperiences(state, ownProps),
-    org: _.find(authInfo.orgs, { name: orgName })
+    org: _.find(authInfo.orgs, { name: orgName }),
+    groups: lookupGroups(state, ownProps)
   };
 };
 

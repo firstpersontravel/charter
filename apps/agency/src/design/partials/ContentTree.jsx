@@ -6,7 +6,7 @@ import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from './ResourceBadge';
-import ResponsiveListGroup from './ResponsiveListGroup';
+import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
 function walkContentTree(contentTree, path, iteree) {
   _.each(contentTree, (value, key) => {

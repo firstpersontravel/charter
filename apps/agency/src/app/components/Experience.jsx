@@ -12,7 +12,9 @@ class Experience extends Component {
         logout={this.props.logout}
         org={this.props.org}
         experience={this.props.experience}
-        experiences={this.props.experiences} />
+        experiences={this.props.experiences}
+        groups={this.props.groups}
+        groupId={this.props.params.groupId} />
     );
   }
 
@@ -54,7 +56,9 @@ Experience.propTypes = {
   experienceRequest: PropTypes.string,
   experience: PropTypes.object,
   experiences: PropTypes.array.isRequired,
+  groups: PropTypes.array.isRequired,
   org: PropTypes.object,
+  params: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired
 };
 

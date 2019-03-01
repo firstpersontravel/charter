@@ -65,6 +65,7 @@ export default function ResponsiveListGroup({ items }) {
 
 ResponsiveListGroup.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     label: PropTypes.node.isRequired,
     text: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired

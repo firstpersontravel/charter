@@ -1,0 +1,318 @@
+import _ from 'lodash';
+import moment from 'moment';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { IndexLink } from 'react-router';
+
+import { TextUtil, TripCore, PlayerCore } from 'fptcore';
+
+import { withLoader } from '../../loader-utils';
+import AreYouSure from '../../partials/AreYouSure';
+import TripModal from '../partials/TripModal';
+import ScheduleUtils from '../utils';
+
+class ScheduleGroup extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isArchivingGroup: null,
+      isArchiveGroupModalOpen: false,
+      isArchivingTrip: null,
+      isArchiveTripModalOpen: false,
+      isTripEditModalOpen: false,
+      isEditingTrip: null,
+      defaultTripDepartureName: null
+    };
+    this.handleArchiveGroup = this.handleArchiveGroup.bind(this);
+    this.handleArchiveGroupToggle = this.handleArchiveGroupToggle.bind(this);
+    this.handleArchiveGroupConfirm = this.handleArchiveGroupConfirm.bind(this);
+    this.handleArchiveTrip = this.handleArchiveTrip.bind(this);
+    this.handleArchiveTripToggle = this.handleArchiveTripToggle.bind(this);
+    this.handleArchiveTripConfirm = this.handleArchiveTripConfirm.bind(this);
+    this.handleEditTripToggle = this.handleEditTripToggle.bind(this);
+    this.handleNewTrip = this.handleNewTrip.bind(this);
+    this.handleEditTripConfirm = this.handleEditTripConfirm.bind(this);
+  }
+
+  handleArchiveGroup() {
+    this.setState({
+      isArchiveGroupModalOpen: true,
+      isArchivingGroup: true
+    });
+  }
+
+  handleArchiveGroupToggle() {
+    this.setState({
+      isArchiveGroupModalOpen: !this.state.isArchiveGroupModalOpen
+    });
+  }
+
+  handleArchiveGroupConfirm() {
+    const group = this.props.group;
+    this.props.updateInstance('groups', group.id, { isArchived: true });
+    group.trips.forEach(trip => (
+      this.props.updateInstance('trips', trip.id, { isArchived: true })
+    ));
+    this.setState({
+      isArchiveGroupModalOpen: false,
+      isArchivingGroup: null
+    });
+  }
+
+  handleArchiveTrip(trip) {
+    this.setState({
+      isArchiveTripModalOpen: true,
+      isArchivingTrip: trip
+    });
+  }
+
+  handleArchiveTripToggle() {
+    this.setState({
+      isArchiveTripModalOpen: !this.state.isArchiveTripModalOpen
+    });
+  }
+
+  handleArchiveTripConfirm() {
+    const trip = this.state.isArchivingTrip;
+    this.props.updateInstance('trips', trip.id, { isArchived: true });
+    this.setState({
+      isArchiveTripModalOpen: false,
+      isArchivingTrip: null
+    });
+  }
+
+  handleEditTripToggle() {
+    this.setState({
+      isTripEditModalOpen: !this.state.isTripEditModalOpen
+    });
+  }
+
+  handleNewTrip(defaultDepartureName) {
+    this.setState({
+      isTripEditModalOpen: true,
+      isEditingTrip: null,
+      defaultTripDepartureName: defaultDepartureName
+    });
+  }
+
+  handleEditTrip(trip) {
+    this.setState({
+      isTripEditModalOpen: true,
+      isEditingTrip: trip,
+      defaultTripDepartureName: null
+    });
+  }
+
+  initialFieldsForRole(experience, script, role, departureName, variantNames) {
+    const profiles = ScheduleUtils.filterAssignableProfiles(
+      this.props.profiles, this.props.users, experience.id,
+      role.name, departureName);
+    const users = profiles.map(profile => (
+      _.find(this.props.users, { id: profile.userId })
+    ));
+    const userId = users.length === 1 ? users[0].id : null;
+    const fields = Object.assign(
+      { orgId: experience.orgId, userId: userId },
+      PlayerCore.getInitialFields(script.content, role.name, variantNames));
+    return fields;
+  }
+
+  handleEditTripConfirm(group, fields) {
+    const initialFields = TripCore.getInitialFields(
+      group.script.content, group.date,
+      group.experience.timezone, fields.variantNames);
+    const tripFields = Object.assign(initialFields, {
+      orgId: group.orgId,
+      experienceId: group.experienceId,
+      groupId: group.id,
+      scriptId: group.scriptId,
+      date: group.date,
+      title: fields.title,
+      galleryName: _.kebabCase(fields.title),
+      departureName: fields.departureName,
+      variantNames: fields.variantNames.join(','),
+      currentSceneName: '',
+      lastScheduledTime: null
+    });
+    const playersFields = group.script.content.roles.map(role => (
+      this.initialFieldsForRole(group.experience, group.script,
+        role, fields.departureName, fields.variantNames)
+    ));
+    if (this.state.isEditingTrip) {
+      // update existing trip
+      this.props.updateInstance('trips', this.state.isEditingTrip.id,
+        tripFields);
+      // TODO: update players too
+    } else {
+      // create new trip
+      this.props.initializeTrip(tripFields, playersFields);
+    }
+    this.handleEditTripToggle();
+  }
+
+  renderDepartureRow(group, departureName, trips) {
+    const addTripRow = (
+      <tr key={departureName}>
+        <td>
+          <strong>{departureName}</strong>
+        </td>
+        <td>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={() => this.handleNewTrip(departureName)}>
+            New trip
+          </button>
+        </td>
+      </tr>
+    );
+    const tripRows = trips
+      .filter(trip => trip.departureName === departureName)
+      .map(trip => (
+        <tr key={trip.id}>
+          <td>
+            <strong>{departureName}</strong>
+          </td>
+          <td>
+            <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
+              {trip.title}
+            </IndexLink>
+          </td>
+          <td>
+            {trip.variantNames.split(',').filter(Boolean).map(TextUtil.titleForKey).join(', ')}
+          </td>
+          <td>
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={() => this.handleEditTrip(trip)}>
+              Edit
+            </button>
+            {' '}
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={() => this.handleArchiveTrip(trip)}>
+              Archive
+            </button>
+          </td>
+        </tr>
+      ));
+
+    return tripRows.length ? tripRows : addTripRow;
+  }
+
+  renderHeader() {
+    const group = this.props.group;
+    const dateShort = moment(group.date).format('MMM D, YYYY');
+    return (
+      <div style={{ marginBottom: '1em' }}>
+        <IndexLink
+          className="btn btn-primary float-right"
+          to={
+            `/${group.org.name}/${group.experience.name}` +
+            `/operate/${group.id}`
+          }>
+          {dateShort} operations
+        </IndexLink>
+        <h4>{dateShort}, script rev. {group.script.revision}</h4>
+      </div>
+    );
+  }
+
+  renderTrips() {
+    const group = this.props.group;
+    const departures = group.script.content.departures || [];
+    const departureNames = departures.length > 0 ?
+      _.map(departures, 'name') : [''];
+    const departureRows = departureNames.map((departureName) => {
+      const depTrips = _.filter(group.trips, { departureName: departureName });
+      return this.renderDepartureRow(group, departureName, depTrips);
+    });
+    const isFull = group.trips.length >= departureNames.length;
+
+    const addTripRow = isFull ? (
+      <tr>
+        <td />
+        <td>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={() => this.handleNewTrip(departureNames[0])}>
+            New trip
+          </button>
+        </td>
+      </tr>
+    ) : null;
+
+    return (
+      <table className="table table-striped">
+        <tbody>
+          {departureRows}
+          {addTripRow}
+        </tbody>
+      </table>
+    );
+  }
+
+  render() {
+    if ((!this.props.group && this.props.group.isLoading) ||
+        !this.props.group.script ||
+        this.props.group.script.isNull) {
+      return <div className="container-fluid">Loading</div>;
+    }
+    if (this.props.group.isError) {
+      return <div className="container-fluid">Error</div>;
+    }
+    return (
+      <div>
+        {this.renderHeader()}
+        {this.renderTrips()}
+
+        <div>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={() => this.handleArchiveGroup()}>
+            Archive group
+          </button>
+        </div>
+
+        <TripModal
+          isOpen={this.state.isTripEditModalOpen}
+          group={this.props.group}
+          trip={this.state.isEditingTrip}
+          defaultDepartureName={this.state.defaultTripDepartureName}
+          onClose={this.handleEditTripToggle}
+          onConfirm={this.handleEditTripConfirm} />
+        <AreYouSure
+          isOpen={this.state.isArchiveGroupModalOpen}
+          onToggle={this.handleArchiveGroupToggle}
+          onConfirm={this.handleArchiveGroupConfirm}
+          message={`Are you sure you want to archive ${this.props.group.date} and all trips?`} />
+        <AreYouSure
+          isOpen={this.state.isArchiveTripModalOpen}
+          onToggle={this.handleArchiveTripToggle}
+          onConfirm={this.handleArchiveTripConfirm}
+          message={`Are you sure you want to archive ${_.get(this.state.isArchivingTrip, 'departureName')}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
+      </div>
+    );
+  }
+}
+
+ScheduleGroup.propTypes = {
+  group: PropTypes.object.isRequired,
+  users: PropTypes.array.isRequired,
+  profiles: PropTypes.array.isRequired,
+  initializeTrip: PropTypes.func.isRequired,
+  updateInstance: PropTypes.func.isRequired
+};
+
+export default withLoader(ScheduleGroup, ['params.groupId'], (props) => {
+  props.listCollection('trips', {
+    groupId: props.params.groupId,
+    experienceId: props.experience.id,
+    orgId: props.experience.orgId
+  });
+  props.listCollection('groups', {
+    id: props.params.groupId,
+    experienceId: props.experience.id,
+    orgId: props.experience.orgId
+  });
+});

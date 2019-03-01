@@ -1,11 +1,13 @@
 import React from 'react';
-import { Route, IndexRedirect } from 'react-router';
+import { Route, IndexRoute } from 'react-router';
 
+import ScheduleConnector from './connectors/Schedule';
 import ScheduleIndexConnector from './connectors/ScheduleIndex';
+import ScheduleGroupConnector from './connectors/ScheduleGroup';
 
 export default (
-  <Route path="operate">
-    <IndexRedirect to="/:orgName/:experienceName/operate/schedule" />
-    <Route path="schedule" component={ScheduleIndexConnector} />
+  <Route path="schedule" component={ScheduleConnector}>
+    <IndexRoute component={ScheduleIndexConnector} />
+    <Route path=":groupId" component={ScheduleGroupConnector} />
   </Route>
 );
