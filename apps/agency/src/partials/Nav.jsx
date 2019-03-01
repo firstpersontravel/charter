@@ -31,7 +31,8 @@ function renderRight(authInfo, logout) {
       <li className="nav-item">
         <div className="dropdown">
           <button className="btn btn-unstyled dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {authInfo.user.email}
+            <span className="d-none d-md-inline">{authInfo.user.email}</span>
+            <span className="d-inline d-md-none"><i className="fa fa-user" /></span>
           </button>
           <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
             {orgLinks}
@@ -139,7 +140,8 @@ function renderMenu(org, experience, experiences) {
 export default function Nav({
   authInfo, logout, org, experience, experiences
 }) {
-  document.title = `${getStage()} - FPT Ops`;
+  const orgTitle = org ? org.title : 'Multiverse';
+  document.title = `${orgTitle}`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
   const navClass = `navbar navbar-expand-sm navbar-light bg-faded ${navStageClass}`;

@@ -3,7 +3,7 @@
 module.exports = function(environment) {
 
   var SENTRY_DSNS = {
-    production: 'https://004c6a38a9c34102a2b53daaa418bd6c@sentry.io/103092'
+    production: 'https://7e43c1af484e4baa92bb0083119ca264@sentry.io/103093'
   };
 
   var ENV = {

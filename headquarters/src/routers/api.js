@@ -1,5 +1,5 @@
 const express = require('express');
-const Raven = require('raven');
+const Sentry = require('@sentry/node');
 
 const apiActionsRoutes = require('../routes/api_actions');
 const apiAdminRoutes = require('../routes/api_admin');
@@ -17,6 +17,8 @@ const apiPolicy = new Policy(designerPolicies);
 const apiAuthorizor = new Authorizor(apiPolicy);
 
 const apiRouter = express.Router();
+
+apiRouter.use(Sentry.Handlers.requestHandler());
 
 /**
  * Utility function to create a REST collection router
@@ -93,7 +95,7 @@ apiRouter.get('/legacy/trip/:id',
   asyncRoute(apiLegacyRoutes.getTripRoute));
 
 // The error handler must be before any other error middleware
-apiRouter.use(Raven.errorHandler());
+apiRouter.use(Sentry.Handlers.errorHandler());
 
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars

@@ -2,7 +2,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
-const Raven = require('raven');
+const Sentry = require('@sentry/node');
 const s3Router = require('react-s3-uploader/s3router');
 
 const config = require('./config');
@@ -18,12 +18,15 @@ const {
 } = require('./routers/page');
 
 // Configure raven
-Raven.config(config.env.SENTRY_DSN).install();
+Sentry.init({
+  dsn: config.env.SENTRY_DSN,
+  environment: config.env.SENTRY_ENVIRONMENT
+});
 
 // Initialize server
 const app = express();
 app.enable('trust proxy');
-app.use(Raven.requestHandler());
+app.use(Sentry.Handlers.requestHandler());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -62,7 +65,7 @@ app.use('/s3', s3Router({
 }));
 
 // The error handler must be before any other error middleware
-app.use(Raven.errorHandler());
+app.use(Sentry.Handlers.errorHandler());
 
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars

@@ -93,7 +93,7 @@ class TripUtil {
       ]
     });
     if (!trip) {
-      throw new Error('Trip not found.');
+      throw new Error(`Trip ${tripId} not found.`);
     }
     const players = await models.Player.findAll({
       where: { tripId: tripId }

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const apn = require('apn');
-const Raven = require('raven');
+const Sentry = require('@sentry/node');
 
 const config = require('../config');
 const models = require('../models');
@@ -62,7 +62,7 @@ class MessageController {
       }
     } catch (err) {
       logger.error(err.message);
-      Raven.captureException(err);
+      Sentry.captureException(err);
     }
   }
 

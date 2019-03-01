@@ -14,7 +14,7 @@ export default DS.Model.extend({
 
   findResourceByName: function(resourceType, name) {
     var resources = this.get('content')[resourceType + 's'];
-    var resource = resources.findBy('name', name);
+    var resource = (resources || []).findBy('name', name);
     if (!resource) {
       throw new Error(`Could not find ${resourceType} ${name}.`);
     }

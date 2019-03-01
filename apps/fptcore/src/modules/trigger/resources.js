@@ -23,6 +23,7 @@ var singleActionParam = {
         required: true
       },
       when: {
+        // TODO - change to 'when' and 'offset'
         type: 'string',
         display: {
           primary: true,
