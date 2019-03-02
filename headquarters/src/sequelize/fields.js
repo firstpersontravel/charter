@@ -54,14 +54,14 @@ function integerField() {
   };
 }
 
-function requiredStringField(maxLength, validate=null) {
-  return stringField(maxLength, Object.assign(validate || {}, {
+function requiredStringField(maxLength) {
+  return stringField(maxLength, {
     notNull: { msg: 'must be present' }
-  }));
+  });
 }
 
-function optionalStringField(maxLength, validate=null) {
-  return stringField(maxLength, validate);
+function optionalStringField(maxLength) {
+  return stringField(maxLength);
 }
 
 function enumStringField(maxLength, values) {

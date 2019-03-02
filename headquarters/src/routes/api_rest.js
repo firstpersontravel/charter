@@ -124,24 +124,19 @@ async function updateRecord(model, record, fields) {
     updateFields.push('updatedAt');
   }
 
-  // Validate fields
+  // Validate fields. Note that this will catch errors in both updated fields
+  // *AND* existing fields in the DB that are un-modified by this operation.
+  // Meaning if some field in a database record is invalid, *ANY* updates to
+  // that record, even to unrelated fields, will fail with a 400. It really
+  // should be a 500 if it's an existing data integrity issue.
   try {
-    await record.validate({ fields: updateFields });
+    await record.validate();
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
       throw apiErrorFromValidationError(err);
     } else {
       throw err;
     }
-  }
-
-  // Catch for latent unexpected data -- this means there is invalid data in
-  // the database since its in a field we aren't updating.
-  try {
-    await record.validate();
-  } catch (err) {
-    throw errors.internalError(
-      `Unexpected validation error: ${err.message}.`);
   }
 
   // If we're updating, only save supplied fields.

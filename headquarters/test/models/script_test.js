@@ -14,7 +14,7 @@ describe('Script', () => {
       experienceId: 1,
       revision: 1,
       contentVersion: 1,
-      content: {}
+      content: { meta: { version: 1 } }
     });
   });
 
@@ -34,15 +34,22 @@ describe('Script', () => {
     });
   });
 
+  it('requires meta', async () => {
+    script.content = {};
+    await assertValidation(script, {
+      content: 'Invalid meta resource.'
+    });
+  });
+
   it('errors on invalid collection', async () => {
-    script.content = { invalid: [{ name: 'hi' }] };
+    script.content = { meta: { version: 1 }, invalid: [{ name: 'hi' }] };
     await assertValidation(script, {
       content: 'There was 1 error validating the following collections: invalid.'
     });
   });
 
   it('errors on invalid resource', async () => {
-    script.content = { scenes: [{ bad_value: 'hi' }] };
+    script.content = { meta: { version: 1 }, scenes: [{ bad_value: 'hi' }] };
     await assertValidation(script, {
       content: 'There were 3 errors validating the following collections: scenes.'
     });

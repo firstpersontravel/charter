@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const jsonschema = require('jsonschema');
 const { ValidationError } = require('sequelize');
 
 const { TextUtil, ParamValidators, ResourcesRegistry } = require('fptcore');
@@ -16,6 +17,15 @@ const {
   mutableModifier,
   snakeCaseColumns
 } = require('../sequelize/fields');
+
+const metaSchema = {
+  type: 'object',
+  properties: {
+    version: { type: 'integer', minimum: 1 }
+  },
+  required: ['version'],
+  additionalProperties: false
+};
 
 function getResourceErrors(script, collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
@@ -39,8 +49,26 @@ function getResourceErrors(script, collectionName, resource) {
 }
 
 function validateScriptContent(script) {
-  var errors = [];
+  // Check meta block
+  const metaValidator = new jsonschema.Validator();
+  const metaOptions = { propertyName: 'meta' };
+  const metaResult = metaValidator.validate(script.content.meta || null,
+    metaSchema, metaOptions);
+  if (!metaResult.valid) {
+    const metaErrors = metaResult.errors.map(e => ({
+      message: `${e.property} ${e.message}`,
+      path: e.property,
+      collection: 'meta'
+    }));
+    throw new ValidationError('Invalid meta resource.', metaErrors);
+  }
+
+  // Check resources
+  const errors = [];
   for (const collectionName of Object.keys(script.content)) {
+    if (collectionName === 'meta') {
+      continue;
+    }
     const collection = script.content[collectionName];
     if (!_.isArray(collection)) {
       errors.push({

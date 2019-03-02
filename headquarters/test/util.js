@@ -19,6 +19,7 @@ const dummyExperienceFields = {
 };
 
 const dummyContent = {
+  meta: { version: 1 },
   roles: [{
     name: 'Dummy',
     title: 'Dummy'

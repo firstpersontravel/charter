@@ -114,6 +114,10 @@ describe('API create', () => {
   });
 
   describe('POST /api/scripts', () => {
+    const scriptContent = {
+      meta: { version: 1 },
+      roles: [{ name: 'hi', title: 'hi' }]
+    };
 
     let experience;
 
@@ -129,18 +133,43 @@ describe('API create', () => {
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
-          content: { roles: [{ name: 'hi', title: 'hi' }] }
+          content: scriptContent
         })
         .set('Accept', 'application/json')
         .expect(201)
         .then((res) => {
           // Test content created and returned correctly
-          assert.deepStrictEqual(res.body.data.script.content, {
-            roles: [{ name: 'hi', title: 'hi' }]
-          });
+          assert.deepStrictEqual(res.body.data.script.content, scriptContent);
           // Test timestamps were added
           assert(res.body.data.script.createdAt);
           assert(res.body.data.script.updatedAt);
+        });
+    });
+
+
+    it('fails on missing meta', () => {
+      return request(app)
+        .post('/api/scripts')
+        .send({
+          orgId: experience.orgId,
+          experienceId: experience.id,
+          revision: 0,
+          contentVersion: 0,
+          content: {}
+        })
+        .set('Accept', 'application/json')
+        .expect(422)
+        .then((res) => {
+          // Test returns an error
+          assert.deepStrictEqual(res.body.error, {
+            fields: [{
+              field: 'content',
+              message: 'meta is not of a type(s) object',
+              path: 'meta'
+            }],
+            message: 'Invalid fields: content.',
+            type: 'ValidationError'
+          });
         });
     });
 
@@ -152,7 +181,10 @@ describe('API create', () => {
           experienceId: experience.id,
           revision: 0,
           contentVersion: 0,
-          content: { departures: [{ title: 'x', scene: 'TEST' }] }
+          content: {
+            meta: { version: 1 },
+            departures: [{ title: 'x', scene: 'TEST' }]
+          }
         })
         .set('Accept', 'application/json')
         .expect(422)

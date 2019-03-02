@@ -1,3 +1,6 @@
+meta:
+  version: 1
+
 roles:
   - name: Knight
     title: Knight

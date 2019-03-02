@@ -211,16 +211,20 @@ class ScheduleGroup extends Component {
   renderHeader() {
     const group = this.props.group;
     const dateShort = moment(group.date).format('MMM D, YYYY');
+    const hasTrips = group.trips.length > 0;
+    const opsBtn = hasTrips ? (
+      <IndexLink
+        className="btn btn-primary float-right"
+        to={
+          `/${group.org.name}/${group.experience.name}` +
+          `/operate/${group.id}`
+        }>
+        {dateShort} operations
+      </IndexLink>
+    ) : null;
     return (
       <div style={{ marginBottom: '1em' }}>
-        <IndexLink
-          className="btn btn-primary float-right"
-          to={
-            `/${group.org.name}/${group.experience.name}` +
-            `/operate/${group.id}`
-          }>
-          {dateShort} operations
-        </IndexLink>
+        {opsBtn}
         <h4>{dateShort}, script rev. {group.script.revision}</h4>
       </div>
     );

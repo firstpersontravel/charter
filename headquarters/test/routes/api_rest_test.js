@@ -55,7 +55,7 @@ async function assertThrows(fn, status, message) {
   }
 }
 
-describe.only('apiRestRoutes', () => {
+describe('apiRestRoutes', () => {
   let dummyAuthz;
   let req;
   let res;
