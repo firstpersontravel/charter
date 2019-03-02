@@ -66,6 +66,9 @@ function walkReferences(collectionName, resource) {
 export function assembleReverseReferences(scriptContent) {
   const graph = {};
   _.each(scriptContent, (collection, collectionName) => {
+    if (collectionName === 'meta') {
+      return;
+    }
     _.each(collection, (resource) => {
       const resourceStr = `${collectionName}.${resource.name}`;
       const resourceRefs = walkReferences(collectionName, resource);

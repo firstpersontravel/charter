@@ -214,7 +214,7 @@ class ScheduleGroup extends Component {
     const hasTrips = group.trips.length > 0;
     const opsBtn = hasTrips ? (
       <IndexLink
-        className="btn btn-primary float-right"
+        className={`btn ${group.isArchived ? 'btn-secondary' : 'btn-primary'} float-right`}
         to={
           `/${group.org.name}/${group.experience.name}` +
           `/operate/${group.id}`
