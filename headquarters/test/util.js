@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const moment = require('moment');
 
+const { ScriptCore } = require('fptcore');
+
 const TripsController = require('../src/controllers/trips');
 const models = require('../src/models');
 
@@ -19,7 +21,7 @@ const dummyExperienceFields = {
 };
 
 const dummyContent = {
-  meta: { version: 1 },
+  meta: { version: ScriptCore.CURRENT_VERSION },
   roles: [{
     name: 'Dummy',
     title: 'Dummy'
@@ -36,7 +38,6 @@ const dummyScriptFields = {
   orgId: 100,
   experienceId: 1,
   revision: 1,
-  contentVersion: 1,
   isActive: true,
   isArchived: false
 };

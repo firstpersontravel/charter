@@ -155,7 +155,6 @@ export default class ResourceShow extends Component {
         orgId: script.orgId,
         experienceId: script.experienceId,
         revision: newRevision,
-        contentVersion: 1,
         content: newScriptContent
       });
       this.setState({

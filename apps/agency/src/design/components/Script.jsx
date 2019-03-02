@@ -86,7 +86,6 @@ class Script extends Component {
       orgId: script.orgId,
       experienceId: script.experienceId,
       content: script.content,
-      contentVersion: script.contentVersion,
       revision: nextRevision,
       isActive: false
     });

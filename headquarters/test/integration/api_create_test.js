@@ -1,6 +1,8 @@
 const assert = require('assert');
 const request = require('supertest');
 
+const { ScriptCore } = require('fptcore');
+
 const app = require('../../src/app');
 const TestUtil = require('../util');
 
@@ -115,7 +117,7 @@ describe('API create', () => {
 
   describe('POST /api/scripts', () => {
     const scriptContent = {
-      meta: { version: 1 },
+      meta: { version: ScriptCore.CURRENT_VERSION },
       roles: [{ name: 'hi', title: 'hi' }]
     };
 
@@ -132,7 +134,6 @@ describe('API create', () => {
           orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
-          contentVersion: 0,
           content: scriptContent
         })
         .set('Accept', 'application/json')
@@ -154,7 +155,6 @@ describe('API create', () => {
           orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
-          contentVersion: 0,
           content: {}
         })
         .set('Accept', 'application/json')
@@ -180,9 +180,8 @@ describe('API create', () => {
           orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
-          contentVersion: 0,
           content: {
-            meta: { version: 1 },
+            meta: { version: ScriptCore.CURRENT_VERSION },
             departures: [{ title: 'x', scene: 'TEST' }]
           }
         })
@@ -213,7 +212,6 @@ describe('API create', () => {
           orgId: experience.orgId,
           experienceId: experience.id,
           revision: 0,
-          contentVersion: 0,
           content: '{ "roles": [{ "name": "hi" }] }'
         })
         .set('Accept', 'application/json')

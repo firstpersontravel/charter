@@ -22,7 +22,6 @@
     isActive: true
     isArchived: false
     revision: 1
-    contentVersion: 1
     content:
       meta:
         version: 1

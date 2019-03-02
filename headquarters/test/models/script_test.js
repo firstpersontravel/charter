@@ -1,5 +1,7 @@
 const moment = require('moment');
 
+const { ScriptCore } = require('fptcore');
+
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
@@ -13,8 +15,7 @@ describe('Script', () => {
       orgId: 100,
       experienceId: 1,
       revision: 1,
-      contentVersion: 1,
-      content: { meta: { version: 1 } }
+      content: { meta: { version: ScriptCore.CURRENT_VERSION } }
     });
   });
 
@@ -41,15 +42,28 @@ describe('Script', () => {
     });
   });
 
+  it('requires current version', async () => {
+    script.content = { meta: { version: 302 } };
+    await assertValidation(script, {
+      content: 'Invalid meta resource.'
+    });
+  });
+
   it('errors on invalid collection', async () => {
-    script.content = { meta: { version: 1 }, invalid: [{ name: 'hi' }] };
+    script.content = {
+      meta: { version: ScriptCore.CURRENT_VERSION },
+      invalid: [{ name: 'hi' }]
+    };
     await assertValidation(script, {
       content: 'There was 1 error validating the following collections: invalid.'
     });
   });
 
   it('errors on invalid resource', async () => {
-    script.content = { meta: { version: 1 }, scenes: [{ bad_value: 'hi' }] };
+    script.content = {
+      meta: { version: ScriptCore.CURRENT_VERSION },
+      scenes: [{ bad_value: 'hi' }]
+    };
     await assertValidation(script, {
       content: 'There were 3 errors validating the following collections: scenes.'
     });

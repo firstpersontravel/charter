@@ -333,7 +333,6 @@ export function createExample(orgId, fields, example, scriptContent) {
           orgId: orgId,
           experienceId: data.id,
           revision: 1,
-          contentVersion: 1,
           content: scriptContent,
           isActive: true
         };
