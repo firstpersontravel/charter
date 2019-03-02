@@ -203,7 +203,7 @@ function jsonField(db, modelName, fieldName, options) {
         instance.setDataValue(fieldName, JSON.stringify(instance.getDataValue(fieldName)));
         return self;
       } else if (instance.dataValues[fieldName] === 'null' || !instance.dataValues[fieldName]) {
-        instance.setDataValue(fieldName, undefined);
+        instance.setDataValue(fieldName, {});
       }
     }
     if (typeof db.models === 'object' && db.models.hasOwnProperty(modelName) && typeof db.models[modelName].hook === 'function') {
@@ -229,7 +229,7 @@ function jsonField(db, modelName, fieldName, options) {
     set: function(value) {
       let str = value;
       if (value === null || value === undefined || value === '') {
-        str = '';
+        str = '{}';
       } else {
         str = stringify(value, { space: 2 });
       }

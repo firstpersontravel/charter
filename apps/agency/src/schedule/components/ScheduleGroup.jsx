@@ -50,10 +50,16 @@ class ScheduleGroup extends Component {
 
   handleArchiveGroupConfirm() {
     const group = this.props.group;
-    this.props.updateInstance('groups', group.id, { isArchived: true });
-    group.trips.forEach(trip => (
-      this.props.updateInstance('trips', trip.id, { isArchived: true })
-    ));
+    const newArchiveValue = !group.isArchived;
+    this.props.updateInstance('groups', group.id, {
+      isArchived: newArchiveValue
+    });
+    if (newArchiveValue === false) {
+      // TODO - replace with bulk update
+      group.trips.forEach(trip => (
+        this.props.updateInstance('trips', trip.id, { isArchived: true })
+      ));
+    }
     this.setState({
       isArchiveGroupModalOpen: false,
       isArchivingGroup: null
@@ -75,7 +81,9 @@ class ScheduleGroup extends Component {
 
   handleArchiveTripConfirm() {
     const trip = this.state.isArchivingTrip;
-    this.props.updateInstance('trips', trip.id, { isArchived: true });
+    this.props.updateInstance('trips', trip.id, {
+      isArchived: !trip.isArchived
+    });
     this.setState({
       isArchiveTripModalOpen: false,
       isArchivingTrip: null
@@ -151,53 +159,53 @@ class ScheduleGroup extends Component {
     this.handleEditTripToggle();
   }
 
-  renderDepartureRow(group, departureName, trips) {
-    const addTripRow = (
-      <tr key={departureName}>
+  renderTripRow(group, trip) {
+    const editTripBtn = !group.isArchived ? (
+      <button
+        className="btn btn-sm btn-outline-secondary"
+        onClick={() => this.handleEditTrip(trip)}>
+        Edit
+      </button>
+    ) : null;
+    const archiveTripBtn = !group.isArchived ? (
+      <button
+        style={{ marginLeft: '0.25em' }}
+        className="btn btn-sm btn-outline-secondary"
+        onClick={() => this.handleArchiveTrip(trip)}>
+        {trip.isArchived ? 'Unarchive' : 'Archive'}
+      </button>
+    ) : null;
+
+    return (
+      <tr key={trip.id}>
         <td>
-          <strong>{departureName}</strong>
+          <strong>{trip.departureName}</strong>
         </td>
         <td>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={() => this.handleNewTrip(departureName)}>
-            New trip
-          </button>
+          <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
+            {trip.title}
+          </IndexLink>
+          {trip.isArchived && <i style={{ marginLeft: '0.25em' }} className="fa fa-archive" />}
+        </td>
+        <td>
+          {trip.variantNames.split(',').filter(Boolean).map(TextUtil.titleForKey).join(', ')}
+        </td>
+        <td>
+          {editTripBtn}
+          {archiveTripBtn}
         </td>
       </tr>
     );
+  }
+
+  renderDepartureRow(group, departureName, trips) {
     const tripRows = trips
       .filter(trip => trip.departureName === departureName)
-      .map(trip => (
-        <tr key={trip.id}>
-          <td>
-            <strong>{departureName}</strong>
-          </td>
-          <td>
-            <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
-              {trip.title}
-            </IndexLink>
-          </td>
-          <td>
-            {trip.variantNames.split(',').filter(Boolean).map(TextUtil.titleForKey).join(', ')}
-          </td>
-          <td>
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={() => this.handleEditTrip(trip)}>
-              Edit
-            </button>
-            {' '}
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={() => this.handleArchiveTrip(trip)}>
-              Archive
-            </button>
-          </td>
-        </tr>
-      ));
+      .map(trip => this.renderTripRow(group, trip));
 
-    return tripRows.length ? tripRows : addTripRow;
+    return tripRows.length ?
+      tripRows :
+      this.renderNewTripRow(departureName);
   }
 
   renderHeader() {
@@ -218,6 +226,32 @@ class ScheduleGroup extends Component {
     );
   }
 
+  renderNewTripRow(departureName) {
+    if (this.props.group.isArchived) {
+      return null;
+    }
+    const departures = this.props.group.script.content.departures || [];
+    const departureNames = departures.length > 0 ?
+      _.map(departures, 'name') : [''];
+    const defaultDepartureName = departureName || departureNames[0];
+    return (
+      <tr key={departureName}>
+        <td>
+          <strong>{departureName}</strong>
+        </td>
+        <td>
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={() => this.handleNewTrip(defaultDepartureName)}>
+            New trip
+          </button>
+        </td>
+        <td />
+        <td />
+      </tr>
+    );
+  }
+
   renderTrips() {
     const group = this.props.group;
     const departures = group.script.content.departures || [];
@@ -228,20 +262,7 @@ class ScheduleGroup extends Component {
       return this.renderDepartureRow(group, departureName, depTrips);
     });
     const isFull = group.trips.length >= departureNames.length;
-
-    const addTripRow = isFull ? (
-      <tr>
-        <td />
-        <td>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={() => this.handleNewTrip(departureNames[0])}>
-            New trip
-          </button>
-        </td>
-      </tr>
-    ) : null;
-
+    const addTripRow = isFull ? this.renderNewTripRow('') : null;
     return (
       <table className="table table-striped">
         <tbody>
@@ -270,7 +291,7 @@ class ScheduleGroup extends Component {
           <button
             className="btn btn-sm btn-outline-secondary"
             onClick={() => this.handleArchiveGroup()}>
-            Archive group
+            {this.props.group.isArchived ? 'Unarchive' : 'Archive'} group
           </button>
         </div>
 
@@ -285,12 +306,12 @@ class ScheduleGroup extends Component {
           isOpen={this.state.isArchiveGroupModalOpen}
           onToggle={this.handleArchiveGroupToggle}
           onConfirm={this.handleArchiveGroupConfirm}
-          message={`Are you sure you want to archive ${this.props.group.date} and all trips?`} />
+          message={`Are you sure you want to ${this.props.group.isArchived ? 'unarchive' : 'archive'} ${this.props.group.date} and all trips?`} />
         <AreYouSure
           isOpen={this.state.isArchiveTripModalOpen}
           onToggle={this.handleArchiveTripToggle}
           onConfirm={this.handleArchiveTripConfirm}
-          message={`Are you sure you want to archive ${_.get(this.state.isArchivingTrip, 'departureName')}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
+          message={`Are you sure you want to ${_.get(this.state.isArchivingTrip, 'isArchived') ? 'unarchive' : 'archive'} ${_.get(this.state.isArchivingTrip, 'departureName')}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
       </div>
     );
   }

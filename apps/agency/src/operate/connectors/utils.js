@@ -85,15 +85,13 @@ const playerIncludesWithTrip = Object.assign({
 }, playerIncludes);
 
 const groupIncludesWithTrips = Object.assign({
-  trips: instancesIncluder('trips', 'groupId', 'id', { isArchived: false },
-    tripIncludes)
+  trips: instancesIncluder('trips', 'groupId', 'id', {}, tripIncludes)
 }, groupIncludes);
 
 export function lookupTrip(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'trips',
     filter: {
-      isArchived: false,
       org: { name: ownProps.params.orgName },
       experience: { name: ownProps.params.experienceName },
       id: Number(ownProps.params.tripId)
@@ -121,10 +119,7 @@ export function lookupPlayersByRole(state, ownProps) {
     filter: {
       roleName: ownProps.params.roleName,
       userId: userId,
-      trip: {
-        groupId: Number(ownProps.params.groupId),
-        isArchived: false
-      }
+      trip: { groupId: Number(ownProps.params.groupId) }
     },
     include: playerIncludesWithTrip
   });
@@ -134,7 +129,6 @@ export function lookupGroup(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'groups',
     filter: {
-      isArchived: false,
       org: { name: ownProps.params.orgName },
       experience: { name: ownProps.params.experienceName },
       id: Number(ownProps.params.groupId)

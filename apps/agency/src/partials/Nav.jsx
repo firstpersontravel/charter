@@ -33,8 +33,7 @@ function renderRight(authInfo, logout) {
       <li className="nav-item">
         <div className="dropdown">
           <button className="btn btn-unstyled dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span className="d-none d-md-inline">{authInfo.user.email}</span>
-            <span className="d-inline d-md-none"><i className="fa fa-user" /></span>
+            <i className="fa fa-user" />
           </button>
           <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
             {orgLinks}

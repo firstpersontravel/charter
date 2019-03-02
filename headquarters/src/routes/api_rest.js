@@ -126,7 +126,7 @@ async function updateRecord(model, record, fields) {
 
   // Validate fields
   try {
-    await record.validate();
+    await record.validate({ fields: updateFields });
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
       throw apiErrorFromValidationError(err);
@@ -134,6 +134,16 @@ async function updateRecord(model, record, fields) {
       throw err;
     }
   }
+
+  // Catch for latent unexpected data -- this means there is invalid data in
+  // the database since its in a field we aren't updating.
+  try {
+    await record.validate();
+  } catch (err) {
+    throw errors.internalError(
+      `Unexpected validation error: ${err.message}.`);
+  }
+
   // If we're updating, only save supplied fields.
   const isCreating = record.id === null;
   const saveOpts = isCreating ? {} : { fields: updateFields };
@@ -179,6 +189,10 @@ function orderFromParam(model, sortQueryParam) {
 }
 
 function _validateValue(type, key, value) {
+  // DATEONLY field has no validate
+  if (!type.validate) {
+    return;
+  }
   try {
     type.validate(value);
   } catch (err) {
@@ -192,32 +206,49 @@ function _validateValue(type, key, value) {
   }
 }
 
-function whereValueFromQuery(model, key, value) {
-  const attribute = model.attributes[key];
+const queryOpTable = {
+  eq: Sequelize.Op.eq,
+  gt: Sequelize.Op.gt,
+  gte: Sequelize.Op.gte,
+  lt: Sequelize.Op.lt,
+  lte: Sequelize.Op.lte
+};
+
+const valConstants = {
+  null: null,
+  true: true,
+  false: false
+};
+
+function whereValueFromQuery(model, fieldName, operator, value) {
+  const attribute = model.attributes[fieldName];
   if (!attribute) {
-    throw errors.badRequestError(`Invalid query parameter: "${key}".`);
+    throw errors.badRequestError(`Invalid query field: "${fieldName}".`);
   }
-  if (value === 'null') {
-    return null;
+  const sqlOp = queryOpTable[operator];
+  if (!sqlOp) {
+    throw errors.badRequestError(`Invalid query operator: "${operator}".`);
   }
-  if (value === 'true') {
-    return true;
+
+  let normalizedValue = value;
+  if (!_.isUndefined(valConstants[value])) {
+    normalizedValue = valConstants[value];
+  } else if (_.isString(value) && value.indexOf(',') > -1) {
+    normalizedValue = value.split(',');
   }
-  if (value === 'false') {
-    return false;
-  }
+
   const type = attribute.type || attribute;
-  if (_.isString(value) && value.indexOf(',') > -1) {
-    value = value.split(',');
-  }
-  if (Array.isArray(value)) {
-    for (const item of value) {
-      _validateValue(type, key, item);
+  if (Array.isArray(normalizedValue)) {
+    for (const item of normalizedValue) {
+      _validateValue(type, fieldName, item);
     }
-    return { [Sequelize.Op.or]: value };
+    return { [Sequelize.Op.in]: normalizedValue };
   }
-  _validateValue(type, key, value);
-  return value;
+
+  if (normalizedValue !== null) {
+    _validateValue(type, fieldName, normalizedValue);
+  }
+  return { [sqlOp]: normalizedValue };
 }
 
 function whereFromQuery(model, whereQuery, opts) {
@@ -226,9 +257,22 @@ function whereFromQuery(model, whereQuery, opts) {
       throw errors.badRequestError(`Missing required filter: "${filter}".`);
     }
   });
-  return _.mapValues(whereQuery, (value, key) => (
-    whereValueFromQuery(model, key, value)
-  ));
+  return _(whereQuery)
+    .map((value, key) => {
+      const parts = key.split('__');
+      const fieldName = parts[0];
+      const op = parts.length > 1 ? parts[1] : 'eq';
+      const normalizedValue = whereValueFromQuery(model, fieldName, op, value);
+      return [fieldName, normalizedValue];
+    })
+    .groupBy(fieldAndOpsByField => fieldAndOpsByField[0])
+    .map((fieldAndOps, fieldName) => {
+      const ops = fieldAndOps.map(i => i[1]);
+      const combined = ops.length === 1 ? ops[0] : { [Sequelize.Op.and]: ops };
+      return [fieldName, combined];
+    })
+    .fromPairs()
+    .value();
 }
 
 function listCollectionRoute(model, authz, opts={}) {

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Faye from 'faye';
 import React, { Component } from 'react';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
 
@@ -43,7 +43,6 @@ export default class Group extends Component {
     this.loadData(this.props.org, group, tripIds);
     this.refreshInterval = setInterval(this.autoRefresh, REFRESH_FREQUENCY);
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
-    this.checkRedirect();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -54,21 +53,12 @@ export default class Group extends Component {
       this.loadData(nextProps.org, nextProps.group, nextTripIds);
     }
     this.checkNextUnappliedAction(nextProps.nextUnappliedAction);
-    this.checkRedirect();
   }
 
   componentWillUnmount() {
     clearInterval(this.refreshInterval);
     if (this.refreshTimeout) {
       clearTimeout(this.refreshTimeout);
-    }
-  }
-
-  checkRedirect() {
-    const group = this.props.group;
-    const tripIds = _.map(group.trips, 'id');
-    if (group && group.id && !group.isLoading && tripIds.length === 0) {
-      browserHistory.push(`/${this.props.params.orgName}/${this.props.params.experienceName}/schedule/${group.id}`);
     }
   }
 
