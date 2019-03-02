@@ -19,6 +19,7 @@ services:
     image: fpt:latest
     # uncomment all volumes to test baked version for deployment
     volumes:
+      - ./headquarters/package.json:/var/app/headquarters/package.json
       - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
       - ./headquarters/bin:/var/app/headquarters/bin
       - ./headquarters/config:/var/app/headquarters/config

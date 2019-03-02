@@ -5,7 +5,8 @@
   "scripts": {
     "pretest": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
-    "db:migrate": "sequelize"
+    "db:migrate": "sequelize",
+    "scripts:migrate": "node bin/migrate.js | pino -c"
   },
   "dependencies": {
     "@sentry/node": "^4.6.3",

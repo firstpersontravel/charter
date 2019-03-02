@@ -75,6 +75,9 @@
     # Create a new migration
     docker-compose exec server sequelize migration:generate --name add-some-fields
 
+    # Run script migrations
+    docker-compose run server yarn run scripts:migrate
+
 ### Random tips
 
     # If the docker clock gets out of sync:
