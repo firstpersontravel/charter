@@ -201,7 +201,12 @@ export default class TripScenes extends Component {
     const btnClass = isProduction() ? 'btn-outline-danger' :
       'btn-outline-secondary';
 
-    const startSceneButton = isCurrentScene ? null : (
+    const globalMarker = scene.global ? (
+      <div><span className="faint">Global</span></div>
+    ) : null;
+
+    const canStartScene = !scene.global && !isCurrentScene;
+    const startSceneButton = canStartScene ? (
       <button
         onClick={() => this.handleAction('start_scene', {
           scene_name: scene.name
@@ -209,7 +214,7 @@ export default class TripScenes extends Component {
         className={`wrap-text btn btn-block btn-sm ${btnClass}`}>
         Start {scene.title}
       </button>
-    );
+    ) : null;
 
     const trip = this.props.trip;
     const triggers = _(trip.script.content.triggers)
@@ -224,6 +229,7 @@ export default class TripScenes extends Component {
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="col-sm-2">
           <h3 className={titleClass}>{scene.title}</h3>
+          {globalMarker}
           {startSceneButton}
         </div>
         <div className="col-sm-8">
@@ -245,15 +251,13 @@ export default class TripScenes extends Component {
     const indexOfCurrentScene = _.findIndex(scenes, {
       name: trip.currentSceneName
     });
-    const scenesToShow = showPastScenes ? scenes : scenes.filter((
-      (scene, i) => (i >= indexOfCurrentScene)
-    ));
-
-    const maxPlayersInScene = Math.max(...scenesToShow
+    const scenesToShow = showPastScenes ? scenes : scenes
+      .filter((scene, i) => (i >= indexOfCurrentScene));
+    const sortedScenes = _.sortBy(scenesToShow, scene => !!scene.global);
+    const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;
     const colWidth = Math.floor(12 / maxPlayersInScene);
-
-    const renderedScenes = scenesToShow.map(scene => (
+    const renderedScenes = sortedScenes.map(scene => (
       this.renderSceneRow(scene, colWidth)
     ));
     const pastScenesAlert = showPastScenes ? null : (
