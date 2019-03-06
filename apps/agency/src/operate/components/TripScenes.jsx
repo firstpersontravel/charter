@@ -166,8 +166,12 @@ export default class TripScenes extends Component {
     const trip = this.props.trip;
     const triggerResourceClass = ResourcesRegistry.trigger;
     const isCurrentScene = scene.name === this.props.trip.currentSceneName;
+    const isActiveGlobalScene = scene.global && (
+      !scene.if ||
+      EvalCore.if(trip.evalContext, scene.if)
+    );
     const hasBeenTriggered = !!trip.history[trigger.name];
-    const canTrigger = !!isCurrentScene;
+    const canTrigger = isCurrentScene || isActiveGlobalScene;
     // const isForbidden = (
     //   (trigger.repeatable === false && hasBeenTriggered) ||
     //   (trigger.if && !EvalCore.if(trip.evalContext, trigger.if))
@@ -248,11 +252,16 @@ export default class TripScenes extends Component {
     const trip = this.props.trip;
     const showPastScenes = this.props.location.query.past === 'true';
     const scenes = trip.script.content.scenes || [];
-    const indexOfCurrentScene = _.findIndex(scenes, {
+
+    const nonGlobalScenes = scenes.filter(scene => !scene.global);
+    const indexOfCurrentScene = _.findIndex(nonGlobalScenes, {
       name: trip.currentSceneName
     });
+
     const scenesToShow = showPastScenes ? scenes : scenes
+      .filter(scene => !scene.global)
       .filter((scene, i) => (i >= indexOfCurrentScene));
+
     const sortedScenes = _.sortBy(scenesToShow, scene => !!scene.global);
     const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;
