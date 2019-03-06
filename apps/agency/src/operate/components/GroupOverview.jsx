@@ -21,7 +21,7 @@ export default class GroupOverview extends Component {
         <Link
           to={
             `/${group.org.name}/${group.experience.name}` +
-            `/operate/${group.id}/all/casting`
+            `/operate/${group.id}/casting`
           }>
           <span className="text-danger">
             <i className="fa fa-user-plus" />
@@ -45,7 +45,7 @@ export default class GroupOverview extends Component {
       <div key={`${roleAndActors.role.name}-${roleAndActors.userId}`} className="constrain-text">
         <IndexLink
           className={pageInfo.statusClass}
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/role/${roleAndActors.role.name}/${actor.userId}`}>
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${roleAndActors.role.name}/${actor.userId || 0}`}>
           <strong>
             {roleAndActors.role.name}{userNameIfMultiple}:
           </strong>
@@ -89,8 +89,28 @@ export default class GroupOverview extends Component {
     );
   }
 
+  renderTrip(trip) {
+    const group = this.props.group;
+    const currentScene = _.find(trip.script.content.scenes, {
+      name: trip.currentSceneName
+    });
+    const currentSceneTitle = currentScene ? currentScene.title :
+      'Not started';
+    return (
+      <div key={trip.id}>
+        <Link
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}`}>
+          <strong>{trip.departureName} {trip.title}:</strong> {currentSceneTitle}
+        </Link>
+      </div>
+    );
+  }
+
   renderAllPlayers() {
     const group = this.props.group;
+    const trips = group.trips.map(trip => (
+      this.renderTrip(trip)
+    ));
     const allPlayers = sortPlayers(group);
     const players = allPlayers.playersByTrip.map(p => (
       this.renderTripAndPlayers(p)
@@ -103,6 +123,10 @@ export default class GroupOverview extends Component {
     ));
     return (
       <div>
+        <div style={{ marginBottom: '0.5em' }}>
+          <h5>Trips</h5>
+          {trips}
+        </div>
         <div style={{ marginBottom: '0.5em' }}>
           <h5>Travelers</h5>
           {players}

@@ -32,6 +32,7 @@ export default function GroupAll({ children, group,
     .value();
   const allPlayers = getAllPlayers(group.trips);
   const allUsers = _(allPlayers).map('user').value();
+
   let roleTitle = 'Roles';
   if (params.roleName && params.userId) {
     const role = _.find(group.script.content.roles, {
@@ -42,6 +43,15 @@ export default function GroupAll({ children, group,
       'No user';
     roleTitle = `Role: ${role.title} (${userTitle})`;
   }
+
+  let tripTitle = 'Trips';
+  if (params.tripId) {
+    const trip = _.find(group.trips, { id: Number(params.tripId) });
+    if (trip) {
+      tripTitle = `Trip: ${trip.departureName} ${trip.title}`;
+    }
+  }
+
   const roleLinks = _(roles)
     .map(role => (
       _(allPlayers)
@@ -55,7 +65,7 @@ export default function GroupAll({ children, group,
             to={
               `/${group.org.name}/${group.experience.name}` +
               `/operate/${group.id}` +
-              `/all/role/${role.name}/${user ? user.id : 0}`}>
+              `/role/${role.name}/${user ? user.id : 0}`}>
             {role.title} ({user ? user.firstName : 'No user'})
           </Link>
         ))
@@ -63,12 +73,28 @@ export default function GroupAll({ children, group,
         .value()
     ))
     .value();
+
+  const tripLinks = _(group.trips)
+    .map(trip => (
+      <Link
+        key={trip.id}
+        className="dropdown-item"
+        to={
+          `/${group.org.name}/${group.experience.name}` +
+          `/operate/${group.id}` +
+          `/trip/${trip.id}`}>
+        {trip.departureName} {trip.title}
+      </Link>
+    ))
+    .value();
+
   const replyWarning = numMessagesNeedingReply > 0 ? (
     <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-warning">
       <i className="fa fa-comment" />
       {numMessagesNeedingReply}
     </span>
   ) : null;
+
   const nextActionWarning = nextUnappliedAction ? (
     <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-info">
       {moment
@@ -77,6 +103,7 @@ export default function GroupAll({ children, group,
         .format('h:mm:ssa')}
     </span>
   ) : null;
+
   return (
     <div>
       <ul className="nav nav-tabs">
@@ -84,7 +111,7 @@ export default function GroupAll({ children, group,
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}`}>
             Overview
           </IndexLink>
         </li>
@@ -92,7 +119,7 @@ export default function GroupAll({ children, group,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/casting`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/casting`}>
             Users
           </Link>
         </li>
@@ -101,18 +128,30 @@ export default function GroupAll({ children, group,
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/role`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role`}>
             {roleTitle}
           </Link>
           <div className="dropdown-menu">
             {roleLinks}
           </div>
         </li>
+        <li className="nav-item dropdown">
+          <Link
+            className="nav-link dropdown-toggle"
+            activeClassName="active"
+            data-toggle="dropdown"
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`}>
+            {tripTitle}
+          </Link>
+          <div className="dropdown-menu">
+            {tripLinks}
+          </div>
+        </li>
         <li className="nav-item">
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/replies`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/replies`}>
             {replyWarning}
             Messages
           </Link>
@@ -121,7 +160,7 @@ export default function GroupAll({ children, group,
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/all/upcoming`}>
+            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/upcoming`}>
             {nextActionWarning}
             Upcoming
           </Link>

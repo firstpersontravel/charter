@@ -10,7 +10,7 @@ export default function Role({ params, user, children }) {
       <Link
         className="nav-link"
         activeClassName="active"
-        to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}/interface`}>
+        to={`/${orgName}/${experienceName}/operate/${params.groupId}/role/${params.roleName}/${params.userId}/interface`}>
         Interface
       </Link>
     </li>
@@ -23,7 +23,7 @@ export default function Role({ params, user, children }) {
           <IndexLink
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}`}>
+            to={`/${orgName}/${experienceName}/operate/${params.groupId}/role/${params.roleName}/${params.userId}`}>
             Overview
           </IndexLink>
         </li>
@@ -31,7 +31,7 @@ export default function Role({ params, user, children }) {
           <Link
             className="nav-link"
             activeClassName="active"
-            to={`/${orgName}/${experienceName}/operate/${params.groupId}/all/role/${params.roleName}/${params.userId}/messages`}>
+            to={`/${orgName}/${experienceName}/operate/${params.groupId}/role/${params.roleName}/${params.userId}/messages`}>
             Messages
           </Link>
         </li>

@@ -8,7 +8,7 @@ import { TextUtil } from 'fptcore';
 
 import { withLoader } from '../../loader-utils';
 import GroupModal from '../partials/GroupModal';
-import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
+import ResponsiveNav from '../../partials/ResponsiveNav';
 import { getStage } from '../../utils';
 
 class Schedule extends Component {
@@ -150,7 +150,7 @@ class Schedule extends Component {
     }
 
     return (
-      <ResponsiveListGroup items={groupItems} />
+      <ResponsiveNav items={groupItems} />
     );
   }
 

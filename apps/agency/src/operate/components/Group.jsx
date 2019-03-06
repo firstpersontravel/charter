@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import Faye from 'faye';
 import React, { Component } from 'react';
-import { Link } from 'react-router';
 import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
 
@@ -175,36 +174,6 @@ export default class Group extends Component {
     }, 1000);
   }
 
-  renderTripLink(trip) {
-    const isArchivedIcon = trip.isArchived ? (
-      <i className="fa fa-archive" style={{ marginRight: '0.25em' }} />
-    ) : null;
-    const sceneTitle = trip.currentSceneName ?
-      _.get(_.find(trip.script.content.scenes, {
-        name: trip.currentSceneName
-      }), 'title') :
-      'Not started';
-    return (
-      <li key={trip.id} className="nav-item nav-trip-item">
-        <Link
-          className="nav-link"
-          activeClassName="active"
-          to={
-            `/${trip.org.name}/${trip.experience.name}/` +
-            `operate/${this.props.params.groupId}/trip/${trip.id}`
-          }>
-          {isArchivedIcon}
-          {trip.departureName}
-          <span className="d-none d-sm-inline"> {trip.title}</span>
-          <br />
-          <span style={{ fontSize: '10pt' }}>
-            {sceneTitle}
-          </span>
-        </Link>
-      </li>
-    );
-  }
-
   render() {
     const group = this.props.group;
     if (group.isError) {
@@ -219,14 +188,9 @@ export default class Group extends Component {
     if (group.trips.length === 0) {
       return <div className="container-fluid">No trips</div>;
     }
-    const dateShort = moment(group.date).format('MMM D');
     const refreshTitle = this.props.areRequestsPending ?
       (<span><i className="fa fa-spin fa-refresh" /> Refreshing</span>) :
       (<span><i className="fa fa-refresh" /> Refresh</span>);
-
-    const tripLinks = _(group.trips)
-      .map(trip => this.renderTripLink(trip))
-      .value();
 
     return (
       <div className="container-fluid" style={{ position: 'relative' }}>
@@ -237,24 +201,6 @@ export default class Group extends Component {
             {refreshTitle}
           </button>
         </div>
-        <ul className="nav nav-tabs">
-          <li className="nav-item nav-trip-item">
-            <Link
-              className="nav-link"
-              activeClassName="active"
-              to={
-                `/${group.org.name}/${group.experience.name}/` +
-                `operate/${this.props.params.groupId}/all`
-              }>
-              Group
-              <br />
-              <span style={{ fontSize: '10pt' }}>
-                {dateShort}
-              </span>
-            </Link>
-          </li>
-          {tripLinks}
-        </ul>
         {this.props.children}
       </div>
     );

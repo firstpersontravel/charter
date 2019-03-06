@@ -142,7 +142,7 @@ function renderVars(orgName, player) {
       <div>
         <strong>Role:</strong>
         &nbsp;
-        <Link to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/all/role/${player.roleName}/${user ? user.id : 0}`}>
+        <Link to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/role/${player.roleName}/${user ? user.id : 0}`}>
           {player.role.title} ({user ? user.firstName : 'No user'})
         </Link>
         <br />

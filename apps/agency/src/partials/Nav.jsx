@@ -113,7 +113,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
       <Link
         key={group.id}
         className="btn btn-link dropdown-item"
-        to={`/${org.name}/${experience.name}/operate/${group.id}/all`}>
+        to={`/${org.name}/${experience.name}/operate/${group.id}`}>
         {moment.utc(group.date).format('MMM D, YYYY')}
       </Link>
     ));

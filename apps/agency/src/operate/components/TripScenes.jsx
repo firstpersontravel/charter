@@ -147,7 +147,7 @@ export default class TripScenes extends Component {
                 `/${trip.org.name}/${trip.experience.name}` +
                 `/operate/${trip.groupId}` +
                 `/trip/${trip.id}/players` +
-                `/${player.roleName}/pages`,
+                `/${player.roleName}`,
               query: { scene: scene.name }
             }}>
             {player.roleName}

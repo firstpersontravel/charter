@@ -19,44 +19,44 @@ export default function Player({ player, children }) {
     r.as === player.roleName || r.with === player.roleName
   ));
   const messageTab = hasRelay ? (
-    <li className="nav-item">
+    <div className="nav-item">
       <Link
         className="nav-link"
         activeClassName="active"
         to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/messages`}>
         Messages
       </Link>
-    </li>
+    </div>
   ) : null;
   return (
     <div>
-      <ul className="nav nav-tabs">
-        <li className="nav-item">
+      <div className="nav nav-tabs">
+        <div className="nav-item">
           <IndexLink
             className="nav-link"
             activeClassName="active"
             to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
             Overview
           </IndexLink>
-        </li>
+        </div>
         {messageTab}
-        <li className="nav-item">
+        <div className="nav-item">
           <Link
             className="nav-link"
             activeClassName="active"
             to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/pages`}>
             Pages
           </Link>
-        </li>
-        <li className="nav-item">
+        </div>
+        <div className="nav-item">
           <Link
             className="nav-link"
             activeClassName="active"
             to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/interface`}>
             Interface
           </Link>
-        </li>
-      </ul>
+        </div>
+      </div>
       {children}
     </div>
   );

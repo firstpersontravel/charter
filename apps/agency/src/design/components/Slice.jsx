@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import ContentTree from '../partials/ContentTree';
-import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
+import ResponsiveNav from '../../partials/ResponsiveNav';
 
 import { prepareContentTree } from '../utils/tree-utils';
 import { sections, getContentList } from '../utils/section-utils';
@@ -70,7 +70,7 @@ export default class Slice extends Component {
     const items = sectionLinks.concat(sceneLinks);
 
     return (
-      <ResponsiveListGroup items={items} />
+      <ResponsiveNav items={items} />
     );
   }
 
