@@ -2,10 +2,11 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { IndexLink, Link } from 'react-router';
+import { IndexLink } from 'react-router';
 
 import { EvalCore } from 'fptcore';
 
+import ResponsiveTabs from '../../partials/ResponsiveTabs';
 import { sortForRole } from '../utils';
 
 function getAllPlayers(trips) {
@@ -52,42 +53,6 @@ export default function GroupAll({ children, group,
     }
   }
 
-  const roleLinks = _(roles)
-    .map(role => (
-      _(allPlayers)
-        .filter({ roleName: role.name })
-        .map('user')
-        .uniq()
-        .map(user => (
-          <Link
-            key={`${role.name}-${user ? user.id : 0}`}
-            className="dropdown-item"
-            to={
-              `/${group.org.name}/${group.experience.name}` +
-              `/operate/${group.id}` +
-              `/role/${role.name}/${user ? user.id : 0}`}>
-            {role.title} ({user ? user.firstName : 'No user'})
-          </Link>
-        ))
-        .flatten()
-        .value()
-    ))
-    .value();
-
-  const tripLinks = _(group.trips)
-    .map(trip => (
-      <Link
-        key={trip.id}
-        className="dropdown-item"
-        to={
-          `/${group.org.name}/${group.experience.name}` +
-          `/operate/${group.id}` +
-          `/trip/${trip.id}`}>
-        {trip.departureName} {trip.title}
-      </Link>
-    ))
-    .value();
-
   const replyWarning = numMessagesNeedingReply > 0 ? (
     <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-warning">
       <i className="fa fa-comment" />
@@ -104,68 +69,61 @@ export default function GroupAll({ children, group,
     </span>
   ) : null;
 
+  const items = [{
+    text: 'Group',
+    linkClass: IndexLink,
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}`
+  }, {
+    text: 'Users',
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/casting`
+  }, {
+    text: roleTitle,
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/role`,
+    subItems: _(roles)
+      .map(role => (
+        _(allPlayers)
+          .filter({ roleName: role.name })
+          .map('user')
+          .uniq()
+          .map(user => ({
+            url: (
+              `/${group.org.name}/${group.experience.name}` +
+              `/operate/${group.id}` +
+              `/role/${role.name}/${user ? user.id : 0}`
+            ),
+            text: `${role.title} (${user ? user.firstName : 'No user'})`
+          }))
+          .flatten()
+          .value()
+      ))
+      .flatten()
+      .value()
+  }, {
+    text: tripTitle,
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
+    subItems: _(group.trips)
+      .map(trip => ({
+        url: (
+          `/${group.org.name}/${group.experience.name}` +
+          `/operate/${group.id}` +
+          `/trip/${trip.id}`
+        ),
+        text: `${trip.departureName} ${trip.title}`
+      }))
+      .value()
+  }, {
+    label: <span>{replyWarning} Messages</span>,
+    text: 'Messages',
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/replies`
+  }, {
+    text: 'Upcoming',
+    label: <span>{nextActionWarning} Upcoming</span>,
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/upcoming`
+  }];
+
   return (
     <div>
-      <ul className="nav nav-tabs">
-        <li className="nav-item">
-          <IndexLink
-            className="nav-link"
-            activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}`}>
-            Overview
-          </IndexLink>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="nav-link"
-            activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/casting`}>
-            Users
-          </Link>
-        </li>
-        <li className="nav-item dropdown">
-          <Link
-            className="nav-link dropdown-toggle"
-            activeClassName="active"
-            data-toggle="dropdown"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role`}>
-            {roleTitle}
-          </Link>
-          <div className="dropdown-menu">
-            {roleLinks}
-          </div>
-        </li>
-        <li className="nav-item dropdown">
-          <Link
-            className="nav-link dropdown-toggle"
-            activeClassName="active"
-            data-toggle="dropdown"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`}>
-            {tripTitle}
-          </Link>
-          <div className="dropdown-menu">
-            {tripLinks}
-          </div>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="nav-link"
-            activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/replies`}>
-            {replyWarning}
-            Messages
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="nav-link"
-            activeClassName="active"
-            to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/upcoming`}>
-            {nextActionWarning}
-            Upcoming
-          </Link>
-        </li>
-      </ul>
+      <ResponsiveTabs items={items} />
       {children}
     </div>
   );

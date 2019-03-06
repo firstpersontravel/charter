@@ -6,7 +6,7 @@ import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from './ResourceBadge';
-import ResponsiveNav from '../../partials/ResponsiveNav';
+import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
 function walkContentTree(contentTree, path, iteree) {
   _.each(contentTree, (value, key) => {
@@ -99,7 +99,7 @@ export default class ContentTree extends Component {
     const allItems = items.concat(this.renderNewItems());
 
     return (
-      <ResponsiveNav items={allItems} />
+      <ResponsiveListGroup items={allItems} />
     );
   }
 }

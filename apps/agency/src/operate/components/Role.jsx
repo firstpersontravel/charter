@@ -24,7 +24,7 @@ export default function Role({ params, user, children }) {
             className="nav-link"
             activeClassName="active"
             to={`/${orgName}/${experienceName}/operate/${params.groupId}/role/${params.roleName}/${params.userId}`}>
-            Overview
+            Players
           </IndexLink>
         </li>
         <li className="nav-item">

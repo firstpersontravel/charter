@@ -11,7 +11,7 @@ function selectItem(e) {
   browserHistory.push(e.target.value);
 }
 
-export default class ResponsiveNav extends Component {
+export default class ResponsiveListGroup extends Component {
   renderSelect() {
     const selectedItem = _.find(this.props.items, item => (
       _.startsWith(window.location.pathname, item.url)
@@ -65,7 +65,7 @@ export default class ResponsiveNav extends Component {
   }
 }
 
-ResponsiveNav.propTypes = {
+ResponsiveListGroup.propTypes = {
   listClassName: PropTypes.string,
   itemClassName: PropTypes.string,
   itemActiveClassName: PropTypes.string,
@@ -77,7 +77,7 @@ ResponsiveNav.propTypes = {
   })).isRequired
 };
 
-ResponsiveNav.defaultProps = {
+ResponsiveListGroup.defaultProps = {
   listClassName: 'list-group list-group-flush',
   itemClassName: 'list-group-item list-group-item-action constrain-text',
   itemActiveClassName: 'active'

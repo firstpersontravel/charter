@@ -194,7 +194,7 @@ export default class Group extends Component {
 
     return (
       <div className="container-fluid" style={{ position: 'relative' }}>
-        <div className="fixed-corner">
+        <div className="fixed-corner d-none d-sm-block">
           <button
             className="btn btn-outline-secondary btn-sm"
             onClick={this.handleRefresh}>
