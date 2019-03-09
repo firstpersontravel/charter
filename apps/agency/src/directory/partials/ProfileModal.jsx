@@ -12,6 +12,7 @@ export default class ProfileModal extends Component {
     return {
       roleName: profile ? profile.roleName : '',
       departureName: profile ? profile.departureName : '',
+      email: profile ? profile.email : '',
       photo: profile ? profile.photo : '',
       phoneNumber: profile ? profile.phoneNumber : '',
       facetimeUsername: profile ? profile.facetimeUsername : '',
@@ -75,6 +76,10 @@ export default class ProfileModal extends Component {
     }
     if (this.state.facetimeUsername &&
       !EMAIL_REGEX.test(this.state.facetimeUsername)) {
+      return false;
+    }
+    if (this.state.email &&
+      !EMAIL_REGEX.test(this.state.email)) {
       return false;
     }
     return true;
@@ -166,6 +171,19 @@ export default class ProfileModal extends Component {
                   placeholder="Photo media path" />
               </div>
               <div className="form-group col-sm-6">
+                <label htmlFor="profile_email">Email</label>
+                <input
+                  type="email"
+                  id="profile_email"
+                  className="form-control"
+                  value={this.state.email}
+                  ref={(input) => { this.firstInput = input; }}
+                  onChange={_.curry(this.handleChangeField)('email')}
+                  placeholder="Email" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="form-group col-sm-4">
                 <label htmlFor="profile_phone_number">Phone number</label>
                 <input
                   type="text"
@@ -175,9 +193,7 @@ export default class ProfileModal extends Component {
                   onChange={_.curry(this.handleChangeField)('phoneNumber')}
                   placeholder="Phone number" />
               </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-sm-6">
+              <div className="form-group col-sm-4">
                 <label htmlFor="profile_facetime_username">Facetime</label>
                 <input
                   type="text"
@@ -187,7 +203,7 @@ export default class ProfileModal extends Component {
                   onChange={_.curry(this.handleChangeField)('facetimeUsername')}
                   placeholder="Facetime username" />
               </div>
-              <div className="form-group col-sm-6">
+              <div className="form-group col-sm-4">
                 <label htmlFor="profile_skype_username">Skype</label>
                 <input
                   type="text"

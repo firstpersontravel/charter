@@ -3,6 +3,7 @@ var moduleActionSets = [
   require('../modules/call/actions'),
   require('../modules/clip/actions'),
   require('../modules/cue/actions'),
+  require('../modules/email/actions'),
   require('../modules/message/actions'),
   require('../modules/page/actions'),
   require('../modules/scene/actions'),

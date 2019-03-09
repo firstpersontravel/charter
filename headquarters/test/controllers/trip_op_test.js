@@ -3,6 +3,7 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
+const EmailController = require('../../src/controllers/email');
 const MessageController = require('../../src/controllers/message');
 const TripOpController = require('../../src/controllers/trip_op');
 const TripRelaysController = require('../../src/controllers/trip_relays');
@@ -113,6 +114,25 @@ describe('TripOpController', () => {
       sinon.assert.calledWith(MessageController.sendMessage, fakeMessage);
       sinon.assert.calledWith(TripRelaysController.relayMessage, objs.trip,
         fakeMessage, 5);
+    });
+  });
+
+  describe('#sendEmail', () => {
+    it('sends an email', async () => {
+      sandbox.stub(EmailController, 'sendEmail');
+      const op = {
+        operation: 'sendEmail',
+        from: 'from@email.com',
+        to: 'to@email.com',
+        subject: 'subj',
+        bodyMarkdown: '# header\n\nbody'
+      };
+
+      await TripOpController.applyOp({}, op);
+
+      sinon.assert.calledOnce(EmailController.sendEmail);
+      sinon.assert.calledWith(EmailController.sendEmail,
+        op.from, op.to, op.subject, op.bodyMarkdown);
     });
   });
 });

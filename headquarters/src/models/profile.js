@@ -21,6 +21,7 @@ const Profile = database.define('Profile', snakeCaseColumns({
   departureName: mutableModifier(optionalStringField(32)),
   isActive: mutableModifier(booleanField(true)),
   photo: mutableModifier(optionalStringField(255)),
+  email: mutableModifier(optionalStringField(255)),
   phoneNumber: mutableModifier(optionalStringField(10)),
   skypeUsername: mutableModifier(optionalStringField(64)),
   facetimeUsername: mutableModifier(optionalStringField(64)),

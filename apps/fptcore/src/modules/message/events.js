@@ -10,6 +10,12 @@ module.exports = {
     help: { summary: 'Occurs when a message has been sent.' },
     getTitle: function(scriptContent, spec) {
       var parts = [spec.medium || 'message'];
+      if (spec.contains) {
+        parts.push('containing "' + spec.contains + '"');
+      }
+      if (spec.geofence) {
+        parts.push('within geofence');
+      }
       if (spec.from) {
         var fromRole = _.find(scriptContent.roles, { name: spec.from });
         if (fromRole) {

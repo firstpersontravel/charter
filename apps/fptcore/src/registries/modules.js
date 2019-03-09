@@ -8,6 +8,7 @@ var moduleNames = [
   'content_page',
   'cue',
   'departure',
+  'email',
   'geofence',
   'layout',
   'message',

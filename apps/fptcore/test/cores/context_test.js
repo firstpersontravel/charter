@@ -21,15 +21,17 @@ describe('ContextCore', () => {
         currentPageName: 'PAGE-NAME',
         user: {
           firstName: 'Vance',
-          lastName: 'Farraday'
+          lastName: 'Farraday',
+          email: 'vance@vance.com'
         }
       };
       const expected = {
         id: 10,
         currentPageName: 'PAGE-NAME',
         link: 'https://test.test/s/10',
-        contact_name: 'Vance',
+        contact_name: 'Vance Farraday',
         photo: null,
+        email: 'vance@vance.com',
         facetime: null,
         phone_number: null,
         directive: null,

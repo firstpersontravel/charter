@@ -5,7 +5,7 @@ const Sentry = require('@sentry/node');
 const config = require('../config');
 const models = require('../models');
 
-var logger = config.logger.child({ name: 'controllers.message' });
+const logger = config.logger.child({ name: 'controllers.message' });
 
 class MessageController {
   /**

@@ -1,7 +1,8 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TextUtil } from 'fptcore';
+import { ResourcesRegistry, TextUtil } from 'fptcore';
 
 const colors = [
   '#2e4d2e',
@@ -30,30 +31,11 @@ const colors = [
   '#e57e88'
 ];
 
-const COLORS = {
-  achievement: colors[0],
-  appearance: colors[1],
-  audio: colors[2],
-  checkpoint: colors[3],
-  clip: colors[4],
-  content_page: colors[5],
-  cue: colors[6],
-  departure: colors[7],
-  geofence: colors[8],
-  layout: colors[9],
-  message: colors[10],
-  page: colors[11],
-  panel: colors[12],
-  query: colors[13],
-  relay: colors[14],
-  role: colors[15],
-  route: colors[16],
-  scene: colors[17],
-  time: colors[18],
-  trigger: colors[19],
-  variant: colors[20],
-  waypoint: colors[21]
-};
+const COLORS = _(ResourcesRegistry)
+  .keys()
+  .map((key, i) => [key, colors[i % colors.length]])
+  .fromPairs()
+  .value();
 
 const RESOURCE_ICONS = {
   achievement: 'trophy',
@@ -64,9 +46,10 @@ const RESOURCE_ICONS = {
   content_page: 'sticky-note',
   cue: 'bell',
   departure: 'space-shuttle',
+  email: 'envelope',
   geofence: 'map-pin',
   layout: 'mobile-phone',
-  message: 'envelope',
+  message: 'comment',
   page: 'sticky-note',
   panel: 'sticky-note',
   query: 'question',

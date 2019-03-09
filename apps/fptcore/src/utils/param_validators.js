@@ -14,6 +14,15 @@ ParamValidators.string = function(script, name, spec, param) {
   }
 };
 
+ParamValidators.markdown = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Markdown param "' + name + '" should be a string.'];
+  }
+  if (spec.required && param === '') {
+    return ['Markdown param "' + name + '" should not be blank.'];
+  }
+};
+
 ParamValidators.simpleValue = function(script, name, spec, param) {
   if (!_.isString(param) && !_.isNumber(param) && !_.isBoolean(param)) {
     return [

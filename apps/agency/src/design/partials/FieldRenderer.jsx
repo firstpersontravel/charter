@@ -60,6 +60,7 @@ const newItemsForSpecType = {
   lookupable: '',
   reference: '',
   ifClause: '',
+  markdown: '',
   dictionary: {},
   list: [],
   object: {},
@@ -79,7 +80,7 @@ export default class FieldRenderer {
   internalStringlike(spec, value, name, path, opts, validate, clean) {
     const validateFunc = validate || (val => true);
     const cleanFunc = clean || (val => val);
-    const allowNewlines = !!_.get(spec, 'display.allowNewlines');
+    const allowNewlines = spec.type === 'markdown';
     const textLabel = allowNewlines ? (
       <div style={{ whiteSpace: 'pre-wrap' }}>{value}</div>
     ) : value;
@@ -174,6 +175,10 @@ export default class FieldRenderer {
   }
 
   renderString(spec, value, name, path, opts) {
+    return this.internalStringlike(spec, value, name, path, opts);
+  }
+
+  renderMarkdown(spec, value, name, path, opts) {
     return this.internalStringlike(spec, value, name, path, opts);
   }
 

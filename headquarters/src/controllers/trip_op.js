@@ -1,5 +1,6 @@
 const _ = require('lodash');
 
+const EmailController = require('../controllers/email');
 const MessageController = require('../controllers/message');
 const TripRelaysController = require('../controllers/trip_relays');
 const models = require('../models');
@@ -46,6 +47,11 @@ class TripOpController {
         op.suppressRelayId);
     }
     return message;
+  }
+
+  static async sendEmail(objs, op) {
+    return EmailController.sendEmail(op.from, op.to, op.subject,
+      op.bodyMarkdown);
   }
 
   static async initiateCall(objs, op) {

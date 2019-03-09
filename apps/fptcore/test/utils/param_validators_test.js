@@ -31,6 +31,23 @@ describe('ParamValidators', () => {
     });
   });
 
+  describe('#markdown', () => {
+    it('permits string', () => {
+      ok(ParamValidators.markdown({}, 's', {}, 'abc'));
+    });
+
+    it('warns if not a string', () => {
+      err(ParamValidators.markdown({}, 's', {}, []),
+        'Markdown param "s" should be a string.');
+    });
+
+    it('warns if required and blank', () => {
+      ok(ParamValidators.markdown({}, 's', { required: true }, 'val'));
+      err(ParamValidators.markdown({}, 's', { required: true }, ''),
+        'Markdown param "s" should not be blank.');
+    });
+  });
+
   describe('#simpleValue', () => {
     it('permits string, number, or boolean', () => {
       ok(ParamValidators.simpleValue({}, 's', {}, 'abc'));

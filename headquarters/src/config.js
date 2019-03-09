@@ -69,7 +69,7 @@ function getApnProvider() {
 }
 let apnProvider = getApnProvider();
 
-// Configure twilio
+// Configure Twilio
 function getTwilioClient() {
   if (!env.TWILIO_ENABLED) {
     return null;
@@ -78,6 +78,11 @@ function getTwilioClient() {
 }
 let twilioClient = getTwilioClient();
 
+// Configure SendGrid
+let sendgridClient = require('@sendgrid/mail');
+sendgridClient.setApiKey(env.SENDGRID_API_KEY);
+
+// Configure faye
 const fayePath = `${pubsubHost}/pubsub`;
 const fayeClient = new faye.Client(fayePath);
 
@@ -88,5 +93,6 @@ module.exports = {
   database: database,
   logger: logger,
   getFayeClient: () => fayeClient,
-  getTwilioClient: () => twilioClient
+  getTwilioClient: () => twilioClient,
+  getSendgridClient: () => sendgridClient
 };

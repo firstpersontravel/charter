@@ -6,9 +6,12 @@ const mocks = sinon.sandbox.create();
 const sandbox = sinon.sandbox.create();
 
 function createTestMocks() {
+  // Push notifications
   mocks.stub(config, 'getApnProvider').returns({
     send: mocks.stub().resolves()
   });
+
+  // Twilio
   const twilioCallsClient = mocks.stub().returns({
     update: mocks.stub().resolves()
   });
@@ -19,9 +22,17 @@ function createTestMocks() {
     incomingPhoneNumbers: { list: mocks.stub().resolves() }
   };
   mocks.stub(config, 'getTwilioClient').returns(twilioStubClient);
+
+  // Faye
   mocks.stub(config, 'getFayeClient').returns({
     publish: mocks.stub().resolves()
   });
+
+  // Sendgrid
+  const sendgridStubClient = {
+    send: mocks.stub().resolves()
+  };
+  mocks.stub(config, 'getSendgridClient').returns(sendgridStubClient);
 }
 
 function teardownTestMocks() {

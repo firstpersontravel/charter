@@ -7,6 +7,7 @@ var moduleResourceSets = [
   require('../modules/content_page/resources'),
   require('../modules/cue/resources'),
   require('../modules/departure/resources'),
+  require('../modules/email/resources'),
   require('../modules/geofence/resources'),
   require('../modules/layout/resources'),
   require('../modules/message/resources'),

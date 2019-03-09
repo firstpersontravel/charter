@@ -44,6 +44,7 @@ describe('TripUtil', () => {
         waypointOptions: { 'WAYPOINT-1': 'OPTION-2' },
         Role: {
           contact_name: null,
+          email: null,
           currentPageName: 'PAGE-1',
           directive: 'Go to the mall.',
           facetime: null,

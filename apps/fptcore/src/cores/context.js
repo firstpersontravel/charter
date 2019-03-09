@@ -14,12 +14,16 @@ ContextCore.gatherPlayerEvalContext = function (env, trip, player) {
   var page = _.find(_.get(trip, 'script.content.pages') || [],
     { name: player.currentPageName }) || {};
   var link = (env.host || '') + '/s/' + player.id;
-
+  var fullName = user.lastName ?
+    (user.firstName + ' ' + user.lastName) :
+    user.firstName;
+  var contactName = role.title || fullName || null;
   return _.assign({}, profile.values, {
     id: player.id,
     currentPageName: player.currentPageName || null,
     link: link,
-    contact_name: role.contact_name || user.firstName || null,
+    email: profile.email || user.email || null,
+    contact_name: contactName,
     photo: profile.photo || null,
     facetime: profile.facetimeUsername || null,
     skype: profile.skypeUsername || null,

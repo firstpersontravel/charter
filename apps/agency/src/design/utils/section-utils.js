@@ -23,6 +23,7 @@ const sliceContent = {
     pages: { scene: sliceName },
     triggers: { scene: sliceName },
     messages: { scene: sliceName },
+    emails: { scene: sliceName },
     cues: { scene: sliceName },
     achievements: { scene: sliceName },
     checkpoints: { scene: sliceName }

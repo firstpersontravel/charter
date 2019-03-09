@@ -99,11 +99,7 @@ var PANEL_CLASSES = {
   text: {
     help: { summary: 'Displays simple text.' },
     properties: {
-      text: {
-        type: 'string',
-        required: true,
-        display: { allowNewlines: true }
-      },
+      text: { type: 'markdown', required: true },
       style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
     }
   },

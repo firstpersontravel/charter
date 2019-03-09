@@ -112,6 +112,8 @@ export default class DirectoryUser extends Component {
     const experience = this.props.experience;
     const script = experience.script;
     const photo = profile.photo ? (<div>Photo: {profile.photo}</div>) : null;
+    const email = profile.email ?
+      (<div>Email: {profile.email}</div>) : null;
     const phone = profile.phoneNumber ?
       (<div>Phone: {profile.phoneNumber}</div>) : null;
     const skype = profile.skypeUsername ?
@@ -167,6 +169,7 @@ export default class DirectoryUser extends Component {
           </button>
         </div>
         {photo}
+        {email}
         {phone}
         {skype}
         {facetime}
