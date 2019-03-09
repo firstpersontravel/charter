@@ -76,8 +76,8 @@ export default class OrgIndex extends Component {
           </p>
           <p className="card-text">
             <Link
-              to={`/${this.props.org.name}/${experience.name}/operate`}>
-              Schedule and operate
+              to={`/${this.props.org.name}/${experience.name}/schedule`}>
+              Schedule
             </Link>
           </p>
           <p className="card-text">

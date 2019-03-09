@@ -161,10 +161,11 @@ function msgFilterForParams(params) {
 
 export function lookupMessages(state, ownProps, limit = null, filters = null) {
   const selfFilter = msgFilterForParams(ownProps.params);
-  const allFilters = Object.assign({
-    trip: { groupId: Number(ownProps.params.groupId) },
-    self: selfFilter
-  }, filters);
+  const tripFilter = ownProps.params.tripId ?
+    { id: Number(ownProps.params.tripId) } :
+    { groupId: Number(ownProps.params.groupId) };
+  const msgFilters = { trip: tripFilter, self: selfFilter };
+  const allFilters = Object.assign(msgFilters, filters);
   return instancesFromDatastore(state, {
     col: 'messages',
     filter: allFilters,
