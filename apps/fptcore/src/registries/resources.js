@@ -1,25 +1,17 @@
 var moduleResourceSets = [
-  require('../modules/achievement/resources'),
-  require('../modules/appearance/resources'),
+  require('../modules/achievements/resources'),
   require('../modules/audio/resources'),
-  require('../modules/checkpoint/resources'),
-  require('../modules/clip/resources'),
-  require('../modules/content_page/resources'),
-  require('../modules/cue/resources'),
-  require('../modules/departure/resources'),
+  require('../modules/checkpoints/resources'),
+  require('../modules/calls/resources'),
   require('../modules/email/resources'),
-  require('../modules/geofence/resources'),
-  require('../modules/layout/resources'),
-  require('../modules/message/resources'),
-  require('../modules/page/resources'),
-  require('../modules/relay/resources'),
-  require('../modules/role/resources'),
-  require('../modules/route/resources'),
-  require('../modules/scene/resources'),
-  require('../modules/time/resources'),
-  require('../modules/trigger/resources'),
-  require('../modules/variant/resources'),
-  require('../modules/waypoint/resources')
+  require('../modules/locations/resources'),
+  require('../modules/messages/resources'),
+  require('../modules/pages/resources'),
+  require('../modules/relays/resources'),
+  require('../modules/roles/resources'),
+  require('../modules/scenes/resources'),
+  require('../modules/triggers/resources'),
+  require('../modules/variants/resources')
 ];
 
 var ResourcesRegistry = {};

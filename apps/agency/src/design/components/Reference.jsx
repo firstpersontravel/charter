@@ -6,12 +6,99 @@ import { ModulesRegistry, TextUtil } from 'fptcore';
 import ResourceBadge from '../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
 
-function renderSidebarModule(moduleName, module) {
+function renderActions(module, actionNames) {
+  const subitemStyle = { paddingLeft: '0.5em' };
+  return _.map(actionNames, actionName => (
+    <div key={actionName} className="constrain-text" style={subitemStyle}>
+      <a href={`#${actionName}`}>
+        {actionName}
+      </a>
+    </div>
+  ));
+}
+
+function renderEvents(module, eventTypes) {
+  const subitemStyle = { paddingLeft: '0.5em' };
+  return _.map(eventTypes, eventType => (
+    <div key={eventType} className="constrain-text" style={subitemStyle}>
+      <a href={`#${eventType}`}>
+        {eventType}
+      </a>
+    </div>
+  ));
+}
+
+function renderResourceLink(module, resourceType) {
+  if (module.resources[resourceType]) {
+    return (
+      <a href={`#r_${resourceType}`}>
+        {TextUtil.titleForKey(resourceType)}
+      </a>
+    );
+  }
+  if (module.subresources[resourceType]) {
+    return (
+      <a href={`#s_${resourceType}`}>
+        {TextUtil.titleForKey(resourceType)}
+      </a>
+    );
+  }
+  return TextUtil.titleForKey(resourceType);
+}
+
+function renderSidebarResource(module, resourceType, actionNames, eventTypes) {
+  if (resourceType === 'panel') {
+    return null;
+  }
+  const resourceStyle = (actionNames.length > 0 || eventTypes.length > 0) ?
+    { marginBottom: '0.5em' } :
+    {};
+
   return (
-    <div key={moduleName}>
-      <div>
-        <a href={`#${moduleName}`}>{TextUtil.titleForKey(moduleName)}</a>
+    <div key={resourceType} style={resourceStyle}>
+      <div className="constrain-text">
+        {renderResourceLink(module, resourceType)}
       </div>
+      {renderActions(module, actionNames)}
+      {renderEvents(module, eventTypes)}
+    </div>
+  );
+}
+
+function renderSidebarModule(moduleName, module) {
+  const actionNamesByNoun = _(module.actions)
+    .keys()
+    .groupBy(actionName => actionName.split('_').splice(-1)[0])
+    .value();
+  const eventTypesByNoun = _(module.events)
+    .keys()
+    .groupBy(eventType => eventType.split('_')[0])
+    .value();
+
+  const virtualResources = _({})
+    .merge(actionNamesByNoun, eventTypesByNoun)
+    .omit(Object.keys(module.resources))
+    .omit(Object.keys(module.subresources))
+    .value();
+
+  const resourceNames = Object.keys(module.resources)
+    .concat(Object.keys(module.subresources))
+    .concat(Object.keys(virtualResources));
+
+  const renderedResources = resourceNames.map(resourceType => (
+    renderSidebarResource(module, resourceType,
+      actionNamesByNoun[resourceType] || [],
+      eventTypesByNoun[resourceType] || [])
+  ));
+
+  return (
+    <div key={moduleName} style={{ marginBottom: '1em' }}>
+      <div className="constrain-text bold" style={{ borderBottom: '1px solid gray' }}>
+        <a href={`#${moduleName}`}>
+          {TextUtil.titleForKey(moduleName)}
+        </a>
+      </div>
+      {renderedResources}
     </div>
   );
 }

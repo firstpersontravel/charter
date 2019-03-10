@@ -1,11 +1,10 @@
 var moduleEventSets = [
-  require('../modules/call/events'),
-  require('../modules/cue/events'),
-  require('../modules/geofence/events'),
-  require('../modules/message/events'),
-  require('../modules/query/events'),
-  require('../modules/time/events'),
-  require('../modules/scene/events')
+  require('../modules/calls/events'),
+  require('../modules/locations/events'),
+  require('../modules/messages/events'),
+  require('../modules/triggers/events'),
+  require('../modules/scenes/events'),
+  require('../modules/variants/events')
 ];
 
 var EventsRegistry = {};

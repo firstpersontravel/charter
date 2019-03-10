@@ -123,9 +123,9 @@ describe('ActionPhraseCore', () => {
 
     it('parses action with var string', () => {
       var res = ActionPhraseCore.parseActionPhrase(
-        'set_state Role "nav window"', actionContext);
+        'adjust_page Role "nav window"', actionContext);
       assert.deepStrictEqual(res, {
-        name: 'set_state',
+        name: 'adjust_page',
         role_name: 'Role',
         new_value: '"nav window"'
       });
