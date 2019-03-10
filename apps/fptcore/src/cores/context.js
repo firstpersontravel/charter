@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var moment = require('moment');
 
 var ContextCore = {};
 
@@ -38,6 +39,7 @@ ContextCore.gatherPlayerEvalContext = function (env, trip, player) {
 ContextCore.gatherEvalContext = function (env, trip) {
   // Gather core values
   var context = _.assign({}, trip.customizations, trip.values, {
+    date: moment.utc(trip.date).format('dddd, MMMM D'),
     currentSceneName: trip.currentSceneName,
     waypointOptions: trip.waypointOptions,
     schedule: trip.schedule,

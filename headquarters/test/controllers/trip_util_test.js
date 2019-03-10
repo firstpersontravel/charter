@@ -1,5 +1,9 @@
+const sinon = require('sinon');
 const assert = require('assert');
 
+const { ContextCore } = require('fptcore');
+
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const TripUtil = require('../../src/controllers/trip_util');
 
@@ -10,6 +14,9 @@ describe('TripUtil', () => {
 
   describe('#prepareEvalContext', () => {
     it('creates trip context', () => {
+      const sentinel = 'abc';
+      sandbox.stub(ContextCore, 'gatherEvalContext').returns(sentinel);
+
       const objs = {
         experience: {
           domain: 'test.x.com'
@@ -23,6 +30,7 @@ describe('TripUtil', () => {
           }
         }),
         trip: models.Trip.build({
+          date: '01-01-2015',
           currentSceneName: 'SCENE-1',
           schedule: { 'TIME-1': 'time' },
           history: { 'CUE-1': 'time' },
@@ -37,24 +45,53 @@ describe('TripUtil', () => {
 
       const res = TripUtil.prepareEvalContext(objs);
 
-      assert.deepStrictEqual(res, {
+      sinon.assert.calledOnce(ContextCore.gatherEvalContext);
+
+      const expectedEnv = { host: 'https://test.x.com' };
+      const expectedTrip = {
         currentSceneName: 'SCENE-1',
-        schedule: { 'TIME-1': 'time' },
-        history: { 'CUE-1': 'time' },
-        waypointOptions: { 'WAYPOINT-1': 'OPTION-2' },
-        Role: {
-          contact_name: null,
-          email: null,
+        customizations: {},
+        date: '01-01-2015',
+        departureName: '',
+        galleryName: '',
+        history: {
+          'CUE-1': 'time'
+        },
+        id: null,
+        isArchived: false,
+        players: [{
+          acknowledgedPageName: '',
           currentPageName: 'PAGE-1',
-          directive: 'Go to the mall.',
-          facetime: null,
           id: 123,
-          link: 'https://test.x.com/s/123',
-          phone_number: null,
-          photo: null,
-          skype: null
+          roleName: 'Role',
+          user: null
+        }],
+        schedule: {
+          'TIME-1': 'time'
+        },
+        script: {
+          content: {
+            pages: [{
+              directive: 'Go to the mall.',
+              name: 'PAGE-1'
+            }]
+          },
+          id: null,
+          isActive: false,
+          isArchived: false,
+          isLocked: false
+        },
+        title: '',
+        values: {},
+        variantNames: '',
+        waypointOptions: {
+          'WAYPOINT-1': 'OPTION-2'
         }
-      });
+      };
+      assert.deepStrictEqual(ContextCore.gatherEvalContext.firstCall.args, [
+        expectedEnv, expectedTrip]);
+
+      assert.deepStrictEqual(res, sentinel);
     });
   });
 });

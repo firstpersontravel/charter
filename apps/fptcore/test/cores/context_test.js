@@ -86,6 +86,7 @@ describe('ContextCore', () => {
   describe('#gatherEvalContext', () => {
     it('gathers all context', () => {
       const trip = {
+        date: '02-01-2014',
         script: { content: {} },
         currentSceneName: 'SCENE-01',
         schedule: { 'TIME-123': '2017-02-16T21:44:02Z' },
@@ -111,6 +112,7 @@ describe('ContextCore', () => {
       subcontextStub.onSecondCall().returns(vanceValues);
 
       const expected = {
+        date: 'Saturday, February 1',
         currentSceneName: 'SCENE-01',
         schedule: trip.schedule,
         history: trip.history,
