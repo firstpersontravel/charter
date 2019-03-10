@@ -9,12 +9,12 @@ export default class GroupModal extends Component {
 
   static getDefaultState(group, scripts, propDefaults) {
     const defaults = {
-      date: propDefaults.date || moment.utc(),
+      date: propDefaults.date || moment(),
       scriptId: propDefaults.scriptId ||
         _.get(_.find(scripts, 'isActive'), 'id')
     };
     return {
-      date: group ? moment.utc(group.date) : defaults.date,
+      date: group ? moment(group.date) : defaults.date,
       scriptId: Number(group ? group.scriptId : defaults.scriptId)
     };
   }
