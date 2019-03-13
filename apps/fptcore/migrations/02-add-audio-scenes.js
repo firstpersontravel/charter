@@ -20,6 +20,8 @@ module.exports = function(scriptContent) {
   });
   // Changing `set_state` action to `adjust_page` in a SUPER HACKY WAY
   var js = JSON.stringify(scriptContent);
-  js = js.replace(/set_state/g, 'adjust_page');
-  _.assign(scriptContent, JSON.parse(js));
+  if (js.indexOf('set_state') > -1) {
+    js = js.replace(/set_state/g, 'adjust_page');
+    _.assign(scriptContent, JSON.parse(js));
+  }
 };
