@@ -26,15 +26,21 @@ scenes:
 
 clips:
   - name: CLIP-PHONETREE-1
+    title: Greetings
+    scene: SCENE-MAIN
     transcript: Greetings!! Would you like a refreshing beverage?
     query:
       name: QUERY-BEVERAGE
       hints: [yes, no]
 
   - name: CLIP-PHONETREE-1-YES
+    title: "yes"
+    scene: SCENE-MAIN
     transcript: Here you go!
 
   - name: CLIP-PHONETREE-1-NO
+    title: "no"
+    scene: SCENE-MAIN
     transcript: Next time!
 
 triggers:

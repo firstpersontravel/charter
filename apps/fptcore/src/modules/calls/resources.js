@@ -8,6 +8,8 @@ var clip = {
   },
   properties: {
     name: { type: 'name', required: true },
+    title: { type: 'string', required: true },
+    scene: { type: 'reference', collection: 'scenes', required: true },
     transcript: { type: 'string' },
     voice: { type: 'enum', options: CLIP_VOICE_OPTIONS, default: 'alice' },
     path: { type: 'media', extensions: ['m4a', 'mp3'] },
