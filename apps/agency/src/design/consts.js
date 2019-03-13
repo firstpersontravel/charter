@@ -17,7 +17,7 @@ export const COLLECTION_NAMES = {
   'relays.for': 'roles',
   'relays.with': 'roles',
   'roles.starting_page': 'pages',
-  'roles.default_layout': 'layouts',
+  'roles.layout': 'layouts',
   'routes.from': 'waypoints',
   'routes.to': 'waypoints',
   'triggers.scene': 'scenes'

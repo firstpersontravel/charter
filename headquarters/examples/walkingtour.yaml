@@ -1,5 +1,5 @@
 meta:
-  version: 1
+  version: 2
 
 layouts:
   - name: tablet
@@ -32,7 +32,7 @@ roles:
     actor: false
     user: true
     starting_page: PAGE-START
-    default_layout: tablet
+    layout: tablet
 
   - name: Guide
     title: Guide

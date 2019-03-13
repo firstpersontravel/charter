@@ -1,5 +1,5 @@
 meta:
-  version: 1
+  version: 2
 
 roles:
   - name: Driver

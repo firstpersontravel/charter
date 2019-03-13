@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
   pageLayoutName: function() {
     var page = this.get('pageModel');
     var player = this.get('player.model');
-    var pageLayoutName = player.get('role').default_layout || null;
+    var pageLayoutName = player.get('role').layout || null;
     if (page.layout !== undefined) { pageLayoutName = page.layout; }
     return pageLayoutName;
   }.property('pageModel'),

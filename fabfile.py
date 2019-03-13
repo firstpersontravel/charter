@@ -585,6 +585,11 @@ def db_migrate():
     with cd(env.hq_path):
         run('export $(cat ../env | xargs) && ./node_modules/.bin/sequelize db:migrate')
 
+@roles('app')
+def script_migrate():
+    with cd(env.hq_path):
+        run('export $(cat ../env | xargs) && yarn run scripts:migrate')
+
 def install_node_requirements():
     # with cd(env.repo_path):
     #     run('npm install')
@@ -690,6 +695,7 @@ def _deploy():
     build_apps()
     update_to_latest_release()
     db_migrate()
+    script_migrate()
 
 
 def _get_releases():

@@ -9,12 +9,6 @@ const logger = config.logger.child({ name: 'bin.migrate' });
 
 async function migrateScript(script) {
 
-  try {
-    await script.validate();
-  } catch (err) {
-    logger.error(`Script #${script.id} failed validation: ${err.message}.`);
-  }
-
   // For some reason, getting script.content updates `dataValues` which
   // triggers a validation error on the json field. So we do the get *after*
   // validating.
@@ -32,6 +26,17 @@ async function migrateScript(script) {
   } catch (err) {
     logger.error(`Script #${script.id} failed migration: ${err.message}.`);
   }
+
+  try {
+    await script.validate();
+    logger.info(`Script #${script.id} passed validation!`);
+  } catch (err) {
+    logger.error(`Script #${script.id} failed validation: ${err.message}.`);
+    err.errors[0].__raw.errors.forEach((innerErr) => {
+      logger.error(`- ${innerErr.path}: ${innerErr.message}`);
+    });
+  }
+
 }
 
 async function migrateAll() {

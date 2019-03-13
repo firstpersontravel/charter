@@ -36,7 +36,7 @@ var role = {
       type: 'list',
       items: { type: 'simpleAttribute', required: true }
     },
-    default_layout: { type: 'reference', collection: 'layouts' },
+    layout: { type: 'reference', collection: 'layouts' },
     primary: { type: 'boolean', default: false }
   }
 };
