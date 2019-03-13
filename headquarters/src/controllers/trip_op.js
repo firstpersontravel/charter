@@ -50,8 +50,7 @@ class TripOpController {
   }
 
   static async sendEmail(objs, op) {
-    return EmailController.sendEmail(op.from, op.to, op.subject,
-      op.bodyMarkdown);
+    return EmailController.sendEmail(op.params);
   }
 
   static async initiateCall(objs, op) {

@@ -14,6 +14,19 @@ ParamValidators.string = function(script, name, spec, param) {
   }
 };
 
+ParamValidators.email = function(script, name, spec, param) {
+  if (!_.isString(param)) {
+    return ['Email param "' + name + '" should be a string.'];
+  }
+  if (spec.required && param === '') {
+    return ['Email param "' + name + '" should not be blank.'];
+  }
+  var emailRegex = /(?:"?([^"]*)"?\s)?(?:<?(.+@[^>]+\.[^>]+)>?)/;
+  if (!emailRegex.test(param)) {
+    return ['Email param "' + name + '" should be a valid email.'];
+  }
+};
+
 ParamValidators.markdown = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['Markdown param "' + name + '" should be a string.'];

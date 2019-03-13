@@ -18,12 +18,22 @@ Link: <a href="http://test.com">info</a>.
 Yours truly,
 FPT
       `;
-      await EmailController.sendEmail(from, to, subject, body);
+
+      await EmailController.sendEmail({
+        from: from,
+        to: to,
+        cc: null,
+        bcc: null,
+        subject: subject,
+        bodyMarkdown: body
+      });
 
       sinon.assert.calledOnce(config.getSendgridClient().send);
       sinon.assert.calledWith(config.getSendgridClient().send, {
         from: from,
         to: to,
+        cc: null,
+        bcc: null,
         subject: subject,
         html: `<h1 id="heading">Heading</h1>
 <p>Your <strong>order</strong> has been <em>shipped</em>.</p>

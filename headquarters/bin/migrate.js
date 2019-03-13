@@ -22,9 +22,9 @@ async function migrateScript(script) {
   const migrated = Migrator.migrateScriptContent(script.content);
   try {
     await script.update({ content: migrated });
-    logger.info(`Script #${script.id} migrated to version ${migrated.meta.version}.`);
+    logger.info(`Script #${script.id} migrated from version ${oldVersion} to ${migrated.meta.version}.`);
   } catch (err) {
-    logger.error(`Script #${script.id} failed migration: ${err.message}.`);
+    logger.error(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
   }
 
   try {

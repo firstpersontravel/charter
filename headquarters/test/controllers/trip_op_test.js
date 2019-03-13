@@ -122,17 +122,18 @@ describe('TripOpController', () => {
       sandbox.stub(EmailController, 'sendEmail');
       const op = {
         operation: 'sendEmail',
-        from: 'from@email.com',
-        to: 'to@email.com',
-        subject: 'subj',
-        bodyMarkdown: '# header\n\nbody'
+        params: {
+          from: 'from@email.com',
+          to: 'to@email.com',
+          subject: 'subj',
+          bodyMarkdown: '# header\n\nbody'
+        }
       };
 
       await TripOpController.applyOp({}, op);
 
       sinon.assert.calledOnce(EmailController.sendEmail);
-      sinon.assert.calledWith(EmailController.sendEmail,
-        op.from, op.to, op.subject, op.bodyMarkdown);
+      sinon.assert.calledWith(EmailController.sendEmail, op.params);
     });
   });
 });

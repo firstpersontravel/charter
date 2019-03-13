@@ -48,6 +48,44 @@ describe('ParamValidators', () => {
     });
   });
 
+  describe('#email', () => {
+    it('permits email', () => {
+      ok(ParamValidators.email({}, 's', {}, 'dispatch@tacosyndicate.family'));
+      ok(ParamValidators.email({}, 's', {}, '<test@test.com>'));
+    });
+
+    it('permits email and name', () => {
+      ok(ParamValidators.email({}, 's', {}, '"Taco Syndicate Dispatch" <dispatch@tacosyndicate.family>'));
+      ok(ParamValidators.email({}, 's', {}, 'Taco Syndicate Dispatch <dispatch@tacosyndicate.family>'));
+      ok(ParamValidators.email({}, 's', {}, '"Gabe\'s Mom" <a-b-c@d_eF.net>'));
+    });
+
+
+    it('warns if not a string', () => {
+      err(ParamValidators.email({}, 's', {}, []),
+        'Email param "s" should be a string.');
+    });
+
+    it('warns if required and blank', () => {
+      ok(ParamValidators.email({}, 's', { required: true }, 'val@val.com'));
+      err(ParamValidators.email({}, 's', { required: true }, ''),
+        'Email param "s" should not be blank.');
+    });
+
+    it('warns if not a valid email', () => {
+      err(ParamValidators.email({}, 's', {}, 'asdjsadk'),
+        'Email param "s" should be a valid email.');
+      err(ParamValidators.email({}, 's', {}, 'abc.com'),
+        'Email param "s" should be a valid email.');
+      err(ParamValidators.email({}, 's', {}, 'john@domain'),
+        'Email param "s" should be a valid email.');
+      err(ParamValidators.email({}, 's', {}, '"john@domain"'),
+        'Email param "s" should be a valid email.');
+      err(ParamValidators.email({}, 's', {}, '<john@domain> "test"'),
+        'Email param "s" should be a valid email.');
+    });
+  });
+
   describe('#simpleValue', () => {
     it('permits string, number, or boolean', () => {
       ok(ParamValidators.simpleValue({}, 's', {}, 'abc'));
