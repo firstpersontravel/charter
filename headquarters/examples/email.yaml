@@ -1,0 +1,28 @@
+meta:
+  version: 2
+
+roles:
+  - name: player
+    title: Player
+    user: true
+
+  - name: system
+    title: System
+
+inboxes:
+  - name: inbox
+    role: system
+    address: system@system.com
+
+scenes:
+  - name: scene
+    title: First scene
+
+emails:
+  - name: email-1
+    from: inbox
+    to: player
+    title: First email
+    scene: scene
+    subject: test
+    body: Hello there!
