@@ -24,6 +24,12 @@ var send_email = {
     var bodyMarkdown = EvalCore.templateText(actionContext.evalContext,
       emailData.body, actionContext.timezone);
 
+    var fromInbox = _.find(actionContext.scriptContent.inboxes,
+      { name: emailData.from });
+    if (!fromInbox) {
+      return null;
+    }
+
     var toRole = _.find(actionContext.scriptContent.roles,
       { name: emailData.to });
     if (!toRole) {
@@ -42,7 +48,7 @@ var send_email = {
     return [{
       operation: 'sendEmail',
       params: {
-        from: emailData.from,
+        from: fromInbox.address,
         to: toPlayer.email,
         cc: emailData.cc,
         bcc: emailData.bcc,

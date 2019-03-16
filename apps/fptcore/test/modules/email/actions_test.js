@@ -7,9 +7,14 @@ describe('#send_email', () => {
   const actionContext = {
     scriptContent: {
       roles: [{ name: 'Player' }, { name: 'System' }],
+      inboxes: [{
+        name: 'INBOX',
+        role: 'System',
+        address: 'system@system.com'
+      }],
       emails: [{
         name: 'EMAIL',
-        from: 'system@system.com',
+        from: 'INBOX',
         to: 'Player',
         subject: 'Your {{productName}} is ready!',
         body: 'Your order of {{num}} {{productName}}(s) is ready.'
