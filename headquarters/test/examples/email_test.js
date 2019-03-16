@@ -54,8 +54,8 @@ describe('EmailExample', () => {
       from: 'system@system.com',
       to: 'phil@paypalmafia.com',
       subject: 'test',
-      text: '\nHello there!\n',
-      html: '<p>Hello there!</p>\n',
+      text: 'Hello there!\nGreetings from the System\n\nSincerely yours\n',
+      html: '<h1 id="hello-there">Hello there!</h1>\n<p>Greetings from the System</p>\n<p>Sincerely yours</p>\n',
       cc: undefined,
       bcc: undefined
     }]);

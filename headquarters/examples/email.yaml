@@ -25,4 +25,9 @@ emails:
     title: First email
     scene: scene
     subject: test
-    body: Hello there!
+    body: |
+      # Hello there!
+
+      Greetings from the System
+
+      Sincerely yours
