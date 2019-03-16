@@ -99,11 +99,11 @@ export default class ProfileModal extends Component {
     const roles = experience.script.content.roles || [];
     const departures = experience.script.content.departures || [];
     const roleOptions = roles.map(role => (
-      <option key={role.name} value={role.name}>{role.name}</option>
+      <option key={role.name} value={role.name}>{role.title}</option>
     ));
     const departureOptions = departures.map(departure => (
       <option key={departure.name} value={departure.name}>
-        {departure.name}
+        {departure.title}
       </option>
     ));
     const role = _.find(roles, { name: this.state.roleName });

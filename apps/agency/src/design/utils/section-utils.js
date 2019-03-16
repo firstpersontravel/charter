@@ -12,7 +12,7 @@ export const sections = [
 const sectionContent = {
   roles: { roles: {}, appearances: {} },
   scenes: { scenes: {} },
-  messaging: { relays: {} },
+  messaging: { relays: {}, inboxes: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
   variants: { variants: {}, departures: {}, times: {} },
   interface: { layouts: {}, content_pages: {} }

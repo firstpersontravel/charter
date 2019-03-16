@@ -13,18 +13,20 @@ function selectItem(e) {
 
 export default class ResponsiveListGroup extends Component {
   renderSelect() {
-    const selectedItem = _.find(this.props.items, item => (
+    const enabledItems = this.props.items.filter(item => !item.disabled);
+    const selectedItem = _.find(enabledItems, item => (
       _.startsWith(window.location.pathname, item.url)
     ));
     const selectedUrl = _.get(selectedItem, 'url') || '';
     const emptyOption = selectedUrl ? null : (
       <option value="">---</option>
     );
-    const renderedOptions = this.props.items.map(item => (
-      <option key={item.key} value={item.url}>
-        {item.text}
-      </option>
-    ));
+    const renderedOptions = enabledItems
+      .map(item => (
+        <option key={item.key} value={item.url}>
+          {item.text}
+        </option>
+      ));
     return (
       <div className="d-sm-none" style={{ marginBottom: '0.5em' }}>
         <select
@@ -41,7 +43,7 @@ export default class ResponsiveListGroup extends Component {
   renderGroup() {
     const renderedItems = this.props.items.map(item => (
       <Link
-        className={this.props.itemClassName}
+        className={`${this.props.itemClassName} ${item.disabled ? 'disabled faint' : ''}`}
         activeClassName={this.props.itemActiveClassName}
         key={item.key}
         to={item.url}>
@@ -70,6 +72,7 @@ ResponsiveListGroup.propTypes = {
   itemClassName: PropTypes.string,
   itemActiveClassName: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.shape({
+    disabled: PropTypes.bool,
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     label: PropTypes.node.isRequired,
     text: PropTypes.string.isRequired,

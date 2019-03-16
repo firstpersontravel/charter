@@ -67,7 +67,28 @@ export default class Slice extends Component {
       text: section[1]
     }));
 
-    const items = sectionLinks.concat(sceneLinks);
+    const globalHeader = {
+      key: 'global',
+      url: '',
+      label: 'Global',
+      text: 'Global',
+      disabled: true
+    };
+
+
+    const scenesHeader = {
+      key: 'scenes',
+      url: '',
+      label: 'Scenes',
+      text: 'Scenes',
+      disabled: true
+    };
+
+
+    const items = [globalHeader]
+      .concat(sectionLinks)
+      .concat([scenesHeader])
+      .concat(sceneLinks);
 
     return (
       <ResponsiveListGroup items={items} />

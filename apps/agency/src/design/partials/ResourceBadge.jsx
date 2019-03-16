@@ -48,6 +48,7 @@ const RESOURCE_ICONS = {
   departure: 'space-shuttle',
   email: 'envelope',
   geofence: 'map-pin',
+  inbox: 'envelope',
   layout: 'mobile-phone',
   message: 'comment',
   page: 'sticky-note',

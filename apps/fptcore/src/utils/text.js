@@ -31,22 +31,26 @@ TextUtil.splitWords = function(sentence) {
 };
 
 // TODO: rename audio collection to something that can be dumbly pluralized.
-var innumerateWords = ['audio', 'directions'];
+var plurals = {
+  audio: 'audio',
+  directions: 'directions',
+  inbox: 'inboxes'
+};
+
+var singulars = {
+  audio: 'audio',
+  directions: 'directions',
+  inboxes: 'inbox'
+};
 
 // SUPER DUMB pluralization
 TextUtil.pluralize = function(singular) {
-  if (_.includes(innumerateWords, singular)) {
-    return singular;
-  }
-  return singular + 's';
+  return plurals[singular] || (singular + 's');
 };
 
 // SUPER DUMB singularization
 TextUtil.singularize = function(plural) {
-  if (_.includes(innumerateWords, plural)) {
-    return plural;
-  }
-  return plural.substr(0, plural.length - 1);
+  return singulars[plural] || plural.substr(0, plural.length - 1);
 };
 
 module.exports = TextUtil;

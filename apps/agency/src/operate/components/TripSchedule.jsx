@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TimeUtil, TextUtil } from 'fptcore';
+import { TimeUtil } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
 
@@ -31,10 +31,12 @@ export default class TripSchedule extends Component {
     const localTime = moment.utc(timestamp).tz(timezone);
     const dayString = localTime.format('ddd');
     const timeString = localTime.format('h:mma');
-    const timeLabel = TextUtil.titleForKey(timeName.substring(5));
+    const time = _.find(this.props.trip.script.content.times, {
+      name: timeName
+    });
     return (
       <tr key={timeName}>
-        <td>{timeLabel}</td>
+        <td>{time.title}</td>
         <td>
           {dayString}
           {' '}

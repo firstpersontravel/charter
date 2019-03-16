@@ -46,6 +46,7 @@ function internalEmpty(spec) {
 
 const newItemsForSpecType = {
   string: '',
+  email: '',
   simpleValue: '',
   number: 0,
   boolean: null,
@@ -176,6 +177,14 @@ export default class FieldRenderer {
 
   renderString(spec, value, name, path, opts) {
     return this.internalStringlike(spec, value, name, path, opts);
+  }
+
+  renderEmail(spec, value, name, path, opts) {
+    const validate = val => (
+      isEmpty(ParamValidators.email(this.script, name, spec, val))
+    );
+    const clean = val => val;
+    return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   renderMarkdown(spec, value, name, path, opts) {

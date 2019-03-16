@@ -52,7 +52,7 @@ var send_email = {
     }];
   },
   getChildClaims: function(params) {
-    return ['messages.' + params.message_name];
+    return ['emails.' + params.email_name];
   }
 };
 
