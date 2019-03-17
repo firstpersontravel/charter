@@ -68,7 +68,7 @@ export default class Slice extends Component {
     }));
 
     const globalHeader = {
-      key: 'global',
+      key: 'global-header',
       url: '',
       label: 'Global',
       text: 'Global',
@@ -77,7 +77,7 @@ export default class Slice extends Component {
 
 
     const scenesHeader = {
-      key: 'scenes',
+      key: 'scenes-header',
       url: '',
       label: 'Scenes',
       text: 'Scenes',

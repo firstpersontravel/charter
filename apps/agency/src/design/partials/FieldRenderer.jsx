@@ -134,7 +134,7 @@ export default class FieldRenderer {
         choices={choices}
         onConfirm={onEnumUpdate}
         label={label || value || internalEmpty(spec)}
-        value={value || choices[0].value} />
+        value={value} />
     );
   }
 

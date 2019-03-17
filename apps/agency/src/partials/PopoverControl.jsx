@@ -68,8 +68,8 @@ export default class PopoverControl extends Component {
     if (this.props.choices) {
       const options = this.props.choices
         .map((choice) => {
-          const value = choice.value || choice;
-          const label = choice.label || choice;
+          const value = _.isPlainObject(choice) ? choice.value : choice;
+          const label = _.isPlainObject(choice) ? choice.label : choice;
           return <option key={value} value={value}>{label}</option>;
         });
       return (
