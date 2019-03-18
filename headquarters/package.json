@@ -6,7 +6,7 @@
     "pretest": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
     "db:migrate": "sequelize",
-    "scripts:migrate": "node bin/migrate.js | pino -c"
+    "scripts:migrate": "node cmd/migrate-scripts.js | pino -c"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -16,6 +16,7 @@
     "bcrypt": "^3.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.15.2",
+    "commander": "^2.19.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",

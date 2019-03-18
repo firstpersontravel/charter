@@ -5,6 +5,7 @@ roles:
   - name: Driver
     title: Driver
     starting_page: Start
+    user: true
 
 scenes:
   - name: main

@@ -11,7 +11,6 @@ const {
   floatField,
   mutableModifier,
   optionalStringField,
-  requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -21,7 +20,7 @@ const {
 const User = database.define('User', snakeCaseColumns({
   email: mutableModifier(optionalStringField(255)),
   passwordHash: mutableModifier(optionalStringField(60)),
-  firstName: mutableModifier(requiredStringField(255)),
+  firstName: mutableModifier(optionalStringField(255)),
   lastName: mutableModifier(optionalStringField(255)),
   phoneNumber: mutableModifier(optionalStringField(10)),
   isActive: mutableModifier(booleanField(true)),
@@ -38,6 +37,8 @@ const User = database.define('User', snakeCaseColumns({
 }));
 
 User.belongsTo(Org, belongsToField('org'));
-User.belongsTo(Experience, belongsToField('experience'));
+
+// Null experience users are admins -- others are players.
+User.belongsTo(Experience, allowNullModifier(belongsToField('experience')));
 
 module.exports = User;

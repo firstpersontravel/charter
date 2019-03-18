@@ -87,10 +87,9 @@ describe('API create', () => {
         .then((res) => {
           assert.deepStrictEqual(res.body.error, {
             type: 'ValidationError',
-            message: 'Invalid fields: firstName, isActive.',
+            message: 'Invalid fields: isActive.',
             fields: [
-              { field: 'isActive', message: 'must be true or false' },
-              { field: 'firstName', message: 'must be present' }
+              { field: 'isActive', message: 'must be true or false' }
             ]
           });
         });
