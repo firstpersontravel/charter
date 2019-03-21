@@ -179,14 +179,25 @@ function renderResourceField(key, spec) {
   );
 }
 
+const HIDE_PROPERTIES = ['name', 'title'];
+
 function renderFields(properties) {
-  const keys = Object.keys(properties);
+  const keys = Object
+    .keys(properties)
+    .filter(key => HIDE_PROPERTIES.indexOf(key) === -1);
+
+  if (!keys.length) {
+    return null;
+  }
+
   if (keys.length === 1 && keys[0] === 'self') {
     return renderFields(properties.self);
   }
+
   const fields = keys.map(key => (
     renderResourceField(key, properties[key])
   ));
+
   return (
     <table className="table table-sm table-bordered table-striped">
       <thead>

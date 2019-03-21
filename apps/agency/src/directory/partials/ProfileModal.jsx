@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 const PHONE_REGEX = /^\d{10}$/;
-const EMAIL_REGEX = /^[\w._-]+@\w+\.\w+$/;
+const EMAIL_REGEX = /^[\w._-]+@[\w.-]+$/;
 
 export default class ProfileModal extends Component {
 
