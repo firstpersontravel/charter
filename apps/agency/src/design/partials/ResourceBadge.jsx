@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ResourcesRegistry, TextUtil } from 'fptcore';
+import { ResourcesRegistry, SubresourcesRegistry, TextUtil } from 'fptcore';
 
 const colors = [
   '#2e4d2e',
@@ -33,11 +33,13 @@ const colors = [
 
 const COLORS = _(ResourcesRegistry)
   .keys()
+  .concat(Object.keys(SubresourcesRegistry))
+  .uniq()
   .map((key, i) => [key, colors[i % colors.length]])
   .fromPairs()
   .value();
 
-const RESOURCE_ICONS = {
+export const RESOURCE_ICONS = {
   achievement: 'trophy',
   appearance: 'calendar',
   audio: 'music',

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { ModulesRegistry, TextUtil } from 'fptcore';
 
-import ResourceBadge from '../partials/ResourceBadge';
+import ResourceBadge, { RESOURCE_ICONS } from '../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
 
 function renderActions(module, actionNames) {
@@ -11,7 +11,7 @@ function renderActions(module, actionNames) {
   return _.map(actionNames, actionName => (
     <div key={actionName} className="constrain-text" style={subitemStyle}>
       <a href={`#${actionName}`}>
-        {actionName}
+        <i className="fa fa-mail-forward" /> {actionName}
       </a>
     </div>
   ));
@@ -22,42 +22,49 @@ function renderEvents(module, eventTypes) {
   return _.map(eventTypes, eventType => (
     <div key={eventType} className="constrain-text" style={subitemStyle}>
       <a href={`#${eventType}`}>
-        {eventType}
+        <i className="fa fa-bolt" /> {eventType}
       </a>
     </div>
   ));
 }
 
-function renderResourceLink(module, resourceType) {
-  if (module.resources[resourceType]) {
+function renderResourceLink(resourceType, moduleResource) {
+  const resourceIcon = RESOURCE_ICONS[resourceType] ? (
+    <i style={{ marginRight: '0.25em' }} className={`fa fa-${RESOURCE_ICONS[resourceType]}`} />
+  ) : null;
+
+  const resourceLabel = (
+    <span>
+      {resourceIcon}{TextUtil.titleForKey(resourceType)}
+    </span>
+  );
+
+  if (moduleResource.resource) {
     return (
-      <a href={`#r_${resourceType}`}>
-        {TextUtil.titleForKey(resourceType)}
-      </a>
+      <a href={`#r_${resourceType}`}>{resourceLabel}</a>
     );
   }
-  if (module.subresources[resourceType]) {
+  if (moduleResource.subresource) {
     return (
-      <a href={`#s_${resourceType}`}>
-        {TextUtil.titleForKey(resourceType)}
-      </a>
+      <a href={`#s_${resourceType}`}>{resourceLabel}</a>
     );
   }
-  return TextUtil.titleForKey(resourceType);
+  return resourceLabel;
 }
 
-function renderSidebarResource(module, resourceType, actionNames, eventTypes) {
+function renderSidebarResource(resourceType, moduleResource) {
   if (resourceType === 'panel') {
     return null;
   }
+  const actionNames = Object.keys(moduleResource.actions || {});
+  const eventTypes = Object.keys(moduleResource.events || {});
   const resourceStyle = (actionNames.length > 0 || eventTypes.length > 0) ?
     { marginBottom: '0.5em' } :
     {};
-
   return (
     <div key={resourceType} style={resourceStyle}>
       <div className="constrain-text">
-        {renderResourceLink(module, resourceType)}
+        {renderResourceLink(resourceType, moduleResource)}
       </div>
       {renderActions(module, actionNames)}
       {renderEvents(module, eventTypes)}
@@ -66,29 +73,8 @@ function renderSidebarResource(module, resourceType, actionNames, eventTypes) {
 }
 
 function renderSidebarModule(moduleName, module) {
-  const actionNamesByNoun = _(module.actions)
-    .keys()
-    .groupBy(actionName => actionName.split('_').splice(-1)[0])
-    .value();
-  const eventTypesByNoun = _(module.events)
-    .keys()
-    .groupBy(eventType => eventType.split('_')[0])
-    .value();
-
-  const virtualResources = _({})
-    .merge(actionNamesByNoun, eventTypesByNoun)
-    .omit(Object.keys(module.resources))
-    .omit(Object.keys(module.subresources))
-    .value();
-
-  const resourceNames = Object.keys(module.resources)
-    .concat(Object.keys(module.subresources))
-    .concat(Object.keys(virtualResources));
-
-  const renderedResources = resourceNames.map(resourceType => (
-    renderSidebarResource(module, resourceType,
-      actionNamesByNoun[resourceType] || [],
-      eventTypesByNoun[resourceType] || [])
+  const renderedResources = Object.keys(module.resources).map(resourceType => (
+    renderSidebarResource(resourceType, module.resources[resourceType])
   ));
 
   return (
@@ -214,30 +200,22 @@ function renderFields(properties) {
   );
 }
 
-function renderSubresource(resourceType, resourceSpec) {
-  // HACK
-  if (resourceType === 'panel') {
+function renderResourceSimple(resourceType, moduleResource) {
+  const resource = moduleResource.resource || moduleResource.subresource;
+  if (!resource) {
     return null;
   }
+  const isPrimaryResource = !!moduleResource.resource;
+  const resourceTypeTitle = isPrimaryResource ?
+    'Resource' :
+    'Embedded resource';
   return (
     <div key={resourceType}>
-      <h3 id={`s_${resourceType}`}>
-        Embedded resource: {TextUtil.titleForKey(resourceType)}
+      <h3 id={`${isPrimaryResource ? 'r' : 's'}_${resourceType}`}>
+        {resourceTypeTitle}: <ResourceBadge resourceType={resourceType} />
       </h3>
-      <p>{_.get(resourceSpec, 'help.summary')}</p>
-      {renderFields(resourceSpec.properties)}
-    </div>
-  );
-}
-
-function renderResource(resourceType, resourceSpec) {
-  return (
-    <div key={resourceType}>
-      <h3 id={`r_${resourceType}`}>
-        Resource: <ResourceBadge resourceType={resourceType} />
-      </h3>
-      <p>{_.get(resourceSpec, 'help.summary')}</p>
-      {renderFields(resourceSpec.properties)}
+      <p>{_.get(resource, 'help.summary')}</p>
+      {renderFields(resource.properties)}
     </div>
   );
 }
@@ -246,7 +224,7 @@ function renderAction(actionName, actionSpec) {
   return (
     <div key={actionName}>
       <h4 id={actionName}>
-        Action: <strong>{actionName}</strong>
+        Action: <i className="fa fa-mail-forward" /> <strong>{actionName}</strong>
       </h4>
       <p>{_.get(actionSpec, 'help.summary')}</p>
       {renderFields(actionSpec.params)}
@@ -258,10 +236,31 @@ function renderEvent(eventType, eventSpec) {
   return (
     <div key={eventType}>
       <h4 id={eventType}>
-        Event: <strong>{eventType}</strong>
+        Event: <strong><i className="fa fa-bolt" /> {eventType}</strong>
       </h4>
       <p>{_.get(eventSpec, 'help.summary')}</p>
       {renderFields(eventSpec.specParams)}
+    </div>
+  );
+}
+
+function renderResource(resourceType, moduleResource) {
+  const renderedResource = renderResourceSimple(resourceType, moduleResource);
+  const renderedActions = Object
+    .keys(moduleResource.actions || {})
+    .map(actionName => (
+      renderAction(actionName, moduleResource.actions[actionName])
+    ));
+  const renderedEvents = Object
+    .keys(moduleResource.events || {})
+    .map(eventName => (
+      renderEvent(eventName, moduleResource.events[eventName])
+    ));
+  return (
+    <div key={resourceType}>
+      {renderedResource}
+      {renderedActions}
+      {renderedEvents}
     </div>
   );
 }
@@ -270,16 +269,6 @@ function renderModule(moduleName, module) {
   const renderedResources = Object.keys(module.resources).map(resourceType => (
     renderResource(resourceType, module.resources[resourceType])
   ));
-  const renderedSubresources = Object.keys(module.subresources)
-    .map(resourceType => (
-      renderSubresource(resourceType, module.subresources[resourceType])
-    ));
-  const renderedActions = Object.keys(module.actions).map(actionName => (
-    renderAction(actionName, module.actions[actionName])
-  ));
-  const renderedEvents = Object.keys(module.events).map(eventName => (
-    renderEvent(eventName, module.events[eventName])
-  ));
   return (
     <div style={{ borderBottom: '2px dashed #aaa' }} key={moduleName}>
       <h2 id={moduleName}>
@@ -287,9 +276,6 @@ function renderModule(moduleName, module) {
       </h2>
       <p>The {moduleName} module gathers relevant resources, events and actions.</p>
       {renderedResources}
-      {renderedSubresources}
-      {renderedActions}
-      {renderedEvents}
     </div>
   );
 }
