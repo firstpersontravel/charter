@@ -4,12 +4,14 @@ var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'quest'];
 
 module.exports = {
   audio_foreground: {
+    icon: 'sticky-note',
     help: { summary: 'Displays an audio message that can be played at will.' },
     properties: {
       path: { type: 'media', medium: 'audio' }
     }
   },
   button: {
+    icon: 'sticky-note',
     help: { summary: 'Displays a button. When pressed, a cue will be signaled.' },
     properties: {
       text: { type: 'string', required: true },
@@ -18,8 +20,9 @@ module.exports = {
     }
   },
   choice: {
+    icon: 'sticky-note',
+    help: { summary: 'Displays a multiple choice option. When selected by a user, the curresponding value in the trip state will be updated.' },
     properties: {
-      help: { summary: 'Displays a multiple choice option. When selected by a user, the curresponding value in the trip state will be updated.' },
       text: { type: 'string', required: true },
       value_ref: { type: 'simpleAttribute', required: true },
       choices: {
@@ -36,6 +39,7 @@ module.exports = {
     }
   },
   content_browse: {
+    icon: 'sticky-note',
     help: { summary: 'Displays an index page of content. The user can browse through all visible content pages matching the given section.' },
     properties: {
       title: { type: 'string', required: true },
@@ -43,6 +47,7 @@ module.exports = {
     }
   },
   directions: {
+    icon: 'sticky-note',
     help: { summary: 'Displays live directions for the given route.' },
     properties: {
       route: { type: 'reference', collection: 'routes' },
@@ -58,6 +63,7 @@ module.exports = {
     }
   },
   image: {
+    icon: 'sticky-note',
     help: { summary: 'Displays an image.' },
     properties: {
       path: { type: 'media', medium: 'image', required: true },
@@ -65,12 +71,14 @@ module.exports = {
     }
   },
   messages_browse: {
+    icon: 'sticky-note',
     help: { summary: 'Displays a browsable interface of all messages for a player.' },
     properties: {
       title: { type: 'string', required: true }
     }
   },
   messages: {
+    icon: 'sticky-note',
     help: { summary: 'Displays a browsable interface of all messages between a set of players.' },
     properties: {
       title: { type: 'string' },
@@ -79,6 +87,7 @@ module.exports = {
     }
   },
   numberpad: {
+    icon: 'sticky-note',
     help: { summary: 'Displays a numberpad.' },
     properties: {
       submit: { type: 'string' },
@@ -89,12 +98,14 @@ module.exports = {
     }
   },
   outlet: {
+    icon: 'sticky-note',
     help: { summary: 'For internal use.' },
     properties: {
       name: { type: 'string', required: true }
     }
   },
   text: {
+    icon: 'sticky-note',
     help: { summary: 'Displays simple text.' },
     properties: {
       text: { type: 'markdown', required: true },
@@ -102,6 +113,7 @@ module.exports = {
     }
   },
   video: {
+    icon: 'sticky-note',
     help: { summary: 'Displays a video.' },
     properties: {
       path: { type: 'media', medium: 'video', required: true },
@@ -109,6 +121,7 @@ module.exports = {
     }
   },
   yesno: {
+    icon: 'sticky-note',
     help: { summary: 'Displays a yes/no choice. When updated, the corresponding value in the trip state will be updated.' },
     properties: {
       text: { type: 'string', required: true },

@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'envelope',
   help: {
     summary: 'An inbox corresponds to an email address that you have access to.'
   },

@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'user',
   help: {
     summary: 'A role defines a participant in the experience. This participant can be a player, an actor, or a scripted automaton.'
   },

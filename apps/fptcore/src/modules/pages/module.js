@@ -22,9 +22,6 @@ module.exports = {
         adjust_page: require('./page_adjust'),
         send_to_page: require('./page_send_to')
       }
-    },
-    panel: {
-      subresource: require('./panel')
     }
   }, panelSubresources),
 };

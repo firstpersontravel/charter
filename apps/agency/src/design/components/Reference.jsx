@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { ModulesRegistry, TextUtil } from 'fptcore';
 
-import ResourceBadge, { RESOURCE_ICONS } from '../partials/ResourceBadge';
+import ResourceBadge from '../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
 
 function renderActions(module, actionNames) {
@@ -29,8 +29,12 @@ function renderEvents(module, eventTypes) {
 }
 
 function renderResourceLink(resourceType, moduleResource) {
-  const resourceIcon = RESOURCE_ICONS[resourceType] ? (
-    <i style={{ marginRight: '0.25em' }} className={`fa fa-${RESOURCE_ICONS[resourceType]}`} />
+  const resourceClass = moduleResource.resource || moduleResource.subresource;
+  const resourceIconName = resourceClass && resourceClass.icon;
+  const resourceIcon = resourceIconName ? (
+    <i
+      style={{ marginRight: '0.25em' }}
+      className={`fa fa-${resourceIconName}`} />
   ) : null;
 
   const resourceLabel = (
@@ -53,9 +57,7 @@ function renderResourceLink(resourceType, moduleResource) {
 }
 
 function renderSidebarResource(resourceType, moduleResource) {
-  if (resourceType === 'panel') {
-    return null;
-  }
+  // Variategated resources don't display well.
   const actionNames = Object.keys(moduleResource.actions || {});
   const eventTypes = Object.keys(moduleResource.events || {});
   const resourceStyle = (actionNames.length > 0 || eventTypes.length > 0) ?

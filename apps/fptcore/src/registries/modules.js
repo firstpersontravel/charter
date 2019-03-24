@@ -39,7 +39,7 @@ Object.values(ModulesRegistry).forEach(function(module) {
 
 var createTriggerResource = require('./trigger');
 
-ModulesRegistry.trigger = {
+ModulesRegistry.triggers = {
   resources: {
     trigger: { resource: createTriggerResource(allActions, allEvents) }
   }

@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'map-pin',
   help: {
     summary: 'A waypoint defines a location used by the trip. Each waypoint has multiple options that can be set for each trip.'
   },

@@ -39,39 +39,14 @@ const COLORS = _(ResourcesRegistry)
   .fromPairs()
   .value();
 
-export const RESOURCE_ICONS = {
-  achievement: 'trophy',
-  appearance: 'calendar',
-  audio: 'music',
-  checkpoint: 'floppy-o',
-  clip: 'volume-control-phone',
-  content_page: 'sticky-note',
-  cue: 'bell',
-  departure: 'space-shuttle',
-  email: 'envelope',
-  geofence: 'map-pin',
-  inbox: 'envelope',
-  layout: 'mobile-phone',
-  message: 'comment',
-  page: 'sticky-note',
-  panel: 'sticky-note',
-  query: 'question',
-  relay: 'phone',
-  role: 'user',
-  route: 'compass',
-  scene: 'puzzle-piece',
-  time: 'hourglass',
-  trigger: 'certificate',
-  variant: 'space-shuttle',
-  waypoint: 'map-pin'
-};
-
 export default function ResourceBadge({ resourceType, style, ...props }) {
   const styleWithColor = Object.assign({
     backgroundColor: COLORS[resourceType] || '#cccccc'
   }, style);
-  const resourceIcon = RESOURCE_ICONS[resourceType] ? (
-    <i className={`fa fa-${RESOURCE_ICONS[resourceType]}`} />
+  const resourceClass = ResourcesRegistry[resourceType] ||
+    SubresourcesRegistry[resourceType];
+  const resourceIcon = resourceClass.icon ? (
+    <i className={`fa fa-${resourceClass.icon}`} />
   ) : null;
   return (
     <span style={styleWithColor} className="badge badge-secondary" {...props}>

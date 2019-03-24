@@ -1,6 +1,7 @@
 var panel = require('./panel');
 
 module.exports = {
+  icon: 'sticky-note',
   help: {
     summary: 'A page is a user interface that can be displayed to a player. It is comprised of panels, each of which is a unit of functionality.'
   },

@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'floppy-o',
   help: {
     summary: 'A checkpoint is a saved place marker in a trip that can be quickly reset to for testing purposes.'
   },

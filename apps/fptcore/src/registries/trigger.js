@@ -147,6 +147,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
   }
 
   return {
+    icon: 'certificate',
     help: {
       summary: 'A trigger is the primary method for creating interactivity. Each trigger fires upon certain events. Once fired, it will apply a set of actions, which change the trip state.'
     },

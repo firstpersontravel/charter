@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'envelope',
   help: {
     summary: 'An email can be sent as part of an experience.'
   },

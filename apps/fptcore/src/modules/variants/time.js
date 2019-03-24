@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'hourglass',
   help: {
     summary: 'A time is a configurable schedule that can be defined by variants.'
   },

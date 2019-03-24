@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'space-shuttle',
   help: {
     summary: 'A departure is a label used to differentiate trips taking place simultaneously.'
   },

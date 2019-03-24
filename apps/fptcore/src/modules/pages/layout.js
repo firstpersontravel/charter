@@ -3,6 +3,7 @@ var panel = require('./panel');
 var LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
 
 module.exports = {
+  icon: 'mobile-phone',
   help: {
     summary: 'A layout is a combination of panels that create a user interface.'
   },

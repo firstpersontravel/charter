@@ -1,4 +1,5 @@
 module.exports = {
+  icon: 'space-shuttle',
   help: {
     summary: 'A variant defines a variation in trip values.'
   },
