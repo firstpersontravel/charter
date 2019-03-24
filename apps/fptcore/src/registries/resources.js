@@ -1,43 +1,26 @@
-var moduleResourceSets = [
-  {
-    achievement: require('../modules/achievements/module').resources.achievement.resource
-  },
-  {
-    audio: require('../modules/audio/module').resources.audio.resource
-  },
-  {
-    clip: require('../modules/calls/module').resources.clip.resource
-  },
-  require('../modules/checkpoints/resources'),
-  require('../modules/email/resources'),
-  require('../modules/locations/resources'),
-  require('../modules/messages/resources'),
-  require('../modules/pages/resources'),
-  require('../modules/relays/resources'),
-  require('../modules/roles/resources'),
-  require('../modules/scenes/resources'),
-  require('../modules/triggers/resources'),
-  require('../modules/variants/resources')
-];
+var ModulesRegistry = require('../registries/modules');
 
 var ResourcesRegistry = {};
 
-moduleResourceSets.forEach(function(moduleResourceSet) {
-  for (var resourceType in moduleResourceSet) {
-    ResourcesRegistry[resourceType] = moduleResourceSet[resourceType];
-  }
+Object.values(ModulesRegistry).forEach(function(module) {
+  Object.keys(module.resources).forEach(function(resourceType) {
+    var resourceOrModuleResource = module.resources[resourceType];
+    if (resourceOrModuleResource.resource) {
+      ResourcesRegistry[resourceType] = resourceOrModuleResource.resource;
+    } else if (resourceOrModuleResource.properties) {
+      ResourcesRegistry[resourceType] = resourceOrModuleResource;
+    }
+  });
 });
 
 module.exports = ResourcesRegistry;
 
-// var ModulesRegistry = require('../registries/modules');
 
-// var ResourcesRegistry = {};
+var ActionsRegistry = require('./actions');
+var EventsRegistry = require('./events');
+var createTriggerResource = require('./trigger');
 
-// Object.values(ModulesRegistry).forEach(function(module) {
-//   Object.keys(module.resources).forEach(function(resourceType) {
-//     ResourcesRegistry[resourceType] = module.resources[resourceType];
-//   });
-// });
+ResourcesRegistry.trigger = createTriggerResource(
+  ActionsRegistry, EventsRegistry);
 
-// module.exports = ResourcesRegistry;
+module.exports = ResourcesRegistry;

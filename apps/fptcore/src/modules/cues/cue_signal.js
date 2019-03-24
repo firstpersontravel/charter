@@ -1,4 +1,4 @@
-var signal_cue = {
+module.exports = {
   help: { summary: 'Signal a cue.' },
   params: {
     cue_name: {
@@ -21,8 +21,4 @@ var signal_cue = {
   getChildClaims: function(params) {
     // return ['cues.' + params.cue_name];
   }
-};
-
-module.exports = {
-  signal_cue: signal_cue
 };

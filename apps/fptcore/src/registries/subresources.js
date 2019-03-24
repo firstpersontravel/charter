@@ -1,28 +1,19 @@
-var moduleSubresourceSets = [
-  {
-    query: require('../modules/calls/module').resources.query.subresource
-  },
-  require('../modules/pages/subresources')
-];
+var ModulesRegistry = require('../registries/modules');
 
 var SubresourcesRegistry = {};
 
-moduleSubresourceSets.forEach(function(moduleSubresourceSet) {
-  for (var resourceType in moduleSubresourceSet) {
-    SubresourcesRegistry[resourceType] = moduleSubresourceSet[resourceType];
+Object.values(ModulesRegistry).forEach(function(module) {
+  Object.keys(module.resources).forEach(function(resourceType) {
+    var moduleResource = module.resources[resourceType];
+    if (moduleResource.subresource) {
+      SubresourcesRegistry[resourceType] = moduleResource.subresource;
+    }
+  });
+  if (module.subresources) {
+    Object.keys(module.subresources).forEach(function(resourceType) {
+      SubresourcesRegistry[resourceType] = module.subresources[resourceType];
+    });
   }
 });
 
 module.exports = SubresourcesRegistry;
-
-// var ModulesRegistry = require('../registries/modules');
-
-// var SubresourcesRegistry = {};
-
-// Object.values(ModulesRegistry).forEach(function(module) {
-//   Object.keys(module.subresources).forEach(function(resourceType) {
-//     SubresourcesRegistry[resourceType] = module.subresources[resourceType];
-//   });
-// });
-
-// module.exports = SubresourcesRegistry;

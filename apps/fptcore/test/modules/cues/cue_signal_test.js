@@ -1,15 +1,15 @@
 const assert = require('assert');
 
-const triggerActions = require('../../../src/modules/triggers/actions');
+const signal_cue = require('../../../src/modules/cues/cue_signal');
 
 describe('#signal_cue', () => {
   it('does nothing', () => {
-    const res = triggerActions.signal_cue.applyAction({}, {});
+    const res = signal_cue.applyAction({}, {});
     assert.strictEqual(res, null);
   });
 
   it('generates an event', () => {
-    const event = triggerActions.signal_cue.eventForParams({ cue_name: 'hi' });
+    const event = signal_cue.eventForParams({ cue_name: 'hi' });
     assert.deepStrictEqual(event, { type: 'cue_signaled', cue: 'hi' });
   });
 });

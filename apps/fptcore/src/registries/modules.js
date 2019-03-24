@@ -2,6 +2,7 @@ var newModuleNames = [
   'achievements',
   'audio',
   'calls',
+  'cues',
 ];
 
 var oldModuleNames = [
@@ -13,7 +14,6 @@ var oldModuleNames = [
   'relays',
   'roles',
   'scenes',
-  'triggers',
   'values',
   'variants'
 ];
@@ -28,17 +28,43 @@ function importOrBlank(moduleName, subtype) {
   }
 }
 
+var allActions = {};
+var allEvents = {};
+
 newModuleNames.forEach(function(modName) {
-  ModulesRegistry[modName] = require('../modules/' + modName + '/module');
+  var mod = require('../modules/' + modName + '/module');
+  mod.actions = {};
+  mod.events = {};
+  Object.keys(mod.resources).forEach(function(resourceType) {
+    var resourceDef = mod.resources[resourceType];
+    Object.assign(mod.actions, resourceDef.actions);
+    Object.assign(mod.events, resourceDef.events);
+  });
+  ModulesRegistry[modName] = mod;
+  Object.assign(allActions, mod.actions);
+  Object.assign(allEvents, mod.events);
 });
 
 oldModuleNames.forEach(function(modName) {
+  var actions = importOrBlank(modName, 'actions');
+  var events = importOrBlank(modName, 'events');
   ModulesRegistry[modName] = {
     subresources: importOrBlank(modName, 'subresources'),
     resources: importOrBlank(modName, 'resources'),
-    actions: importOrBlank(modName, 'actions'),
-    events: importOrBlank(modName, 'events')
+    actions: actions,
+    events: events
   };
+  Object.assign(allActions, actions);
+  Object.assign(allEvents, events);
 });
+
+
+var createTriggerResource = require('./trigger');
+
+ModulesRegistry.trigger = {
+  resources: {
+    trigger: { resource: createTriggerResource(allActions, allEvents) }
+  }
+};
 
 module.exports = ModulesRegistry;
