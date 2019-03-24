@@ -1,6 +1,8 @@
 var moduleSubresourceSets = [
-  require('../modules/pages/subresources'),
-  require('../modules/calls/subresources')
+  {
+    query: require('../modules/calls/module').resources.query.subresource
+  },
+  require('../modules/pages/subresources')
 ];
 
 var SubresourcesRegistry = {};

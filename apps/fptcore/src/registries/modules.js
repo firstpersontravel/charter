@@ -1,7 +1,10 @@
-var moduleNames = [
+var newModuleNames = [
   'achievements',
   'audio',
   'calls',
+];
+
+var oldModuleNames = [
   'checkpoints',
   'email',
   'locations',
@@ -25,12 +28,16 @@ function importOrBlank(moduleName, subtype) {
   }
 }
 
-moduleNames.forEach(function(moduleName) {
-  ModulesRegistry[moduleName] = {
-    subresources: importOrBlank(moduleName, 'subresources'),
-    resources: importOrBlank(moduleName, 'resources'),
-    actions: importOrBlank(moduleName, 'actions'),
-    events: importOrBlank(moduleName, 'events')
+newModuleNames.forEach(function(modName) {
+  ModulesRegistry[modName] = require('../modules/' + modName + '/module');
+});
+
+oldModuleNames.forEach(function(modName) {
+  ModulesRegistry[modName] = {
+    subresources: importOrBlank(modName, 'subresources'),
+    resources: importOrBlank(modName, 'resources'),
+    actions: importOrBlank(modName, 'actions'),
+    events: importOrBlank(modName, 'events')
   };
 });
 

@@ -1,5 +1,6 @@
 var moduleEventSets = [
-  require('../modules/calls/events'),
+  require('../modules/calls/module').resources.call.events,
+  require('../modules/calls/module').resources.query.events,
   require('../modules/locations/events'),
   require('../modules/messages/events'),
   require('../modules/triggers/events'),

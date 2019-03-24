@@ -1,6 +1,7 @@
 var moduleActionSets = [
-  require('../modules/audio/actions'),
-  require('../modules/calls/actions'),
+  require('../modules/audio/module').resources.audio.actions,
+  require('../modules/calls/module').resources.call.actions,
+  require('../modules/calls/module').resources.clip.actions,
   require('../modules/email/actions'),
   require('../modules/messages/actions'),
   require('../modules/pages/actions'),

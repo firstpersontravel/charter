@@ -1,4 +1,4 @@
-var audio = {
+module.exports = {
   help: {
     summary: 'An audio clip is a sound that can be referred to and played on different devices.'
   },
@@ -9,8 +9,4 @@ var audio = {
     duration: { type: 'number', required: true },
     path: { type: 'media', required: true, medium: 'audio' }
   }
-};
-
-module.exports = {
-  audio: audio
 };

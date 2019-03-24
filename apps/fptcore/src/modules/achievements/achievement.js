@@ -1,6 +1,6 @@
 var ACHIEVEMENT_STYLE_OPTIONS = ['completion', 'choice'];
 
-var achievement = {
+module.exports = {
   help: {
     summary: 'An achievement is a defined summary of trip state. A use is to easily summarize player choices and progress from an overview screen. For instance, you can quickly see which branches they experienced, how many areas were unlocked, or other metrics.',
   },
@@ -23,8 +23,4 @@ var achievement = {
       values: { type: 'string' }
     },
   }
-};
-
-module.exports = {
-  achievement: achievement
 };

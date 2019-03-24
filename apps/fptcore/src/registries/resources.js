@@ -1,8 +1,14 @@
 var moduleResourceSets = [
-  require('../modules/achievements/resources'),
-  require('../modules/audio/resources'),
+  {
+    achievement: require('../modules/achievements/module').resources.achievement.resource
+  },
+  {
+    audio: require('../modules/audio/module').resources.audio.resource
+  },
+  {
+    clip: require('../modules/calls/module').resources.clip.resource
+  },
   require('../modules/checkpoints/resources'),
-  require('../modules/calls/resources'),
   require('../modules/email/resources'),
   require('../modules/locations/resources'),
   require('../modules/messages/resources'),

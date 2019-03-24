@@ -1,44 +1,6 @@
 const assert = require('assert');
 
-const callActions = require('../../../src/modules/calls/actions');
-
-describe('#add_to_call', () => {
-  it('starts a conference from incoming call', () => {
-    const params = { role_name: 'Invitee' };
-    const actionContext = {
-      evalContext: {
-        event: { type: 'call_received', from: 'Caller' }
-      }
-    };
-
-    const res = callActions.add_to_call.applyAction(params, actionContext);
-
-    assert.deepEqual(res, [
-      {
-        operation: 'twiml',
-        clause: 'dial',
-        fromRoleName: 'Caller',
-        toRoleName: 'Invitee'
-      }
-    ]);
-  });
-});
-
-describe('#initiate_call', () => {
-  it('starts a conference from incoming call', () => {
-    const params = { to_role_name: 'Callee', as_role_name: 'Actor' };
-    const actionContext = { evalContext: {} };
-
-    const res = callActions.initiate_call.applyAction(params, actionContext);
-
-    assert.deepEqual(res, [{
-      operation: 'initiateCall',
-      toRoleName: 'Callee',
-      asRoleName: 'Actor',
-      detectVoicemail: false
-    }]);
-  });
-});
+const play_clip = require('../../../src/modules/calls/clip_play');
 
 describe('#play_clip', () => {
   it('does nothing if cannot find clip', () => {
@@ -47,7 +9,7 @@ describe('#play_clip', () => {
       scriptContent: {}
     };
 
-    const res = callActions.play_clip.applyAction(params, actionContext);
+    const res = play_clip.applyAction(params, actionContext);
 
     assert.deepEqual(res, null);
   });
@@ -63,7 +25,7 @@ describe('#play_clip', () => {
       }
     };
 
-    const res = callActions.play_clip.applyAction(params, actionContext);
+    const res = play_clip.applyAction(params, actionContext);
 
     assert.deepEqual(res, [
       { operation: 'twiml', clause: 'play', media: 'audio.mp3' }
@@ -81,7 +43,7 @@ describe('#play_clip', () => {
       }
     };
 
-    const res = callActions.play_clip.applyAction(params, actionContext);
+    const res = play_clip.applyAction(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',
@@ -105,7 +67,7 @@ describe('#play_clip', () => {
         }]
       }
     };
-    const res = callActions.play_clip.applyAction(params, actionContext);
+    const res = play_clip.applyAction(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',
@@ -136,7 +98,7 @@ describe('#play_clip', () => {
       }
     };
 
-    const res = callActions.play_clip.applyAction(params, actionContext);
+    const res = play_clip.applyAction(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',
