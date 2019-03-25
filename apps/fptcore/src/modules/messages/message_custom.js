@@ -17,22 +17,6 @@ module.exports = {
   phraseForm: [
     'from_role_name', 'to_role_name', 'message_medium', 'message_content'
   ],
-  eventForParams: function(params) {
-    return {
-      type: 'message_sent',
-      message: {
-        from: params.from_role_name,
-        to: params.to_role_name,
-        medium: params.message_medium,
-        content: params.message_content
-      },
-      location: {
-        latitude: params.location_latitude,
-        longitude: params.location_longitude,
-        accuracy: params.location_accuracy
-      }
-    };
-  },
   applyAction: function(params, actionContext) {
     var roles = actionContext.scriptContent.roles || [];
     var sentByRole = _.find(roles, { name: params.from_role_name });
@@ -53,6 +37,22 @@ module.exports = {
         sentFromAccuracy: params.location_accuracy || null,
         isReplyNeeded: isReplyNeeded,
         isInGallery: params.message_medium === 'image'
+      }
+    }, {
+      operation: 'event',
+      event: {
+        type: 'message_sent',
+        message: {
+          from: params.from_role_name,
+          to: params.to_role_name,
+          medium: params.message_medium,
+          content: params.message_content
+        },
+        location: {
+          latitude: params.location_latitude,
+          longitude: params.location_longitude,
+          accuracy: params.location_accuracy
+        }
       }
     }];
   }

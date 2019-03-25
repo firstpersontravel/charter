@@ -9,14 +9,11 @@ module.exports = {
     }
   },
   phraseForm: ['cue_name'],
-  eventForParams: function(params) {
-    return {
-      type: 'cue_signaled',
-      cue: params.cue_name
-    };
-  },
   applyAction: function(params, actionContext) {
-    return null;
+    return [{
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: params.cue_name }
+    }];
   },
   getChildClaims: function(params) {
     // return ['cues.' + params.cue_name];

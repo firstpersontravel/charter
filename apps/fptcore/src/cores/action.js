@@ -38,18 +38,6 @@ ActionCore.opsForAction = function(action, actionContext) {
 };
 
 /**
- * Get the results for a given action.
- */
-ActionCore.eventForAction = function(action) {
-  var actionClass = ActionsRegistry[action.name];
-  if (!actionClass) {
-    throw new Error('Invalid action "' + action.name + '".');
-  }
-  var eventFunc = actionClass.eventForParams;
-  return eventFunc ? eventFunc(action.params) : null;
-};
-
-/**
  * Just apply a simple action and return the result.
  */
 ActionCore.applyActionSimple = function(action, actionContext) {
@@ -58,19 +46,17 @@ ActionCore.applyActionSimple = function(action, actionContext) {
 };
 
 /**
- * Apply an action, including any triggers started by a resulting event.
+ * Apply an action, including any triggers started by a resulting events.
  */
 ActionCore.applyAction = function(action, actionContext) {
   var result = ActionCore.applyActionSimple(action, actionContext);
-  var event = ActionCore.eventForAction(action);
-  // If no event, return the simple result
-  if (!event) {
-    return result;
-  }
-  // Otherwise, calculate the concatentation of that action and the triggered
-  // event.
-  var eventResult = ActionCore.applyEvent(event, result.nextContext);
-  return ActionResultCore.concatResult(result, eventResult);
+  var eventOps = _.filter(result.resultOps, { operation: 'event' });
+  eventOps.forEach(function(eventOp) {
+    var event = eventOp.event;
+    var eventResult = ActionCore.applyEvent(event, result.nextContext);
+    result = ActionResultCore.concatResult(result, eventResult);
+  });
+  return result;
 };
 
 /**

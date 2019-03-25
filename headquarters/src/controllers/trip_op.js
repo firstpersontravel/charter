@@ -10,6 +10,7 @@ class TripOpController {
   static async twiml() { /* ignore */ }
   static async updateAudio() { /* ignore */ }
   static async updateUi() { /* ignore */ }
+  static async event() { /* ignore - handled internally */}
 
   static async updateTripFields(objs, op) {
     return await objs.trip.update(op.fields);

@@ -3,12 +3,6 @@ var _ = require('lodash');
 module.exports = {
   help: { summary: 'Update the current scene.' },
   phraseForm: ['scene_name'],
-  eventForParams: function(params) {
-    return {
-      type: 'scene_started',
-      scene: params.scene_name
-    };
-  },
   params: {
     scene_name: {
       required: true,
@@ -28,6 +22,12 @@ module.exports = {
     return [{
       operation: 'updateTripFields',
       fields: { currentSceneName: newSceneName }
+    }, {
+      operation: 'event',
+      event: {
+        type: 'scene_started',
+        scene: params.scene_name
+      }
     }];
   }
 };

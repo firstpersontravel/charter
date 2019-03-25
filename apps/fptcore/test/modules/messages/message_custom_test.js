@@ -36,6 +36,22 @@ describe('#custom_message', () => {
         isInGallery: false
       },
       suppressRelayId: null
+    }, {
+      operation: 'event',
+      event: {
+        type: 'message_sent',
+        message: {
+          from: 'Ally',
+          to: 'Babbit',
+          medium: 'text',
+          content: 'hi'
+        },
+        location: {
+          latitude: undefined,
+          longitude: undefined,
+          accuracy: undefined
+        }
+      }
     }]);
   });
 
@@ -88,6 +104,22 @@ describe('#custom_message', () => {
         isInGallery: true
       },
       suppressRelayId: null
+    }, {
+      operation: 'event',
+      event: {
+        type: 'message_sent',
+        message: {
+          from: 'Ally',
+          to: 'Babbit',
+          medium: 'image',
+          content: 'url'
+        },
+        location: {
+          latitude: 38.051112,
+          longitude: -122.693563,
+          accuracy: 30
+        }
+      }
     }]);
   });
 
@@ -116,35 +148,22 @@ describe('#custom_message', () => {
         isInGallery: false
       },
       suppressRelayId: null
-    }]);
-  });
-
-  it('generates an event', () => {
-    const params = {
-      message_medium: 'audio',
-      message_content: 'url',
-      from_role_name: 'Ally',
-      to_role_name: 'Babbit',
-      location_latitude: 38.051112,
-      location_longitude: -122.693563,
-      location_accuracy: 30
-    };
-
-    const event = custom_message.eventForParams(params);
-
-    assert.deepStrictEqual(event, {
-      type: 'message_sent',
-      message: {
-        from: 'Ally',
-        to: 'Babbit',
-        medium: 'audio',
-        content: 'url'
-      },
-      location: {
-        latitude: 38.051112,
-        longitude: -122.693563,
-        accuracy: 30
+    }, {
+      operation: 'event',
+      event: {
+        type: 'message_sent',
+        message: {
+          from: 'Ally',
+          to: 'Babbit',
+          medium: 'audio',
+          content: 'url'
+        },
+        location: {
+          latitude: undefined,
+          longitude: undefined,
+          accuracy: undefined
+        }
       }
-    });
+    }]);
   });
 });

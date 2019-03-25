@@ -35,10 +35,6 @@ describe('ActionCore', () => {
     it.skip('tbd');
   });
 
-  describe('#eventForAction', () => {
-    it.skip('tbd');
-  });
-
   describe('#addEventToContext', () => {
     it('adds event to context', () => {
       const event = { type: 'event' };
@@ -80,13 +76,22 @@ describe('ActionCore', () => {
     });
 
     it('returns action and subsequent event results', () => {
-      const eventSentinel = {};
-      sandbox.stub(ActionCore, 'eventForAction').returns(eventSentinel);
+      sandbox.stub(ActionCore, 'applyActionSimple')
+        .callsFake(function(action, actionContext) {
+          return {
+            nextContext: actionContext,
+            resultOps: [{ operation: 'event', event: { type: '123' }}],
+            scheduledActions: []
+          };
+        });
       sandbox.stub(ActionCore, 'applyEvent')
         .callsFake(function(event, actionContext) {
           return {
-            nextContext: actionContext,
-            resultOps: [{ operation: 'updateTripValues', values: {} }],
+            nextContext: { evalContext: { number: 1 } },
+            resultOps: [{
+              operation: 'updateTripValues',
+              values: { number: 1 }
+            }],
             scheduledActions: []
           };
         });
@@ -96,13 +101,18 @@ describe('ActionCore', () => {
 
       const result = ActionCore.applyAction(action, actionContext);
 
+      sinon.assert.calledOnce(ActionCore.applyEvent);
+      sinon.assert.calledWith(ActionCore.applyEvent, { type: '123' });
+
+      console.log('result.nextContext', result.nextContext);
+
       assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updateTripValues',
-        values: { number: 1 }
+        operation: 'event',
+        event: { type: '123' }
       }, {
         operation: 'updateTripValues',
-        values: {}
+        values: { number: 1 }
       }]);
     });
   });

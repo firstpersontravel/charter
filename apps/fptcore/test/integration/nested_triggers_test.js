@@ -149,6 +149,9 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.evalContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: 'CUE-PICK-APPLES' }
+    }, {
       operation: 'updateTripHistory',
       history: { 'TRIGGER-PICK-APPLES': now.toISOString() }
     }, {
@@ -187,6 +190,9 @@ describe('Integration - Nested Triggers', () => {
 
     assert.strictEqual(result.nextContext.evalContext.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' }
+    }, {
       operation: 'updateTripHistory',
       history: { 'TRIGGER-SUNRISE': now.toISOString() }
     }]);
@@ -251,29 +257,50 @@ describe('Integration - Nested Triggers', () => {
         })]);
 
     // Test results
-    assert.deepStrictEqual(result.resultOps,
-      [{
-        operation: 'updateTripHistory',
-        history: { 'TRIGGER-GREET-1': now.toISOString() }
-      }, {
-        operation: 'updateTripHistory',
-        history: { 'TRIGGER-GREET-2': now.toISOString() }
-      }, {
-        operation: 'createMessage',
-        fields: {
-          medium: 'text',
+    assert.deepStrictEqual(result.resultOps, [{
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: 'CUE-GREET' }
+    }, {
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-GREET-1': now.toISOString() }
+    }, {
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }
+    }, {
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-GREET-2': now.toISOString() }
+    }, {
+      operation: 'createMessage',
+      fields: {
+        medium: 'text',
+        content: 'howdy',
+        createdAt: now,
+        sentById: 3,
+        sentToId: 1,
+        sentFromLatitude: null,
+        sentFromLongitude: null,
+        sentFromAccuracy: null,
+        isReplyNeeded: false,
+        isInGallery: false
+      },
+      suppressRelayId: null
+    }, {
+      operation: 'event',
+      event: {
+        type: 'message_sent',
+        message: {
           content: 'howdy',
-          createdAt: now,
-          sentById: 3,
-          sentToId: 1,
-          sentFromLatitude: null,
-          sentFromLongitude: null,
-          sentFromAccuracy: null,
-          isReplyNeeded: false,
-          isInGallery: false
+          from: 'Cowboy',
+          to: 'Farmer',
+          medium: 'text'
         },
-        suppressRelayId: null
-      }]);
+        location: {
+          longitude: undefined,
+          latitude: undefined,
+          accuracy: undefined
+        }
+      }
+    }]);
   });
 
   it('applies nested triggers requiring intermediate context', () => {
@@ -284,32 +311,53 @@ describe('Integration - Nested Triggers', () => {
 
     const result = ActionCore.applyAction(unpackedAction, actionContext);
 
-    assert.deepStrictEqual(result.resultOps,
-      [{
-        operation: 'updateTripHistory',
-        history: { 'TRIGGER-NAV-1': now.toISOString() }
-      }, {
-        operation: 'updateTripValues',
-        values: { is_navigating: true }
-      }, {
-        operation: 'updateTripHistory',
-        history: { 'TRIGGER-NAV-2': now.toISOString() }
-      }, {
-        operation: 'createMessage',
-        fields: {
-          medium: 'text',
+    assert.deepStrictEqual(result.resultOps, [{
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: 'CUE-NAV-1' }
+    }, {
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-NAV-1': now.toISOString() }
+    }, {
+      operation: 'updateTripValues',
+      values: { is_navigating: true }
+    }, {
+      operation: 'event',
+      event: { type: 'cue_signaled', cue: 'CUE-NAV-2' }
+    }, {
+      operation: 'updateTripHistory',
+      history: { 'TRIGGER-NAV-2': now.toISOString() }
+    }, {
+      operation: 'createMessage',
+      fields: {
+        medium: 'text',
+        content: 'geewhiz',
+        createdAt: now,
+        sentById: 3,
+        sentToId: 1,
+        sentFromLatitude: null,
+        sentFromLongitude: null,
+        sentFromAccuracy: null,
+        isReplyNeeded: false,
+        isInGallery: false
+      },
+      suppressRelayId: null
+    }, {
+      operation: 'event',
+      event: {
+        type: 'message_sent',
+        message: {
           content: 'geewhiz',
-          createdAt: now,
-          sentById: 3,
-          sentToId: 1,
-          sentFromLatitude: null,
-          sentFromLongitude: null,
-          sentFromAccuracy: null,
-          isReplyNeeded: false,
-          isInGallery: false
+          from: 'Cowboy',
+          to: 'Farmer',
+          medium: 'text'
         },
-        suppressRelayId: null
-      }]);
+        location: {
+          latitude: undefined,
+          longitude: undefined,
+          accuracy: undefined
+        }
+      }
+    }]);
   });
 
   it('applies scene start cues after start_scene event', () => {
