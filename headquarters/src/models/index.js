@@ -3,6 +3,7 @@ module.exports = {
   Asset: require('./asset'),
   Experience: require('./experience'),
   Group: require('./group'),
+  LogEntry: require('./log_entry'),
   Message: require('./message'),
   Org: require('./org'),
   OrgRole: require('./org_role'),
