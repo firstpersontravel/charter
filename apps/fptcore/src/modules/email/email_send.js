@@ -17,7 +17,11 @@ module.exports = {
     var name = params.email_name;
     var emailData = _.find(actionContext.scriptContent.emails, { name: name });
     if (!emailData) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find email named "' + name + '".'
+      }];
     }
     var subject = EvalCore.templateText(actionContext.evalContext,
       emailData.subject, actionContext.timezone);
@@ -27,22 +31,39 @@ module.exports = {
     var fromInbox = _.find(actionContext.scriptContent.inboxes,
       { name: emailData.from });
     if (!fromInbox) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find inbox named "' + emailData.from + '".'
+      }];
     }
 
     var toRole = _.find(actionContext.scriptContent.roles,
       { name: emailData.to });
     if (!toRole) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find role named "' + params.emailData.to + '".'
+      }];
     }
 
     var toPlayer = actionContext.evalContext[toRole.name];
     if (!toPlayer) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find player context for "' + toRole.name + '".'
+      }];
     }
 
     if (!toPlayer.email) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'warning',
+        message: 'Tried to send email but player "' + toRole.name +
+          '" had no email address.'
+      }];
     }
 
     return [{

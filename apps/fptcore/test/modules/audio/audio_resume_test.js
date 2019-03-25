@@ -13,7 +13,7 @@ describe('#resume_audio', () => {
     }]
   };
 
-  it('does nothing if not started', () => {
+  it('logs error if not started', () => {
     const params = { role_name: 'Tablet' };
     const actionContext = {
       scriptContent: scriptContent,
@@ -21,10 +21,14 @@ describe('#resume_audio', () => {
       evaluateAt: now
     };
     const res = resume_audio.applyAction(params, actionContext);
-    assert.strictEqual(res, null);
+    assert.deepStrictEqual(res, [{
+      operation: 'log',
+      level: 'error',
+      message: 'Tried to resume audio when no pause time was available.'
+    }]);
   });
 
-  it('does nothing if playing', () => {
+  it('logs warning if playing', () => {
     const params = { role_name: 'Tablet' };
     const actionContext = {
       scriptContent: scriptContent,
@@ -32,7 +36,11 @@ describe('#resume_audio', () => {
       evaluateAt: now
     };
     const res = resume_audio.applyAction(params, actionContext);
-    assert.strictEqual(res, null);
+    assert.deepStrictEqual(res, [{
+      operation: 'log',
+      level: 'warning',
+      message: 'Tried to resume audio when audio was already playing.'
+    }]);
   });
 
   it('resume audio', () => {

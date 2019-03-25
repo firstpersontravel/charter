@@ -18,7 +18,11 @@ module.exports = {
     var clip = _.find(actionContext.scriptContent.clips,
       { name: params.clip_name });
     if (!clip) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find clip named "' + params.clip_name + '".'
+      }];
     }
     // Play audio if it is present.
     var playClause = clip.path ?

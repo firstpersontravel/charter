@@ -16,7 +16,11 @@ module.exports = {
     var newScene = _.find(actionContext.scriptContent.scenes,
       { name: newSceneName });
     if (!newScene) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find scene named "' + newScene + '".'
+      }];
     }
     // Create updates object
     return [{

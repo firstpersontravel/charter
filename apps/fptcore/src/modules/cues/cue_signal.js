@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = {
   help: { summary: 'Signal a cue.' },
   params: {
@@ -10,6 +12,15 @@ module.exports = {
   },
   phraseForm: ['cue_name'],
   applyAction: function(params, actionContext) {
+    var cue = _.find(actionContext.scriptContent.cues,
+      { name: params.cue_name });
+    if (!cue) {
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find cue named "' + params.cue_name + '".'
+      }];
+    }
     return [{
       operation: 'event',
       event: { type: 'cue_signaled', cue: params.cue_name }

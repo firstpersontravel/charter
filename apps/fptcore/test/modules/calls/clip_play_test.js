@@ -3,7 +3,7 @@ const assert = require('assert');
 const play_clip = require('../../../src/modules/calls/clip_play');
 
 describe('#play_clip', () => {
-  it('does nothing if cannot find clip', () => {
+  it('logs error if cannot find clip', () => {
     const params = { clip_name: 'CLIP-TEST' };
     const actionContext = {
       scriptContent: {}
@@ -11,7 +11,11 @@ describe('#play_clip', () => {
 
     const res = play_clip.applyAction(params, actionContext);
 
-    assert.deepEqual(res, null);
+    assert.deepStrictEqual(res, [{
+      operation: 'log',
+      level: 'error',
+      message: 'Could not find clip named "CLIP-TEST".'
+    }]);
   });
 
   it('plays audio clip if found', () => {

@@ -28,5 +28,10 @@ module.exports = {
         toRoleName: params.role_name
       }];
     }
+    return [{
+      operation: 'log',
+      level: 'error',
+      message: 'Invalid triggering event "' + (evt.type || 'none') + '".'
+    }];
   }
 };

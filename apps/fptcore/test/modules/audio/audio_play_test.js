@@ -13,7 +13,7 @@ describe('#play_audio', () => {
     }]
   };
 
-  it('does nothing if audio not found', () => {
+  it('logs error if audio not found', () => {
     const params = { role_name: 'Tablet', audio_name: 'AUDIO-3' };
     const actionContext = {
       scriptContent: scriptContent,
@@ -21,7 +21,11 @@ describe('#play_audio', () => {
       evaluateAt: now
     };
     const res = play_audio.applyAction(params, actionContext);
-    assert.strictEqual(res, null);
+    assert.deepStrictEqual(res, [{
+      operation: 'log',
+      level: 'error',
+      message: 'Could not find audio named "AUDIO-3".'
+    }]);
   });
 
   it('plays audio', () => {

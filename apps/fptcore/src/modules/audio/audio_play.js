@@ -16,7 +16,11 @@ module.exports = {
     var audio = _.find(actionContext.scriptContent.audio,
       { name: params.audio_name });
     if (!audio) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find audio named "' + params.audio_name + '".'
+      }];
     }
 
     return [{

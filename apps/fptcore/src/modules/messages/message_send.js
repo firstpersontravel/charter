@@ -24,7 +24,11 @@ module.exports = {
     var messageData = _.find(actionContext.scriptContent.messages,
       { name: name });
     if (!messageData) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find message named "' + name + '".'
+      }];
     }
     var medium = messageData.medium;
     var content = EvalCore.templateText(actionContext.evalContext,
@@ -33,7 +37,11 @@ module.exports = {
     var fromRoleName = messageData.from;
     var toRoleName = params.to_role_name || messageData.to;
     if (!toRoleName) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find role named "' + toRoleName + '".'
+      }];
     }
     return [{
       operation: 'createMessage',

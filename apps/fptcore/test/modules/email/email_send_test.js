@@ -46,15 +46,19 @@ describe('#send_email', () => {
     }]);
   });
 
-  it('does nothing if email is not found', () => {
+  it('logs eror if email is not found', () => {
     const params = { email_name: 'EMAIL2' };
 
     const res = send_email.applyAction(params, actionContext);
 
-    assert.deepStrictEqual(res, null);
+    assert.deepStrictEqual(res, [{
+      operation: 'log',
+      level: 'error',
+      message: 'Could not find email named "EMAIL2".'
+    }]);
   });
 
-  it('does nothing if to email is not present', () => {
+  it('logs warning if to email is not present', () => {
     const clonedActionContext = _.cloneDeep(actionContext);
     delete clonedActionContext.evalContext.Player.email;
 
@@ -62,6 +66,10 @@ describe('#send_email', () => {
 
     const res = send_email.applyAction(params, clonedActionContext);
 
-    assert.deepStrictEqual(res, null);
+    assert.deepStrictEqual(res, [{
+      operation: 'log',
+      level: 'warning',
+      message: 'Tried to send email but player "Player" had no email address.'
+    }]);
   });
 });

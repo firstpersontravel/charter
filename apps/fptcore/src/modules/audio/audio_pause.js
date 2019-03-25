@@ -12,7 +12,13 @@ module.exports = {
   },
   phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {
-    if (!actionContext.evalContext.audio_is_playing) { return null; }
+    if (!actionContext.evalContext.audio_is_playing) {
+      return [{
+        operation: 'log',
+        level: 'info',
+        message: 'Tried to pause audio when none was playing.'
+      }];
+    }
 
     var startedTime = actionContext.evalContext.audio_started_time;
     var startedAt = moment.utc(actionContext.evalContext.audio_started_at);

@@ -11,10 +11,18 @@ module.exports = {
   phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {
     if (actionContext.evalContext.audio_is_playing) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'warning',
+        message: 'Tried to resume audio when audio was already playing.'
+      }];
     }
     if (!actionContext.evalContext.audio_paused_time) {
-      return null;
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Tried to resume audio when no pause time was available.'
+      }];
     }
     return [{
       operation: 'updateTripValues',
