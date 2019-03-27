@@ -33,7 +33,7 @@
     yarn run download_secrets
 
     # setup core
-    cd apps/fptcore
+    cd fptcore
         yarn install
 
     # setup travel
@@ -41,18 +41,13 @@
         yarn install
         bower install
         rm -rf node_modules/fptcore
-        ln -s `pwd`/../fptcore ./node_modules
+        ln -s `pwd`/../../fptcore ./node_modules
 
     # setup agency
     cd apps/agency
         yarn install
         rm -rf node_modules/fptcore
-        ln -s `pwd`/../fptcore ./node_modules
-
-    # setup app
-    cd headquarters
-        yarn install
-        ln -s `pwd`/../apps/fptcore ./node_modules
+        ln -s `pwd`/../../fptcore ./node_modules
 
     # run tests
     yarn test

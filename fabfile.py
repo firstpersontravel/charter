@@ -554,7 +554,7 @@ def create_release():
     _create_release()
 
     symlink_paths = [
-        '/apps/fptcore/node_modules',
+        '/fptcore/node_modules',
         '/apps/travel/node_modules',
         '/apps/travel/bower_components',
         '/apps/agency/node_modules',
@@ -595,22 +595,22 @@ def install_node_requirements():
     #     run('npm install')
     with cd('%s/headquarters' % env.repo_path):
         run('yarn install')
-    with cd('%s/apps/fptcore' % env.repo_path):
+    with cd('%s/fptcore' % env.repo_path):
         run('yarn install')
     with cd('%s/apps/agency' % env.repo_path):
         run('yarn install')
         run('rm -rf %s/apps/agency/node_modules/fptcore' % env.repo_path)
-        run('ln -nsf %s/apps/fptcore %s/apps/agency/node_modules'
+        run('ln -nsf %s/fptcore %s/apps/agency/node_modules'
              % (env.repo_path, env.repo_path))
     with cd('%s/apps/travel' % env.repo_path):
         run('yarn install')
         run('rm -rf %s/apps/travel/node_modules/fptcore' % env.repo_path)
-        run('ln -nsf %s/apps/fptcore %s/apps/travel/node_modules'
+        run('ln -nsf %s/fptcore %s/apps/travel/node_modules'
              % (env.repo_path, env.repo_path))
         run('bower install')
-    with cd('%s/headquarters' % env.repo_path):
-        run('ln -nsf %s/apps/fptcore %s/headquarters/node_modules'
-             % (env.repo_path, env.repo_path))
+    # with cd('%s/headquarters' % env.repo_path):
+    #     run('ln -nsf %s/apps/fptcore %s/headquarters/node_modules'
+    #          % (env.repo_path, env.repo_path))
 
 def install_nginx():
     sudo('add-apt-repository -y ppa:nginx/stable')

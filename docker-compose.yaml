@@ -19,8 +19,10 @@ services:
     image: fpt:latest
     # uncomment all volumes to test baked version for deployment
     volumes:
+      - ./fptcore/package.json:/var/app/fptcore/package.json
+      - ./fptcore/migrations:/var/app/fptcore/migrations
+      - ./fptcore/src:/var/app/fptcore/src
       - ./headquarters/package.json:/var/app/headquarters/package.json
-      - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
       - ./headquarters/bin:/var/app/headquarters/bin
       - ./headquarters/cmd:/var/app/headquarters/cmd
       - ./headquarters/config:/var/app/headquarters/config
@@ -39,7 +41,7 @@ services:
     image: fpt:latest
     # uncomment all volumes to test baked version for deployment
     volumes:
-      - ./apps/fptcore:/var/npm/beta/node_modules/fptcore
+      - ./fptcore/src:/var/app/fptcore/src
       - ./headquarters/bin:/var/app/headquarters/bin
       - ./headquarters/src:/var/app/headquarters/src
     env_file: [./secrets/env-local]

@@ -2,11 +2,9 @@ const _ = require('lodash');
 
 const EmailController = require('../controllers/email');
 const MessageController = require('../controllers/message');
+const TripLogController = require('../controllers/trip_log');
 const TripRelaysController = require('../controllers/trip_relays');
-const config = require('../config');
 const models = require('../models');
-
-const logger = config.logger.child({ name: 'controllers.trip_op' });
 
 class TripOpController {
 
@@ -16,7 +14,7 @@ class TripOpController {
   static async event() { /* ignore - handled internally */}
 
   static async log(objs, op) {
-    logger[op.level].call(logger, op.message);
+    TripLogController.log(objs.trip, op.level, op.message);
   }
 
   static async updateTripFields(objs, op) {

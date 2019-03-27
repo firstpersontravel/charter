@@ -1,7 +1,9 @@
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-const { TriggerEventCore, EventsRegistry, SceneCore } = require('fptcore');
+const TriggerEventCore = require('../../../fptcore/src/cores/trigger_event');
+const SceneCore = require('../../../fptcore/src/cores/scene');
+const EventsRegistry = require('../../../fptcore/src/registries/events');
 
 const config = require('../config');
 const models = require('../models');

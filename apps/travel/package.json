@@ -44,6 +44,6 @@
     "ember-resolver": "^2.0.3",
     "faye": "^1.2.4",
     "font-awesome": "4.4.0",
-    "fptcore": "file:../fptcore"
+    "fptcore": "file:../../fptcore"
   }
 }

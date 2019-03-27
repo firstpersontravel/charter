@@ -5,7 +5,7 @@
   "scripts": {
     "test": "yarn run test_core && yarn run test_agency && yarn run test_hq",
     "test_hq": "cd headquarters; yarn test",
-    "test_core": "cd apps/fptcore; yarn test",
+    "test_core": "cd fptcore; yarn test",
     "test_agency": "cd apps/agency; yarn test",
     "build_travel": "cd apps/travel && ember build --env production && echo `TZ=US/Pacific date` > dist/build_timestamp.txt && rm -rf dist/dist.zip; zip -q -r dist/dist.zip dist",
     "build_agency": "cd apps/agency; export NODE_ENV=production; webpack --colors",

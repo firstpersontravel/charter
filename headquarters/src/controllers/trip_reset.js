@@ -1,6 +1,8 @@
 const _ = require('lodash');
 
-const { SceneCore, TripCore, PlayerCore } = require('fptcore');
+const SceneCore = require('../../../fptcore/src/cores/scene');
+const TripCore = require('../../../fptcore/src/cores/trip');
+const PlayerCore = require('../../../fptcore/src/cores/player');
 
 const TripNotifyController = require('./trip_notify');
 const TripUtil = require('./trip_util');

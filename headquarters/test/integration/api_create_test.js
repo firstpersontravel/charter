@@ -1,7 +1,7 @@
 const assert = require('assert');
 const request = require('supertest');
 
-const { ScriptCore } = require('fptcore');
+const ScriptCore = require('../../../fptcore/src/cores/script');
 
 const app = require('../../src/app');
 const TestUtil = require('../util');

@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const { ContextCore } = require('fptcore');
+const ContextCore = require('../../../fptcore/src/cores/context');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');

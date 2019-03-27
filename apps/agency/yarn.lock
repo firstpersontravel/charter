@@ -2586,7 +2586,7 @@ forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
 
-"fptcore@file:../fptcore":
+"fptcore@file:../../fptcore":
   version "0.1.0"
   dependencies:
     lodash "^4.17.3"

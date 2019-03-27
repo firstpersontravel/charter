@@ -2,7 +2,8 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const Sequelize = require('sequelize');
 
-const { EvalCore, PlayerCore } = require('fptcore');
+const EvalCore = require('../../../fptcore/src/cores/eval');
+const PlayerCore = require('../../../fptcore/src/cores/player');
 
 const config = require('../config');
 const models = require('../models');

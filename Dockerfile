@@ -34,22 +34,22 @@ RUN cd /var/npm/beta && yarn install
 
 # Install core modules
 RUN mkdir -p /var/npm/fptcore
-ADD apps/fptcore/package.json /var/npm/fptcore/package.json
-ADD apps/fptcore/yarn.lock /var/npm/fptcore/yarn.lock
+ADD fptcore/package.json /var/npm/fptcore/package.json
+ADD fptcore/yarn.lock /var/npm/fptcore/yarn.lock
 RUN cd /var/npm/fptcore && yarn install
 
 # Install travel modules
-RUN mkdir -p /var/npm/travel
-ADD apps/travel/package.json /var/npm/travel/package.json
-ADD apps/travel/yarn.lock /var/npm/travel/yarn.lock
-RUN cd /var/npm/travel && yarn install
+RUN mkdir -p /var/npm/apps/travel
+ADD apps/travel/package.json /var/npm/apps/travel/package.json
+ADD apps/travel/yarn.lock /var/npm/apps/travel/yarn.lock
+RUN cd /var/npm/apps/travel && yarn install
 
 # Install agency modules
-RUN mkdir -p /var/npm/agency
-ADD apps/agency/package.json /var/npm/agency/package.json
-ADD apps/agency/yarn.lock /var/npm/agency/yarn.lock
-RUN cd /var/npm/agency && yarn add node-sass@latest
-RUN cd /var/npm/agency && yarn install
+RUN mkdir -p /var/npm/apps/agency
+ADD apps/agency/package.json /var/npm/apps/agency/package.json
+ADD apps/agency/yarn.lock /var/npm/apps/agency/yarn.lock
+RUN cd /var/npm/apps/agency && yarn add node-sass@latest
+RUN cd /var/npm/apps/agency && yarn install
 
 # Install travel bower components
 RUN mkdir -p /var/bower/travel
@@ -58,25 +58,28 @@ RUN cd /var/bower/travel && bower --allow-root install
 
 # Install apps directory and static dir
 ADD static /var/app/static
+ADD fptcore /var/app/fptcore
 ADD apps /var/app/apps
 ADD headquarters /var/app/headquarters
 
 # Symlink cached requirements
-RUN ln -nsf /var/npm/fptcore/node_modules /var/app/apps/fptcore
-RUN ln -nsf /var/npm/agency/node_modules /var/app/apps/agency
-RUN ln -nsf /var/npm/travel/node_modules /var/app/apps/travel
+RUN ln -nsf /var/npm/fptcore/node_modules /var/app/fptcore
+RUN ln -nsf /var/npm/apps/agency/node_modules /var/app/apps/agency
+RUN ln -nsf /var/npm/apps/travel/node_modules /var/app/apps/travel
 RUN ln -nsf /var/bower/travel/bower_components /var/app/apps/travel
 RUN ln -nsf /var/npm/beta/node_modules /var/app/headquarters
 
 # Link core with symlink
 RUN rm -rf /var/app/apps/agency/node_modules/fptcore && \
-    ln -nsf /var/app/apps/fptcore /var/app/apps/agency/node_modules/fptcore
+    ln -nsf /var/app/fptcore /var/app/apps/agency/node_modules/fptcore
 RUN rm -rf /var/app/apps/travel/node_modules/fptcore && \
-    ln -nsf /var/app/apps/fptcore /var/app/apps/travel/node_modules/fptcore
-RUN ln -nsf /var/app/apps/fptcore /var/npm/beta/node_modules
+    ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore
+
+# don't symlink headquarters since it uses relative references
+# RUN ln -nsf /var/app/fptcore /var/npm/beta/node_modules
 
 # Run tests
-RUN cd /var/app/apps/fptcore && yarn test
+RUN cd /var/app/fptcore && yarn test
 RUN cd /var/app/apps/agency && yarn test
 RUN cd /var/app/headquarters && yarn test
 

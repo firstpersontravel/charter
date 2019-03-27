@@ -1,4 +1,5 @@
-const { TripCore, PlayerCore } = require('fptcore');
+const TripCore = require('../../../fptcore/src/cores/trip');
+const PlayerCore = require('../../../fptcore/src/cores/player');
 
 const models = require('../models');
 

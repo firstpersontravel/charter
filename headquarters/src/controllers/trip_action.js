@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const { ActionCore } = require('fptcore');
+const ActionCore = require('../../../fptcore/src/cores/action');
 
 const config = require('../config');
 const TripOpController = require('./trip_op');

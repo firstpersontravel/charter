@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const { ActionPhraseCore } = require('fptcore');
+const ActionPhraseCore = require('../../../fptcore/src/cores/action_phrase');
 
 const models = require('../models');
 const ExperienceController = require('../controllers/experience');
