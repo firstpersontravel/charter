@@ -47,7 +47,7 @@ export default class GroupOverview extends Component {
           className={pageInfo.statusClass}
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${roleAndActors.role.name}/${actor.userId || 0}`}>
           <strong>
-            {roleAndActors.role.name}{userNameIfMultiple}:
+            {roleAndActors.role.title}{userNameIfMultiple}:
           </strong>
           {' '}
           {trip.departureName}
@@ -70,7 +70,9 @@ export default class GroupOverview extends Component {
       <div key={player.id} className="constrain-text">
         <IndexLink
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/players/${player.role.name}`}>
-          {trip.departureName} {player.role.name}:
+          <strong>{trip.departureName} {trip.title}</strong>
+          {' '}
+          {player.role.title}:
           {' '}
           {pageInfo.status}
         </IndexLink>

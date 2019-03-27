@@ -65,7 +65,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
   menu: function() {
     var selectedContact = this.get('selectedContact');
     return this.get('contacts').map(function(contact) {
-      var contactName = contact.get('contactName') || contact.get('roleName');
+      console.log('contact', contact);
+      var contactName = contact.get('contactName') || contact.get('role.title');
       return {
         contact: contact,
         isSelected: contact === selectedContact,

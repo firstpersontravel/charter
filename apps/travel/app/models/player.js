@@ -36,7 +36,7 @@ export default DS.Model.extend({
 
   contactName: function() {
     if (this.get('role.actor')) {
-      return this.get('role.contact_name') || this.get('role.name');
+      return this.get('role.contact_name') || this.get('role.title');
     } else if (this.get('user')) {
       return `${this.get('user.firstName')} ${this.get('user.lastName')}`;
     } else {

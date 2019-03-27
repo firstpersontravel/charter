@@ -45,11 +45,18 @@ export default function GroupAll({ children, group,
     roleTitle = `Role: ${role.title} (${userTitle})`;
   }
 
+  const archivedIcon = (
+    <i style={{ marginLeft: '0.25em' }} className="fa fa-archive" />
+  );
   let tripTitle = 'Trips';
+  let tripLabel = 'Trips';
   if (params.tripId) {
     const trip = _.find(group.trips, { id: Number(params.tripId) });
     if (trip) {
       tripTitle = `Trip: ${trip.departureName} ${trip.title}`;
+      tripLabel = (
+        <span>{tripTitle}{trip.isArchived ? archivedIcon : null}</span>
+      );
     }
   }
 
@@ -100,6 +107,7 @@ export default function GroupAll({ children, group,
       .value()
   }, {
     text: tripTitle,
+    label: tripLabel,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
     subItems: _(group.trips)
       .map(trip => ({
@@ -108,7 +116,13 @@ export default function GroupAll({ children, group,
           `/operate/${group.id}` +
           `/trip/${trip.id}`
         ),
-        text: `${trip.departureName} ${trip.title}`
+        text: `${trip.departureName} ${trip.title}`,
+        label: (
+          <span>
+            {trip.departureName} {trip.title}
+            {trip.isArchived ? archivedIcon : null}
+          </span>
+        )
       }))
       .value()
   }, {

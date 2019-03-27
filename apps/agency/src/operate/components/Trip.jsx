@@ -8,6 +8,9 @@ import { EvalCore } from 'fptcore';
 import { sortForRole } from '../utils';
 
 export default function Trip({ trip, params, children }) {
+  if (!trip.script) {
+    return null;
+  }
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
     .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))

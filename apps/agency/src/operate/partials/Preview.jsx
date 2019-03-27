@@ -48,8 +48,13 @@ function renderPanel(player, page, panel) {
   );
 }
 
+const archivedIcon = (
+  <i className="fa fa-archive" style={{ marginLeft: '0.25em' }} />
+);
+
 function renderPageNotActive(appearance, player) {
   const trip = player.trip;
+  const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const appearanceStart = appearance.start ?
     moment.utc(trip.schedule[appearance.start]) :
     null;
@@ -60,7 +65,7 @@ function renderPageNotActive(appearance, player) {
     <div className="card" style={{ marginBottom: '0.5em' }}>
       <div className="card-header">
         <strong>
-          {trip.departureName} {trip.title} as {player.roleName}
+          {trip.departureName} {trip.title}{tripArchivedLabel} as {player.roleName}
         </strong>
         &nbsp;
         {appearance.title} {startLabel}
@@ -77,6 +82,7 @@ function renderPageNotActive(appearance, player) {
 
 function renderPage(appearance, page, player) {
   const trip = player.trip;
+  const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const panels = page.panels || [];
   let headerPanel = null;
   if (page.directive) {
@@ -85,7 +91,7 @@ function renderPage(appearance, page, player) {
     headerPanel = (
       <div className="card-header">
         <strong>
-          {trip.departureName} {trip.title} as {player.roleName}
+          {trip.departureName} {trip.title}{tripArchivedLabel} as {player.roleName}
         </strong>
         &nbsp;
         {headerText}

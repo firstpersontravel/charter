@@ -5,6 +5,7 @@ roles:
   - name: player
     title: Player
     user: true
+    actor: false
 
 scenes:
   - name: first
