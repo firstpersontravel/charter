@@ -9,6 +9,7 @@ Object.keys(panels).forEach(function(panelType) {
 });
 
 module.exports = {
+  name: 'pages',
   resources: Object.assign({
     content_page: {
       resource: require('./content_page')

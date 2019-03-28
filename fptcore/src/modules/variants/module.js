@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'variants',
   resources: {
     departure: {
       resource: require('./departure')

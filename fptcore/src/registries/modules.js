@@ -1,24 +1,23 @@
-var moduleNames = [
-  'achievements',
-  'audio',
-  'calls',
-  'checkpoints',
-  'cues',
-  'email',
-  'locations',
-  'messages',
-  'pages',
-  'relays',
-  'roles',
-  'scenes',
-  'values',
-  'variants'
+var modules = [
+  require('../modules/achievements/module'),
+  require('../modules/audio/module'),
+  require('../modules/calls/module'),
+  require('../modules/checkpoints/module'),
+  require('../modules/cues/module'),
+  require('../modules/email/module'),
+  require('../modules/locations/module'),
+  require('../modules/messages/module'),
+  require('../modules/pages/module'),
+  require('../modules/relays/module'),
+  require('../modules/roles/module'),
+  require('../modules/scenes/module'),
+  require('../modules/values/module'),
+  require('../modules/variants/module'),
 ];
 
 var ModulesRegistry = {};
 
-moduleNames.forEach(function(moduleName) {
-  var mod = require('../modules/' + moduleName + '/module');
+modules.forEach(function(mod) {
   mod.actions = {};
   mod.events = {};
   Object.keys(mod.resources).forEach(function(resourceType) {
@@ -26,7 +25,7 @@ moduleNames.forEach(function(moduleName) {
     Object.assign(mod.actions, resourceDef.actions);
     Object.assign(mod.events, resourceDef.events);
   });
-  ModulesRegistry[moduleName] = mod;
+  ModulesRegistry[mod.name] = mod;
 });
 
 var allActions = {};

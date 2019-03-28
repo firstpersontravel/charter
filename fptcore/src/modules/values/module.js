@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'values',
   resources: {
     value: {
       resource: null,  // implicit

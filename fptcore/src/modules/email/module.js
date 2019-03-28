@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'email',
   resources: {
     email: {
       resource: require('./email'),

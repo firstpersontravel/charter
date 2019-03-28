@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'messages',
   resources: {
     message: {
       resource: require('./message'),

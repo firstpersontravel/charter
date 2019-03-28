@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import RealtimeMixin from '../mixins/controllers/realtime';
 
-import fptCore from 'npm:fptcore';
+import fptCore from 'fptcore';
 
 export default Ember.Controller.extend(RealtimeMixin, {
   channelFormat: '/@env_trip_@id',

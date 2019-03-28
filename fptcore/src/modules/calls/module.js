@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'calls',
   resources: {
     call: {
       resource: null,  // virtual

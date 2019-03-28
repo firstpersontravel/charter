@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-import fptCore from 'npm:fptcore';
+import fptCore from 'fptcore';
 
 export default Ember.Controller.extend({
   time: Ember.inject.service(),

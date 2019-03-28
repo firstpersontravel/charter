@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'locations',
   resources: {
     geofence: {
       resource: require('./geofence'),

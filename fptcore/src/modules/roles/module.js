@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'roles',
   resources: {
     appearance: {
       resource: require('./appearance')

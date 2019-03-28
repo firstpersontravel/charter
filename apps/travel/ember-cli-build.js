@@ -3,6 +3,10 @@ var Funnel = require('broccoli-funnel');
 var MergeTrees = require('broccoli-merge-trees');
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
+var rollupJsonPlugin = require('rollup-plugin-json');
+var rollupBuiltinsPlugin = require('rollup-plugin-node-builtins');
+var rollupGlobalsPlugin = require('rollup-plugin-node-globals');
+
 module.exports = function(defaults) {
 
   var PRODUCTION_ENVS = ['production', 'staging'];
@@ -38,6 +42,18 @@ module.exports = function(defaults) {
   });
   var fontFiles = new Funnel('bower_components/font-awesome/fonts', {
     destDir: 'assets/fonts'
+  });
+
+  app.import('node_modules/fptcore/src/index.js', {
+    using: [{
+      transformation: 'cjs',
+      as: 'fptcore',
+      plugins: [
+        rollupJsonPlugin(),
+        rollupGlobalsPlugin(),
+        rollupBuiltinsPlugin()
+      ]
+    }]
   });
 
   app.import('bower_components/featherlight/release/featherlight.min.css');

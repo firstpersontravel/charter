@@ -3,7 +3,7 @@ import DS from 'ember-data';
 
 import RefUtils from '../utils/ref';
 
-import fptCore from 'npm:fptcore';
+import fptCore from 'fptcore';
 
 export default DS.Model.extend({
 

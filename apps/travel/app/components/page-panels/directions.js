@@ -3,7 +3,7 @@ import Ember from 'ember';
 import distance from '../../utils/distance';
 import WindowHeightMixin from '../../mixins/panels/window-height';
 
-import fptCore from 'npm:fptcore';
+import fptCore from 'fptcore';
 
 export default Ember.Component.extend(WindowHeightMixin, {
 

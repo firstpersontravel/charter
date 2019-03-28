@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'scenes',
   resources: {
     scene: {
       resource: require('./scene'),
