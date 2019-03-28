@@ -26,8 +26,10 @@ function extractPanelPaths(panel) {
   if (!panel.type) {
     return [];
   }
-  const panelClasses = SubresourcesRegistry.panel.properties.self.classes;
-  const panelClass = panelClasses[panel.type];
+  const panelClass = SubresourcesRegistry[`${panel.type}_panel`];
+  if (!panelClass) {
+    throw new Error(`Could not find panel ${panel.type}.`);
+  }
   return extractMediaPaths(panelClass, panel);
 }
 

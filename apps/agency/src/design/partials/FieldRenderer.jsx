@@ -292,13 +292,16 @@ export default class FieldRenderer {
 
   renderEnum(spec, value, name, path, opts) {
     const choices = spec.options.map(opt => ({ value: opt, label: opt }));
+    if (value === null || value === undefined || value === '') {
+      choices.unshift({ value: '', label: '---' });
+    }
     const label = (
       <span style={{ whiteSpace: 'nowrap' }}>
         {value || internalEmpty(spec)}
       </span>
     );
-    return this.internalEnumlike(spec, value, name, path, opts, choices, null,
-      label);
+    return this.internalEnumlike(spec, value || '', name, path, opts,
+      choices, null, label);
   }
 
   renderBoolean(spec, value, name, path, opts) {

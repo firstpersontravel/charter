@@ -43,7 +43,7 @@ export default Ember.Component.extend({
     if (!withPlayer) { return 'Unnamed'; }
     return withPlayer.get('contactName') ||
       withPlayer.get('firstName') ||
-      withPlayer.get('roleName');
+      withPlayer.get('role.title');
   }.property('withPlayer'),
 
   messages: function() {
