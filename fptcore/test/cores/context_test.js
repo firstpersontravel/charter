@@ -86,7 +86,7 @@ describe('ContextCore', () => {
   describe('#gatherEvalContext', () => {
     it('gathers all context', () => {
       const trip = {
-        date: '02-01-2014',
+        date: '2014-02-01',
         script: { content: {} },
         currentSceneName: 'SCENE-01',
         schedule: { 'TIME-123': '2017-02-16T21:44:02Z' },
