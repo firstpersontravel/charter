@@ -1,37 +1,95 @@
 var _ = require('lodash');
 var fs = require('fs');
 
-var Migrations = [];
+var ResourcesRegistry = require('./registries/resources');
+var TextUtil = require('./utils/text');
+var TriggerCore = require('./cores/trigger');
+
+var Migrator = {};
+
+var migrations = [];
 
 fs.readdirSync(__dirname + '/../migrations').forEach(function(file) {
   if (file.match(/\.js$/) === null) {
     return;
   }
   var migration = require('../migrations/' + file);
-  var migrationNum = Number(file.split('-')[0]);
-  Migrations.push({ num: migrationNum, migration: migration });
+  var num = Number(file.split('-')[0]);
+  migrations.push({
+    num: num,
+    name: file.replace('.js', ''),
+    migrations: migration.migrations,
+    tests: migration.tests
+  });
 });
 
+Migrator.Migrations = _.sortBy(migrations, 'num');
 
-var Migrator = {};
+Migrator.getMigrations = function(currentMigrationNum) {
+  return Migrator.Migrations.filter(function(migration) {
+    return migration.num > currentMigrationNum;
+  });
+};
+
+Migrator.runMigration = function(collectionName, migration, scriptContent) {
+  if (collectionName === 'scriptContent') {
+    migration(scriptContent);
+    return;
+  }
+  var triggers = scriptContent.triggers || [];
+  if (collectionName === 'actions') {
+    triggers.forEach(function(trigger) {
+      TriggerCore.walkPackedActions(trigger.actions, '', function(action) {
+        migration(action, scriptContent);
+      }, function() {});
+    });
+    return;
+  }
+  if (collectionName === 'eventSpecs') {
+    triggers.forEach(function(trigger) {
+      trigger.events.forEach(function(eventSpec) {
+        migration(eventSpec, scriptContent);
+      });
+    });
+    return;
+  }
+  var resourceType = TextUtil.singularize(collectionName);
+  if (!ResourcesRegistry[resourceType]) {
+    throw new Error('Illegal collection name ' + collectionName);
+  }
+  if (!scriptContent[collectionName]) {
+    return;
+  }
+  scriptContent[collectionName].forEach(function(item) {
+    migration(item, scriptContent);
+  });
+};
+
+Migrator.runMigrations = function(migrations, scriptContent) {
+  Object
+    .keys(migrations)
+    .forEach(function(collectionName) {
+      var migration = migrations[collectionName];
+      Migrator.runMigration(collectionName, migration, scriptContent);
+    });
+};
 
 /**
  * Return migrated script content up to version number.
  */
 Migrator.migrateScriptContent = function(scriptContent) {
-  var migratedScriptContent = scriptContent;
-  if (!migratedScriptContent.meta) {
-    migratedScriptContent.meta = { version: 0 };
+  var migrated = _.cloneDeep(scriptContent);
+  if (!migrated.meta) {
+    migrated.meta = { version: 0 };
   }
-  var curMigrationNum = migratedScriptContent.meta.version;
-  Migrations.forEach(function(migration) {
-    if (curMigrationNum < migration.num) {
-      migratedScriptContent = _.cloneDeep(migratedScriptContent);
-      migration.migration(migratedScriptContent);
-      migratedScriptContent.meta.version = migration.num;
-    }
-  });
-  return migratedScriptContent;
+  var currentMigrationNum = migrated.meta.version;
+  Migrator
+    .getMigrations(currentMigrationNum)
+    .forEach(function(migration) {
+      Migrator.runMigrations(migration.migrations, migrated);
+      migrated.meta.version = migration.num;
+    });
+  return migrated;
 };
 
 module.exports = Migrator;
