@@ -6,7 +6,6 @@ const SceneCore = require('../../src/cores/scene');
 const sandbox = sinon.sandbox.create();
 
 describe('SceneCore', () => {
-
   afterEach(() => {
     sandbox.restore();
   });
@@ -30,7 +29,10 @@ describe('SceneCore', () => {
 
     it('returns active conditional scene', () => {
       const scriptContent = {
-        scenes: [{ name: '1', if: 'v' }, { name: '2' }]
+        scenes: [
+          { name: '1', if: { op: 'istrue', ref: 'v' } },
+          { name: '2' }
+        ]
       };
       const res = SceneCore.getStartingSceneName(scriptContent, { v: 1 });
       assert.strictEqual(res, '1');

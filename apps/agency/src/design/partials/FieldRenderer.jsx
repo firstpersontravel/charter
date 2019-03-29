@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { TextUtil, ParamValidators } from 'fptcore';
+import { EvalCore, TextUtil, ParamValidators } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
@@ -34,8 +34,6 @@ function internalEmpty(spec) {
   let label = _.get(spec, 'display.placeholder') || 'Empty';
   if (spec.type === 'media') {
     label = 'Enter a path (i.e. "sound.mp3", "img.jpg"). Save, then upload content.';
-  } else if (spec.type === 'ifClause') {
-    label = 'Always';
   } else if (!_.isUndefined(spec.default)) {
     label = `${stringOrYesNo(spec.default)} by default`;
   }
@@ -60,7 +58,7 @@ const newItemsForSpecType = {
   nestedAttribute: '',
   lookupable: '',
   reference: '',
-  ifClause: '',
+  ifClause: { op: '' },
   markdown: '',
   dictionary: {},
   list: [],
@@ -262,11 +260,32 @@ export default class FieldRenderer {
   }
 
   renderIfClause(spec, value, name, path, opts) {
-    const validate = val => (
-      isEmpty(ParamValidators.ifClause(this.script, name, spec, val))
+    if (!value) {
+      const choices = [{ value: '', label: '---' }]
+        .concat(Object.keys(EvalCore.IF_PARAM_OP_CLASSES).map(op => ({
+          value: op,
+          label: op
+        })));
+      const clean = val => (val === '' ? null : { op: val });
+      const label = <em className="faint">Always</em>;
+      return this.internalEnumlike(spec, '', name, path, opts,
+        choices, clean, label);
+    }
+    const COMPLEX_IF_OPS = ['and', 'or'];
+    const inlineOpts = Object.assign({}, opts);
+    const inlineStyle = {};
+    if (_.includes(COMPLEX_IF_OPS, value.op)) {
+      inlineOpts.inline = false;
+      inlineStyle.paddingLeft = '1em';
+    } else {
+      inlineOpts.inline = true;
+      inlineStyle.display = 'inline-block';
+    }
+    return (
+      <div className="ifClause" style={inlineStyle}>
+        {this.renderFieldValue(EvalCore.ifSpec, value, name, path, inlineOpts)}
+      </div>
     );
-    const clean = val => val;
-    return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -461,7 +480,10 @@ export default class FieldRenderer {
       }
     }
 
-    const isInline = _.get(spec, 'display.form') === 'inline';
+    const isInline = (
+      _.get(spec, 'display.form') === 'inline' ||
+      _.get(opts, 'inline')
+    );
     const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
 
     const itemStyle = isInline ? inlineStyle : {};
@@ -502,7 +524,7 @@ export default class FieldRenderer {
 
     return (
       // eslint-disable-next-line react/no-array-index-key
-      <div key={key} style={itemStyle}>
+      <div key={key} style={itemStyle} className="object-key">
         {label}
         {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
           itemPath)}
@@ -521,8 +543,9 @@ export default class FieldRenderer {
       this.internalObjectKey(spec, value, name, path, opts,
         spec.properties[key], key)
     ));
+    const divStyle = _.get(opts, 'inline') ? { display: 'inline-block' } : {};
     return (
-      <div>
+      <div style={divStyle} className="object">
         {renderedItems}
       </div>
     );

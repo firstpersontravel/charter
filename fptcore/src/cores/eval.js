@@ -1,169 +1,112 @@
 var _ = require('lodash');
 var moment = require('moment-timezone');
 
-var TextUtil = require('../utils/text');
 var TimeUtil = require('../utils/time');
 
 var EvalCore = {};
 
-EvalCore.IF_COMMANDS = {
-  istrue: function (a) { return !!a; },
-  equals: function (a, b) { return a === b; },
-  contains: function(a, b) {
-    return (
-      typeof a === 'string' &&
-      typeof b === 'string' &&
-      a.toLowerCase().indexOf(b.toLowerCase()) > -1
-    );
-  },
-  matches: function(a, b) {
-    return (
-      typeof a === 'string' &&
-      typeof b === 'string' &&
-      RegExp(b, 'i').test(a)
-    );
-  }
-};
+// Assigned here to avoid infinite loop
+EvalCore.ifSpec = {};
 
-EvalCore.parseParens = function(str) {
-  var i = 0;
-  var quoted = false;
-  var trailingWhiteSpace = str[str.length - 1] === ' ';
-  function parenClause() {
-    var arr = [];
-    var startIndex = i;
-    function addWord() {
-      if (i - 1 > startIndex) {
-        arr.push(str.slice(startIndex, i - 1));
-      }
-    }
-    while (i < str.length) {
-      var c = str[i++];
-      if (c === '"') {
-        quoted = !quoted;
-      }
-      if (quoted) {
-        continue;
-      }
-      switch(c) {
-      case ' ':
-        addWord();
-        startIndex = i;
-        continue;
-      case '(':
-        arr.push(parenClause());
-        startIndex = i;
-        continue;
-      case ')':
-        addWord();
-        return arr;
-      }
-    }
-    if (!trailingWhiteSpace) {
-      i = i + 1;
-      addWord();
-    }
-    return arr;
-  }
-  return parenClause();
-};
-
-EvalCore.breakWordList = function(words, breakBy) {
-  var broken = [[]];
-  _.each(words, function(word) {
-    if (word === breakBy) {
-      broken.push([]);
-    } else {
-      broken[broken.length - 1].push(word);
-    }
-  });
-  return broken;
-};
-
-EvalCore.evalWords = function(evalContext, words) {
-  if (!_.isArray(words)) {
-    throw new Error('Expected array.');
-  }
-  if (!_.every(words, _.isString)) {
-    throw new Error('Expected array of strings.');
-  }
-  var isNegated = words[0] === 'not';
-  if (isNegated) {
-    words = words.slice(1);
-  }
-  var ifCommand = words.length > 1 ? words[0] : 'istrue';
-  var ifArgs = words.length > 1 ? words.slice(1) : words;
-  var ifValues = ifArgs.map(function(item) {
-    return EvalCore.lookupRef(evalContext, item);
-  });
-  var ifFunc = EvalCore.IF_COMMANDS[ifCommand];
-  if (!ifFunc) {
-    throw new Error('Invalid if command ' + ifCommand + '.');
-  }
-  var isResult = ifFunc.apply(null, ifValues);
-  var finalResult = isNegated ? !isResult : isResult;
-  return finalResult;
-};
-
-function isStringOrList(i) {
-  return _.isString(i) || _.isArray(i);
+function negateIf(negated, result) {
+  return negated ? !result : result;
 }
 
-EvalCore.evalNestedWords = function(evalContext, wordsOrLists) {
-  if (!_.isArray(wordsOrLists)) {
-    throw new Error('Expected array.');
+EvalCore.IF_PARAM_OP_CLASSES = {
+  istrue: {
+    properties: {
+      ref: { type: 'lookupable', required: true },
+      neg: { type: 'boolean', default: false }
+    },
+    eval: function(params, evalContext) {
+      return negateIf(params.neg, (
+        !!EvalCore.lookupRef(evalContext, params.ref)
+      ));
+    }
+  },
+  equals: {
+    properties: {
+      ref1: { type: 'lookupable', required: true },
+      ref2: { type: 'lookupable', required: true },
+      neg: { type: 'boolean', default: false }
+    },
+    eval: function(params, evalContext) {
+      return negateIf(params.neg, (
+        EvalCore.lookupRef(evalContext, params.ref1) ===
+        EvalCore.lookupRef(evalContext, params.ref2)
+      ));
+    }
+  },
+  contains: {
+    properties: {
+      string_ref: { type: 'lookupable', required: true },
+      part_ref: { type: 'lookupable', required: true },
+      neg: { type: 'boolean', default: false }
+    },
+    eval: function(params, evalContext) {
+      var a = EvalCore.lookupRef(evalContext, params.string_ref);
+      var b = EvalCore.lookupRef(evalContext, params.part_ref);
+      return negateIf(params.neg, (
+        typeof a === 'string' &&
+        typeof b === 'string' &&
+        a.toLowerCase().indexOf(b.toLowerCase()) > -1
+      ));
+    }
+  },
+  matches: {
+    properties: {
+      string_ref: { type: 'lookupable', required: true },
+      regex_ref: { type: 'string', required: true },
+      neg: { type: 'boolean', default: false }
+    },
+    eval: function(params, evalContext) {
+      var a = EvalCore.lookupRef(evalContext, params.string_ref);
+      var regex = EvalCore.lookupRef(evalContext, params.regex_ref);
+      return negateIf(params.neg, (
+        typeof a === 'string' && RegExp(regex, 'i').test(a)
+      ));
+    }
+  },
+  and: {
+    properties: { items: { type: 'list', items: EvalCore.ifSpec } },
+    eval: function(params, evalContext) {
+      return _.every(params.items, function(item) {
+        return EvalCore.if(evalContext, item);
+      });
+    }
+  },
+  or: {
+    properties: { items: { type: 'list', items: EvalCore.ifSpec } },
+    eval: function(params, evalContext) {
+      return _.some(params.items, function(item) {
+        return EvalCore.if(evalContext, item);
+      });
+    }
   }
-  if (!_.every(wordsOrLists, isStringOrList)) {
-    throw new Error('Expected array of strings or lists.');
-  }
-  // Blank is false
-  if (wordsOrLists.length === 0) {
-    return false;
-  }
-  // If only one entry, just evaluate it.
-  if (wordsOrLists.length === 1 && _.isArray(wordsOrLists[0])) {
-    return EvalCore.evalNestedWords(evalContext, wordsOrLists[0]);
-  }
-
-  // Break by ors first.
-  var hasOr = _.some(wordsOrLists, function(i) { return i === 'or'; });
-  if (hasOr) {
-    var brokenByOr = EvalCore.breakWordList(wordsOrLists, 'or');
-    var resultsToOr = _.map(brokenByOr, function(part) {
-      return EvalCore.evalNestedWords(evalContext, part);
-    });
-    return _.some(resultsToOr);
-  }
-
-  // Then ands.
-  var hasAnd = _.some(wordsOrLists, function(i) { return i === 'and'; });
-  if (hasAnd) {
-    var brokenByAnd = EvalCore.breakWordList(wordsOrLists, 'and');
-    var resultsToAnd = _.map(brokenByAnd, function(part) {
-      return EvalCore.evalNestedWords(evalContext, part);
-    });
-    return _.every(resultsToAnd);
-  }
-  
-  // We should be left with just some plain words. If there are any lists left,
-  // we don't know how to parse them.
-  var hasLists = _.some(wordsOrLists, _.isArray);
-  if (hasLists) {
-    throw new Error('Lists must be joined by "or" or "and".');
-  }
-
-  // Parse words.
-  return EvalCore.evalWords(evalContext, wordsOrLists);
 };
 
-EvalCore.simpleIf = function (evalContext, ifStatement) {
-  var ifParts = TextUtil.splitWords(ifStatement);
-  return EvalCore.evalWords(evalContext, ifParts);
-};
+_.assign(EvalCore.ifSpec, {
+  type: 'variegated',
+  key: 'op',
+  common: {
+    properties: {
+      op: {
+        type: 'enum',
+        options: Object.keys(EvalCore.IF_PARAM_OP_CLASSES),
+        required: true,
+        display: { primary: true }
+      }
+    }
+  },
+  classes: EvalCore.IF_PARAM_OP_CLASSES
+});
 
 EvalCore.if = function (evalContext, ifStatement) {
-  var nestedWords = EvalCore.parseParens(ifStatement);
-  return EvalCore.evalNestedWords(evalContext, nestedWords);
+  var ifClass = EvalCore.IF_PARAM_OP_CLASSES[ifStatement.op];
+  if (!ifClass) {
+    throw new Error('Invalid if operation: ' + ifStatement.op);
+  }
+  return ifClass.eval(ifStatement, evalContext);
 };
 
 EvalCore.constants = { true: true, false: false, null: null };
@@ -222,7 +165,8 @@ EvalCore.templateText = function (evalContext, text, timezone) {
   });
   // Then {% if %} {% endif %} statements.
   text = text.replace(EvalCore.ifElseRegex, function(m, p1, p2, p3) {
-    return EvalCore.if(evalContext, p1) ? p2 : (p3 || '');
+    var ifStmt = { op: 'istrue', ref: p1 };
+    return EvalCore.if(evalContext, ifStmt) ? p2 : (p3 || '');
   });
   return text;
 };

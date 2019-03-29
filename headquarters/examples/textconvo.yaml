@@ -1,5 +1,5 @@
 meta:
-  version: 2
+  version: 3
 
 roles:
   - name: Knight
@@ -62,18 +62,34 @@ triggers:
   - name: hello
     events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
-    if: not game_started
+    if:
+      op: istrue
+      neg: true
+      ref: game_started
     actions:
       - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
       - name: conditional
-        if: contains event.message.content "hello" or contains event.message.content "hi" or contains event.message.content "hey"
+        if:
+          op: or
+          items:
+            - op: contains
+              string_ref: event.message.content
+              part_ref: '"hello"'
+            - op: contains
+              string_ref: event.message.content
+              part_ref: '"hi"'
+            - op: contains
+              string_ref: event.message.content
+              part_ref: '"hey"'
         actions: [{ name: send_message, message_name: MESSAGE-HELLO }]
         else: [{ name: send_message, message_name: MESSAGE-HELLO-RUDE }]
 
   - name: getname
     events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
-    if: game_started
+    if:
+      op: istrue
+      ref: game_started
     actions:
       - { name: set_value, value_ref: player_name, new_value_ref: event.message.content }
       - { name: send_message, message_name: MESSAGE-RETURN-GREETING }

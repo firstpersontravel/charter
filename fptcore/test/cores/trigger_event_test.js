@@ -7,13 +7,11 @@ const TriggerEventCore = require('../../src/cores/trigger_event');
 var sandbox = sinon.sandbox.create();
 
 describe('TriggerEventCore', () => {
-
   afterEach(() => {
     sandbox.restore();
   });
 
   describe('#isSceneActive', () => {
-
     const scriptContent = {
       roles: [{
         name: 'Role'
@@ -34,7 +32,7 @@ describe('TriggerEventCore', () => {
       }, {
         name: 'COND-1',
         global: true,
-        if: 'val'
+        if: { op: 'istrue', ref: 'val' }
       }]
     };
 
@@ -133,14 +131,14 @@ describe('TriggerEventCore', () => {
     });
 
     it('returns true if if test passes', () => {
-      const trigger = { if: 'test' };
+      const trigger = { if: { op: 'istrue', ref: 'test' } };
       const actionContext = { evalContext: { test: true } };
       const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, true);
     });
 
     it('returns false if if test fails', () => {
-      const trigger = { if: 'test' };
+      const trigger = { if: { op: 'istrue', ref: 'test' } };
       const actionContext = { evalContext: { test: false } };
       const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, false);

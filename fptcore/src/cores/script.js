@@ -6,7 +6,7 @@ var ResourcesRegistry = require('../registries/resources');
 var ParamValidators = require('../utils/param_validators');
 var Errors = require('../errors');
 
-var CURRENT_VERSION = 2;
+var CURRENT_VERSION = 3;
 
 var ScriptCore = {};
 
@@ -20,6 +20,86 @@ var metaSchema = {
 };
 
 ScriptCore.CURRENT_VERSION = CURRENT_VERSION;
+
+function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
+  if (!paramSpec.type) {
+    throw new Error('Param spec with no type.');
+  }
+  if (paramSpec.type === 'variegated') {
+    var variety = ParamValidators.getVariegatedVariety(paramSpec, obj);
+    var varietyClass = ParamValidators.getVariegatedClass(paramSpec, variety);
+    walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
+      iteree);
+    return;
+  }
+  if (paramSpec.type === 'subresource') {
+    walkObjectParams(parent, key, obj, paramSpec.class.properties,
+      paramType, iteree);
+    return;
+  }
+  if (paramSpec.type === 'object') {
+    walkObjectParams(parent, key, obj, paramSpec.properties, paramType,
+      iteree);
+    return;
+  }
+  if (paramSpec.type === 'list') {
+    if (!obj) {
+      return;
+    }
+    obj.forEach(function(item, i) {
+      walkObjectParam(obj, i, item, paramSpec.items, paramType, iteree);
+    });
+    return;
+  }
+  if (paramSpec.type === 'dictionary') {
+    if (!obj) {
+      return;
+    }
+    Object.keys(obj).forEach(function(key) {
+      walkObjectParam(obj, 'keys', key, paramSpec.keys, paramType, iteree);
+      walkObjectParam(obj, key, obj[key], paramSpec.values, paramType, iteree);
+    });
+    return;
+  }
+  // If we've made it to here, we're a simple type.
+  if (paramSpec.type === paramType) {
+    iteree(obj, paramSpec, parent, key);
+  }
+}
+
+function walkObjectParams(parent, key, obj, spec, paramType, iteree) {
+  if (!obj) {
+    return;
+  }
+  Object.keys(spec).forEach(function(paramName) {
+    if (paramName === 'self') {
+      walkObjectParam(parent, key, obj, spec[paramName], paramType, iteree);
+      return;
+    }
+    walkObjectParam(obj, paramName, obj[paramName], spec[paramName], paramType,
+      iteree);
+  });
+}
+
+/**
+ * Walk all resources in the script to iterate over all params
+ */
+ScriptCore.walkParams = function(scriptContent, paramType, iteree) {
+  Object
+    .keys(scriptContent)
+    .forEach(function (collectionName) {
+      if (collectionName === 'meta') {
+        return;
+      }
+      var resourceType = TextUtil.singularize(collectionName);
+      var resourceClass = ResourcesRegistry[resourceType];
+      var collection = scriptContent[collectionName];
+      collection.forEach(function(resource) {
+        walkObjectParams(null, null, resource, resourceClass.properties, 
+          paramType, iteree);
+      });
+    });
+};
 
 ScriptCore.getResourceErrors = function(script, collectionName, resource) {
   var resourceType = TextUtil.singularize(collectionName);

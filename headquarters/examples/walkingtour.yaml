@@ -1,5 +1,5 @@
 meta:
-  version: 2
+  version: 3
 
 layouts:
   - name: tablet
@@ -10,7 +10,9 @@ layouts:
       - type: text
         style: quest
         text: "{{Player.directive}}"
-        if: Player.directive
+        if:
+          op: istrue
+          ref: Player.directive
     
 content_pages:
   - name: nav

@@ -2,6 +2,7 @@ var _ = require('lodash');
 var fs = require('fs');
 
 var ResourcesRegistry = require('./registries/resources');
+var ScriptCore = require('./cores/script');
 var TextUtil = require('./utils/text');
 var TriggerCore = require('./cores/trigger');
 
@@ -43,6 +44,13 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
         migration(action, scriptContent);
       }, function() {});
     });
+    return;
+  }
+  if (collectionName === 'ifClauses') {
+    ScriptCore.walkParams(scriptContent, 'ifClause',
+      function(ifClause, spec, parent, key) {
+        migration(ifClause, scriptContent, parent, key);
+      });
     return;
   }
   if (collectionName === 'eventSpecs') {

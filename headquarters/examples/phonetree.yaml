@@ -1,5 +1,5 @@
 meta:
-  version: 2
+  version: 3
 
 roles:
   - name: Player
@@ -54,6 +54,9 @@ triggers:
     scene: SCENE-MAIN
     actions:
       - name: conditional  
-        if: contains event.response "yes"
+        if:
+          op: contains
+          string_ref: event.response
+          part_ref: '"yes"'
         actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-YES' }]
         else: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-NO' }]

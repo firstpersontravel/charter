@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
+const EvalCore = require('../../src/cores/eval');
 const ParamValidators = require('../../src/utils/param_validators');
 
 const eq = assert.deepStrictEqual;
@@ -310,6 +311,7 @@ describe('ParamValidators', () => {
       ok(ParamValidators.lookupable({}, 's', {}, 'abc'));
       ok(ParamValidators.lookupable({}, 's', {}, 'A12'));
       ok(ParamValidators.lookupable({}, 's', {}, 'A_BC'));
+      ok(ParamValidators.lookupable({}, 's', {}, 'A-BC'));
       ok(ParamValidators.lookupable({}, 's', {}, 'a.b.c'));
       ok(ParamValidators.lookupable({}, 's', {}, '0'));
     });
@@ -325,12 +327,10 @@ describe('ParamValidators', () => {
     });
 
     it('warns if contains invalid characters', () => {
-      err(ParamValidators.lookupable({}, 's', {}, 'a-b'),
-        'Lookupable param "s" ("a-b") should be alphanumeric with underscores and periods.');
-      err(ParamValidators.lookupable({}, 's', {}, 'a"-b'),
-        'Lookupable param "s" ("a"-b") should be alphanumeric with underscores and periods.');
+      err(ParamValidators.lookupable({}, 's', {}, 'a=b'),
+        'Lookupable param "s" ("a=b") should be alphanumeric with underscores, dashes and periods.');
       err(ParamValidators.lookupable({}, 's', {}, 'b^$(D'),
-        'Lookupable param "s" ("b^$(D") should be alphanumeric with underscores and periods.');
+        'Lookupable param "s" ("b^$(D") should be alphanumeric with underscores, dashes and periods.');
     });
   });
 
@@ -391,7 +391,29 @@ describe('ParamValidators', () => {
   });
 
   describe('#ifClause', () => {
-    it.skip('validates if statement', () => {});
+    const spec = { type: 'ifClause' };
+
+    it('warns if not an object', () => {
+      err(ParamValidators.ifClause({}, 's', spec, [1]),
+        'If param "s" should be an object.');
+      err(ParamValidators.ifClause({}, 's', spec, 123),
+        'If param "s" should be an object.');
+      err(ParamValidators.ifClause({}, 's', spec, true),
+        'If param "s" should be an object.');
+    });
+
+    it('validates if statement', () => {
+      const script = {};
+      const stubResponse = ['response'];
+      const param = { op: 'istrue' };
+      sandbox.stub(ParamValidators, 'validateParam').returns(stubResponse);
+
+      const resp = ParamValidators.ifClause(script, 's', spec, param);
+
+      assert.strictEqual(resp, stubResponse);
+      sinon.assert.calledWith(ParamValidators.validateParam.firstCall,
+        script, 's', EvalCore.ifSpec, param);
+    });
   });
 
   describe('#dictionary', () => {
@@ -649,7 +671,7 @@ describe('ParamValidators', () => {
       var panelCommon = {
         properties: {
           type: { type: 'string', required: true },
-          if: { type: 'ifClause' }
+          if: { type: 'string' }
         }
       };
 
@@ -693,7 +715,7 @@ describe('ParamValidators', () => {
           name: { type: 'name', required: true },
           section: { type: 'string', required: true },
           title: { type: 'string', required: true },
-          if: { type: 'ifClause' },
+          if: { type: 'string' },
           panels: { type: 'subresource', class: panelList }
         }
       };

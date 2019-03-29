@@ -165,8 +165,8 @@ ParamValidators.lookupable = function(script, name, spec, param) {
   if (!param) {
     return ['Lookupable attribute param "' + name + '" should not be blank.'];
   }
-  if (!/^['"]?[\w\d_.]+['"]?$/.test(param)) {
-    return ['Lookupable param "' + name + '" ("' + param + '") should be alphanumeric with underscores and periods.'];
+  if (!/^['"]?[\w\d_.-]+['"]?$/.test(param)) {
+    return ['Lookupable param "' + name + '" ("' + param + '") should be alphanumeric with underscores, dashes and periods.'];
   }
 };
 
@@ -195,17 +195,10 @@ ParamValidators.reference = function(script, name, spec, param) {
 };
 
 ParamValidators.ifClause = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['If param "' + name + '" ("' + param + '") should be a string.'];
+  if (!_.isPlainObject(param)) {
+    return ['If param "' + name + '" should be an object.'];
   }
-  if (!param) {
-    return ['If param "' + name + '" should not be blank.'];
-  }
-  try {
-    EvalCore.if({}, param);
-  } catch (err) {
-    return [err.message];
-  }
+  return ParamValidators.validateParam(script, name, EvalCore.ifSpec, param);
 };
 
 ParamValidators.dictionary = function(script, name, spec, param) {
@@ -272,6 +265,22 @@ ParamValidators.subresource = function(script, name, spec, param) {
 };
 
 /**
+ * Get the variety of a param by spec.
+ */
+ParamValidators.getVariegatedVariety = function(spec, param) {
+  return _.isFunction(spec.key) ? spec.key(param) : param[spec.key];
+};
+
+/**
+ * Get resource class of a variegated property, merging common and variety.
+ */
+ParamValidators.getVariegatedClass = function(spec, variety) {
+  var commonClass = spec.common;
+  var variedClass = spec.classes[variety];
+  return _.merge({}, commonClass, variedClass);
+};
+
+/**
  * Embed a variegated validator which hinges on a key param.
  */
 ParamValidators.variegated = function(script, name, spec, param) {
@@ -289,7 +298,7 @@ ParamValidators.variegated = function(script, name, spec, param) {
   // HACK TO SUPPORT FUNCTION KEYS FOR NOW UNTIL WE SIMPLIFY THE EVENT
   // STRUCTURE -- should be {type: event_type, ...params}.
   var keyName = _.isFunction(spec.key) ? 'key' : spec.key;
-  var variety = _.isFunction(spec.key) ? spec.key(param) : param[spec.key];
+  var variety = ParamValidators.getVariegatedVariety(spec, param);
   if (!variety) {
     return ['Required param "' + name + '[' + keyName + ']" not present.'];
   }
@@ -302,11 +311,9 @@ ParamValidators.variegated = function(script, name, spec, param) {
       '" ("' + variety + '") should be one of: ' +
       Object.keys(spec.classes).join(', ') + '.'];
   }
-  var commonClass = spec.common;
-  var variedClass = spec.classes[variety];
-  var mergedClass = _.merge({}, commonClass, variedClass);
+  var varietyClass = ParamValidators.getVariegatedClass(spec, variety);
   var prefix = name + '.';
-  return ParamValidators.validateResource(script, mergedClass, param, prefix);
+  return ParamValidators.validateResource(script, varietyClass, param, prefix);
 };
 
 /**

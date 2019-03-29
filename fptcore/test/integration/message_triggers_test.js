@@ -9,7 +9,6 @@ var sandbox = sinon.sandbox.create();
 const now = moment.utc();
 
 describe('Integration - Message Triggers', () => {
-
   afterEach(() => {
     sandbox.restore();
   });
@@ -28,7 +27,7 @@ describe('Integration - Message Triggers', () => {
         }, {
           name: 'trigger2',
           events: [{ type: 'message_sent', from: 'A', to: 'B' }],
-          if: ['trigger'],
+          if: { op: 'istrue', ref: 'trigger' },
           actions: [{
             name: 'set_value',
             value_ref: 'SHOULD_NOT_FIRE',
@@ -52,7 +51,11 @@ describe('Integration - Message Triggers', () => {
         triggers: [{
           name: 'trigger1',
           events: [{ type: 'message_sent', medium: 'text' }],
-          if: 'contains event.message.content "1234"',
+          if: {
+            op: 'contains',
+            string_ref: 'event.message.content',
+            part_ref: '"1234"'
+          },
           actions: [{
             name: 'set_value',
             value_ref: 'trigger',
@@ -83,7 +86,11 @@ describe('Integration - Message Triggers', () => {
         triggers: [{
           name: 'trigger1',
           events: [{ type: 'message_sent', medium: 'text' }],
-          if: 'contains event.message.content "1234"',
+          if: {
+            op: 'contains',
+            string_ref: 'event.message.content',
+            part_ref: '"1234"'
+          },
           actions: [{
             name: 'set_value',
             value_ref: 'trigger',

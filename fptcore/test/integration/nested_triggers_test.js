@@ -73,7 +73,7 @@ const actionContext = {
     }, {
       name: 'TRIGGER-NAV-2',
       events: [{ type: 'cue_signaled', cue: 'CUE-NAV-2' }],
-      if: 'is_navigating',
+      if: { op: 'istrue', ref: 'is_navigating' },
       actions: [{
         name: 'custom_message',
         from_role_name: 'Cowboy',

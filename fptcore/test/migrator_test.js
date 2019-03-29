@@ -107,6 +107,39 @@ describe('Migrator', () => {
       sinon.assert.calledWith(migration.getCall(3), { name: 8 });
     });
 
+    it('migrates if clauses', () => {
+      const scriptContent = {
+        triggers: [{
+          if: 'test1',
+          actions: [{ name: 2 }]
+        }, {
+          actions: [{
+            name: 'conditional',
+            if: 'test2',
+            actions: [{ name: 4 }],
+            elseifs: [{
+              if: 'test3',
+              actions: [{ name: 6 }]
+            }],
+            else: [{ name: 8 }]
+          }]
+        }]
+      };
+      const migration = sinon.stub();
+
+      Migrator.runMigration('ifClauses', migration, scriptContent);
+
+      sinon.assert.callCount(migration, 4);
+      sinon.assert.calledWith(migration.getCall(0), 'test1', scriptContent,
+        scriptContent.triggers[0], 'if');
+      sinon.assert.calledWith(migration.getCall(1), undefined, scriptContent,
+        scriptContent.triggers[1], 'if');
+      sinon.assert.calledWith(migration.getCall(2), 'test2', scriptContent,
+        scriptContent.triggers[1].actions[0], 'if');
+      sinon.assert.calledWith(migration.getCall(3), 'test3', scriptContent,
+        scriptContent.triggers[1].actions[0].elseifs[0], 'if');
+    });
+
     it('migrates event specs', () => {
       const scriptContent = {
         triggers: [{

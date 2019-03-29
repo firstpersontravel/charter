@@ -6,7 +6,6 @@ const TriggerCore = require('../../src/cores/trigger');
 var sandbox = sinon.sandbox.create();
 
 describe('TriggerCore', () => {
-
   afterEach(() => {
     sandbox.restore();
   });
@@ -25,20 +24,26 @@ describe('TriggerCore', () => {
     });
 
     it('handles single passing if', () => {
-      const clause = {if: 'valueA', actions: [simpleAction]};
+      const clause = {
+        if: { op: 'istrue', ref: 'valueA' },
+        actions: [simpleAction]
+      };
       const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
     it('handles single failing if', () => {
-      const clause = {if: 'not valueA', actions: [simpleAction]};
+      const clause = {
+        if: {op: 'istrue', neg: true, ref: 'valueA' },
+        actions: [simpleAction]
+      };
       const res = TriggerCore.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, []);
     });
 
     it('handles single failing if with else', () => {
       const clause = {
-        if: 'valueB',
+        if: { op: 'istrue', ref: 'valueB' },
         actions: [simpleAction],
         else: [otherAction]
       };
@@ -48,9 +53,9 @@ describe('TriggerCore', () => {
 
     it('handles nested actions', () => {
       const clause = {
-        if: 'not valueB',
+        if: {op: 'istrue', neg: true, ref: 'valueB' },
         actions: [{
-          if: 'valueB',
+          if: {op: 'istrue', ref: 'valueB' },
           actions: [thirdAction],
           else: [otherAction]
         }]
@@ -61,10 +66,10 @@ describe('TriggerCore', () => {
 
     it('handles nested else', () => {
       const clause = {
-        if: 'valueB',
+        if: {op: 'istrue', ref: 'valueB' },
         actions: ['action'],
         else: [{
-          if: 'valueA',
+          if: {op: 'istrue', ref: 'valueA' },
           actions: [thirdAction],
           else: [otherAction]
         }]
@@ -75,11 +80,16 @@ describe('TriggerCore', () => {
 
     it('handles list of clauses', () => {
       const clause = {
-        if: 'valueA',
+        if: {op: 'istrue', ref: 'valueA' },
         actions: [
           simpleAction,
-          { if: 'valueB', actions: [otherAction] },
-          { if: 'not valueB', actions: [thirdAction] }
+          {
+            if: {op: 'istrue', ref: 'valueB' },
+            actions: [otherAction]
+          }, {
+            if: {op: 'istrue', neg: true, ref: 'valueB' },
+            actions: [thirdAction]
+          }
         ]
       };
       const res = TriggerCore.packedActionsForClause(clause, actionContext);
@@ -88,13 +98,13 @@ describe('TriggerCore', () => {
 
     it('handles else ifs', () => {
       const clause = {
-        if: 'a',
+        if: {op: 'istrue', ref: 'a' },
         actions: [simpleAction],
         elseifs: [{
-          if: 'b',
+          if: {op: 'istrue', ref: 'b' },
           actions: [otherAction]
         }, {
-          if: 'c',
+          if: {op: 'istrue', ref: 'c' },
           actions: [thirdAction]
         }],
         else: [fourthAction]
@@ -129,9 +139,15 @@ describe('TriggerCore', () => {
       const cue1 = { name: 'cue', params: { cue_name: 'ALLTRUE' } };
       const cue2 = { name: 'cue', params: { cue_name: 'NOT' } };
       const clause = {
-        if: 'val1 and val2',
+        if: {
+          op: 'and',
+          items: [
+            { op: 'istrue', ref: 'val1' },
+            { op: 'istrue', ref: 'val2' }
+          ]
+        },
         actions: [{
-          if: 'val3',
+          if: { op: 'istrue', ref: 'val3' },
           actions: [cue1],
           else: [cue2]
         }]
