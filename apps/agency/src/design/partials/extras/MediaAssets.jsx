@@ -119,6 +119,10 @@ class MediaAsset extends Component {
     }
   }
 
+  isDynamic() {
+    return this.props.path.indexOf('{{') >= 0;
+  }
+
   renderStatus() {
     if (this.state.uploading) {
       return 'Uploading...';
@@ -130,7 +134,7 @@ class MediaAsset extends Component {
         </span>
       );
     }
-    if (this.props.path.indexOf('{{') >= 0) {
+    if (this.isDynamic()) {
       return 'Dynamic';
     }
     const matchingAsset = this.getAsset();
@@ -147,6 +151,9 @@ class MediaAsset extends Component {
   }
 
   renderUploader() {
+    if (this.isDynamic()) {
+      return ' (Uploading dynamic media is not yet supported.)';
+    }
     const fullPath = this.getFullPath();
     const filename = fullPath.split('/').pop();
     const s3Folder = fullPath.substr(0, fullPath.length - filename.length);
