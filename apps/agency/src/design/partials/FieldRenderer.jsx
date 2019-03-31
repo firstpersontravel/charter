@@ -324,13 +324,17 @@ export default class FieldRenderer {
   }
 
   renderBoolean(spec, value, name, path, opts) {
-    const choices = ['Yes', 'No'];
-    // eslint-disable-next-line no-nested-ternary
-    const existing = value ? 'Yes' : 'No';
-    const label = _.isUndefined(value) ? internalEmpty(spec) : existing;
-    const clean = val => val === 'Yes';
-    return this.internalEnumlike(spec, existing, name, path, opts, choices,
-      clean, label);
+    const style = _.isUndefined(value) ? { opacity: 0.5 } : {};
+    const existing = _.isUndefined(value) ? spec.default : value;
+    return (
+      <input
+        style={style}
+        type="checkbox"
+        checked={existing}
+        onChange={(e) => {
+          this.onPropUpdate(path, e.target.checked);
+        }} />
+    );
   }
 
   renderReference(spec, value, name, path, opts) {
@@ -517,9 +521,9 @@ export default class FieldRenderer {
     const shouldShowLabel = !_.get(keySpec, 'display.primary');
     const labelText = labelForSpec(keySpec, key);
     const label = shouldShowLabel ? (
-      <strong style={{ marginRight: '0.25em' }}>
+      <span style={{ fontVariant: 'small-caps', marginRight: '0.25em' }}>
         {labelText}:
-      </strong>
+      </span>
     ) : null;
 
     return (
