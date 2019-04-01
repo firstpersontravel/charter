@@ -18,7 +18,6 @@ module.exports = {
       display: { hidden: true }
     }
   },
-  phraseForm: ['to_role_name', 'as_role_name', 'detect_voicemail'],
   applyAction: function (params, actionContext) {
     return [{
       operation: 'initiateCall',

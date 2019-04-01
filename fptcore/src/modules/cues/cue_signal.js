@@ -10,7 +10,6 @@ module.exports = {
       display: { primary: true }
     }
   },
-  phraseForm: ['cue_name'],
   applyAction: function(params, actionContext) {
     var cue = _.find(actionContext.scriptContent.cues,
       { name: params.cue_name });

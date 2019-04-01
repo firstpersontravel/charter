@@ -13,8 +13,8 @@ describe('#custom_message', () => {
 
   it('sends text message with content', () => {
     const params = {
-      message_medium: 'text',
-      message_content: 'hi',
+      medium: 'text',
+      content: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
@@ -65,8 +65,8 @@ describe('#custom_message', () => {
       }
     });
     const params = {
-      message_medium: 'text',
-      message_content: 'hi',
+      medium: 'text',
+      content: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
@@ -78,13 +78,13 @@ describe('#custom_message', () => {
 
   it('sends image message with location', () => {
     const params = {
-      message_medium: 'image',
-      message_content: 'url',
+      medium: 'image',
+      content: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit',
-      location_latitude: 38.051112,
-      location_longitude: -122.693563,
-      location_accuracy: 30
+      latitude: 38.051112,
+      longitude: -122.693563,
+      accuracy: 30
     };
 
     const res = custom_message.applyAction(params, actionContext);
@@ -125,8 +125,8 @@ describe('#custom_message', () => {
 
   it('sends audio message', () => {
     const params = {
-      message_medium: 'audio',
-      message_content: 'url',
+      medium: 'audio',
+      content: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };

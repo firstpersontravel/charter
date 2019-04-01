@@ -2,7 +2,6 @@ var _ = require('lodash');
 
 module.exports = {
   help: { summary: 'Update the current scene.' },
-  phraseForm: ['scene_name'],
   params: {
     scene_name: {
       required: true,

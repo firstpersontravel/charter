@@ -7,16 +7,13 @@ module.exports = {
   params: {
     from_role_name: { required: true, type: 'reference', collection: 'roles' },
     to_role_name: { required: true, type: 'reference', collection: 'roles' },
-    message_medium: { required: true, type: 'enum', options: MESSAGE_MEDIUM_OPTIONS },
-    message_content: { required: true, type: 'string' },
-    location_latitude: { required: false, type: 'number', display: { hidden: true } },
-    location_longitude: { required: false, type: 'number', display: { hidden: true } },
-    location_accuracy: { required: false, type: 'number', display: { hidden: true } },
-    suppress_relay_id: { required: false, type: 'number', display: { hidden: true } }
+    medium: { required: true, type: 'enum', options: MESSAGE_MEDIUM_OPTIONS },
+    content: { required: true, type: 'string' },
+    latitude: { required: false, type: 'number', display: { hidden: true } },
+    longitude: { required: false, type: 'number', display: { hidden: true } },
+    accuracy: { required: false, type: 'number', display: { hidden: true } },
+    from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
-  phraseForm: [
-    'from_role_name', 'to_role_name', 'message_medium', 'message_content'
-  ],
   applyAction: function(params, actionContext) {
     var roles = actionContext.scriptContent.roles || [];
     var sentByRole = _.find(roles, { name: params.from_role_name });
@@ -25,18 +22,18 @@ module.exports = {
     var isReplyNeeded = !!sentToRole.actor && !sentByRole.actor;
     return [{
       operation: 'createMessage',
-      suppressRelayId: params.suppress_relay_id || null,
+      suppressRelayId: params.from_relay_id || null,
       fields: {
         sentByRoleName: params.from_role_name,
         sentToRoleName: params.to_role_name,
         createdAt: actionContext.evaluateAt,
-        medium: params.message_medium,
-        content: params.message_content,
-        sentFromLatitude: params.location_latitude || null,
-        sentFromLongitude: params.location_longitude || null,
-        sentFromAccuracy: params.location_accuracy || null,
+        medium: params.medium,
+        content: params.content,
+        sentFromLatitude: params.latitude || null,
+        sentFromLongitude: params.longitude || null,
+        sentFromAccuracy: params.accuracy || null,
         isReplyNeeded: isReplyNeeded,
-        isInGallery: params.message_medium === 'image'
+        isInGallery: params.medium === 'image'
       }
     }, {
       operation: 'event',
@@ -45,13 +42,13 @@ module.exports = {
         message: {
           from: params.from_role_name,
           to: params.to_role_name,
-          medium: params.message_medium,
-          content: params.message_content
+          medium: params.medium,
+          content: params.content
         },
         location: {
-          latitude: params.location_latitude,
-          longitude: params.location_longitude,
-          accuracy: params.location_accuracy
+          latitude: params.latitude,
+          longitude: params.longitude,
+          accuracy: params.accuracy
         }
       }
     }];

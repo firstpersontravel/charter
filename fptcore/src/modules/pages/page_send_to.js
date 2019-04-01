@@ -2,7 +2,6 @@ var _ = require('lodash');
 
 module.exports = {
   help: { summary: 'Set a player to a page.' },
-  phraseForm: ['role_name', 'page_name'],
   params: {
     role_name: {
       required: true,

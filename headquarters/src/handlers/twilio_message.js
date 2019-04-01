@@ -16,9 +16,9 @@ function getMessageActions(relay, body, media) {
       params: {
         from_role_name: relay.asRoleName,
         to_role_name: relay.withRoleName,
-        message_medium: 'text',
-        message_content: body,
-        suppress_relay_id: relay.id
+        medium: 'text',
+        content: body,
+        from_relay_id: relay.id
       }
     });
   }
@@ -28,9 +28,9 @@ function getMessageActions(relay, body, media) {
     params: {
       from_role_name: relay.asRoleName,
       to_role_name: relay.withRoleName,
-      message_medium: 'image',
-      message_content: mediaItem.url,
-      suppress_relay_id: relay.id
+      medium: 'image',
+      content: mediaItem.url,
+      from_relay_id: relay.id
     }
   })));
   return actions;

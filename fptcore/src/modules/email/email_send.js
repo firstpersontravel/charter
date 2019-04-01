@@ -13,7 +13,6 @@ module.exports = {
       display: { primary: true }
     }
   },
-  phraseForm: ['email_name'],
   applyAction: function(params, actionContext) {
     var name = params.email_name;
     var emailData = _.find(actionContext.scriptContent.emails, { name: name });

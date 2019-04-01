@@ -185,11 +185,11 @@ export default Ember.Route.extend({
       this.makeAction('custom_message', {
         from_role_name: asRoleName,
         to_role_name: toRoleName,
-        message_medium: medium,
-        message_content: content,
-        location_latitude: lastFix && lastFix.coords.latitude,
-        location_longitude: lastFix && lastFix.coords.longitude,
-        location_accuracy: lastFix && lastFix.coords.accuracy
+        medium: medium,
+        content: content,
+        latitude: lastFix && lastFix.coords.latitude,
+        longitude: lastFix && lastFix.coords.longitude,
+        accuracy: lastFix && lastFix.coords.accuracy
       });
     },
 

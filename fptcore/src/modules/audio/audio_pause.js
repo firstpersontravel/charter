@@ -10,7 +10,6 @@ module.exports = {
       display: { primary: true }
     }
   },
-  phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {
     if (!actionContext.evalContext.audio_is_playing) {
       return [{

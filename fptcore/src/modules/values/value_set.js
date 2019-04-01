@@ -17,7 +17,6 @@ module.exports = {
       title: 'To'
     }
   },
-  phraseForm: ['value_ref', 'new_value_ref'],
   applyAction: function(params, actionContext) {
     var newValue = EvalCore.lookupRef(actionContext.evalContext,
       params.new_value_ref);

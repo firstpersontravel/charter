@@ -56,8 +56,8 @@ const actionContext = {
         name: 'custom_message',
         from_role_name: 'Cowboy',
         to_role_name: 'Farmer',
-        message_medium: 'text',
-        message_content: 'howdy'
+        medium: 'text',
+        content: 'howdy'
       }]
     }, {
       name: 'TRIGGER-NAV-1',
@@ -78,8 +78,8 @@ const actionContext = {
         name: 'custom_message',
         from_role_name: 'Cowboy',
         to_role_name: 'Farmer',
-        message_medium: 'text',
-        message_content: 'geewhiz'
+        medium: 'text',
+        content: 'geewhiz'
       }]
     }],
     scenes: [{ name: 'MAIN' }],
@@ -238,8 +238,8 @@ describe('Integration - Nested Triggers', () => {
         {
           from_role_name: 'Cowboy',
           to_role_name: 'Farmer',
-          message_content: 'howdy',
-          message_medium: 'text'
+          content: 'howdy',
+          medium: 'text'
         },
         _.merge({}, actionContext, {
           evalContext: {

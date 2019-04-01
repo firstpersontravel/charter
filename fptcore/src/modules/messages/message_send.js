@@ -18,7 +18,6 @@ module.exports = {
       display: { hidden: true }
     }
   },
-  phraseForm: ['message_name', 'to_role_name'],
   applyAction: function(params, actionContext) {
     var name = params.message_name;
     var messageData = _.find(actionContext.scriptContent.messages,

@@ -8,7 +8,6 @@ module.exports = {
       display: { primary: true }
     }
   },
-  phraseForm: ['role_name'],
   applyAction: function(params, actionContext) {
     return [{
       operation: 'updateTripValues',

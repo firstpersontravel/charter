@@ -49,9 +49,9 @@ describe('TwilioMessageHandler', () => {
           name: 'custom_message',
           params: {
             from_role_name: 'From',
-            message_content: 'incomïng mêssage',
-            message_medium: 'text',
-            suppress_relay_id: 2,
+            content: 'incomïng mêssage',
+            medium: 'text',
+            from_relay_id: 2,
             to_role_name: 'To'
           }
         }]);
@@ -71,9 +71,9 @@ describe('TwilioMessageHandler', () => {
           name: 'custom_message',
           params: {
             from_role_name: 'From',
-            message_content: 'http://test/image.jpg',
-            message_medium: 'image',
-            suppress_relay_id: 2,
+            content: 'http://test/image.jpg',
+            medium: 'image',
+            from_relay_id: 2,
             to_role_name: 'To'
           }
         }]);
@@ -87,11 +87,11 @@ describe('TwilioMessageHandler', () => {
       assert.strictEqual(result, true);
       sinon.assert.calledTwice(TripActionController.applyAction);
       assert.deepStrictEqual(
-        TripActionController.applyAction.firstCall.args[1]
-          .params.message_medium, 'text');
+        TripActionController.applyAction.firstCall.args[1].params.medium,
+        'text');
       assert.deepStrictEqual(
-        TripActionController.applyAction.secondCall.args[1]
-          .params.message_medium, 'image');
+        TripActionController.applyAction.secondCall.args[1].params.medium,
+        'image');
     });
   });
 });

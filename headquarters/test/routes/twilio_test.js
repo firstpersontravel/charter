@@ -48,9 +48,9 @@ describe('twilioRoutes', () => {
         params: {
           from_role_name: 'Player',
           to_role_name: 'Actor',
-          message_medium: 'text',
-          message_content: 'Reply',
-          suppress_relay_id: 3
+          medium: 'text',
+          content: 'Reply',
+          from_relay_id: 3
         }
       };
       assert.deepEqual(

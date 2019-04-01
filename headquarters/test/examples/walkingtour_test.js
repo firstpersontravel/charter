@@ -64,11 +64,11 @@ describe('WalkingTourExample', () => {
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        message_medium: 'image',
-        message_content: 'url',
-        location_latitude: 33.758273,
-        location_longitude: -121.411681,
-        location_accuracy: 40
+        medium: 'image',
+        content: 'url',
+        latitude: 33.758273,
+        longitude: -121.411681,
+        accuracy: 40
       }
     });
 
@@ -86,11 +86,11 @@ describe('WalkingTourExample', () => {
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        message_medium: 'image',
-        message_content: 'another_url',
-        location_latitude: 37.759002,
-        location_longitude: -122.411496,
-        location_accuracy: 30
+        medium: 'image',
+        content: 'another_url',
+        latitude: 37.759002,
+        longitude: -122.411496,
+        accuracy: 30
       }
     }, now);
 

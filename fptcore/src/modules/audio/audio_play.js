@@ -11,7 +11,6 @@ module.exports = {
     },
     audio_name: { required: true, type: 'reference', collection: 'audio' }
   },
-  phraseForm: ['role_name', 'audio_name'],
   applyAction: function(params, actionContext) {
     var audio = _.find(actionContext.scriptContent.audio,
       { name: params.audio_name });

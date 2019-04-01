@@ -11,7 +11,6 @@ module.exports = {
     },
     delta: { required: false, type: 'number' }
   },
-  phraseForm: ['value_ref', 'delta'],
   applyAction: function(params, actionContext) {
     var valueRef = params.value_ref;
     var existingValue = Number(actionContext.evalContext[valueRef] || 0);

@@ -4,7 +4,6 @@ var EvalCore = require('../../cores/eval');
 
 module.exports = {
   help: { summary: 'Play a clip on an active phone call.' },
-  phraseForm: ['clip_name'],
   requiredEventTypes: [
     'call_received', // type: call_received, from: role
     'call_answered', // type: call_answered, to: role
