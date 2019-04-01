@@ -1,26 +1,22 @@
-var ModulesRegistry = require('../registries/modules');
+const ModulesRegistry = require('../registries/modules');
 
-var ResourcesRegistry = {};
+const ResourcesRegistry = {};
 
-Object.values(ModulesRegistry).forEach(function(module) {
-  Object.keys(module.resources).forEach(function(resourceType) {
-    var resourceOrModuleResource = module.resources[resourceType];
-    if (resourceOrModuleResource.resource) {
-      ResourcesRegistry[resourceType] = resourceOrModuleResource.resource;
-    } else if (resourceOrModuleResource.properties) {
-      ResourcesRegistry[resourceType] = resourceOrModuleResource;
+Object.values(ModulesRegistry).forEach(module => {
+  Object.entries(module.resources).forEach(([resourceType, modResource]) => {
+    if (modResource.resource) {
+      ResourcesRegistry[resourceType] = modResource.resource;
     }
   });
 });
 
 module.exports = ResourcesRegistry;
 
+const ActionsRegistry = require('./actions');
+const EventsRegistry = require('./events');
+const createTriggerResource = require('./trigger');
 
-var ActionsRegistry = require('./actions');
-var EventsRegistry = require('./events');
-var createTriggerResource = require('./trigger');
-
-ResourcesRegistry.trigger = createTriggerResource(
-  ActionsRegistry, EventsRegistry);
+ResourcesRegistry.trigger = createTriggerResource(ActionsRegistry, 
+  EventsRegistry);
 
 module.exports = ResourcesRegistry;

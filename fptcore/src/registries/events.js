@@ -1,8 +1,8 @@
-var ModulesRegistry = require('../registries/modules');
+const ModulesRegistry = require('../registries/modules');
 
-var EventsRegistry = {};
+const EventsRegistry = {};
 
-Object.values(ModulesRegistry).forEach(function(module) {
+Object.values(ModulesRegistry).forEach(module => {
   Object.assign(EventsRegistry, module.events);
 });
 

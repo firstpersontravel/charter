@@ -1,4 +1,4 @@
-var Errors = {};
+const Errors = {};
 
 /**
  * Superclass for Validation errors

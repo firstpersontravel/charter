@@ -1,15 +1,17 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var TriggerCore = require('../cores/trigger');
+const TriggerCore = require('../cores/trigger');
 
 function createActionListProperty(actionsRegistry) {
-  var actionsClasses = _.mapValues(actionsRegistry, function(actionClass) {
+  const actionsClasses = _.mapValues(actionsRegistry, function(actionClass) {
     return { properties: actionClass.params };
   });
 
-  var ACTION_NAME_OPTIONS = Object.keys(actionsRegistry).concat(['conditional']);
+  const ACTION_NAME_OPTIONS = Object
+    .keys(actionsRegistry)
+    .concat(['conditional']);
 
-  var singleActionParam = {
+  const singleActionParam = {
     type: 'variegated',
     key: 'name',
     common: {
@@ -35,14 +37,14 @@ function createActionListProperty(actionsRegistry) {
     classes: actionsClasses
   };
 
-  var singleActionResource = {
+  const singleActionResource = {
     properties: { self: singleActionParam }
   };
 
   // Filled in later to avoid circular dependency
-  var actionListParam = {};
+  const actionListParam = {};
 
-  var elseIfParam = {
+  const elseIfParam = {
     type: 'object',
     properties: {
       if: { type: 'ifClause' },
@@ -50,7 +52,7 @@ function createActionListProperty(actionsRegistry) {
     }
   };
 
-  var conditionalActionResource = {
+  const conditionalActionResource = {
     properties: {
       name: {
         type: 'enum',
@@ -65,7 +67,7 @@ function createActionListProperty(actionsRegistry) {
     }
   };
 
-  var actionOrClauseParam = {
+  const actionOrClauseParam = {
     type: 'variegated',
     key: function(obj) {
       return obj.name === 'conditional' ? 'conditionalAction' : 'singleAction';
@@ -87,7 +89,7 @@ function createActionListProperty(actionsRegistry) {
 }
 
 function createEventResource(eventsRegistry) {
-  var eventsClasses = _(eventsRegistry)
+  const eventsClasses = _(eventsRegistry)
     .mapValues(function(eventClass, eventType) {
       return { properties: eventClass.specParams };
     })
@@ -113,14 +115,14 @@ function createEventResource(eventsRegistry) {
 
 module.exports = function (actionsRegistry, eventsRegistry) {
   function validateActionWithTrigger(action, path, trigger) {
-    var warnings = [];
-    var actionClass = actionsRegistry[action.name];
+    const warnings = [];
+    const actionClass = actionsRegistry[action.name];
     if (!actionClass) {
       return;
     }
     // Check against required event types if present.
     if (actionClass.requiredEventTypes) {
-      var resourceEventTypes = _.uniq(_.map(trigger.events, 'type'));
+      const resourceEventTypes = _.uniq(_.map(trigger.events, 'type'));
       resourceEventTypes.forEach(function(resourceEventType) {
         if (!_.includes(actionClass.requiredEventTypes, resourceEventType)) {
           warnings.push('Action "' + path + '" ("' + action.name + '") is triggered by event "' + resourceEventType +
@@ -133,16 +135,16 @@ module.exports = function (actionsRegistry, eventsRegistry) {
   }
 
   function getEventParent(eventSpec) {
-    var eventClass = eventsRegistry[eventSpec.type];
+    const eventClass = eventsRegistry[eventSpec.type];
     if (!eventClass.parentResourceParam) {
       return null;
     }
-    var paramSpec = eventClass.specParams[eventClass.parentResourceParam];
+    const paramSpec = eventClass.specParams[eventClass.parentResourceParam];
     if (paramSpec.type !== 'reference') {
       return null;
     }
-    var collectionName = paramSpec.collection;
-    var resourceName = eventSpec[eventClass.parentResourceParam];
+    const collectionName = paramSpec.collection;
+    const resourceName = eventSpec[eventClass.parentResourceParam];
     return collectionName + '.' + resourceName;
   }
 
@@ -167,17 +169,16 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     validateResource: function(script, resource) {
       // Iterate over actions and ifs to provide trigger-specific validation that
       // can't be provided by looking at the script and action in and of itself.
-      var warnings = [];
+      const warnings = [];
 
       // Iterator for actions.
-      var actionIteree = function(action, path) {
+      const actionIteree = function(action, path) {
         warnings.push.apply(warnings, validateActionWithTrigger(action, path,
           resource));
       };
 
-      var ifIteree = function(ifClause, path) {
-
-      };
+      const ifIteree = function(ifClause, path) {};
+      
       TriggerCore.walkPackedActions(resource.actions, 'actions', actionIteree,
         ifIteree);
       return warnings;
@@ -186,10 +187,10 @@ module.exports = function (actionsRegistry, eventsRegistry) {
       if (!resource.events.length) {
         return 'Untriggerable';
       }
-      var firstEvent = resource.events[0];
-      var firstEventClass = eventsRegistry[firstEvent.type];
+      const firstEvent = resource.events[0];
+      const firstEventClass = eventsRegistry[firstEvent.type];
       if (firstEventClass.getTitle) {
-        var customTitle = firstEventClass.getTitle(scriptContent, firstEvent);
+        const customTitle = firstEventClass.getTitle(scriptContent, firstEvent);
         if (customTitle) {
           return customTitle;
         }
@@ -203,12 +204,12 @@ module.exports = function (actionsRegistry, eventsRegistry) {
         .value();
     },
     getChildClaims: function(resource) {
-      var childClaims = [];
+      const childClaims = [];
       TriggerCore.walkPackedActions(resource.actions, '',
         function(action, path) {
-          var actionClass = actionsRegistry[action.name];
+          const actionClass = actionsRegistry[action.name];
           if (actionClass.getChildClaims) {
-            var actionChildClaims = actionClass.getChildClaims(action);
+            const actionChildClaims = actionClass.getChildClaims(action);
             childClaims.push.apply(childClaims, actionChildClaims);
           }
         },

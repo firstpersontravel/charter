@@ -1,19 +1,13 @@
-var ModulesRegistry = require('../registries/modules');
+const ModulesRegistry = require('../registries/modules');
 
-var SubresourcesRegistry = {};
+const SubresourcesRegistry = {};
 
-Object.values(ModulesRegistry).forEach(function(module) {
-  Object.keys(module.resources).forEach(function(resourceType) {
-    var moduleResource = module.resources[resourceType];
-    if (moduleResource.subresource) {
-      SubresourcesRegistry[resourceType] = moduleResource.subresource;
+Object.values(ModulesRegistry).forEach(module => {
+  Object.entries(module.resources).forEach(([resourceType, modResource]) => {
+    if (modResource.subresource) {
+      SubresourcesRegistry[resourceType] = modResource.subresource;
     }
   });
-  if (module.subresources) {
-    Object.keys(module.subresources).forEach(function(resourceType) {
-      SubresourcesRegistry[resourceType] = module.subresources[resourceType];
-    });
-  }
 });
 
 module.exports = SubresourcesRegistry;

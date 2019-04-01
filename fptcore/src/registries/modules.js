@@ -1,4 +1,4 @@
-var modules = [
+const modules = [
   require('../modules/achievements/module'),
   require('../modules/audio/module'),
   require('../modules/calls/module'),
@@ -15,32 +15,37 @@ var modules = [
   require('../modules/variants/module'),
 ];
 
-var ModulesRegistry = {};
+const ModulesRegistry = {};
 
+// Load modules
 modules.forEach(function(mod) {
   mod.actions = {};
   mod.events = {};
-  Object.keys(mod.resources).forEach(function(resourceType) {
-    var resourceDef = mod.resources[resourceType];
+  Object.keys(mod.resources).forEach(resourceType => {
+    const resourceDef = mod.resources[resourceType];
     Object.assign(mod.actions, resourceDef.actions);
     Object.assign(mod.events, resourceDef.events);
   });
   ModulesRegistry[mod.name] = mod;
 });
 
-var allActions = {};
-var allEvents = {};
+// Gather actions and events
+const allActions = {};
+const allEvents = {};
 
-Object.values(ModulesRegistry).forEach(function(module) {
+Object.values(ModulesRegistry).forEach(module => {
   Object.assign(allActions, module.actions);
   Object.assign(allEvents, module.events);
 });
 
-var createTriggerResource = require('./trigger');
+// Create trigger module
+const createTriggerResource = require('./trigger');
 
 ModulesRegistry.triggers = {
   resources: {
-    trigger: { resource: createTriggerResource(allActions, allEvents) }
+    trigger: {
+      resource: createTriggerResource(allActions, allEvents)
+    }
   }
 };
 
