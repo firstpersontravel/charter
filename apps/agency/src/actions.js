@@ -249,6 +249,27 @@ export function updateInstance(collectionName, instanceId, fields) {
   };
 }
 
+export function bulkUpdate(collectionName, query, fields) {
+  return function (dispatch) {
+    // Then dispatch the update request.
+    const queryString = createQueryString(query);
+    const url = `/api/${collectionName}${queryString}`;
+    const params = {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields)
+    };
+    return request(collectionName, null, 'bulkUpdate', url, params, dispatch)
+      .then((response) => {
+        dispatch(saveInstances(collectionName, response.data[collectionName]));
+        return response.data[collectionName];
+      })
+      .catch((err) => {
+        console.error(err.message);
+      });
+  };
+}
+
 export function refreshLiveData(orgId, tripIds) {
   return function (dispatch) {
     dispatch(listCollection('users', { orgId: orgId, isArchived: false }));

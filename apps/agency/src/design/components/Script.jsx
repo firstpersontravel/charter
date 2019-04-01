@@ -124,6 +124,13 @@ class Script extends Component {
     this.props.updateInstance('experiences', experience.id, {
       isArchived: true
     });
+    const expFilters = {
+      orgId: experience.orgId,
+      experienceId: experience.id
+    };
+    this.props.bulkUpdate('groups', expFilters, { isArchived: true });
+    this.props.bulkUpdate('trips', expFilters, { isArchived: true });
+    this.props.bulkUpdate('relays', expFilters, { isActive: false });
     browserHistory.push(`${this.props.params.orgName}`);
   }
 
@@ -372,7 +379,8 @@ Script.propTypes = {
   params: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   createInstance: PropTypes.func.isRequired,
-  updateInstance: PropTypes.func.isRequired
+  updateInstance: PropTypes.func.isRequired,
+  bulkUpdate: PropTypes.func.isRequired
 };
 
 export default withLoader(Script, ['script.id'], (props) => {

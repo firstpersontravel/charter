@@ -325,6 +325,20 @@ function replaceRecordRoute(model, authz, opts={}) {
   };
 }
 
+function replaceRecordsRoute(model, authz, opts={}) {
+  return async (req, res) => {
+    const where = whereFromQuery(model, req.query, opts);
+    const records = await model.findAll({ where: where });
+    const fields = deserializeFields(model, req.body, opts);
+    for (const record of records) {
+      authz.checkRecord(req, 'update', model, record);
+      authz.checkFields(req, 'update', model, record, req.body);
+      await updateRecord(model, record, fields);
+    }
+    respondWithRecords(res, model, records, opts);
+  };
+}
+
 function updateRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
@@ -338,10 +352,27 @@ function updateRecordRoute(model, authz, opts={}) {
   };
 }
 
+function updateRecordsRoute(model, authz, opts={}) {
+  return async (req, res) => {
+    const where = whereFromQuery(model, req.query, opts);
+    const records = await model.findAll({ where: where });
+    const fields = deserializeFields(model, req.body, opts);
+    for (const record of records) {
+      authz.checkRecord(req, 'update', model, record);
+      authz.checkFields(req, 'update', model, record, req.body);
+      const mergedFields = mergeFields(record, fields);
+      await updateRecord(model, record, mergedFields);
+    }
+    respondWithRecords(res, model, records, opts);
+  };
+}
+
 module.exports = {
-  listCollectionRoute,
   createRecordRoute,
-  retrieveRecordRoute,
+  listCollectionRoute,
   replaceRecordRoute,
-  updateRecordRoute
+  replaceRecordsRoute,
+  retrieveRecordRoute,
+  updateRecordRoute,
+  updateRecordsRoute
 };

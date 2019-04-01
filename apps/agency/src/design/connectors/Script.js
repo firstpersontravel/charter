@@ -1,7 +1,12 @@
 import { connect } from 'react-redux';
 
 import Script from '../components/Script';
-import { listCollection, createInstance, updateInstance } from '../../actions';
+import {
+  bulkUpdate,
+  listCollection,
+  createInstance,
+  updateInstance
+} from '../../actions';
 import { lookupScript, lookupScripts } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -10,6 +15,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  bulkUpdate: (...args) => dispatch(bulkUpdate(...args)),
   listCollection: (...args) => dispatch(listCollection(...args)),
   createInstance: (...args) => dispatch(createInstance(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args))

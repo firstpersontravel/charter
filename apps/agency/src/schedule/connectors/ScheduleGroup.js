@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { instanceFromDatastore } from '../../datastore-utils';
 import {
+  bulkUpdate,
   createInstance,
   updateInstance,
   initializeTrip,
@@ -23,6 +24,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  bulkUpdate: (...args) => dispatch(bulkUpdate(...args)),
   initializeTrip: (...args) => dispatch(initializeTrip(...args)),
   createInstance: (...args) => dispatch(createInstance(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args)),

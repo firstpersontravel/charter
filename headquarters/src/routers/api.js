@@ -30,7 +30,9 @@ function createModelRouter(model, opts={}) {
     create: apiRestRoutes.createRecordRoute(model, apiAuthorizor, opts),
     retrieve: apiRestRoutes.retrieveRecordRoute(model, apiAuthorizor, opts),
     replace: apiRestRoutes.replaceRecordRoute(model, apiAuthorizor, opts),
-    update: apiRestRoutes.updateRecordRoute(model, apiAuthorizor, opts)
+    replaceBulk: apiRestRoutes.replaceRecordsRoute(model, apiAuthorizor, opts),
+    update: apiRestRoutes.updateRecordRoute(model, apiAuthorizor, opts),
+    updateBulk: apiRestRoutes.updateRecordsRoute(model, apiAuthorizor, opts)
   };
   // Create and return router
   const router = express.Router();
@@ -38,27 +40,30 @@ function createModelRouter(model, opts={}) {
   router.post('/', asyncRoute(routes.create));
   router.get('/:recordId', asyncRoute(routes.retrieve));
   router.put('/:recordId', asyncRoute(routes.replace));
+  router.put('/', asyncRoute(routes.replaceBulk));
   router.patch('/:recordId', asyncRoute(routes.update));
+  router.patch('/', asyncRoute(routes.updateBulk));
   return router;
 }
 
 // REST API routers for Organization-filtered models
 const orgOpts = { requireFilters: ['orgId'] };
-apiRouter.use('/actions', createModelRouter(models.Action, orgOpts));
-apiRouter.use('/assets', createModelRouter(models.Asset, orgOpts));
+const expOpts = { requireFilters: ['orgId', 'experienceId'] };
+apiRouter.use('/actions', createModelRouter(models.Action, expOpts));
+apiRouter.use('/assets', createModelRouter(models.Asset, expOpts));
 apiRouter.use('/experiences', createModelRouter(models.Experience, orgOpts));
-apiRouter.use('/groups', createModelRouter(models.Group, orgOpts));
-apiRouter.use('/log-entries', createModelRouter(models.LogEntry, orgOpts));
-apiRouter.use('/messages', createModelRouter(models.Message, orgOpts));
-apiRouter.use('/players', createModelRouter(models.Player, orgOpts));
-apiRouter.use('/profiles', createModelRouter(models.Profile, orgOpts));
-apiRouter.use('/relays', createModelRouter(models.Relay, orgOpts));
-apiRouter.use('/scripts', createModelRouter(models.Script, orgOpts));
-apiRouter.use('/trips', createModelRouter(models.Trip, orgOpts));
+apiRouter.use('/groups', createModelRouter(models.Group, expOpts));
+apiRouter.use('/log-entries', createModelRouter(models.LogEntry, expOpts));
+apiRouter.use('/messages', createModelRouter(models.Message, expOpts));
+apiRouter.use('/players', createModelRouter(models.Player, expOpts));
+apiRouter.use('/profiles', createModelRouter(models.Profile, expOpts));
+apiRouter.use('/relays', createModelRouter(models.Relay, expOpts));
+apiRouter.use('/scripts', createModelRouter(models.Script, expOpts));
+apiRouter.use('/trips', createModelRouter(models.Trip, expOpts));
 
 // And for users, which are shared
 const userOpts = {
-  requireFilters: ['orgId'],
+  requireFilters: ['orgId', 'experienceId'],
   blacklistFields: ['passwordHash']
 };
 apiRouter.use('/users', createModelRouter(models.User, userOpts));

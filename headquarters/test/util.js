@@ -7,14 +7,11 @@ const TripsController = require('../src/controllers/trips');
 const models = require('../src/models');
 
 const dummyOrgFields = {
-  id: 100,
   name: 'org',
   title: 'Org'
 };
 
 const dummyExperienceFields = {
-  id: 1,
-  orgId: 100,
   name: 'dummy',
   title: 'dummy',
   timezone: 'US/Pacific',
@@ -35,8 +32,6 @@ const dummyContent = {
 const dummyScriptFields = {
   createdAt: moment.utc(),
   updatedAt: moment.utc(),
-  orgId: 100,
-  experienceId: 1,
   revision: 1,
   isActive: true,
   isArchived: false
@@ -47,17 +42,17 @@ async function createDummyOrg() {
 }
 
 async function createDummyExperience() {
-  await createDummyOrg();
-  return await models.Experience.create(dummyExperienceFields);
-}
-
-async function createDummyScript() {
-  return await createScriptWithContent(dummyContent);
+  const org = await createDummyOrg();
+  return await models.Experience.create(Object.assign({
+    orgId: org.id
+  }, dummyExperienceFields));
 }
 
 async function createScriptWithContent(scriptContent) {
-  await createDummyExperience();
+  const experience = await createDummyExperience();
   const scriptFields = Object.assign({}, dummyScriptFields, {
+    orgId: experience.orgId,
+    experienceId: experience.id,
     content: scriptContent
   });
 
@@ -77,6 +72,10 @@ async function createScriptWithContent(scriptContent) {
 
   await script.save();
   return script;
+}
+
+async function createDummyScript() {
+  return await createScriptWithContent(dummyContent);
 }
 
 async function createDummyTrip() {

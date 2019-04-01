@@ -30,7 +30,7 @@ describe('API retrieve', () => {
                 experienceId: trip.experienceId,
                 scriptId: trip.scriptId,
                 groupId: group.id,
-                orgId: 100,
+                orgId: trip.orgId,
                 currentSceneName: 'SCENE-MAIN',
                 date: today,
                 history: {},

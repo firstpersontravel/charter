@@ -54,11 +54,14 @@ class ScheduleGroup extends Component {
     this.props.updateInstance('groups', group.id, {
       isArchived: newArchiveValue
     });
-    if (newArchiveValue === false) {
-      // TODO - replace with bulk update
-      group.trips.forEach(trip => (
-        this.props.updateInstance('trips', trip.id, { isArchived: true })
-      ));
+    if (newArchiveValue === true) {
+      this.props.bulkUpdate('trips', {
+        orgId: group.orgId,
+        experienceId: group.experienceId,
+        groupId: group.id
+      }, {
+        isArchived: true
+      });
     }
     this.setState({
       isArchiveGroupModalOpen: false,
@@ -326,7 +329,8 @@ ScheduleGroup.propTypes = {
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   initializeTrip: PropTypes.func.isRequired,
-  updateInstance: PropTypes.func.isRequired
+  updateInstance: PropTypes.func.isRequired,
+  bulkUpdate: PropTypes.func.isRequired
 };
 
 export default withLoader(ScheduleGroup, ['params.groupId'], (props) => {
