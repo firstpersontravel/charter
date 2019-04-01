@@ -6,6 +6,7 @@ var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 var rollupJsonPlugin = require('rollup-plugin-json');
 var rollupBuiltinsPlugin = require('rollup-plugin-node-builtins');
 var rollupGlobalsPlugin = require('rollup-plugin-node-globals');
+var rollupBabelPlugin = require('rollup-plugin-babel');
 
 module.exports = function(defaults) {
 
@@ -49,6 +50,7 @@ module.exports = function(defaults) {
       transformation: 'cjs',
       as: 'fptcore',
       plugins: [
+        rollupBabelPlugin(),
         rollupJsonPlugin(),
         rollupGlobalsPlugin(),
         rollupBuiltinsPlugin()
