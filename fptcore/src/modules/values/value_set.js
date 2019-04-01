@@ -14,7 +14,7 @@ module.exports = {
     new_value_ref: {
       required: true,
       type: 'lookupable',
-      title: 'New Value'
+      title: 'To'
     }
   },
   phraseForm: ['value_ref', 'new_value_ref'],

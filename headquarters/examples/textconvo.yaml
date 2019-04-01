@@ -94,4 +94,4 @@ triggers:
     actions:
       - { name: set_value, value_ref: player_name, new_value_ref: event.message.content }
       - { name: send_message, message_name: MESSAGE-RETURN-GREETING }
-      - { name: send_message, message_name: MESSAGE-QUEST, when: in 10s }
+      - { name: send_message, message_name: MESSAGE-QUEST, offset: 10s }

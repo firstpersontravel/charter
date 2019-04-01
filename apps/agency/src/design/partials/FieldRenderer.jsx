@@ -58,7 +58,7 @@ const newItemsForSpecType = {
   number: 0,
   boolean: null,
   enum: '',
-  duration: '',
+  timeOffset: '',
   name: '',
   media: '',
   coords: '',
@@ -241,9 +241,9 @@ export default class FieldRenderer {
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
   }
 
-  renderDuration(spec, value, name, path, opts) {
+  renderTimeOffset(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.duration(this.script, name, spec, val))
+      isEmpty(ParamValidators.timeOffset(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);

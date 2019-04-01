@@ -41,7 +41,7 @@ const actionContext = {
       name: 'TRIGGER-SUNRISE',
       events: [{ type: 'cue_signaled', cue: 'CUE-SUNRISE' }],
       actions: [{
-        when: 'in 120m',
+        offset: '120m',
         name: 'send_message',
         message_name: 'MESSAGE-CROW'
       }]

@@ -17,6 +17,25 @@ module.exports = {
           delete eventSpec.after;
         }
       }
+    },
+    // Update complex 'when' clause for actions to 'offset' and 'when'
+    actions: function(action) {
+      if (!action.when) {
+        return;
+      }
+      var words = action.when.split(/\s+/);
+      if (words[0].toLowerCase() === 'in') {
+        action.offset = words[1];
+        delete action.when;
+      } else if (words[0].toLowerCase() === 'at') {
+        action.when = words[1].replace('schedule.', '');
+      } else if (words[1].toLowerCase() === 'after') {
+        action.offset = words[0];
+        action.when = words[2].replace('schedule.', '');
+      } else if (words[1].toLowerCase() === 'before') {
+        action.offset = '-' + words[0];
+        action.when = words[2].replace('schedule.', '');
+      }
     }
   },
   tests: [{
@@ -28,11 +47,18 @@ module.exports = {
         disabled_message: 'message'
       }],
       triggers: [{
-        events: [{ type: 'time_occurred', before: '5.4m' }]
+        events: [{ type: 'time_occurred', before: '5.4m' }],
+        actions: [{ name: 'cue', when: 'at schedule.TIME_THING' }]
       }, {
-        events: [{ type: 'cue_signaled' }]
+        events: [{ type: 'cue_signaled' }],
+        actions: [{ name: 'cue', when: '10s before schedule.TIME_THING' }]
       }, {
-        events: [{ type: 'time_occurred', after: '10s' }]
+        events: [{ type: 'time_occurred', after: '10s' }],
+        actions: [
+          { name: 'cue', when: '5.5m after schedule.TIME_THING' },
+          { name: 'cue', when: 'in 3d' },
+          { name: 'cue' }
+        ]
       }]
     },
     after: {
@@ -40,11 +66,18 @@ module.exports = {
         name: 'x'
       }],
       triggers: [{
-        events: [{ type: 'time_occurred', offset: '-5.4m' }]
+        events: [{ type: 'time_occurred', offset: '-5.4m' }],
+        actions: [{ name: 'cue', when: 'TIME_THING' }]
       }, {
-        events: [{ type: 'cue_signaled' }]
+        events: [{ type: 'cue_signaled' }],
+        actions: [{ name: 'cue', when: 'TIME_THING', offset: '-10s' }]
       }, {
-        events: [{ type: 'time_occurred', offset: '10s' }]
+        events: [{ type: 'time_occurred', offset: '10s' }],
+        actions: [
+          { name: 'cue', when: 'TIME_THING', offset: '5.5m' },
+          { name: 'cue', offset: '3d' },
+          { name: 'cue' }
+        ]
       }]
     }
   }]

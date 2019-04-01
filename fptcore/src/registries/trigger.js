@@ -22,13 +22,13 @@ function createActionListProperty(actionsRegistry) {
           required: true
         },
         when: {
-          // TODO - change to 'when' and 'offset'
-          type: 'string',
-          display: {
-            primary: true,
-            last: true,
-            placeholder: 'Immediately'
-          }
+          type: 'reference',
+          collection: 'times',
+          display: { last: true, placeholder: 'At once' }
+        },
+        offset: {
+          type: 'timeOffset',
+          display: { last: true, placeholder: 'None' }
         }
       }
     },

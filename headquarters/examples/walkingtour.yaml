@@ -112,7 +112,7 @@ triggers:
         geofence: GEOFENCE-ATLAS
     scene: SCENE-MAIN
     actions:
-      - { name: send_message, message_name: MESSAGE-ATLAS-REC, when: in 10s }
+      - { name: send_message, message_name: MESSAGE-ATLAS-REC, offset: 10s }
       - { name: increment_value, value_ref: points, delta: 5 }
 
   - name: geofence

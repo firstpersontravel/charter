@@ -1,14 +1,11 @@
 const moment = require('moment');
 
-const ActionPhraseCore = require('../../../fptcore/src/cores/action_phrase');
-
 const models = require('../models');
 const ExperienceController = require('../controllers/experience');
 const RunnerWorker = require('../workers/runner');
 const TripActionController = require('../controllers/trip_action');
 const TripNotifyController = require('../controllers/trip_notify');
 const TripResetController = require('../controllers/trip_reset');
-const TripUtil = require('../controllers/trip_util');
 
 async function updateRelaysRoute(req, res) {
   await ExperienceController.ensureTrailheads(req.params.experienceId);
@@ -50,19 +47,19 @@ async function resetRoute(req, res) {
 }
 
 async function phraseRoute(req, res) {
-  const tripId = req.params.tripId;
-  const actionPhrase = req.body.action_phrase;
-  const actionContext = await TripUtil.getActionContext(tripId);
-  const packedAction = ActionPhraseCore.parseActionPhrase(actionPhrase, 
-    actionContext);
-  const unpackedAction = ActionPhraseCore.unpackAction(packedAction,
-    actionContext);
-  if (packedAction.when) {
-    await TripActionController.scheduleAction(tripId, unpackedAction);
-  } else {
-    await TripActionController.applyAction(tripId, unpackedAction);
-  }
-  await TripNotifyController.notifyAction(tripId, unpackedAction);
+  // const tripId = req.params.tripId;
+  // const actionPhrase = req.body.action_phrase;
+  // const actionContext = await TripUtil.getActionContext(tripId);
+  // const packedAction = ActionPhraseCore.parseActionPhrase(actionPhrase, 
+  //   actionContext);
+  // const unpackedAction = ActionPhraseCore.unpackAction(packedAction,
+  //   actionContext);
+  // if (packedAction.when) {
+  //   await TripActionController.scheduleAction(tripId, unpackedAction);
+  // } else {
+  //   await TripActionController.applyAction(tripId, unpackedAction);
+  // }
+  // await TripNotifyController.notifyAction(tripId, unpackedAction);
   res.json({ data: { ok: true } });
 }
 
