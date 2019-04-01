@@ -304,9 +304,12 @@ export default class FieldRenderer {
     }
     const inlineOpts = Object.assign({}, opts);
     const inlineStyle = {};
-    if (_.includes(EvalCore.COMPOUND_IF_OPS, value.op)) {
-      inlineOpts.inline = false;
+    if (!_.get(opts, 'insideCompoundIf')) {
       inlineStyle.paddingLeft = '1em';
+    }
+    if (_.includes(['and', 'or'], value.op)) {
+      inlineOpts.inline = false;
+      inlineOpts.insideCompoundIf = true;
     } else {
       inlineOpts.inline = true;
       inlineStyle.display = 'inline-block';
@@ -418,28 +421,33 @@ export default class FieldRenderer {
       clean, label);
   }
 
-  renderList(spec, value, name, path, opts) {
-    const items = _.map(value, (item, i) => {
-      const itemPath = `${path}[${i}]`;
-      const rmBtn = (
-        <button
-          className="btn btn-sm btn-outline-secondary"
-          onClick={() => this.onArrayUpdate(path, i, null)}>
-          <i className="fa fa-minus" />
-        </button>
-      );
-      return (
-        // eslint-disable-next-line react/no-array-index-key
-        <div key={i}>
-          <div style={{ float: 'left' }}>
-            {rmBtn}
-          </div>
-          <div style={{ marginLeft: '2em' }}>
-            {this.renderFieldValue(spec.items, item, `${name} Item`, itemPath)}
-          </div>
+  renderListItem(spec, value, name, path, opts, item, index) {
+    const itemPath = `${path}[${index}]`;
+    const rmBtn = (
+      <button
+        className="btn btn-sm btn-outline-secondary"
+        onClick={() => this.onArrayUpdate(path, index, null)}>
+        <i className="fa fa-minus" />
+      </button>
+    );
+    return (
+      // eslint-disable-next-line react/no-array-index-key
+      <div key={index}>
+        <div style={{ float: 'left' }}>
+          {rmBtn}
         </div>
-      );
-    });
+        <div style={{ marginLeft: '2em' }}>
+          {this.renderFieldValue(spec.items, item, `${name} Item`, itemPath,
+            opts)}
+        </div>
+      </div>
+    );
+  }
+
+  renderList(spec, value, name, path, opts) {
+    const items = _.map(value, (item, i) => (
+      this.renderListItem(spec, value, name, path, opts, item, i)
+    ));
     const listIsEmpty = !value || value.length === 0;
     const newIndex = value ? value.length : 0;
     const newPath = `${path}[${newIndex}]`;
@@ -549,6 +557,7 @@ export default class FieldRenderer {
     }
 
     const shouldShowLabel = !_.get(keySpec, 'display.primary');
+    const shouldShowClear = isSimpleType && keySpec.type !== 'boolean';
     const labelText = labelForSpec(keySpec, key);
     const label = shouldShowLabel ? (
       <span style={{ fontVariant: 'small-caps', marginRight: '0.25em' }}>
@@ -561,8 +570,8 @@ export default class FieldRenderer {
       <div key={key} style={itemStyle} className="object-key">
         {label}
         {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
-          itemPath)}
-        {isSimpleType ?
+          itemPath, opts)}
+        {shouldShowClear ?
           this.internalClear(keySpec, itemValue, itemPath) : null}
         {invalidWarning}
       </div>

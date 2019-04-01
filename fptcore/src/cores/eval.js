@@ -8,8 +8,6 @@ var EvalCore = {};
 // Assigned here to avoid infinite loop
 EvalCore.ifSpec = {};
 
-EvalCore.COMPOUND_IF_OPS = ['and', 'or', 'not'];
-
 EvalCore.IF_PARAM_OP_CLASSES = {
   istrue: {
     properties: {
@@ -60,7 +58,7 @@ EvalCore.IF_PARAM_OP_CLASSES = {
     }
   },
   and: {
-    properties: { items: { type: 'list', items: EvalCore.ifSpec } },
+    properties: { items: { type: 'list', items: { type: 'ifClause' } } },
     eval: function(params, evalContext) {
       return _.every(params.items, function(item) {
         return EvalCore.if(evalContext, item);
@@ -68,7 +66,7 @@ EvalCore.IF_PARAM_OP_CLASSES = {
     }
   },
   or: {
-    properties: { items: { type: 'list', items: EvalCore.ifSpec } },
+    properties: { items: { type: 'list', items: { type: 'ifClause' } } },
     eval: function(params, evalContext) {
       return _.some(params.items, function(item) {
         return EvalCore.if(evalContext, item);
@@ -77,7 +75,11 @@ EvalCore.IF_PARAM_OP_CLASSES = {
   },
   not: {
     properties: {
-      item: EvalCore.ifSpec
+      item: {
+        required: true,
+        type: 'ifClause',
+        display: { primary: true }
+      }
     },
     eval: function(params, evalContext) {
       if (!params.item) {
