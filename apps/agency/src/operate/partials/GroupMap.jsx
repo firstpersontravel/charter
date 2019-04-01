@@ -151,11 +151,6 @@ function getPolylineRemaining(coords, currentCoords) {
 }
 
 export default class GroupMap extends Component {
-
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
-
   getWaypointLatLngs() {
     const script = this.props.trips[0].script;
     const waypoints = WaypointCore.getAllWaypointOptions(script.content);
@@ -401,6 +396,10 @@ export default class GroupMap extends Component {
 }
 
 L.Icon.Default.imagePath = '/static/images/';
+
+GroupMap.contextTypes = {
+  router: PropTypes.object.isRequired
+};
 
 GroupMap.propTypes = {
   center: ReactLeafletPropTypes.latlng,

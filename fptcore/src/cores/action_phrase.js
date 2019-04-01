@@ -1,33 +1,33 @@
-var _ = require('lodash');
-var moment = require('moment-timezone');
+const _ = require('lodash');
+const moment = require('moment-timezone');
 
-var TimeUtil = require('../utils/time');
+const TimeUtil = require('../utils/time');
 
-var ActionPhraseCore = {};
+class ActionPhraseCore {
+  /**
+   * Parse an action when and offset modifiers into a time.
+   */
+  static scheduleAtForWhen(when, offset, actionContext) {
+    const baseTimestamp = when ?
+      actionContext.evalContext.schedule[when] :
+      actionContext.evaluateAt;
+    const offsetSecs = TimeUtil.secondsForOffsetShorthand(offset);
+    return moment.utc(baseTimestamp).add(offsetSecs, 'seconds');
+  }
 
-/**
- * Parse an action when and offset modifiers into a time.
- */
-ActionPhraseCore.scheduleAtForWhen = function(when, offset, actionContext) {
-  var baseTimestamp = when ?
-    actionContext.evalContext.schedule[when] :
-    actionContext.evaluateAt;
-  var offsetSecs = TimeUtil.secondsForOffsetShorthand(offset);
-  return moment.utc(baseTimestamp).add(offsetSecs, 'seconds');
-};
-
-/**
- * Parse an action when modifier ("in 3m") into a time.
- */
-ActionPhraseCore.unpackAction = function(action, actionContext) {
-  var params = _.omit(action, 'name', 'when', 'offset');
-  var scheduleAt = ActionPhraseCore.scheduleAtForWhen(action.when,
-    action.offset, actionContext);
-  return {
-    name: action.name,
-    params: params,
-    scheduleAt: scheduleAt
-  };
-};
+  /**
+   * Parse an action when modifier ("in 3m") into a time.
+   */
+  static unpackAction(action, actionContext) {
+    const params = _.omit(action, 'name', 'when', 'offset');
+    const scheduleAt = this.scheduleAtForWhen(action.when, action.offset, 
+      actionContext);
+    return {
+      name: action.name,
+      params: params,
+      scheduleAt: scheduleAt
+    };
+  }
+}
 
 module.exports = ActionPhraseCore;

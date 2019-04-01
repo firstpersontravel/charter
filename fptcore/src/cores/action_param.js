@@ -1,11 +1,9 @@
-var _ = require('lodash');
-
-var ActionParamCore = {};
+const _ = require('lodash');
 
 /**
  * Prep function - decode ref if needed.
  */
-ActionParamCore.PARAM_PREP_FUNCTIONS = {
+const PARAM_PREP_FUNCTIONS = {
   // Strip quotes from strings
   string: function(paramSpec, param, actionContext) {
     if (param[0] === '"' && param[param.length - 1] === '"') {
@@ -25,23 +23,31 @@ ActionParamCore.PARAM_PREP_FUNCTIONS = {
   }
 };
 
-ActionParamCore.prepareParam = function(paramSpec, param, actionContext) {
-  var paramPrepFunc = ActionParamCore.PARAM_PREP_FUNCTIONS[paramSpec.type];
-  // If no prep function is present, return the param as-is.
-  if (!paramPrepFunc) {
-    return param;
-  }
-  return paramPrepFunc(paramSpec, param, actionContext);
-};
-
-ActionParamCore.prepareParams = function(paramsSpec, params, actionContext) {
-  return _.mapValues(params, function(param, key) {
-    if (!paramsSpec[key]) {
-      throw new Error('Invalid param ' + key);
+class ActionParamCore {
+  /**
+   * Prepare a parameter.
+   */
+  static prepareParam(paramSpec, param, actionContext) {
+    const paramPrepFunc = PARAM_PREP_FUNCTIONS[paramSpec.type];
+    // If no prep function is present, return the param as-is.
+    if (!paramPrepFunc) {
+      return param;
     }
-    var spec = paramsSpec[key];
-    return ActionParamCore.prepareParam(spec, param, actionContext);
-  });
-};
+    return paramPrepFunc(paramSpec, param, actionContext);
+  }
+
+  /**
+   * Prepare all parameters.
+   */
+  static prepareParams(paramsSpec, params, actionContext) {
+    return _.mapValues(params, (param, key) => {
+      if (!paramsSpec[key]) {
+        throw new Error('Invalid param ' + key);
+      }
+      const spec = paramsSpec[key];
+      return this.prepareParam(spec, param, actionContext);
+    });
+  }
+}
 
 module.exports = ActionParamCore;

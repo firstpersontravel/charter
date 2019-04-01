@@ -19,18 +19,8 @@ const plugins = [
   })
 ];
 
-const prodPlugins = [
-  new webpack.optimize.UglifyJsPlugin({
-    minimize: true,
-    compress: {
-      warnings: false
-    }
-  })
-];
-
-const allPlugins = (isProduction ? prodPlugins : []).concat(plugins);
-
 module.exports = {
+  mode: isProduction ? 'production' : 'development',
   devtool: isProduction ? 'source-map' : 'cheap-source-map',
   entry: [
     './src/index.jsx',
@@ -53,7 +43,7 @@ module.exports = {
     uriparser: 'empty',
     child_process: 'empty'
   },
-  plugins: allPlugins,
+  plugins: plugins,
   module: {
     rules: [{
     //   enforce: 'pre',
@@ -63,14 +53,23 @@ module.exports = {
     // }, {
       test: /\.jsx?$/,
       loader: 'babel-loader',
-      include: path.join(__dirname, 'src')
+      options: {
+        presets: [
+          '@babel/preset-env',
+          '@babel/preset-react'
+        ]
+      },
+      include: [
+        path.join(__dirname, 'src')
+        // path.join(__dirname, 'node_modules/fptcore/src')
+      ]
     }, {
       test: /\.scss$/,
       loaders: ['style-loader', 'css-loader', 'sass-loader']
     }, {
-      test: /\.json$/,
-      loader: 'json-loader'
-    }, {
+    //   test: /\.json$/,
+    //   loader: 'json-loader'
+    // }, {
       test: /\.png$/,
       loader: 'file-loader?name=[name].[ext]'
     }, {

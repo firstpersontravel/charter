@@ -291,7 +291,7 @@ export function refreshLiveData(orgId, experienceId, tripIds) {
       tripId: tripIds,
       appliedAt: 'null'
     }, { clear: true }));
-    dispatch(listCollection('messsages', {
+    dispatch(listCollection('messages', {
       orgId: orgId,
       tripId: tripIds,
       sort: '-id',
