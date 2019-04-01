@@ -92,14 +92,23 @@ export default class ResourceView extends Component {
   }
 
   handleResourceUpdate(newResource) {
-    this.setState({
-      pendingResource: newResource,
-      hasPendingChanges: true,
-      errors: ParamValidators.validateResource(
-        this.props.script,
-        ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
-        newResource, '')
-    });
+    const errors = ParamValidators.validateResource(
+      this.props.script,
+      ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
+      newResource, '');
+    // If there are errors, set the pending state so we can correct them.
+    // If this is a new resource, also wait for an explicit confirm.
+    const hasErrors = errors && errors.length > 0;
+    if (hasErrors || this.props.isNew) {
+      this.setState({
+        pendingResource: newResource,
+        hasPendingChanges: true,
+        errors: errors
+      });
+      return;
+    }
+    // Otherwise apply immediately.
+    this.props.onUpdate(newResource);
   }
 
   handleArrayUpdate(path, index, newValue) {

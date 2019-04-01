@@ -23,6 +23,15 @@ function saveInstances(collectionName, instances) {
   };
 }
 
+function updateInstanceFields(collectionName, instanceId, fields) {
+  return {
+    type: 'updateInstanceFields',
+    collectionName: collectionName,
+    instanceId: instanceId,
+    fields: fields
+  };
+}
+
 function clearInstances(collectionName) {
   return {
     type: 'clearInstances',
@@ -220,6 +229,9 @@ export function updateInstance(collectionName, instanceId, fields) {
   }
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
+    // First update instance in-place for fast responsiveness.
+    dispatch(updateInstanceFields(collectionName, instanceId, fields));
+    // Then dispatch the update request.
     const url = `/api/${collectionName}/${instanceId}`;
     const params = {
       method: 'PATCH',

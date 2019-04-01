@@ -32,6 +32,19 @@ function saveInstancesHandler(state, action) {
   });
 }
 
+function updateInstanceFieldsHandler(state, action) {
+  const collection = state.datastore[action.collectionName];
+  const index = _.findIndex(collection, { id: action.instanceId });
+  const collectionUpdate = {
+    [index]: _.mapValues(action.fields, field => ({
+      $set: field
+    }))
+  };
+  return update(state, {
+    datastore: { [action.collectionName]: collectionUpdate }
+  });
+}
+
 function clearInstancesHandler(state, action) {
   return update(state, {
     datastore: { [action.collectionName]: { $set: [] } }
@@ -41,6 +54,7 @@ function clearInstancesHandler(state, action) {
 const handlers = {
   saveInstances: saveInstancesHandler,
   clearInstances: clearInstancesHandler,
+  updateInstanceFields: updateInstanceFieldsHandler,
   saveRequest: saveRequestHandler
 };
 
