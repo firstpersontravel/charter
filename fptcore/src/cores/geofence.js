@@ -1,26 +1,26 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var distance = require('../utils/distance');
-var WaypointCore = require('./waypoint');
+const distance = require('../utils/distance');
+const WaypointCore = require('./waypoint');
 
-var GeofenceCore = {};
-
-/**
- * Get all geofences overlapping an area.
- */
-GeofenceCore.geofencesInArea = function(scriptContent, latitude, longitude,
-  accuracy, waypointOptions) {
-  if (!latitude || !longitude) {
-    return [];
+class GeofenceCore {
+  /**
+   * Get all geofences overlapping an area.
+   */
+  static geofencesInArea(scriptContent, latitude, longitude, accuracy,
+    waypointOptions) {
+    if (!latitude || !longitude) {
+      return [];
+    }
+    const geofences = scriptContent.geofences || [];
+    return _.filter(geofences, (geofence) => {
+      const waypointOption = WaypointCore.optionForWaypoint(scriptContent,
+        geofence.center, waypointOptions);
+      const dist = distance(latitude, longitude,
+        waypointOption.coords[0], waypointOption.coords[1]);
+      return dist - accuracy <= geofence.distance;
+    });
   }
-  var geofences = scriptContent.geofences || [];
-  return _.filter(geofences, function(geofence) {
-    var waypointOption = WaypointCore.optionForWaypoint(scriptContent,
-      geofence.center, waypointOptions);
-    var dist = distance(latitude, longitude,
-      waypointOption.coords[0], waypointOption.coords[1]);
-    return dist - accuracy <= geofence.distance;
-  });
-};
+}
 
 module.exports = GeofenceCore;

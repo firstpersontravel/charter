@@ -1,14 +1,11 @@
-var _ = require('lodash');
-var moment = require('moment-timezone');
+const _ = require('lodash');
+const moment = require('moment-timezone');
 
-var TimeUtil = require('../utils/time');
+const TimeUtil = require('../utils/time');
 
-var EvalCore = {};
+const ifSpec = {};
 
-// Assigned here to avoid infinite loop
-EvalCore.ifSpec = {};
-
-EvalCore.IF_PARAM_OP_CLASSES = {
+const ifOpClasses = {
   istrue: {
     properties: {
       ref: { type: 'lookupable', required: true }
@@ -35,8 +32,8 @@ EvalCore.IF_PARAM_OP_CLASSES = {
       part_ref: { type: 'lookupable', required: true }
     },
     eval: function(params, evalContext) {
-      var a = EvalCore.lookupRef(evalContext, params.string_ref);
-      var b = EvalCore.lookupRef(evalContext, params.part_ref);
+      const a = EvalCore.lookupRef(evalContext, params.string_ref);
+      const b = EvalCore.lookupRef(evalContext, params.part_ref);
       return (
         typeof a === 'string' &&
         typeof b === 'string' &&
@@ -50,8 +47,8 @@ EvalCore.IF_PARAM_OP_CLASSES = {
       regex_ref: { type: 'string', required: true }
     },
     eval: function(params, evalContext) {
-      var a = EvalCore.lookupRef(evalContext, params.string_ref);
-      var regex = EvalCore.lookupRef(evalContext, params.regex_ref);
+      const a = EvalCore.lookupRef(evalContext, params.string_ref);
+      const regex = EvalCore.lookupRef(evalContext, params.regex_ref);
       return (
         typeof a === 'string' && RegExp(regex, 'i').test(a)
       );
@@ -90,90 +87,96 @@ EvalCore.IF_PARAM_OP_CLASSES = {
   },
 };
 
-_.assign(EvalCore.ifSpec, {
+_.assign(ifSpec, {
   type: 'variegated',
   key: 'op',
   common: {
     properties: {
       op: {
         type: 'enum',
-        options: Object.keys(EvalCore.IF_PARAM_OP_CLASSES),
+        options: Object.keys(ifOpClasses),
         required: true,
         display: { primary: true }
       }
     }
   },
-  classes: EvalCore.IF_PARAM_OP_CLASSES
+  classes: ifOpClasses
 });
 
-EvalCore.if = function (evalContext, ifStatement) {
-  var ifClass = EvalCore.IF_PARAM_OP_CLASSES[ifStatement.op];
-  if (!ifClass) {
-    throw new Error('Invalid if operation: ' + ifStatement.op);
-  }
-  return ifClass.eval(ifStatement, evalContext);
-};
 
-EvalCore.constants = { true: true, false: false, null: null };
+const refConstants = { true: true, false: false, null: null };
+const templateRegex = /{{\s*([\w_\-.:]+)\s*}}/gi;
+const ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif\s*%}/gi;
 
-EvalCore.lookupRef = function (evalContext, ref) {
-  if (_.isBoolean(ref) || _.isNull(ref) || _.isNumber(ref)) {
-    return ref;
-  }
-  if (!_.isString(ref)) {
-    return null;
-  }
-  if (!isNaN(Number(ref))) {
-    return Number(ref);
-  }
-  if (!_.isUndefined(EvalCore.constants[ref])) {
-    return EvalCore.constants[ref];
-  }
-  if ((ref[0] === '"' && ref[ref.length - 1] === '"') ||
-      (ref[0] === '\'' && ref[ref.length - 1] === '\'')) {
-    return ref.slice(1, ref.length - 1);
-  }
-  var result = _.get(evalContext, ref);
-  return _.isUndefined(result) ? null : result;
-};
 
-EvalCore.templateRegex = /{{\s*([\w_\-.:]+)\s*}}/gi;
-EvalCore.ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif\s*%}/gi;
-
-EvalCore.templateText = function (evalContext, text, timezone) {
-  if (text === null || text === undefined) { return ''; }
-  if (text === false) { return 'No'; }
-  if (text === true) { return 'Yes'; }
-  if (_.isNumber(text)) { return text.toString(); }
-
-  // Is time
-  if (TimeUtil.isoTimeRegex.test(text)) {
-    if (!timezone) {
-      throw new Error('Timezone is required.');
+class EvalCore {
+  static if(evalContext, ifStatement) {
+    const ifClass = ifOpClasses[ifStatement.op];
+    if (!ifClass) {
+      throw new Error('Invalid if operation: ' + ifStatement.op);
     }
-    return moment.utc(text).tz(timezone).format('h:mma');
+    return ifClass.eval(ifStatement, evalContext);
   }
 
-  // Is phone number
-  if (/^\d{10}$/.test(text)) {
-    return (
-      '(' + text.substring(0, 3) + ') ' +
-      text.substring(3, 6) + '-' +
-      text.substring(6)
-    );
+  static lookupRef(evalContext, ref) {
+    if (_.isBoolean(ref) || _.isNull(ref) || _.isNumber(ref)) {
+      return ref;
+    }
+    if (!_.isString(ref)) {
+      return null;
+    }
+    if (!isNaN(Number(ref))) {
+      return Number(ref);
+    }
+    if (!_.isUndefined(refConstants[ref])) {
+      return refConstants[ref];
+    }
+    if ((ref[0] === '"' && ref[ref.length - 1] === '"') ||
+        (ref[0] === '\'' && ref[ref.length - 1] === '\'')) {
+      return ref.slice(1, ref.length - 1);
+    }
+    const result = _.get(evalContext, ref);
+    return _.isUndefined(result) ? null : result;
   }
 
-  // Interpolate {{ }}s first.
-  text = text.replace(EvalCore.templateRegex, function(m, p1) {
-    return EvalCore.templateText(evalContext, EvalCore.lookupRef(evalContext, p1),
-      timezone);
-  });
-  // Then {% if %} {% endif %} statements.
-  text = text.replace(EvalCore.ifElseRegex, function(m, p1, p2, p3) {
-    var ifStmt = { op: 'istrue', ref: p1 };
-    return EvalCore.if(evalContext, ifStmt) ? p2 : (p3 || '');
-  });
-  return text;
-};
+  static templateText(evalContext, text, timezone) {
+    if (text === null || text === undefined) { return ''; }
+    if (text === false) { return 'No'; }
+    if (text === true) { return 'Yes'; }
+    if (_.isNumber(text)) { return text.toString(); }
+
+    // Is time
+    if (TimeUtil.isoTimeRegex.test(text)) {
+      if (!timezone) {
+        throw new Error('Timezone is required.');
+      }
+      return moment.utc(text).tz(timezone).format('h:mma');
+    }
+
+    // Is phone number
+    if (/^\d{10}$/.test(text)) {
+      return (
+        '(' + text.substring(0, 3) + ') ' +
+        text.substring(3, 6) + '-' +
+        text.substring(6)
+      );
+    }
+
+    // Interpolate {{ }}s first.
+    text = text.replace(templateRegex, (m, p1) => {
+      return this.templateText(evalContext, this.lookupRef(evalContext, p1),
+        timezone);
+    });
+    // Then {% if %} {% endif %} statements.
+    text = text.replace(ifElseRegex, (m, p1, p2, p3) => {
+      const ifStmt = { op: 'istrue', ref: p1 };
+      return this.if(evalContext, ifStmt) ? p2 : (p3 || '');
+    });
+    return text;
+  }
+}
+
+EvalCore.ifSpec = ifSpec;
+EvalCore.ifOpClasses = ifOpClasses;
 
 module.exports = EvalCore;

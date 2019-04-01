@@ -284,7 +284,7 @@ export default class FieldRenderer {
   renderIfClause(spec, value, name, path, opts) {
     if (!value) {
       const choices = [{ value: '', label: '---' }]
-        .concat(Object.keys(EvalCore.IF_PARAM_OP_CLASSES).map(op => ({
+        .concat(Object.keys(EvalCore.ifOpClasses).map(op => ({
           value: op,
           label: op
         })));
