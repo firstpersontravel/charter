@@ -64,7 +64,6 @@ const newItemsForSpecType = {
   coords: '',
   timeShorthand: '',
   simpleAttribute: '',
-  nestedAttribute: '',
   lookupable: '',
   reference: '',
   ifClause: { op: '' },
@@ -253,14 +252,6 @@ export default class FieldRenderer {
   renderLookupable(spec, value, name, path, opts) {
     const validate = val => (
       isEmpty(ParamValidators.lookupable(this.script, name, spec, val))
-    );
-    const clean = val => val;
-    return this.internalStringlike(spec, value, name, path, opts, validate, clean);
-  }
-
-  renderNestedAttribute(spec, value, name, path, opts) {
-    const validate = val => (
-      isEmpty(ParamValidators.nestedAttribute(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);

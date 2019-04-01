@@ -52,14 +52,6 @@ describe('ActionParamCore', () => {
       });
     });
 
-    describe('nestedAttribute', () => {
-      it('preserves refs', () => {
-        const spec = { type: 'nestedAttribute' };
-        const res = ActionParamCore.prepareParam(spec, 'abc', null);
-        assert.strictEqual(res, 'abc');
-      });
-    });
-
     describe('other', () => {
       it('preserves other param types', () => {
         const spec = { type: 'other' };

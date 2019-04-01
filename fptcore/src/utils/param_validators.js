@@ -143,21 +143,6 @@ ParamValidators.simpleAttribute = function(script, name, spec, param) {
   }
 };
 
-ParamValidators.nestedAttribute = function(script, name, spec, param) {
-  if (!_.isString(param)) {
-    return ['Nested attribute param "' + name + '" should be a string.'];
-  }
-  if (!param) {
-    return ['Nested attribute param "' + name + '" should not be blank.'];
-  }
-  if (!/[A-Za-z]/.test(param[0])) {
-    return ['Nested attribute param "' + name + '" ("' + param + '") should start with a letter.'];
-  }
-  if (!/^[\w\d_.]+$/.test(param)) {
-    return ['Nested attribute param "' + name + '" ("' + param + '") should be alphanumeric with underscores and periods.'];
-  }
-};
-
 ParamValidators.lookupable = function(script, name, spec, param) {
   if (!_.isString(param)) {
     return ['Lookupable param "' + name + '" ("' + param + '") should be a string.'];

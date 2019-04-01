@@ -271,41 +271,6 @@ describe('ParamValidators', () => {
     });
   });
 
-  describe('#nestedAttribute', () => {
-    it('permits valid value names', () => {
-      ok(ParamValidators.nestedAttribute({}, 's', {}, 'abc'));
-      ok(ParamValidators.nestedAttribute({}, 's', {}, 'A12'));
-      ok(ParamValidators.nestedAttribute({}, 's', {}, 'A_BC'));
-      ok(ParamValidators.nestedAttribute({}, 's', {}, 'a.b.c'));
-    });
-
-    it('warns if not a string', () => {
-      err(ParamValidators.nestedAttribute({}, 's', {}, 1),
-        'Nested attribute param "s" should be a string.');
-    });
-
-    it('warns if starts with a number', () => {
-      err(ParamValidators.nestedAttribute({}, 's', {}, '0'),
-        'Nested attribute param "s" ("0") should start with a letter.');
-    });
-
-    it('does not allow quotes', () => {
-      err(ParamValidators.nestedAttribute({}, 's', {}, '"abc"'),
-        'Nested attribute param "s" (""abc"") should start with a letter.');
-      err(ParamValidators.nestedAttribute({}, 's', {}, '\'A\''),
-        'Nested attribute param "s" ("\'A\'") should start with a letter.');
-    });
-
-    it('warns if contains invalid characters', () => {
-      err(ParamValidators.nestedAttribute({}, 's', {}, 'a-b'),
-        'Nested attribute param "s" ("a-b") should be alphanumeric with underscores and periods.');
-      err(ParamValidators.nestedAttribute({}, 's', {}, 'a"-b'),
-        'Nested attribute param "s" ("a"-b") should be alphanumeric with underscores and periods.');
-      err(ParamValidators.nestedAttribute({}, 's', {}, 'b^$(D'),
-        'Nested attribute param "s" ("b^$(D") should be alphanumeric with underscores and periods.');
-    });
-  });
-
   describe('#lookupable', () => {
     it('permits valid value names', () => {
       ok(ParamValidators.lookupable({}, 's', {}, 'abc'));
@@ -419,12 +384,12 @@ describe('ParamValidators', () => {
   describe('#dictionary', () => {
     const spec = {
       type: 'dictionary',
-      keys: { type: 'nestedAttribute' },
+      keys: { type: 'name' },
       values: { type: 'simpleValue' }
     };
 
     it('checks keys and values', () => {
-      const valid = { abc_123: 5, 'def.egf': true, 'word_two': 'abc' };
+      const valid = { abc_123: 5, 'def_egf': true, 'word_two': 'abc' };
       ok(ParamValidators.dictionary({}, 's', spec, valid));
     });
 
@@ -440,7 +405,7 @@ describe('ParamValidators', () => {
     it('warns if invalid key', () => {
       const invalid = { 'd%f': false };
       err(ParamValidators.dictionary({}, 's', spec, invalid),
-        'Nested attribute param "s[d%f]" ("d%f") should be alphanumeric with underscores and periods.');
+        'Name param "s[d%f]" ("d%f") should be alphanumeric with dashes or underscores.');
     });
 
     it('warns if invalid value', () => {
