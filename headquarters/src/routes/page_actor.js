@@ -61,14 +61,7 @@ function getPage(objs, evalContext, player) {
     return null;
   }
   const appearanceSort = PlayerCore.getSceneSort(script, evalContext, player);
-  const localSceneStart = pageInfo.appearanceStart ?
-    pageInfo.appearanceStart.clone().tz(timezone) :
-    null;
-  const appearanceDisabledStart = localSceneStart ?
-    ('- Starts ' + localSceneStart.format('h:mma')) : '';
   const appearance = pageInfo.appearance;
-  const introText = EvalCore.templateText(evalContext, appearance.intro,
-    timezone);
   const page = pageInfo.page;
   const directiveText = EvalCore.templateText(evalContext,
     page.directive, timezone);
@@ -84,10 +77,6 @@ function getPage(objs, evalContext, player) {
     panels: panels,
     pageInfo: pageInfo,
     appearance: appearance,
-    appearanceDisabledStart: appearanceDisabledStart,
-    appearanceDisabledIntro: introText,
-    appearanceDisabledMessage: appearance.disabled_message ||
-      'Not ready to start',
     sort: appearanceSort,
     directiveText: directiveText
   };

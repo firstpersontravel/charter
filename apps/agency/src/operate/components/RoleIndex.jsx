@@ -5,8 +5,6 @@ import moment from 'moment';
 import L from 'leaflet';
 import { Link } from 'react-router';
 
-import { EvalCore } from 'fptcore';
-
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 
@@ -66,12 +64,7 @@ function renderPlayerCell(player, isFirst) {
       </div>
     );
   }
-  const appearance = _.find(trip.script.content.appearances, {
-    name: page.appearance
-  }) || {};
-  const appearanceIsActive = !appearance.if || EvalCore.if(trip.evalContext, appearance.if);
   const pageTitle = page ? page.title : player.currentPageName;
-  const status = appearanceIsActive ? pageTitle : appearance.disabled_message;
   const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
@@ -94,7 +87,7 @@ function renderPlayerCell(player, isFirst) {
           <strong>Player:</strong>
           {' '}
           <Link to={tripRoleUrl} activeClassName="bold">
-            {trip.departureName} {status}
+            {trip.departureName} {pageTitle}
           </Link>
           <br />
           <strong>Page:</strong> {pageTitle}

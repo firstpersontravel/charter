@@ -8,13 +8,13 @@ module.exports = {
     title: { type: 'string', required: true },
     actor: { type: 'boolean', default: false },
     user: { type: 'boolean', default: false },
+    primary: { type: 'boolean', default: false },
     if: { type: 'ifClause' },
     starting_page: { type: 'reference', collection: 'pages' },
     required_values: {
       type: 'list',
       items: { type: 'simpleAttribute', required: true }
     },
-    layout: { type: 'reference', collection: 'layouts' },
-    primary: { type: 'boolean', default: false }
+    layout: { type: 'reference', collection: 'layouts' }
   }
 };

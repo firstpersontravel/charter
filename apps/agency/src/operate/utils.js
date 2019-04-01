@@ -94,7 +94,7 @@ function isActorByRoleActive(group, roleAndActors) {
   const firstActor = roleAndActors.actors[0];
   const trip = _.find(group.trips, { id: firstActor.tripId });
   const pageInfo = getPlayerPageInfo(trip, firstActor);
-  return pageInfo && pageInfo.appearanceIsActive;
+  return !!pageInfo;
 }
 
 export function sortPlayers(group) {

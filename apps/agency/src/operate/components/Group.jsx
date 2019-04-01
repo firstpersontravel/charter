@@ -115,6 +115,9 @@ export default class Group extends Component {
   }
 
   loadData(org, group, tripIds) {
+    if (group.isNull) {
+      return;
+    }
     if (!tripIds || !tripIds.length) {
       // If we have no trip ids, it's probably because this group was
       // archived, so the trips are not loaded by default. We still want to
@@ -123,11 +126,15 @@ export default class Group extends Component {
       // refreshLiveData will do the trick.`
       const groupId = this.props.params.groupId;
       this.props.retrieveInstance('groups', groupId);
-      this.props.listCollection('trips', { orgId: org.id, groupId: groupId });
+      this.props.listCollection('trips', {
+        orgId: org.id,
+        experienceId: group.experienceId,
+        groupId: groupId
+      });
       return;
     }
     this.updateFayeSubscriptions(tripIds);
-    this.props.refreshLiveData(org.id, tripIds);
+    this.props.refreshLiveData(org.id, group.experienceId, tripIds);
     this.props.retrieveInstance('scripts', group.scriptId);
     this.props.listCollection('assets', {
       orgId: org.id,
@@ -170,7 +177,11 @@ export default class Group extends Component {
     // Reload in a second
     setTimeout(() => {
       console.log('Reloading due to incoming realtime event.');
-      this.props.refreshLiveData(this.props.org.id, [tripId]);
+      this.props.refreshLiveData(
+        this.props.org.id,
+        this.props.group.experienceId,
+        [tripId]
+      );
     }, 1000);
   }
 

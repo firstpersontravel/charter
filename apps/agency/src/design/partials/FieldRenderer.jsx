@@ -304,12 +304,12 @@ export default class FieldRenderer {
     }
     const inlineOpts = Object.assign({}, opts);
     const inlineStyle = {};
-    if (!_.get(opts, 'insideCompoundIf')) {
-      inlineStyle.paddingLeft = '1em';
-    }
     if (_.includes(['and', 'or'], value.op)) {
       inlineOpts.inline = false;
       inlineOpts.insideCompoundIf = true;
+      if (!_.get(opts, 'insideCompoundIf')) {
+        inlineStyle.paddingLeft = '1em';
+      }
     } else {
       inlineOpts.inline = true;
       inlineStyle.display = 'inline-block';

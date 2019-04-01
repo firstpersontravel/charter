@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment-timezone';
 
 import { EvalCore } from 'fptcore';
 
@@ -52,35 +51,7 @@ const archivedIcon = (
   <i className="fa fa-archive" style={{ marginLeft: '0.25em' }} />
 );
 
-function renderPageNotActive(appearance, player) {
-  const trip = player.trip;
-  const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
-  const appearanceStart = appearance.start ?
-    moment.utc(trip.schedule[appearance.start]) :
-    null;
-  const startLabel = appearanceStart ? ` - ${appearanceStart.clone().tz(trip.experience.timezone).format('h:mma')}` : '';
-  const introText = EvalCore.templateText(trip.evalContext,
-    appearance.intro, trip.experience.timezone);
-  return (
-    <div className="card" style={{ marginBottom: '0.5em' }}>
-      <div className="card-header">
-        <strong>
-          {trip.departureName} {trip.title}{tripArchivedLabel} as {player.roleName}
-        </strong>
-        &nbsp;
-        {appearance.title} {startLabel}
-      </div>
-      <div className="card-body">
-        <p className="card-text">{introText}</p>
-        <button className="btn btn-block constrain-text btn-outline-secondary" disabled>
-          {appearance.disabled_message}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function renderPage(appearance, page, player) {
+function renderPage(page, player) {
   const trip = player.trip;
   const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const panels = page.panels || [];
@@ -122,17 +93,7 @@ export default function Preview({ player }) {
   if (!page) {
     return null;
   }
-  const appearance = _.find(script.content.appearances,
-    { name: page.appearance });
-  const appearanceIsActive = (
-    !appearance ||
-    !appearance.if ||
-    EvalCore.if(trip.evalContext, appearance.if)
-  );
-  if (!appearanceIsActive) {
-    return renderPageNotActive(appearance, player);
-  }
-  return renderPage(appearance, page, player);
+  return renderPage(page, player);
 }
 
 Preview.propTypes = {

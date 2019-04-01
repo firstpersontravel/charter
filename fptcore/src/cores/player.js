@@ -1,8 +1,6 @@
 var _ = require('lodash');
 var moment = require('moment-timezone');
 
-var EvalCore = require('./eval');
-
 var PlayerCore = {};
 
 PlayerCore.getInitialFields = function(scriptContent, roleName, variantNames) {
@@ -36,10 +34,7 @@ PlayerCore.getPageInfo = function(script, evalContext, player) {
   var appearance = _.find(script.content.appearances, { name: page.appearance }) ||
     { name: 'No appearance', title: 'No appearance' };
 
-  var appearanceIsActive = !appearance.if ||
-    EvalCore.if(evalContext, appearance.if);
   var pageTitle = page ? page.title : player.currentPageName;
-  var appearanceTitle = appearanceIsActive ? pageTitle : appearance.disabled_message;
   var appearanceStart = appearance.start ?
     moment.utc(evalContext.schedule[appearance.start]) :
     null;
@@ -48,9 +43,8 @@ PlayerCore.getPageInfo = function(script, evalContext, player) {
     appearance: appearance,
     scene: scene,
     appearanceStart: appearanceStart,
-    appearanceIsActive: appearanceIsActive,
-    statusClass: appearanceIsActive ? '' : 'faint',
-    status: appearanceTitle
+    statusClass: '',
+    status: pageTitle
   };
 };
 

@@ -12,10 +12,7 @@ module.exports = {
       parent: true
     },
     title: { type: 'string', required: true },
-    intro: { type: 'string' },
-    disabled_message: { type: 'string' },
-    start: { type: 'reference', collection: 'times' },
-    if: { type: 'ifClause' }
+    start: { type: 'reference', collection: 'times' }
   },
   getParentClaims: function(resource) {
     return ['roles.' + resource.role];
