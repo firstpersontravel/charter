@@ -4,12 +4,8 @@ var moment = require('moment');
 var TimeUtil = require('../../utils/time');
 
 function timeForSpec(spec, evalContext) {
-  var offset = 0;
-  if (spec.after) {
-    offset = TimeUtil.secondsForDurationShorthand(spec.after);
-  } else if (spec.before) {
-    offset = -TimeUtil.secondsForDurationShorthand(spec.before);
-  }
+  var offset = spec.offset ? TimeUtil.secondsForOffsetShorthand(spec.offset) :
+    0;
   var timestring = evalContext.schedule[spec.time];
   if (!timestring) {
     return null;
@@ -22,8 +18,7 @@ module.exports = {
   parentResourceParam: 'time',
   specParams: {
     time: { required: true, type: 'reference', collection: 'times' },
-    before: { required: false, type: 'duration' },
-    after: { required: false, type: 'duration' }
+    offset: { required: false, type: 'timeOffset' }
   },
   timeForSpec: timeForSpec,
   matchEvent: function(spec, event, actionContext) {
@@ -43,11 +38,12 @@ module.exports = {
     if (!time) {
       return null;
     }
-    if (spec.before) {
-      return spec.before + ' before "' + time.title + '"';
-    }
-    if (spec.after) {
-      return spec.after + ' after "' + time.title + '"';
+    if (spec.offset) {
+      var offset = TimeUtil.secondsForOffsetShorthand(spec.offset);
+      if (offset < 0) {
+        return spec.offset.substr(1) + ' before "' + time.title + '"';
+      }
+      return spec.offset + ' after "' + time.title + '"';
     }
     return 'at "' + time.title + '"';
   }

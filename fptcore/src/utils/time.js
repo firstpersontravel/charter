@@ -3,7 +3,7 @@ var moment = require('moment-timezone');
 var TimeUtil = {};
 
 TimeUtil.timeShorthandRegex = /^(\+\dd\s)?(\d|1[0-2]):[0-5]\d(a|p|am|pm)$/i;
-
+TimeUtil.timeOffsetRegex = /^-?\d+(\.\d+)?[hms]$/;
 TimeUtil.isoTimeRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.?\d*Z/;
 
 /**
@@ -74,6 +74,19 @@ TimeUtil.secondsForDurationShorthand = function(durationShorthand) {
     return 0;
   }
   return num * multiplier;
+};
+
+/**
+ * Allow positive or negative values for offsets.
+ */
+TimeUtil.secondsForOffsetShorthand = function(offsetShorthand) {
+  if (!offsetShorthand) {
+    return 0;
+  }
+  if (offsetShorthand[0] === '-') {
+    return -TimeUtil.secondsForDurationShorthand(offsetShorthand.substr(1));
+  }
+  return TimeUtil.secondsForDurationShorthand(offsetShorthand);
 };
 
 module.exports = TimeUtil;

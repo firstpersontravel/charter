@@ -71,9 +71,9 @@ ParamValidators.enum = function(script, name, spec, param) {
   }
 };
 
-ParamValidators.duration = function(script, name, spec, param) {
-  if (TimeUtil.secondsForDurationShorthand(param) === 0) {
-    return ['Duration param "' + name + '" ("' + param + '") should be a number with "h", "m", or "s".'];
+ParamValidators.timeOffset = function(script, name, spec, param) {
+  if (!TimeUtil.timeOffsetRegex.test(param)) {
+    return ['Time offset param "' + name + '" ("' + param + '") should be a number suffixed by "h/m/s".'];
   }
 };
 

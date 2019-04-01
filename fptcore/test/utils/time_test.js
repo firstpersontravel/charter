@@ -127,4 +127,23 @@ describe('TimeUtil', () => {
       assert.strictEqual(TimeUtil.secondsForDurationShorthand('1ss'), 0);
     });
   });
+
+  describe('#secondsForOffsetShorthand', () => {
+    it('should parse positive and negative values', () => {
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('1s'), 1);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-1.5s'), -1.5);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('8m'), 480);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-97.0s'), -97);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('0s'), 0);
+    });
+
+    it('should parse invalid values as zero', () => {
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand(null), 0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand(''), 0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('0'), 0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('10x'), 0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-gabe'), 0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-1ss'), 0);
+    });
+  });
 });

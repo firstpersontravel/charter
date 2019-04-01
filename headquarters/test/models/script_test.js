@@ -43,7 +43,7 @@ describe('Script', () => {
   });
 
   it('requires current version', async () => {
-    script.content = { meta: { version: 302 } };
+    script.content = { meta: { version: 402 } };
     await assertValidation(script, {
       content: 'Invalid meta resource.'
     });

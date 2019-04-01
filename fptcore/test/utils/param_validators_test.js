@@ -168,6 +168,28 @@ describe('ParamValidators', () => {
     });
   });
 
+  describe('#timeOffset', () => {
+    it('permits valid offsets', () => {
+      ok(ParamValidators.timeOffset({}, 's', {}, '1h'));
+      ok(ParamValidators.timeOffset({}, 's', {}, '-600.234m'));
+      ok(ParamValidators.timeOffset({}, 's', {}, '0s'));
+      ok(ParamValidators.timeOffset({}, 's', {}, '120s'));
+    });
+
+    it('rejects invalid time offsets', () => {
+      err(ParamValidators.timeOffset({}, 's', {}, 'h'),
+        'Time offset param "s" ("h") should be a number suffixed by "h/m/s".');
+      err(ParamValidators.timeOffset({}, 's', {}, '10x'),
+        'Time offset param "s" ("10x") should be a number suffixed by "h/m/s".');
+      err(ParamValidators.timeOffset({}, 's', {}, '1_345s'),
+        'Time offset param "s" ("1_345s") should be a number suffixed by "h/m/s".');
+      err(ParamValidators.timeOffset({}, 's', {}, '1.2.3m'),
+        'Time offset param "s" ("1.2.3m") should be a number suffixed by "h/m/s".');
+      err(ParamValidators.timeOffset({}, 's', {}, '1-6d'),
+        'Time offset param "s" ("1-6d") should be a number suffixed by "h/m/s".');
+    });
+  });
+
   describe('#name', () => {
     const spec = { type: 'name' };
 

@@ -68,13 +68,13 @@ describe('#time_occurred', () => {
         schedule: { 'HAPPENS': moment.unix(now).toISOString() }
       }
     };
-    const spec = { time: 'HAPPENS', before: '90.1m' };
+    const spec = { time: 'HAPPENS', offset: '-90.1m' };
 
     const res = time_occurred.matchEvent(spec, event, actionContext);
 
     assert.strictEqual(res, true);
 
-    const spec2 = { time: 'HAPPENS', before: '30.1m' };
+    const spec2 = { time: 'HAPPENS', offset: '-30.1m' };
 
     const res2 = time_occurred.matchEvent(spec2, event, actionContext);
 
@@ -91,19 +91,19 @@ describe('#time_occurred', () => {
         schedule: { 'HAPPENS': moment.unix(twoHoursAgo).toISOString() }
       }
     };
-    const spec = { time: 'HAPPENS', after: '5400s' };
+    const spec = { time: 'HAPPENS', offset: '5400s' };
 
     const res = time_occurred.matchEvent(spec, event, actionContext);
 
     assert.strictEqual(res, true);
 
-    const spec2 = { time: 'HAPPENS', after: '900s' };
+    const spec2 = { time: 'HAPPENS', offset: '900s' };
 
     const res2 = time_occurred.matchEvent(spec2, event, actionContext);
 
     assert.strictEqual(res2, true);
 
-    const spec3 = { time: 'HAPPENS', after: '9000s' };
+    const spec3 = { time: 'HAPPENS', offset: '9000s' };
 
     const res3 = time_occurred.matchEvent(spec3, event, actionContext);
 
@@ -120,7 +120,7 @@ describe('#time_occurred', () => {
         schedule: { 'HAPPENS': moment.unix(oneHourAgo).toISOString() }
       }
     };
-    const spec = { time: 'HAPPENS', before: '0h' };
+    const spec = { time: 'HAPPENS', offset: '0h' };
 
     const res = time_occurred.matchEvent(spec, event, actionContext);
 
@@ -137,7 +137,7 @@ describe('#time_occurred', () => {
         schedule: {}
       }
     };
-    const spec = { time: 'HAPPENS', before: '0h' };
+    const spec = { time: 'HAPPENS', offset: '0h' };
 
     const res = time_occurred.matchEvent(spec, event, actionContext);
 

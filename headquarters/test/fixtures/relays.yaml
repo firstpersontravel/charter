@@ -24,7 +24,7 @@
     revision: 1
     content:
       meta:
-        version: 3
+        version: 4
       roles:
         - name: Actor
           title: Actor
