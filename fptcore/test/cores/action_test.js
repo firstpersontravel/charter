@@ -104,8 +104,6 @@ describe('ActionCore', () => {
       sinon.assert.calledOnce(ActionCore.applyEvent);
       sinon.assert.calledWith(ActionCore.applyEvent, { type: '123' });
 
-      console.log('result.nextContext', result.nextContext);
-
       assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
         operation: 'event',
