@@ -1,3 +1,25 @@
+var waypointOptionSpec = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'name',
+      required: true,
+      display: { hidden: true },
+      default: function() {
+        return 'waypt-opt-' + Math.floor(Math.random() * 100000);
+      }
+    },
+    title: { type: 'string', required: true },
+    coords: { type: 'coords', required: true },
+    address: { type: 'string' },
+    values: {
+      type: 'dictionary',
+      keys: { type: 'simpleAttribute' },
+      values: { type: 'simpleValue' }
+    }
+  }
+};
+
 module.exports = {
   icon: 'map-pin',
   help: {
@@ -9,20 +31,7 @@ module.exports = {
     options: {
       type: 'list',
       default: [{}],
-      items: {
-        type: 'object',
-        properties: {
-          name: { type: 'name', required: true },
-          title: { type: 'string', required: true },
-          coords: { type: 'coords', required: true },
-          address: { type: 'string' },
-          values: {
-            type: 'dictionary',
-            keys: { type: 'simpleAttribute' },
-            values: { type: 'simpleValue' }
-          }
-        }
-      }
+      items: waypointOptionSpec
     }
   }
 };

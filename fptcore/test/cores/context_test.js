@@ -13,6 +13,14 @@ describe('ContextCore', () => {
     sandbox.restore();
   });
 
+  describe('#slugForRole', () => {
+    it('slugifies a complex name', () => {
+      const res = ContextCore.slugForRole({ title: 'Gabe\'s friend' });
+
+      assert.strictEqual(res, 'gabes_friend');
+    });
+  });
+
   describe('#gatherPlayerEvalContext', () => {
     it('gathers values from player', () => {
       const player = {
@@ -26,7 +34,6 @@ describe('ContextCore', () => {
         }
       };
       const expected = {
-        id: 10,
         currentPageName: 'PAGE-NAME',
         link: 'https://test.test/s/10',
         contact_name: 'Vance Farraday',
@@ -87,7 +94,14 @@ describe('ContextCore', () => {
     it('gathers all context', () => {
       const trip = {
         date: '2014-02-01',
-        script: { content: {} },
+        script: {
+          content: {
+            roles: [
+              { name: 'role-123', title: 'Sarai' },
+              { name: 'role-456', title: 'Vance' }
+            ]
+          }
+        },
         currentSceneName: 'SCENE-01',
         schedule: { 'TIME-123': '2017-02-16T21:44:02Z' },
         history: { 'CUE-123': '2017-02-16T21:44:02Z' },
@@ -95,12 +109,10 @@ describe('ContextCore', () => {
         customizations: { model: 'deluxe' },
         values: { abc: '123' },
         players: [{
-          roleName: 'Sarai',
-          user: {
-            id: 3
-          }
+          roleName: 'role-123',
+          user: { id: 3 }
         }, {
-          roleName: 'Vance',
+          roleName: 'role-456',
           user: null
         }]
       };
@@ -119,8 +131,8 @@ describe('ContextCore', () => {
         waypointOptions: trip.waypointOptions,
         model: 'deluxe',
         abc: '123',
-        Sarai: saraiValues,
-        Vance: vanceValues
+        sarai: saraiValues,
+        vance: vanceValues
       };
 
       const result = ContextCore.gatherEvalContext(env, trip);

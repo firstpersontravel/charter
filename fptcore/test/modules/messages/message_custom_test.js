@@ -7,7 +7,7 @@ describe('#custom_message', () => {
   const now = moment.utc();
   const actionContext = {
     scriptContent: { roles: [{ name: 'Ally' }, { name: 'Babbit' }] },
-    evalContext: { Ally: { id: 1 }, Babbit: { id: 2 } },
+    evalContext: {},
     evaluateAt: now
   };
 
@@ -24,8 +24,8 @@ describe('#custom_message', () => {
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentById: 1,
-        sentToId: 2,
+        sentByRoleName: 'Ally',
+        sentToRoleName: 'Babbit',
         createdAt: now,
         medium: 'text',
         content: 'hi',
@@ -92,8 +92,8 @@ describe('#custom_message', () => {
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentById: 1,
-        sentToId: 2,
+        sentByRoleName: 'Ally',
+        sentToRoleName: 'Babbit',
         createdAt: now,
         medium: 'image',
         content: 'url',
@@ -136,8 +136,8 @@ describe('#custom_message', () => {
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentById: 1,
-        sentToId: 2,
+        sentByRoleName: 'Ally',
+        sentToRoleName: 'Babbit',
         createdAt: now,
         medium: 'audio',
         content: 'url',

@@ -27,8 +27,8 @@ module.exports = {
       operation: 'createMessage',
       suppressRelayId: params.suppress_relay_id || null,
       fields: {
-        sentById: actionContext.evalContext[params.from_role_name].id,
-        sentToId: actionContext.evalContext[params.to_role_name].id,
+        sentByRoleName: params.from_role_name,
+        sentToRoleName: params.to_role_name,
         createdAt: actionContext.evaluateAt,
         medium: params.message_medium,
         content: params.message_content,

@@ -20,7 +20,6 @@ ContextCore.gatherPlayerEvalContext = function (env, trip, player) {
     user.firstName;
   var contactName = role.title || fullName || null;
   return _.assign({}, profile.values, {
-    id: player.id,
     currentPageName: player.currentPageName || null,
     link: link,
     email: profile.email || user.email || null,
@@ -31,6 +30,19 @@ ContextCore.gatherPlayerEvalContext = function (env, trip, player) {
     phone_number: profile.phoneNumber || user.phoneNumber || null,
     directive: page && page.directive || null
   });
+};
+
+/**
+ * Get the role slug for a given role.
+ */
+ContextCore.slugForRole = function (role) {
+  if (!role || !role.title) {
+    return null;
+  }
+  return role.title
+    .toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/[^\w]/g, '');
 };
 
 /**
@@ -63,9 +75,21 @@ ContextCore.gatherEvalContext = function (env, trip) {
     }
   });
   // Add player values
+  var roles = _.get(trip, 'script.content.roles') || [];
   _.each(trip.players, function(player) {
-    context[player.roleName] = ContextCore.gatherPlayerEvalContext(
-      env, trip, player);
+    var role = _.find(roles, { name: player.roleName });
+    var roleSlug = ContextCore.slugForRole(role);
+    var playerContext = ContextCore.gatherPlayerEvalContext(env, trip, player);
+    if (roleSlug) {
+      context[roleSlug] = playerContext;
+    }
+    // LEGACY: for legacy role names that were determined by old scripts
+    // (like headlands gamble), put the player context in as the old role name.
+    // This means {{Player.directive}} will still work without requiring a
+    // change at the moment to {{player.directive}}.
+    if (player.roleName.indexOf('-') === -1) {
+      context[player.roleName] = playerContext;
+    }
   });
   return context;
 };

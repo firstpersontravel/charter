@@ -1,5 +1,6 @@
 var _ = require('lodash');
 
+var ContextCore = require('../../cores/context');
 var EvalCore = require('../../cores/eval');
 
 module.exports = {
@@ -44,24 +45,32 @@ module.exports = {
       return [{
         operation: 'log',
         level: 'error',
-        message: 'Could not find role named "' + params.emailData.to + '".'
+        message: 'Could not find role named "' + emailData.to + '".'
       }];
     }
 
-    var toPlayer = actionContext.evalContext[toRole.name];
-    if (!toPlayer) {
+    var toRoleSlug = ContextCore.slugForRole(toRole);
+    if (!toRoleSlug) {
       return [{
         operation: 'log',
         level: 'error',
-        message: 'Could not find player context for "' + toRole.name + '".'
+        message: 'Could not generate slug for role "' + emailData.to + '".'
+      }];      
+    }
+    var toPlayerContext = actionContext.evalContext[toRoleSlug];
+    if (!toPlayerContext) {
+      return [{
+        operation: 'log',
+        level: 'error',
+        message: 'Could not find player context for "' + toRole.title + '".'
       }];
     }
 
-    if (!toPlayer.email) {
+    if (!toPlayerContext.email) {
       return [{
         operation: 'log',
         level: 'warning',
-        message: 'Tried to send email but player "' + toRole.name +
+        message: 'Tried to send email but player "' + toRole.title +
           '" had no email address.'
       }];
     }
@@ -70,7 +79,7 @@ module.exports = {
       operation: 'sendEmail',
       params: {
         from: fromInbox.address,
-        to: toPlayer.email,
+        to: toPlayerContext.email,
         cc: emailData.cc,
         bcc: emailData.bcc,
         subject: subject,

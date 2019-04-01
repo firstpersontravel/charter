@@ -76,6 +76,28 @@ const newItemsForSpecType = {
   variegated: {}
 };
 
+function defaultForParam(paramSpec) {
+  if (_.isFunction(paramSpec.default)) {
+    return paramSpec.default();
+  }
+  if (!_.isUndefined(paramSpec.default)) {
+    return paramSpec.default;
+  }
+  return null;
+}
+
+function newItemForSpec(spec) {
+  if (spec.type === 'object') {
+    return _(spec.properties)
+      .keys()
+      .filter(key => spec.properties[key].default)
+      .map(key => [key, defaultForParam(spec.properties[key])])
+      .fromPairs()
+      .value();
+  }
+  return newItemsForSpecType[spec.type];
+}
+
 export default class FieldRenderer {
   constructor(script, resource, isNew, onPropUpdate, onArrayUpdate) {
     this.script = script;
@@ -421,7 +443,7 @@ export default class FieldRenderer {
     const listIsEmpty = !value || value.length === 0;
     const newIndex = value ? value.length : 0;
     const newPath = `${path}[${newIndex}]`;
-    const newItem = newItemsForSpecType[spec.items.type];
+    const newItem = newItemForSpec(spec.items);
     const newBtnStyle = { display: listIsEmpty ? 'inline' : 'block' };
     const newItemBtn = (
       <div style={newBtnStyle}>

@@ -1,10 +1,13 @@
 const _ = require('lodash');
 
+const config = require('../config');
 const EmailController = require('../controllers/email');
 const MessageController = require('../controllers/message');
 const TripLogController = require('../controllers/trip_log');
 const TripRelaysController = require('../controllers/trip_relays');
 const models = require('../models');
+
+const logger = config.logger.child({ name: 'controllers.trip_op' });
 
 class TripOpController {
 
@@ -14,6 +17,7 @@ class TripOpController {
   static async event() { /* ignore - handled internally */}
 
   static async log(objs, op) {
+    logger[op.level].call(logger, op.message);
     TripLogController.log(objs.trip, op.level, op.message);
   }
 
@@ -39,13 +43,29 @@ class TripOpController {
   }
 
   static async createMessage(objs, op) {
-    const fields = Object.assign({}, op.fields, {
+    const sentBy = _.find(objs.players, {
+      roleName: op.fields.sentByRoleName
+    });
+    const sentTo = _.find(objs.players, {
+      roleName: op.fields.sentToRoleName
+    });
+    const fields = {
       orgId: objs.trip.orgId,
       experienceId: objs.trip.experienceId,
       tripId: objs.trip.id,
+      sentById: sentBy.id,
+      sentToId: sentTo.id,
       createdAt: op.fields.createdAt.toDate(),
-      readAt: op.fields.readAt ? op.fields.readAt.toDate() : null
-    });
+      name: op.fields.name,
+      medium: op.fields.medium,
+      content: op.fields.content,
+      sentFromLatitude: op.fields.sentFromLatitude,
+      sentFromLongitude: op.fields.sentFromLongitude,
+      sentFromAccuracy: op.fields.sentFromAccuracy,
+      readAt: op.fields.readAt ? op.fields.readAt.toDate() : null,
+      isReplyNeeded: op.fields.isReplyNeeded,
+      isInGallery: op.fields.isInGallery
+    };
     const message = await models.Message.create(fields);
     await MessageController.sendMessage(message);
     if (!fields.readAt) {

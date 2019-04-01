@@ -145,7 +145,7 @@ export default class ResourceView extends Component {
     const hasPendingChanges = this.state.hasPendingChanges;
     const hasErrors = this.state.errors && this.state.errors.length > 0;
     const canDelete = this.props.canDelete && !hasPendingChanges;
-    const showApply = hasPendingChanges || isNew;
+    const showCreate = isNew;
     const canApply = !hasErrors;
 
     const deleteBtnClass = `btn btn-sm btn-outline-secondary ${canDelete ? '' : 'disabled'}`;
@@ -192,13 +192,13 @@ export default class ResourceView extends Component {
       </button>
     );
 
-    const applyBtn = (
+    const createBtn = (
       <button
         className={`btn btn-sm btn-primary ${canApply ? '' : 'disabled'}`}
         style={{ marginRight: '0.25em' }}
         onClick={this.handleApplyChanges}>
-        <i className={`fa ${isNew ? 'fa-plus' : 'fa-check'}`} />&nbsp;
-        {isNew ? 'Create' : 'Apply'}
+        <i className="fa fa-plus" />&nbsp;
+        Create
       </button>
     );
 
@@ -207,7 +207,7 @@ export default class ResourceView extends Component {
         <div style={{ float: 'right' }}>
           {isNew ? cancelBtn : null}
           {(hasPendingChanges && !isNew) ? revertBtn : null}
-          {showApply ? applyBtn : null}
+          {showCreate ? createBtn : null}
           {(!hasPendingChanges && !isNew) ? deleteBtnToShow : null}
         </div>
         <ResourceBadge resourceType={resourceType} />

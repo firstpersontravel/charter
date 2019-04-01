@@ -96,12 +96,7 @@ const actionContext = {
       content: 'cock-a-doodle-doo!'
     }]
   },
-  evalContext: {
-    Farmer: { id: 1, page: 'TRACTOR' },
-    Rooster: { id: 2 },
-    Cowboy: { id: 3 },
-    apples: 2
-  },
+  evalContext: { Farmer: { page: 'TRACTOR' }, apples: 2 },
   evaluateAt: now
 };
 
@@ -275,8 +270,8 @@ describe('Integration - Nested Triggers', () => {
         medium: 'text',
         content: 'howdy',
         createdAt: now,
-        sentById: 3,
-        sentToId: 1,
+        sentByRoleName: 'Cowboy',
+        sentToRoleName: 'Farmer',
         sentFromLatitude: null,
         sentFromLongitude: null,
         sentFromAccuracy: null,
@@ -332,8 +327,8 @@ describe('Integration - Nested Triggers', () => {
         medium: 'text',
         content: 'geewhiz',
         createdAt: now,
-        sentById: 3,
-        sentToId: 1,
+        sentByRoleName: 'Cowboy',
+        sentToRoleName: 'Farmer',
         sentFromLatitude: null,
         sentFromLongitude: null,
         sentFromAccuracy: null,

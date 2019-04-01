@@ -1,3 +1,4 @@
+const assert = require('assert');
 const moment = require('moment');
 const sinon = require('sinon');
 
@@ -81,14 +82,20 @@ describe('TripOpController', () => {
   describe('#createMessage', () => {
     it('creates a message', async () => {
       const now = moment.utc();
-      const objs = { trip: { id: 123, orgId: 456, experienceId: 789 } };
+      const objs = {
+        trip: { id: 123, orgId: 456, experienceId: 789 },
+        players: [
+          { roleName: 'BadGuy', id: 10 },
+          { roleName: 'GoodGuy', id: 20 }
+        ]
+      };
       const op = {
         operation: 'createMessage',
         fields: {
-          sentById: 1,
-          sentToId: 2,
+          sentByRoleName: 'BadGuy',
+          sentToRoleName: 'GoodGuy',
           medium: 'text',
-          content: 'hi there',
+          content: 'die!',
           createdAt: now,
         },
         suppressRelayId: 5
@@ -100,17 +107,24 @@ describe('TripOpController', () => {
 
       await TripOpController.applyOp(objs, op);
 
-      sinon.assert.calledWith(models.Message.create, {
+      sinon.assert.calledOnce(models.Message.create);
+      assert.deepStrictEqual(models.Message.create.firstCall.args, [{
         createdAt: now.toDate(),
-        content: 'hi there',
+        content: 'die!',
         medium: 'text',
+        name: undefined,
         orgId: 456,
         experienceId: 789,
+        isInGallery: undefined,
+        isReplyNeeded: undefined,
         tripId: 123,
         readAt: null,
-        sentById: 1,
-        sentToId: 2
-      });
+        sentById: 10,
+        sentToId: 20,
+        sentFromAccuracy: undefined,
+        sentFromLatitude: undefined,
+        sentFromLongitude: undefined
+      }]);
       sinon.assert.calledWith(MessageController.sendMessage, fakeMessage);
       sinon.assert.calledWith(TripRelaysController.relayMessage, objs.trip,
         fakeMessage, 5);

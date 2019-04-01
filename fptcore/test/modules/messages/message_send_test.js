@@ -19,8 +19,7 @@ describe('#send_message', () => {
         }]
       },
       evalContext: {
-        Ally: { id: 1, audio_path: 'hi.mp3' },
-        Babbit: { id: 2 }
+        Ally: { audio_path: 'hi.mp3' }
       },
       evaluateAt: now
     };
@@ -30,8 +29,8 @@ describe('#send_message', () => {
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentById: 1,
-        sentToId: 2,
+        sentByRoleName: 'Ally',
+        sentToRoleName: 'Babbit',
         createdAt: now,
         readAt: null,
         name: 'MESSAGE-HELLO',
@@ -54,8 +53,7 @@ describe('#send_message', () => {
         }]
       },
       evalContext: {
-        Ally: { id: 1, audio_path: 'hi.mp3' },
-        Babbit: { id: 2 }
+        Ally: { audio_path: 'hi.mp3' }
       },
       evaluateAt: now
     };
@@ -65,8 +63,8 @@ describe('#send_message', () => {
     assert.deepStrictEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentById: 1,
-        sentToId: 2,
+        sentByRoleName: 'Ally',
+        sentToRoleName: 'Babbit',
         createdAt: now,
         readAt: null,
         name: 'MESSAGE-HELLO',

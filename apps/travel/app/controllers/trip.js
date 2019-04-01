@@ -259,12 +259,12 @@ export default Ember.Controller.extend(RealtimeMixin, {
       // Create a message
       case 'createMessage':
         op.fields.trip = this.get('model');
-        op.fields.sentBy = players.findBy('id',
-          op.fields.sentById.toString());
-        op.fields.sentTo = players.findBy('id',
-          op.fields.sentToId.toString());
-        delete op.fields.sentById;
-        delete op.fields.sentToId;
+        op.fields.sentBy = players.findBy('roleName',
+          op.fields.sentByRoleName);
+        op.fields.sentTo = players.findBy('roleName',
+          op.fields.sentToRoleName);
+        delete op.fields.sentByRoleName;
+        delete op.fields.sentToRoleName;
         var msg = this.store.createRecord('message', op.fields);
         uiCallbacks.notifyMessage(msg);
         console.log('-> msg', op.fields.name ||

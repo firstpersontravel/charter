@@ -46,8 +46,8 @@ module.exports = {
     return [{
       operation: 'createMessage',
       fields: {
-        sentById: actionContext.evalContext[fromRoleName].id,
-        sentToId: actionContext.evalContext[toRoleName].id,
+        sentByRoleName: fromRoleName,
+        sentToRoleName: toRoleName,
         createdAt: actionContext.evaluateAt,
         readAt: hasBeenRead ? actionContext.evaluateAt : null,
         name: name,

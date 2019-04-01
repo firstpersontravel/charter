@@ -6,7 +6,10 @@ const send_email = require('../../../src/modules/email/email_send');
 describe('#send_email', () => {
   const actionContext = {
     scriptContent: {
-      roles: [{ name: 'Player' }, { name: 'System' }],
+      roles: [
+        { name: 'Player', title: 'Player', },
+        { name: 'System', title: 'System' }
+      ],
       inboxes: [{
         name: 'INBOX',
         role: 'System',
@@ -21,8 +24,8 @@ describe('#send_email', () => {
       }]
     },
     evalContext: {
-      Player: { email: 'player@test.com', contact_name: 'The Player' },
-      System: { contact_name: 'SYSTEM' },
+      player: { email: 'player@test.com', contact_name: 'The Player' },
+      system: { contact_name: 'SYSTEM' },
       productName: 'widget',
       num: 2
     }
@@ -60,7 +63,7 @@ describe('#send_email', () => {
 
   it('logs warning if to email is not present', () => {
     const clonedActionContext = _.cloneDeep(actionContext);
-    delete clonedActionContext.evalContext.Player.email;
+    delete clonedActionContext.evalContext.player.email;
 
     const params = { email_name: 'EMAIL' };
 
