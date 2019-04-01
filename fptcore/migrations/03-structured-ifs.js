@@ -83,11 +83,11 @@ function xformWords(words) {
     .map(function(argName, i) { return [argName, ifArgs[i]]; })
     .fromPairs()
     .value();
-  return _.assign(
-    { op: ifCommand },
-    argsByName,
-    (isNegated ? { neg: true } : {})
-  );
+  var op = _.assign({ op: ifCommand }, argsByName);
+  if (isNegated) {
+    return { op: 'not', item: op };
+  }
+  return op;
 }
 
 function isStringOrList(i) {
@@ -164,9 +164,11 @@ module.exports = {
         if: {
           op: 'and',
           items: [{
-            op: 'istrue',
-            neg: true,
-            ref: 'a'
+            op: 'not',
+            item: {
+              op: 'istrue',
+              ref: 'a'
+            }
           }, {
             op: 'istrue',
             ref: 'b'
@@ -187,9 +189,11 @@ module.exports = {
               part_ref: '"y"'
             }]
           }, {
-            op: 'istrue',
-            neg: true,
-            ref: 'zzz'
+            op: 'not',
+            item: {
+              op: 'istrue',
+              ref: 'zzz'
+            }
           }]
         }
       }]

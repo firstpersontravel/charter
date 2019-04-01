@@ -268,6 +268,9 @@ ParamValidators.subresource = function(script, name, spec, param) {
  * Get the variety of a param by spec.
  */
 ParamValidators.getVariegatedVariety = function(spec, param) {
+  if (!param) {
+    return null;
+  }
   return _.isFunction(spec.key) ? spec.key(param) : param[spec.key];
 };
 
@@ -276,6 +279,17 @@ ParamValidators.getVariegatedVariety = function(spec, param) {
  */
 ParamValidators.getVariegatedClass = function(spec, variety) {
   var commonClass = spec.common;
+  // For display in the editor, it's useful to just show the common
+  // class if you have a null object, that way users can select
+  // the variety to get the extra fields.
+  if (!variety) {
+    return commonClass;
+  }
+  if (!spec.classes[variety]) {
+    throw new Error('Invalid variety ' + variety +
+      ', should be one of: ' +
+      Object.keys(spec.classes).join(', ') + '.');
+  }
   var variedClass = spec.classes[variety];
   return _.merge({}, commonClass, variedClass);
 };

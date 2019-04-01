@@ -556,6 +556,63 @@ describe('ParamValidators', () => {
     });
   });
 
+  describe('#getVariegatedVariety', () => {
+    it('gets variety by key', () => {
+      const spec = { key: 'type' };
+      const param = { type: 'frog' };
+      const res = ParamValidators.getVariegatedVariety(spec, param);
+
+      assert.strictEqual(res, 'frog');
+    });
+
+    it('gets variety by function', () => {
+      const spec = { key: obj => obj.type };
+      const param = { type: 'frog' };
+      const res = ParamValidators.getVariegatedVariety(spec, param);
+
+      assert.strictEqual(res, 'frog');
+    });
+
+    it('returns null for null param', () => {
+      const spec = { key: obj => obj.type };
+      const res = ParamValidators.getVariegatedVariety(spec, null);
+
+      assert.strictEqual(res, null);
+    });
+  });
+
+  describe('#getVariegatedClass', () => {
+    const spec = {
+      common: { properties: { type: { type: 'string' } } },
+      classes: {
+        frog: { properties: { ribbits: { type: 'boolean' } } }
+      }
+    };
+
+    it('returns merged class by variety', () => {
+      const res = ParamValidators.getVariegatedClass(spec, 'frog');
+
+      assert.deepStrictEqual(res, {
+        properties: {
+          type: spec.common.properties.type,
+          ribbits: spec.classes.frog.properties.ribbits
+        }
+      });
+    });
+
+    it('returns only common class if null variety', () => {
+      const res = ParamValidators.getVariegatedClass(spec, null);
+
+      assert.deepStrictEqual(res, spec.common);
+    });
+
+    it('throws error if invalid class', () => {
+      assert.throws(() => {
+        ParamValidators.getVariegatedClass(spec, 'parrot');
+      });
+    });
+  });
+
   describe('#variegated', () => {
     const spec = {
       type: 'variegated',

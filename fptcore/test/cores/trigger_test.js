@@ -34,7 +34,7 @@ describe('TriggerCore', () => {
 
     it('handles single failing if', () => {
       const clause = {
-        if: {op: 'istrue', neg: true, ref: 'valueA' },
+        if: { op: 'not', item: { op: 'istrue', ref: 'valueA' } },
         actions: [simpleAction]
       };
       const res = TriggerCore.packedActionsForClause(clause, actionContext);
@@ -53,7 +53,7 @@ describe('TriggerCore', () => {
 
     it('handles nested actions', () => {
       const clause = {
-        if: {op: 'istrue', neg: true, ref: 'valueB' },
+        if: { op: 'not', item: { op: 'istrue', ref: 'valueB' } },
         actions: [{
           if: {op: 'istrue', ref: 'valueB' },
           actions: [thirdAction],
@@ -84,10 +84,10 @@ describe('TriggerCore', () => {
         actions: [
           simpleAction,
           {
-            if: {op: 'istrue', ref: 'valueB' },
+            if: { op: 'istrue', ref: 'valueB' },
             actions: [otherAction]
           }, {
-            if: {op: 'istrue', neg: true, ref: 'valueB' },
+            if: { op: 'not', item: { op: 'istrue', ref: 'valueB' } },
             actions: [thirdAction]
           }
         ]

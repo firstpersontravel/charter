@@ -23,7 +23,7 @@ describe('EvalCore', () => {
     });
 
     describe('#istrue', () => {
-      it('evaluates istrue', () => {
+      it('evaluates', () => {
         const stmt = { op: 'istrue', ref: 'v' };
         assertIfEq({ v: true }, stmt, true);
         assertIfEq({ v: 1 }, stmt, true);
@@ -35,25 +35,9 @@ describe('EvalCore', () => {
         assertIfEq({}, stmt, false);
       });
 
-      it('evaluates negated', () => {
-        const stmt = { op: 'istrue', ref: 'v', neg: true };
-        assertIfEq({ v: true }, stmt, false);
-        assertIfEq({ v: 1 }, stmt, false);
-        assertIfEq({ v: '1' }, stmt, false);
-        assertIfEq({ v: 'true' }, stmt, false);
-        assertIfEq({ v: false }, stmt, true);
-        assertIfEq({ v: 0 }, stmt, true);
-        assertIfEq({ v: null }, stmt, true);
-        assertIfEq({}, stmt, true);
-      });
-
       it('evaluates nested objects', () => {
         assertIfEq({ a: { b: '2' } }, {op: 'istrue', ref: 'a.b'}, true);
         assertIfEq({ a: { b: '2' } }, {op: 'istrue', ref: 'a.c'}, false);
-        assertIfEq({ a: { b: '2' } }, {op: 'istrue', neg: true, ref: 'a.b'},
-          false);
-        assertIfEq({ a: { b: '2' } }, {op: 'istrue', neg: true, ref: 'a.c'},
-          true);
       });
     });
 
@@ -94,18 +78,6 @@ describe('EvalCore', () => {
         assertIfEq({ a: '1', b: '2' }, stmt, false);
       });
 
-      it('evaluates not with constants', () => {
-        assertIfEq({}, {op: 'equals', neg: true, ref1: '"2"', ref2: '"2"'}, false);
-        assertIfEq({}, {op: 'equals', neg: true, ref1: '1', ref2: '1'}, false);
-        assertIfEq({}, {op: 'equals', neg: true, ref1: 'true', ref2: 'true'},
-          false);
-        assertIfEq({}, {op: 'equals', neg: true, ref1: '"2"', ref2: '"1"'},
-          true);
-        assertIfEq({}, {op: 'equals', neg: true, ref1: '1',ref2: '0'}, true);
-        assertIfEq({}, {op: 'equals', neg: true, ref1: '5',ref2: 'true'},
-          true);
-      });
-
       it('evaluates nested objects', () => {
         assertIfEq({ a: { b: '2' } }, {op: 'equals', ref1: 'a.b', ref2: '"2"'},
           true);
@@ -127,21 +99,6 @@ describe('EvalCore', () => {
         assertIfEq({ a: 'a simple man'},
           { op: 'contains', string_ref: 'a', part_ref: '"car"'}, false);
       });
-
-      it('evaluates negated', () => {
-        assertIfEq({ a: 'A sIMPle THING', b: 'simple' },
-          { op: 'contains', neg: true, string_ref: 'a', part_ref: 'b'}, false);
-        assertIfEq({ a: 'a simple man', b: 'simple' },
-          { op: 'contains', neg: true, string_ref: 'a', part_ref: 'b'}, false);
-        assertIfEq({ a: 'a simple man', b: 'car' },
-          { op: 'contains', neg: true, string_ref: 'a', part_ref: 'b'}, true);
-        assertIfEq({ b: 'house' },
-          { op: 'contains', neg: true, string_ref: '"my house"',
-            part_ref: 'b'}, false);
-        assertIfEq({ a: 'a simple man'},
-          { op: 'contains', neg: true, string_ref: 'a',
-            part_ref: '"car"'}, true);
-      });
     });
 
     describe('#matches', () => {
@@ -156,24 +113,6 @@ describe('EvalCore', () => {
           {op: 'matches', string_ref: 'a', regex_ref: '"^[a-d]+$"'}, true);
         assertIfEq({ a: 'abcde', },
           {op: 'matches', string_ref: 'a', regex_ref: '"^[a-d]+$"'}, false);
-      });
-
-      it('evaluates negated', () => {
-        assertIfEq({ a: '9144844223', },
-          {op: 'matches', neg: true, string_ref: 'a',
-            regex_ref: '"^\\d{10}$"'}, false);
-        assertIfEq({ a: '91448442233', },
-          {op: 'matches', neg: true, string_ref: 'a',
-            regex_ref: '"^\\d{10}$"'}, true);
-        assertIfEq({ a: '914484422', },
-          {op: 'matches', neg: true, string_ref: 'a',
-            regex_ref: '"^\\d{10}$"'}, true);
-        assertIfEq({ a: 'abcd', },
-          {op: 'matches', neg: true, string_ref: 'a',
-            regex_ref: '"^[a-d]+$"'}, false);
-        assertIfEq({ a: 'abcde', },
-          {op: 'matches', neg: true, string_ref: 'a',
-            regex_ref: '"^[a-d]+$"'}, true);
       });
     });
 
@@ -278,6 +217,33 @@ describe('EvalCore', () => {
 
         const ctx4 = { sent_offer: true, event: { msg: { content: 'nope' } } };
         assert.strictEqual(EvalCore.if(ctx4, stmt), false);
+      });
+    });
+
+    describe('#not', () => {
+      it('evaluates not istrue', () => {
+        const stmt = {
+          op: 'not',
+          item: { op: 'istrue', ref: 'v' }
+        };
+        assertIfEq({ v: true }, stmt, false);
+        assertIfEq({ v: 1 }, stmt, false);
+        assertIfEq({ v: '1' }, stmt, false);
+        assertIfEq({ v: 'true' }, stmt, false);
+        assertIfEq({ v: false }, stmt, true);
+        assertIfEq({ v: 0 }, stmt, true);
+        assertIfEq({ v: null }, stmt, true);
+        assertIfEq({}, stmt, true);
+
+        // nested examples
+        assertIfEq(
+          { a: { b: '2' } },
+          { op: 'not', item: { op: 'istrue', ref: 'a.b' } },
+          false);
+        assertIfEq(
+          { a: { b: '2' } },
+          { op: 'not', item: { op: 'istrue', ref: 'a.c' } },
+          true);
       });
     });
   });

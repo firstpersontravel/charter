@@ -63,9 +63,10 @@ triggers:
     events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
     if:
-      op: istrue
-      neg: true
-      ref: game_started
+      op: not
+      item:
+        op: istrue
+        ref: game_started
     actions:
       - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
       - name: conditional

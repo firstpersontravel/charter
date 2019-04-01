@@ -82,17 +82,17 @@ describe('Migrator', () => {
     it('migrates actions', () => {
       const scriptContent = {
         triggers: [{
-          actions: [{ name: 2 }]
+          actions: [{ name: 'play_audio', audio_name: '2' }]
         }, {
           actions: [{
             name: 'conditional',
-            if: '123',
-            actions: [{ name: 4 }],
+            if: { op: 'istrue', ref: '123' },
+            actions: [{ name: 'play_audio', audio_name: '4' }],
             elseifs: [{
-              if: '456',
-              actions: [{ name: 6 }]
+              if: { op: 'istrue', ref: '456' },
+              actions: [{ name: 'play_audio', audio_name: '6' }],
             }],
-            else: [{ name: 8 }]
+            else: [{ name: 'play_audio', audio_name: '8' }],
           }]
         }]
       };
@@ -101,27 +101,35 @@ describe('Migrator', () => {
       Migrator.runMigration('actions', migration, scriptContent);
 
       sinon.assert.callCount(migration, 4);
-      sinon.assert.calledWith(migration.getCall(0), { name: 2 });
-      sinon.assert.calledWith(migration.getCall(1), { name: 4 });
-      sinon.assert.calledWith(migration.getCall(2), { name: 6 });
-      sinon.assert.calledWith(migration.getCall(3), { name: 8 });
+      sinon.assert.calledWith(
+        migration.getCall(0),
+        { name: 'play_audio', audio_name: '2' });
+      sinon.assert.calledWith(
+        migration.getCall(1),
+        { name: 'play_audio', audio_name: '4' });
+      sinon.assert.calledWith(
+        migration.getCall(2),
+        { name: 'play_audio', audio_name: '6' });
+      sinon.assert.calledWith(
+        migration.getCall(3),
+        { name: 'play_audio', audio_name: '8' });
     });
 
     it('migrates if clauses', () => {
       const scriptContent = {
         triggers: [{
-          if: 'test1',
-          actions: [{ name: 2 }]
+          if: { op: 'istrue', ref: 'test1' },
+          actions: [{ name: 'play_audio', audio_name: '2' }]
         }, {
           actions: [{
             name: 'conditional',
-            if: 'test2',
-            actions: [{ name: 4 }],
+            if: { op: 'istrue', ref: 'test2' },
+            actions: [{ name: 'play_audio', audio_name: '4' }],
             elseifs: [{
-              if: 'test3',
-              actions: [{ name: 6 }]
+              if: { op: 'istrue', ref: 'test3' },
+              actions: [{ name: 'play_audio', audio_name: '6' }]
             }],
-            else: [{ name: 8 }]
+            else: [{ name: 'play_audio', audio_name: '8' }]
           }]
         }]
       };
@@ -130,13 +138,25 @@ describe('Migrator', () => {
       Migrator.runMigration('ifClauses', migration, scriptContent);
 
       sinon.assert.callCount(migration, 4);
-      sinon.assert.calledWith(migration.getCall(0), 'test1', scriptContent,
+      sinon.assert.calledWith(
+        migration.getCall(0),
+        scriptContent.triggers[0].if,
+        scriptContent,
         scriptContent.triggers[0], 'if');
-      sinon.assert.calledWith(migration.getCall(1), undefined, scriptContent,
+      sinon.assert.calledWith(
+        migration.getCall(1),
+        undefined,
+        scriptContent,
         scriptContent.triggers[1], 'if');
-      sinon.assert.calledWith(migration.getCall(2), 'test2', scriptContent,
+      sinon.assert.calledWith(
+        migration.getCall(2),
+        scriptContent.triggers[1].actions[0].if,
+        scriptContent,
         scriptContent.triggers[1].actions[0], 'if');
-      sinon.assert.calledWith(migration.getCall(3), 'test3', scriptContent,
+      sinon.assert.calledWith(
+        migration.getCall(3),
+        scriptContent.triggers[1].actions[0].elseifs[0].if,
+        scriptContent,
         scriptContent.triggers[1].actions[0].elseifs[0], 'if');
     });
 

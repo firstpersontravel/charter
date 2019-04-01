@@ -8,63 +8,55 @@ var EvalCore = {};
 // Assigned here to avoid infinite loop
 EvalCore.ifSpec = {};
 
-function negateIf(negated, result) {
-  return negated ? !result : result;
-}
+EvalCore.COMPOUND_IF_OPS = ['and', 'or', 'not'];
 
 EvalCore.IF_PARAM_OP_CLASSES = {
   istrue: {
     properties: {
-      ref: { type: 'lookupable', required: true },
-      neg: { type: 'boolean', default: false }
+      ref: { type: 'lookupable', required: true }
     },
     eval: function(params, evalContext) {
-      return negateIf(params.neg, (
-        !!EvalCore.lookupRef(evalContext, params.ref)
-      ));
+      return !!EvalCore.lookupRef(evalContext, params.ref);
     }
   },
   equals: {
     properties: {
       ref1: { type: 'lookupable', required: true },
-      ref2: { type: 'lookupable', required: true },
-      neg: { type: 'boolean', default: false }
+      ref2: { type: 'lookupable', required: true }
     },
     eval: function(params, evalContext) {
-      return negateIf(params.neg, (
+      return (
         EvalCore.lookupRef(evalContext, params.ref1) ===
         EvalCore.lookupRef(evalContext, params.ref2)
-      ));
+      );
     }
   },
   contains: {
     properties: {
       string_ref: { type: 'lookupable', required: true },
-      part_ref: { type: 'lookupable', required: true },
-      neg: { type: 'boolean', default: false }
+      part_ref: { type: 'lookupable', required: true }
     },
     eval: function(params, evalContext) {
       var a = EvalCore.lookupRef(evalContext, params.string_ref);
       var b = EvalCore.lookupRef(evalContext, params.part_ref);
-      return negateIf(params.neg, (
+      return (
         typeof a === 'string' &&
         typeof b === 'string' &&
         a.toLowerCase().indexOf(b.toLowerCase()) > -1
-      ));
+      );
     }
   },
   matches: {
     properties: {
       string_ref: { type: 'lookupable', required: true },
-      regex_ref: { type: 'string', required: true },
-      neg: { type: 'boolean', default: false }
+      regex_ref: { type: 'string', required: true }
     },
     eval: function(params, evalContext) {
       var a = EvalCore.lookupRef(evalContext, params.string_ref);
       var regex = EvalCore.lookupRef(evalContext, params.regex_ref);
-      return negateIf(params.neg, (
+      return (
         typeof a === 'string' && RegExp(regex, 'i').test(a)
-      ));
+      );
     }
   },
   and: {
@@ -82,7 +74,18 @@ EvalCore.IF_PARAM_OP_CLASSES = {
         return EvalCore.if(evalContext, item);
       });
     }
-  }
+  },
+  not: {
+    properties: {
+      item: EvalCore.ifSpec
+    },
+    eval: function(params, evalContext) {
+      if (!params.item) {
+        return false;
+      }
+      return !EvalCore.if(evalContext, params.item);
+    }
+  },
 };
 
 _.assign(EvalCore.ifSpec, {

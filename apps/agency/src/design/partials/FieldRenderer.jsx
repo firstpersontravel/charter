@@ -31,7 +31,8 @@ function stringOrYesNo(val) {
 }
 
 function internalEmpty(spec) {
-  let label = _.get(spec, 'display.placeholder') || 'Empty';
+  const nullText = spec.type === 'reference' ? 'None' : 'Empty';
+  let label = _.get(spec, 'display.placeholder') || nullText;
   if (spec.type === 'media') {
     label = 'Enter a path (i.e. "sound.mp3", "img.jpg"). Save, then upload content.';
   } else if (!_.isUndefined(spec.default)) {
@@ -40,6 +41,14 @@ function internalEmpty(spec) {
   return (
     <em className="faint">{label}</em>
   );
+}
+
+function defaultIfForOp(op) {
+  // Need default item for not, otherwise will error when showing choice.
+  if (op === 'not') {
+    return { op: 'not', item: { op: '' } };
+  }
+  return { op: op };
 }
 
 const newItemsForSpecType = {
@@ -266,15 +275,14 @@ export default class FieldRenderer {
           value: op,
           label: op
         })));
-      const clean = val => (val === '' ? null : { op: val });
+      const clean = val => (val === '' ? null : defaultIfForOp(val));
       const label = <em className="faint">Always</em>;
       return this.internalEnumlike(spec, '', name, path, opts,
         choices, clean, label);
     }
-    const COMPLEX_IF_OPS = ['and', 'or'];
     const inlineOpts = Object.assign({}, opts);
     const inlineStyle = {};
-    if (_.includes(COMPLEX_IF_OPS, value.op)) {
+    if (_.includes(EvalCore.COMPOUND_IF_OPS, value.op)) {
       inlineOpts.inline = false;
       inlineStyle.paddingLeft = '1em';
     } else {
@@ -565,11 +573,9 @@ export default class FieldRenderer {
   }
 
   renderVariegated(spec, value, name, path, opts) {
-    const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
-    const commonClass = spec.common;
-    const varietyClass = spec.classes[variety];
-    const mergedClass = _.merge({}, commonClass, varietyClass);
-    return this.renderSubresource({ class: mergedClass }, value, name, path,
+    const variety = ParamValidators.getVariegatedVariety(spec, value);
+    const varietyClass = ParamValidators.getVariegatedClass(spec, variety);
+    return this.renderSubresource({ class: varietyClass }, value, name, path,
       opts);
   }
 }
