@@ -41,7 +41,8 @@ export default class UserModal extends Component {
     }
   }
 
-  handleConfirm() {
+  handleConfirm(e) {
+    e.preventDefault();
     this.props.onConfirm(_.assign({}, this.state));
   }
 
@@ -79,7 +80,7 @@ export default class UserModal extends Component {
         zIndex={3000}>
         <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
         <ModalBody>
-          <form>
+          <form onSubmit={this.handleConfirm}>
             <div className="row">
               <div className="form-group col-sm-6">
                 <label htmlFor="user_first_name">First name</label>
@@ -130,6 +131,7 @@ export default class UserModal extends Component {
         <ModalFooter>
           <Button
             color="primary"
+            type="submit"
             onClick={this.handleConfirm}
             disabled={!isValid}>
             {confirmLabel}

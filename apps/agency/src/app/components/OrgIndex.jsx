@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
+import * as Sentry from '@sentry/browser';
 
 import Examples from '../examples';
 import ExperienceModal from '../partials/ExperienceModal';
@@ -24,8 +25,7 @@ export default class OrgIndex extends Component {
     browserHistory.push(`/${this.props.org.name}`);
   }
 
-  handleCreateExperience(fields) {
-    const example = this.getCreatingExample();
+  handleCreateExperience(example, fields) {
     fetch(`/content/examples/${example.name}`)
       .then((r) => {
         if (r.status !== 200) {
@@ -36,10 +36,19 @@ export default class OrgIndex extends Component {
           .then((data) => {
             this.props.createExample(this.props.org.id, fields, example, data);
             browserHistory.push(`/${this.props.org.name}/${fields.name}`);
+          })
+          .catch((err) => {
+            // Errors outside synchronous function aren't captured by
+            // react.
+            console.error(`Error creating example: ${err.message}`);
+            Sentry.captureException(err);
           });
       })
       .catch((err) => {
-        console.error(`Error creating example: ${err.message}.`);
+        // Errors outside synchronous function aren't captured by
+        // react.
+        console.error(`Error fetching example: ${err.message}.`);
+        Sentry.captureException(err);
       });
   }
 
@@ -114,7 +123,7 @@ export default class OrgIndex extends Component {
   }
 
   render() {
-    const creatingExample = this.getCreatingExample();
+    const example = this.getCreatingExample();
     return (
       <div className="container-fluid">
         <h1>Welcome to the Multiverse!</h1>
@@ -126,8 +135,8 @@ export default class OrgIndex extends Component {
         {this.renderExamples()}
 
         <ExperienceModal
-          isOpen={!!creatingExample}
-          example={creatingExample}
+          isOpen={!!example}
+          example={example}
           onClose={this.handleExperienceModalClose}
           onConfirm={this.handleCreateExperience} />
       </div>

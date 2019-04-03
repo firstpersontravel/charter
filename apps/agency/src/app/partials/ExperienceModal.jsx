@@ -48,8 +48,9 @@ export default class ExperienceModal extends Component {
     }
   }
 
-  handleConfirm() {
-    this.props.onConfirm(this.state);
+  handleConfirm(e) {
+    e.preventDefault();
+    this.props.onConfirm(this.props.example, this.state);
   }
 
   handleChangeField(fieldName, event) {
@@ -123,7 +124,7 @@ export default class ExperienceModal extends Component {
         zIndex={3000}>
         <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
         <ModalBody>
-          <form>
+          <form onSubmit={this.handleConfirm}>
             <div className="row">
               <div className="form-group col-12">
                 <label htmlFor="exp_title">Title</label>
@@ -155,6 +156,7 @@ export default class ExperienceModal extends Component {
         <ModalFooter>
           <Button
             color="primary"
+            type="submit"
             onClick={this.handleConfirm}
             disabled={!isValid}>
             {confirmLabel}

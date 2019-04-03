@@ -131,7 +131,7 @@ class Script extends Component {
     this.props.bulkUpdate('groups', expFilters, { isArchived: true });
     this.props.bulkUpdate('trips', expFilters, { isArchived: true });
     this.props.bulkUpdate('relays', expFilters, { isActive: false });
-    browserHistory.push(`${this.props.params.orgName}`);
+    browserHistory.push(`/${this.props.params.orgName}`);
   }
 
   handleUpdateExperience(fields) {

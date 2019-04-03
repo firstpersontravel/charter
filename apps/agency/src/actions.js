@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import 'whatwg-fetch';
+import * as Sentry from '@sentry/browser';
 
 import { getStage } from './utils';
 
@@ -83,10 +84,11 @@ function request(collectionName, instanceId, operationName, url, params,
         return data;
       },
       (err) => {
-        console.error('error loading', err);
+        console.error(`Error requesting ${url}.`, params);
+        console.error(err);
         const errdata = { data: err.data || null, status: err.status || null };
         dispatch(saveRequest(requestName, 'rejected', errdata));
-        throw err;
+        Sentry.captureException(err);
       }
     );
 }
