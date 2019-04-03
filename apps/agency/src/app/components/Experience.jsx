@@ -21,11 +21,25 @@ class Experience extends Component {
   renderErrorOrLoadingState() {
     let msg;
     if (!this.props.experience && this.props.experienceRequest === 'pending') {
-      msg = 'Loading...';
+      msg = (
+        <div className="alert alert-info">
+          Loading...
+        </div>
+      );
     } else if (this.props.experienceRequest === 'rejected') {
-      msg = 'Error loading experience.';
+      msg = (
+        <div className="alert alert-danger">
+          Error loading experience.
+        </div>
+      );
     } else if (!this.props.experience) {
-      msg = 'Experience not found.';
+      msg = (
+        <div className="alert alert-warning">
+          Experience not found.
+          &nbsp;
+          <a href={`/${this.props.params.orgName}`}>Go back</a>
+        </div>
+      );
     }
     return (
       <div>
