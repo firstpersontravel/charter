@@ -562,12 +562,18 @@ def create_release():
         '/secrets'
     ]
 
-    # Don't copy node modules -- symlink instead
+    # Copy code
     run((
         'rsync -a %(repo_path)s/ %(release_path)s/ ' +
         '--exclude /.git* ' +
         ' '.join(['--exclude %s*' % path for path in symlink_paths]))
         % env)
+
+    # Set git hash
+    with cd(env.repo_path):
+        run('git rev-parse --short HEAD >> %s/.githash' % env.release_path)
+
+    # symlink node modules
     for path in symlink_paths:
         source_path = '%s%s' % (env.repo_path, path)
         target_path = '%s%s' % (env.release_path, path.rsplit('/', 1)[0])
@@ -713,13 +719,19 @@ def clear_old():
         run('rm -rf %s/%s' % (env.releases_path, d))
 
 def copy_environment():
+    # Copy env
     run('cp %(shared_path)s/env %(release_path)s' % env)
+    # Add githash
+    run('echo GIT_HASH=`cat %(release_path)s/.githash` >> %(release_path)s/env' % env)
 
 
 @roles('app')
 def build_apps():
     with cd(env.release_path):
-        run('export $(cat ./env | xargs) && yarn run build')
+        run(
+            'export GIT_HASH=`cat ./.githash` && '
+            'export $(cat ./env | xargs) && '
+            'yarn run build')
 
 
 #######################################################

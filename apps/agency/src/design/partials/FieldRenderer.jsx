@@ -31,7 +31,11 @@ function stringOrYesNo(val) {
 }
 
 function internalEmpty(spec) {
-  const nullText = spec.type === 'reference' ? 'None' : 'Empty';
+  const nullIsNone = (
+    spec.type === 'reference' ||
+    spec.type === 'timeOffset'
+  );
+  const nullText = nullIsNone ? 'None' : 'Empty';
   let label = _.get(spec, 'display.placeholder') || nullText;
   if (spec.type === 'media') {
     label = 'Enter a path (i.e. "sound.mp3", "img.jpg"). Save, then upload content.';

@@ -20,7 +20,8 @@ const {
 // Configure raven
 Sentry.init({
   dsn: config.env.SENTRY_DSN,
-  environment: config.env.SENTRY_ENVIRONMENT
+  environment: config.env.SENTRY_ENVIRONMENT,
+  release: config.env.GIT_HASH
 });
 
 // Initialize server

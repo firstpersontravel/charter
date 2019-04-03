@@ -17,7 +17,12 @@ module.exports = {
   help: { summary: 'Occurs when the current time reaches a scheduled time.' },
   parentResourceParam: 'time',
   specParams: {
-    time: { required: true, type: 'reference', collection: 'times' },
+    time: {
+      required: true,
+      type: 'reference',
+      collection: 'times',
+      display: { primary: true }
+    },
     offset: { required: false, type: 'timeOffset' }
   },
   timeForSpec: timeForSpec,

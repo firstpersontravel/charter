@@ -7,6 +7,7 @@ const nodeEnv = isProduction ? 'production' : 'development';
 
 const env = {
   NODE_ENV: nodeEnv,
+  GIT_HASH: (process.env.GIT_HASH || '').trim(),
   GOOGLE_API_KEY: process.env.FRONTEND_GOOGLE_API_KEY,
   SENTRY_DSN: process.env.FRONTEND_SENTRY_DSN,
   SENTRY_ENVIRONMENT: process.env.FRONTEND_SENTRY_ENVIRONMENT,

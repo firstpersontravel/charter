@@ -13,7 +13,8 @@ import reducers from './reducers';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  environment: process.env.SENTRY_ENVIRONMENT
+  environment: process.env.SENTRY_ENVIRONMENT,
+  release: process.env.GIT_HASH
 });
 
 // const loggerMiddleware = createLogger();

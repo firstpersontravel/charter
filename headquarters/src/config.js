@@ -8,8 +8,9 @@ const twilio = require('twilio');
 
 const sequelizeReadonlyPlugin = require('./sequelize/readonly');
 
+// Read config if on live environment
 try {
-  const envPath = '/var/apps/galaxy/shared/env';
+  const envPath = `${__dirname}/../../env`;
   fs.readFileSync(envPath, 'utf8')
     .split('\n')
     .filter(Boolean)
