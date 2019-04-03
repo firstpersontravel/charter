@@ -23,8 +23,8 @@ export default class TripSchedule extends Component {
     this.props.updateInstance('trips', trip.id, {
       schedule: { [timeName]: newTimestamp }
     });
-    this.props.postAdminAction(trip.orgId, trip.id, 'notify',
-      { notify_type: 'refresh' });
+    this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+      'notify', { notify_type: 'refresh' });
   }
 
   renderTimeRow(timeName, timestamp, timezone) {

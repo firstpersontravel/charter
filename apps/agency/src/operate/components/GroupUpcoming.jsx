@@ -55,9 +55,8 @@ export default class GroupUpcoming extends Component {
       <button
         className="btn btn-sm btn-outline-secondary"
         onClick={() => {
-          this.props.postAdminAction(trip.orgId, trip.id, 'trigger', {
-            trigger_name: trigger.name
-          });
+          this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+            'trigger', { trigger_name: trigger.name });
         }}>
         Apply now
       </button>
@@ -93,9 +92,8 @@ export default class GroupUpcoming extends Component {
           this.props.updateInstance('actions', action.id, {
             isArchived: !action.isArchived
           });
-          this.props.postAdminAction(trip.orgId, trip.id, 'notify', {
-            notify_type: 'refresh'
-          });
+          this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+            'notify', { notify_type: 'refresh' });
         }}>
         {action.isArchived ? 'Unarchive' : 'Archive'}
       </button>
@@ -110,9 +108,8 @@ export default class GroupUpcoming extends Component {
           this.props.updateInstance('actions', action.id, {
             scheduledAt: moment.utc().toISOString()
           });
-          this.props.postAdminAction(trip.orgId, trip.id, 'notify', {
-            notify_type: 'refresh'
-          });
+          this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+            'notify', { notify_type: 'refresh' });
         }}>
         Apply now
       </button>

@@ -33,7 +33,8 @@ export default class TripScenes extends Component {
         return;
       }
     }
-    this.props.postAction(trip.orgId, trip.id, actionName, actionParams);
+    this.props.postAction(trip.orgId, trip.experienceId, trip.id, actionName,
+      actionParams);
   }
 
   renderCueButton(page, panel) {
@@ -94,7 +95,8 @@ export default class TripScenes extends Component {
         className="ml-1"
         style={{ cursor: 'pointer', float: 'right' }}
         onClick={() => this.props.postAdminAction(
-          trip.orgId, trip.id, 'notify', { notify_type: 'refresh' }
+          trip.orgId, trip.experienceId, trip.id,
+          'notify', { notify_type: 'refresh' }
         )}>
         <i className="fa fa-hand-o-right" /> device
       </a>
@@ -186,7 +188,8 @@ export default class TripScenes extends Component {
         key={trigger.name}
         disabled={!canTrigger}
         onClick={() => this.props.postAdminAction(
-          trip.orgId, trip.id, 'trigger', { trigger_name: trigger.name })}
+          trip.orgId, trip.experienceId, trip.id,
+          'trigger', { trigger_name: trigger.name })}
         style={style}
         className="constrain-text btn btn-block btn-xs btn-outline-secondary">
         {triggerResourceClass.getTitle(trip.script.content, trigger)}

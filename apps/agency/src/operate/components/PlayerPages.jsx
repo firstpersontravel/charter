@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { EvalCore } from 'fptcore';
 
-function renderPage(player, page, postAction) {
+function renderPage(player, page) {
   const trip = player.trip;
   const context = player.trip.evalContext;
   const cueButtons = _(page.panels)
@@ -31,12 +31,12 @@ function renderPage(player, page, postAction) {
   );
 }
 
-function renderScenePages(player, sceneName, pages, postAction) {
+function renderScenePages(player, sceneName, pages) {
   const scene = _.find(player.trip.script.content.scenes, {
     name: sceneName
   });
   const renderedPages = pages.map(page => (
-    renderPage(player, page, postAction)
+    renderPage(player, page)
   ));
   return (
     <div key={sceneName}>
@@ -46,7 +46,7 @@ function renderScenePages(player, sceneName, pages, postAction) {
   );
 }
 
-function renderPages(player, postAction) {
+function renderPages(player) {
   const pages = _(player.trip.script.content.pages)
     .filter({ role: player.roleName })
     .value();
@@ -54,12 +54,13 @@ function renderPages(player, postAction) {
   return sceneNames
     .map(sceneName => (
       renderScenePages(player, sceneName,
-        _.filter(pages, { scene: sceneName }), postAction)
+        _.filter(pages, { scene: sceneName })
+      )
     ));
 }
 
-export default function PlayerPages({ player, postAction }) {
-  const renderedPages = renderPages(player, postAction);
+export default function PlayerPages({ player }) {
+  const renderedPages = renderPages(player);
   return (
     <div>
       {renderedPages}
@@ -68,6 +69,5 @@ export default function PlayerPages({ player, postAction }) {
 }
 
 PlayerPages.propTypes = {
-  player: PropTypes.object.isRequired,
-  postAction: PropTypes.func.isRequired
+  player: PropTypes.object.isRequired
 };

@@ -93,8 +93,10 @@ export default class TripControls extends Component {
   }
 
   handleAdminAction(name, params) {
-    this.props.postAdminAction(this.props.trip.orgId, this.props.trip.id,
-      name, params || {});
+    this.props.postAdminAction(
+      this.props.trip.orgId,
+      this.props.trip.experienceId,
+      this.props.trip.id, name, params || {});
   }
 
   handleNotifyAction(notifyType) {

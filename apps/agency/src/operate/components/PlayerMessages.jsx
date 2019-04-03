@@ -87,8 +87,9 @@ export default class PlayerMessages extends Component {
     event.preventDefault();
     this.setState({ pendingMessage: '' });
     const orgId = this.props.player.orgId;
+    const expId = this.props.player.trip.experienceId;
     const tripId = this.props.player.tripId;
-    this.props.postAction(orgId, tripId, 'custom_message', {
+    this.props.postAction(orgId, expId, tripId, 'custom_message', {
       from_role_name: this.props.params.roleName,
       to_role_name: this.props.params.withRoleName,
       medium: 'text',

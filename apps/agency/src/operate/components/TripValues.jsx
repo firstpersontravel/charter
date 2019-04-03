@@ -20,8 +20,8 @@ export default class TripValues extends Component {
     this.props.updateInstance('trips', this.props.trip.id, {
       customizations: { [key]: newValue }
     });
-    this.props.postAdminAction(trip.orgId, trip.id, 'notify',
-      { notify_type: 'refresh' }, false);
+    this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+      'notify', { notify_type: 'refresh' }, false);
   }
 
   handleFlagUpdate(key, newValue) {
@@ -33,8 +33,8 @@ export default class TripValues extends Component {
     this.props.updateInstance('trips', this.props.trip.id, {
       waypointOptions: { [key]: event.target.value }
     });
-    this.props.postAdminAction(trip.orgId, trip.id, 'notify',
-      { notify_type: 'refresh' }, false);
+    this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+      'notify', { notify_type: 'refresh' }, false);
   }
 
   renderFlagRow(item) {
