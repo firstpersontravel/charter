@@ -12,7 +12,7 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
   const resourceClass = ResourcesRegistry[resourceType];
   const helpText = _.get(resourceClass, 'help.summary');
   return (
-    <p key={collectionName} style={{ marginBottom: '1em' }}>
+    <p key={collectionName} className="mb-3">
       {helpText}
       &nbsp;
       <Link

@@ -298,7 +298,7 @@ export default class GroupMap extends Component {
             ({player.user.firstName})
           </LinkWithContext>
         </div>
-        <div style={{ marginBottom: '0.25em' }}>
+        <div className="mb-1">
           <i className="fa fa-location-arrow" />
           &nbsp;{moment
             .utc(player.user.locationTimestamp)

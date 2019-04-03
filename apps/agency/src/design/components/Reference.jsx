@@ -32,9 +32,7 @@ function renderResourceLink(resourceType, moduleResource) {
   const resourceClass = moduleResource.resource || moduleResource.subresource;
   const resourceIconName = resourceClass && resourceClass.icon;
   const resourceIcon = resourceIconName ? (
-    <i
-      style={{ marginRight: '0.25em' }}
-      className={`fa fa-${resourceIconName}`} />
+    <i className={`fa fa-${resourceIconName} mr-1`} />
   ) : null;
 
   const resourceLabel = (
@@ -60,11 +58,10 @@ function renderSidebarResource(resourceType, moduleResource) {
   // Variategated resources don't display well.
   const actionNames = Object.keys(moduleResource.actions || {});
   const eventTypes = Object.keys(moduleResource.events || {});
-  const resourceStyle = (actionNames.length > 0 || eventTypes.length > 0) ?
-    { marginBottom: '0.5em' } :
-    {};
+  const resourceClass = (actionNames.length > 0 || eventTypes.length > 0) ?
+    'mb-2' : '';
   return (
-    <div key={resourceType} style={resourceStyle}>
+    <div key={resourceType} className={resourceClass}>
       <div className="constrain-text">
         {renderResourceLink(resourceType, moduleResource)}
       </div>
@@ -80,7 +77,7 @@ function renderSidebarModule(moduleName, module) {
   ));
 
   return (
-    <div key={moduleName} style={{ marginBottom: '1em' }}>
+    <div key={moduleName} className="mb-2">
       <div className="constrain-text bold" style={{ borderBottom: '1px solid gray' }}>
         <a href={`#${moduleName}`}>
           {TextUtil.titleForKey(moduleName)}
@@ -124,7 +121,7 @@ function labelForSpecType(spec, key) {
   if (spec.type === 'variegated') {
     return Object.values(spec.classes)
       .map(cls => (
-        <span style={{ marginRight: '0.25em' }}>
+        <span className="mr-1">
           {labelForSpecType(cls)}
         </span>
       ));

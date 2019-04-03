@@ -21,7 +21,7 @@ function renderMessages(trips, messages) {
         message={message} />
     ));
   return (
-    <div style={{ marginBottom: '1em' }}>
+    <div className="mb-3">
       {renderedMessages}
     </div>
   );

@@ -13,7 +13,7 @@ function renderPanel(player, page, panel) {
     const humanized = EvalCore.templateText(player.trip.evalContext,
       panel.text, player.trip.experience.timezone);
     return humanized.split('\n').filter(Boolean).map(p => (
-      <p key={p} style={{ marginBottom: '0.5em' }} className="card-text">
+      <p key={p} className="card-text mb-2">
         {p}
       </p>
     ));
@@ -35,8 +35,8 @@ function renderPanel(player, page, panel) {
     const panelContent = isSceneActive ? panelText : disabledPanelText;
     return (
       <button
-        style={{ marginBottom: '0.5rem', whiteSpace: 'initial' }}
-        className="btn btn-block constrain-text btn-outline-secondary"
+        style={{ whiteSpace: 'initial' }}
+        className="btn btn-block constrain-text btn-outline-secondary mb-2"
         disabled>
         {panelContent}
       </button>
@@ -48,7 +48,7 @@ function renderPanel(player, page, panel) {
 }
 
 const archivedIcon = (
-  <i className="fa fa-archive" style={{ marginLeft: '0.25em' }} />
+  <i className="fa fa-archive ml-1" />
 );
 
 function renderPage(page, player) {
@@ -76,7 +76,7 @@ function renderPage(page, player) {
       </div>
     ));
   return (
-    <div className="card" style={{ marginBottom: '0.5em' }}>
+    <div className="card mb-2">
       {headerPanel}
       <div className="card-body">
         {panelsRendered}

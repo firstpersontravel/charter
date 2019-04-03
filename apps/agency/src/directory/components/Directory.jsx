@@ -56,7 +56,7 @@ export default class Directory extends Component {
           </Link>
         </div>
         {this.renderRoles()}
-        <div style={{ marginTop: '0.5em' }}>
+        <div className="mt-2">
           <Link
             activeClassName="bold"
             to={`/${experience.org.name}/${experience.name}/directory?role=Archived`}>

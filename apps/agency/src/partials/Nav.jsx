@@ -55,8 +55,7 @@ function renderBrand(org, experience) {
       <Link
         key="main"
         activeClassName="active"
-        className="navbar-brand"
-        style={{ marginRight: '0.25rem' }}
+        className="navbar-brand mr-1"
         to="/">
         MULTIVERSE
       </Link>
@@ -66,8 +65,7 @@ function renderBrand(org, experience) {
     <Link
       key="org"
       activeClassName="active"
-      className="navbar-brand"
-      style={{ marginRight: '0.25rem' }}
+      className="navbar-brand mr-1"
       to={`/${org.name}`}>
       {org.title.toUpperCase()}
     </Link>

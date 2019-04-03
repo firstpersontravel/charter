@@ -65,9 +65,8 @@ class Schedule extends Component {
 
     const allocateRelaysBtn = hasUnallocated ? (
       <button
-        style={{ marginLeft: '1em' }}
         disabled={this.props.systemActionRequestState === 'pending'}
-        className="btn btn-primary"
+        className="btn btn-primary ml-3"
         onClick={() => this.props.updateRelays(
           this.props.org.id, this.props.experience.id)}>
         Allocate phone numbers
@@ -90,7 +89,7 @@ class Schedule extends Component {
     const oneMonthAgo = cur.clone().subtract(1, 'months');
     const inOneMonth = cur.clone().add(1, 'months');
     return (
-      <div style={{ marginBottom: '1em' }} className="btn-group d-flex">
+      <div className="btn-group d-flex mb-3">
         <Link
           className="btn btn-outline-secondary"
           to={`/${this.props.org.name}/${this.props.experience.name}/schedule/${oneMonthAgo.format('YYYY/MM')}`}>
@@ -127,9 +126,7 @@ class Schedule extends Component {
       label: (
         <span>
           {moment.utc(group.date).format('MMM D, YYYY')}
-          {group.isArchived ? (
-            <i style={{ marginLeft: '0.25em' }} className="fa fa-archive" />
-          ) : null}
+          {group.isArchived ? <i className="fa fa-archive ml-1" /> : null}
         </span>
       ),
       url: (

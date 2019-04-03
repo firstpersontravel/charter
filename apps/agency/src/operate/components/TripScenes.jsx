@@ -55,15 +55,14 @@ export default class TripScenes extends Component {
     );
     const cueTitle = isCurrentScene ? activeCueTitle : inactiveCueTitle;
     return (
-      <div key={panel.cue} style={{ marginTop: '0.25em' }}>
+      <div key={panel.cue} className="mt-1">
         <button
           disabled={!isCurrentScene}
           key={`${page.name}-${panel.cue}`}
-          style={{ marginTop: '0.25em' }}
           onClick={() => (
             this.handleAction('signal_cue', { cue_name: panel.cue })
           )}
-          className={`wrap-text btn btn-block btn-sm ${btnClass}`}>
+          className={`wrap-text btn btn-block btn-sm mt-1 ${btnClass}`}>
           {cueTitle}
         </button>
       </div>
@@ -79,12 +78,12 @@ export default class TripScenes extends Component {
     const goToPageButton = (!isCurrentPage) ? (
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <a
-        style={{ marginLeft: '0.25em', cursor: 'pointer', float: 'right' }}
+        style={{ cursor: 'pointer', float: 'right' }}
         onClick={() => this.handleAction('send_to_page', {
           role_name: player.roleName,
           page_name: page.name
         })}
-        className={`${goToPageClass}`}>
+        className={`ml-1 ${goToPageClass}`}>
         Go
       </a>
     ) : null;
@@ -92,7 +91,8 @@ export default class TripScenes extends Component {
     const refreshButton = (isCurrentPage && !isAckedPage) ? (
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <a
-        style={{ marginLeft: '0.25em', cursor: 'pointer', float: 'right' }}
+        className="ml-1"
+        style={{ cursor: 'pointer', float: 'right' }}
         onClick={() => this.props.postAdminAction(
           trip.orgId, trip.id, 'notify', { notify_type: 'refresh' }
         )}>

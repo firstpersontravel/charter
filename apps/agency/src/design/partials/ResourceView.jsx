@@ -175,8 +175,7 @@ export default class ResourceView extends Component {
           `/script/${script.revision}` +
           `/design/${this.props.sliceType}/${this.props.sliceName}`
         }
-        style={{ marginRight: '0.25em' }}
-        className="btn btn-sm btn-outline-secondary">
+        className="btn btn-sm btn-outline-secondary mr-1">
         <i className="fa fa-trash-o" />&nbsp;
         Cancel
       </Link>
@@ -184,8 +183,7 @@ export default class ResourceView extends Component {
 
     const revertBtn = (
       <button
-        className="btn btn-sm btn-secondary"
-        style={{ marginRight: '0.25em' }}
+        className="btn btn-sm btn-secondary mr-1"
         onClick={this.handleRevertChanges}>
         <i className="fa fa-undo" />&nbsp;
         Revert
@@ -194,8 +192,7 @@ export default class ResourceView extends Component {
 
     const createBtn = (
       <button
-        className={`btn btn-sm btn-primary ${canApply ? '' : 'disabled'}`}
-        style={{ marginRight: '0.25em' }}
+        className={`btn btn-sm btn-primary ${canApply ? '' : 'disabled'} mr-1`}
         onClick={this.handleApplyChanges}>
         <i className="fa fa-plus" />&nbsp;
         Create
@@ -229,9 +226,7 @@ export default class ResourceView extends Component {
       </span>
     );
     const emptyWarning = resource.title ? null : (
-      <i
-        style={{ marginLeft: '0.25em' }}
-        className="text-danger fa fa-exclamation-circle" />
+      <i className="text-danger fa fa-exclamation-circle ml-1" />
     );
     if (resourceClass.properties.title) {
       return (
@@ -315,8 +310,7 @@ export default class ResourceView extends Component {
     return (
       <Link
         key={childResourceType}
-        style={{ marginRight: '0.5em' }}
-        className="btn btn-outline-secondary"
+        className="btn btn-outline-secondary mr-2"
         to={
           `/${script.org.name}/${script.experience.name}` +
           `/script/${script.revision}` +
@@ -358,7 +352,7 @@ export default class ResourceView extends Component {
 
   render() {
     return (
-      <div className="card" style={{ marginBottom: '1em' }}>
+      <div className="card mb-3">
         {this.renderHeader()}
         <div className="card-body">
           {this.renderErrors()}

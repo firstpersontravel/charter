@@ -54,7 +54,7 @@ export default class OrgIndex extends Component {
 
   renderExample(example) {
     return (
-      <div key={example.name} className="card" style={{ marginBottom: '1em' }} >
+      <div key={example.name} className="card mb-3">
         <h5 className="card-header d-none d-sm-block">{example.title}</h5>
         <div className="card-body d-none d-sm-block">
           <p className="card-text">{example.desc}</p>
@@ -74,7 +74,7 @@ export default class OrgIndex extends Component {
 
   renderExperience(experience) {
     return (
-      <div key={experience.id} className="card" style={{ marginBottom: '1em' }} >
+      <div key={experience.id} className="card mb-3">
         <h5 className="card-header d-none d-sm-block">{experience.title}</h5>
         <div className="card-body d-none d-sm-block">
           <p className="card-text">

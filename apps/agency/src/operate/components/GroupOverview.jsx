@@ -125,15 +125,15 @@ export default class GroupOverview extends Component {
     ));
     return (
       <div>
-        <div style={{ marginBottom: '0.5em' }}>
+        <div className="mb-2">
           <h5>Trips</h5>
           {trips}
         </div>
-        <div style={{ marginBottom: '0.5em' }}>
+        <div className="mb-2">
           <h5>Travelers</h5>
           {players}
         </div>
-        <div style={{ marginBottom: '0.5em' }}>
+        <div className="mb-2">
           <h5>Actors</h5>
           {activeActors}
         </div>

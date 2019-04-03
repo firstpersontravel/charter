@@ -12,29 +12,17 @@ function getBadgesForScript(script, maxRevision) {
   const badges = [];
   if (script.isActive) {
     badges.push(
-      <span
-        key="active"
-        style={{ marginLeft: '0.5em' }} className="badge badge-primary">
-        Active
-      </span>
+      <span key="active" className="badge badge-primary ml-2">Active</span>
     );
   } else if (script.revision === maxRevision) {
     badges.push(
-      <span
-        key="draft"
-        style={{ marginLeft: '0.5em' }} className="badge badge-secondary">
-        Draft
-      </span>
+      <span key="draft" className="badge badge-secondary ml-2">Draft</span>
     );
   }
 
   if (script.isLocked) {
     badges.push(
-      <span
-        key="locked"
-        style={{ marginLeft: '0.5em' }} className="badge badge-warning">
-        Locked
-      </span>
+      <span key="locked" className="badge badge-warning ml-2">Locked</span>
     );
   }
   return badges;
@@ -202,9 +190,8 @@ class Script extends Component {
     const badges = getBadgesForScript(script);
     const revertBtn = activeRevision ? (
       <button
-        style={{ marginLeft: '0.5em' }}
         onClick={this.handleRevertScript}
-        className="btn btn-xs btn-outline-secondary">
+        className="btn btn-xs btn-outline-secondary ml-2">
         <i className="fa fa-undo" />&nbsp;
         Revert to {activeRevision}
       </button>
@@ -212,9 +199,8 @@ class Script extends Component {
 
     const activateBtn = (
       <button
-        style={{ marginLeft: '0.5em' }}
         onClick={this.handleActivateScript}
-        className="btn btn-xs btn-outline-secondary">
+        className="btn btn-xs btn-outline-secondary ml-2">
         <i className="fa fa-check" />&nbsp;
         Activate
       </button>
@@ -222,9 +208,8 @@ class Script extends Component {
 
     const newDraftBtn = (
       <button
-        style={{ marginLeft: '0.5em' }}
         onClick={this.handleNewDraft}
-        className="btn btn-xs btn-outline-secondary">
+        className="btn btn-xs btn-outline-secondary ml-2">
         <i className="fa fa-pencil" />&nbsp;
         New draft
       </button>
@@ -232,9 +217,8 @@ class Script extends Component {
 
     const lockBtn = (
       <button
-        style={{ marginLeft: '0.5em' }}
         onClick={this.handleLockScript}
-        className="btn btn-xs btn-outline-secondary">
+        className="btn btn-xs btn-outline-secondary ml-2">
         <i className={`fa ${script.isLocked ? 'fa-unlock' : 'fa-lock'}`} />&nbsp;
         {script.isLocked ? 'Unlock' : 'Lock'}
       </button>
@@ -251,7 +235,7 @@ class Script extends Component {
       newDraftBtn : null;
 
     const goToLatestLink = !isMaxRevision ? (
-      <span style={{ marginLeft: '0.5em', padding: '0' }}>
+      <span className="ml-2 p-0">
         <Link to={`/${script.org.name}/${script.experience.name}/script/${maxRevision}/design`}>
           Go to {maxRevision}
         </Link>
@@ -268,7 +252,7 @@ class Script extends Component {
     ));
 
     const expOpts = (
-      <div className="dropdown" style={{ cursor: 'pointer', marginLeft: '0.5em', display: 'inline' }}>
+      <div className="dropdown ml-2 d-inline" style={{ cursor: 'pointer' }}>
         <span id="expDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i className="fa fa-gear" />
         </span>
@@ -290,12 +274,7 @@ class Script extends Component {
 
     return (
       <div style={{ backgroundColor: '#eee' }}>
-        <div
-          className="container-fluid"
-          style={{
-            margin: 0,
-            padding: '0.5em 1em'
-          }}>
+        <div className="container-fluid m-0 px-3 py-2">
           <div className="row">
             <div className="col-sm-6">
               <Link

@@ -159,7 +159,7 @@ class MediaAsset extends Component {
     const s3Folder = fullPath.substr(0, fullPath.length - filename.length);
     return (
       <ReactS3Uploader
-        style={{ marginLeft: '0.25em' }}
+        className="ml-1"
         signingUrl="/s3/sign"
         signingUrlMethod="GET"
         accept={MEDIA_MIME_TYPES[this.props.medium]}
@@ -179,7 +179,7 @@ class MediaAsset extends Component {
     const matchingAsset = this.getAsset();
     const link = matchingAsset ? (
       <a
-        style={{ marginLeft: '0.25em' }}
+        className="ml-1"
         href={matchingAsset.data.url}
         target="_blank"
         rel="noopener noreferrer">

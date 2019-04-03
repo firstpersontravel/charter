@@ -28,7 +28,7 @@ export default class ResponsiveListGroup extends Component {
         </option>
       ));
     return (
-      <div className="d-sm-none" style={{ marginBottom: '0.5em' }}>
+      <div className="d-sm-none mb-2">
         <select
           className="form-control"
           value={selectedUrl}

@@ -220,8 +220,7 @@ export default class ResourceShow extends Component {
     return (
       <div
         key={parentPath.join(',')}
-        className="constrain-text"
-        style={{ marginBottom: '0.25em' }}>
+        className="constrain-text mb-1">
         {pathItems}
       </div>
     );
@@ -241,7 +240,7 @@ export default class ResourceShow extends Component {
       return null;
     }
     return (
-      <div style={{ marginBottom: '0.5em' }}>
+      <div className="mb-2">
         {renderedPaths}
       </div>
     );
@@ -277,7 +276,7 @@ export default class ResourceShow extends Component {
     ));
 
     return (
-      <div style={{ marginBottom: '0.5em' }}>
+      <div className="mb-2">
         <div><strong>Children:</strong></div>
         {renderedChildren}
       </div>
@@ -294,7 +293,7 @@ export default class ResourceShow extends Component {
     ));
 
     return (
-      <div style={{ marginBottom: '0.5em' }}>
+      <div className="mb-2">
         <div><strong>All references:</strong></div>
         {renderedReverseRefs}
       </div>

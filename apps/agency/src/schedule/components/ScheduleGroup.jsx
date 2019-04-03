@@ -172,8 +172,7 @@ class ScheduleGroup extends Component {
     ) : null;
     const archiveTripBtn = !group.isArchived ? (
       <button
-        style={{ marginLeft: '0.25em' }}
-        className="btn btn-sm btn-outline-secondary"
+        className="btn btn-sm btn-outline-secondary ml-1"
         onClick={() => this.handleArchiveTrip(trip)}>
         {trip.isArchived ? 'Unarchive' : 'Archive'}
       </button>
@@ -188,7 +187,7 @@ class ScheduleGroup extends Component {
           <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
             {trip.title}
           </IndexLink>
-          {trip.isArchived && <i style={{ marginLeft: '0.25em' }} className="fa fa-archive" />}
+          {trip.isArchived && <i className="fa fa-archive ml-1" />}
         </td>
         <td>
           {trip.variantNames.split(',').filter(Boolean).map(TextUtil.titleForKey).join(', ')}
@@ -226,7 +225,7 @@ class ScheduleGroup extends Component {
       </IndexLink>
     ) : null;
     return (
-      <div style={{ marginBottom: '1em' }}>
+      <div className="mb-3">
         {opsBtn}
         <h4>{dateShort}, script rev. {group.script.revision}</h4>
       </div>

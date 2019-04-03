@@ -115,7 +115,7 @@ export default function Message({ message, updateInstance, isInTripContext,
 
   const tripPrefix = (
     <Link
-      style={{ marginRight: '0.25em' }}
+      className="mr-1"
       to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
       {trip.departureName ? trip.departureName : trip.title}
     </Link>

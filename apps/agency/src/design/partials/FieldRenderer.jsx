@@ -343,7 +343,7 @@ export default class FieldRenderer {
       choices.unshift({ value: '', label: '---' });
     }
     const label = (
-      <span style={{ whiteSpace: 'nowrap' }}>
+      <span style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
         {value || internalEmpty(spec)}
       </span>
     );
@@ -533,9 +533,7 @@ export default class FieldRenderer {
       if (_.isNull(itemValue) || _.isUndefined(itemValue)) {
         if (keySpec.required) {
           invalidWarning = (
-            <i
-              style={{ marginLeft: '0.25em' }}
-              className="fa fa-exclamation-circle text-danger" />
+            <i className="fa fa-exclamation-circle text-danger ml-1" />
           );
         }
       } else {
@@ -543,9 +541,7 @@ export default class FieldRenderer {
           name, keySpec, itemValue);
         if (validatorErrors && validatorErrors.length > 0) {
           invalidWarning = (
-            <i
-              style={{ marginLeft: '0.25em' }}
-              className="fa fa-exclamation-circle text-danger" />
+            <i className="fa fa-exclamation-circle text-danger ml-1" />
           );
         }
       }
@@ -555,7 +551,7 @@ export default class FieldRenderer {
     const shouldShowClear = isSimpleType && keySpec.type !== 'boolean';
     const labelText = labelForSpec(keySpec, key);
     const label = shouldShowLabel ? (
-      <span style={{ fontVariant: 'small-caps', marginRight: '0.25em' }}>
+      <span className="ml-1" style={{ fontVariant: 'small-caps' }}>
         {labelText}:
       </span>
     ) : null;

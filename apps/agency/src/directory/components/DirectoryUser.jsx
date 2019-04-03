@@ -235,7 +235,7 @@ export default class DirectoryUser extends Component {
         </p>
         {userFields}
         {profilesList}
-        <div style={{ marginTop: '0.5em' }}>
+        <div className="mt-2">
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{

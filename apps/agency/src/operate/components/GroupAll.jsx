@@ -45,9 +45,7 @@ export default function GroupAll({ children, group,
     roleTitle = `Role: ${role.title} (${userTitle})`;
   }
 
-  const archivedIcon = (
-    <i style={{ marginLeft: '0.25em' }} className="fa fa-archive" />
-  );
+  const archivedIcon = <i className="fa fa-archive ml-1" />;
   let tripTitle = 'Trips';
   let tripLabel = 'Trips';
   if (params.tripId) {
@@ -61,14 +59,14 @@ export default function GroupAll({ children, group,
   }
 
   const replyWarning = numMessagesNeedingReply > 0 ? (
-    <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-warning">
+    <span style={{ position: 'relative', top: '-2px' }} className="badge badge-warning mr-1">
       <i className="fa fa-comment" />
       {numMessagesNeedingReply}
     </span>
   ) : null;
 
   const nextActionWarning = nextUnappliedAction ? (
-    <span style={{ marginRight: '0.25em', position: 'relative', top: '-2px' }} className="badge badge-info">
+    <span style={{ position: 'relative', top: '-2px' }} className="badge badge-info mr-1">
       {moment
         .utc(nextUnappliedAction.scheduledAt)
         .tz(group.experience.timezone)

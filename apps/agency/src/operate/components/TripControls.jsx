@@ -66,8 +66,8 @@ export default class TripControls extends Component {
       this.props.trip.actionContext);
     const renderedTriggers = triggers.map(trigger => (
       <li key={trigger.name}>
-        <pre style={{ marginBottom: 0 }}>{trigger.name}:</pre>
-        <pre style={{ marginBottom: 0 }}>{yaml.safeDump(trigger.actions)}</pre>
+        <pre className="mb-0">{trigger.name}:</pre>
+        <pre className="mb-0">{yaml.safeDump(trigger.actions)}</pre>
       </li>
     ));
     return (
@@ -197,7 +197,7 @@ export default class TripControls extends Component {
         </button>
       );
     return (
-      <div style={{ marginBottom: '0.5em' }}>
+      <div className="mb-2">
         <h5>Device Refresh</h5>
         <div className="btn-group">
           <button
@@ -289,7 +289,7 @@ export default class TripControls extends Component {
       })
       .value();
     const triggerContent = pendingTrigger ? (
-      <pre style={{ marginBottom: 0 }}>
+      <pre className="mb-0">
         {yaml.safeDump(pendingTrigger.actions)}
       </pre>
     ) : null;
@@ -325,7 +325,7 @@ export default class TripControls extends Component {
     const btnDangerClass = isProduction() ? 'btn-danger' : 'btn-primary';
     const isCommandApplyDisabled = this.state.pendingCommand === '';
     return (
-      <div style={{ marginBottom: '0.5em' }}>
+      <div className="mb-2">
         <h5>Command</h5>
         <form className="row" onSubmit={this.handleCommandApply}>
           <div className="col-sm-8">
