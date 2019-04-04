@@ -36,14 +36,27 @@ export default class DirectoryIndex extends Component {
   }
 
   handleCreateUser(fields) {
-    this.props.createInstance('users', {
+    const roleName = this.props.location.query.role;
+    const userFields = {
       orgId: this.props.experience.orgId,
       experienceId: this.props.experience.id,
       firstName: fields.firstName,
       lastName: fields.lastName,
       phoneNumber: fields.phoneNumber,
       email: fields.email
-    });
+    };
+    const profilesToCreate = roleName ? [{
+      collection: 'profiles',
+      fields: {
+        orgId: this.props.experience.orgId,
+        experienceId: this.props.experience.id,
+        roleName: roleName
+      },
+      insertions: {
+        userId: 'id'
+      }
+    }] : null;
+    this.props.createInstances('users', userFields, profilesToCreate);
     this.handleUserModalClose();
   }
 
@@ -120,13 +133,38 @@ export default class DirectoryIndex extends Component {
     );
   }
 
+  renderNewUserButton() {
+    const experience = this.props.experience;
+    const roleName = this.props.location.query.role;
+    if (roleName === 'Archived') {
+      return null;
+    }
+    const role = _.find(experience.script.content.roles, { name: roleName });
+    const roleTitle = role && role.title;
+
+    const btnTitle = roleName ? `New ${roleTitle} user` : 'New user';
+    return (
+      <div>
+        <Link
+          to={{
+            pathname: `/${experience.org.name}/${experience.name}/directory`,
+            query: {
+              role: roleName || undefined,
+              editing: true
+            }
+          }}
+          className="btn btn-sm btn-outline-secondary">
+          {btnTitle}
+        </Link>
+      </div>
+    );
+  }
+
   render() {
     if (this.props.users.isLoading ||
         this.props.profiles.isLoading) {
       return 'Loading';
     }
-    const experience = this.props.experience;
-    const roleName = this.props.location.query.role;
     const users = this.getUsers();
     const userRows = users.map(user => this.renderUser(user));
     const header = this.renderHeader();
@@ -145,19 +183,7 @@ export default class DirectoryIndex extends Component {
             {userRows}
           </tbody>
         </table>
-        <div>
-          <Link
-            to={{
-              pathname: `/${experience.org.name}/${experience.name}/directory`,
-              query: {
-                role: roleName || undefined,
-                editing: true
-              }
-            }}
-            className="btn btn-sm btn-outline-secondary">
-            New user
-          </Link>
-        </div>
+        {this.renderNewUserButton()}
         <UserModal
           isOpen={!!this.props.location.query.editing}
           user={null}
@@ -169,7 +195,7 @@ export default class DirectoryIndex extends Component {
 }
 
 DirectoryIndex.propTypes = {
-  createInstance: PropTypes.func.isRequired,
+  createInstances: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   experience: PropTypes.object.isRequired,
   profiles: PropTypes.array.isRequired,

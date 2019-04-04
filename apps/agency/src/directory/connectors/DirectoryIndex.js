@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import DirectoryIndex from '../components/DirectoryIndex';
 import { lookupExperience, lookupProfiles, lookupUsers } from './utils';
-import { createInstance } from '../../actions';
+import { createInstances } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => ({
   experience: lookupExperience(state, ownProps),
@@ -11,7 +11,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  createInstance: (...args) => dispatch(createInstance(...args))
+  createInstances: (...args) => dispatch(createInstances(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DirectoryIndex);

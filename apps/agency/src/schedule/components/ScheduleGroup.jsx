@@ -146,20 +146,25 @@ class ScheduleGroup extends Component {
       currentSceneName: '',
       lastScheduledTime: null
     });
-    const playersFields = group.script.content.roles.map(role => (
-      this.initialFieldsForRole(group.experience, group.script,
-        role, fields.departureName, fields.variantNames)
-    ));
     if (this.state.isEditingTrip) {
       // update existing trip
       this.props.updateInstance('trips', this.state.isEditingTrip.id,
         tripFields);
-      // TODO: update players too
     } else {
       // create new trip
-      this.props.initializeTrip(tripFields, playersFields);
+      this.initializeTrip(group, tripFields);
     }
     this.handleEditTripToggle();
+  }
+
+  initializeTrip(group, tripFields) {
+    const roles = group.script.content.roles;
+    this.props.createInstances('trips', tripFields, roles.map(role => ({
+      collection: 'players',
+      fields: this.initialFieldsForRole(group.experience, group.script,
+        role, tripFields.departureName, tripFields.variantNames.split(',')),
+      insertions: { tripId: 'id' }
+    })));
   }
 
   renderTripRow(group, trip) {
@@ -327,7 +332,7 @@ ScheduleGroup.propTypes = {
   group: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
-  initializeTrip: PropTypes.func.isRequired,
+  createInstances: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   bulkUpdate: PropTypes.func.isRequired
 };

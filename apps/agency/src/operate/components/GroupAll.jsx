@@ -109,6 +109,7 @@ export default function GroupAll({ children, group,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
     subItems: _(group.trips)
       .map(trip => ({
+        key: trip.id,
         url: (
           `/${group.org.name}/${group.experience.name}` +
           `/operate/${group.id}` +

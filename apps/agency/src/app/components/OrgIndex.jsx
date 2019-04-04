@@ -34,7 +34,7 @@ export default class OrgIndex extends Component {
         return r
           .json()
           .then((data) => {
-            this.props.createExample(this.props.org.id, fields, example, data);
+            this.createExperienceFromExample(fields, data);
             browserHistory.push(`/${this.props.org.name}/${fields.name}`);
           })
           .catch((err) => {
@@ -50,6 +50,25 @@ export default class OrgIndex extends Component {
         console.error(`Error fetching example: ${err.message}.`);
         Sentry.captureException(err);
       });
+  }
+
+  createExperienceFromExample(fields, scriptContent) {
+    const expFields = Object.assign({
+      orgId: this.props.org.id
+    }, fields);
+    // Create example, then create script
+    return this.props.createInstances('experiences', expFields, [{
+      collection: 'scripts',
+      fields: {
+        orgId: this.props.org.id,
+        revision: 1,
+        content: scriptContent,
+        isActive: true
+      },
+      insertions: {
+        experienceId: 'id'
+      }
+    }]);
   }
 
   renderExample(example) {
@@ -137,6 +156,7 @@ export default class OrgIndex extends Component {
         <ExperienceModal
           isOpen={!!example}
           example={example}
+          existingExperiences={this.props.experiences}
           onClose={this.handleExperienceModalClose}
           onConfirm={this.handleCreateExperience} />
       </div>
@@ -148,5 +168,5 @@ OrgIndex.propTypes = {
   location: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   experiences: PropTypes.array.isRequired,
-  createExample: PropTypes.func.isRequired
+  createInstances: PropTypes.func.isRequired
 };

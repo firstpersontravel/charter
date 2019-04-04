@@ -24,11 +24,14 @@ export default class DesignIndex extends Component {
   }
 
   render() {
-    if (this.props.scripts.length === 0 && this.props.scripts.isLoading) {
+    if (this.props.scripts.isLoading) {
       return <div className="container-fluid">Loading</div>;
     }
     if (this.props.scripts.isError) {
       return <div className="container-fluid">Error</div>;
+    }
+    if (this.props.scripts.length === 0) {
+      return <div className="container-fluid">No script found</div>;
     }
     return (
       <div className="container-fluid">

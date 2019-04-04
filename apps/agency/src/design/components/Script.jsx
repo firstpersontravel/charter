@@ -122,7 +122,7 @@ class Script extends Component {
     browserHistory.push(`/${this.props.params.orgName}`);
   }
 
-  handleUpdateExperience(fields) {
+  handleUpdateExperience(example, fields) {
     const experience = this.props.script.experience;
     this.props.updateInstance('experiences', experience.id, fields);
     browserHistory.push(
@@ -338,6 +338,7 @@ class Script extends Component {
         <ExperienceModal
           isOpen={isEditingExperience}
           experience={this.props.script.experience}
+          existingExperiences={this.props.experiences}
           onClose={() => browserHistory.push(window.location.pathname)}
           onConfirm={this.handleUpdateExperience} />
 
@@ -355,6 +356,7 @@ Script.propTypes = {
   children: PropTypes.node.isRequired,
   script: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
+  experiences: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   createInstance: PropTypes.func.isRequired,

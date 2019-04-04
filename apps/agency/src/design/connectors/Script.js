@@ -7,11 +7,12 @@ import {
   createInstance,
   updateInstance
 } from '../../actions';
-import { lookupScript, lookupScripts } from './utils';
+import { lookupExperiences, lookupScript, lookupScripts } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
   script: lookupScript(state, ownProps),
-  scripts: lookupScripts(state, ownProps)
+  scripts: lookupScripts(state, ownProps),
+  experiences: lookupExperiences(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

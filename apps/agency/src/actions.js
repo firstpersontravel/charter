@@ -44,6 +44,10 @@ function modelNameForCollectionName(collectionName) {
   return collectionName.substring(0, collectionName.length - 1);
 }
 
+function processError(err) {
+  Sentry.captureException(err);
+}
+
 function fetchJsonAssuringSuccess(url, params) {
   return fetch(url, params)
     .then((response) => {
@@ -88,7 +92,8 @@ function request(collectionName, instanceId, operationName, url, params,
         console.error(err);
         const errdata = { data: err.data || null, status: err.status || null };
         dispatch(saveRequest(requestName, 'rejected', errdata));
-        Sentry.captureException(err);
+        // Rethrow err, to be caught later in the stack.
+        throw err;
       }
     );
 }
@@ -121,9 +126,7 @@ export function listCollection(collectionName, query, opts) {
         }
         dispatch(saveInstances(collectionName, response.data[collectionName]));
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -199,9 +202,7 @@ export function retrieveInstance(collectionName, instanceId) {
       .then((response) => {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -219,9 +220,7 @@ export function createInstance(collectionName, fields) {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
         return response.data[modelName];
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -245,9 +244,7 @@ export function updateInstance(collectionName, instanceId, fields) {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
         return response.data[modelName];
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -266,9 +263,7 @@ export function bulkUpdate(collectionName, query, fields) {
         dispatch(saveInstances(collectionName, response.data[collectionName]));
         return response.data[collectionName];
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -315,9 +310,7 @@ export function postAction(orgId, experienceId, tripId, actionName,
       .then((response) => {
         dispatch(refreshLiveData(orgId, experienceId, [tripId]));
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -336,9 +329,7 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
           dispatch(refreshLiveData(orgId, experienceId, [tripId]));
         }
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
@@ -354,45 +345,23 @@ export function updateRelays(orgId, experienceId) {
           stage: getStage()
         }));
       })
-      .catch((err) => {
-        console.error(err.message);
-      });
+      .catch(processError);
   };
 }
 
-export function initializeTrip(fields, playersFields) {
+export function createInstances(collection, fields, nextItems) {
   return function (dispatch) {
-    createInstance('trips', fields)(dispatch)
-      .then((data) => {
-        const tripId = data.id;
-        playersFields.forEach((playerFields) => {
-          const mergedFields = _.assign({}, playerFields,
-            { tripId: tripId });
-          createInstance('players', mergedFields)(dispatch);
-        });
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
-  };
-}
-
-export function createExample(orgId, fields, example, scriptContent) {
-  return function (dispatch) {
-    const experienceFields = Object.assign({}, fields, { orgId: orgId });
-    createInstance('experiences', experienceFields)(dispatch)
-      .then((data) => {
-        const scriptFields = {
-          orgId: orgId,
-          experienceId: data.id,
-          revision: 1,
-          content: scriptContent,
-          isActive: true
-        };
-        return createInstance('scripts', scriptFields)(dispatch);
-      })
-      .catch((err) => {
-        console.error(err.message);
-      });
+    createInstance(collection, fields)(dispatch)
+      .then(createdItem => (
+        Promise.all(nextItems || [], nextItems.map((next) => {
+          const insertions = _.mapValues(next.insertions, (val, key) => (
+            createdItem[val]
+          ));
+          const nextFields = Object.assign({}, next.fields, insertions);
+          return createInstances(next.collection, nextFields,
+            next.nextItems)(dispatch);
+        }))
+      ))
+      .catch(processError);
   };
 }

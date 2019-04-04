@@ -3,9 +3,26 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
+function nameForTitle(title) {
+  return title
+    .toLowerCase()
+    .replace(/[\s_]/g, '-')
+    .replace(/[^A-Za-z0-9-]/g, '');
+}
+
+function titleForExample(example, existingExperiences) {
+  if (!_.find(existingExperiences, { title: example.title })) {
+    return `${example.title}`;
+  }
+  const numExisting = _.filter(existingExperiences, exp => (
+    _.startsWith(exp.title, example.title)
+  )).length;
+  return `${example.title} #${numExisting + 1}`;
+}
+
 export default class ExperienceModal extends Component {
 
-  static getDefaultState(experience, example) {
+  static getDefaultState(experience, example, existingExperiences) {
     if (experience) {
       return {
         name: experience.name,
@@ -14,18 +31,22 @@ export default class ExperienceModal extends Component {
         timezone: experience.timezone
       };
     }
-    return {
-      name: example ? example.name : '',
-      title: example ? example.title : '',
-      domain: '',
-      timezone: 'US/Pacific'
-    };
+    if (example) {
+      const title = titleForExample(example, existingExperiences);
+      return {
+        name: nameForTitle(title),
+        title: title,
+        domain: '',
+        timezone: 'US/Pacific'
+      };
+    }
+    return { name: '', title: '', domain: '', timezone: 'US/Pacific' };
   }
 
   constructor(props) {
     super(props);
     this.state = ExperienceModal.getDefaultState(props.experience,
-      props.example);
+      props.example, props.existingExperiences);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
@@ -33,7 +54,7 @@ export default class ExperienceModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState(ExperienceModal.getDefaultState(nextProps.experience,
-      nextProps.example));
+      nextProps.example, nextProps.existingExperiences));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -41,6 +62,13 @@ export default class ExperienceModal extends Component {
       this.firstInput.focus();
     }
   }
+
+  getExperienceWithOverlappingName() {
+    return _.find(this.props.existingExperiences, {
+      name: this.state.name
+    });
+  }
+
 
   handleToggle() {
     if (this.props.isOpen) {
@@ -57,16 +85,28 @@ export default class ExperienceModal extends Component {
     const LOCKED_NAMES = ['theheadlandsgamble', 'tacosyndicate'];
     this.setState({ [fieldName]: event.target.value });
     if (fieldName === 'title' && this.state.name !== LOCKED_NAMES) {
-      const newName = event.target.value
-        .toLowerCase()
-        .replace(/[\s_]/g, '-')
-        .replace(/[^A-Za-z0-9-]/g, '');
+      const newName = nameForTitle(event.target.value);
       this.setState({ name: newName });
     }
   }
 
+  hasOverlappingName() {
+    const overlap = this.getExperienceWithOverlappingName();
+    if (!overlap) {
+      return false;
+    }
+    if (!this.props.experience) {
+      return true;
+    }
+    // if one overlaps ours, but it's the same id, it's fine.
+    return overlap.id !== this.props.experience.id;
+  }
+
   isValid() {
     if (this.state.name === '') {
+      return false;
+    }
+    if (this.hasOverlappingName()) {
       return false;
     }
     if (!/^[a-zA-Z0-9-]+$/.test(this.state.name)) {
@@ -117,6 +157,13 @@ export default class ExperienceModal extends Component {
       </div>
     );
 
+    const overlapWarning = this.hasOverlappingName() ? (
+      <div className="alert alert-warning">
+        An existing experience has a title too close to
+        &nbsp;&quot;{this.state.title}&quot;; please choose a distinct title.
+      </div>
+    ) : null;
+
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -127,6 +174,7 @@ export default class ExperienceModal extends Component {
           <form onSubmit={this.handleConfirm}>
             <div className="row">
               <div className="form-group col-12">
+                {overlapWarning}
                 <label htmlFor="exp_title">Title</label>
                 <input
                   type="text"
@@ -175,6 +223,7 @@ ExperienceModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   experience: PropTypes.object,
   example: PropTypes.object,
+  existingExperiences: PropTypes.array.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };
