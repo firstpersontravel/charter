@@ -477,9 +477,9 @@ def install_packages():
     sudo('apt-get update')
 
     # node
-    sudo('curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -')
+    sudo('curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -')
     sudo('apt-get install -y nodejs yarn')
-    sudo('yarn global add pino pm2 bower ember-cli webpack@^2.2.0-rc eslint')
+    sudo('yarn global add pino pm2 bower ember-cli webpack weback-cli eslint')
 
     # pm2
     sudo('env PATH=$PATH:/usr/bin /usr/local/share/.config/yarn/global/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy')
