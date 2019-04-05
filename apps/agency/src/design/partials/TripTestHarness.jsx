@@ -43,7 +43,6 @@ class TripKernel {
   constructor(state, updateState, onEvent) {
     this.state = state;
     this.updateState = updateState;
-    this.onEvent = onEvent;
   }
 
   updateTripFields({ fields }) {
@@ -77,13 +76,20 @@ class TripKernel {
     });
   }
 
-  event({ event }) {
-    this.onEvent(event);
+  createMessage({ fields }) {
+    this.log({ level: 'info', message: `"${fields.content}"` });
   }
+
+  event() {}
+  initiateCall() {}
 
   log({ level, message }) {
     this.updateState({
-      log: this.state.log.concat([{ level: level, message: message }])
+      log: this.state.log.concat([{
+        id: this.state.log.length,
+        level: level,
+        message: message
+      }])
     });
   }
 }
@@ -152,11 +158,10 @@ export default class TripTestHarness extends Component {
   processResultOp(resultOp) {
     const kernel = new TripKernel(
       this.pendingState || this.state,
-      this.processStateUpdate,
-      this.handleEvent
+      this.processStateUpdate
     );
-    console.info(resultOp);
     if (!kernel[resultOp.operation]) {
+      console.info(resultOp);
       console.warn(`Unhandled operation "${resultOp.operation}".`);
       return;
     }
@@ -164,7 +169,7 @@ export default class TripTestHarness extends Component {
   }
 
   processScheduledAction(scheduledAction) {
-    // ignore for now
+    this.handleAction(scheduledAction.name, scheduledAction.params);
   }
 
   processResult(result) {
@@ -216,8 +221,13 @@ export default class TripTestHarness extends Component {
   }
 
   renderLogEntry(logEntry) {
+    const logEntryIcons = {
+      info: <i className="fa fa-info-circle mr-1" />,
+      warning: <i className="fa fa-exclamation-circle mr-1" />
+    };
     return (
-      <div>
+      <div key={logEntry.id}>
+        {logEntryIcons[logEntry.level]}
         {logEntry.message}
       </div>
     );
