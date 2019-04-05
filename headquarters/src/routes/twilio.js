@@ -92,7 +92,7 @@ async function callStatusRoute(req, res) {
 
 async function callInterruptRoute(req, res) {
   const twimlBase64 = req.query.twiml;
-  const twimlText = new Buffer(twimlBase64, 'base64').toString('utf-8');
+  const twimlText = Buffer.from(twimlBase64, 'base64').toString('utf-8');
   res.status(200);
   res.set('Content-Type', 'application/xml');
   res.send(twimlText);

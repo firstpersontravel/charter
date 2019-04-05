@@ -26,7 +26,7 @@ describe('authRoutes', () => {
 
   describe('#loginRoute', () => {
     it('sets a cookie if login is correct', async () => {
-      sandbox.stub(models.User, 'find').resolves(mockUser);
+      sandbox.stub(models.User, 'findOne').resolves(mockUser);
       req.body = { email: 'gabe@test.com', password: 'i<3bunnies' };
       const now = moment.utc();
 
@@ -46,8 +46,8 @@ describe('authRoutes', () => {
       assert(Math.abs(now.add(7, 'days').unix() - decoded.exp) < 2);
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.User.find);
-      sinon.assert.calledWith(models.User.find, {
+      sinon.assert.calledOnce(models.User.findOne);
+      sinon.assert.calledWith(models.User.findOne, {
         where: {
           email: 'gabe@test.com',
           passwordHash: { [Sequelize.Op.not]: '' }
@@ -56,7 +56,7 @@ describe('authRoutes', () => {
     });
 
     it('returns 401 if password is incorrect', async () => {
-      sandbox.stub(models.User, 'find').resolves(mockUser);
+      sandbox.stub(models.User, 'findOne').resolves(mockUser);
       req.body = { email: 'gabe@test.com', password: 'deth2bunnies' };
 
       await authRoutes.loginRoute(req, res);
@@ -66,8 +66,8 @@ describe('authRoutes', () => {
       assert.strictEqual(res.cookies.fptauth, undefined);
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.User.find);
-      sinon.assert.calledWith(models.User.find, {
+      sinon.assert.calledOnce(models.User.findOne);
+      sinon.assert.calledWith(models.User.findOne, {
         where: { 
           email: 'gabe@test.com',
           passwordHash: { [Sequelize.Op.not]: '' }
@@ -76,7 +76,7 @@ describe('authRoutes', () => {
     });
 
     it('returns 401 if user is not found', async () => {
-      sandbox.stub(models.User, 'find').resolves(null);
+      sandbox.stub(models.User, 'findOne').resolves(null);
       req.body = { email: 'gabe@test.com', password: 'deth2bunnies' };
 
       await authRoutes.loginRoute(req, res);
@@ -109,7 +109,7 @@ describe('authRoutes', () => {
         org: { name: 'name', title: 'title' }
       }];
       sandbox.stub(authMiddleware, 'tokenForReq').resolves(mockToken);
-      sandbox.stub(models.User, 'findById').resolves(mockUser);
+      sandbox.stub(models.User, 'findByPk').resolves(mockUser);
       sandbox.stub(models.OrgRole, 'findAll').resolves(mockRoles);
 
       await authRoutes.infoRoute(req, res);

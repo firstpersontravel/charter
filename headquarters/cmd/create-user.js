@@ -8,7 +8,7 @@ program
   .parse(process.argv);
 
 async function createUser(orgName, email, password) {
-  const org = await models.Org.find({
+  const org = await models.Org.findOne({
     where: { name: orgName }
   });
   if (!org) {

@@ -38,7 +38,7 @@ describe('TextConvoExample', () => {
     assert.strictEqual(msgResult, true);
 
     // Test trip was created
-    const trip = await models.Trip.find({ where: { scriptId: script.id } });
+    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
     assert(trip);
 
     // Test value was set
@@ -85,7 +85,7 @@ describe('TextConvoExample', () => {
       '5556667777', trailhead.relayPhoneNumber, 'yo', []);
 
     // Test trip was created
-    const trip = await models.Trip.find({ where: { scriptId: script.id } });
+    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
     assert(trip);
 
     // Test message was created

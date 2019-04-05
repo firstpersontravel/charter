@@ -12,10 +12,10 @@ describe('RelayController', () => {
       const stubScript = { name: 'abc', experience: {} };
       const relay = { experienceId: 10 };
 
-      sandbox.stub(models.Script, 'find').resolves(stubScript);
+      sandbox.stub(models.Script, 'findOne').resolves(stubScript);
       const res = await RelayController.scriptForRelay(relay);
       assert.strictEqual(res, stubScript);
-      sinon.assert.calledWith(models.Script.find, {
+      sinon.assert.calledWith(models.Script.findOne, {
         where: { isActive: true, isArchived: false },
         include: [{
           model: models.Experience,
@@ -78,14 +78,14 @@ describe('RelayController', () => {
         experienceId: 10
       };
 
-      sandbox.stub(models.Player, 'find').resolves(stubPlayer);
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
       const res = await RelayController.lookupPlayer(relay, phoneNumber);
 
       assert.strictEqual(res, stubPlayer);
 
       // Check lookup done correctly.
-      sinon.assert.calledWith(models.Player.find, {
+      sinon.assert.calledWith(models.Player.findOne, {
         where: { roleName: relay.forRoleName },
         include: [{
           model: models.User,
@@ -159,7 +159,7 @@ describe('RelayController', () => {
     };
 
     it('sends a text message', async () => {
-      sandbox.stub(models.Player, 'find').resolves(stubPlayer);
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
       await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
 
@@ -172,14 +172,14 @@ describe('RelayController', () => {
       });
 
       // Test player was fetched with right args
-      sinon.assert.calledWith(models.Player.find, {
+      sinon.assert.calledWith(models.Player.findOne, {
         where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
         include: [{ model: models.User, as: 'user' }]
       });
     });
 
     it('sends an image message', async () => {
-      sandbox.stub(models.Player, 'find').resolves(stubPlayer);
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
       await RelayController.sendMessage(stubRelay, stubTrip, null, 'url');
 
@@ -194,7 +194,7 @@ describe('RelayController', () => {
 
     it('prevents send for non-whitelisted number', async () => {
       const player = { user: { phoneNumber: '4445556666' } };
-      sandbox.stub(models.Player, 'find').resolves(player);
+      sandbox.stub(models.Player, 'findOne').resolves(player);
 
       await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
 
@@ -202,7 +202,7 @@ describe('RelayController', () => {
       sinon.assert.notCalled(config.getTwilioClient().messages.create);
 
       // Test player was fetched with right args
-      sinon.assert.calledWith(models.Player.find, {
+      sinon.assert.calledWith(models.Player.findOne, {
         where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
         include: [{ model: models.User, as: 'user' }]
       });
@@ -210,7 +210,7 @@ describe('RelayController', () => {
 
     it('prevents send for inactive relay', async () => {
       const inactiveRelay = { isActive: false };
-      sandbox.stub(models.Player, 'find').resolves(stubPlayer);
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
       await RelayController.sendMessage(inactiveRelay, stubTrip, 'msg', null);
 
@@ -218,7 +218,7 @@ describe('RelayController', () => {
       sinon.assert.notCalled(config.getTwilioClient().messages.create);
 
       // Test player was fetched with right args
-      sinon.assert.notCalled(models.Player.find);
+      sinon.assert.notCalled(models.Player.findOne);
     });
   });
 });

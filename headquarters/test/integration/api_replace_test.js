@@ -51,7 +51,7 @@ describe('API replace', () => {
     let player;
 
     beforeEach(async () => {
-      player = await models.Player.find({ where: { tripId: trip.id } });
+      player = await models.Player.findOne({ where: { tripId: trip.id } });
     });
 
     it('updates player with simple values', () => {

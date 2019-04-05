@@ -37,7 +37,7 @@ describe('PhoneTreeExample', () => {
     assert(twiml1.toString().indexOf('<Say voice="alice">Greetings!! Would you like a refreshing beverage?</Say>') > -1);
 
     // Test trip was created
-    const trip = await models.Trip.find({ where: { scriptId: script.id } });
+    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
     assert(trip);
 
     // Handle response
@@ -56,7 +56,7 @@ describe('PhoneTreeExample', () => {
     assert(twiml1.toString().indexOf('<Say voice="alice">Greetings!! Would you like a refreshing beverage?</Say>') > -1);
 
     // Test trip was created
-    const trip = await models.Trip.find({ where: { scriptId: script.id } });
+    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
     assert(trip);
 
     // Handle response

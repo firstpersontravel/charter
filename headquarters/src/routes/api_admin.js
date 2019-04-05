@@ -27,7 +27,7 @@ async function fastForwardRoute(req, res) {
 
 async function fastForwardNextRoute(req, res) {
   const tripId = req.params.tripId;
-  const nextAction = await models.Action.find({
+  const nextAction = await models.Action.findOne({
     where: { tripId: tripId, appliedAt: null, failedAt: null },
     order: [['scheduledAt', 'ASC'], ['id', 'ASC']]
   });

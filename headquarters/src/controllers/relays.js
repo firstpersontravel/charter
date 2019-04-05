@@ -92,7 +92,7 @@ class RelaysController {
       userPhoneNumber: userNum
     };
     // Return relay if it exists
-    const existingRelay = await models.Relay.find({ where: relayFields });
+    const existingRelay = await models.Relay.findOne({ where: relayFields });
     if (existingRelay) {
       return existingRelay;
     }
@@ -116,7 +116,7 @@ class RelaysController {
    * Find a relay by its number and a user number.
    */
   static async findByNumber(relayNumber, userNum) {
-    return await models.Relay.find({
+    return await models.Relay.findOne({
       where: {
         stage: config.env.STAGE,
         relayPhoneNumber: relayNumber,

@@ -45,13 +45,13 @@ describe('TripsController', () => {
         script: stubScript,
         experience: stubExperience
       };
-      sandbox.stub(models.Group, 'find').resolves(stubGroup);
+      sandbox.stub(models.Group, 'findOne').resolves(stubGroup);
       sandbox.stub(models.Trip, 'create').resolves({ id: 3, orgId: 200 });
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
       await TripsController.createTrip(1, 'title', 'T1', ['basic']);
 
-      sinon.assert.calledWith(models.Group.find, {
+      sinon.assert.calledWith(models.Group.findOne, {
         where: { id: 1 },
         include: [
           { model: models.Script, as: 'script' },

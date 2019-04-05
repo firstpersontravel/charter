@@ -22,7 +22,7 @@ class TripsController {
    * Create an initial trip including players with default values.
    */
   static async createTrip(groupId, title, departureName, variantNames=[]) {
-    const group = await models.Group.find({
+    const group = await models.Group.findOne({
       where: { id: groupId },
       include: [
         { model: models.Script, as: 'script' },

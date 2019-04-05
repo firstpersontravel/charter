@@ -32,7 +32,7 @@ describe('apiRestRoutes', () => {
         timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
       });
       sandbox.stub(existingRecord, 'save').resolves(null);
-      sandbox.stub(Model, 'findById').resolves(existingRecord);
+      sandbox.stub(Model, 'findByPk').resolves(existingRecord);
 
       // Call the route
       await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
@@ -52,7 +52,7 @@ describe('apiRestRoutes', () => {
       });
 
       // Assert find call made
-      sinon.assert.calledWith(Model.findById, 10);
+      sinon.assert.calledWith(Model.findByPk, 10);
 
       // Assert save call made with fields argument
       sinon.assert.calledOnce(existingRecord.save);
@@ -73,7 +73,7 @@ describe('apiRestRoutes', () => {
         timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
       });
       sandbox.stub(existingRecord, 'save').resolves(null);
-      sandbox.stub(Model, 'findById').resolves(existingRecord);
+      sandbox.stub(Model, 'findByPk').resolves(existingRecord);
 
       // Call the route
       await apiRestRoutes.updateRecordRoute(Model, dummyAuthz)(req, res);
@@ -91,7 +91,7 @@ describe('apiRestRoutes', () => {
     it('returns 404 if not found', async () => {
       req.params = { recordId: '10' };
       req.body = { title: 'def' };
-      sandbox.stub(Model, 'findById').resolves(null);
+      sandbox.stub(Model, 'findByPk').resolves(null);
 
       // Call the route
       await assertThrows(async () => {
@@ -108,7 +108,7 @@ describe('apiRestRoutes', () => {
         timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
       });
       sandbox.stub(existingRecord, 'save').resolves(null);
-      sandbox.stub(Model, 'findById').resolves(existingRecord);
+      sandbox.stub(Model, 'findByPk').resolves(existingRecord);
 
       // Call the route
       await assertThrows(async () => {
@@ -126,7 +126,7 @@ describe('apiRestRoutes', () => {
         timestamp: moment.utc('2018-02-04T04:05:06Z').toDate()
       });
       sandbox.stub(existingRecord, 'save').resolves(null);
-      sandbox.stub(Model, 'findById').resolves(existingRecord);
+      sandbox.stub(Model, 'findByPk').resolves(existingRecord);
 
       // Call the route
       const route = apiRestRoutes.updateRecordRoute(Model, dummyAuthz, opts);

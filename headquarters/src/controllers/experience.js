@@ -9,7 +9,7 @@ class ExperienceController {
    * Locate the one active script for new trips etc.
    */
   static async findActiveScript(experienceId) {
-    return await models.Script.find({
+    return await models.Script.findOne({
       where: {
         experienceId: experienceId,
         isActive: true,
@@ -23,7 +23,7 @@ class ExperienceController {
    */
   static async ensureTrailheads(experienceId) {
     // Get active script by name
-    const experience = await models.Experience.findById(experienceId);
+    const experience = await models.Experience.findByPk(experienceId);
     const script = await this.findActiveScript(experience.id);
 
     // Create only trailhead relays

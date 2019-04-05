@@ -95,7 +95,7 @@ describe('WalkingTourExample', () => {
     }, now);
 
     // Test response message is scheduled in 10 sec
-    const scheduledAction = await models.Action.find({
+    const scheduledAction = await models.Action.findOne({
       order: [['id', 'ASC']],
       where: { tripId: trip.id, appliedAt: null }
     });

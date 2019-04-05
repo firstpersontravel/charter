@@ -56,7 +56,7 @@ class TwilioCallHandler {
     }
     const twilioHost = config.env.TWILIO_HOST;
     const twimlBase64 = encodeURIComponent(
-      new Buffer(twiml.toString()).toString('base64'));
+      Buffer.from(twiml.toString()).toString('base64'));
     const url = (
       `${twilioHost}/endpoints/twilio/calls/interrupt` + 
       `?twiml=${twimlBase64}`
@@ -113,7 +113,7 @@ class TwilioCallHandler {
   }
 
   static async handleOutgoingCall(relayId, tripId, answeredByHuman) {
-    const relay = await models.Relay.findById(relayId);
+    const relay = await models.Relay.findByPk(relayId);
     if (!relay) {
       return TwilioCallUtil.hangup();
     }
@@ -141,7 +141,7 @@ class TwilioCallHandler {
       partial: isPartial,
       response: speechResult
     };
-    const relay = await models.Relay.findById(relayId);
+    const relay = await models.Relay.findByPk(relayId);
     const twimlRes = await this._triggerEventAndGatherTwiml(tripId, relay,
       event);
 
@@ -165,7 +165,7 @@ class TwilioCallHandler {
   }
 
   static async handleCallEnded(relayId, tripId) {
-    const relay = await models.Relay.findById(relayId);
+    const relay = await models.Relay.findByPk(relayId);
     const event = {
       type: 'call_ended',
       roles: [relay.withRoleName, relay.asRoleName]

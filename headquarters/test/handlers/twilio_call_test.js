@@ -28,7 +28,7 @@ describe('TwilioCallHandler', () => {
         .resolves([stubOppositeRelay]);
       // Stub searching for player
       sandbox
-        .stub(models.Player, 'find')
+        .stub(models.Player, 'findOne')
         .resolves(stubPlayer);
       // Apply event returns a dial operation
       sandbox
@@ -52,9 +52,9 @@ describe('TwilioCallHandler', () => {
         RelayController.findSiblings.firstCall.args,
         [stubRelay, 'ToPerson', 'FromPerson']);
       // Assert found player by role
-      sinon.assert.calledOnce(models.Player.find);
+      sinon.assert.calledOnce(models.Player.findOne);
       assert.deepStrictEqual(
-        models.Player.find.firstCall.args, [{
+        models.Player.findOne.firstCall.args, [{
           where: { tripId: 1, roleName: 'ToPerson' },
           include: [{ model: models.User, as: 'user' }]
         }]);
@@ -201,7 +201,7 @@ describe('TwilioCallHandler', () => {
       const twimlSentinel = new twilio.twiml.VoiceResponse();
       twimlSentinel.say({}, 'message');
       const twimlBase64 = encodeURIComponent(
-        new Buffer(twimlSentinel.toString()).toString('base64'));
+        Buffer.from(twimlSentinel.toString()).toString('base64'));
       const base64Url = (
         `${config.env.TWILIO_HOST}/endpoints/twilio/` +
         `calls/interrupt?twiml=${twimlBase64}`

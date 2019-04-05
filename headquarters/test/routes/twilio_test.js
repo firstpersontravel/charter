@@ -212,7 +212,7 @@ describe('twilioRoutes', () => {
         .resolves(twimlSentinel);
 
       // basic stub relay
-      sandbox.stub(models.Relay, 'findById').resolves(stubRelay);
+      sandbox.stub(models.Relay, 'findByPk').resolves(stubRelay);
     });
 
     it('handles final response', async () => {
@@ -286,7 +286,7 @@ describe('twilioRoutes', () => {
       const interruptTwiml = new twilio.twiml.VoiceResponse();
       interruptTwiml.say({}, 'response message');
       const twimlText = interruptTwiml.toString('ascii');
-      const twimlBase64 = new Buffer(twimlText).toString('base64');
+      const twimlBase64 = Buffer.from(twimlText).toString('base64');
 
       // Create dummy request
       const req = httpMocks.createRequest({

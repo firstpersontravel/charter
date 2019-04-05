@@ -20,7 +20,7 @@ describe('RoadTripExample', () => {
 
   it('runs through road trip', async () => {
     const trip = await TestUtil.createDummyTripForScript(script);
-    const driver = await models.Player.find({ where: { tripId: trip.id } });
+    const driver = await models.Player.findOne({ where: { tripId: trip.id } });
 
     // Starts on starting page
     assert.strictEqual(driver.currentPageName, 'Start');

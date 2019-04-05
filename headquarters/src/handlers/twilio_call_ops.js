@@ -20,7 +20,7 @@ class TwilioCallOps {
     const dialRelay = dialRelays[0];
 
     // Find the active player
-    const dialPlayer = await models.Player.find({
+    const dialPlayer = await models.Player.findOne({
       where: { tripId: tripId, roleName: twimlOp.toRoleName },
       include: [{ model: models.User, as: 'user' }]
     });

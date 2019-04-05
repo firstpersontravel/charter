@@ -1,4 +1,4 @@
-FROM node:8.15-alpine
+FROM node:10.15-alpine
  
 # Update OS
 RUN apk update
@@ -21,7 +21,7 @@ RUN echo -e 'http://dl-cdn.alpinelinux.org/alpine/edge/main\nhttp://dl-cdn.alpin
 RUN apk add --no-cache yarn
 
 # Install app build tools
-RUN yarn global add ember-cli@2.2.0-beta.6 bower webpack@2.2.0-rc.2
+RUN yarn global add ember-cli bower webpack webpack-cli
 
 # Install requirements for node-sass :{
 RUN apk add --update python make gcc g++

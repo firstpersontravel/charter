@@ -32,7 +32,7 @@ describe('apiRestRoutes', () => {
   describe('#retrieveRecordRoute', () => {
     it('returns a record', async () => {
       req.params = { recordId: '10' };
-      sandbox.stub(Model, 'findById').resolves(sampleRecord1);
+      sandbox.stub(Model, 'findByPk').resolves(sampleRecord1);
 
       // Call the route
       await apiRestRoutes.retrieveRecordRoute(Model, dummyAuthz)(req, res);
@@ -52,13 +52,13 @@ describe('apiRestRoutes', () => {
       });
 
       // Assert find call made
-      sinon.assert.calledWith(Model.findById, 10);
+      sinon.assert.calledWith(Model.findByPk, 10);
     });
 
     it('omits blacklisted fields', async () => {
       const opts = { blacklistFields: ['isShiny', 'id' ] };
       req.params = { recordId: '10' };
-      sandbox.stub(Model, 'findById').resolves(sampleRecord1);
+      sandbox.stub(Model, 'findByPk').resolves(sampleRecord1);
 
       // Call the route
       await (
@@ -80,7 +80,7 @@ describe('apiRestRoutes', () => {
 
     it('calls authorizer', async () => {
       req.params = { recordId: '10' };
-      sandbox.stub(Model, 'findById').resolves(sampleRecord1);
+      sandbox.stub(Model, 'findByPk').resolves(sampleRecord1);
 
       // Call the route
       await apiRestRoutes.retrieveRecordRoute(Model, dummyAuthz)(req, res);
@@ -93,7 +93,7 @@ describe('apiRestRoutes', () => {
 
     it('returns 404 if not found', async () => {
       req.params = { recordId: '10' };
-      sandbox.stub(Model, 'findById').resolves(null);
+      sandbox.stub(Model, 'findByPk').resolves(null);
 
       // Call the route
       await assertThrows(async () => {

@@ -39,7 +39,7 @@ function jsonApiSerialize(instance) {
  * Legacy getter for THG app in JSONAPI format.
  */
 async function getUserRoute(req, res) {
-  const user = await models.User.findById(req.params.id);
+  const user = await models.User.findByPk(req.params.id);
   const response = { data: jsonApiSerialize(user) };
   res.status(200);
   res.set('Content-Type', 'application/json');
@@ -51,7 +51,7 @@ async function getUserRoute(req, res) {
  */
 async function getTripRoute(req, res) {
   const includeScript = !!req.query.script;
-  const trip = await models.Trip.find({
+  const trip = await models.Trip.findOne({
     where: { id: req.params.id },
     include: [
       { model: models.Script, as: 'script' },

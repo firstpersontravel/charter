@@ -18,7 +18,7 @@ describe('pageGalleryRoutes', () => {
         title: 'some people',
         experience: { title: 'The Headlands Gamble' }
       };
-      sandbox.stub(models.Trip, 'find').resolves(mockTrip);
+      sandbox.stub(models.Trip, 'findOne').resolves(mockTrip);
       
       const mockMessages = [{
         createdAt: '2018-01-01T00:00:00',
@@ -32,8 +32,8 @@ describe('pageGalleryRoutes', () => {
       await pageGalleryRoutes.galleryRoute(req, res);
 
       // Test search calls made correctly
-      sinon.assert.calledOnce(models.Trip.find);
-      assert.deepStrictEqual(models.Trip.find.firstCall.args, [{
+      sinon.assert.calledOnce(models.Trip.findOne);
+      assert.deepStrictEqual(models.Trip.findOne.firstCall.args, [{
         where: { galleryName: 'abc' },
         include: [{ model: models.Experience, as: 'experience' }]
       }]);
@@ -67,7 +67,7 @@ describe('pageGalleryRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub response
-      sandbox.stub(models.Trip, 'find').resolves(null);
+      sandbox.stub(models.Trip, 'findOne').resolves(null);
 
       await pageGalleryRoutes.galleryRoute(req, res);
 

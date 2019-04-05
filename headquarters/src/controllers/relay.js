@@ -17,7 +17,7 @@ class RelayController {
    * Find script for relay
    */
   static async scriptForRelay(relay) {
-    return await models.Script.find({
+    return await models.Script.findOne({
       where: {
         isActive: true,
         isArchived: false
@@ -65,7 +65,7 @@ class RelayController {
     // If we found an existing matching player with this number,
     // then we're good -- return it -- even if this is a trailhead because
     // that means a specific user has already been assigned.
-    return await models.Player.find({
+    return await models.Player.findOne({
       where: { roleName: relay.forRoleName },
       include: [{
         model: models.User,
@@ -142,7 +142,7 @@ class RelayController {
     // Figure out which role to send the message to. This won't be the same
     // as the message's sendTo since a relay can, say, forward Sarai's messages
     // to the TravelAgent as well.
-    const toPlayer = await models.Player.find({
+    const toPlayer = await models.Player.findOne({
       where: { tripId: trip.id, roleName: relay.forRoleName },
       include: [{ model: models.User, as: 'user' }]
     });

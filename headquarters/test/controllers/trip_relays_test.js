@@ -15,13 +15,13 @@ describe('TripRelaysController', () => {
       const relaySpec = { for: 'ForRole' };
       const player = { user: { phoneNumber: '1234567890' } };
 
-      sandbox.stub(models.Player, 'find').resolves(player);
+      sandbox.stub(models.Player, 'findOne').resolves(player);
 
       const res = await (
         TripRelaysController.userNumberForRelay(trip, relaySpec)
       );
       assert.strictEqual(res, player.user.phoneNumber);
-      sinon.assert.calledWith(models.Player.find, {
+      sinon.assert.calledWith(models.Player.findOne, {
         where: { roleName: 'ForRole', tripId: 1 },
         include: [{ model: models.User, as: 'user' }]
       });
@@ -30,7 +30,7 @@ describe('TripRelaysController', () => {
     it('returns null when no player found', async () => {
       const relaySpec = { for: 'ForRole' };
 
-      sandbox.stub(models.Player, 'find').resolves(null);
+      sandbox.stub(models.Player, 'findOne').resolves(null);
 
       const res = await (
         TripRelaysController.userNumberForRelay(trip, relaySpec)
@@ -42,7 +42,7 @@ describe('TripRelaysController', () => {
       const relaySpec = { for: 'ForRole' };
       const player = { user: null };
 
-      sandbox.stub(models.Player, 'find').resolves(player);
+      sandbox.stub(models.Player, 'findOne').resolves(player);
 
       const res = await (
         TripRelaysController.userNumberForRelay(trip, relaySpec)
@@ -125,8 +125,8 @@ describe('TripRelaysController', () => {
 
     it('gets relay with as and with params', async () => {
       // Script has multiple relay specs
-      sandbox.stub(models.Script, 'findById').resolves(stubScript);
-      sandbox.stub(models.Experience, 'findById').resolves(stubExperience);
+      sandbox.stub(models.Script, 'findByPk').resolves(stubScript);
+      sandbox.stub(models.Experience, 'findByPk').resolves(stubExperience);
       sandbox.stub(TripRelaysController, 'ensureRelay').resolves(stubRelay);
 
       const filters = { as: 'as', with: 'with' };
@@ -152,7 +152,7 @@ describe('TripRelaysController', () => {
       const stubPlayer = models.Player.build();
 
       sandbox.stub(TripRelaysController, 'ensureRelays').resolves([stubRelay]);
-      sandbox.stub(models.Player, 'find').resolves(stubPlayer);
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
       sandbox.stub(RelayController, 'initiateCall').resolves();
 
       // initiate call to Player as Actor
@@ -163,7 +163,7 @@ describe('TripRelaysController', () => {
         trip, { as: 'Player', with: 'Actor' }, 'phone_out');
 
       // test player looked for for target
-      sinon.assert.calledWith(models.Player.find, {
+      sinon.assert.calledWith(models.Player.findOne, {
         where: { tripId: 10, roleName: 'Player' },
         include: [{ model: models.User, as: 'user' }]
       });
@@ -176,7 +176,7 @@ describe('TripRelaysController', () => {
       const trip = await models.Trip.build({ id: 10 });
 
       sandbox.stub(TripRelaysController, 'ensureRelays').resolves([]);
-      sandbox.stub(models.Player, 'find').resolves();
+      sandbox.stub(models.Player, 'findOne').resolves();
       sandbox.stub(RelayController, 'initiateCall').resolves();
 
       // initiate call to Player as Actor
@@ -186,7 +186,7 @@ describe('TripRelaysController', () => {
       sinon.assert.calledWith(TripRelaysController.ensureRelays,
         trip, { as: 'Player', with: 'Actor' }, 'phone_out');
 
-      sinon.assert.notCalled(models.Player.find);
+      sinon.assert.notCalled(models.Player.findOne);
       sinon.assert.notCalled(RelayController.initiateCall);
     });
 
@@ -195,7 +195,7 @@ describe('TripRelaysController', () => {
       const stubRelay = models.Relay.build({ forRoleName: 'Player' });
 
       sandbox.stub(TripRelaysController, 'ensureRelays').resolves([stubRelay]);
-      sandbox.stub(models.Player, 'find').resolves(null);
+      sandbox.stub(models.Player, 'findOne').resolves(null);
       sandbox.stub(RelayController, 'initiateCall').resolves();
 
       // initiate call to Player as Actor
@@ -206,7 +206,7 @@ describe('TripRelaysController', () => {
         trip, { as: 'Player', with: 'Actor' }, 'phone_out');
 
       // test player looked for for target
-      sinon.assert.calledWith(models.Player.find, {
+      sinon.assert.calledWith(models.Player.findOne, {
         where: { tripId: 10, roleName: 'Player' },
         include: [{ model: models.User, as: 'user' }]
       });

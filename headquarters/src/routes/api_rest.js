@@ -160,7 +160,7 @@ async function loadRecord(model, recordId) {
   if (isNaN(Number(recordId))) {
     throw errors.badRequestError('Invalid record id.');
   }
-  const record = await model.findById(Number(recordId));
+  const record = await model.findByPk(Number(recordId));
   if (!record) {
     throw errors.notFoundError('Record not found.');
   }

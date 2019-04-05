@@ -55,7 +55,7 @@ describe('API update', () => {
     let message;
 
     beforeEach(async () => {
-      const player = await models.Player.find({ 
+      const player = await models.Player.findOne({ 
         where: { tripId: trip.id }
       });
       message = await models.Message.create({

@@ -16,7 +16,7 @@ class TripRelaysController {
    */
   static async userNumberForRelay(trip, relaySpec) {
     // Find the player and user for this trip and relay spec.
-    const player = await models.Player.find({
+    const player = await models.Player.findOne({
       where: { roleName: relaySpec.for, tripId: trip.id },
       include: [{ model: models.User, as: 'user' }]
     });
@@ -54,7 +54,7 @@ class TripRelaysController {
    * Get relays matching a search pattern. Create them if they don't exist.
    */
   static async ensureRelays(trip, specFilters, specType) {
-    const script = await models.Script.findById(trip.scriptId);
+    const script = await models.Script.findByPk(trip.scriptId);
 
     // Get specs that match the filters and also the type we're looking for.
     const relaySpecs = _(script.content.relays)
@@ -89,7 +89,7 @@ class TripRelaysController {
     }
     const relay = relays[0];
     // Get player for this trip.
-    const player = await models.Player.find({
+    const player = await models.Player.findOne({
       where: { tripId: trip.id, roleName: relay.forRoleName },
       include: [{ model: models.User, as: 'user' }]
     });
@@ -124,8 +124,8 @@ class TripRelaysController {
     // an actor role.
     const stage = config.env.STAGE === 'production' ?
       '' : `${config.env.STAGE[0].toUpperCase()}${config.env.STAGE.substr(1)} `;
-    const sentBy = await models.Player.findById(message.sentById);
-    const sentTo = await models.Player.findById(message.sentToId);
+    const sentBy = await models.Player.findByPk(message.sentById);
+    const sentTo = await models.Player.findByPk(message.sentToId);
     const contentPrefix = (
       `[${stage}${trip.departureName}] ` +
       `${sentBy.roleName} to ${sentTo.roleName}:`
@@ -140,7 +140,7 @@ class TripRelaysController {
     if (_.startsWith(url, 'http')) {
       return url;
     }
-    const asset = await models.Asset.find({
+    const asset = await models.Asset.findOne({
       where: {
         experienceId: experience.id,
         type: 'media',
@@ -190,8 +190,8 @@ class TripRelaysController {
    */
   static async relayMessage(trip, message, suppressRelayId) {
     const script = await trip.getScript();
-    const sentBy = await models.Player.findById(message.sentById);
-    const sentTo = await models.Player.findById(message.sentToId);
+    const sentBy = await models.Player.findByPk(message.sentById);
+    const sentTo = await models.Player.findByPk(message.sentToId);
 
     // Send to forward relays -- relays as the role receiving the message.
     const fwdFilters = { as: sentTo.roleName, with: sentBy.roleName };

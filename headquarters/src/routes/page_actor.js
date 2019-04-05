@@ -118,7 +118,7 @@ const actorsListRoute = async (req, res) => {
  */
 const playerShowRoute = async (req, res) => {
   const playerId = req.params.playerId;
-  const player = await models.Player.findById(playerId);
+  const player = await models.Player.findByPk(playerId);
   if (!player) {
     res.redirect('/actor');
     return;
@@ -145,7 +145,7 @@ const playerShowRoute = async (req, res) => {
  * Show a user, including all active players.
  */
 const userShowRoute = async (req, res) => {
-  const user = await models.User.findById(req.params.userId);
+  const user = await models.User.findByPk(req.params.userId);
   if (!user) {
     res.redirect('/actor');
     return;

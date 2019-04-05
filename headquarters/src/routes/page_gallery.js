@@ -5,7 +5,7 @@ const models = require('../models');
 const galleryRoute = async (req, res) => {
   const alias = req.params.alias;
   const where = isNaN(Number(alias)) ? { galleryName: alias } : { id: alias };
-  const trip = await models.Trip.find({
+  const trip = await models.Trip.findOne({
     where: where,
     include: [{ model: models.Experience, as: 'experience' }]
   });

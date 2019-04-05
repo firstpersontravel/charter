@@ -35,7 +35,7 @@ class UserController {
    */
   static async _notifyNewDeviceState(user, trip, player, oldState,
     clientId) {
-    const script = await models.Script.findById(trip.scriptId);
+    const script = await models.Script.findByPk(trip.scriptId);
     // Calculate new geofences
     const oldGeofences = GeofenceCore.geofencesInArea(
       script.content, oldState.latitude, oldState.longitude,
@@ -91,7 +91,7 @@ class UserController {
    *     -> create enterGeofence events locally
    */
   static async updateDeviceState(userId, fields, clientId=null) {
-    const user = await models.User.findById(userId);
+    const user = await models.User.findByPk(userId);
     const trips = await models.Trip.findAll({
       where: { isArchived: false }
     });
@@ -103,7 +103,7 @@ class UserController {
     };
     await this._updateUserDeviceState(user, fields);
     for (let trip of trips) {
-      const player = await models.Player.find({
+      const player = await models.Player.findOne({
         where: { userId: user.id, tripId: trip.id }
       });
       if (!player) {

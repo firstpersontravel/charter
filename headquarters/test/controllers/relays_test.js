@@ -31,7 +31,7 @@ describe('RelaysController', () => {
 
     it('locates relay', async () => {
       // Stub relay find
-      sandbox.stub(models.Relay, 'find').resolves(stubRelay);
+      sandbox.stub(models.Relay, 'findOne').resolves(stubRelay);
 
       const result = await RelaysController.findByNumber(
         stubRelay.relayPhoneNumber,
@@ -39,7 +39,7 @@ describe('RelaysController', () => {
       );
 
       assert.strictEqual(result, stubRelay);
-      sinon.assert.calledWith(models.Relay.find, {
+      sinon.assert.calledWith(models.Relay.findOne, {
         where: {
           isActive: true,
           relayPhoneNumber: '1234567890',

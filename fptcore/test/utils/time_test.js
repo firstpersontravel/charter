@@ -142,8 +142,8 @@ describe('TimeUtil', () => {
       assert.strictEqual(TimeUtil.secondsForOffsetShorthand(''), 0);
       assert.strictEqual(TimeUtil.secondsForOffsetShorthand('0'), 0);
       assert.strictEqual(TimeUtil.secondsForOffsetShorthand('10x'), 0);
-      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-gabe'), 0);
-      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-1ss'), 0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-gabe'), -0);
+      assert.strictEqual(TimeUtil.secondsForOffsetShorthand('-1ss'), -0);
     });
   });
 });

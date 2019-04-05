@@ -11,12 +11,12 @@
 
     # set up n
     npm install -g n
-    n 8.11.3
+    n 10.15.3
     npm install -g bower
 
     # install webpack
     brew install yarn --without-node
-    yarn global add webpack@2.2.0-rc.2
+    yarn global add webpack
 
     # set up pre-commit hook
     cp precommit.sh ./.git/hooks/pre-commit

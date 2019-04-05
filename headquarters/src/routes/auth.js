@@ -52,7 +52,7 @@ async function respondWithUserAuthInfo(res, user) {
 const loginRoute = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = await models.User.find({
+  const user = await models.User.findOne({
     where: {
       email: email,
       passwordHash: { [Sequelize.Op.not]: '' }
@@ -87,7 +87,7 @@ const logoutRoute = async (req, res) => {
  */
 const infoRoute = async (req, res) => {
   const token = await authMiddleware.tokenForReq(req);
-  const user = token ? await models.User.findById(token.sub) : null;
+  const user = token ? await models.User.findByPk(token.sub) : null;
   if (!user) {
     res.status(200);
     res.json({ data: null });

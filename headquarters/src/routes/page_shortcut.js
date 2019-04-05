@@ -2,7 +2,7 @@ const models = require('../models');
 
 const playerShortcutRoute = async (req, res) => {
   const playerId = req.params.playerId;
-  const player = await models.Player.findById(playerId);
+  const player = await models.Player.findByPk(playerId);
   if (!player) {
     res.status(404).send('Not Found');
     return;

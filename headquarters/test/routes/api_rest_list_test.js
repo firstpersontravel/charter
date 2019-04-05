@@ -205,15 +205,14 @@ describe('apiRestRoutes', () => {
       }
     });
 
-    // TODO -- asserting by symbols isn't working
     it('filters by parameters with operators', async () => {
       const okValues = [
         ['isShiny__eq', 'false', { [Sequelize.Op.eq]: false }],
         ['title__gt', 'abc', { [Sequelize.Op.gt]: 'abc' }],
-        ['id__lt', '123', { [Sequelize.Op.lt]: 123 }],
-        ['id__lte', '123', { [Sequelize.Op.lte]: 123 }],
-        ['id__gt', '123', { [Sequelize.Op.gt]: 123 }],
-        ['id__gte', '123', { [Sequelize.Op.gte]: 123 }],
+        ['id__lt', '123', { [Sequelize.Op.lt]: '123' }],
+        ['id__lte', '123', { [Sequelize.Op.lte]: '123' }],
+        ['id__gt', '123', { [Sequelize.Op.gt]: '123' }],
+        ['id__gte', '123', { [Sequelize.Op.gte]: '123' }],
         ['timestamp__lt', '2018-02-04', { [Sequelize.Op.lt]: '2018-02-04' }],
         ['timestamp__gte', '2018-02-04', { [Sequelize.Op.gte]: '2018-02-04' }],
         ['date__lte', '2018-02-04', { [Sequelize.Op.lte]: '2018-02-04' }],
