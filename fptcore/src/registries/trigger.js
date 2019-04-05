@@ -134,17 +134,21 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     return warnings;
   }
 
-  function getEventParent(eventSpec) {
+  function getEventParent(trigger, eventSpec) {
+    // Special case; the `scene_started` event is always
+    if (eventSpec.type === 'scene_started') {
+      return `scenes.${trigger.scene}`;
+    }
     const eventClass = eventsRegistry[eventSpec.type];
-    if (!eventClass.parentResourceParam) {
+    if (!eventClass.parentParamNameOnEventSpec) {
       return null;
     }
-    const paramSpec = eventClass.specParams[eventClass.parentResourceParam];
+    const paramSpec = eventClass.specParams[eventClass.parentParamNameOnEventSpec];
     if (paramSpec.type !== 'reference') {
       return null;
     }
     const collectionName = paramSpec.collection;
-    const resourceName = eventSpec[eventClass.parentResourceParam];
+    const resourceName = eventSpec[eventClass.parentParamNameOnEventSpec];
     return collectionName + '.' + resourceName;
   }
 
@@ -198,10 +202,9 @@ module.exports = function (actionsRegistry, eventsRegistry) {
       return firstEvent.type.replace(/_/g, ' ');
     },
     getParentClaims: function(resource) {
-      return _(resource.events)
-        .map(getEventParent)
-        .filter(Boolean)
-        .value();
+      return resource.events
+        .map(eventSpec => getEventParent(resource, eventSpec))
+        .filter(Boolean);
     },
     getChildClaims: function(resource) {
       const childClaims = [];

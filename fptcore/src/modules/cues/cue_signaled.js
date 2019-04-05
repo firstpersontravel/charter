@@ -2,7 +2,7 @@ var _ = require('lodash');
 
 module.exports = {
   help: { summary: 'Occurs when a cue has been signaled.' },
-  parentResourceParam: 'cue',
+  parentParamNameOnEventSpec: 'cue',
   specParams: {
     cue: {
       required: true,

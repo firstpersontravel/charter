@@ -370,7 +370,7 @@ describe('Integration - Nested Triggers', () => {
           actions: [{ name: 'start_scene', scene_name: 'SCENE-2' }]
         }, {
           name: 'trigger2',
-          events: [{ type: 'scene_started', scene: 'SCENE-2' }],
+          events: [{ type: 'scene_started' }],
           scene: 'SCENE-2',
           actions: [{
             name: 'set_value',
