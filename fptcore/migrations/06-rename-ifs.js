@@ -18,9 +18,17 @@ module.exports = {
     },
     content_pages: function(contentPage) {
       move(contentPage, 'if', 'active_if');
+      (contentPage.panels || []).forEach(panel => (
+        move(panel, 'if', 'active_if')
+      ));
+    },
+    layouts: function(layout) {
+      (layout.header_panels || []).forEach(panel => (
+        move(panel, 'if', 'active_if')
+      ));
     },
     pages: function(page) {
-      page.panels.forEach(panel => (
+      (page.panels || []).forEach(panel => (
         move(panel, 'if', 'active_if')
       ));
     }

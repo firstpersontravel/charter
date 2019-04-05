@@ -785,3 +785,6 @@ def db_load_from_remote():
     get(remote_path='/home/deploy/backup.sql',
         local_path=local_path)
     local('mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4306 galaxy < %s' % local_path)
+    # migrate local
+    local('yarn run migrate')
+    local('yarn run migrate:scripts')

@@ -18,6 +18,7 @@
     "upload_secrets": "aws s3 sync secrets s3://fpt-tech/secrets --exclude '*.DS_Store'",
     "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets",
     "migrate": "docker-compose exec server sequelize db:migrate",
-    "migrate:undo": "docker-compose exec server sequelize db:migrate:undo"
+    "migrate:undo": "docker-compose exec server sequelize db:migrate:undo",
+    "migrate:scripts": "docker-compose run server yarn run scripts:migrate"
   }
 }
