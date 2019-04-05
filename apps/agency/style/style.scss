@@ -122,7 +122,8 @@ body {
 }
 
 .cell-page {
-  &.cell-current-page {
+  a { color: inherit; }
+  &.cell-current-page, &.cell-current-page a {
     background: #666 !important;
     color: white;
   }

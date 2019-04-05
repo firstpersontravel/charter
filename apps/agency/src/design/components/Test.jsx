@@ -1,13 +1,115 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { TextUtil } from 'fptcore';
+
+import TripTestHarness from '../partials/TripTestHarness';
+
+function variantSectionsForScript(script) {
+  return _(_.get(script, 'content.variants'))
+    .map('section')
+    .filter(Boolean)
+    .uniq()
+    .value();
+}
+
+function variantOptionsForSection(script, section) {
+  return _(_.get(script, 'content.variants'))
+    .filter({ section: section })
+    .value();
+}
+
+function initialStateForScript(script) {
+  return {
+    departureName: _.get(script, 'content.departures[0].name') || '',
+    variantSections: _(variantSectionsForScript(script))
+      .map(section => (
+        [section, _.get(variantOptionsForSection(script, section), '[0].name')]
+      ))
+      .fromPairs()
+      .value()
+  };
+}
+
 // eslint-disable-next-line react/prefer-stateless-function
 export default class Test extends Component {
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = initialStateForScript(props.script);
+    this.handleChangeField = this.handleChangeField.bind(this);
+    this.handleChangeVariant = this.handleChangeVariant.bind(this);
+  }
+
+  handleChangeField(fieldName, event) {
+    this.setState({
+      [fieldName]: event.target.value
+    });
+  }
+
+  handleChangeVariant(sectionName, event) {
+    this.setState({
+      variantSections: Object.assign({}, this.state.variantSections, {
+        [sectionName]: event.target.value
+      })
+    });
+  }
+
+  renderVariantSelect(section) {
+    const variants = variantOptionsForSection(this.props.script, section);
+    if (!variants.length) {
+      return null;
+    }
+    const variantOptions = variants
+      .map(variant => (
+        <option key={variant.name} value={variant.name}>
+          {variant.title}
+        </option>
+      ));
     return (
-      <span>
-        Coming soon...
-      </span>
+      <div className="form-group" key={section}>
+        <label htmlFor={`variant_${section}`}>
+          {TextUtil.titleForKey(section)}
+        </label>
+        <select
+          className="form-control"
+          id={`variant_${section}`}
+          onChange={_.curry(this.handleChangeVariant)(section)}
+          value={this.state.variantSections[section]}>
+          {variantOptions}
+        </select>
+      </div>
+    );
+  }
+
+  renderVariantSelects() {
+    return variantSectionsForScript(this.props.script)
+      .map(section => this.renderVariantSelect(section));
+  }
+
+  renderParams() {
+    return (
+      <div>
+        {this.renderVariantSelects()}
+      </div>
+    );
+  }
+
+  render() {
+    const variantNames = Object.values(this.state.variantSections);
+    return (
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-sm-1 script-editor-full-height">
+            {this.renderParams()}
+          </div>
+          <div className="col-sm-11">
+            <TripTestHarness
+              script={this.props.script}
+              variantNames={variantNames} />
+          </div>
+        </div>
+      </div>
     );
   }
 }

@@ -1,19 +1,22 @@
 import _ from 'lodash';
-import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 
 import { ResourcesRegistry, EvalCore } from 'fptcore';
 
-import { sortForRole } from '../utils';
+import ResourceBadge from './ResourceBadge';
+import { sortForRole } from '../../operate/utils';
 import { isProduction } from '../../utils';
 
-export default class TripScenes extends Component {
+export default class TripState extends Component {
   getPlayersForScene(scene) {
-    return _(this.props.trip.players)
+    const trip = this.props.trip;
+    return _(trip.players)
       .filter(player => (
-        _.find(this.props.trip.script.content.pages, {
+        !player.role.if || EvalCore.if(trip.evalContext, player.role.if)
+      ))
+      .filter(player => (
+        _.find(trip.script.content.pages, {
           role: player.roleName,
           scene: scene.name
         })
@@ -23,17 +26,7 @@ export default class TripScenes extends Component {
   }
 
   handleAction(actionName, actionParams) {
-    const trip = this.props.trip;
-    const shouldConfirm = isProduction();
-    if (shouldConfirm) {
-      const confirmText = `Are you sure you want to apply the "${actionName}" action on ${trip.experience.title} ${trip.departureName} "${trip.title}"?`;
-      // eslint-disable-next-line no-alert
-      if (!confirm(confirmText)) {
-        return;
-      }
-    }
-    this.props.postAction(trip.orgId, trip.experienceId, trip.id, actionName,
-      actionParams);
+    this.props.onAction(actionName, actionParams);
   }
 
   renderCueButton(page, panel) {
@@ -72,35 +65,7 @@ export default class TripScenes extends Component {
   renderPlayerPage(player, page) {
     const trip = this.props.trip;
     const isCurrentPage = page.name === player.currentPageName;
-    const isAckedPage = player.acknowledgedPageName === page.name;
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
-    const goToPageClass = isProduction() ? 'text-danger' : 'text-primary';
-    const goToPageButton = (!isCurrentPage) ? (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-      <a
-        style={{ cursor: 'pointer', float: 'right' }}
-        onClick={() => this.handleAction('send_to_page', {
-          role_name: player.roleName,
-          page_name: page.name
-        })}
-        className={`ml-1 ${goToPageClass}`}>
-        Go
-      </a>
-    ) : null;
-
-    const refreshButton = (isCurrentPage && !isAckedPage) ? (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-      <a
-        className="ml-1"
-        style={{ cursor: 'pointer', float: 'right' }}
-        onClick={() => this.props.postAdminAction(
-          trip.orgId, trip.experienceId, trip.id,
-          'notify', { notify_type: 'refresh' }
-        )}>
-        <i className="fa fa-hand-o-right" /> device
-      </a>
-    ) : null;
-
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
       .filter(panel => !panel.if || EvalCore.if(trip.evalContext, panel.if))
@@ -109,24 +74,14 @@ export default class TripScenes extends Component {
     const pageTitle = EvalCore.templateText(trip.evalContext, page.title,
       trip.experience.timezone);
 
-    const isAckedIcon = isAckedPage ? (
-      <span>
-        &nbsp;
-        <i className="fa fa-check" />
-        {moment
-          .utc(player.acknowledgedPageAt)
-          .tz(trip.experience.timezone)
-          .format('h:mma')}
-      </span>
-    ) : null;
-
     return (
       <tr key={page.name} className={`cell-page ${pageClass}`}>
         <td>
-          {goToPageButton}
-          {refreshButton}
+          <ResourceBadge
+            resourceType="page"
+            className="mr-1"
+            showType={false} />
           {pageTitle}
-          {isAckedIcon}
           {cueButtons}
         </td>
       </tr>
@@ -140,20 +95,11 @@ export default class TripScenes extends Component {
     const renderedPages = pages
       .map(page => this.renderPlayerPage(player, page));
     return (
-      <div className={`col-sm-${colWidth}`} key={player.id}>
-        <h4>
-          <Link
-            to={{
-              pathname:
-                `/${trip.org.name}/${trip.experience.name}` +
-                `/operate/${trip.groupId}` +
-                `/trip/${trip.id}/players` +
-                `/${player.roleName}`,
-              query: { scene: scene.name }
-            }}>
-            {player.roleName}
-          </Link>
-        </h4>
+      <div className={`col-sm-${colWidth}`} key={player.roleName}>
+        <h5 className="constrain-text">
+          <ResourceBadge resourceType="role" className="mr-1" showType={false} />
+          {player.roleName}
+        </h5>
         <table className="table table-sm table-striped" style={{ margin: 0 }}>
           <tbody>
             {renderedPages}
@@ -183,16 +129,15 @@ export default class TripScenes extends Component {
       textDecoration: hasBeenTriggered ? 'line-through' : ''
     };
     return (
-      <button
-        key={trigger.name}
-        disabled={!canTrigger}
-        onClick={() => this.props.postAdminAction(
-          trip.orgId, trip.experienceId, trip.id,
-          'trigger', { trigger_name: trigger.name })}
-        style={style}
-        className="constrain-text btn btn-block btn-xs btn-outline-secondary">
-        {triggerResourceClass.getTitle(trip.script.content, trigger)}
-      </button>
+      <span key={trigger.name}>
+        <button
+          disabled={!canTrigger}
+          onClick={() => this.props.onTrigger(trigger.name)}
+          style={style}
+          className="constrain-text btn btn-block btn-xs btn-outline-secondary">
+          {triggerResourceClass.getTitle(trip.script.content, trigger)}
+        </button>
+      </span>
     );
   }
 
@@ -234,7 +179,10 @@ export default class TripScenes extends Component {
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="col-sm-2">
-          <h3 className={titleClass}>{scene.title}</h3>
+          <h4 className={titleClass}>
+            <ResourceBadge resourceType="scene" className="mr-1" showType={false} />
+            {scene.title}
+          </h4>
           {globalMarker}
           {startSceneButton}
         </div>
@@ -252,51 +200,24 @@ export default class TripScenes extends Component {
 
   render() {
     const trip = this.props.trip;
-    const showPastScenes = this.props.location.query.past === 'true';
     const scenes = trip.script.content.scenes || [];
-
-    const nonGlobalScenes = scenes.filter(scene => !scene.global);
-    const indexOfCurrentScene = _.findIndex(nonGlobalScenes, {
-      name: trip.currentSceneName
-    });
-
-    const scenesToShow = showPastScenes ? scenes : scenes
-      .filter(scene => !scene.global)
-      .filter((scene, i) => (i >= indexOfCurrentScene));
-
-    const sortedScenes = _.sortBy(scenesToShow, scene => !!scene.global);
+    const sortedScenes = _.sortBy(scenes, scene => !!scene.global);
     const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;
     const colWidth = Math.floor(12 / maxPlayersInScene);
     const renderedScenes = sortedScenes.map(scene => (
       this.renderSceneRow(scene, colWidth)
     ));
-    const pastScenesAlert = showPastScenes ? null : (
-      <div className="alert alert-info">
-        Past scenes hidden.&nbsp;
-        <Link
-          to={{
-            pathname:
-              `/${trip.org.name}/${trip.experience.name}` +
-              `/operate/${trip.groupId}/trip/${trip.id}/scenes`,
-            query: { past: true }
-          }}>
-          Show all
-        </Link>
-      </div>
-    );
     return (
       <div>
-        {pastScenesAlert}
         {renderedScenes}
       </div>
     );
   }
 }
 
-TripScenes.propTypes = {
+TripState.propTypes = {
   trip: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-  postAction: PropTypes.func.isRequired,
-  postAdminAction: PropTypes.func.isRequired
+  onAction: PropTypes.func.isRequired,
+  onTrigger: PropTypes.func.isRequired
 };

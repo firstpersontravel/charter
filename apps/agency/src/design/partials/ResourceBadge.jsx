@@ -39,20 +39,38 @@ const COLORS = _(ResourcesRegistry)
   .fromPairs()
   .value();
 
-export default function ResourceBadge({ resourceType, style, ...props }) {
+export function iconForResourceType(resourceType) {
+  const resourceClass = (
+    ResourcesRegistry[resourceType] ||
+    SubresourcesRegistry[resourceType]
+  );
+  if (!resourceClass || !resourceClass.icon) {
+    return null;
+  }
+  return (
+    <i className={`fa fa-${resourceClass.icon}`} />
+  );
+}
+
+export default function ResourceBadge({ resourceType, style, className, showType, ...props }) {
   const styleWithColor = Object.assign({
     backgroundColor: COLORS[resourceType] || '#cccccc'
   }, style);
-  const resourceClass = ResourcesRegistry[resourceType] ||
-    SubresourcesRegistry[resourceType];
-  const resourceIcon = resourceClass.icon ? (
-    <i className={`fa fa-${resourceClass.icon}`} />
-  ) : null;
+  const resourceIcon = iconForResourceType(resourceType);
+  let titleClass = 'ml-1 d-inline d-sm-none d-md-inline';
+  if (showType === true) {
+    titleClass = 'ml-1 d-inline';
+  } else if (showType === false) {
+    titleClass = 'd-none';
+  }
   return (
-    <span style={styleWithColor} className="badge badge-secondary" {...props}>
+    <span
+      style={styleWithColor}
+      className={`badge badge-secondary ${className}`}
+      {...props}>
       {resourceIcon}
-      <span className="d-inline d-sm-none d-md-inline">
-        {' '}{TextUtil.titleForKey(resourceType)}
+      <span className={titleClass}>
+        {TextUtil.titleForKey(resourceType)}
       </span>
     </span>
   );
@@ -60,9 +78,13 @@ export default function ResourceBadge({ resourceType, style, ...props }) {
 
 ResourceBadge.propTypes = {
   style: PropTypes.object,
-  resourceType: PropTypes.string.isRequired
+  resourceType: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  showType: PropTypes.bool
 };
 
 ResourceBadge.defaultProps = {
-  style: {}
+  style: {},
+  className: '',
+  showType: null
 };

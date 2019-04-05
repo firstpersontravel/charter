@@ -18,6 +18,7 @@
     "google": true
   },
   "rules": {
+    "class-methods-use-this": 0,
     "object-shorthand": [2, "never"],
     "import/prefer-default-export": 0,
     "comma-dangle": [2, "never"],

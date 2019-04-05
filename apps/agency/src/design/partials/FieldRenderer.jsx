@@ -342,11 +342,11 @@ export default class FieldRenderer {
     if (value === null || value === undefined || value === '') {
       choices.unshift({ value: '', label: '---' });
     }
-    const label = (
+    const label = value ? (
       <span style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-        {value || internalEmpty(spec)}
+        {value}
       </span>
-    );
+    ) : internalEmpty(spec);
     return this.internalEnumlike(spec, value || '', name, path, opts,
       choices, null, label);
   }
@@ -551,7 +551,7 @@ export default class FieldRenderer {
     const shouldShowClear = isSimpleType && keySpec.type !== 'boolean';
     const labelText = labelForSpec(keySpec, key);
     const label = shouldShowLabel ? (
-      <span className="ml-1" style={{ fontVariant: 'small-caps' }}>
+      <span className="mr-1" style={{ fontVariant: 'small-caps' }}>
         {labelText}:
       </span>
     ) : null;
