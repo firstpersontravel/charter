@@ -6,8 +6,8 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 function nameForTitle(title) {
   return title
     .toLowerCase()
-    .replace(/[\s_]/g, '-')
-    .replace(/[^A-Za-z0-9-]/g, '');
+    .replace(/[^A-Za-z0-9-_\s]/g, '')
+    .replace(/[\s_-]+/g, '-');
 }
 
 function titleForExample(example, existingExperiences) {
