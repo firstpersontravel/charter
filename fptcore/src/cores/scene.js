@@ -9,7 +9,7 @@ class SceneCore {
       if (scene.global) {
         return false;
       }
-      return !scene.if || EvalCore.if(evalContext, scene.if);
+      return EvalCore.if(evalContext, scene.active_if);
     });
     return firstScene && firstScene.name;
   }

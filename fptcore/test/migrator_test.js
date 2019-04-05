@@ -118,7 +118,7 @@ describe('Migrator', () => {
     it('migrates if clauses', () => {
       const scriptContent = {
         triggers: [{
-          if: { op: 'istrue', ref: 'test1' },
+          active_if: { op: 'istrue', ref: 'test1' },
           actions: [{ name: 'play_audio', audio_name: '2' }]
         }, {
           actions: [{
@@ -140,14 +140,14 @@ describe('Migrator', () => {
       sinon.assert.callCount(migration, 4);
       sinon.assert.calledWith(
         migration.getCall(0),
-        scriptContent.triggers[0].if,
+        scriptContent.triggers[0].active_if,
         scriptContent,
-        scriptContent.triggers[0], 'if');
+        scriptContent.triggers[0], 'active_if');
       sinon.assert.calledWith(
         migration.getCall(1),
         undefined,
         scriptContent,
-        scriptContent.triggers[1], 'if');
+        scriptContent.triggers[1], 'active_if');
       sinon.assert.calledWith(
         migration.getCall(2),
         scriptContent.triggers[1].actions[0].if,

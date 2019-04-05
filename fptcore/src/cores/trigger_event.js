@@ -56,13 +56,15 @@ class TriggerEventCore {
    * Test if a scene is active for a given context.
    */
   static isSceneActive(sceneName, actionContext) {
-    var scene = _.find(actionContext.scriptContent.scenes, { name: sceneName });
+    var scene = _.find(actionContext.scriptContent.scenes, {
+      name: sceneName
+    });
     if (!scene) {
       return false;
     }
 
     // If we have a conditional, return false if it's not true.
-    if (scene.if && !EvalCore.if(actionContext.evalContext, scene.if)) {
+    if (!EvalCore.if(actionContext.evalContext, scene.active_if)) {
       return false;
     }
 
@@ -91,10 +93,8 @@ class TriggerEventCore {
       }
     }
     // Skip inactive triggers
-    if (trigger.if) {
-      if (!EvalCore.if(actionContext.evalContext, trigger.if)) {
-        return false;
-      }
+    if (!EvalCore.if(actionContext.evalContext, trigger.active_if)) {
+      return false;
     }
     // Skip non-repeatable triggers that have already fired.
     if (trigger.repeatable === false) {

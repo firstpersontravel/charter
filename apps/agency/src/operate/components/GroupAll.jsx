@@ -14,9 +14,9 @@ function getAllPlayers(trips) {
   return _(trips)
     .map('players')
     .flatten()
-    .filter(player => (
-      !player.role.if ||
-      EvalCore.if(tripsById[player.tripId].evalContext, player.role.if)
+    .filter(player => EvalCore.if(
+      tripsById[player.tripId].evalContext,
+      player.role.active_if
     ))
     .value();
 }

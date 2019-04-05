@@ -32,7 +32,7 @@ describe('TriggerEventCore', () => {
       }, {
         name: 'COND-1',
         global: true,
-        if: { op: 'istrue', ref: 'val' }
+        active_if: { op: 'istrue', ref: 'val' }
       }]
     };
 
@@ -131,14 +131,14 @@ describe('TriggerEventCore', () => {
     });
 
     it('returns true if if test passes', () => {
-      const trigger = { if: { op: 'istrue', ref: 'test' } };
+      const trigger = { active_if: { op: 'istrue', ref: 'test' } };
       const actionContext = { evalContext: { test: true } };
       const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, true);
     });
 
     it('returns false if if test fails', () => {
-      const trigger = { if: { op: 'istrue', ref: 'test' } };
+      const trigger = { active_if: { op: 'istrue', ref: 'test' } };
       const actionContext = { evalContext: { test: false } };
       const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, false);

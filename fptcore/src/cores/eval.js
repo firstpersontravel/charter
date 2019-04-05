@@ -111,6 +111,10 @@ const ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif
 
 class EvalCore {
   static if(evalContext, ifStatement) {
+    // Null if statements resolve to true.
+    if (!ifStatement) {
+      return true;
+    }
     const ifClass = ifOpClasses[ifStatement.op];
     if (!ifClass) {
       throw new Error('Invalid if operation: ' + ifStatement.op);

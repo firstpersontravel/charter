@@ -9,7 +9,7 @@ module.exports = {
     name: { type: 'name', required: true },
     section: { type: 'string', required: true },
     title: { type: 'string', required: true },
-    if: { type: 'ifClause' },
+    active_if: { type: 'ifClause' },
     panels: {
       type: 'list',
       required: true,

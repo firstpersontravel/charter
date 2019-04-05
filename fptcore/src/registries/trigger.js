@@ -163,7 +163,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
         default: [{}]
       },
       repeatable: { type: 'boolean', default: true },
-      if: { type: 'ifClause' },
+      active_if: { type: 'ifClause' },
       actions: createActionListProperty(actionsRegistry)
     },
     validateResource: function(script, resource) {

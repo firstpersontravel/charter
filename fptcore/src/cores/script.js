@@ -6,7 +6,7 @@ var ResourcesRegistry = require('../registries/resources');
 var ParamValidators = require('../utils/param_validators');
 var Errors = require('../errors');
 
-var CURRENT_VERSION = 5;
+var CURRENT_VERSION = 6;
 
 var metaSchema = {
   type: 'object',

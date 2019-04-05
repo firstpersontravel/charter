@@ -7,6 +7,6 @@ module.exports = {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     global: { type: 'boolean', default: false },
-    if: { type: 'ifClause' }
+    active_if: { type: 'ifClause' }
   }
 };

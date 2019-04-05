@@ -13,7 +13,7 @@ export default function Trip({ trip, params, children }) {
   }
   const roles = _(trip.script.content.roles)
     .filter(role => role.user)
-    .filter(role => !role.if || EvalCore.if(trip.evalContext, role.if))
+    .filter(role => EvalCore.if(trip.evalContext, role.active_if))
     .sortBy([sortForRole, 'name'])
     .value();
   const roleLinks = roles.map((role => (

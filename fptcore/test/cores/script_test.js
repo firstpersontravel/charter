@@ -11,7 +11,7 @@ describe('ScriptCore', () => {
         scenes: [{
           name: 'abc',
           title: 'def',
-          if: 'test1'
+          active_if: 'test1'
         }],
         achievements: [{
           test: 'test2'
@@ -19,11 +19,11 @@ describe('ScriptCore', () => {
         pages: [{
           panels: [{
             type: 'image',
-            if: 'test3'
+            active_if: 'test3'
           }]
         }],
         triggers: [{
-          if: 'test4',
+          active_if: 'test4',
           actions: [{
             name: 'conditional',
             if: 'test5',
@@ -39,17 +39,17 @@ describe('ScriptCore', () => {
 
       sinon.assert.callCount(iteree, 6);
       sinon.assert.calledWith(iteree.getCall(0), 'test1',
-        ResourcesRegistry.scene.properties.if,
-        scriptContent.scenes[0], 'if');
+        ResourcesRegistry.scene.properties.active_if,
+        scriptContent.scenes[0], 'active_if');
       sinon.assert.calledWith(iteree.getCall(1), 'test2',
         ResourcesRegistry.achievement.properties.test,
         scriptContent.achievements[0], 'test');
       sinon.assert.calledWith(iteree.getCall(2), 'test3',
         { type: 'ifClause' },
-        scriptContent.pages[0].panels[0], 'if');  // panel common
+        scriptContent.pages[0].panels[0], 'active_if');  // panel common
       sinon.assert.calledWith(iteree.getCall(3), 'test4',
-        ResourcesRegistry.trigger.properties.if,
-        scriptContent.triggers[0], 'if');
+        ResourcesRegistry.trigger.properties.active_if,
+        scriptContent.triggers[0], 'active_if');
       sinon.assert.calledWith(iteree.getCall(4), 'test5',
         { required: true, type: 'ifClause' },
         scriptContent.triggers[0].actions[0], 'if');

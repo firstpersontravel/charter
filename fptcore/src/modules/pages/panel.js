@@ -7,7 +7,7 @@ var PANEL_COMMON_CLASS = {
       options: Object.keys(panels),
       required: true
     },
-    if: { type: 'ifClause' }
+    active_if: { type: 'ifClause' }
   }
 };
 

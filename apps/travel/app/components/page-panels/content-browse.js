@@ -17,8 +17,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
       .filterBy('section', section);
     var trip = this.get('trip');
     return sectionItems.filter(function(item) {
-      if (!item.if) { return true; }
-      return trip.evaluateIf(item.if);
+      if (!item.active_if) { return true; }
+      return trip.evaluateIf(item.active_if);
     });
   }.property('params.section', 'trip.evalContext'),
 

@@ -1,5 +1,5 @@
 meta:
-  version: 5
+  version: 6
 
 roles:
   - name: Player

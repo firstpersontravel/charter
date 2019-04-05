@@ -22,6 +22,10 @@ describe('EvalCore', () => {
       });
     });
 
+    it('returns true if null', () => {
+      assertIfEq({}, null, true);
+    });
+
     describe('#istrue', () => {
       it('evaluates', () => {
         const stmt = { op: 'istrue', ref: 'v' };

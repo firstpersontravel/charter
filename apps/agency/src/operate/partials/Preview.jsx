@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { EvalCore } from 'fptcore';
 
 function renderPanel(player, page, panel) {
-  if (panel.if && !EvalCore.if(player.trip.evalContext, panel.if)) {
+  if (!EvalCore.if(player.trip.evalContext, panel.active_if)) {
     return null;
   }
   if (panel.type === 'text' ||

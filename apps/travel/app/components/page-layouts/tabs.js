@@ -31,7 +31,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
   visibleTabs: function() {
     return this.get('tabs').filter(function(tab) {
       if (tab.visible === false) { return false; }
-      if (tab.if) { return this.get('trip').evaluateIf(tab.if); }
+      if (tab.active_if) {
+        return this.get('trip').evaluateIf(tab.active_if);
+      }
       return true;
     }, this);
   }.property('tabs', 'trip.evalContext'),

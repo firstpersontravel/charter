@@ -17,31 +17,19 @@ export function getPlayerPageInfo(trip, player) {
 function getGroupPlayersForRole(group, roleName) {
   const role = _.find(group.script.content.roles, { name: roleName });
   return group.trips
-    .filter(trip => (
-      !role.if || EvalCore.if(trip.evalContext, role.if)
-    ))
-    .map(trip => (
-      _.find(trip.players, { roleName: role.name })
-    ))
+    .filter(trip => EvalCore.if(trip.evalContext, role.active_if))
+    .map(trip => _.find(trip.players, { roleName: role.name }))
     .filter(Boolean)
-    .filter(player => (
-      player.currentPageName
-    ));
+    .filter(player => player.currentPageName);
 }
 
 function getTripPlayersForRoles(trip, roleFilters) {
   const roles = _.filter(trip.script.content.roles, roleFilters);
   return roles
-    .filter(role => (
-      !role.if || EvalCore.if(trip.evalContext, role.if)
-    ))
-    .map(role => (
-      _.find(trip.players, { roleName: role.name })
-    ))
+    .filter(role => EvalCore.if(trip.evalContext, role.active_if))
+    .map(role => _.find(trip.players, { roleName: role.name }))
     .filter(Boolean)
-    .filter(player => (
-      player.currentPageName
-    ));
+    .filter(player => player.currentPageName);
 }
 
 function getTripPlayers(trip) {

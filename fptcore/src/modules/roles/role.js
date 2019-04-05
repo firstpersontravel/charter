@@ -9,7 +9,7 @@ module.exports = {
     actor: { type: 'boolean', default: false },
     user: { type: 'boolean', default: false },
     primary: { type: 'boolean', default: false },
-    if: { type: 'ifClause' },
+    active_if: { type: 'ifClause' },
     starting_page: { type: 'reference', collection: 'pages' },
     required_values: {
       type: 'list',

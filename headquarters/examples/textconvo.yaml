@@ -1,5 +1,5 @@
 meta:
-  version: 5
+  version: 6
 
 roles:
   - name: Knight
@@ -62,7 +62,7 @@ triggers:
   - name: hello
     events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
-    if:
+    active_if:
       op: not
       item:
         op: istrue
@@ -88,7 +88,7 @@ triggers:
   - name: getname
     events: [{type: message_sent, from: Knight, to: Sage, medium: text}]
     scene: SCENE-MAIN
-    if:
+    active_if:
       op: istrue
       ref: game_started
     actions:

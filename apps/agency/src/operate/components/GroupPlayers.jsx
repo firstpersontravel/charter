@@ -10,10 +10,7 @@ import ScheduleUtils from '../../schedule/utils';
 
 function doesTripHaveRole(trip, roleName) {
   const role = _.find(trip.script.content.roles, { name: roleName });
-  if (!role.if) {
-    return true;
-  }
-  return EvalCore.if(trip.evalContext, role.if);
+  return EvalCore.if(trip.evalContext, role.active_if);
 }
 
 export default class GroupPlayers extends Component {
