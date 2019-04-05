@@ -7,7 +7,7 @@ describe('#custom_message', () => {
   const now = moment.utc();
   const actionContext = {
     scriptContent: { roles: [{ name: 'Ally' }, { name: 'Babbit' }] },
-    evalContext: {},
+    evalContext: { venue: 'the bar' },
     evaluateAt: now
   };
 
@@ -39,7 +39,7 @@ describe('#custom_message', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_sent',
+        type: 'message_received',
         message: {
           from: 'Ally',
           to: 'Babbit',
@@ -53,6 +53,19 @@ describe('#custom_message', () => {
         }
       }
     }]);
+  });
+
+  it('sends text message with templating', () => {
+    const params = {
+      medium: 'text',
+      content: 'We are meeting at {{venue}}.',
+      from_role_name: 'Ally',
+      to_role_name: 'Babbit'
+    };
+
+    const res = custom_message.applyAction(params, actionContext);
+
+    assert.strictEqual(res[0].fields.content, 'We are meeting at the bar.');
   });
 
   it('reply is needed for non-actor to actor', () => {
@@ -107,7 +120,7 @@ describe('#custom_message', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_sent',
+        type: 'message_received',
         message: {
           from: 'Ally',
           to: 'Babbit',
@@ -151,7 +164,7 @@ describe('#custom_message', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_sent',
+        type: 'message_received',
         message: {
           from: 'Ally',
           to: 'Babbit',

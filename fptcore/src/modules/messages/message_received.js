@@ -6,7 +6,7 @@ var WaypointCore = require('../../cores/waypoint');
 var distance = require('../../utils/distance');
 
 module.exports = {
-  help: { summary: 'Occurs when a message has been sent.' },
+  help: { summary: 'Occurs when a message has been received.' },
   getTitle: function(scriptContent, spec) {
     var parts = [spec.medium || 'message'];
     if (spec.contains) {

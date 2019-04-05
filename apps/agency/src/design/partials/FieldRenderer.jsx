@@ -376,7 +376,7 @@ export default class FieldRenderer {
         resource);
       label = (
         <span style={{ whiteSpace: 'nowrap' }}>
-          <ResourceBadge resourceType={resourceType} />
+          <ResourceBadge resourceType={resourceType} showType={false} />
           &nbsp;{title}
         </span>
       );

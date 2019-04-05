@@ -282,7 +282,7 @@ describe('Integration - Nested Triggers', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_sent',
+        type: 'message_received',
         message: {
           content: 'howdy',
           from: 'Cowboy',
@@ -339,7 +339,7 @@ describe('Integration - Nested Triggers', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_sent',
+        type: 'message_received',
         message: {
           content: 'geewhiz',
           from: 'Cowboy',

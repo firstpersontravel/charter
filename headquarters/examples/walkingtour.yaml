@@ -1,5 +1,5 @@
 meta:
-  version: 7
+  version: 8
 
 layouts:
   - name: tablet
@@ -105,7 +105,7 @@ triggers:
 
   - name: msg
     events:
-      - type: message_sent
+      - type: message_received
         medium: image
         from: Player
         to: Guide

@@ -1,6 +1,8 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
+const EvalCore = require('../../cores/eval');
+
+const MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 module.exports = {
   help: { summary: 'Send a text or media message from one player to another.' },
@@ -15,11 +17,13 @@ module.exports = {
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
   applyAction: function(params, actionContext) {
-    var roles = actionContext.scriptContent.roles || [];
-    var sentByRole = _.find(roles, { name: params.from_role_name });
-    var sentToRole = _.find(roles, { name: params.to_role_name });
+    const roles = actionContext.scriptContent.roles || [];
+    const content = EvalCore.templateText(actionContext.evalContext,
+      params.content);
+    const sentByRole = _.find(roles, { name: params.from_role_name });
+    const sentToRole = _.find(roles, { name: params.to_role_name });
     // Messages need replies if they are sent from non-actors to actors.
-    var isReplyNeeded = !!sentToRole.actor && !sentByRole.actor;
+    const isReplyNeeded = !!sentToRole.actor && !sentByRole.actor;
     return [{
       operation: 'createMessage',
       suppressRelayId: params.from_relay_id || null,
@@ -28,7 +32,7 @@ module.exports = {
         sentToRoleName: params.to_role_name,
         createdAt: actionContext.evaluateAt,
         medium: params.medium,
-        content: params.content,
+        content: content,
         sentFromLatitude: params.latitude || null,
         sentFromLongitude: params.longitude || null,
         sentFromAccuracy: params.accuracy || null,
@@ -38,12 +42,12 @@ module.exports = {
     }, {
       operation: 'event',
       event: {
-        type: 'message_sent',
+        type: 'message_received',
         message: {
           from: params.from_role_name,
           to: params.to_role_name,
           medium: params.medium,
-          content: params.content
+          content: content
         },
         location: {
           latitude: params.latitude,

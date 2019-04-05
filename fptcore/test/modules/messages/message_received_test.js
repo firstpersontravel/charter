@@ -1,28 +1,28 @@
 const assert = require('assert');
 
-const message_sent = require('../../../src/modules/messages/message_sent');
+const message_received = require('../../../src/modules/messages/message_received');
 
-describe('#message_sent', () => {
+describe('#message_received', () => {
   const imageClause = { from: 'Gabe', to: 'Cat', type: 'image' };
 
   it('fires on matching message', () => {
     const event = {
-      type: 'message_sent',
+      type: 'message_received',
       message: { from: 'Gabe', to: 'Cat', type: 'image' }
     };
 
-    const res = message_sent.matchEvent(imageClause, event, {});
+    const res = message_received.matchEvent(imageClause, event, {});
 
     assert.strictEqual(res, true);
   });
 
   it('does not fire on unmatching message', () => {
     const event = {
-      type: 'message_sent',
+      type: 'message_received',
       message: { from: 'Cat', to: 'Gabe', type: 'image' }
     };
 
-    const res = message_sent.matchEvent(imageClause, event, {});
+    const res = message_received.matchEvent(imageClause, event, {});
 
     assert.strictEqual(res, false);
   });
@@ -31,21 +31,21 @@ describe('#message_sent', () => {
 
   it('fires on message containing text', () => {
     const event = {
-      type: 'message_sent',
+      type: 'message_received',
       message: { type: 'text', content: 'Gabe says hi' }
     };
 
-    const res = message_sent.matchEvent(textClause, event, {});
+    const res = message_received.matchEvent(textClause, event, {});
 
     assert.strictEqual(res, true);
   });
 
   it('does not fire on message not containing text', () => {
     const event = {
-      type: 'message_sent',
+      type: 'message_received',
       message: { type: 'text', content: 'Bob sez hi' }
     };
-    const res = message_sent.matchEvent(textClause, event, {});
+    const res = message_received.matchEvent(textClause, event, {});
     assert.strictEqual(res, false);
   });
 
@@ -68,24 +68,24 @@ describe('#message_sent', () => {
 
   it('fires on message inside geofence', () => {
     const event = {
-      type: 'message_sent',
+      type: 'message_received',
       message: { from: 'Gabe', to: 'Cat', type: 'image' },
       location: { latitude: 37.75827, longitude: -122.41168, accuracy: 5 }
     };
 
-    const res = message_sent.matchEvent(geoClause, event, geoActionContext);
+    const res = message_received.matchEvent(geoClause, event, geoActionContext);
 
     assert.strictEqual(res, true);
   });
 
   it('does not fire on message outside geofence', () => {
     const event = {
-      type: 'message_sent',
+      type: 'message_received',
       message: { from: 'Gabe', to: 'Cat', type: 'image' },
       location: { latitude: 37.75901, longitude: -122.41149, accuracy: 5 }
     };
 
-    const res = message_sent.matchEvent(geoClause, event, geoActionContext);
+    const res = message_received.matchEvent(geoClause, event, geoActionContext);
 
     assert.strictEqual(res, false);
   });
