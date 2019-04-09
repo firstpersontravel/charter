@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 module.exports = {
-  help: { summary: 'Start playing audio for a certain role.' },
+  help: 'Start playing audio for a certain role.',
   params: {
     role_name: {
       required: true,

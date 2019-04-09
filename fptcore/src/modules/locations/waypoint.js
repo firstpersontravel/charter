@@ -1,3 +1,13 @@
+function defaultWaypointOptionName() {
+  return 'waypt-opt-' + Math.floor(Math.random() * 100000);
+}
+
+function defaultWaypointOptionList() {
+  return [{
+    name: defaultWaypointOptionName()
+  }];
+}
+
 var waypointOptionSpec = {
   type: 'object',
   properties: {
@@ -5,9 +15,7 @@ var waypointOptionSpec = {
       type: 'name',
       required: true,
       display: { hidden: true },
-      default: function() {
-        return 'waypt-opt-' + Math.floor(Math.random() * 100000);
-      }
+      default: defaultWaypointOptionName
     },
     title: { type: 'string', required: true },
     coords: { type: 'coords', required: true },
@@ -22,15 +30,13 @@ var waypointOptionSpec = {
 
 module.exports = {
   icon: 'map-pin',
-  help: {
-    summary: 'A waypoint defines a location used by the trip. Each waypoint has multiple options that can be set for each trip.'
-  },
+  help: 'A location used by the trip. Each waypoint can have multiple options that can be set for each trip. For instance, a "lunch" waypoint can have two options, each a different restaurant.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     options: {
       type: 'list',
-      default: [{}],
+      default: defaultWaypointOptionList,
       items: waypointOptionSpec
     }
   }

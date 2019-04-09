@@ -3,7 +3,7 @@ var _ = require('lodash');
 var EvalCore = require('../../cores/eval');
 
 module.exports = {
-  help: { summary: 'Play a clip on an active phone call.' },
+  help: 'Play a clip on an active phone call.',
   requiredEventTypes: [
     'call_received', // type: call_received, from: role
     'call_answered', // type: call_answered, to: role

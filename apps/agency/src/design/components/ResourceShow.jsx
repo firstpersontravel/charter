@@ -13,20 +13,10 @@ import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
 import { titleForResource } from '../utils/text-utils';
 import { getContentList, urlForResource } from '../utils/section-utils';
 import { assembleReverseReferences } from '../utils/graph-utils';
-
-// Characters for resource ids.
-const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz';
-
-function defaultFieldsForClass(resourceClass) {
-  const fields = {};
-  Object.keys(resourceClass.properties).forEach((key) => {
-    const spec = resourceClass.properties[key];
-    if (!_.isUndefined(spec.default)) {
-      fields[key] = spec.default;
-    }
-  });
-  return fields;
-}
+import {
+  defaultFieldsForClass,
+  newResourceNameForType
+} from '../utils/resource-utils';
 
 export default class ResourceShow extends Component {
   constructor(props) {
@@ -57,31 +47,26 @@ export default class ResourceShow extends Component {
     return resourceType;
   }
 
-  getNewResourceName() {
-    const resourceType = this.getResourceType();
-    const newId = _.range(6).map(i => (
-      ID_CHARS.charAt(Math.floor(Math.random() * ID_CHARS.length))
-    )).join('');
-    return `${resourceType}-${newId}`;
-  }
-
   getNewResourceFields() {
     const collectionName = this.props.params.collectionName;
     const sliceType = this.props.params.sliceType;
     const sliceName = this.props.params.sliceName;
     const resourceType = TextUtil.singularize(collectionName);
     const resourceClass = ResourcesRegistry[resourceType];
-    const fields = Object.assign({
-      name: this.getNewResourceName()
-    }, defaultFieldsForClass(resourceClass));
+    const newName = newResourceNameForType(resourceType);
+    const defaultFields = defaultFieldsForClass(resourceClass);
+    const fields = Object.assign({ name: newName }, defaultFields);
+
     if (resourceClass.properties.scene && sliceType === 'scene') {
       fields.scene = sliceName;
     }
+
     _.each(this.props.location.query, (val, key) => {
       if (resourceClass.properties[key]) {
         fields[key] = val;
       }
     });
+
     return fields;
   }
 

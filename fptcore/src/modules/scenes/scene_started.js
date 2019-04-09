@@ -1,5 +1,5 @@
 module.exports = {
-  help: { summary: 'Occurs when a scene has been started.' },
+  help: 'Occurs when a scene has been started.',
   specParams: {},
   matchEvent: function(spec, event, actionContext) {
     // The scene_started event matches always, since it's filtered by

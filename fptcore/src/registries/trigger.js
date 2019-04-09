@@ -140,6 +140,9 @@ module.exports = function (actionsRegistry, eventsRegistry) {
       return `scenes.${trigger.scene}`;
     }
     const eventClass = eventsRegistry[eventSpec.type];
+    if (!eventClass) {
+      throw new Error(`Invalid event ${eventSpec.type}.`);
+    }
     if (!eventClass.parentParamNameOnEventSpec) {
       return null;
     }
@@ -154,9 +157,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
 
   return {
     icon: 'certificate',
-    help: {
-      summary: 'A trigger is the primary method for creating interactivity. Each trigger fires upon certain events. Once fired, it will apply a set of actions, which change the trip state.'
-    },
+    help: 'A fires when a defined event occurs. Once fired, it will apply a set of actions, which change the trip state.',
     properties: {
       name: { type: 'name', required: true },
       scene: { type: 'reference', collection: 'scenes', required: true },

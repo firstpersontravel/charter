@@ -213,7 +213,7 @@ function renderResourceSimple(resourceType, moduleResource) {
       <h3 id={`${isPrimaryResource ? 'r' : 's'}_${resourceType}`}>
         {resourceTypeTitle}: <ResourceBadge resourceType={resourceType} />
       </h3>
-      <p>{_.get(resource, 'help.summary')}</p>
+      <p>{resource.help}</p>
       {renderFields(resource.properties)}
     </div>
   );
@@ -225,7 +225,7 @@ function renderAction(actionName, actionSpec) {
       <h4 id={actionName}>
         Action: <i className="fa fa-mail-forward" /> <strong>{actionName}</strong>
       </h4>
-      <p>{_.get(actionSpec, 'help.summary')}</p>
+      <p>{actionSpec.help}</p>
       {renderFields(actionSpec.params)}
     </div>
   );
@@ -237,7 +237,7 @@ function renderEvent(eventType, eventSpec) {
       <h4 id={eventType}>
         Event: <strong><i className="fa fa-bolt" /> {eventType}</strong>
       </h4>
-      <p>{_.get(eventSpec, 'help.summary')}</p>
+      <p>{eventSpec.help}</p>
       {renderFields(eventSpec.specParams)}
     </div>
   );

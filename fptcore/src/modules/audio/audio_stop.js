@@ -1,5 +1,5 @@
 module.exports = {
-  help: { summary: 'Stop audio and reset audio state.' },
+  help: 'Stop audio and reset audio state.',
   params: {
     role_name: {
       required: true,

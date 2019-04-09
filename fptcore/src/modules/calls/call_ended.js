@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 module.exports = {
-  help: { summary: 'Occurs when a player hangs up the phone.' },
+  help: 'Occurs when a player hangs up the phone.',
   specParams: {
     role: { required: true, type: 'reference', collection: 'roles' }
   },

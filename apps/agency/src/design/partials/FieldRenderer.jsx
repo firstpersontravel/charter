@@ -7,6 +7,7 @@ import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
 import PopoverControl from '../../partials/PopoverControl';
 import ResourceBadge from './ResourceBadge';
+import { defaultForSpec, doesSpecHaveDefault } from '../utils/resource-utils';
 
 const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
   'variegated'];
@@ -39,8 +40,8 @@ function internalEmpty(spec) {
   let label = _.get(spec, 'display.placeholder') || nullText;
   if (spec.type === 'media') {
     label = 'Enter a path (i.e. "sound.mp3", "img.jpg"). Save, then upload content.';
-  } else if (!_.isUndefined(spec.default)) {
-    label = `${stringOrYesNo(spec.default)} by default`;
+  } else if (doesSpecHaveDefault(spec)) {
+    label = `${stringOrYesNo(defaultForSpec(spec))} by default`;
   }
   return (
     <em className="faint">{label}</em>
@@ -79,22 +80,12 @@ const newItemsForSpecType = {
   variegated: {}
 };
 
-function defaultForParam(paramSpec) {
-  if (_.isFunction(paramSpec.default)) {
-    return paramSpec.default();
-  }
-  if (!_.isUndefined(paramSpec.default)) {
-    return paramSpec.default;
-  }
-  return null;
-}
-
 function newItemForSpec(spec) {
   if (spec.type === 'object') {
     return _(spec.properties)
       .keys()
-      .filter(key => spec.properties[key].default)
-      .map(key => [key, defaultForParam(spec.properties[key])])
+      .filter(key => doesSpecHaveDefault(spec.properties[key]))
+      .map(key => [key, defaultForSpec(spec.properties[key])])
       .fromPairs()
       .value();
   }
@@ -353,7 +344,7 @@ export default class FieldRenderer {
 
   renderBoolean(spec, value, name, path, opts) {
     const style = _.isUndefined(value) ? { opacity: 0.5 } : {};
-    const existing = _.isUndefined(value) ? spec.default : value;
+    const existing = _.isUndefined(value) ? defaultForSpec(spec) : value;
     return (
       <input
         style={style}

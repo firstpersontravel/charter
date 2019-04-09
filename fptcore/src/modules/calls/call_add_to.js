@@ -1,5 +1,5 @@
 module.exports = {
-  help: { summary: 'Add a player to a conference call.' },
+  help: 'Add a player to a conference call.',
   requiredEventTypes: [
     'call_received', // type: call_received, from: role
     'call_answered'  // type: call_answered, to: role

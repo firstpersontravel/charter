@@ -1,8 +1,6 @@
 module.exports = {
   icon: 'calendar',
-  help: {
-    summary: 'An appearance is an section of involvement of a trip player. It is used to organize different interactions when a user is taking part in multiple trips at the same time.'
-  },
+  help: 'A period of activity for an actor player. It is used to organize different interactions when a player is taking part in multiple trips at the same time, and sort properly by start time.',
   properties: {
     name: { type: 'name', required: true },
     role: {

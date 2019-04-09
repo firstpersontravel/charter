@@ -1,8 +1,6 @@
 module.exports = {
   icon: 'envelope',
-  help: {
-    summary: 'An email can be sent as part of an experience.'
-  },
+  help: 'An email message for sending from a dedicated inbox to a player with an email address.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

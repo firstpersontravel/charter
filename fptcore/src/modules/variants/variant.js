@@ -1,8 +1,6 @@
 module.exports = {
   icon: 'space-shuttle',
-  help: {
-    summary: 'A variant defines a variation in trip values.'
-  },
+  help: 'A variation in trip values, including timing, values, and waypoint options.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

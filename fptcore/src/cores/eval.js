@@ -8,7 +8,11 @@ const ifSpec = {};
 const ifOpClasses = {
   istrue: {
     properties: {
-      ref: { type: 'lookupable', required: true }
+      ref: {
+        type: 'lookupable',
+        required: true,
+        display: { primary: true }
+      }
     },
     eval: function(params, evalContext) {
       return !!EvalCore.lookupRef(evalContext, params.ref);
@@ -55,7 +59,13 @@ const ifOpClasses = {
     }
   },
   and: {
-    properties: { items: { type: 'list', items: { type: 'ifClause' } } },
+    properties: {
+      items: {
+        type: 'list',
+        items: { type: 'ifClause' },
+        display: { primary: true }
+      }
+    },
     eval: function(params, evalContext) {
       return _.every(params.items, function(item) {
         return EvalCore.if(evalContext, item);
@@ -63,7 +73,13 @@ const ifOpClasses = {
     }
   },
   or: {
-    properties: { items: { type: 'list', items: { type: 'ifClause' } } },
+    properties: {
+      items: {
+        type: 'list',
+        items: { type: 'ifClause' },
+        display: { primary: true }
+      }
+    },
     eval: function(params, evalContext) {
       return _.some(params.items, function(item) {
         return EvalCore.if(evalContext, item);

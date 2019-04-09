@@ -98,7 +98,7 @@ export default class TripState extends Component {
       <div className={`col-sm-${colWidth}`} key={player.roleName}>
         <h5 className="constrain-text">
           <ResourceBadge resourceType="role" className="mr-1" showType={false} />
-          {player.roleName}
+          {player.role.title}
         </h5>
         <table className="table table-sm table-striped" style={{ margin: 0 }}>
           <tbody>

@@ -2,9 +2,7 @@ var panel = require('./panel');
 
 module.exports = {
   icon: 'sticky-note',
-  help: {
-    summary: 'A content page is a section of static text or media that can be displayed by a user interface.'
-  },
+  help: 'A section of static text or media that can be displayed in a user interface.',
   properties: {
     name: { type: 'name', required: true },
     section: { type: 'string', required: true },

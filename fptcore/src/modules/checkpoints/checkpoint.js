@@ -1,8 +1,6 @@
 module.exports = {
   icon: 'floppy-o',
-  help: {
-    summary: 'A checkpoint is a saved place marker in a trip that can be quickly reset to for testing purposes.'
-  },
+  help: 'A saved place marker for quickly resetting a trip while testing.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

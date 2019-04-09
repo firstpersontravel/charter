@@ -4,9 +4,7 @@ var LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
 
 module.exports = {
   icon: 'mobile-phone',
-  help: {
-    summary: 'A layout is a combination of panels that create a user interface.'
-  },
+  help: 'A combination of panels that create a user interface for a tablet, phone, or device.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

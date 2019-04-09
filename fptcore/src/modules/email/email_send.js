@@ -4,7 +4,7 @@ var ContextCore = require('../../cores/context');
 var EvalCore = require('../../cores/eval');
 
 module.exports = {
-  help: { summary: 'Send a pre-defined email from one player to another.' },
+  help: 'Send a pre-defined email from one player to another.',
   params: {
     email_name: {
       required: true,

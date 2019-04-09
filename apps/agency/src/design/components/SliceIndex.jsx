@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
@@ -10,10 +9,9 @@ import { getSliceContent } from '../utils/section-utils';
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
   const resourceType = TextUtil.singularize(collectionName);
   const resourceClass = ResourcesRegistry[resourceType];
-  const helpText = _.get(resourceClass, 'help.summary');
   return (
     <p key={collectionName} className="mb-3">
-      {helpText}
+      {resourceClass.help}
       &nbsp;
       <Link
         to={

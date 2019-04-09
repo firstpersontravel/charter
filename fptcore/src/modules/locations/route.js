@@ -2,9 +2,7 @@ var ROUTE_VIA_OPTIONS = ['driving', 'walking', 'cycling'];
 
 module.exports = {
   icon: 'compass',
-  help: {
-    summary: 'A route is a path between one waypoint and another.'
-  },
+  help: 'A path between one waypoint and another, including walking/driving directions. If one of the waypoints has multiple options, then multiple paths will be fetched.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

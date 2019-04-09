@@ -2,9 +2,7 @@ var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 module.exports = {
   icon: 'comment',
-  help: {
-    summary: 'A message is text or media that can be sent from one player to another.'
-  },
+  help: 'Text or media that can be sent from one player to another.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

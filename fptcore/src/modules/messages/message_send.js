@@ -3,7 +3,7 @@ var _ = require('lodash');
 var EvalCore = require('../../cores/eval');
 
 module.exports = {
-  help: { summary: 'Send a pre-defined message from one player to another.' },
+  help: 'Send a pre-defined message from one player to another.',
   params: {
     message_name: {
       required: true,

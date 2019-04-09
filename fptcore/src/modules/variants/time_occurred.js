@@ -14,7 +14,7 @@ function timeForSpec(spec, evalContext) {
 }
 
 module.exports = {
-  help: { summary: 'Occurs when the current time reaches a scheduled time.' },
+  help: 'Occurs when the current time reaches a scheduled time.',
   parentParamNameOnEventSpec: 'time',
   specParams: {
     time: {

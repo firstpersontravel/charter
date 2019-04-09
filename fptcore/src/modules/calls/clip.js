@@ -4,9 +4,7 @@ var CLIP_VOICE_OPTIONS = ['alice', 'man', 'woman'];
 
 module.exports = {
   icon: 'volume-control-phone',
-  help: {
-    summary: 'A clip is a unit of text or audio that can be played as part of phone calls. A clip will optionally include a query, in which case the call participant\'s response will be recorded and resent as a `query_responded` event.'
-  },
+  help: 'A unit of text or audio that can be played as part of phone calls. A clip will optionally include a query, in which case the call participant\'s response will be recorded and resent as a `query_responded` event.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

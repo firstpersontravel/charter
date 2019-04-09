@@ -1,7 +1,5 @@
 module.exports = {
-  help: {
-    summary: 'Occurs when a player responds to a query over the phone.'
-  },
+  help: 'Occurs when a player responds to a query over the phone.',
   specParams: {
     query: { required: true, type: 'string' },
     partial: { required: false, type: 'boolean', display: { hidden: true } },

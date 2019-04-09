@@ -1,5 +1,5 @@
 module.exports = {
-  help: { summary: 'Resume currently paused audio.' },
+  help: 'Resume currently paused audio.',
   params: {
     role_name: {
       required: true,

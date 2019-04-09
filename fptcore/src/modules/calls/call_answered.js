@@ -1,5 +1,5 @@
 module.exports = {
-  help: { summary: 'Occurs when a player answers a call.' },
+  help: 'Occurs when a player answers a call.',
   specParams: {
     from: { required: true, type: 'reference', collection: 'roles' },
     to: { required: true, type: 'reference', collection: 'roles' }

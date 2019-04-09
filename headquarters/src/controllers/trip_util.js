@@ -85,7 +85,7 @@ class TripUtil {
    */
   static async getObjectsForTrip(tripId) {
     // Get trip and players first
-    const trip = await models.Trip.find({
+    const trip = await models.Trip.findOne({
       where: { id: tripId },
       include: [
         { model: models.Script, as: 'script' },

@@ -2,9 +2,7 @@ var _ = require('lodash');
 
 module.exports = {
   icon: 'phone',
-  help: {
-    summary: 'A relay defines a text or phone interface from one player to another.'
-  },
+  help: 'A phone number by which one player can contact another via text or phone calls.',
   properties: {
     name: { type: 'name', required: true },
     for: {

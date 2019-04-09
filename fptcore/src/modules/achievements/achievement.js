@@ -2,9 +2,7 @@ var ACHIEVEMENT_STYLE_OPTIONS = ['completion', 'choice'];
 
 module.exports = {
   icon: 'trophy',
-  help: {
-    summary: 'An achievement is a defined summary of trip state. A use is to easily summarize player choices and progress from an overview screen. For instance, you can quickly see which branches they experienced, how many areas were unlocked, or other metrics.',
-  },
+  help: 'An achievement is a defined summary of trip state. A use is to easily summarize player choices and progress from an overview screen. For instance, you can quickly see which branches they experienced, how many areas were unlocked, or other metrics.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

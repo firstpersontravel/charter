@@ -85,11 +85,12 @@ class TripKernel {
 
   log({ level, message }) {
     this.updateState({
-      log: this.state.log.concat([{
+      log: [{
         id: this.state.log.length,
+        time: moment(),
         level: level,
         message: message
-      }])
+      }].concat(this.state.log).slice(0, 100)
     });
   }
 }
@@ -227,6 +228,7 @@ export default class TripTestHarness extends Component {
     };
     return (
       <div key={logEntry.id}>
+        <span className="mr-1">{logEntry.time.format('h:mma')}</span>
         {logEntryIcons[logEntry.level]}
         {logEntry.message}
       </div>

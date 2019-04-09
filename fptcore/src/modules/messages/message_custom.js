@@ -5,7 +5,7 @@ const EvalCore = require('../../cores/eval');
 const MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
 module.exports = {
-  help: { summary: 'Send a text or media message from one player to another.' },
+  help: 'Send a text or media message from one player to another.',
   params: {
     from_role_name: { required: true, type: 'reference', collection: 'roles' },
     to_role_name: { required: true, type: 'reference', collection: 'roles' },

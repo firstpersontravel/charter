@@ -62,7 +62,7 @@ class TripResetController {
    * Reset a game state.
    */
   static async resetToCheckpoint(tripId, checkpointName) {
-    const trip = await models.Trip.find({
+    const trip = await models.Trip.findOne({
       where: { id: tripId },
       include: [
         { model: models.Script, as: 'script' },

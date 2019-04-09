@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 module.exports = {
-  help: { summary: 'Signal a cue.' },
+  help: 'Signal a cue. A cue does nothing on its own, but usually will have triggers attached, which fire actions.',
   params: {
     cue_name: {
       required: true,

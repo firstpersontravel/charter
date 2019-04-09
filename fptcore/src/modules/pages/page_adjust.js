@@ -1,5 +1,5 @@
 module.exports = {
-  help: { summary: 'Send an ephemeral signal to a player. This is deprecated.' },
+  help: 'Send an ephemeral signal to a player. This is deprecated.',
   params: {
     role_name: {
       required: true,

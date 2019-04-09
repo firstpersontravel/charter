@@ -1,8 +1,6 @@
 module.exports = {
   icon: 'music',
-  help: {
-    summary: 'An audio clip is a sound that can be referred to and played on different devices.'
-  },
+  help: 'A sound that can be played on different devices.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

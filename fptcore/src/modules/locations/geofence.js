@@ -2,9 +2,7 @@ var _ = require('lodash');
 
 module.exports = {
   icon: 'map-pin',
-  help: {
-    summary: 'A geofence is a circular region around a waypoint. It can be used to trigger events when players enter or leave a region, or when messages are sent from within that region.'
-  },
+  help: 'A circular region around a waypoint. It can be used to trigger events when players enter or leave a region, or when messages are sent from within that region.',
   properties: {
     name: { type: 'name', required: true },
     center: {

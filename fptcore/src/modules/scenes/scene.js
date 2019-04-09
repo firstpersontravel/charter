@@ -1,8 +1,6 @@
 module.exports = {
   icon: 'puzzle-piece',
-  help: {
-    summary: 'A scene is a temporal unit of experience. Usually only one scene is active at a time.'
-  },
+  help: 'A temporal unit of experience. Usually only one scene is active at a time.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

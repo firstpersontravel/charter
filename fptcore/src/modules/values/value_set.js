@@ -3,7 +3,7 @@ var _ = require('lodash');
 var EvalCore = require('../../cores/eval');
 
 module.exports = {
-  help: { summary: 'Update a value in the trip state to either a constant number or string, or to match another value by reference.' },
+  help: 'Update a value in the trip state to either a constant number or string, or to match another value by reference.',
   params: {
     value_ref: {
       required: true,

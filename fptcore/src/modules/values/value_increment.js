@@ -1,7 +1,7 @@
 var set_value = require('./value_set');
 
 module.exports = {
-  help: { summary: 'Increment the numerical value of a value by reference.' },
+  help: 'Increment the numerical value of a value by reference.',
   params: {
     value_ref: {
       required: true,
