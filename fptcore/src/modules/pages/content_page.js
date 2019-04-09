@@ -11,7 +11,7 @@ module.exports = {
     panels: {
       type: 'list',
       required: true,
-      items: { type: 'subresource', class: panel }
+      items: { type: 'subresource', class: panel, name: 'panel' }
     }
   }
 };

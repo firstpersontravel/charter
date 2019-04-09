@@ -7,9 +7,14 @@ module.exports = {
       type: 'reference',
       collection: 'roles',
       required: true,
-      parent: true
+      parent: true,
+      help: 'Role this inbox belongs to.'
     },
-    address: { type: 'email', required: true }
+    address: {
+      type: 'email',
+      required: true,
+      help: 'Email address to send from. Currently must be from @firstperson.travel.'
+    }
   },
   getTitle: function(scriptContent, spec) {
     return spec.address;

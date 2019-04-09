@@ -10,7 +10,12 @@ module.exports = {
     'query_responded', // type: query_responded, clip: clip-name
   ],
   params: {
-    clip_name: { required: true, type: 'reference', collection: 'clips' }
+    clip_name: {
+      required: true,
+      type: 'reference',
+      collection: 'clips',
+      help: 'The clip to play.'
+    }
   },
   applyAction: function (params, actionContext) {
     // Find the clip.

@@ -99,42 +99,43 @@ function renderSidebar() {
   );
 }
 
+function labelForSubresource(resourceType) {
+  return (
+    <a href={`#s_${resourceType}`}>
+      <ResourceBadge resourceType={resourceType} className="mb-1" />
+    </a>
+  );
+}
+
 function labelForSpecType(spec, key) {
   // HACK
-  if (_.endsWith(key, 'panels')) {
-    return 'List: Panel';
+  if (_.startsWith(key, 'actions')) {
+    return 'Action';
   }
   // HACK
-  if (key === 'actions') {
-    return 'List: Action';
-  }
-  // HACK
-  if (key === 'events') {
-    return 'List: Event';
+  if (_.startsWith(key, 'events')) {
+    return 'Event';
   }
   if (!spec.type) {
     return 'unknown';
   }
   if (spec.type === 'subresource') {
-    return labelForSpecType(spec.class);
+    return labelForSubresource(spec.name);
   }
+  // HACK: Only for panel at the moment
   if (spec.type === 'variegated') {
-    return Object.values(spec.classes)
-      .map(cls => (
-        <span className="mr-1">
-          {labelForSpecType(cls)}
+    return Object.keys(spec.classes)
+      .map(k => (
+        <span key={k} className="mr-1">
+          {labelForSubresource(`${k}_panel`)}
         </span>
       ));
   }
   if (spec.type === 'list') {
-    return (
-      <span>List: {labelForSpecType(spec.items)}</span>
-    );
+    return <span>List</span>;
   }
   if (spec.type === 'dictionary') {
-    return (
-      <span>Dictionary: {labelForSpecType(spec.keys)} to {labelForSpecType(spec.values)}</span>
-    );
+    return <span>Dictionary</span>;
   }
   if (spec.type === 'reference') {
     const resourceType = TextUtil.singularize(spec.collection);
@@ -153,15 +154,51 @@ function labelForSpecType(spec, key) {
   return TextUtil.titleForKey(spec.type);
 }
 
-function renderResourceField(key, spec) {
+function renderResourceFieldItem(key, spec, prefix) {
+  if (_.get(spec, 'display.hidden')) {
+    return null;
+  }
   const specStyle = spec.required ? { fontWeight: 'bold' } : {};
   return (
-    <tr key={key}>
-      <td style={specStyle}>{labelForSpec(spec, key)}</td>
+    <tr key={`${prefix}-${key}`}>
+      <td
+        className="constrain-text"
+        style={specStyle}>
+        {prefix}{labelForSpec(spec, key)}
+      </td>
       <td>{labelForSpecType(spec, key)}</td>
-      <td />
+      <td>{spec.help}</td>
     </tr>
   );
+}
+
+function renderResourceField(key, spec, prefix) {
+  if (_.get(spec, 'display.hidden')) {
+    return null;
+  }
+  const prefixes = (
+    <span>{prefix}<span className="faint mr-1">&bull;</span></span>
+  );
+  if (spec.type === 'list') {
+    return [
+      renderResourceFieldItem(key, spec, prefix),
+      renderResourceField('item', spec.items, prefixes)
+    ];
+  }
+  if (spec.type === 'dictionary') {
+    return [
+      renderResourceFieldItem(key, spec, prefix),
+      renderResourceField('key', spec.keys, prefixes),
+      renderResourceField('value', spec.values, prefixes)
+    ];
+  }
+  if (spec.type === 'object') {
+    return [renderResourceFieldItem(key, spec, prefix)]
+      .concat(...Object.keys(spec.properties).map(k => (
+        renderResourceField(k, spec.properties[k], prefixes)
+      )));
+  }
+  return renderResourceFieldItem(key, spec, prefix);
 }
 
 const HIDE_PROPERTIES = ['name', 'title'];
@@ -173,10 +210,6 @@ function renderFields(properties) {
 
   if (!keys.length) {
     return null;
-  }
-
-  if (keys.length === 1 && keys[0] === 'self') {
-    return renderFields(properties.self);
   }
 
   const fields = keys.map(key => (

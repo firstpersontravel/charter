@@ -7,7 +7,8 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'cues',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The cue to signal.'
     }
   },
   applyAction: function(params, actionContext) {

@@ -12,7 +12,7 @@ module.exports = {
     section: { type: 'string' },
     header_panels: {
       type: 'list',
-      items: { type: 'subresource', class: panel }
+      items: { type: 'subresource', class: panel, name: 'panel' }
     }
   },
   validateResource: function(script, resource) {

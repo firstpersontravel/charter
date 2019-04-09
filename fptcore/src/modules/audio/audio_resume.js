@@ -5,7 +5,8 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The role to resume the audio for.'
     }
   },
   applyAction: function(params, actionContext) {

@@ -9,9 +9,14 @@ module.exports = {
       type: 'reference',
       collection: 'waypoints',
       required: true,
-      parent: true
+      parent: true,
+      help: 'Center of the geofence.'
     },
-    distance: { type: 'number', required: true }
+    distance: {
+      type: 'number',
+      required: true,
+      help: 'Distance in meters around the center that is counted as within the geofence.'
+    }
   },
   getTitle: function(scriptContent, resource) {
     var waypoint = _.find(scriptContent.waypoints, { name: resource.center });

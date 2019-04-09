@@ -1,7 +1,11 @@
 module.exports = {
   help: 'Occurs when a player responds to a query over the phone.',
   specParams: {
-    query: { required: true, type: 'string' },
+    query: {
+      required: true,
+      type: 'string',
+      hint: 'The query being responded to.'
+    },
     partial: { required: false, type: 'boolean', display: { hidden: true } },
     final: { required: false, type: 'boolean', display: { hidden: true } }
   },

@@ -5,7 +5,12 @@ module.exports = {
     'call_answered'  // type: call_answered, to: role
   ],
   params: {
-    role_name: { required: true, type: 'reference', collection: 'roles' }
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles',
+      help: 'The role to add to the call.'
+    }
   },
   applyAction: function (params, actionContext) {
     var evt = actionContext.evalContext.event || {};

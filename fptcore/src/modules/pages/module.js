@@ -1,6 +1,11 @@
+var panel = require('./panel');
 var panels = require('./panels');
 
-var panelSubresources = {};
+var panelSubresources = {
+  panel: {
+    subresource: panel
+  }
+};
 
 Object.keys(panels).forEach(function(panelType) {
   panelSubresources[panelType + '_panel'] = {

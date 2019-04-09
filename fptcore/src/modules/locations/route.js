@@ -10,15 +10,29 @@ module.exports = {
       type: 'reference',
       collection: 'waypoints',
       required: true,
-      parent: true
+      parent: true,
+      help: 'The starting waypoint.'
     },
     to: {
       type: 'reference',
       collection: 'waypoints',
-      required: true
+      required: true,
+      help: 'The ending waypoint'
     },
-    via: { type: 'list', items: { type: 'coords' } },
-    mode: { type: 'enum', options: ROUTE_VIA_OPTIONS, default: 'driving' }
+    via: {
+      type: 'list',
+      items: {
+        type: 'coords',
+        help: 'A coord that the route must pass through.'
+      },
+      help: 'An optional list of coordinates through through which the route must pass.'
+    },
+    mode: {
+      type: 'enum',
+      options: ROUTE_VIA_OPTIONS,
+      default: 'driving',
+      help: 'The method of transit for directions.'
+    }
   },
   getParentClaims: function(resource) {
     return ['waypoints.' + resource.from];

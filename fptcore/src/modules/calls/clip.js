@@ -9,10 +9,26 @@ module.exports = {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    transcript: { type: 'string' },
-    voice: { type: 'enum', options: CLIP_VOICE_OPTIONS, default: 'alice' },
-    path: { type: 'media', extensions: ['m4a', 'mp3'] },
-    query: { type: 'subresource', class: query }
+    transcript: {
+      type: 'string',
+      help: 'The text transcript used to generate audio via speech-to-text. Only required if there is not a media path.'
+    },
+    voice: {
+      type: 'enum',
+      options: CLIP_VOICE_OPTIONS,
+      default: 'alice',
+      help: 'The voice used to generate audio via speech-to-text. Only required if there is not a media path.'
+    },
+    path: {
+      type: 'media',
+      extensions: ['m4a', 'mp3'],
+      help: 'Media path for an audio clip to play.'
+    },
+    query: {
+      type: 'subresource',
+      name: 'query',
+      class: query
+    }
   },
   validateResource: function(script, resource) {
     if (!resource.transcript && !resource.path) {

@@ -7,9 +7,15 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The role to play the audio for.'
     },
-    audio_name: { required: true, type: 'reference', collection: 'audio' }
+    audio_name: {
+      required: true,
+      type: 'reference',
+      collection: 'audio',
+      help: 'The audio file to play.'
+    }
   },
   applyAction: function(params, actionContext) {
     var audio = _.find(actionContext.scriptContent.audio,

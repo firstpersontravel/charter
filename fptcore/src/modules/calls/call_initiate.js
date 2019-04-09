@@ -4,12 +4,14 @@ module.exports = {
     to_role_name: {
       required: true,
       type: 'reference',
-      collection: 'roles'
+      collection: 'roles',
+      help: 'The player to initiate a call to.'
     },
     as_role_name: {
       required: true,
       type: 'reference',
-      collection: 'roles'
+      collection: 'roles',
+      help: 'The player from whom the call originates.'
     },
     detect_voicemail: {
       required: false,

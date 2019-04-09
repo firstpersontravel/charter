@@ -12,6 +12,8 @@ var PANEL_COMMON_CLASS = {
 };
 
 var panel = {
+  icon: 'sticky-note',
+  help: 'A unit of interface with many different options.',
   properties: {
     self: {
       type: 'variegated',

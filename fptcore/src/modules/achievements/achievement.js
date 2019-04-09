@@ -11,15 +11,21 @@ module.exports = {
       type: 'enum',
       options: ACHIEVEMENT_STYLE_OPTIONS,
       default: 'completion',
-      required: true
+      required: true,
+      help: '"Completion" achievements are active if the test resolves to true. "Choice" achievements can have multiple titles based on the evaluation of the test.'
     },
-    test: { type: 'ifClause', required: true },
+    test: {
+      type: 'ifClause',
+      required: true,
+      help: 'The value to test for to determine if this achievement has been activated.'
+    },
     titles: {
       type: 'dictionary',
       required: true,
       default: { 'true': '', 'false': '' },
       keys: { type: 'string' },
-      values: { type: 'string' }
+      values: { type: 'string' },
+      help: 'Text values to display based on the result of the achievement test.'
     },
   }
 };

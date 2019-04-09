@@ -6,9 +6,15 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The role entering the geofence.'
     },
-    geofence: { required: true, type: 'reference', collection: 'geofences' }
+    geofence: {
+      required: true,
+      type: 'reference',
+      collection: 'geofences',
+      help: 'The geofence being entered.'
+    }
   },
   matchEvent: function(spec, event, actionContext) {
     return (

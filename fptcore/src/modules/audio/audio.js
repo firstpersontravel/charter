@@ -5,7 +5,15 @@ module.exports = {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    duration: { type: 'number', required: true },
-    path: { type: 'media', required: true, medium: 'audio' }
+    duration: {
+      type: 'number',
+      required: true,
+      help: 'Duration in seconds of this audio clip. Used for displaying time remaining.'
+    },
+    path: {
+      type: 'media',
+      required: true, medium: 'audio',
+      help: 'The audio file.'
+    }
   }
 };

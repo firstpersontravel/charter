@@ -10,7 +10,8 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'emails',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'Predefined email to send.'
     }
   },
   applyAction: function(params, actionContext) {

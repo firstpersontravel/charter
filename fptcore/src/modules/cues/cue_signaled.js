@@ -8,7 +8,8 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'cues',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The cue that was signaled.'
     }
   },
   matchEvent: function(spec, event, actionContext) {

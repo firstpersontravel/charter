@@ -18,8 +18,15 @@ var waypointOptionSpec = {
       default: defaultWaypointOptionName
     },
     title: { type: 'string', required: true },
-    coords: { type: 'coords', required: true },
-    address: { type: 'string' },
+    coords: {
+      type: 'coords',
+      required: true,
+      help: 'The coordinates of the location.'
+    },
+    address: {
+      type: 'string',
+      help: 'The address of the location.'
+    },
     values: {
       type: 'dictionary',
       keys: { type: 'simpleAttribute' },
@@ -37,7 +44,8 @@ module.exports = {
     options: {
       type: 'list',
       default: defaultWaypointOptionList,
-      items: waypointOptionSpec
+      items: waypointOptionSpec,
+      help: 'A list of locations that this waypoint could refer to.'
     }
   }
 };
