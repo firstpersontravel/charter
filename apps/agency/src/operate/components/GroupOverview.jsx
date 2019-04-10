@@ -54,6 +54,8 @@ export default class GroupOverview extends Component {
           {' '}
           {pageInfo.status}
         </IndexLink>
+        {' '}
+        <pre>{window.location.origin}/actor/{actor.userId}</pre>
         {this.renderAddUserIcon(actor)}
       </div>
     );
@@ -76,6 +78,8 @@ export default class GroupOverview extends Component {
           {' '}
           {pageInfo.status}
         </IndexLink>
+        {' '}
+        <pre>{window.location.origin}/s/{player.id}</pre>
         {this.renderAddUserIcon(player)}
       </div>
     );

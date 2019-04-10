@@ -73,6 +73,7 @@ function getPage(objs, evalContext, player) {
     experienceTitle: objs.experience.title,
     trip: trip,
     player: player,
+    role: _.find(script.content.roles, { name: player.roleName }),
     page: page,
     panels: panels,
     pageInfo: pageInfo,

@@ -109,6 +109,10 @@ describe('EvalCore', () => {
       it.skip('evaluates', () => {});
     });
 
+    describe('#message_is_affirmative', () => {
+      
+    });
+
     describe('#matches', () => {
       it('evaluates', () => {
         assertIfEq({ a: '9144844223', },

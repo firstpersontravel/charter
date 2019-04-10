@@ -42,7 +42,7 @@ function getTripPlayersForRoles(trip, roleFilters) {
 }
 
 function getTripPlayers(trip) {
-  return getTripPlayersForRoles(trip, { user: true, actor: false });
+  return getTripPlayersForRoles(trip, { type: 'traveler' });
 }
 
 function getPlayerSceneSort(trip, player) {
@@ -73,7 +73,7 @@ function getUserActors(group, role) {
 
 function getActors(group) {
   const actorRoles = _.filter(group.script.content.roles,
-    { user: true, actor: true });
+    { type: 'performer' });
   const userActorsByRole = actorRoles
     .map(role => getUserActors(group, role));
   const rolesAndActors = _(userActorsByRole)

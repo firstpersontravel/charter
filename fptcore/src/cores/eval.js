@@ -47,14 +47,26 @@ const ifOpClasses = {
   },
   message_contains: {
     properties: {
-      part: { type: 'string', required: true }
+      part: { type: 'string', required: true, primary: true }
     },
     eval: function(params, evalContext) {
-      const a = EvalCore.lookupRef(evalContext, 'event.message.content');
+      const msg = EvalCore.lookupRef(evalContext, 'event.message.content');
       return (
-        typeof a === 'string' &&
-        a.toLowerCase().indexOf(params.part.toLowerCase()) > -1
+        typeof msg === 'string' &&
+        msg.toLowerCase().indexOf(params.part.toLowerCase()) > -1
       );
+    }
+  },
+  message_is_affirmative: {
+    properties: {},
+    eval: function(params, evalContext) {
+      const msg = EvalCore.lookupRef(evalContext, 'event.message.content');
+      const affirmativeParts = ['y', 'yes', 'sure', 'ok'];
+      if (typeof msg !== 'string') {
+        return false;
+      }
+      const lower = msg.toLowerCase();
+      return _.some(affirmativeParts, part => lower.indexOf(part) > -1);
     }
   },
   matches: {
