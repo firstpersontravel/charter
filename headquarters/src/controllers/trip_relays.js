@@ -208,7 +208,7 @@ class TripRelaysController {
       // Only actors get notified if another user sent a message as the
       // same role.
       const role = _.find(script.content.roles, { name: relay.forRoleName });
-      if (!role.actor) {
+      if (role.type !== 'performer') {
         continue;
       }
       const [body, mediaUrl] = await this._partsForRelayMessage(trip, relay, 

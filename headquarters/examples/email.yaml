@@ -4,10 +4,11 @@ meta:
 roles:
   - name: player
     title: Player
-    user: true
+    type: traveler
 
   - name: system
     title: System
+    type: scripted
 
 inboxes:
   - name: inbox

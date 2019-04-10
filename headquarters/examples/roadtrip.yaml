@@ -5,7 +5,7 @@ roles:
   - name: Driver
     title: Driver
     starting_page: Start
-    user: true
+    type: traveler
 
 scenes:
   - name: main

@@ -7,7 +7,7 @@ import { IndexLink } from 'react-router';
 import { EvalCore } from 'fptcore';
 
 import ResponsiveTabs from '../../partials/ResponsiveTabs';
-import { sortForRole } from '../utils';
+import { sortForRole, shouldDisplayRole } from '../utils';
 
 function getAllPlayers(trips) {
   const tripsById = _.fromPairs(_.map(trips, t => [t.id, t]));
@@ -28,7 +28,7 @@ export default function GroupAll({ children, group,
     return <div>No trips</div>;
   }
   const roles = _(group.script.content.roles)
-    .filter(role => role.user)
+    .filter(role => shouldDisplayRole(role))
     .sortBy([sortForRole, 'name'])
     .value();
   const allPlayers = getAllPlayers(group.trips);

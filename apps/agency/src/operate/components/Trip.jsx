@@ -5,14 +5,14 @@ import { Link } from 'react-router';
 
 import { EvalCore } from 'fptcore';
 
-import { sortForRole } from '../utils';
+import { sortForRole, canRoleHaveUser } from '../utils';
 
 export default function Trip({ trip, params, children }) {
   if (!trip.script) {
     return null;
   }
   const roles = _(trip.script.content.roles)
-    .filter(role => role.user)
+    .filter(role => canRoleHaveUser(role))
     .filter(role => EvalCore.if(trip.evalContext, role.active_if))
     .sortBy([sortForRole, 'name'])
     .value();

@@ -314,7 +314,7 @@ export default class GroupMap extends Component {
     const oneHourAgo = moment.utc().subtract(1, 'hour');
     const locatedAt = moment.utc(user.locationTimestamp);
     const locIsRecent = locatedAt.isAfter(oneHourAgo);
-    const isActor = playerGroup[0].role.actor;
+    const isActor = playerGroup[0].role.type === 'performer';
     const icons = isActor ?
       [actorIcon, actorIconLocExpired] :
       [userIcon, userIconExpired];

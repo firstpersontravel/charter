@@ -4,8 +4,7 @@ meta:
 roles:
   - name: player
     title: Player
-    user: true
-    actor: false
+    type: traveler
 
 scenes:
   - name: first

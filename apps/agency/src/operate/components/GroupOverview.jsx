@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { IndexLink, Link } from 'react-router';
 
 import GroupMap from '../partials/GroupMap';
-import { getPlayerPageInfo, sortPlayers } from '../utils';
+import { getPlayerPageInfo, sortPlayers, canRoleHaveUser } from '../utils';
 
 export default class GroupOverview extends Component {
   renderAddUserIcon(player) {
-    if (!player.role.user) {
+    if (!canRoleHaveUser(player.role)) {
       return null;
     }
     if (player.user) {

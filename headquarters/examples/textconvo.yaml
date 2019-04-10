@@ -4,13 +4,11 @@ meta:
 roles:
   - name: Knight
     title: Knight
-    actor: false
-    user: true
+    type: traveler
 
   - name: Sage
     title: Sage
-    actor: false
-    user: false
+    type: scripted
 
 relays:
   - name: main

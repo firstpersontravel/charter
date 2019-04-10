@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 
 import { ResourcesRegistry, TextUtil } from 'fptcore';
 
+import ResourceBadge from '../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
@@ -11,6 +12,7 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
   const resourceClass = ResourcesRegistry[resourceType];
   return (
     <p key={collectionName} className="mb-3">
+      <ResourceBadge resourceType={resourceType} className="mr-1" />
       {resourceClass.help}
       &nbsp;
       <Link

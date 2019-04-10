@@ -20,7 +20,10 @@ describe('pageActorRoutes', () => {
         trip: {
           script: {
             content: {
-              roles: [{ name: 'Gabe', actor: true }]
+              roles: [{
+                name: 'Gabe',
+                type: 'performer'
+              }]
             }
           }
         }

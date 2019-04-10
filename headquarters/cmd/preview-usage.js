@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const program = require('commander');
 
 const models = require('../src/models');
@@ -36,7 +37,7 @@ async function previewUsage(resourceType, property) {
     }
     for (const item of collection) {
       const value = item[property];
-      if (!value) {
+      if (_.isUndefined(value)) {
         continue;
       }
       const hash = hashCode(JSON.stringify(value));
@@ -58,11 +59,15 @@ async function previewUsage(resourceType, property) {
   }
   
   for (const usageItem of usageItems) {
-    const scriptDescs = usageItem.scripts.map(script => (
-      `${script.experience.title} v${script.revision} id:${script.id}`
-    ));
-    console.log(`${scriptDescs.join(', ')}:`);
+    const scriptDescs = _(usageItem.scripts)
+      .groupBy('experienceId')
+      .values()
+      .map((scripts) => (
+        `${scripts[0].experience.title} #${_(scripts).map('id').uniq().value().join(',')}`
+      ))
+      .value();
     console.log(JSON.stringify(usageItem.value, null, 2));
+    console.log(`-> ${scriptDescs.join(', ')}`);
     console.log('');
   }
 }

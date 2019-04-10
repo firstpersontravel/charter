@@ -3,10 +3,19 @@ import _ from 'lodash';
 import { EvalCore, PlayerCore } from 'fptcore';
 
 export function sortForRole(role) {
-  if (role.primary) {
-    return -1;
-  }
-  return 0;
+  return {
+    traveler: -1,
+    performer: 0,
+    scripted: 1
+  }[role.type];
+}
+
+export function shouldDisplayRole(role) {
+  return {
+    traveler: true,
+    performer: true,
+    scripted: false
+  }[role.type];
 }
 
 export function getPlayerPageInfo(trip, player) {

@@ -1,12 +1,17 @@
+const ROLE_TYPE_OPTIONS = ['traveler', 'performer', 'scripted'];
+
 module.exports = {
   icon: 'user',
   help: 'A participant in the experience. This participant can be a player, an actor, or a scripted automaton.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    actor: { type: 'boolean', default: false },
-    user: { type: 'boolean', default: false },
-    primary: { type: 'boolean', default: false },
+    type: {
+      type: 'enum',
+      options: ROLE_TYPE_OPTIONS,
+      required: true,
+      help: 'Type of role. "Traveler" refers to the audience, "performer" can be used for actors or internal staff, and "scripted" is for automated roles that are not assigned users.'
+    },
     active_if: { type: 'ifClause' },
     starting_page: { type: 'reference', collection: 'pages' },
     required_values: {

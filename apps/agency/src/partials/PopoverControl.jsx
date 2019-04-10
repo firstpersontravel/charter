@@ -109,6 +109,9 @@ export default class PopoverControl extends Component {
       cursor: 'pointer'
     };
     const edit = this.renderEdit();
+    const helpText = this.props.helpText ? (
+      <p>{this.props.helpText}</p>
+    ) : null;
     return (
       <span className="popover-control">
         <button
@@ -127,6 +130,7 @@ export default class PopoverControl extends Component {
           toggle={this.handleClose}>
           <PopoverHeader>{this.props.title}</PopoverHeader>
           <PopoverBody>
+            {helpText}
             <form className="form-inline">
               {edit}
               &nbsp;
@@ -150,6 +154,7 @@ export default class PopoverControl extends Component {
 
 PopoverControl.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  helpText: PropTypes.string,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
   labelClassName: PropTypes.string,
   title: PropTypes.string.isRequired,
@@ -162,5 +167,6 @@ PopoverControl.defaultProps = {
   labelClassName: '',
   label: '',
   choices: null,
-  validate: null
+  validate: null,
+  helpText: null
 };

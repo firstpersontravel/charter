@@ -5,6 +5,8 @@ import { Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
+import { canRoleHaveUser } from '../utils';
+
 function renderMessageContent(message) {
   if (message.medium === 'image' && message.name) {
     return `[Image: ${TextUtil.titleForTypedKey(message.name)}]`;
@@ -38,7 +40,7 @@ function renderMessageIcon(message, sentBy, sentTo) {
     icon = 'fa-exclamation-circle';
   } else if (message.name) {
     icon = 'fa-clock-o';
-  } else if (sentBy.role.actor) {
+  } else if (sentBy.role.type === 'performer') {
     icon = 'fa-user-o';
   } else {
     icon = 'fa-user';
@@ -95,7 +97,7 @@ export default function Message({ message, updateInstance, isInTripContext,
   const trip = message.trip;
   const sentTo = message.sentTo;
   const sentBy = message.sentBy;
-  const userPlayer = sentBy.role.actor ? sentTo : sentBy;
+  const userPlayer = sentBy.role.type === 'performer' ? sentTo : sentBy;
   const actorPlayer = userPlayer === sentBy ? sentTo : sentBy;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
@@ -103,7 +105,7 @@ export default function Message({ message, updateInstance, isInTripContext,
   const content = renderMessageContent(message);
   const icon = renderMessageIcon(message, sentBy, sentTo);
   const archivedClass = message.isArchived ? 'message-archived' : '';
-  const shouldShowRespond = !message.sentTo.role.user &&
+  const shouldShowRespond = !canRoleHaveUser(message.sentTo.role) &&
     !message.reponseReceivedAt;
   const respondBtn = shouldShowRespond ? (
     <Link

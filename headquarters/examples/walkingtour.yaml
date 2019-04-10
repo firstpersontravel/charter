@@ -31,15 +31,13 @@ content_pages:
 roles:
   - name: Player
     title: Player
-    actor: false
-    user: true
+    type: traveler
     starting_page: PAGE-START
     layout: tablet
 
   - name: Guide
     title: Guide
-    actor: false
-    user: false
+    type: scripted
 
 scenes:
   - name: SCENE-MAIN

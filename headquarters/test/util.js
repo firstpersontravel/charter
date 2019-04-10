@@ -21,7 +21,8 @@ const dummyContent = {
   meta: { version: ScriptCore.CURRENT_VERSION },
   roles: [{
     name: 'Dummy',
-    title: 'Dummy'
+    title: 'Dummy',
+    type: 'traveler'
   }],
   scenes: [{
     name: 'SCENE-MAIN',

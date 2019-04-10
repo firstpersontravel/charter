@@ -7,7 +7,7 @@ function getIframeUrl(player) {
   const user = player.user;
   const role = _.find(player.trip.script.content.roles,
     { name: player.roleName });
-  if (role.actor || !user) {
+  if (role.type === 'performer' || !user) {
     return `/actor/player/${player.id}?nogps=1&noack=1`;
   }
   return `/travel/u/${user.id}/p/${trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;

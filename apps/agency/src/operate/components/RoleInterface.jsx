@@ -6,7 +6,7 @@ function getIframeUrl(players, user) {
     return null;
   }
   const player = players[0];
-  if (player.role.actor) {
+  if (player.role.type === 'performer') {
     return user ? `/actor/${user.id}?nogps=1&noack=1` : null;
   }
   return `/travel/u/${user.id}/p/${player.trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;

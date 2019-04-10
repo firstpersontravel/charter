@@ -117,7 +117,7 @@ describe('API create', () => {
   describe('POST /api/scripts', () => {
     const scriptContent = {
       meta: { version: ScriptCore.CURRENT_VERSION },
-      roles: [{ name: 'hi', title: 'hi' }]
+      roles: [{ name: 'hi', title: 'hi', type: 'traveler' }]
     };
 
     let experience;

@@ -28,16 +28,13 @@ const mockScript = {
   content: {
     roles: [{
       name: 'actor',
-      actor: true,
-      user: true
+      type: 'performer'
     }, {
       name: 'npc',
-      actor: false,
-      user: false
+      type: 'scripted',
     }, {
       name: 'player',
-      actor: false,
-      user: true
+      type: 'traveler'
     }]
   }
 };

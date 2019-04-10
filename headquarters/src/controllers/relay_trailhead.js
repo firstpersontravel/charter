@@ -38,7 +38,7 @@ class RelayTrailheadController {
     for (const role of script.content.roles) {
       // Find other roles that need to be assigned users
       // If role doesn't allow being assigned users, or isn't an actor, skip.
-      if (!role.user || !role.actor) {
+      if (role.type !== 'performer') {
         continue;
       }
       await RelayTrailheadController.assignActor(script.experience, trip,

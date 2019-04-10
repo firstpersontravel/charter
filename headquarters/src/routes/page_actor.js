@@ -104,7 +104,7 @@ const actorsListRoute = async (req, res) => {
   const actorPlayers = players.filter(((player) => {
     const roles = player.trip.script.content.roles;
     const role = _.find(roles, { name: player.roleName });
-    return role && role.actor;
+    return role && role.type === 'performer';
   }));
   const users = _.uniqBy(_.map(actorPlayers, 'user'), 'id');
   res.render('actor/actors', {

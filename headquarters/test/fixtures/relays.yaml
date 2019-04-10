@@ -28,10 +28,13 @@
       roles:
         - name: Actor
           title: Actor
+          type: performer
         - name: Player
           title: Player
+          type: traveler
         - name: StageManager
           title: StageManager
+          type: performer
       relays:
         - name: relay-1
           for: Actor

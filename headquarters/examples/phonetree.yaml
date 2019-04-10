@@ -4,13 +4,11 @@ meta:
 roles:
   - name: Player
     title: Player
-    actor: false
-    user: true
+    type: traveler
 
   - name: PhoneTree
     title: PhoneTree
-    actor: false
-    user: false
+    type: scripted
 
 relays:
   - name: relay-1

@@ -35,7 +35,7 @@ export default DS.Model.extend({
   }.property('userProfile'),
 
   contactName: function() {
-    if (this.get('role.actor')) {
+    if (this.get('role.type') === 'performer') {
       return this.get('role.contact_name') || this.get('role.title');
     } else if (this.get('user')) {
       return `${this.get('user.firstName')} ${this.get('user.lastName')}`;
@@ -45,7 +45,7 @@ export default DS.Model.extend({
   }.property('userProfile', 'user'),
 
   isActor: function() {
-    return this.get('role.actor') || false;
+    return this.get('role.type') === 'performer';
   }.property('trip'),
 
   firstName: function() {

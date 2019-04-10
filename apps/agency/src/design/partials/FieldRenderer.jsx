@@ -119,6 +119,7 @@ export default class FieldRenderer {
       <PopoverControl
         title={name}
         validate={validateFunc}
+        helpText={spec.help}
         onConfirm={onConfirm}
         label={label}
         value={value || ''} />
@@ -155,6 +156,7 @@ export default class FieldRenderer {
       <PopoverControl
         title={name}
         choices={choices}
+        helpText={spec.help}
         onConfirm={onEnumUpdate}
         label={label || value || internalEmpty(spec)}
         value={value} />
@@ -474,16 +476,18 @@ export default class FieldRenderer {
       </div>
     ));
     const newItem = newItemsForSpecType[spec.values.type];
+    const newItemField = this.renderFieldValue(
+      spec.keys, 'New item', `${name} New Key`, 'INVALID', {
+        onConfirm: val => this.onPropUpdate(`${path}[${val}]`, newItem)
+      }
+    );
     const newItemBtn = (
       <div>
         <button className="btn btn-xs btn-outline-secondary disabled">
           <i className="fa fa-plus" />
         </button>
         &nbsp;
-        {this.renderFieldValue(spec.keys, 'New item', `${name} New Key`,
-          'INVALID', { onConfirm: (val) => {
-            this.onPropUpdate(`${path}[${val}]`, newItem);
-          } })}
+        {newItemField}
       </div>
     );
     return (
