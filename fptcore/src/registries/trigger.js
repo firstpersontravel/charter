@@ -194,6 +194,9 @@ module.exports = function (actionsRegistry, eventsRegistry) {
       }
       const firstEvent = resource.events[0];
       const firstEventClass = eventsRegistry[firstEvent.type];
+      if (!firstEventClass) {
+        return 'No event';
+      }
       if (firstEventClass.getTitle) {
         const customTitle = firstEventClass.getTitle(scriptContent, firstEvent);
         if (customTitle) {
