@@ -10,7 +10,7 @@ export function sortForRole(role) {
   }[role.type];
 }
 
-export function shouldDisplayRole(role) {
+export function canRoleHaveUser(role) {
   return {
     traveler: true,
     performer: true,
