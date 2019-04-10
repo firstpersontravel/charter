@@ -107,7 +107,7 @@ describe('TripRelaysController', () => {
     const stubScript = models.Script.build({
       content: {
         relays: [
-          { for: 'for', as: 'as', with: 'with', sms_out: true },
+          { for: 'for', as: 'as', with: 'with' },
           { for: 'with', as: 'with', with: 'for' }
         ]
       }
@@ -131,7 +131,7 @@ describe('TripRelaysController', () => {
 
       const filters = { as: 'as', with: 'with' };
       const res = await (
-        TripRelaysController.ensureRelays(stubTrip, filters, 'sms_out')
+        TripRelaysController.ensureRelays(stubTrip, filters)
       );
 
       // Should filter out by spec and only call ensureRelay with one
@@ -160,7 +160,7 @@ describe('TripRelaysController', () => {
 
       // test ensureRelays called looking for the player relay (for target)
       sinon.assert.calledWith(TripRelaysController.ensureRelays,
-        trip, { as: 'Player', with: 'Actor' }, 'phone_out');
+        trip, { as: 'Player', with: 'Actor' });
 
       // test player looked for for target
       sinon.assert.calledWith(models.Player.findOne, {
@@ -184,7 +184,7 @@ describe('TripRelaysController', () => {
 
       // test ensureRelays called looking for the player relay (for target)
       sinon.assert.calledWith(TripRelaysController.ensureRelays,
-        trip, { as: 'Player', with: 'Actor' }, 'phone_out');
+        trip, { as: 'Player', with: 'Actor' });
 
       sinon.assert.notCalled(models.Player.findOne);
       sinon.assert.notCalled(RelayController.initiateCall);
@@ -203,7 +203,7 @@ describe('TripRelaysController', () => {
 
       // test ensureRelays called looking for the player relay (for target)
       sinon.assert.calledWith(TripRelaysController.ensureRelays,
-        trip, { as: 'Player', with: 'Actor' }, 'phone_out');
+        trip, { as: 'Player', with: 'Actor' });
 
       // test player looked for for target
       sinon.assert.calledWith(models.Player.findOne, {
@@ -211,27 +211,6 @@ describe('TripRelaysController', () => {
         include: [{ model: models.User, as: 'user' }]
       });
       sinon.assert.notCalled(RelayController.initiateCall);
-    });
-  });
-
-  describe('#sendAdminMessage', () => {
-    it('sends an admin message', async () => {
-      const trip = await models.Trip.build();
-      const stubRelay = models.Relay.build();
-
-      sandbox.stub(TripRelaysController, 'ensureRelays').resolves([stubRelay]);
-      sandbox.stub(RelayController, 'sendMessage').resolves();
-
-      await TripRelaysController
-        .sendAdminMessage(trip, 'StageManager', 'test');
-
-      // searches relays
-      sandbox.assert.calledWith(TripRelaysController.ensureRelays,
-        trip, { for: 'StageManager' }, 'admin_out');
-
-      // sends message to resulting relay
-      sandbox.assert.calledWith(RelayController.sendMessage,
-        stubRelay, trip, '[Admin] test', null);
     });
   });
 

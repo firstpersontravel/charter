@@ -8,10 +8,19 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    type: { type: 'enum', options: LAYOUT_TYPE_OPTIONS, required: true },
-    section: { type: 'string' },
+    type: {
+      type: 'enum',
+      options: LAYOUT_TYPE_OPTIONS,
+      required: true,
+      help: 'What type of layout to use. Currently just simple or tabs.'
+    },
+    section: {
+      type: 'string',
+      help: 'Section of content pages to search for tabs (if relevant).'
+    },
     header_panels: {
       type: 'list',
+      help: 'List of user interface panels to display at the top.',
       items: { type: 'subresource', class: panel, name: 'panel' }
     }
   },

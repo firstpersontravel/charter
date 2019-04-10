@@ -24,7 +24,7 @@
     revision: 1
     content:
       meta:
-        version: 8
+        version: 9
       roles:
         - name: Actor
           title: Actor
@@ -37,24 +37,11 @@
           for: Actor
           as: Actor
           with: Player
-          phone_in: true
-          phone_out: true
-          sms_in: true
-          sms_out: true
         - name: relay-2
           for: Player
           as: Player
           with: Actor
-          phone_in: true
-          phone_out: true
-          sms_in: true
-          sms_out: true
           trailhead: true
-        - name: relay-3
-          for: StageManager
-          as: StageManager
-          with: Player
-          admin_out: true
 
 - model: Group
   data:
@@ -139,19 +126,4 @@
     asRoleName: Actor
     withRoleName: Player
     relayPhoneNumber: '9999999998'
-    userPhoneNumber: ''
-
-# Admin stage manager relay
-- model: Relay
-  data:
-    id: 5
-    org: 1
-    experience: 1
-    departureName: T1
-    stage: test
-    isActive: true
-    forRoleName: StageManager
-    withRoleName: Player
-    asRoleName: StageManager
-    relayPhoneNumber: '9999999997'
     userPhoneNumber: ''

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const assert = require('assert');
 
+const ScriptCore = require('../src/cores/script');
 const Migrator = require('../src/migrator');
 
 describe('Migrations', () => {
@@ -15,5 +16,10 @@ describe('Migrations', () => {
         assert.deepStrictEqual(scriptContent, test.after);
       });
     });
+  });
+
+  it('migrates up to script current version', () => {
+    const maxNum = Math.max(..._.map(Migrator.Migrations, 'num'));
+    assert.strictEqual(ScriptCore.CURRENT_VERSION, maxNum);
   });
 });

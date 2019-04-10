@@ -1,11 +1,9 @@
 const moment = require('moment-timezone');
 
-const config = require('../config');
 const models = require('../models');
 
 const RelayController = require('./relay');
 const TripsController = require('./trips');
-const TripRelaysController = require('./trip_relays');
 
 class RelayTrailheadController {
   /**
@@ -30,13 +28,6 @@ class RelayTrailheadController {
     await models.Player.update({ userId: matchingProfile.userId }, {
       where: { tripId: trip.id, roleName: role.name }
     });
-    // Send admin message
-    const host = config.env.SERVER_HOST_PUBLIC;
-    const actorUrl = `${host}/actor/${matchingProfile.userId}`;
-    const castMessage = (
-      `New trip for ${experience.title} as ${role.name}: ${actorUrl}`
-    );
-    await TripRelaysController.sendAdminMessage(trip, role.name, castMessage);
   }
 
   /**

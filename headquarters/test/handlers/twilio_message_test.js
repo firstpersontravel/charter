@@ -15,9 +15,7 @@ describe('TwilioMessageHandler', () => {
         relays: [{
           for: 'From',
           as: 'From',
-          with: 'To',
-          sms_in: true,
-          sms_out: true
+          with: 'To'
         }]
       }
     };

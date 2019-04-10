@@ -1,11 +1,6 @@
-var panel = require('./panel');
 var panels = require('./panels');
 
-var panelSubresources = {
-  panel: {
-    subresource: panel
-  }
-};
+var panelSubresources = {};
 
 Object.keys(panels).forEach(function(panelType) {
   panelSubresources[panelType + '_panel'] = {
@@ -28,6 +23,9 @@ module.exports = {
         adjust_page: require('./page_adjust'),
         send_to_page: require('./page_send_to')
       }
+    },
+    panel: {
+      subresource: require('./panel')
     }
   }, panelSubresources),
 };

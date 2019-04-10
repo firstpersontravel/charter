@@ -9,7 +9,8 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'messages',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The message to send.'
     },
     to_role_name: {
       required: false,

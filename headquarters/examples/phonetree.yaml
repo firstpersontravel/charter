@@ -1,5 +1,5 @@
 meta:
-  version: 8
+  version: 9
 
 roles:
   - name: Player
@@ -17,7 +17,6 @@ relays:
     for: Player
     as: Player
     with: PhoneTree
-    phone_in: true
     trailhead: true
 
 scenes:

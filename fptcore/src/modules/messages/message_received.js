@@ -30,15 +30,35 @@ module.exports = {
     return parts.join(' ');
   },
   specParams: {
-    from: { required: false, type: 'reference', collection: 'roles' },
-    to: { required: false, type: 'reference', collection: 'roles' },
+    from: {
+      required: false,
+      type: 'reference',
+      collection: 'roles',
+      help: 'The sender of the message.'
+    },
+    to: {
+      required: false,
+      type: 'reference',
+      collection: 'roles',
+      help: 'The recipient of the message.'
+    },
     medium: {
       required: false,
       type: 'enum',
-      options: MESSAGE_MEDIUM_OPTIONS
+      options: MESSAGE_MEDIUM_OPTIONS,
+      help: 'The type of the message.'
     },
-    contains: { required: false, type: 'string' },
-    geofence: { required: false, type: 'reference', collection: 'geofences' }
+    contains: {
+      required: false,
+      type: 'string',
+      help: 'Optionally, a message that the message must contain.'
+    },
+    geofence: {
+      required: false,
+      type: 'reference',
+      collection: 'geofences',
+      help: 'Optionally, a geofence within which the message must have been sent.'
+    }
   },
   matchEvent: function(spec, event, actionContext) {
     if (spec.medium && spec.medium !== event.message.medium) {

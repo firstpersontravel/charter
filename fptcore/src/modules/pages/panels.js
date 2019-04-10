@@ -7,24 +7,48 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays an audio message that can be played at will.',
     properties: {
-      path: { type: 'media', medium: 'audio' }
+      path: {
+        type: 'media',
+        medium: 'audio',
+        help: 'The audio file to play.'
+      }
     }
   },
   button: {
     icon: 'sticky-note',
     help: 'Displays a button. When pressed, a cue will be signaled.',
     properties: {
-      text: { type: 'string', required: true },
-      cue: { type: 'reference', collection: 'cues', required: true },
-      style: { type: 'enum', options: PANEL_BUTTON_STYLE_OPTIONS }
+      text: {
+        type: 'string',
+        required: true,
+        help: 'Visible label on the button.'
+      },
+      cue: {
+        type: 'reference',
+        collection: 'cues',
+        required: true,
+        help: 'Cue to signal on pressing the button.'
+      },
+      style: {
+        type: 'enum',
+        options: PANEL_BUTTON_STYLE_OPTIONS,
+        help: 'Visual style of the button.'
+      }
     }
   },
   choice: {
     icon: 'sticky-note',
     help: 'Displays a multiple choice option. When selected by a user, the curresponding value in the trip state will be updated.',
     properties: {
-      text: { type: 'string', required: true },
-      value_ref: { type: 'simpleAttribute', required: true },
+      text: {
+        type: 'string',
+        required: true,
+        help: 'Visible title for the choice.'
+      },
+      value_ref: {
+        type: 'simpleAttribute',
+        required: true
+      },
       choices: {
         type: 'list',
         required: true,

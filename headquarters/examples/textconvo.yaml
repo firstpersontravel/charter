@@ -1,5 +1,5 @@
 meta:
-  version: 8
+  version: 9
 
 roles:
   - name: Knight
@@ -18,8 +18,6 @@ relays:
     as: Knight
     with: Sage
     trailhead: true
-    sms_in: true
-    sms_out: true
 
 messages:
   - name: MESSAGE-HELLO

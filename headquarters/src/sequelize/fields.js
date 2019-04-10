@@ -206,9 +206,9 @@ function jsonField(db, modelName, fieldName, options) {
         instance.setDataValue(fieldName, {});
       }
     }
-    if (typeof db.models === 'object' && db.models.hasOwnProperty(modelName) && typeof db.models[modelName].hook === 'function') {
-      db.models[modelName].hook('beforeUpdate', stringifyField);
-      db.models[modelName].hook('beforeCreate', stringifyField);
+    if (typeof db.models === 'object' && db.models.hasOwnProperty(modelName)) {
+      db.models[modelName].addHook('beforeUpdate', stringifyField);
+      db.models[modelName].addHook('beforeCreate', stringifyField);
     }
   });
 

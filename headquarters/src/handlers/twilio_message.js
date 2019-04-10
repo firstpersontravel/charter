@@ -61,11 +61,6 @@ async function handleIncomingMessage(fromNumber, toNumber, body, media) {
     return false;
   }
 
-  if (!relaySpec.sms_in) {
-    logger.warn(`Relay ${relay.id} does not accept incoming SMS.`);
-    return false;
-  }
-
   // Get player or create trip.
   const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
   if (!tripId) {

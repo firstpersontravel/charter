@@ -5,9 +5,13 @@ var PANEL_COMMON_CLASS = {
     type: {
       type: 'enum',
       options: Object.keys(panels),
-      required: true
+      required: true,
+      help: 'The type of panel.'
     },
-    active_if: { type: 'ifClause' }
+    active_if: {
+      type: 'ifClause',
+      help: 'A test to determine if this panel is visible.'
+    }
   }
 };
 

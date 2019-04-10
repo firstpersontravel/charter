@@ -7,10 +7,28 @@ module.exports = {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     scene: { type: 'reference', collection: 'scenes', required: true },
-    medium: { type: 'enum', options: MESSAGE_MEDIUM_OPTIONS, required: true },
-    from: { type: 'reference', collection: 'roles', required: true },
-    to: { type: 'reference', collection: 'roles' },
-    content: { type: 'string', required: true },
+    medium: {
+      type: 'enum',
+      options: MESSAGE_MEDIUM_OPTIONS,
+      required: true,
+      help: 'What kind of message this is.'
+    },
+    from: {
+      type: 'reference',
+      collection: 'roles',
+      required: true,
+      help: 'The sender of the message.'
+    },
+    to: {
+      type: 'reference',
+      collection: 'roles',
+      help: 'The recipient of the message.'
+    },
+    content: {
+      type: 'string',
+      required: true,
+      help: 'For text messages, the content. For audio or image, the path.'
+    },
     read: { type: 'boolean', default: false, display: { hidden: true } }
   }
 };

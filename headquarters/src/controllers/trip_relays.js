@@ -53,7 +53,7 @@ class TripRelaysController {
   /**
    * Get relays matching a search pattern. Create them if they don't exist.
    */
-  static async ensureRelays(trip, specFilters, specType) {
+  static async ensureRelays(trip, specFilters) {
     const script = await models.Script.findByPk(trip.scriptId);
 
     // Get specs that match the filters and also the type we're looking for.
@@ -63,7 +63,6 @@ class TripRelaysController {
         Object.assign({}, relaySpec, { as: relaySpec.as || relaySpec.for }),
         specFilters
       ))
-      .filter(relaySpec => relaySpec[specType] === true)
       .value();
 
     // Ensure all relays exist.
@@ -80,7 +79,7 @@ class TripRelaysController {
    */
   static async initiateCall(trip, toRoleName, asRoleName, detectVoicemail) {
     const relayFilters = { as: toRoleName, with: asRoleName };
-    const relays = await this.ensureRelays(trip, relayFilters, 'phone_out');
+    const relays = await this.ensureRelays(trip, relayFilters);
 
     // Check for relay
     if (!relays.length) {
@@ -98,18 +97,6 @@ class TripRelaysController {
       return;
     }
     await RelayController.initiateCall(relay, player, detectVoicemail);
-  }
-
-  /**
-   * Send an admin message via admin relays.
-   */
-  static async sendAdminMessage(trip, toRoleName, messageText) {
-    const adminFilters = { for: toRoleName };
-    const relays = await this.ensureRelays(trip, adminFilters, 'admin_out');
-    for (let relay of relays) {
-      const adminMessageText = `[Admin] ${messageText}`;
-      await RelayController.sendMessage(relay, trip, adminMessageText, null);
-    }
   }
 
   /**
@@ -195,7 +182,7 @@ class TripRelaysController {
 
     // Send to forward relays -- relays as the role receiving the message.
     const fwdFilters = { as: sentTo.roleName, with: sentBy.roleName };
-    const fwdRelays = await this.ensureRelays(trip, fwdFilters, 'sms_out');
+    const fwdRelays = await this.ensureRelays(trip, fwdFilters);
 
     for (let relay of fwdRelays) {
       if (relay.id === suppressRelayId) {
@@ -211,7 +198,7 @@ class TripRelaysController {
     // should only send if the relay is for an actor, otherwise the player
     // may get texts if they use an in-game interface to send a message.
     const invFilters = { as: sentBy.roleName, with: sentTo.roleName };
-    const invRelays = await this.ensureRelays(trip, invFilters, 'sms_out');
+    const invRelays = await this.ensureRelays(trip, invFilters);
 
     for (let relay of invRelays) {
       if (relay.id === suppressRelayId) {

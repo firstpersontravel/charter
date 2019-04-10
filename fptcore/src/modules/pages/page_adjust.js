@@ -5,9 +5,14 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The role to send the adjustment to.'
     },
-    new_value: { required: true, type: 'string' }
+    new_value: {
+      required: true,
+      type: 'string',
+      help: 'The adjustment value to send.'
+    }
   },
   applyAction: function(params, actionContext) {
     return [{

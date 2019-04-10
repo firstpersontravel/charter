@@ -19,23 +19,6 @@ class TwilioCallUtil {
     response.hangup();
     return response;
   }
-
-  /**
-   * Return a voicemail, or hangup if no voicemail is available.
-   */
-  static hangupOrVoicemail(experienceName, voicemailPath) {
-    // If no voicemail configured, hang up.
-    if (!voicemailPath) {
-      return this.hangup();
-    }
-    // Otherwise, play voicemail
-    const twimlResponse = new twilio.twiml.VoiceResponse();
-    const voicemailUrl = this.getTwilioMediaPath(experienceName,
-      voicemailPath);
-    twimlResponse.play({}, voicemailUrl);
-    twimlResponse.hangup();
-    return twimlResponse;
-  }
 }
 
 module.exports = TwilioCallUtil;

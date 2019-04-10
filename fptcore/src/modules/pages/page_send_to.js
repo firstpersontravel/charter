@@ -7,10 +7,16 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true }
+      display: { primary: true },
+      help: 'The player to send to a page.'
     },
-    page_name: { required: true, type: 'reference', collection: 'pages',
-      allowNull: true }
+    page_name: {
+      required: true,
+      type: 'reference',
+      collection: 'pages',
+      allowNull: true,
+      help: 'The page to send the player to.'
+    }
   },
   applyAction: function(params, actionContext) {
     var newPageName = params.page_name !== 'null' ? params.page_name : '';
