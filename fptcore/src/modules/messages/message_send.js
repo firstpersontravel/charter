@@ -16,7 +16,7 @@ module.exports = {
       required: false,
       type: 'reference',
       collection: 'roles',
-      display: { hidden: true }
+      help: 'If your message does not have a recipient, you can add one here.'
     }
   },
   applyAction: function(params, actionContext) {
@@ -55,6 +55,22 @@ module.exports = {
         content: content
       }
     }];
+  },
+  validateResource: function(script, resource) {
+    const message = _.find(script.content.messages, {
+      name: resource.message_name
+    });
+    // If not found, message is elsewhere.
+    if (!message) {
+      return [];
+    }
+    if (message.to && resource.to_role_name) {
+      return [`Message "${message.title}" already has a recipient.`];
+    }
+    if (!message.to && !resource.to_role_name) {
+      return [`Message "${message.title}" has no recipient, so a specific "to" parameter is required.`];
+    }
+    return [];
   },
   getChildClaims: function(params) {
     return ['messages.' + params.message_name];
