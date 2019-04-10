@@ -73,4 +73,9 @@ describe('#send_message', () => {
       }
     }]);
   });
+
+  describe('#validateResource', () => {
+    it.skip('prohibits params.to_role_name with message.to');
+    it.skip('needs params.to_role_name when no message.to');
+  });
 });

@@ -45,6 +45,18 @@ const ifOpClasses = {
       );
     }
   },
+  message_contains: {
+    properties: {
+      part: { type: 'string', required: true }
+    },
+    eval: function(params, evalContext) {
+      const a = EvalCore.lookupRef(evalContext, 'event.message.content');
+      return (
+        typeof a === 'string' &&
+        a.toLowerCase().indexOf(params.part.toLowerCase()) > -1
+      );
+    }
+  },
   matches: {
     properties: {
       string_ref: { type: 'lookupable', required: true },
