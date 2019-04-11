@@ -19,11 +19,6 @@ module.exports = {
       required: true,
       help: 'The sender of the message.'
     },
-    to: {
-      type: 'reference',
-      collection: 'roles',
-      help: 'The recipient of the message.'
-    },
     content: {
       type: 'string',
       required: true,

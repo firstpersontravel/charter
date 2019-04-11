@@ -13,10 +13,10 @@ module.exports = {
       help: 'The message to send.'
     },
     to_role_name: {
-      required: false,
+      required: true,
       type: 'reference',
       collection: 'roles',
-      help: 'If your message does not have a recipient, you can add one here.'
+      help: 'The recipient of the message.'
     }
   },
   applyAction: function(params, actionContext) {

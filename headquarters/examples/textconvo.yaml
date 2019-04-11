@@ -1,5 +1,5 @@
 meta:
-  version: 9
+  version: 10
 
 roles:
   - name: Knight
@@ -23,7 +23,6 @@ messages:
     scene: SCENE-MAIN
     medium: text
     from: Sage
-    to: Knight
     content: Why hello there, fine sir/lady/being! What is your name?
 
   - name: MESSAGE-HELLO-RUDE
@@ -31,7 +30,6 @@ messages:
     scene: SCENE-MAIN
     medium: text
     from: Sage
-    to: Knight
     content: How rude, not even a greeting! What is your name?
 
   - name: MESSAGE-RETURN-GREETING
@@ -39,7 +37,6 @@ messages:
     title: Greet
     medium: text
     from: Sage
-    to: Knight
     content: Greetings, {{player_name}}. You may now await your righteous quest.
 
   - name: MESSAGE-QUEST
@@ -47,7 +44,6 @@ messages:
     title: Quest
     medium: text
     from: Sage
-    to: Knight
     content: Your quest is... the holy grail!
 
 scenes:
@@ -78,8 +74,14 @@ triggers:
             - op: contains
               string_ref: event.message.content
               part_ref: '"hey"'
-        actions: [{ name: send_message, message_name: MESSAGE-HELLO }]
-        else: [{ name: send_message, message_name: MESSAGE-HELLO-RUDE }]
+        actions:
+          - name: send_message
+            message_name: MESSAGE-HELLO
+            to_role_name: Knight
+        else:
+          - name: send_message
+            message_name: MESSAGE-HELLO-RUDE
+            to_role_name: Knight
 
   - name: getname
     events: [{type: message_received, from: Knight, to: Sage, medium: text}]
@@ -88,6 +90,13 @@ triggers:
       op: istrue
       ref: game_started
     actions:
-      - { name: set_value, value_ref: player_name, new_value_ref: event.message.content }
-      - { name: send_message, message_name: MESSAGE-RETURN-GREETING }
-      - { name: send_message, message_name: MESSAGE-QUEST, offset: 10s }
+      - name: set_value
+        value_ref: player_name
+        new_value_ref: event.message.content
+      - name: send_message
+        message_name: MESSAGE-RETURN-GREETING
+        to_role_name: Knight
+      - name: send_message
+        message_name: MESSAGE-QUEST
+        to_role_name: Knight
+        offset: 10s

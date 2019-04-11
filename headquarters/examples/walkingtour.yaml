@@ -1,5 +1,5 @@
 meta:
-  version: 9
+  version: 10
 
 layouts:
   - name: tablet
@@ -98,8 +98,12 @@ triggers:
     events: [{ type: cue_signaled, cue: CUE-ATLAS-ARRIVE }]
     scene: SCENE-MAIN
     actions:
-      - { name: send_message, message_name: MESSAGE-ATLAS-WELCOME }
-      - { name: send_to_page, role_name: Player, page_name: PAGE-ATLAS }
+      - name: send_message
+        message_name: MESSAGE-ATLAS-WELCOME
+        to_role_name: Player
+      - name: send_to_page
+        role_name: Player
+        page_name: PAGE-ATLAS
 
   - name: msg
     events:
@@ -110,8 +114,13 @@ triggers:
         geofence: GEOFENCE-ATLAS
     scene: SCENE-MAIN
     actions:
-      - { name: send_message, message_name: MESSAGE-ATLAS-REC, offset: 10s }
-      - { name: increment_value, value_ref: points, delta: 5 }
+      - name: send_message
+        message_name: MESSAGE-ATLAS-REC
+        to_role_name: Player
+        offset: 10s
+      - name: increment_value
+        value_ref: points
+        delta: 5
 
   - name: geofence
     events:
@@ -120,8 +129,12 @@ triggers:
         geofence: GEOFENCE-BON-NENE
     scene: SCENE-MAIN
     actions:
-      - { name: send_message, message_name: MESSAGE-BON-NENE-WELCOME }
-      - { name: increment_value, value_ref: points, delta: 10 }
+      - name: send_message
+        message_name: MESSAGE-BON-NENE-WELCOME
+        to_role_name: Player
+      - name: increment_value
+        value_ref: points
+        delta: 10
 
 messages:
   - name: MESSAGE-ATLAS-WELCOME
@@ -129,7 +142,6 @@ messages:
     scene: SCENE-MAIN
     medium: text
     from: Guide
-    to: Player
     content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
 
   - name: MESSAGE-ATLAS-REC
@@ -137,7 +149,6 @@ messages:
     scene: SCENE-MAIN
     medium: text
     from: Guide
-    to: Player
     content: Try the trout sandwich.
 
   - name: MESSAGE-BON-NENE-WELCOME
@@ -145,5 +156,4 @@ messages:
     scene: SCENE-MAIN
     medium: text
     from: Guide
-    to: Player
     content: The mushroom spaghetti bowl is amazing.

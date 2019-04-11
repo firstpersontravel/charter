@@ -103,7 +103,8 @@ describe('WalkingTourExample', () => {
     assert.strictEqual(scheduledAction.type, 'action');
     assert.strictEqual(scheduledAction.name, 'send_message');
     assert.deepStrictEqual(scheduledAction.params, {
-      message_name: 'MESSAGE-ATLAS-REC'
+      message_name: 'MESSAGE-ATLAS-REC',
+      to_role_name: 'Player'
     });
     const tenSecFromNow = now.clone().add(10, 'seconds');
     assert(moment.utc(scheduledAction.scheduledAt).isSame(tenSecFromNow));
