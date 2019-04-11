@@ -32,6 +32,21 @@ Migrator.getMigrations = function(currentMigrationNum) {
   });
 };
 
+function walkIfExpressions(ifClause, iteree) {
+  if (!ifClause) {
+    return;
+  }
+  if (ifClause.op === 'and' || ifClause.op === 'or') {
+    ifClause.items.forEach(item => walkIfExpressions(item, iteree));
+    return;
+  }
+  if (ifClause.op === 'not') {
+    walkIfExpressions(ifClause.item, iteree);
+    return;
+  }
+  iteree(ifClause);
+}
+
 Migrator.runMigration = function(collectionName, migration, scriptContent) {
   if (collectionName === 'scriptContent') {
     migration(scriptContent);
@@ -47,10 +62,17 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
     return;
   }
   if (collectionName === 'ifClauses') {
-    ScriptCore.walkParams(scriptContent, 'ifClause',
-      function(ifClause, spec, parent, key) {
-        migration(ifClause, scriptContent, parent, key);
-      });
+    ScriptCore.walkParams(scriptContent, 'ifClause', (ifClause, spec) => (
+      migration(ifClause, scriptContent)
+    ));
+    return;
+  }
+  if (collectionName === 'ifExpressions') {
+    ScriptCore.walkParams(scriptContent, 'ifClause', (ifClause, spec) => (
+      walkIfExpressions(ifClause, ifExpression => (
+        migration(ifExpression, scriptContent)
+      ))
+    ));
     return;
   }
   if (collectionName === 'eventSpecs') {

@@ -102,62 +102,72 @@ describe('Migrator', () => {
 
       sinon.assert.callCount(migration, 4);
       sinon.assert.calledWith(
-        migration.getCall(0),
-        { name: 'play_audio', audio_name: '2' });
+        migration.getCall(0), { name: 'play_audio', audio_name: '2' });
       sinon.assert.calledWith(
-        migration.getCall(1),
-        { name: 'play_audio', audio_name: '4' });
+        migration.getCall(1), { name: 'play_audio', audio_name: '4' });
       sinon.assert.calledWith(
-        migration.getCall(2),
-        { name: 'play_audio', audio_name: '6' });
+        migration.getCall(2), { name: 'play_audio', audio_name: '6' });
       sinon.assert.calledWith(
-        migration.getCall(3),
-        { name: 'play_audio', audio_name: '8' });
+        migration.getCall(3), { name: 'play_audio', audio_name: '8' });
     });
 
-    it('migrates if clauses', () => {
-      const scriptContent = {
-        triggers: [{
-          active_if: { op: 'istrue', ref: 'test1' },
-          actions: [{ name: 'play_audio', audio_name: '2' }]
-        }, {
-          actions: [{
-            name: 'conditional',
-            if: { op: 'istrue', ref: 'test2' },
-            actions: [{ name: 'play_audio', audio_name: '4' }],
-            elseifs: [{
-              if: { op: 'istrue', ref: 'test3' },
-              actions: [{ name: 'play_audio', audio_name: '6' }]
-            }],
-            else: [{ name: 'play_audio', audio_name: '8' }]
-          }]
+    const lotsOfIfs = {
+      triggers: [{
+        active_if: { op: 'istrue', ref: 'test1' },
+        actions: [{ name: 'play_audio', audio_name: '2' }]
+      }, {
+        actions: [{
+          name: 'conditional',
+          if: { op: 'istrue', ref: 'test2' },
+          actions: [{ name: 'play_audio', audio_name: '4' }],
+          elseifs: [{
+            if: {
+              op: 'and',
+              items: [
+                { op: 'istrue', ref: 'test3' },
+                { op: 'not', item: { op: 'equals', ref1: 'a', ref2: 'b' } }
+              ],
+            },
+            actions: [{ name: 'play_audio', audio_name: '6' }]
+          }],
+          else: [{ name: 'play_audio', audio_name: '8' }]
         }]
-      };
+      }]
+    };
+
+    it('migrates if clauses', () => {
       const migration = sinon.stub();
 
-      Migrator.runMigration('ifClauses', migration, scriptContent);
+      Migrator.runMigration('ifClauses', migration, lotsOfIfs);
 
       sinon.assert.callCount(migration, 4);
       sinon.assert.calledWith(
-        migration.getCall(0),
-        scriptContent.triggers[0].active_if,
-        scriptContent,
-        scriptContent.triggers[0], 'active_if');
+        migration.getCall(0), { op: 'istrue', ref: 'test1' }, lotsOfIfs);
       sinon.assert.calledWith(
-        migration.getCall(1),
-        undefined,
-        scriptContent,
-        scriptContent.triggers[1], 'active_if');
+        migration.getCall(1), undefined, lotsOfIfs);
       sinon.assert.calledWith(
-        migration.getCall(2),
-        scriptContent.triggers[1].actions[0].if,
-        scriptContent,
-        scriptContent.triggers[1].actions[0], 'if');
+        migration.getCall(2), { op: 'istrue', ref: 'test2' }, lotsOfIfs);
+      // Complex if statement
       sinon.assert.calledWith(
-        migration.getCall(3),
-        scriptContent.triggers[1].actions[0].elseifs[0].if,
-        scriptContent,
-        scriptContent.triggers[1].actions[0].elseifs[0], 'if');
+        migration.getCall(3), lotsOfIfs.triggers[1].actions[0].elseifs[0].if,
+        lotsOfIfs);
+    });
+
+    it('migrates if expressions', () => {
+      const migration = sinon.stub();
+
+      Migrator.runMigration('ifExpressions', migration, lotsOfIfs);
+
+      sinon.assert.callCount(migration, 4);
+      sinon.assert.calledWith(
+        migration.getCall(0), { op: 'istrue', ref: 'test1' }, lotsOfIfs);
+      sinon.assert.calledWith(
+        migration.getCall(1), { op: 'istrue', ref: 'test2' }, lotsOfIfs);
+      sinon.assert.calledWith(
+        migration.getCall(2), { op: 'istrue', ref: 'test3' }, lotsOfIfs);
+      sinon.assert.calledWith(
+        migration.getCall(3), { op: 'equals', ref1: 'a', ref2: 'b' },
+        lotsOfIfs);
     });
 
     it('migrates event specs', () => {

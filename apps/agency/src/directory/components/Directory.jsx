@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
+import { canRoleHaveUser } from '../../operate/utils';
+
 export default class Directory extends Component {
 
   renderRole(roleName, roleProfiles) {
@@ -30,16 +32,16 @@ export default class Directory extends Component {
   }
 
   renderRoles() {
+    const script = this.props.experience.script;
     const profiles = this.props.profiles;
-    const roleNames = _.uniq(_.map(profiles, 'roleName')).sort();
-    const renderedRoles = _.filter(roleNames).map((roleName) => {
-      const roleProfiles = _.filter(profiles, {
-        roleName: roleName
-      });
+    const roleNames = _(script.content.roles)
+      .filter(canRoleHaveUser)
+      .map('name')
+      .value();
+    return roleNames.map((roleName) => {
+      const roleProfiles = _.filter(profiles, { roleName: roleName });
       return this.renderRole(roleName, roleProfiles);
     });
-
-    return renderedRoles;
   }
 
   renderRolesSidebar() {
@@ -68,7 +70,8 @@ export default class Directory extends Component {
   }
 
   render() {
-    if (this.props.profiles.isLoading) {
+    if (this.props.profiles.isLoading ||
+      !this.props.experience.script) {
       return (
         <div className="container-fluid">Loading</div>
       );
