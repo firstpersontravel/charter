@@ -1,7 +1,7 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var ContextCore = require('../../cores/context');
-var EvalCore = require('../../cores/eval');
+const TextUtil = require('../../utils/text');
+const TemplateUtil = require('../../utils/template');
 
 module.exports = {
   help: 'Send a pre-defined email from one player to another.',
@@ -15,8 +15,8 @@ module.exports = {
     }
   },
   applyAction: function(params, actionContext) {
-    var name = params.email_name;
-    var emailData = _.find(actionContext.scriptContent.emails, { name: name });
+    const name = params.email_name;
+    const emailData = _.find(actionContext.scriptContent.emails, { name: name });
     if (!emailData) {
       return [{
         operation: 'log',
@@ -24,12 +24,12 @@ module.exports = {
         message: 'Could not find email named "' + name + '".'
       }];
     }
-    var subject = EvalCore.templateText(actionContext.evalContext,
+    const subject = TemplateUtil.templateText(actionContext.evalContext,
       emailData.subject, actionContext.timezone);
-    var bodyMarkdown = EvalCore.templateText(actionContext.evalContext,
+    const bodyMarkdown = TemplateUtil.templateText(actionContext.evalContext,
       emailData.body, actionContext.timezone);
 
-    var fromInbox = _.find(actionContext.scriptContent.inboxes,
+    const fromInbox = _.find(actionContext.scriptContent.inboxes,
       { name: emailData.from });
     if (!fromInbox) {
       return [{
@@ -39,7 +39,7 @@ module.exports = {
       }];
     }
 
-    var toRole = _.find(actionContext.scriptContent.roles,
+    const toRole = _.find(actionContext.scriptContent.roles,
       { name: emailData.to });
     if (!toRole) {
       return [{
@@ -49,7 +49,7 @@ module.exports = {
       }];
     }
 
-    var toRoleSlug = ContextCore.slugForRole(toRole);
+    const toRoleSlug = TextUtil.varForText(toRole.title);
     if (!toRoleSlug) {
       return [{
         operation: 'log',
@@ -57,7 +57,7 @@ module.exports = {
         message: 'Could not generate slug for role "' + emailData.to + '".'
       }];      
     }
-    var toPlayerContext = actionContext.evalContext[toRoleSlug];
+    const toPlayerContext = actionContext.evalContext[toRoleSlug];
     if (!toPlayerContext) {
       return [{
         operation: 'log',

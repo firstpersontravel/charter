@@ -2,11 +2,11 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ConditionCore, EvalCore, TextUtil } from 'fptcore';
+import { ConditionCore, TemplateUtil, TextUtil } from 'fptcore';
 
 function renderCompletedAchievementStatus(trip, achievement) {
   if (achievement.type === 'choice') {
-    const value = EvalCore.lookupRef(trip.evalContext, achievement.test);
+    const value = TemplateUtil.lookupRef(trip.evalContext, achievement.test);
     const statusTitle = achievement.titles[value];
     return statusTitle || 'Unknown value';
   }

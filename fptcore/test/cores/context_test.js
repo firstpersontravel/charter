@@ -13,14 +13,6 @@ describe('ContextCore', () => {
     sandbox.restore();
   });
 
-  describe('#slugForRole', () => {
-    it('slugifies a complex name', () => {
-      const res = ContextCore.slugForRole({ title: 'Gabe\'s friend' });
-
-      assert.strictEqual(res, 'gabes_friend');
-    });
-  });
-
   describe('#gatherPlayerEvalContext', () => {
     it('gathers values from player', () => {
       const player = {

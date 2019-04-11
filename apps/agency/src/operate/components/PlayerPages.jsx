@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { EvalCore } from 'fptcore';
+import { TemplateUtil } from 'fptcore';
 
 function renderPage(player, page) {
   const trip = player.trip;
@@ -11,16 +11,17 @@ function renderPage(player, page) {
     .filter({ type: 'button' })
     .map(panel => (
       <li key={`${page.name}-${panel.cue}`}>
-        {EvalCore.templateText(trip.evalContext, panel.text, trip.experience.timezone)}
+        {TemplateUtil.templateText(trip.evalContext, panel.text,
+          trip.experience.timezone)}
       </li>
     ))
     .value();
   const cueOptions = cueButtons.length > 0 ? (
     <ul style={{ margin: 0 }}>{cueButtons}</ul>
   ) : null;
-  const title = EvalCore.templateText(context, page.title,
+  const title = TemplateUtil.templateText(context, page.title,
     player.trip.experience.timezone);
-  const directiveText = EvalCore.templateText(context, page.directive,
+  const directiveText = TemplateUtil.templateText(context, page.directive,
     trip.experience.timezone);
   const directive = page.directive ? `: ${directiveText}` : '';
   return (

@@ -1,11 +1,10 @@
-const _ = require('lodash');
 const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
 const ActionCore = require('../../src/cores/action');
 const ActionsRegistry = require('../../src/registries/actions');
-const TriggerCore = require('../../src/cores/trigger');
+const TriggerActionCore = require('../../src/cores/trigger_action');
 const TriggerEventCore = require('../../src/cores/trigger_event');
 
 const sandbox = sinon.sandbox.create();
@@ -154,39 +153,7 @@ describe('ActionCore', () => {
     });
   });
 
-  describe('#unpackedActionsForTrigger', () => {
-    it('returns actions with added event and trigger info', () => {
-      sandbox.stub(TriggerCore, 'packedActionsForTrigger').callsFake(() => {
-        return [{ name: 'fake', param1: 1 }];
-      });
-      const trigger = { name: 'trigger' };
-      const event = { type: 'event' };
-      const actionContext = { evalContext: {}, evaluateAt: now };
-
-      const result = ActionCore.unpackedActionsForTrigger(trigger, event,
-        actionContext);
-
-      assert.deepStrictEqual(result, [{
-        name: 'fake',
-        params: { param1: 1 },
-        scheduleAt: now,
-        triggerName: trigger.name,
-        event: event
-      }]);
-
-      // Ensure TriggerCore.packedActionsForTrigger was called with the event
-      // added to the context -- for when triggers have if statements
-      // that depend on the contextual event.
-      assert.deepStrictEqual(
-        TriggerCore.packedActionsForTrigger.firstCall.args, [
-          trigger,
-          _.merge({}, actionContext, { evalContext: { event: event } })
-        ]);
-    });
-  });
-
   describe('#applyOrScheduleAction', () => {
-
     const actionContext = { evaluateAt: now };
 
     it('applies action if scheduled immediately', () => {
@@ -224,7 +191,7 @@ describe('ActionCore', () => {
     const actionContext = { evalContext: {}, evaluateAt: now };
 
     it('returns history op even if no actions', () => {
-      sandbox.stub(ActionCore, 'unpackedActionsForTrigger').returns([]);
+      sandbox.stub(TriggerActionCore, 'unpackedActionsForTrigger').returns([]);
 
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
@@ -241,7 +208,7 @@ describe('ActionCore', () => {
     });
 
     it('returns immediate result', () => {
-      sandbox.stub(ActionCore, 'unpackedActionsForTrigger')
+      sandbox.stub(TriggerActionCore, 'unpackedActionsForTrigger')
         .returns([{ name: 'add',  params: {}, scheduleAt: now }]);
 
       const trigger = { name: 'trigger' };
@@ -273,7 +240,7 @@ describe('ActionCore', () => {
         triggerName: 'trigger',
         event: event
       };
-      sandbox.stub(ActionCore, 'unpackedActionsForTrigger')
+      sandbox.stub(TriggerActionCore, 'unpackedActionsForTrigger')
         .returns([unpackedAction]);
 
       const res = ActionCore.applyTrigger(trigger, event,

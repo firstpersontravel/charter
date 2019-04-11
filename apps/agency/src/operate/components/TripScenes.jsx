@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ConditionCore, EvalCore, ResourcesRegistry } from 'fptcore';
+import { ConditionCore, ResourcesRegistry, TemplateUtil } from 'fptcore';
 
 import { sortForRole } from '../utils';
 import { isProduction } from '../../utils';
@@ -43,7 +43,7 @@ export default class TripScenes extends Component {
     const pageSceneTitle = pageScene.title;
     const activeBtnClass = isProduction() ? 'btn-danger' : 'btn-primary';
     const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
-    const panelText = EvalCore.templateText(trip.evalContext, panel.text || '',
+    const panelText = TemplateUtil.templateText(trip.evalContext, panel.text || '',
       trip.experience.timezone);
     const activeCueTitle = panel.type === 'button' ?
       panelText : `Cue ${panel.cue}`;
@@ -106,7 +106,7 @@ export default class TripScenes extends Component {
       .filter(panel => ConditionCore.if(trip.evalContext, panel.active_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
-    const pageTitle = EvalCore.templateText(trip.evalContext, page.title,
+    const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
       trip.experience.timezone);
 
     const isAckedIcon = isAckedPage ? (

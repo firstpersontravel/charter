@@ -42,6 +42,17 @@ class TextUtil {
       .value();
   }
 
+  // Underscored var name for text - underscores and lowercase chars.
+  static varForText(text) {
+    if (!text) {
+      return null;
+    }
+    return text
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^\w]/g, '');
+  }
+
   // SUPER DUMB pluralization
   static pluralize(singular) {
     return plurals[singular] || (singular + 's');

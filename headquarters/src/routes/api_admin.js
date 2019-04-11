@@ -46,23 +46,6 @@ async function resetRoute(req, res) {
   res.json({ data: { ok: true } });
 }
 
-async function phraseRoute(req, res) {
-  // const tripId = req.params.tripId;
-  // const actionPhrase = req.body.action_phrase;
-  // const actionContext = await TripUtil.getActionContext(tripId);
-  // const packedAction = ActionPhraseCore.parseActionPhrase(actionPhrase, 
-  //   actionContext);
-  // const unpackedAction = ActionPhraseCore.unpackAction(packedAction,
-  //   actionContext);
-  // if (packedAction.when) {
-  //   await TripActionController.scheduleAction(tripId, unpackedAction);
-  // } else {
-  //   await TripActionController.applyAction(tripId, unpackedAction);
-  // }
-  // await TripNotifyController.notifyAction(tripId, unpackedAction);
-  res.json({ data: { ok: true } });
-}
-
 async function triggerRoute(req, res) {
   const tripId = req.params.tripId;
   const triggerName = req.body.trigger_name;
@@ -75,7 +58,6 @@ module.exports = {
   fastForwardRoute,
   fastForwardNextRoute,
   notifyRoute,
-  phraseRoute,
   resetRoute,
   triggerRoute,
   updateRelaysRoute

@@ -6,9 +6,18 @@ const TextUtil = require('../../src/utils/text');
 const sandbox = sinon.sandbox.create();
 
 describe('TextUtil', () => {
-
   afterEach(() => {
     sandbox.restore();
+  });
+
+  describe('#varForText', () => {
+    it('slugifies a complex name', () => {
+      assert.strictEqual(TextUtil.varForText('Bob\'s friend'), 'bobs_friend');
+    });
+
+    it('returns null for empty', () => {
+      assert.strictEqual(TextUtil.varForText(null), null);
+    });
   });
 
   describe('#splitWords', () => {

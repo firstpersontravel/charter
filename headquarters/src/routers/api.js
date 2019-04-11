@@ -93,8 +93,6 @@ apiRouter.post('/admin/trips/:tripId/fast_forward_next',
   asyncRoute(apiAdminRoutes.fastForwardNextRoute));
 apiRouter.post('/admin/trips/:tripId/reset',
   asyncRoute(apiAdminRoutes.resetRoute));
-apiRouter.post('/admin/trips/:tripId/phrase',
-  asyncRoute(apiAdminRoutes.phraseRoute));
 apiRouter.post('/admin/trips/:tripId/trigger',
   asyncRoute(apiAdminRoutes.triggerRoute));
 

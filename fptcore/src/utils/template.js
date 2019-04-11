@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const moment = require('moment-timezone');
 
-const TimeUtil = require('../utils/time');
+const TimeUtil = require('./time');
 
 const refConstants = { true: true, false: false, null: null };
 const templateRegex = /{{\s*([\w_\-.:]+)\s*}}/gi;
 const ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif\s*%}/gi;
 
-class EvalCore {
+class TemplateUtil {
   static lookupRef(evalContext, ref) {
     if (_.isBoolean(ref) || _.isNull(ref) || _.isNumber(ref)) {
       return ref;
@@ -67,4 +67,4 @@ class EvalCore {
   }
 }
 
-module.exports = EvalCore;
+module.exports = TemplateUtil;

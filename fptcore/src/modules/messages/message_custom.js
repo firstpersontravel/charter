@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const EvalCore = require('../../cores/eval');
+const TemplateUtil = require('../../utils/template');
 
 const MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
 
@@ -37,7 +37,7 @@ module.exports = {
   },
   applyAction: function(params, actionContext) {
     const roles = actionContext.scriptContent.roles || [];
-    const content = EvalCore.templateText(actionContext.evalContext,
+    const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content);
     const sentByRole = _.find(roles, { name: params.from_role_name });
     const sentToRole = _.find(roles, { name: params.to_role_name });

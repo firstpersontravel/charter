@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var EvalCore = require('../../cores/eval');
+var TemplateUtil = require('../../utils/template');
 
 module.exports = {
   help: 'Play a clip on an active phone call.',
@@ -34,7 +34,7 @@ module.exports = {
       {
         clause: 'say',
         voice: clip.voice || 'alice',
-        message: EvalCore.templateText(actionContext.evalContext,
+        message: TemplateUtil.templateText(actionContext.evalContext,
           clip.transcript, actionContext.timezone)
       };
 

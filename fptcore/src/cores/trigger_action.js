@@ -1,8 +1,10 @@
 const _ = require('lodash');
+const moment = require('moment-timezone');
 
 const ConditionCore = require('./condition');
+const TimeUtil = require('../utils/time');
 
-class TriggerCore {
+class TriggerActionCore {
   /**
    * Walk the trigger actions and call the iterees for each child.
    */
@@ -106,6 +108,40 @@ class TriggerCore {
   static packedActionsForTrigger(trigger, actionContext) {
     return this.packedActionsForClause(trigger, actionContext);
   }
+
+  /**
+   * Parse an action when modifier ("in 3m") into a time.
+   */
+  static unpackAction(action, actionContext) {
+    const params = _.omit(action, 'name', 'when', 'offset');
+    const baseTimestamp = action.when ?
+      actionContext.evalContext.schedule[action.when] :
+      actionContext.evaluateAt;
+    const offsetSecs = TimeUtil.secondsForOffsetShorthand(action.offset);
+    const scheduleAt = moment
+      .utc(baseTimestamp)
+      .add(offsetSecs, 'seconds');
+    return {
+      name: action.name,
+      params: params,
+      scheduleAt: scheduleAt
+    };
+  }
+
+  /**
+   * Calculate actions for a trigger and event -- include the trigger name
+   * and event in the action result.
+   */
+  static unpackedActionsForTrigger(trigger, actionContext) {
+    const packedActions = this.packedActionsForTrigger(trigger, actionContext);
+    return packedActions.map((packedAction) => {
+      const unpackedAction = this.unpackAction(packedAction, actionContext);
+      return Object.assign(unpackedAction, {
+        triggerName: trigger.name,
+        event: actionContext.evalContext.event
+      });
+    });
+  }
 }
 
-module.exports = TriggerCore;
+module.exports = TriggerActionCore;

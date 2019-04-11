@@ -1,22 +1,24 @@
-var _ = require('lodash');
-var moment = require('moment');
+const _ = require('lodash');
+const moment = require('moment');
+
+const TextUtil = require('../utils/text');
 
 class ContextCore {
   /**
    * Gather context for a player.
    */
   static gatherPlayerEvalContext(env, trip, player) {
-    var user = player.user || {};
-    var profile = user.profile || {};
-    var role = _.find(_.get(trip, 'script.content.roles') || [],
+    const user = player.user || {};
+    const profile = user.profile || {};
+    const role = _.find(_.get(trip, 'script.content.roles') || [],
       { name: player.roleName }) || {};
-    var page = _.find(_.get(trip, 'script.content.pages') || [],
+    const page = _.find(_.get(trip, 'script.content.pages') || [],
       { name: player.currentPageName }) || {};
-    var link = (env.host || '') + '/s/' + player.id;
-    var fullName = user.lastName ?
+    const link = (env.host || '') + '/s/' + player.id;
+    const fullName = user.lastName ?
       (user.firstName + ' ' + user.lastName) :
       user.firstName;
-    var contactName = role.title || fullName || null;
+    const contactName = role.title || fullName || null;
     return _.assign({}, profile.values, {
       currentPageName: player.currentPageName || null,
       link: link,
@@ -31,24 +33,11 @@ class ContextCore {
   }
 
   /**
-   * Get the role slug for a given role.
-   */
-  static slugForRole(role) {
-    if (!role || !role.title) {
-      return null;
-    }
-    return role.title
-      .toLowerCase()
-      .replace(/\s+/g, '_')
-      .replace(/[^\w]/g, '');
-  }
-
-  /**
    * Gather all context for a trip.
    */
   static gatherEvalContext(env, trip) {
     // Gather core values
-    var context = _.assign({}, trip.customizations, trip.values, {
+    const context = _.assign({}, trip.customizations, trip.values, {
       date: moment.utc(trip.date, 'YYYY-MM-DD').format('dddd, MMMM D'),
       currentSceneName: trip.currentSceneName,
       waypointOptions: trip.waypointOptions,
@@ -56,15 +45,15 @@ class ContextCore {
       history: trip.history
     });
     // Add waypoint values if present
-    var waypointNames = Object.keys(trip.waypointOptions || {});
+    const waypointNames = Object.keys(trip.waypointOptions || {});
     _.each(waypointNames, (waypointName) => {
-      var waypoints = trip.script.content.waypoints;
-      var waypoint = _.find(waypoints, { name: waypointName });
+      const waypoints = trip.script.content.waypoints;
+      const waypoint = _.find(waypoints, { name: waypointName });
       if (!waypoint) {
         return;
       }
-      var optionName = trip.waypointOptions[waypointName];
-      var option = _.find(waypoint.options, { name: optionName });
+      const optionName = trip.waypointOptions[waypointName];
+      const option = _.find(waypoint.options, { name: optionName });
       if (!option) {
         return;
       }
@@ -73,11 +62,14 @@ class ContextCore {
       }
     });
     // Add player values
-    var roles = _.get(trip, 'script.content.roles') || [];
+    const roles = _.get(trip, 'script.content.roles') || [];
     _.each(trip.players, (player) => {
-      var role = _.find(roles, { name: player.roleName });
-      var roleSlug = this.slugForRole(role);
-      var playerContext = this.gatherPlayerEvalContext(env, trip, player);
+      const role = _.find(roles, { name: player.roleName });
+      if (!role) {
+        return;
+      }
+      const roleSlug = TextUtil.varForText(role.title);
+      const playerContext = this.gatherPlayerEvalContext(env, trip, player);
       if (roleSlug) {
         context[roleSlug] = playerContext;
       }

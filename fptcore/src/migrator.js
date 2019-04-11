@@ -4,7 +4,7 @@ var fs = require('fs');
 var ResourcesRegistry = require('./registries/resources');
 var ScriptCore = require('./cores/script');
 var TextUtil = require('./utils/text');
-var TriggerCore = require('./cores/trigger');
+var TriggerActionCore = require('./cores/trigger_action');
 
 var Migrator = {};
 
@@ -55,9 +55,9 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
   var triggers = scriptContent.triggers || [];
   if (collectionName === 'actions') {
     triggers.forEach(function(trigger) {
-      TriggerCore.walkPackedActions(trigger.actions, '', function(action) {
-        migration(action, scriptContent);
-      }, function() {});
+      TriggerActionCore.walkPackedActions(trigger.actions, '', action => (
+        migration(action, scriptContent)
+      ), () => {});
     });
     return;
   }

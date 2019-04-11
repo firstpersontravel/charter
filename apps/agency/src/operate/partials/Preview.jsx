@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ConditionCore, EvalCore } from 'fptcore';
+import { ConditionCore, TemplateUtil } from 'fptcore';
 
 function renderPanel(player, page, panel) {
   if (!ConditionCore.if(player.trip.evalContext, panel.active_if)) {
@@ -10,7 +10,7 @@ function renderPanel(player, page, panel) {
   }
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
-    const humanized = EvalCore.templateText(player.trip.evalContext,
+    const humanized = TemplateUtil.templateText(player.trip.evalContext,
       panel.text, player.trip.experience.timezone);
     return humanized.split('\n').filter(Boolean).map(p => (
       <p key={p} className="card-text mb-2">
@@ -22,7 +22,7 @@ function renderPanel(player, page, panel) {
       panel.type === 'numberpad') {
     const isSceneActive = page.scene === player.trip.currentSceneName;
     const script = player.trip.script;
-    const panelText = EvalCore.templateText(player.trip.evalContext,
+    const panelText = TemplateUtil.templateText(player.trip.evalContext,
       panel.text || panel.placeholder, player.trip.experience.timezone);
     const scene = _.find(script.content.scenes, { name: page.scene });
     const disabledPanelText = (
@@ -57,7 +57,7 @@ function renderPage(page, player) {
   const panels = page.panels || [];
   let headerPanel = null;
   if (page.directive) {
-    const headerText = EvalCore.templateText(trip.evalContext,
+    const headerText = TemplateUtil.templateText(trip.evalContext,
       page.directive, trip.experience.timezone);
     headerPanel = (
       <div className="card-header">

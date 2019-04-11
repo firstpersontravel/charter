@@ -87,7 +87,7 @@ export default DS.Model.extend({
 
   lookupRef: function(ref) {
     var context = this.get('evalContext');
-    return fptCore.EvalCore.lookupRef(context, ref);
+    return fptCore.TemplateUtil.lookupRef(context, ref);
   },
 
   setValue: function(valueRef, newValue) {
@@ -103,7 +103,7 @@ export default DS.Model.extend({
   },
 
   humanizeText: function(text) {
-    return fptCore.EvalCore.templateText(this.get('evalContext'), text,
+    return fptCore.TemplateUtil.templateText(this.get('evalContext'), text,
       this.get('experience.timezone'));
   }
 });

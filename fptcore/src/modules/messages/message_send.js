@@ -1,6 +1,6 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var EvalCore = require('../../cores/eval');
+const TemplateUtil = require('../../utils/template');
 
 module.exports = {
   help: 'Send a pre-defined message from one player to another.',
@@ -20,8 +20,8 @@ module.exports = {
     }
   },
   applyAction: function(params, actionContext) {
-    var name = params.message_name;
-    var messageData = _.find(actionContext.scriptContent.messages,
+    const name = params.message_name;
+    const messageData = _.find(actionContext.scriptContent.messages,
       { name: name });
     if (!messageData) {
       return [{
@@ -30,12 +30,12 @@ module.exports = {
         message: 'Could not find message named "' + name + '".'
       }];
     }
-    var medium = messageData.medium;
-    var content = EvalCore.templateText(actionContext.evalContext,
+    const medium = messageData.medium;
+    const content = TemplateUtil.templateText(actionContext.evalContext,
       messageData.content, actionContext.timezone);
-    var hasBeenRead = messageData.read === true;
-    var fromRoleName = messageData.from;
-    var toRoleName = params.to_role_name || messageData.to;
+    const hasBeenRead = messageData.read === true;
+    const fromRoleName = messageData.from;
+    const toRoleName = params.to_role_name || messageData.to;
     if (!toRoleName) {
       return [{
         operation: 'log',

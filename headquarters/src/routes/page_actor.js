@@ -3,8 +3,8 @@ const Promise = require('bluebird');
 const Sequelize = require('sequelize');
 
 const ConditionCore = require('../../../fptcore/src/cores/condition');
-const EvalCore = require('../../../fptcore/src/cores/eval');
 const PlayerCore = require('../../../fptcore/src/cores/player');
+const TemplateUtil = require('../../../fptcore/src/utils/template');
 
 const config = require('../config');
 const models = require('../models');
@@ -12,27 +12,27 @@ const TripUtil = require('../controllers/trip_util');
 
 const supportedPartials = {
   button: (evalContext, panel, timezone) => ({
-    text: EvalCore.templateText(evalContext, panel.text, timezone)
+    text: TemplateUtil.templateText(evalContext, panel.text, timezone)
   }),
   text: (evalContext, panel, timezone) => ({
-    paragraphs: EvalCore
+    paragraphs: TemplateUtil
       .templateText(evalContext, panel.text, timezone)
       .split('\n')
       .filter(Boolean)
   }),
   choice: (evalContext, panel, timezone) => ({
-    text: EvalCore.templateText(evalContext, panel.text, timezone),
+    text: TemplateUtil.templateText(evalContext, panel.text, timezone),
     choices: _.map(panel.choices, choice => (
       Object.assign({}, choice, {
-        isChosen: EvalCore.lookupRef(evalContext, panel.value_ref) ===
+        isChosen: TemplateUtil.lookupRef(evalContext, panel.value_ref) ===
           choice.value
       })
     ))
   }),
   yesno: (evalContext, panel, timezone) => ({
-    text: EvalCore.templateText(evalContext, panel.text, timezone),
-    isYes: EvalCore.lookupRef(evalContext, panel.value_ref) === true,
-    isNo: EvalCore.lookupRef(evalContext, panel.value_ref) === false
+    text: TemplateUtil.templateText(evalContext, panel.text, timezone),
+    isYes: TemplateUtil.lookupRef(evalContext, panel.value_ref) === true,
+    isNo: TemplateUtil.lookupRef(evalContext, panel.value_ref) === false
   }),
   default: () => ({})
 };
@@ -64,7 +64,7 @@ function getPage(objs, evalContext, player) {
   const appearanceSort = PlayerCore.getSceneSort(script, evalContext, player);
   const appearance = pageInfo.appearance;
   const page = pageInfo.page;
-  const directiveText = EvalCore.templateText(evalContext,
+  const directiveText = TemplateUtil.templateText(evalContext,
     page.directive, timezone);
   const panels = _(page.panels || [])
     .filter(panel => ConditionCore.if(evalContext, panel.active_if))

@@ -1,10 +1,9 @@
 const _ = require('lodash');
 
 const ActionParamCore = require('./action_param');
-const ActionPhraseCore = require('./action_phrase');
 const ActionResultCore = require('./action_result');
 const ActionsRegistry = require('../registries/actions');
-const TriggerCore = require('./trigger');
+const TriggerActionCore = require('./trigger_action');
 const TriggerEventCore = require('./trigger_event');
 
 class ActionCore {
@@ -101,8 +100,10 @@ class ActionCore {
 
     // Add event to context for consideration for if logic. Figure out which
     // actions should be called, either now or later.
-    const nextActions = this.unpackedActionsForTrigger(
-      trigger, event, actionContextWhenTriggered);
+    const contextWithEvent = this.addEventToContext(event,
+      actionContextWhenTriggered);
+    const nextActions = TriggerActionCore.unpackedActionsForTrigger(
+      trigger, contextWithEvent);
 
     // Either call or schedule each action.
     for (const action of nextActions) {
@@ -113,24 +114,6 @@ class ActionCore {
 
     // Return all results
     return result;
-  }
-
-  /**
-   * Calculate actions for a trigger and event -- include the trigger name
-   * and event in the action result.
-   */
-  static unpackedActionsForTrigger(trigger, event, actionContext) {
-    var contextWithEvent = this.addEventToContext(event, actionContext);
-    return TriggerCore
-      .packedActionsForTrigger(trigger, contextWithEvent)
-      .map((packedAction) => {
-        var unpackedAction = ActionPhraseCore.unpackAction(packedAction,
-          actionContext);
-        return Object.assign(unpackedAction, {
-          triggerName: trigger.name,
-          event: event
-        });
-      });
   }
 
   /**

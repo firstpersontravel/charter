@@ -1,6 +1,6 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var EvalCore = require('../../cores/eval');
+const TemplateUtil = require('../../utils/template');
 
 module.exports = {
   help: 'Update a value in the trip state to either a constant number or string, or to match another value by reference.',
@@ -18,7 +18,7 @@ module.exports = {
     }
   },
   applyAction: function(params, actionContext) {
-    var newValue = EvalCore.lookupRef(actionContext.evalContext,
+    const newValue = TemplateUtil.lookupRef(actionContext.evalContext,
       params.new_value_ref);
     return [{
       operation: 'updateTripValues',

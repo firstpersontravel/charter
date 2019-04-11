@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
-const EvalCore = require('./eval');
+// TODO - just replace these with `_.get`?
+const TemplateUtil = require('../utils/template');
 
 const ifSpec = {};
 
@@ -14,7 +15,7 @@ const ifOpClasses = {
       }
     },
     eval: function(params, evalContext) {
-      return !!EvalCore.lookupRef(evalContext, params.ref);
+      return !!TemplateUtil.lookupRef(evalContext, params.ref);
     }
   },
   equals: {
@@ -24,8 +25,8 @@ const ifOpClasses = {
     },
     eval: function(params, evalContext) {
       return (
-        EvalCore.lookupRef(evalContext, params.ref1) ===
-        EvalCore.lookupRef(evalContext, params.ref2)
+        TemplateUtil.lookupRef(evalContext, params.ref1) ===
+        TemplateUtil.lookupRef(evalContext, params.ref2)
       );
     }
   },
@@ -35,8 +36,8 @@ const ifOpClasses = {
       part_ref: { type: 'lookupable', required: true }
     },
     eval: function(params, evalContext) {
-      const a = EvalCore.lookupRef(evalContext, params.string_ref);
-      const b = EvalCore.lookupRef(evalContext, params.part_ref);
+      const a = TemplateUtil.lookupRef(evalContext, params.string_ref);
+      const b = TemplateUtil.lookupRef(evalContext, params.part_ref);
       return (
         typeof a === 'string' &&
         typeof b === 'string' &&
@@ -49,7 +50,7 @@ const ifOpClasses = {
       part: { type: 'string', required: true, primary: true }
     },
     eval: function(params, evalContext) {
-      const msg = EvalCore.lookupRef(evalContext, 'event.message.content');
+      const msg = TemplateUtil.lookupRef(evalContext, 'event.message.content');
       return (
         typeof msg === 'string' &&
         msg.toLowerCase().indexOf(params.part.toLowerCase()) > -1
@@ -59,7 +60,7 @@ const ifOpClasses = {
   message_is_affirmative: {
     properties: {},
     eval: function(params, evalContext) {
-      const msg = EvalCore.lookupRef(evalContext, 'event.message.content');
+      const msg = TemplateUtil.lookupRef(evalContext, 'event.message.content');
       const affirmativeParts = ['y', 'yes', 'sure', 'ok'];
       if (typeof msg !== 'string') {
         return false;
@@ -74,8 +75,8 @@ const ifOpClasses = {
       regex_ref: { type: 'string', required: true }
     },
     eval: function(params, evalContext) {
-      const a = EvalCore.lookupRef(evalContext, params.string_ref);
-      const regex = EvalCore.lookupRef(evalContext, params.regex_ref);
+      const a = TemplateUtil.lookupRef(evalContext, params.string_ref);
+      const regex = TemplateUtil.lookupRef(evalContext, params.regex_ref);
       return (
         typeof a === 'string' && RegExp(regex, 'i').test(a)
       );

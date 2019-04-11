@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const TriggerCore = require('../cores/trigger');
+const TriggerActionCore = require('../cores/trigger_action');
 
 function createActionListProperty(actionsRegistry) {
   const actionsClasses = _.mapValues(actionsRegistry, function(actionClass) {
@@ -184,8 +184,8 @@ module.exports = function (actionsRegistry, eventsRegistry) {
 
       const ifIteree = function(ifClause, path) {};
       
-      TriggerCore.walkPackedActions(resource.actions, 'actions', actionIteree,
-        ifIteree);
+      TriggerActionCore.walkPackedActions(resource.actions, 'actions',
+        actionIteree, ifIteree);
       return warnings;
     },
     getTitle: function(scriptContent, resource) {
@@ -212,7 +212,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     },
     getChildClaims: function(resource) {
       const childClaims = [];
-      TriggerCore.walkPackedActions(resource.actions, '',
+      TriggerActionCore.walkPackedActions(resource.actions, '',
         function(action, path) {
           const actionClass = actionsRegistry[action.name];
           if (actionClass.getChildClaims) {

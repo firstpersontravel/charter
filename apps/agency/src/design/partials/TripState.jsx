@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ConditionCore, EvalCore, ResourcesRegistry } from 'fptcore';
+import { ConditionCore, ResourcesRegistry, TemplateUtil } from 'fptcore';
 
 import ResourceBadge from './ResourceBadge';
 import { sortForRole } from '../../operate/utils';
@@ -36,8 +36,8 @@ export default class TripState extends Component {
     const pageSceneTitle = pageScene.title;
     const activeBtnClass = isProduction() ? 'btn-danger' : 'btn-primary';
     const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
-    const panelText = EvalCore.templateText(trip.evalContext, panel.text || '',
-      trip.experience.timezone);
+    const panelText = TemplateUtil.templateText(trip.evalContext,
+      panel.text || '', trip.experience.timezone);
     const activeCueTitle = panel.type === 'button' ?
       panelText : `Cue ${panel.cue}`;
     const inactiveCueTitle = (
@@ -71,7 +71,7 @@ export default class TripState extends Component {
       .filter(panel => ConditionCore.if(trip.evalContext, panel.active_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
-    const pageTitle = EvalCore.templateText(trip.evalContext, page.title,
+    const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
       trip.experience.timezone);
 
     return (
