@@ -2,7 +2,7 @@ module.exports = {
   name: 'calls',
   resources: {
     call: {
-      resource: null,  // virtual
+      resource: null, // virtual
       actions: {
         add_to_call: require('./call_add_to'),
         initiate_call: require('./call_initiate'),
@@ -17,12 +17,9 @@ module.exports = {
       resource: require('./clip'),
       actions: {
         play_clip: require('./clip_play')
-      }
-    },
-    query: {
-      subresource: require('./query'),
+      },
       events: {
-        query_responded: require('./query_responded')
+        clip_answered: require('./clip_answered')
       }
     }
   }

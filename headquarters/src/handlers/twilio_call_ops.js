@@ -64,17 +64,16 @@ class TwilioCallOps {
       input: 'speech',
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +
-        `?relay=${relay.id}&trip=${tripId}&query=${twimlOp.queryName}` +
-        `&type=${twimlOp.queryType}`
+        `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`
       ),
       partialResultCallback: (
         `${twilioHost}/endpoints/twilio/calls/response` +
-        `?relay=${relay.id}&trip=${tripId}&query=${twimlOp.queryName}` +
-        `&type=${twimlOp.queryType}&partial=true`
+        `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}` +
+        '&partial=true'
       )
     };
-    if (twimlOp.queryHints) {
-      args.hints = twimlOp.queryHints;
+    if (twimlOp.hints) {
+      args.hints = twimlOp.hints;
     }
     const gather = twimlResponse.gather(args);
     // Interpret the subclause and add it to the gather clause.

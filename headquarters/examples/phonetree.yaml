@@ -1,5 +1,5 @@
 meta:
-  version: 10
+  version: 11
 
 roles:
   - name: Player
@@ -26,9 +26,8 @@ clips:
     title: Greetings
     scene: SCENE-MAIN
     transcript: Greetings!! Would you like a refreshing beverage?
-    query:
-      name: QUERY-BEVERAGE
-      hints: [yes, no]
+    answer_expected: true
+    answer_hints: [yes, no]
 
   - name: CLIP-PHONETREE-1-YES
     title: "yes"
@@ -47,13 +46,10 @@ triggers:
     actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1' }]
 
   - name: t2
-    events: [{type: query_responded, query: QUERY-BEVERAGE}]
+    events: [{type: clip_answered, clip: CLIP-PHONETREE-1}]
     scene: SCENE-MAIN
     actions:
       - name: conditional  
-        if:
-          op: contains
-          string_ref: event.response
-          part_ref: '"yes"'
+        if: { op: clip_answer_is, response: "yes" }
         actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-YES' }]
         else: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-NO' }]

@@ -64,10 +64,8 @@ describe('#play_clip', () => {
         clips: [{
           name: 'CLIP-TEST',
           path: 'audio.mp3',
-          query: {
-            name: 'QUERY-TEST',
-            hints: ['yes', 'no']
-          }
+          answer_expected: true,
+          answer_hints: ['yes', 'no']
         }]
       }
     };
@@ -76,9 +74,8 @@ describe('#play_clip', () => {
     assert.deepEqual(res, [{
       operation: 'twiml',
       clause: 'gather',
-      queryName: 'QUERY-TEST',
-      queryType: 'normal',
-      queryHints: ['yes', 'no'],
+      clipName: 'CLIP-TEST',
+      hints: ['yes', 'no'],
       subclause: {
         clause: 'play',
         media: 'audio.mp3'
@@ -93,11 +90,8 @@ describe('#play_clip', () => {
         clips: [{
           name: 'CLIP-TEST',
           transcript: 'Why hello there',
-          query: {
-            name: 'QUERY-TEST',
-            type: 'phone',
-            hints: ['yes', 'no']
-          }
+          answer_expected: true,
+          answer_hints: ['yes', 'no']
         }]
       }
     };
@@ -107,9 +101,8 @@ describe('#play_clip', () => {
     assert.deepEqual(res, [{
       operation: 'twiml',
       clause: 'gather',
-      queryName: 'QUERY-TEST',
-      queryType: 'phone',
-      queryHints: ['yes', 'no'],
+      clipName: 'CLIP-TEST',
+      hints: ['yes', 'no'],
       subclause: {
         clause: 'say',
         message: 'Why hello there',

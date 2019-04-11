@@ -64,16 +64,15 @@ async function outgoingCallRoute(req, res) {
 async function callResponseRoute(req, res) {
   const relayId = Number(req.query.relay);
   const tripId = Number(req.query.trip);
-  const queryName = req.query.query;
-  const queryType = req.query.type || 'normal';
+  const clipName = req.query.clip;
   const callSid = req.body.CallSid;
   const isPartial = req.query.partial === 'true';
   const speechResultKey = isPartial ? 'UnstableSpeechResult' : 'SpeechResult';
   const speechResult = req.body[speechResultKey];
   const twimlResponse = await (
     TwilioCallHandler.handleCallResponse(
-      relayId, tripId, callSid, queryName,
-      queryType, speechResult, isPartial)
+      relayId, tripId, callSid, clipName,
+      speechResult, isPartial)
   );
   handleTwimlResponse(res, twimlResponse);
 }

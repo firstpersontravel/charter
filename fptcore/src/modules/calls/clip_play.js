@@ -7,7 +7,7 @@ module.exports = {
   requiredEventTypes: [
     'call_received', // type: call_received, from: role
     'call_answered', // type: call_answered, to: role
-    'query_responded', // type: query_responded, clip: clip-name
+    'clip_answered', // type: clip_answered, clip: clip-name
   ],
   params: {
     clip_name: {
@@ -40,13 +40,12 @@ module.exports = {
 
     // If we expect a response, return the play within a gather
     // clause.
-    if (clip.query) {
+    if (clip.answer_expected) {
       return [{
         operation: 'twiml',
         clause: 'gather',
-        queryName: clip.query.name,
-        queryType: clip.query.type || 'normal',
-        queryHints: clip.query.hints || null,
+        clipName: clip.name,
+        hints: clip.answer_hints || null,
         subclause: playClause
       }];
     }

@@ -42,7 +42,7 @@ describe('PhoneTreeExample', () => {
 
     // Handle response
     const twiml2 = await TwilioCallHandler.handleCallResponse(
-      trailhead.id, trip.id, 123, 'QUERY-BEVERAGE', 'normal', 'yes', false);
+      trailhead.id, trip.id, 123, 'CLIP-PHONETREE-1', 'yes', false);
 
     assert(twiml2.toString().indexOf('<Say voice="alice">Here you go!</Say>') > -1);
   });
@@ -61,7 +61,7 @@ describe('PhoneTreeExample', () => {
 
     // Handle response
     const twiml2 = await TwilioCallHandler.handleCallResponse(
-      trailhead.id, trip.id, 123, 'QUERY-BEVERAGE', 'normal', 'no', false);
+      trailhead.id, trip.id, 123, 'CLIP-PHONETREE-1', 'no', false);
 
     assert(twiml2.toString().indexOf('<Say voice="alice">Next time!</Say>') > -1);
   });

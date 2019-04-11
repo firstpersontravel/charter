@@ -141,8 +141,7 @@ describe('TwilioCallHandler', () => {
           resultOps: [{
             operation: 'twiml',
             clause: 'gather',
-            queryName: 'QUERY-123',
-            queryType: 'normal',
+            clipName: 'CLIP-123',
             subclause: {
               clause: 'play',
               media: 'audio.mp3'
@@ -164,11 +163,10 @@ describe('TwilioCallHandler', () => {
         '<?xml version="1.0" encoding="UTF-8"?>' +
         '<Response><Gather input="speech" ' +
         'action="http://twilio.test/endpoints/twilio/calls/response' +
-        '?relay=100&amp;trip=1&amp;query=QUERY-123&amp;type=normal" ' +
+        '?relay=100&amp;trip=1&amp;clip=CLIP-123" ' +
         'partialResultCallback=' +
         '"http://twilio.test/endpoints/twilio/calls/response?' +
-        'relay=100&amp;trip=1&amp;query=QUERY-123&amp;type=normal&amp;' +
-        'partial=true">' +
+        'relay=100&amp;trip=1&amp;clip=CLIP-123&amp;partial=true">' +
         '<Play>http://twilio.media/test_script/audio.mp3</Play>' +
         '</Gather></Response>');
     });

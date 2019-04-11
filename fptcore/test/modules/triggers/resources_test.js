@@ -15,7 +15,7 @@ describe('#validateResource', () => {
     const res = ResourcesRegistry.trigger.validateResource(script, trigger);
 
     assert.deepStrictEqual(res, [
-      'Action "actions[0]" ("play_clip") is triggered by event "message_received", but requires one of: call_received, call_answered, query_responded.'
+      'Action "actions[0]" ("play_clip") is triggered by event "message_received", but requires one of: call_received, call_answered, clip_answered.'
     ]);
   });
 });

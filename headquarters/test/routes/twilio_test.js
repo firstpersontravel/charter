@@ -218,7 +218,7 @@ describe('twilioRoutes', () => {
     it('handles final response', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
-        query: { trip: '1', relay: '10', query: 'QUERY-NAME' },
+        query: { trip: '1', relay: '10', clip: 'CLIP-NAME' },
         body: { SpeechResult: 'test result', Confidence: 0.5 }
       });
       const res = httpMocks.createResponse();
@@ -230,10 +230,10 @@ describe('twilioRoutes', () => {
       assert.deepStrictEqual(
         TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
         [1, stubRelay, {
-          query: 'QUERY-NAME',
+          clip: 'CLIP-NAME',
           partial: false,
           response: 'test result',
-          type: 'query_responded'
+          type: 'clip_answered'
         }]);
       // Call doesn't need to be interrupted
       sinon.assert.notCalled(TwilioCallHandler._interruptCall);
@@ -249,7 +249,7 @@ describe('twilioRoutes', () => {
         query: {
           trip: '1',
           relay: '10',
-          query: 'QUERY-NAME',
+          clip: 'CLIP-NAME',
           partial: 'true'
         },
         body: { CallSid: '1234', UnstableSpeechResult: 'prelim result' }
@@ -263,10 +263,10 @@ describe('twilioRoutes', () => {
       assert.deepStrictEqual(
         TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
         [1, stubRelay, {
-          query: 'QUERY-NAME',
+          clip: 'CLIP-NAME',
           partial: true,
           response: 'prelim result',
-          type: 'query_responded'
+          type: 'clip_answered'
         }]);
       // Call is interrupted
       sinon.assert.calledOnce(TwilioCallHandler._interruptCall);

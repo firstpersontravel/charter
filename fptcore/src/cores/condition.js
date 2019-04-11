@@ -45,6 +45,18 @@ const ifOpClasses = {
       );
     }
   },
+  clip_answer_is: {
+    properties: {
+      response: { type: 'string', required: true, primary: true }
+    },
+    eval: function(params, evalContext) {
+      const msg = TemplateUtil.lookupRef(evalContext, 'event.response');
+      return (
+        typeof msg === 'string' &&
+        msg.toLowerCase().indexOf(params.response.toLowerCase()) > -1
+      );
+    }
+  },
   message_contains: {
     properties: {
       part: { type: 'string', required: true, primary: true }
