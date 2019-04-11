@@ -3,7 +3,7 @@ var jsonschema = require('jsonschema');
 
 var TextUtil = require('../utils/text');
 var ResourcesRegistry = require('../registries/resources');
-var ParamValidators = require('../utils/param_validators');
+var ValidationCore = require('../cores/validation');
 var Errors = require('../errors');
 
 var CURRENT_VERSION = 10;
@@ -22,8 +22,8 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
     throw new Error('Param spec with no type.');
   }
   if (paramSpec.type === 'variegated') {
-    var variety = ParamValidators.getVariegatedVariety(paramSpec, obj);
-    var varietyClass = ParamValidators.getVariegatedClass(paramSpec, variety);
+    var variety = ValidationCore.getVariegatedVariety(paramSpec, obj);
+    var varietyClass = ValidationCore.getVariegatedClass(paramSpec, variety);
     walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
       iteree);
     return;
@@ -109,7 +109,7 @@ class ScriptCore {
         message: 'Invalid collection: ' + collectionName
       }];
     }
-    var errors = ParamValidators.validateResource(script, resourceClass, 
+    var errors = ValidationCore.validateResource(script, resourceClass, 
       resource);
 
     return errors.map(function(err) {

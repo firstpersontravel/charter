@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import { IndexLink } from 'react-router';
 
-import { EvalCore } from 'fptcore';
+import { ConditionCore } from 'fptcore';
 
 import ResponsiveTabs from '../../partials/ResponsiveTabs';
 import { sortForRole, canRoleHaveUser } from '../utils';
@@ -14,7 +14,7 @@ function getAllPlayers(trips) {
   return _(trips)
     .map('players')
     .flatten()
-    .filter(player => EvalCore.if(
+    .filter(player => ConditionCore.if(
       tripsById[player.tripId].evalContext,
       player.role.active_if
     ))

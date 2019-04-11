@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { EvalCore, TextUtil, ParamValidators } from 'fptcore';
+import { ConditionCore, TextUtil, ValidationCore } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
@@ -206,7 +206,7 @@ export default class FieldRenderer {
 
   renderEmail(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.email(this.script, name, spec, val))
+      isEmpty(ValidationCore.email(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -232,7 +232,7 @@ export default class FieldRenderer {
   // Aliases
   renderName(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.name(this.script, name, spec, val))
+      isEmpty(ValidationCore.name(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -240,7 +240,7 @@ export default class FieldRenderer {
 
   renderTimeOffset(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.timeOffset(this.script, name, spec, val))
+      isEmpty(ValidationCore.timeOffset(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -248,7 +248,7 @@ export default class FieldRenderer {
 
   renderLookupable(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.lookupable(this.script, name, spec, val))
+      isEmpty(ValidationCore.lookupable(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -256,7 +256,7 @@ export default class FieldRenderer {
 
   renderSimpleAttribute(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.simpleAttribute(this.script, name, spec, val))
+      isEmpty(ValidationCore.simpleAttribute(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -264,7 +264,7 @@ export default class FieldRenderer {
 
   renderMedia(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.media(this.script, name, spec, val))
+      isEmpty(ValidationCore.media(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -272,7 +272,7 @@ export default class FieldRenderer {
 
   renderTimeShorthand(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ParamValidators.timeShorthand(this.script, name, spec, val))
+      isEmpty(ValidationCore.timeShorthand(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -281,7 +281,7 @@ export default class FieldRenderer {
   renderIfClause(spec, value, name, path, opts) {
     if (!value) {
       const choices = [{ value: '', label: '---' }]
-        .concat(Object.keys(EvalCore.ifOpClasses).map(op => ({
+        .concat(Object.keys(ConditionCore.ifOpClasses).map(op => ({
           value: op,
           label: op
         })));
@@ -304,7 +304,7 @@ export default class FieldRenderer {
     }
     return (
       <div className="ifClause" style={inlineStyle}>
-        {this.renderFieldValue(EvalCore.ifSpec, value, name, path, inlineOpts)}
+        {this.renderFieldValue(ConditionCore.ifSpec, value, name, path, inlineOpts)}
       </div>
     );
   }
@@ -532,7 +532,7 @@ export default class FieldRenderer {
           );
         }
       } else {
-        const validatorErrors = ParamValidators[keySpec.type](this.script,
+        const validatorErrors = ValidationCore[keySpec.type](this.script,
           name, keySpec, itemValue);
         if (validatorErrors && validatorErrors.length > 0) {
           invalidWarning = (
@@ -590,8 +590,8 @@ export default class FieldRenderer {
   }
 
   renderVariegated(spec, value, name, path, opts) {
-    const variety = ParamValidators.getVariegatedVariety(spec, value);
-    const varietyClass = ParamValidators.getVariegatedClass(spec, variety);
+    const variety = ValidationCore.getVariegatedVariety(spec, value);
+    const varietyClass = ValidationCore.getVariegatedClass(spec, variety);
     return this.renderSubresource({ class: varietyClass }, value, name, path,
       opts);
   }

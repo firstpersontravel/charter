@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ResourcesRegistry, TextUtil, ParamValidators } from 'fptcore';
+import { ResourcesRegistry, TextUtil, ValidationCore } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { getChildResourceTypes } from '../utils/graph-utils';
@@ -24,7 +24,7 @@ export default class ResourceView extends Component {
       isConfirmingDelete: false,
       hasPendingChanges: false,
       pendingResource: pendingResource,
-      errors: ParamValidators.validateResource(
+      errors: ValidationCore.validateResource(
         props.script,
         ResourcesRegistry[TextUtil.singularize(props.collectionName)],
         pendingResource, '')
@@ -44,7 +44,7 @@ export default class ResourceView extends Component {
         isConfirmingDelete: false,
         hasPendingChanges: false,
         pendingResource: pendingResource,
-        errors: ParamValidators.validateResource(
+        errors: ValidationCore.validateResource(
           nextProps.script,
           ResourcesRegistry[TextUtil.singularize(nextProps.collectionName)],
           pendingResource, '')
@@ -92,7 +92,7 @@ export default class ResourceView extends Component {
   }
 
   handleResourceUpdate(newResource) {
-    const errors = ParamValidators.validateResource(
+    const errors = ValidationCore.validateResource(
       this.props.script,
       ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
       newResource, '');

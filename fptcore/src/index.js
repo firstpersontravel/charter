@@ -4,13 +4,13 @@ module.exports = {
   ActionParamCore: require('./cores/action_param'),
   ActionPhraseCore: require('./cores/action_phrase'),
   ActionResultCore: require('./cores/action_result'),
+  ConditionCore: require('./cores/condition'),
   ContextCore: require('./cores/context'),
   Errors: require('./errors'),
   EvalCore: require('./cores/eval'),
   EventsRegistry: require('./registries/events'),
   GeofenceCore: require('./cores/geofence'),
   ModulesRegistry: require('./registries/modules'),
-  ParamValidators: require('./utils/param_validators'),
   PlayerCore: require('./cores/player'),
   ResourcesRegistry: require('./registries/resources'),
   SceneCore: require('./cores/scene'),
@@ -21,5 +21,6 @@ module.exports = {
   TripCore: require('./cores/trip'),
   TriggerCore: require('./cores/trigger'),
   TriggerEventCore: require('./cores/trigger_event'),
+  ValidationCore: require('./cores/validation'),
   WaypointCore: require('./cores/waypoint')
 };

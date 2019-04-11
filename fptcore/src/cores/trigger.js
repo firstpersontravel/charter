@@ -1,6 +1,6 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var EvalCore = require('./eval');
+const ConditionCore = require('./condition');
 
 class TriggerCore {
   /**
@@ -19,7 +19,7 @@ class TriggerCore {
         throw new Error('Expected action to be object, was ' + typeof action +
           '.');
       }
-      var indexPath = path + '[' + i + ']';
+      const indexPath = path + '[' + i + ']';
       if (action.name && action.name !== 'conditional') {
         actionIteree(action, indexPath);
         return;
@@ -33,7 +33,7 @@ class TriggerCore {
       }
       if (action.elseifs) {
         action.elseifs.forEach((elseif, j) => {
-          var elseifPath = indexPath + '.elseifs[' + j + ']';
+          const elseifPath = indexPath + '.elseifs[' + j + ']';
           ifIteree(elseif.if, elseifPath + '.if');
           this.walkPackedActions(elseif.actions, elseifPath + '.actions', 
             actionIteree, ifIteree);
@@ -55,13 +55,13 @@ class TriggerCore {
       return clause.actions;
     }
     // If .if is true, use normal actions.
-    if (EvalCore.if(actionContext.evalContext, clause.if)) {
+    if (ConditionCore.if(actionContext.evalContext, clause.if)) {
       return clause.actions;
     }
     // Check for elseifs and iterate in order.
     if (clause.elseifs) {
-      for (var i = 0; i < clause.elseifs.length; i++) {
-        if (EvalCore.if(actionContext.evalContext, clause.elseifs[i].if)) {
+      for (let i = 0; i < clause.elseifs.length; i++) {
+        if (ConditionCore.if(actionContext.evalContext, clause.elseifs[i].if)) {
           return clause.elseifs[i].actions;
         }
       }
@@ -79,7 +79,7 @@ class TriggerCore {
    */
   static packedActionsForClause(clause, actionContext) {
     // Figure out which if clause is active
-    var actions = this.packedActionsForConditional(clause, actionContext);
+    const actions = this.packedActionsForConditional(clause, actionContext);
 
     // Ensure an array is returned
     if (!_.isArray(actions)) {

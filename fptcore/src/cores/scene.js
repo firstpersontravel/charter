@@ -1,15 +1,15 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var EvalCore = require('./eval');
+const ConditionCore = require('./condition');
 
 class SceneCore {
   static getStartingSceneName(scriptContent, evalContext) {
-    var firstScene = _.find(scriptContent.scenes || [], function(scene) {
+    const firstScene = _.find(scriptContent.scenes || [], function(scene) {
       // Global scenes can not be started.
       if (scene.global) {
         return false;
       }
-      return EvalCore.if(evalContext, scene.active_if);
+      return ConditionCore.if(evalContext, scene.active_if);
     });
     return firstScene && firstScene.name;
   }

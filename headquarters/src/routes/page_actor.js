@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const Sequelize = require('sequelize');
 
+const ConditionCore = require('../../../fptcore/src/cores/condition');
 const EvalCore = require('../../../fptcore/src/cores/eval');
 const PlayerCore = require('../../../fptcore/src/cores/player');
 
@@ -66,7 +67,7 @@ function getPage(objs, evalContext, player) {
   const directiveText = EvalCore.templateText(evalContext,
     page.directive, timezone);
   const panels = _(page.panels || [])
-    .filter(panel => EvalCore.if(evalContext, panel.active_if))
+    .filter(panel => ConditionCore.if(evalContext, panel.active_if))
     .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
   return {

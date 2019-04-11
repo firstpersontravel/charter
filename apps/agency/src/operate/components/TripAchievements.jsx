@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { EvalCore, TextUtil } from 'fptcore';
+import { ConditionCore, EvalCore, TextUtil } from 'fptcore';
 
 function renderCompletedAchievementStatus(trip, achievement) {
   if (achievement.type === 'choice') {
@@ -11,7 +11,7 @@ function renderCompletedAchievementStatus(trip, achievement) {
     return statusTitle || 'Unknown value';
   }
   if (achievement.type === 'completion') {
-    const isPassed = EvalCore.if(trip.evalContext, achievement.test);
+    const isPassed = ConditionCore.if(trip.evalContext, achievement.test);
     const statusClass = isPassed ? 'text-success' : 'text-danger';
     const statusTitle = (
       isPassed ? achievement.titles.true : achievement.titles.false

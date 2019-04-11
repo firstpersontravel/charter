@@ -1,8 +1,8 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const EvalCore = require('../../src/cores/eval');
-const ParamValidators = require('../../src/utils/param_validators');
+const ConditionCore = require('../../src/cores/condition');
+const ValidationCore = require('../../src/cores/validation');
 
 const eq = assert.deepStrictEqual;
 const ok = (res) => eq(res === undefined ? [] : res, []);
@@ -10,182 +10,182 @@ const err = (res, expected) => eq(res, [expected]);
 
 const sandbox = sinon.sandbox.create();
 
-describe('ParamValidators', () => {
+describe('ValidationCore', () => {
   beforeEach(() => {
     sandbox.restore();
   });
 
   describe('#string', () => {
     it('permits string', () => {
-      ok(ParamValidators.string({}, 's', {}, 'abc'));
+      ok(ValidationCore.string({}, 's', {}, 'abc'));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.string({}, 's', {}, []),
+      err(ValidationCore.string({}, 's', {}, []),
         'String param "s" should be a string.');
     });
 
     it('warns if required and blank', () => {
-      ok(ParamValidators.string({}, 's', { required: true }, 'val'));
-      err(ParamValidators.string({}, 's', { required: true }, ''),
+      ok(ValidationCore.string({}, 's', { required: true }, 'val'));
+      err(ValidationCore.string({}, 's', { required: true }, ''),
         'String param "s" should not be blank.');
     });
   });
 
   describe('#markdown', () => {
     it('permits string', () => {
-      ok(ParamValidators.markdown({}, 's', {}, 'abc'));
+      ok(ValidationCore.markdown({}, 's', {}, 'abc'));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.markdown({}, 's', {}, []),
+      err(ValidationCore.markdown({}, 's', {}, []),
         'Markdown param "s" should be a string.');
     });
 
     it('warns if required and blank', () => {
-      ok(ParamValidators.markdown({}, 's', { required: true }, 'val'));
-      err(ParamValidators.markdown({}, 's', { required: true }, ''),
+      ok(ValidationCore.markdown({}, 's', { required: true }, 'val'));
+      err(ValidationCore.markdown({}, 's', { required: true }, ''),
         'Markdown param "s" should not be blank.');
     });
   });
 
   describe('#email', () => {
     it('permits email', () => {
-      ok(ParamValidators.email({}, 's', {}, 'dispatch@tacosyndicate.family'));
-      ok(ParamValidators.email({}, 's', {}, '<test@test.com>'));
+      ok(ValidationCore.email({}, 's', {}, 'dispatch@tacosyndicate.family'));
+      ok(ValidationCore.email({}, 's', {}, '<test@test.com>'));
     });
 
     it('permits email and name', () => {
-      ok(ParamValidators.email({}, 's', {}, '"Taco Syndicate Dispatch" <dispatch@tacosyndicate.family>'));
-      ok(ParamValidators.email({}, 's', {}, 'Taco Syndicate Dispatch <dispatch@tacosyndicate.family>'));
-      ok(ParamValidators.email({}, 's', {}, '"Gabe\'s Mom" <a-b-c@d_eF.net>'));
+      ok(ValidationCore.email({}, 's', {}, '"Taco Syndicate Dispatch" <dispatch@tacosyndicate.family>'));
+      ok(ValidationCore.email({}, 's', {}, 'Taco Syndicate Dispatch <dispatch@tacosyndicate.family>'));
+      ok(ValidationCore.email({}, 's', {}, '"Gabe\'s Mom" <a-b-c@d_eF.net>'));
     });
 
 
     it('warns if not a string', () => {
-      err(ParamValidators.email({}, 's', {}, []),
+      err(ValidationCore.email({}, 's', {}, []),
         'Email param "s" should be a string.');
     });
 
     it('warns if required and blank', () => {
-      ok(ParamValidators.email({}, 's', { required: true }, 'val@val.com'));
-      err(ParamValidators.email({}, 's', { required: true }, ''),
+      ok(ValidationCore.email({}, 's', { required: true }, 'val@val.com'));
+      err(ValidationCore.email({}, 's', { required: true }, ''),
         'Email param "s" should not be blank.');
     });
 
     it('warns if not a valid email', () => {
-      err(ParamValidators.email({}, 's', {}, 'asdjsadk'),
+      err(ValidationCore.email({}, 's', {}, 'asdjsadk'),
         'Email param "s" should be a valid email.');
-      err(ParamValidators.email({}, 's', {}, 'abc.com'),
+      err(ValidationCore.email({}, 's', {}, 'abc.com'),
         'Email param "s" should be a valid email.');
-      err(ParamValidators.email({}, 's', {}, 'john@domain'),
+      err(ValidationCore.email({}, 's', {}, 'john@domain'),
         'Email param "s" should be a valid email.');
-      err(ParamValidators.email({}, 's', {}, '"john@domain"'),
+      err(ValidationCore.email({}, 's', {}, '"john@domain"'),
         'Email param "s" should be a valid email.');
-      err(ParamValidators.email({}, 's', {}, '<john@domain> "test"'),
+      err(ValidationCore.email({}, 's', {}, '<john@domain> "test"'),
         'Email param "s" should be a valid email.');
     });
   });
 
   describe('#simpleValue', () => {
     it('permits string, number, or boolean', () => {
-      ok(ParamValidators.simpleValue({}, 's', {}, 'abc'));
-      ok(ParamValidators.simpleValue({}, 's', {}, 123));
-      ok(ParamValidators.simpleValue({}, 's', {}, true));
-      ok(ParamValidators.simpleValue({}, 's', {}, false));
+      ok(ValidationCore.simpleValue({}, 's', {}, 'abc'));
+      ok(ValidationCore.simpleValue({}, 's', {}, 123));
+      ok(ValidationCore.simpleValue({}, 's', {}, true));
+      ok(ValidationCore.simpleValue({}, 's', {}, false));
     });
 
     it('warns if not a string, number or boolean', () => {
-      err(ParamValidators.simpleValue({}, 's', {}, [1]),
+      err(ValidationCore.simpleValue({}, 's', {}, [1]),
         'Simple param "s" should be a string, number or boolean.');
-      err(ParamValidators.simpleValue({}, 's', {}, {a: 2}),
+      err(ValidationCore.simpleValue({}, 's', {}, {a: 2}),
         'Simple param "s" should be a string, number or boolean.');
     });
 
     it('warns if required and blank', () => {
-      ok(ParamValidators.simpleValue({}, 's', { required: true }, 'val'));
-      err(ParamValidators.simpleValue({}, 's', { required: true }, ''),
+      ok(ValidationCore.simpleValue({}, 's', { required: true }, 'val'));
+      err(ValidationCore.simpleValue({}, 's', { required: true }, ''),
         'Simple param "s" should not be blank.');
     });
   });
 
   describe('#number', () => {
     it('permits string number', () => {
-      ok(ParamValidators.number({}, 's', {}, '1'));
+      ok(ValidationCore.number({}, 's', {}, '1'));
     });
 
     it('permits number', () => {
-      ok(ParamValidators.number({}, 's', {}, 1.5));
+      ok(ValidationCore.number({}, 's', {}, 1.5));
     });
 
     it('warns if not a number', () => {
-      err(ParamValidators.number({}, 's', {}, 'abc'),
+      err(ValidationCore.number({}, 's', {}, 'abc'),
         'Number param "s" should be a number.');
     });
   });
 
   describe('#coords', () => {
     it('permits valid coords', () => {
-      ok(ParamValidators.coords({}, 's', {}, [42, -18.3]));
+      ok(ValidationCore.coords({}, 's', {}, [42, -18.3]));
     });
 
     it('warns if not an array of length 2', () => {
-      err(ParamValidators.coords({}, 's', {}, 2),
+      err(ValidationCore.coords({}, 's', {}, 2),
         'Coords param "s" should be an array of two numbers.');
-      err(ParamValidators.coords({}, 's', {}, []),
+      err(ValidationCore.coords({}, 's', {}, []),
         'Coords param "s" should be an array of two numbers.');
-      err(ParamValidators.coords({}, 's', {}, [1, 2, 3]),
+      err(ValidationCore.coords({}, 's', {}, [1, 2, 3]),
         'Coords param "s" should be an array of two numbers.');
     });
 
     it('warns if coords are out of bounds', () => {
-      err(ParamValidators.coords({}, 's', {}, [-1000, 0]),
+      err(ValidationCore.coords({}, 's', {}, [-1000, 0]),
         'Coords param "s[0]" should be between -180 and 180.');
-      err(ParamValidators.coords({}, 's', {}, [32, 230]),
+      err(ValidationCore.coords({}, 's', {}, [32, 230]),
         'Coords param "s[1]" should be between -180 and 180.');
     });
   });
 
   describe('#timeShorthand', () => {
     it('permits valid time shorthand', () => {
-      ok(ParamValidators.timeShorthand({}, 's', {}, '1:00pm'));
-      ok(ParamValidators.timeShorthand({}, 's', {}, '12:59am'));
-      ok(ParamValidators.timeShorthand({}, 's', {}, '+1d 10:23a'));
-      ok(ParamValidators.timeShorthand({}, 's', {}, '+4d 12:00p'));
+      ok(ValidationCore.timeShorthand({}, 's', {}, '1:00pm'));
+      ok(ValidationCore.timeShorthand({}, 's', {}, '12:59am'));
+      ok(ValidationCore.timeShorthand({}, 's', {}, '+1d 10:23a'));
+      ok(ValidationCore.timeShorthand({}, 's', {}, '+4d 12:00p'));
     });
 
     it('rejects invalid time shorthand', () => {
-      err(ParamValidators.timeShorthand({}, 's', {}, '10:00x'),
+      err(ValidationCore.timeShorthand({}, 's', {}, '10:00x'),
         'Time shorthand param "s" ("10:00x") must be valid.');
-      err(ParamValidators.timeShorthand({}, 's', {}, '23:00pm'),
+      err(ValidationCore.timeShorthand({}, 's', {}, '23:00pm'),
         'Time shorthand param "s" ("23:00pm") must be valid.');
-      err(ParamValidators.timeShorthand({}, 's', {}, '3:99a'),
+      err(ValidationCore.timeShorthand({}, 's', {}, '3:99a'),
         'Time shorthand param "s" ("3:99a") must be valid.');
-      err(ParamValidators.timeShorthand({}, 's', {}, '-1d 2:00pm'),
+      err(ValidationCore.timeShorthand({}, 's', {}, '-1d 2:00pm'),
         'Time shorthand param "s" ("-1d 2:00pm") must be valid.');
-      err(ParamValidators.timeShorthand({}, 's', {}, 'd 2:00pm'),
+      err(ValidationCore.timeShorthand({}, 's', {}, 'd 2:00pm'),
         'Time shorthand param "s" ("d 2:00pm") must be valid.');
     });
   });
 
   describe('#timeOffset', () => {
     it('permits valid offsets', () => {
-      ok(ParamValidators.timeOffset({}, 's', {}, '1h'));
-      ok(ParamValidators.timeOffset({}, 's', {}, '-600.234m'));
-      ok(ParamValidators.timeOffset({}, 's', {}, '0s'));
-      ok(ParamValidators.timeOffset({}, 's', {}, '120s'));
+      ok(ValidationCore.timeOffset({}, 's', {}, '1h'));
+      ok(ValidationCore.timeOffset({}, 's', {}, '-600.234m'));
+      ok(ValidationCore.timeOffset({}, 's', {}, '0s'));
+      ok(ValidationCore.timeOffset({}, 's', {}, '120s'));
     });
 
     it('rejects invalid time offsets', () => {
-      err(ParamValidators.timeOffset({}, 's', {}, 'h'),
+      err(ValidationCore.timeOffset({}, 's', {}, 'h'),
         'Time offset param "s" ("h") should be a number suffixed by "h/m/s".');
-      err(ParamValidators.timeOffset({}, 's', {}, '10x'),
+      err(ValidationCore.timeOffset({}, 's', {}, '10x'),
         'Time offset param "s" ("10x") should be a number suffixed by "h/m/s".');
-      err(ParamValidators.timeOffset({}, 's', {}, '1_345s'),
+      err(ValidationCore.timeOffset({}, 's', {}, '1_345s'),
         'Time offset param "s" ("1_345s") should be a number suffixed by "h/m/s".');
-      err(ParamValidators.timeOffset({}, 's', {}, '1.2.3m'),
+      err(ValidationCore.timeOffset({}, 's', {}, '1.2.3m'),
         'Time offset param "s" ("1.2.3m") should be a number suffixed by "h/m/s".');
-      err(ParamValidators.timeOffset({}, 's', {}, '1-6d'),
+      err(ValidationCore.timeOffset({}, 's', {}, '1-6d'),
         'Time offset param "s" ("1-6d") should be a number suffixed by "h/m/s".');
     });
   });
@@ -194,50 +194,50 @@ describe('ParamValidators', () => {
     const spec = { type: 'name' };
 
     it('warns if not a string', () => {
-      const result = ParamValidators.name({}, 's', spec, 1);
+      const result = ValidationCore.name({}, 's', spec, 1);
       err(result, 'Name param "s" ("1") should be a string.');
     });
 
     it('warns if does not start with a letter', () => {
       err(
-        ParamValidators.name({}, 's', spec, '1bc'),
+        ValidationCore.name({}, 's', spec, '1bc'),
         'Name param "s" ("1bc") should start with a letter.');
       err(
-        ParamValidators.name({}, 's', spec, '.bc'),
+        ValidationCore.name({}, 's', spec, '.bc'),
         'Name param "s" (".bc") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
-      err(ParamValidators.name({}, 's', {}, 'a%b'),
+      err(ValidationCore.name({}, 's', {}, 'a%b'),
         'Name param "s" ("a%b") should be alphanumeric with dashes or underscores.');
-      err(ParamValidators.name({}, 's', {}, 'a"-b'),
+      err(ValidationCore.name({}, 's', {}, 'a"-b'),
         'Name param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
-      err(ParamValidators.name({}, 's', {}, 'b^$(D'),
+      err(ValidationCore.name({}, 's', {}, 'b^$(D'),
         'Name param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
     });
   });
 
   describe('#media', () => {
     it('permits path', () => {
-      ok(ParamValidators.media({}, 's', {}, 'abc.mp3'));
+      ok(ValidationCore.media({}, 's', {}, 'abc.mp3'));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.media({}, 's', {}, 123),
+      err(ValidationCore.media({}, 's', {}, 123),
         'Media param "s" should be a string.');
-      err(ParamValidators.media({}, 's', {}, false),
+      err(ValidationCore.media({}, 's', {}, false),
         'Media param "s" should be a string.');
     });
 
     it('warns if not valid extension', () => {
       const spec = { extensions: ['mp4', 'jpg'] };
-      err(ParamValidators.media({}, 's', spec, 'gabe.mp3'),
+      err(ValidationCore.media({}, 's', spec, 'gabe.mp3'),
         'Media param "s" should have one of the following extensions: mp4, jpg.');
     });
 
     it('warns if required and blank', () => {
-      ok(ParamValidators.media({}, 's', { required: true }, 'val'));
-      err(ParamValidators.media({}, 's', { required: true }, ''),
+      ok(ValidationCore.media({}, 's', { required: true }, 'val'));
+      err(ValidationCore.media({}, 's', { required: true }, ''),
         'Media param "s" should not be blank.');
     });
   });
@@ -245,78 +245,78 @@ describe('ParamValidators', () => {
   describe('#enum', () => {
     it('permits if in enum', () => {
       const spec = { type: 'enum', options: [1, true, 'abc'] };
-      ok(ParamValidators.enum({}, 's', spec, 1));
-      ok(ParamValidators.enum({}, 's', spec, true));
-      ok(ParamValidators.enum({}, 's', spec, 'abc'));
+      ok(ValidationCore.enum({}, 's', spec, 1));
+      ok(ValidationCore.enum({}, 's', spec, true));
+      ok(ValidationCore.enum({}, 's', spec, 'abc'));
     });
 
     it('warns if not in enum', () => {
       const spec = { type: 'enum', options: [1, true, 'abc'] };
-      err(ParamValidators.enum({}, 's', spec, '1'),
+      err(ValidationCore.enum({}, 's', spec, '1'),
         'Enum param "s" is not one of "1", "true", "abc".');
-      err(ParamValidators.enum({}, 's', spec, false),
+      err(ValidationCore.enum({}, 's', spec, false),
         'Enum param "s" is not one of "1", "true", "abc".');
-      err(ParamValidators.enum({}, 's', spec, 'adc'),
+      err(ValidationCore.enum({}, 's', spec, 'adc'),
         'Enum param "s" is not one of "1", "true", "abc".');
     });
   });
 
   describe('#simpleAttribute', () => {
     it('permits valid value names', () => {
-      ok(ParamValidators.simpleAttribute({}, 's', {}, 'abc'));
-      ok(ParamValidators.simpleAttribute({}, 's', {}, 'A12'));
-      ok(ParamValidators.simpleAttribute({}, 's', {}, 'A_BC'));
+      ok(ValidationCore.simpleAttribute({}, 's', {}, 'abc'));
+      ok(ValidationCore.simpleAttribute({}, 's', {}, 'A12'));
+      ok(ValidationCore.simpleAttribute({}, 's', {}, 'A_BC'));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.simpleAttribute({}, 's', {}, 1),
+      err(ValidationCore.simpleAttribute({}, 's', {}, 1),
         'Simple attribute param "s" should be a string.');
     });
 
     it('warns if starts with a number', () => {
-      err(ParamValidators.simpleAttribute({}, 's', {}, '0'),
+      err(ValidationCore.simpleAttribute({}, 's', {}, '0'),
         'Simple attribute param "s" ("0") should start with a letter.');
     });
 
     it('does not allow quotes', () => {
-      err(ParamValidators.simpleAttribute({}, 's', {}, '"abc"'),
+      err(ValidationCore.simpleAttribute({}, 's', {}, '"abc"'),
         'Simple attribute param "s" (""abc"") should start with a letter.');
-      err(ParamValidators.simpleAttribute({}, 's', {}, '\'A\''),
+      err(ValidationCore.simpleAttribute({}, 's', {}, '\'A\''),
         'Simple attribute param "s" ("\'A\'") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
-      err(ParamValidators.simpleAttribute({}, 's', {}, 'a.b'),
+      err(ValidationCore.simpleAttribute({}, 's', {}, 'a.b'),
         'Simple attribute param "s" ("a.b") should be alphanumeric with underscores.');
-      err(ParamValidators.simpleAttribute({}, 's', {}, 'b^$(D'),
+      err(ValidationCore.simpleAttribute({}, 's', {}, 'b^$(D'),
         'Simple attribute param "s" ("b^$(D") should be alphanumeric with underscores.');
     });
   });
 
   describe('#lookupable', () => {
     it('permits valid value names', () => {
-      ok(ParamValidators.lookupable({}, 's', {}, 'abc'));
-      ok(ParamValidators.lookupable({}, 's', {}, 'A12'));
-      ok(ParamValidators.lookupable({}, 's', {}, 'A_BC'));
-      ok(ParamValidators.lookupable({}, 's', {}, 'A-BC'));
-      ok(ParamValidators.lookupable({}, 's', {}, 'a.b.c'));
-      ok(ParamValidators.lookupable({}, 's', {}, '0'));
+      ok(ValidationCore.lookupable({}, 's', {}, 'abc'));
+      ok(ValidationCore.lookupable({}, 's', {}, 'A12'));
+      ok(ValidationCore.lookupable({}, 's', {}, 'A_BC'));
+      ok(ValidationCore.lookupable({}, 's', {}, 'A-BC'));
+      ok(ValidationCore.lookupable({}, 's', {}, 'a.b.c'));
+      ok(ValidationCore.lookupable({}, 's', {}, '0'));
     });
 
     it('permits with quotes', () => {
-      ok(ParamValidators.lookupable({}, 's', {}, '"abc"'));
-      ok(ParamValidators.lookupable({}, 's', {}, '\'A\''));
+      ok(ValidationCore.lookupable({}, 's', {}, '"abc"'));
+      ok(ValidationCore.lookupable({}, 's', {}, '\'A\''));
     });
 
     it('warns if not a string', () => {
-      err(ParamValidators.lookupable({}, 's', {}, 1),
+      err(ValidationCore.lookupable({}, 's', {}, 1),
         'Lookupable param "s" ("1") should be a string.');
     });
 
     it('warns if contains invalid characters', () => {
-      err(ParamValidators.lookupable({}, 's', {}, 'a=b'),
+      err(ValidationCore.lookupable({}, 's', {}, 'a=b'),
         'Lookupable param "s" ("a=b") should be alphanumeric with underscores, dashes and periods.');
-      err(ParamValidators.lookupable({}, 's', {}, 'b^$(D'),
+      err(ValidationCore.lookupable({}, 's', {}, 'b^$(D'),
         'Lookupable param "s" ("b^$(D") should be alphanumeric with underscores, dashes and periods.');
     });
   });
@@ -326,42 +326,42 @@ describe('ParamValidators', () => {
     const spec = { type: 'reference', collection: 'geofences' };
 
     it('permits found references', () => {
-      ok(ParamValidators.reference(script, 's', spec, 'GEOFENCE-2'));
+      ok(ValidationCore.reference(script, 's', spec, 'GEOFENCE-2'));
     });
 
     it('warns if reference is not found', () => {
       err(
-        ParamValidators.reference(script, 's', spec, 'GEOFENCE-3'),
+        ValidationCore.reference(script, 's', spec, 'GEOFENCE-3'),
         'Reference param "s" ("GEOFENCE-3") is not in collection "geofences".');
     });
 
     it('warns if collection is empty', () => {
       const spec = { type: 'reference', collection: 'messages' };
       err(
-        ParamValidators.reference(script, 's', spec, 'GEOFENCE-3'),
+        ValidationCore.reference(script, 's', spec, 'GEOFENCE-3'),
         'Reference param "s" ("GEOFENCE-3") is not in collection "messages".');
     });
 
     it('warns if not a string', () => {
-      const result = ParamValidators.reference({}, 's', spec, 1);
+      const result = ValidationCore.reference({}, 's', spec, 1);
       err(result, 'Reference param "s" ("1") should be a string.');
     });
 
     it('warns if does not start with a letter', () => {
       err(
-        ParamValidators.reference({}, 's', spec, '1bc'),
+        ValidationCore.reference({}, 's', spec, '1bc'),
         'Reference param "s" ("1bc") should start with a letter.');
       err(
-        ParamValidators.reference({}, 's', spec, '.bc'),
+        ValidationCore.reference({}, 's', spec, '.bc'),
         'Reference param "s" (".bc") should start with a letter.');
     });
 
     it('warns if contains invalid characters', () => {
-      err(ParamValidators.reference({}, 's', {}, 'a%b'),
+      err(ValidationCore.reference({}, 's', {}, 'a%b'),
         'Reference param "s" ("a%b") should be alphanumeric with dashes or underscores.');
-      err(ParamValidators.reference({}, 's', {}, 'a"-b'),
+      err(ValidationCore.reference({}, 's', {}, 'a"-b'),
         'Reference param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
-      err(ParamValidators.reference({}, 's', {}, 'b^$(D'),
+      err(ValidationCore.reference({}, 's', {}, 'b^$(D'),
         'Reference param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
     });
 
@@ -371,8 +371,8 @@ describe('ParamValidators', () => {
         collection: 'geofences',
         allowNull: true
       };
-      ok(ParamValidators.reference(script, 's', specWithNull, 'null'));
-      err(ParamValidators.reference(script, 's', spec, 'null'),
+      ok(ValidationCore.reference(script, 's', specWithNull, 'null'));
+      err(ValidationCore.reference(script, 's', spec, 'null'),
         'Reference param "s" ("null") is not in collection "geofences".');
     });
   });
@@ -381,11 +381,11 @@ describe('ParamValidators', () => {
     const spec = { type: 'ifClause' };
 
     it('warns if not an object', () => {
-      err(ParamValidators.ifClause({}, 's', spec, [1]),
+      err(ValidationCore.ifClause({}, 's', spec, [1]),
         'If param "s" should be an object.');
-      err(ParamValidators.ifClause({}, 's', spec, 123),
+      err(ValidationCore.ifClause({}, 's', spec, 123),
         'If param "s" should be an object.');
-      err(ParamValidators.ifClause({}, 's', spec, true),
+      err(ValidationCore.ifClause({}, 's', spec, true),
         'If param "s" should be an object.');
     });
 
@@ -393,13 +393,13 @@ describe('ParamValidators', () => {
       const script = {};
       const stubResponse = ['response'];
       const param = { op: 'istrue' };
-      sandbox.stub(ParamValidators, 'validateParam').returns(stubResponse);
+      sandbox.stub(ValidationCore, 'validateParam').returns(stubResponse);
 
-      const resp = ParamValidators.ifClause(script, 's', spec, param);
+      const resp = ValidationCore.ifClause(script, 's', spec, param);
 
       assert.strictEqual(resp, stubResponse);
-      sinon.assert.calledWith(ParamValidators.validateParam.firstCall,
-        script, 's', EvalCore.ifSpec, param);
+      sinon.assert.calledWith(ValidationCore.validateParam.firstCall,
+        script, 's', ConditionCore.ifSpec, param);
     });
   });
 
@@ -412,27 +412,27 @@ describe('ParamValidators', () => {
 
     it('checks keys and values', () => {
       const valid = { abc_123: 5, 'def_egf': true, 'word_two': 'abc' };
-      ok(ParamValidators.dictionary({}, 's', spec, valid));
+      ok(ValidationCore.dictionary({}, 's', spec, valid));
     });
 
     it('warns if not an object', () => {
-      err(ParamValidators.dictionary({}, 's', spec, [1]),
+      err(ValidationCore.dictionary({}, 's', spec, [1]),
         'Dictionary param "s" should be an object.');
-      err(ParamValidators.dictionary({}, 's', spec, 123),
+      err(ValidationCore.dictionary({}, 's', spec, 123),
         'Dictionary param "s" should be an object.');
-      err(ParamValidators.dictionary({}, 's', spec, true),
+      err(ValidationCore.dictionary({}, 's', spec, true),
         'Dictionary param "s" should be an object.');
     });
 
     it('warns if invalid key', () => {
       const invalid = { 'd%f': false };
-      err(ParamValidators.dictionary({}, 's', spec, invalid),
+      err(ValidationCore.dictionary({}, 's', spec, invalid),
         'Name param "s[d%f]" ("d%f") should be alphanumeric with dashes or underscores.');
     });
 
     it('warns if invalid value', () => {
       const invalid = { 'car': ['an', 'array'] };
-      err(ParamValidators.dictionary({}, 's', spec, invalid),
+      err(ValidationCore.dictionary({}, 's', spec, invalid),
         'Simple param "s[car]" should be a string, number or boolean.');
     });
   });
@@ -442,21 +442,21 @@ describe('ParamValidators', () => {
 
     it('checks items', () => {
       const valid = [1, 2, 3, 4];
-      ok(ParamValidators.list({}, 's', spec, valid));
+      ok(ValidationCore.list({}, 's', spec, valid));
     });
 
     it('warns if not an array', () => {
-      err(ParamValidators.list({}, 's', spec, {a: 5}),
+      err(ValidationCore.list({}, 's', spec, {a: 5}),
         'List param "s" should be an array.');
-      err(ParamValidators.list({}, 's', spec, 123),
+      err(ValidationCore.list({}, 's', spec, 123),
         'List param "s" should be an array.');
-      err(ParamValidators.list({}, 's', spec, true),
+      err(ValidationCore.list({}, 's', spec, true),
         'List param "s" should be an array.');
     });
 
     it('warns if invalid item', () => {
       const invalid = ['abc'];
-      err(ParamValidators.list({}, 's', spec, invalid),
+      err(ValidationCore.list({}, 's', spec, invalid),
         'Number param "s[0]" should be a number.');
     });
   });
@@ -472,23 +472,23 @@ describe('ParamValidators', () => {
 
     it('checks object', () => {
       const valid = { name: 'test', count: 123 };
-      ok(ParamValidators.object({}, 's', spec, valid));
+      ok(ValidationCore.object({}, 's', spec, valid));
     });
 
     it('warns if missing item', () => {
-      err(ParamValidators.object({}, 's', spec, { count: 2 }),
+      err(ValidationCore.object({}, 's', spec, { count: 2 }),
         'Required param "s.name" not present.');
     });
 
     it('warns if extra item', () => {
       var withExtra = { name: 'test', extra: true };
-      err(ParamValidators.object({}, 's', spec, withExtra),
+      err(ValidationCore.object({}, 's', spec, withExtra),
         'Unexpected param "s.extra" (expected one of: name, count).');
     });
 
     it('gathers multiple warnings', () => {
       var invalid = { count: [123], extra: true };
-      var res = ParamValidators.object({}, 's', spec, invalid);
+      var res = ValidationCore.object({}, 's', spec, invalid);
       eq(res, [
         'Required param "s.name" not present.',
         'Unexpected param "s.extra" (expected one of: name, count).'
@@ -496,7 +496,7 @@ describe('ParamValidators', () => {
     });
 
     it('warns if not an object', () => {
-      err(ParamValidators.object({}, 's', spec, 'abc'),
+      err(ValidationCore.object({}, 's', spec, 'abc'),
         'Parameters should be an object.');
     });
   });
@@ -514,23 +514,23 @@ describe('ParamValidators', () => {
 
     it('checks subresource', () => {
       const valid = { name: 'test', count: 123 };
-      ok(ParamValidators.subresource({}, 's', spec, valid));
+      ok(ValidationCore.subresource({}, 's', spec, valid));
     });
 
     it('warns if missing item', () => {
-      err(ParamValidators.subresource({}, 's', spec, { count: 2 }),
+      err(ValidationCore.subresource({}, 's', spec, { count: 2 }),
         'Required param "s.name" not present.');
     });
 
     it('warns if extra item', () => {
       var withExtra = { name: 'test', extra: true };
-      err(ParamValidators.subresource({}, 's', spec, withExtra),
+      err(ValidationCore.subresource({}, 's', spec, withExtra),
         'Unexpected param "s.extra" (expected one of: name, count).');
     });
 
     it('gathers multiple warnings', () => {
       var invalid = { count: [123], extra: true };
-      var res = ParamValidators.subresource({}, 's', spec, invalid);
+      var res = ValidationCore.subresource({}, 's', spec, invalid);
       eq(res, [
         'Required param "s.name" not present.',
         'Unexpected param "s.extra" (expected one of: name, count).'
@@ -538,7 +538,7 @@ describe('ParamValidators', () => {
     });
 
     it('warns if not an object', () => {
-      err(ParamValidators.subresource({}, 's', spec, 'abc'),
+      err(ValidationCore.subresource({}, 's', spec, 'abc'),
         'Parameters should be an object.');
     });
   });
@@ -547,7 +547,7 @@ describe('ParamValidators', () => {
     it('gets variety by key', () => {
       const spec = { key: 'type' };
       const param = { type: 'frog' };
-      const res = ParamValidators.getVariegatedVariety(spec, param);
+      const res = ValidationCore.getVariegatedVariety(spec, param);
 
       assert.strictEqual(res, 'frog');
     });
@@ -555,14 +555,14 @@ describe('ParamValidators', () => {
     it('gets variety by function', () => {
       const spec = { key: obj => obj.type };
       const param = { type: 'frog' };
-      const res = ParamValidators.getVariegatedVariety(spec, param);
+      const res = ValidationCore.getVariegatedVariety(spec, param);
 
       assert.strictEqual(res, 'frog');
     });
 
     it('returns null for null param', () => {
       const spec = { key: obj => obj.type };
-      const res = ParamValidators.getVariegatedVariety(spec, null);
+      const res = ValidationCore.getVariegatedVariety(spec, null);
 
       assert.strictEqual(res, null);
     });
@@ -577,7 +577,7 @@ describe('ParamValidators', () => {
     };
 
     it('returns merged class by variety', () => {
-      const res = ParamValidators.getVariegatedClass(spec, 'frog');
+      const res = ValidationCore.getVariegatedClass(spec, 'frog');
 
       assert.deepStrictEqual(res, {
         properties: {
@@ -588,14 +588,14 @@ describe('ParamValidators', () => {
     });
 
     it('returns only common class if null variety', () => {
-      const res = ParamValidators.getVariegatedClass(spec, null);
+      const res = ValidationCore.getVariegatedClass(spec, null);
 
       assert.deepStrictEqual(res, spec.common);
     });
 
     it('throws error if invalid class', () => {
       assert.throws(() => {
-        ParamValidators.getVariegatedClass(spec, 'parrot');
+        ValidationCore.getVariegatedClass(spec, 'parrot');
       });
     });
   });
@@ -626,63 +626,63 @@ describe('ParamValidators', () => {
 
     it('allows members of either class', () => {
       const snake = { family: 'snake', name: 'rattler', isVenomous: true };
-      ok(ParamValidators.variegated({}, 's', spec, snake));
+      ok(ValidationCore.variegated({}, 's', spec, snake));
 
       const fish = { family: 'fish', name: 'zebrafish' };
-      ok(ParamValidators.variegated({}, 's', spec, fish));
+      ok(ValidationCore.variegated({}, 's', spec, fish));
     });
 
     it('warns if missing key', () => {
       const invalid = {};
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'Required param "s[family]" not present.');
     });
 
     it('warns if non-string key', () => {
       const invalid = { family: 123 };
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'Variegated param "s" property "family" should be a string.');
     });
 
     it('warns if invalid key', () => {
       const invalid = { family: 'marsupial' };
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'Variegated param "s" property "family" ("marsupial") should be one of: snake, fish.');
     });
 
     it('warns if invalid items in common class', () => {
       const invalid = { family: 'snake', name: false, isVenomous: true };
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'String param "s.name" should be a string.');
     });
 
     it('warns if invalid items in varied class', () => {
       const invalid = { family: 'snake', isVenomous: 'abc' };
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'Boolean param "s.isVenomous" ("abc") should be true or false.');
     });
 
     it('warns if extra items', () => {
       const invalid = { family: 'snake', isVenomous: false, extra: 'hi' };
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'Unexpected param "s.extra" (expected one of: family, name, isVenomous).');
     });
 
     it('warns if has items from non-chosen variety', () => {
       const invalid = { family: 'snake', isVenomous: false, numFins: 3 };
-      err(ParamValidators.variegated({}, 's', spec, invalid),
+      err(ValidationCore.variegated({}, 's', spec, invalid),
         'Unexpected param "s.numFins" (expected one of: family, name, isVenomous).');
     });
   });
 
   describe('#validateParam', () => {
     it('calls param by name', () => {
-      sandbox.stub(ParamValidators, 'string').returns([]);
+      sandbox.stub(ValidationCore, 'string').returns([]);
       const spec = { type: 'string' };
 
-      ParamValidators.validateParam({}, 'name', spec, null);
+      ValidationCore.validateParam({}, 'name', spec, null);
 
-      sinon.assert.calledWith(ParamValidators.string, {}, 'name', spec, null);
+      sinon.assert.calledWith(ValidationCore.string, {}, 'name', spec, null);
     });
   });
 
@@ -764,7 +764,7 @@ describe('ParamValidators', () => {
         }
       };
 
-      ok(ParamValidators.validateResource({}, contentPage, value, ''));
+      ok(ValidationCore.validateResource({}, contentPage, value, ''));
     });
   });
 });

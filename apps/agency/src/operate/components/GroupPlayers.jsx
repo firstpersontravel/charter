@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { EvalCore } from 'fptcore';
+import { ConditionCore } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../../schedule/utils';
@@ -11,7 +11,7 @@ import { canRoleHaveUser } from '../utils';
 
 function doesTripHaveRole(trip, roleName) {
   const role = _.find(trip.script.content.roles, { name: roleName });
-  return EvalCore.if(trip.evalContext, role.active_if);
+  return ConditionCore.if(trip.evalContext, role.active_if);
 }
 
 export default class GroupPlayers extends Component {

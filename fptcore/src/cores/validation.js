@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
-const EvalCore = require('../cores/eval');
+const ConditionCore = require('../cores/condition');
 const TimeUtil = require('../utils/time');
 
-class ParamValidators {
+class ValidationCore {
   static string(script, name, spec, param) {
     if (!_.isString(param)) {
       return ['String param "' + name + '" should be a string.'];
@@ -182,7 +182,7 @@ class ParamValidators {
     if (!_.isPlainObject(param)) {
       return ['If param "' + name + '" should be an object.'];
     }
-    return this.validateParam(script, name, EvalCore.ifSpec, param);
+    return this.validateParam(script, name, ConditionCore.ifSpec, param);
   }
 
   static dictionary(script, name, spec, param) {
@@ -406,4 +406,4 @@ class ParamValidators {
   }
 }
 
-module.exports = ParamValidators;
+module.exports = ValidationCore;

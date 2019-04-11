@@ -2,10 +2,10 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { EvalCore } from 'fptcore';
+import { ConditionCore, EvalCore } from 'fptcore';
 
 function renderPanel(player, page, panel) {
-  if (!EvalCore.if(player.trip.evalContext, panel.active_if)) {
+  if (!ConditionCore.if(player.trip.evalContext, panel.active_if)) {
     return null;
   }
   if (panel.type === 'text' ||

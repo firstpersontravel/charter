@@ -1,7 +1,7 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var EvalCore = require('./eval');
-var EventsRegistry = require('../registries/events');
+const ConditionCore = require('./condition');
+const EventsRegistry = require('../registries/events');
 
 class TriggerEventCore {
   /**
@@ -31,7 +31,7 @@ class TriggerEventCore {
     if (!EventsRegistry[event.type]) {
       return false;
     }
-    var triggerEvent = this.triggerEventForEventType(trigger, event.type);
+    const triggerEvent = this.triggerEventForEventType(trigger, event.type);
 
     // If trigger isn't caused by this event, skip
     if (!triggerEvent) {
@@ -40,8 +40,8 @@ class TriggerEventCore {
 
     // Special case: if event is a time occurred event, treat the event
     // as non-repeatable *always*.
-    var treatAsNonrepeatable = event.type === 'time_occurred';
-    var hasFiredAlready = (
+    const treatAsNonrepeatable = event.type === 'time_occurred';
+    const hasFiredAlready = (
       actionContext.evalContext.history &&
       actionContext.evalContext.history[trigger.name]
     );
@@ -56,7 +56,7 @@ class TriggerEventCore {
    * Test if a scene is active for a given context.
    */
   static isSceneActive(sceneName, actionContext) {
-    var scene = _.find(actionContext.scriptContent.scenes, {
+    const scene = _.find(actionContext.scriptContent.scenes, {
       name: sceneName
     });
     if (!scene) {
@@ -64,7 +64,7 @@ class TriggerEventCore {
     }
 
     // If we have a conditional, return false if it's not true.
-    if (!EvalCore.if(actionContext.evalContext, scene.active_if)) {
+    if (!ConditionCore.if(actionContext.evalContext, scene.active_if)) {
       return false;
     }
 
@@ -93,7 +93,7 @@ class TriggerEventCore {
       }
     }
     // Skip inactive triggers
-    if (!EvalCore.if(actionContext.evalContext, trigger.active_if)) {
+    if (!ConditionCore.if(actionContext.evalContext, trigger.active_if)) {
       return false;
     }
     // Skip non-repeatable triggers that have already fired.

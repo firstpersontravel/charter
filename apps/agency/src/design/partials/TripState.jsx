@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ResourcesRegistry, EvalCore } from 'fptcore';
+import { ConditionCore, EvalCore, ResourcesRegistry } from 'fptcore';
 
 import ResourceBadge from './ResourceBadge';
 import { sortForRole } from '../../operate/utils';
@@ -13,7 +13,7 @@ export default class TripState extends Component {
     const trip = this.props.trip;
     return _(trip.players)
       .filter(player => (
-        EvalCore.if(trip.evalContext, player.role.active_if)
+        ConditionCore.if(trip.evalContext, player.role.active_if)
       ))
       .filter(player => (
         _.find(trip.script.content.pages, {
@@ -68,7 +68,7 @@ export default class TripState extends Component {
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => EvalCore.if(trip.evalContext, panel.active_if))
+      .filter(panel => ConditionCore.if(trip.evalContext, panel.active_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = EvalCore.templateText(trip.evalContext, page.title,
@@ -114,13 +114,13 @@ export default class TripState extends Component {
     const triggerResourceClass = ResourcesRegistry.trigger;
     const isCurrentScene = scene.name === this.props.trip.currentSceneName;
     const isActiveGlobalScene = scene.global && (
-      EvalCore.if(trip.evalContext, scene.active_if)
+      ConditionCore.if(trip.evalContext, scene.active_if)
     );
     const hasBeenTriggered = !!trip.history[trigger.name];
     const canTrigger = isCurrentScene || isActiveGlobalScene;
     // const isForbidden = (
     //   (trigger.repeatable === false && hasBeenTriggered) ||
-    //   (!EvalCore.if(trip.evalContext, trigger.active_if))
+    //   (!ConditionCore.if(trip.evalContext, trigger.active_if))
     // );
     const style = {
       marginTop: 0,
