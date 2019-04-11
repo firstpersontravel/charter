@@ -8,7 +8,11 @@ module.exports = {
         const message = _.find(scriptContent.messages, {
           name: action.message_name
         });
-        action.to_role_name = message.to;
+        action.to_role_name = (
+          action.to_role_name ||
+          message.to ||
+          message.from
+        );
       }
     },
     // And remove `to` from all messages.
