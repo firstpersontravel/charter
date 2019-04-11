@@ -1,7 +1,6 @@
 module.exports = {
   ActionsRegistry: require('./registries/actions'),
   ActionCore: require('./cores/action'),
-  ActionParamCore: require('./cores/action_param'),
   ActionResultCore: require('./cores/action_result'),
   ConditionCore: require('./cores/condition'),
   ContextCore: require('./cores/context'),

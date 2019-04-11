@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-const ActionParamCore = require('./action_param');
 const ActionResultCore = require('./action_result');
 const ActionsRegistry = require('../registries/actions');
 const TriggerActionCore = require('./trigger_action');
@@ -29,10 +28,7 @@ class ActionCore {
     if (!actionClass) {
       throw new Error(`Invalid action ${action.name}.`);
     }
-    const paramsSpec = actionClass.params;
-    const params = ActionParamCore.prepareParams(paramsSpec, action.params,
-      actionContext);
-    return actionClass.applyAction(params, contextWithEvent) || [];
+    return actionClass.applyAction(action.params, contextWithEvent) || [];
   }
 
   /**
