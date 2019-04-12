@@ -7,23 +7,17 @@ import ResourceBadge from '../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
 
 function renderActions(module, actionNames) {
-  const subitemStyle = { paddingLeft: '0.5em' };
   return _.map(actionNames, actionName => (
-    <div key={actionName} className="constrain-text" style={subitemStyle}>
-      <a href={`#${actionName}`}>
-        <i className="fa fa-mail-forward" /> {actionName}
-      </a>
+    <div key={actionName} className="constrain-text pl-2">
+      <a href={`#${actionName}`}>{actionName}</a>
     </div>
   ));
 }
 
 function renderEvents(module, eventTypes) {
-  const subitemStyle = { paddingLeft: '0.5em' };
   return _.map(eventTypes, eventType => (
-    <div key={eventType} className="constrain-text" style={subitemStyle}>
-      <a href={`#${eventType}`}>
-        <i className="fa fa-bolt" /> {eventType}
-      </a>
+    <div key={eventType} className="constrain-text pl-2">
+      <a href={`#${eventType}`}>{eventType}</a>
     </div>
   ));
 }
@@ -256,7 +250,7 @@ function renderAction(actionName, actionSpec) {
   return (
     <div key={actionName}>
       <h4 id={actionName}>
-        Action: <i className="fa fa-mail-forward" /> <strong>{actionName}</strong>
+        Action: <strong>{actionName}</strong>
       </h4>
       <p>{actionSpec.help}</p>
       {renderFields(actionSpec.params)}
@@ -268,7 +262,7 @@ function renderEvent(eventType, eventSpec) {
   return (
     <div key={eventType}>
       <h4 id={eventType}>
-        Event: <strong><i className="fa fa-bolt" /> {eventType}</strong>
+        Event: <strong>{eventType}</strong>
       </h4>
       <p>{eventSpec.help}</p>
       {renderFields(eventSpec.specParams)}
