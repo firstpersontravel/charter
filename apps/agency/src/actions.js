@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import 'whatwg-fetch';
 import * as Sentry from '@sentry/browser';
 
 import { getStage } from './utils';
