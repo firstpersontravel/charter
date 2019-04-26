@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
-import { Circle, Map, Marker, Popup, TileLayer, Polyline, PropTypes as ReactLeafletPropTypes } from 'react-leaflet';
+import { Circle, Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
 
@@ -402,7 +402,7 @@ GroupMap.contextTypes = {
 };
 
 GroupMap.propTypes = {
-  center: ReactLeafletPropTypes.latlng,
+  center: PropTypes.instanceOf(L.LatLng),
   zoom: PropTypes.number,
   group: PropTypes.object.isRequired,
   directions: PropTypes.array,

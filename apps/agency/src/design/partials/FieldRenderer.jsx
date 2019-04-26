@@ -347,7 +347,8 @@ export default class FieldRenderer {
 
   renderBoolean(spec, value, name, path, opts) {
     const style = _.isUndefined(value) ? { opacity: 0.5 } : {};
-    const existing = _.isUndefined(value) ? defaultForSpec(spec) : value;
+    const def = doesSpecHaveDefault(spec) ? defaultForSpec(spec) : false;
+    const existing = _.isUndefined(value) ? def : value;
     return (
       <input
         style={style}
