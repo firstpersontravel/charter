@@ -48,28 +48,34 @@ function processError(err) {
   Sentry.captureException(err);
 }
 
+class RequestError extends Error {
+  constructor(message, url, params, status, response) {
+    super(message);
+    this.url = url;
+    this.params = params;
+    this.status = status;
+    this.response = response;
+    Error.captureStackTrace(this, RequestError);
+  }
+}
+
+function handleResponseError(url, params, response) {
+  let responseData;
+  return response.json()
+    .then((data) => { responseData = data; })
+    .catch(() => { responseData = '<invalid json>'; })
+    .then(() => {
+      throw new RequestError(
+        `Failed ${params.method} to ${url}: ${response.status}.`,
+        url, params, response.status, responseData);
+    });
+}
+
 function fetchJsonAssuringSuccess(url, params) {
   return fetch(url, params)
     .then((response) => {
       if (response.status >= 400) {
-        const failedRequest = new Error(`Failed request to ${url}`);
-        failedRequest.status = response.status;
-        return response.json()
-          .then((data) => {
-            failedRequest.data = data;
-          })
-          .catch(() => {
-            // Catch bad JSON errors
-            failedRequest.data = {
-              message: {
-                502: 'Gateway error',
-                500: 'Internal error'
-              }[response.status] || `Error requesting ${url}`
-            };
-          })
-          .then(() => {
-            throw failedRequest;
-          });
+        return handleResponseError(url, params, response);
       }
       return response.json();
     });
@@ -130,6 +136,22 @@ export function listCollection(collectionName, query, opts) {
   };
 }
 
+function authenticate(dispatch, authData) {
+  dispatch(saveInstances('auth', [{ id: name, data: authData }]));
+  dispatch(saveInstances('auth', [{ id: 'latest', data: authData }]));
+  if (!authData) {
+    return;
+  }
+  dispatch(saveInstances('orgs', authData.orgs));
+  document.cookie = `auth_latest=${btoa(JSON.stringify(authData))};`;
+  Sentry.configureScope((scope) => {
+    scope.setUser({
+      id: authData.user.id,
+      email: authData.user.email
+    });
+  });
+}
+
 export function makeAuthRequest(url, params, name) {
   const reqName = `auth.${name}`;
   return function (dispatch) {
@@ -141,24 +163,21 @@ export function makeAuthRequest(url, params, name) {
           dispatch(saveRequest(reqName, 'fulfilled', null));
           dispatch(saveInstances('auth', [{ id: name, data: null }]));
           dispatch(saveInstances('auth', [{ id: 'latest', data: null }]));
-          return;
+          return null;
         }
         // Other network error
         if (response.status !== 200) {
           dispatch(saveRequest(reqName, 'rejected', null));
-          return;
+          return null;
         }
         // Login success
-        response.json().then((data) => {
-          dispatch(saveRequest(reqName, 'fulfilled', null));
-          dispatch(saveInstances('auth', [{ id: name, data: data.data }]));
-          dispatch(saveInstances('auth', [{ id: 'latest', data: data.data }]));
-          if (data.data) {
-            dispatch(saveInstances('orgs', data.data.orgs));
-          }
-          document.cookie = `auth_latest=${btoa(JSON.stringify(data.data))};`;
-        });
-      });
+        return response.json()
+          .then((data) => {
+            dispatch(saveRequest(reqName, 'fulfilled', null));
+            authenticate(dispatch, data.data);
+          });
+      })
+      .catch(processError);
   };
 }
 
@@ -350,10 +369,11 @@ export function updateRelays(orgId, experienceId) {
 }
 
 export function createInstances(collection, fields, nextItems) {
+  const nextItemsArray = nextItems || [];
   return function (dispatch) {
     createInstance(collection, fields)(dispatch)
       .then(createdItem => (
-        Promise.all(nextItems || [], nextItems.map((next) => {
+        Promise.all(nextItemsArray, nextItemsArray.map((next) => {
           const insertions = _.mapValues(next.insertions, (val, key) => (
             createdItem[val]
           ));
