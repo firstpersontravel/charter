@@ -18,7 +18,7 @@ function createActionListProperty(actionsRegistry) {
       display: { form: 'inline' },
       properties: {
         name: {
-          display: { primary: true, placeholder: 'Action' },
+          display: { label: false, placeholder: 'Action' },
           type: 'enum',
           options: ACTION_NAME_OPTIONS,
           required: true
@@ -58,7 +58,7 @@ function createActionListProperty(actionsRegistry) {
         type: 'enum',
         options: ACTION_NAME_OPTIONS,
         required: true,
-        display: { primary: true, placeholder: 'Action' }
+        display: { label: false, placeholder: 'Action' }
       },
       if: { type: 'ifClause', required: true },
       actions: actionListParam,
@@ -102,7 +102,7 @@ function createEventResource(eventsRegistry) {
       display: { form: 'inline' },
       properties: {
         type: {
-          display: { primary: true },
+          display: { label: false },
           type: 'enum',
           options: Object.keys(eventsRegistry),
           required: true

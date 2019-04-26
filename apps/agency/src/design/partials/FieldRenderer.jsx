@@ -7,6 +7,7 @@ import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
 import PopoverControl from '../../partials/PopoverControl';
 import ResourceBadge from './ResourceBadge';
+import LabelWithTip from './LabelWithTip';
 import { defaultForSpec, doesSpecHaveDefault } from '../utils/resource-utils';
 
 const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
@@ -498,6 +499,17 @@ export default class FieldRenderer {
     );
   }
 
+  internalLabel(spec, key) {
+    const shouldShowLabel = _.get(spec, 'display.label') !== false;
+    if (!shouldShowLabel) {
+      return null;
+    }
+    const labelText = labelForSpec(spec, key);
+    return (
+      <LabelWithTip label={labelText} identifier={key} help={spec.help} />
+    );
+  }
+
   internalObjectKey(spec, value, name, path, opts, keySpec, key) {
     // Hide hidden fields
     if (_.get(keySpec, 'display.hidden')) {
@@ -542,23 +554,16 @@ export default class FieldRenderer {
       }
     }
 
-    const shouldShowLabel = !_.get(keySpec, 'display.primary');
     const shouldShowClear = isSimpleType && keySpec.type !== 'boolean';
-    const labelText = labelForSpec(keySpec, key);
-    const label = shouldShowLabel ? (
-      <span className="mr-1" style={{ fontVariant: 'small-caps' }}>
-        {labelText}:
-      </span>
-    ) : null;
-
+    const clear = shouldShowClear ?
+      this.internalClear(keySpec, itemValue, itemPath) :
+      null;
     return (
-      // eslint-disable-next-line react/no-array-index-key
       <div key={key} style={itemStyle} className="object-key">
-        {label}
+        {this.internalLabel(keySpec, key)}
         {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
           itemPath, opts)}
-        {shouldShowClear ?
-          this.internalClear(keySpec, itemValue, itemPath) : null}
+        {clear}
         {invalidWarning}
       </div>
     );

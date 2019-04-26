@@ -10,7 +10,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'emails',
-      display: { primary: true },
+      display: { label: false },
       help: 'Predefined email to send.'
     }
   },

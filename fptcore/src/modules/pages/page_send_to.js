@@ -7,7 +7,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true },
+      display: { label: false },
       help: 'The player to send to a page.'
     },
     page_name: {

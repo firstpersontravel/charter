@@ -21,7 +21,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'times',
-      display: { primary: true }
+      display: { label: false }
     },
     offset: { required: false, type: 'timeOffset' }
   },

@@ -1,8 +1,4 @@
 {
-  "ecmaFeatures": {
-    "jsx": true,
-    "modules": true
-  },
   "extends": "airbnb",
   "parser": "babel-eslint",
   "plugins": [

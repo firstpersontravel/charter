@@ -7,7 +7,6 @@ const PHONE_REGEX = /^\d{10}$/;
 const EMAIL_REGEX = /^[\w._-]+@[\w.-]+$/;
 
 export default class UserModal extends Component {
-
   static getDefaultState(user) {
     return {
       firstName: user ? user.firstName : '',

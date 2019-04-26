@@ -12,7 +12,6 @@ import TripModal from '../partials/TripModal';
 import ScheduleUtils from '../utils';
 
 class ScheduleGroup extends Component {
-
   constructor(props) {
     super(props);
     this.state = {

@@ -9,7 +9,6 @@ import UserModal from '../partials/UserModal';
 import ProfileModal from '../partials/ProfileModal';
 
 export default class DirectoryUser extends Component {
-
   constructor(props) {
     super(props);
     this.handleUserToggleArchived = this.handleUserToggleArchived.bind(this);

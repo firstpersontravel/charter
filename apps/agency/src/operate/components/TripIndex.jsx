@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { browserHistory } from 'react-router';
 
 export default class TripIndex extends Component {
-
   componentWillMount() {
     browserHistory.push(this.getRedirect());
   }
@@ -27,15 +26,15 @@ export default class TripIndex extends Component {
         `/trip/${trip.id}/values`
       );
     }
-    const primaryRole = (
-      _.find(trip.script.content.roles, { primary: true }) ||
+    const firstTravelerRole = (
+      _.find(trip.script.content.roles, { type: 'traveler' }) ||
       trip.script.content.roles[0]
     );
     return (
       `/${trip.org.name}/${trip.experience.name}` +
       `/operate/${trip.groupId}` +
       `/trip/${trip.id}` +
-      `/players/${primaryRole.name}`
+      `/players/${firstTravelerRole.name}`
     );
   }
 

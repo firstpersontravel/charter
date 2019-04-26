@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 export default class AreYouSure extends Component {
-
   constructor(props) {
     super(props);
     this.cancelButton = React.createRef();

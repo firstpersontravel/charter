@@ -9,7 +9,7 @@ module.exports = {
       required: true,
       type: 'simpleAttribute',
       title: 'Name',
-      display: { primary: true }
+      display: { label: false }
     },
     new_value_ref: {
       required: true,

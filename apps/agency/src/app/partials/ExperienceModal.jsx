@@ -21,7 +21,6 @@ function titleForExample(example, existingExperiences) {
 }
 
 export default class ExperienceModal extends Component {
-
   static getDefaultState(experience, example, existingExperiences) {
     if (experience) {
       return {

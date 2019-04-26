@@ -6,7 +6,6 @@ import { Link } from 'react-router';
 import { canRoleHaveUser } from '../../operate/utils';
 
 export default class Directory extends Component {
-
   renderRole(roleName, roleProfiles) {
     if (!roleProfiles.length) {
       return null;

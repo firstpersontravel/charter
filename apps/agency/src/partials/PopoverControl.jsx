@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 export default class PopoverControl extends Component {
-
   constructor(props) {
     super(props);
     this.handleClose = this.handleClose.bind(this);

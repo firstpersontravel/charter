@@ -61,10 +61,10 @@ function renderActions(message, updateInstance) {
     <span
       className="faint"
       onClick={() => (
-      updateInstance('messages', message.id, {
-        isArchived: !message.isArchived
-      })
-    )}>
+        updateInstance('messages', message.id, {
+          isArchived: !message.isArchived
+        })
+      )}>
       <i className="fa fa-trash-o" />
     </span>
   );
@@ -74,10 +74,10 @@ function renderActions(message, updateInstance) {
     <span
       className="faint"
       onClick={() => (
-      updateInstance('messages', message.id, {
-        replyReceivedAt: moment.utc()
-      })
-    )}>
+        updateInstance('messages', message.id, {
+          replyReceivedAt: moment.utc()
+        })
+      )}>
       <i className="fa fa-check" />
     </span>
   ) : null;

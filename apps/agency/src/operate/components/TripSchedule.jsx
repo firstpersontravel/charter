@@ -8,7 +8,6 @@ import { TimeUtil } from 'fptcore';
 import PopoverControl from '../../partials/PopoverControl';
 
 export default class TripSchedule extends Component {
-
   constructor(props) {
     super(props);
     this.handleTimeUpdate = this.handleTimeUpdate.bind(this);

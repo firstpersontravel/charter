@@ -11,7 +11,7 @@ const ifOpClasses = {
       ref: {
         type: 'lookupable',
         required: true,
-        display: { primary: true }
+        display: { label: false }
       }
     },
     eval: function(params, evalContext) {
@@ -47,7 +47,7 @@ const ifOpClasses = {
   },
   clip_answer_is: {
     properties: {
-      response: { type: 'string', required: true, primary: true }
+      response: { type: 'string', required: true, display: { label: false } }
     },
     eval: function(params, evalContext) {
       const msg = TemplateUtil.lookupRef(evalContext, 'event.response');
@@ -59,7 +59,7 @@ const ifOpClasses = {
   },
   message_contains: {
     properties: {
-      part: { type: 'string', required: true, primary: true }
+      part: { type: 'string', required: true, display: { label: false } }
     },
     eval: function(params, evalContext) {
       const msg = TemplateUtil.lookupRef(evalContext, 'event.message.content');
@@ -99,7 +99,7 @@ const ifOpClasses = {
       items: {
         type: 'list',
         items: { type: 'ifClause' },
-        display: { primary: true }
+        display: { label: false }
       }
     },
     eval: function(params, evalContext) {
@@ -113,7 +113,7 @@ const ifOpClasses = {
       items: {
         type: 'list',
         items: { type: 'ifClause' },
-        display: { primary: true }
+        display: { label: false }
       }
     },
     eval: function(params, evalContext) {
@@ -127,7 +127,7 @@ const ifOpClasses = {
       item: {
         required: true,
         type: 'ifClause',
-        display: { primary: true }
+        display: { label: false }
       }
     },
     eval: function(params, evalContext) {
@@ -148,7 +148,7 @@ _.assign(ifSpec, {
         type: 'enum',
         options: Object.keys(ifOpClasses),
         required: true,
-        display: { primary: true }
+        display: { label: false }
       }
     }
   },

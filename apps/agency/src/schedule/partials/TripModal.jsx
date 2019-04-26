@@ -37,7 +37,6 @@ function getDefaultState(group, trip, departureName) {
 }
 
 export default class TripModal extends Component {
-
   constructor(props) {
     super(props);
     this.state = getDefaultState(

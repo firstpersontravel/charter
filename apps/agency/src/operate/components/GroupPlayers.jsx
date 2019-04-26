@@ -15,7 +15,6 @@ function doesTripHaveRole(trip, roleName) {
 }
 
 export default class GroupPlayers extends Component {
-
   constructor(props) {
     super(props);
     this.handleAssignUser = this.handleAssignUser.bind(this);

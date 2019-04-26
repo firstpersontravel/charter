@@ -6,7 +6,6 @@ import { browserHistory } from 'react-router';
 import Message from '../partials/Message';
 
 export default class PlayerMessages extends Component {
-
   constructor(props) {
     super(props);
     this.state = {

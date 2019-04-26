@@ -7,7 +7,6 @@ import { TextUtil } from 'fptcore';
 import PopoverControl from '../../partials/PopoverControl';
 
 export default class TripValues extends Component {
-
   constructor(props) {
     super(props);
     this.handleFlagUpdate = this.handleFlagUpdate.bind(this);

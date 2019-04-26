@@ -12,7 +12,6 @@ import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 import { getStage } from '../../utils';
 
 class Schedule extends Component {
-
   constructor(props) {
     super(props);
     this.handleCreateGroupToggle = this.handleCreateGroupToggle.bind(this);

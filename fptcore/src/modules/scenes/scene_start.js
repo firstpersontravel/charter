@@ -7,7 +7,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'scenes',
-      display: { primary: true }
+      display: { label: false }
     }
   },
   applyAction: function(params, actionContext) {

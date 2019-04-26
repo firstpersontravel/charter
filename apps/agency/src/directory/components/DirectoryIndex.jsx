@@ -6,7 +6,6 @@ import { Link, browserHistory } from 'react-router';
 import UserModal from '../partials/UserModal';
 
 export default class DirectoryIndex extends Component {
-
   constructor(props) {
     super(props);
     this.handleCreateUser = this.handleCreateUser.bind(this);

@@ -20,7 +20,6 @@ const FayeLogger = {
 };
 
 export default class Group extends Component {
-
   constructor(props) {
     super(props);
     this.fayeClient = new Faye.Client('/pubsub');

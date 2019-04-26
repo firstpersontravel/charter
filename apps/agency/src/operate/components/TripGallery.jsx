@@ -53,7 +53,6 @@ function renderMessage(message, updateInstance) {
 const defaultHost = `${window.location.protocol}//${window.location.host}`;
 
 export default class TripGallery extends Component {
-
   constructor(props) {
     super(props);
     this.editGalleryName = this.editGalleryName.bind(this);

@@ -7,7 +7,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'cues',
-      display: { primary: true },
+      display: { label: false },
       help: 'The cue to signal.'
     }
   },

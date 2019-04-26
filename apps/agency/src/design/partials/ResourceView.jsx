@@ -16,7 +16,6 @@ import FieldRenderer from './FieldRenderer';
 const HIDE_FIELD_NAMES = ['name', 'title'];
 
 export default class ResourceView extends Component {
-
   constructor(props) {
     super(props);
     const pendingResource = _.cloneDeep(props.resource);

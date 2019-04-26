@@ -123,3 +123,7 @@ RoleIndex.propTypes = {
   user: PropTypes.object,
   players: PropTypes.array.isRequired
 };
+
+RoleIndex.defaultProps = {
+  user: null
+};

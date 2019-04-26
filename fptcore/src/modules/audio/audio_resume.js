@@ -5,7 +5,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'roles',
-      display: { primary: true },
+      display: { label: false },
       help: 'The role to resume the audio for.'
     }
   },
