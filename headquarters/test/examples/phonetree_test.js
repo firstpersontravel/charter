@@ -28,41 +28,75 @@ describe('PhoneTreeExample', () => {
     )[0];
   });
 
-  it('runs through yes path', async () => {
+  it('runs through drink yes path', async () => {
     // Start with an incoming call to the trailhead.
     const twiml1 = await TwilioCallHandler.handleIncomingCall('6667778888',
       trailhead.relayPhoneNumber);
 
     // Test greeting is returned
-    assert(twiml1.toString().indexOf('<Say voice="alice">Greetings!! Would you like a refreshing beverage?</Say>') > -1);
+    assert(twiml1.toString().indexOf('<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>') > -1);
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
     assert(trip);
 
-    // Handle response
+    // Choose drink
     const twiml2 = await TwilioCallHandler.handleCallResponse(
-      trailhead.id, trip.id, 123, 'CLIP-PHONETREE-1', 'yes', false);
+      trailhead.id, trip.id, 123, 'CLIP-GREETING', '1', false);
 
-    assert(twiml2.toString().indexOf('<Say voice="alice">Here you go!</Say>') > -1);
+    // Test question is returned
+    assert(twiml2.toString().indexOf('<Say voice="alice">Would you like a refreshing beverage?</Say>') > -1);
+
+    // Handle response
+    const twiml3 = await TwilioCallHandler.handleCallResponse(
+      trailhead.id, trip.id, 123, 'CLIP-DRINK', 'yes', false);
+
+    assert(twiml3.toString().indexOf('<Say voice="alice">Here you go!</Say>') > -1);
   });
 
-  it('runs through no path', async () => {
+  it('runs through drink no path', async () => {
     // Start with an incoming call to the trailhead.
     const twiml1 = await TwilioCallHandler.handleIncomingCall('6667778888',
       trailhead.relayPhoneNumber);
 
     // Test greeting is returned
-    assert(twiml1.toString().indexOf('<Say voice="alice">Greetings!! Would you like a refreshing beverage?</Say>') > -1);
+    assert(twiml1.toString().indexOf('<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>') > -1);
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
     assert(trip);
 
-    // Handle response
+    // Choose drink
     const twiml2 = await TwilioCallHandler.handleCallResponse(
-      trailhead.id, trip.id, 123, 'CLIP-PHONETREE-1', 'no', false);
+      trailhead.id, trip.id, 123, 'CLIP-GREETING', '1', false);
 
-    assert(twiml2.toString().indexOf('<Say voice="alice">Next time!</Say>') > -1);
+    // Test question is returned
+    assert(twiml2.toString().indexOf('<Say voice="alice">Would you like a refreshing beverage?</Say>') > -1);
+
+    // Handle response
+    const twiml3 = await TwilioCallHandler.handleCallResponse(
+      trailhead.id, trip.id, 123, 'CLIP-DRINK', 'no', false);
+
+    assert(twiml3.toString().indexOf('<Say voice="alice">Next time!</Say>') > -1);
+  });
+
+  it('runs through joke path', async () => {
+    // Start with an incoming call to the trailhead.
+    const twiml1 = await TwilioCallHandler.handleIncomingCall('6667778888',
+      trailhead.relayPhoneNumber);
+
+    // Test greeting is returned
+    assert(twiml1.toString().indexOf('<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>') > -1);
+
+    // Test trip was created
+    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
+    assert(trip);
+
+    // Choose drink
+    const twiml2 = await TwilioCallHandler.handleCallResponse(
+      trailhead.id, trip.id, 123, 'CLIP-GREETING', '2', false);
+
+    // Test joke is returned
+    assert(twiml2.toString().indexOf('<Say voice="alice">Why did the chicken cross the road?</Say>') > -1);
   });
 });

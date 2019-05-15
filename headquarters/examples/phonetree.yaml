@@ -22,34 +22,54 @@ scenes:
     title: Main
 
 clips:
-  - name: CLIP-PHONETREE-1
+  - name: CLIP-GREETING
     title: Greetings
     scene: SCENE-MAIN
-    transcript: Greetings!! Would you like a refreshing beverage?
+    transcript: Press 1 for a beverage, or 2 for a joke.
+    answer_expected: true
+
+  - name: CLIP-DRINK
+    title: Greetings
+    scene: SCENE-MAIN
+    transcript: Would you like a refreshing beverage?
     answer_expected: true
     answer_hints: [yes, no]
 
-  - name: CLIP-PHONETREE-1-YES
+  - name: CLIP-DRINK-YES
     title: "yes"
     scene: SCENE-MAIN
     transcript: Here you go!
 
-  - name: CLIP-PHONETREE-1-NO
+  - name: CLIP-DRINK-NO
     title: "no"
     scene: SCENE-MAIN
     transcript: Next time!
+
+  - name: CLIP-JOKE
+    title: joke
+    scene: SCENE-MAIN
+    transcript: Why did the chicken cross the road?
 
 triggers:
   - name: t1
     events: [{type: call_received, from: Player, to: PhoneTree}]
     scene: SCENE-MAIN
-    actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1' }]
+    actions: [{ name: 'play_clip', clip_name: 'CLIP-GREETING' }]
 
-  - name: t2
-    events: [{type: clip_answered, clip: CLIP-PHONETREE-1}]
+  - name: trigger-greeting-answered
+    events: [{type: clip_answered, clip: CLIP-GREETING}]
+    scene: SCENE-MAIN
+    actions:
+      - name: conditional  
+        if: { op: clip_answer_is, response: "1" }
+        actions: [{ name: 'play_clip', clip_name: 'CLIP-DRINK' }]
+        else: [{ name: 'play_clip', clip_name: 'CLIP-JOKE' }]
+
+  - name: trigger-drink-answered
+    events: [{type: clip_answered, clip: CLIP-DRINK}]
     scene: SCENE-MAIN
     actions:
       - name: conditional  
         if: { op: clip_answer_is, response: "yes" }
-        actions: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-YES' }]
-        else: [{ name: 'play_clip', clip_name: 'CLIP-PHONETREE-1-NO' }]
+        actions: [{ name: 'play_clip', clip_name: 'CLIP-DRINK-YES' }]
+        else: [{ name: 'play_clip', clip_name: 'CLIP-DRINK-NO' }]
