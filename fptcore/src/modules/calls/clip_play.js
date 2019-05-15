@@ -1,6 +1,6 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template');
 
 module.exports = {
   help: 'Play a clip on an active phone call.',
@@ -19,7 +19,7 @@ module.exports = {
   },
   applyAction: function (params, actionContext) {
     // Find the clip.
-    var clip = _.find(actionContext.scriptContent.clips,
+    const clip = _.find(actionContext.scriptContent.clips,
       { name: params.clip_name });
     if (!clip) {
       return [{
@@ -28,8 +28,9 @@ module.exports = {
         message: 'Could not find clip named "' + params.clip_name + '".'
       }];
     }
+
     // Play audio if it is present.
-    var playClause = clip.path ?
+    const playClause = clip.path ?
       { clause: 'play', media: clip.path } :
       {
         clause: 'say',

@@ -1,14 +1,15 @@
-var _ = require('lodash');
-var jsonschema = require('jsonschema');
+const _ = require('lodash');
+const jsonschema = require('jsonschema');
 
-var TextUtil = require('../utils/text');
-var ResourcesRegistry = require('../registries/resources');
-var ValidationCore = require('../cores/validation');
-var Errors = require('../errors');
+// const ConditionCore = require('./condition');
+const TextUtil = require('../utils/text');
+const ResourcesRegistry = require('../registries/resources');
+const ValidationCore = require('../cores/validation');
+const Errors = require('../errors');
 
-var CURRENT_VERSION = 11;
+const CURRENT_VERSION = 11;
 
-var metaSchema = {
+const metaSchema = {
   type: 'object',
   properties: {
     version: { type: 'integer', enum: [CURRENT_VERSION] }
@@ -22,8 +23,8 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
     throw new Error('Param spec with no type.');
   }
   if (paramSpec.type === 'variegated') {
-    var variety = ValidationCore.getVariegatedVariety(paramSpec, obj);
-    var varietyClass = ValidationCore.getVariegatedClass(paramSpec, variety);
+    const variety = ValidationCore.getVariegatedVariety(paramSpec, obj);
+    const varietyClass = ValidationCore.getVariegatedClass(paramSpec, variety);
     walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
       iteree);
     return;
@@ -57,6 +58,16 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
     });
     return;
   }
+
+  // For if clauses, call iteree for all if clauses, both parent and child
+  // if (paramSpec.type === 'ifClause') {
+  //   if (paramType === 'ifClause') {
+  //     iteree(obj, paramSpec, parent, key);
+  //   }
+  //   walkObjectParam(parent, key, obj, ConditionCore.ifSpec, 'ifClause',
+  //     iteree);
+  // }
+
   // If we've made it to here, we're a simple type.
   if (paramSpec.type === paramType) {
     iteree(obj, paramSpec, parent, key);
@@ -79,29 +90,36 @@ function walkObjectParams(parent, key, obj, spec, paramType, iteree) {
 
 class ScriptCore {
   /**
+   * Walk over all params in a resource.
+   */
+  static walkResourceParams(resourceType, resource, paramType, iteree) {
+    const resourceClass = ResourcesRegistry[resourceType];
+    walkObjectParams(null, null, resource, resourceClass.properties, 
+      paramType, iteree);
+  }
+
+  /**
    * Walk all resources in the script to iterate over all params
    */
   static walkParams(scriptContent, paramType, iteree) {
     Object
       .keys(scriptContent)
-      .forEach(function (collectionName) {
+      .forEach((collectionName) => {
         if (collectionName === 'meta') {
           return;
         }
-        var resourceType = TextUtil.singularize(collectionName);
-        var resourceClass = ResourcesRegistry[resourceType];
-        var collection = scriptContent[collectionName];
-        collection.forEach(function(resource) {
-          walkObjectParams(null, null, resource, resourceClass.properties, 
-            paramType, iteree);
+        const collection = scriptContent[collectionName];
+        const resourceType = TextUtil.singularize(collectionName);
+        collection.forEach((resource) => {
+          this.walkResourceParams(resourceType, resource, paramType, iteree);
         });
       });
   }
 
   static getResourceErrors(script, collectionName, resource) {
-    var resourceType = TextUtil.singularize(collectionName);
-    var resourceName = resource.name || '<unknown>';
-    var resourceClass = ResourcesRegistry[resourceType];
+    const resourceType = TextUtil.singularize(collectionName);
+    const resourceName = resource.name || '<unknown>';
+    const resourceClass = ResourcesRegistry[resourceType];
     if (!resourceClass) {
       return [{
         path: collectionName,
@@ -109,7 +127,7 @@ class ScriptCore {
         message: 'Invalid collection: ' + collectionName
       }];
     }
-    var errors = ValidationCore.validateResource(script, resourceClass, 
+    const errors = ValidationCore.validateResource(script, resourceClass, 
       resource);
 
     return errors.map(function(err) {
@@ -123,12 +141,12 @@ class ScriptCore {
 
   static validateScriptContent(script) {
     // Check meta block
-    var metaValidator = new jsonschema.Validator();
-    var metaOptions = { propertyName: 'meta' };
-    var metaResult = metaValidator.validate(script.content.meta || null,
+    const metaValidator = new jsonschema.Validator();
+    const metaOptions = { propertyName: 'meta' };
+    const metaResult = metaValidator.validate(script.content.meta || null,
       metaSchema, metaOptions);
     if (!metaResult.valid) {
-      var metaErrors = metaResult.errors.map(function(e) {
+      const metaErrors = metaResult.errors.map(function(e) {
         return {
           message: e.property + ' ' + e.message,
           path: e.property,
@@ -140,12 +158,12 @@ class ScriptCore {
     }
 
     // Check resources
-    var errors = [];
+    const errors = [];
     Object.keys(script.content).forEach(function(collectionName) {
       if (collectionName === 'meta') {
         return;
       }
-      var collection = script.content[collectionName];
+      const collection = script.content[collectionName];
       if (!_.isArray(collection)) {
         errors.push({
           path: collectionName,
@@ -155,15 +173,15 @@ class ScriptCore {
         return;
       }
       collection.forEach(function(resource) {
-        var resourceErrors = ScriptCore.getResourceErrors(script, collectionName,
+        const resourceErrors = ScriptCore.getResourceErrors(script, collectionName,
           resource);
         errors.push.apply(errors, resourceErrors);
       });
     });
     if (errors.length > 0) {
-      var collectionNames = _.uniq(_.map(errors, 'collection'));
-      var onlyOne = errors.length === 1;
-      var message = (
+      const collectionNames = _.uniq(_.map(errors, 'collection'));
+      const onlyOne = errors.length === 1;
+      const message = (
         'There ' +
         (onlyOne ? 'was ' : 'were ') +
         errors.length +

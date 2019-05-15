@@ -113,7 +113,6 @@ describe('twilioRoutes', () => {
   });
 
   describe('#outgoingCallRoute', () => {
-
     beforeEach(() => {
       // We're simulating an outgoing call from the Actor to the Player,
       // so the player's phone is dialing -- we need to add the Actor phone.
@@ -195,7 +194,6 @@ describe('twilioRoutes', () => {
   });
 
   describe('#callResponseRoute', () => {
-
     // Create a dummy response to check for.  
     const twimlSentinel = new twilio.twiml.VoiceResponse();
     twimlSentinel.say({}, 'response message');
@@ -215,7 +213,35 @@ describe('twilioRoutes', () => {
       sandbox.stub(models.Relay, 'findByPk').resolves(stubRelay);
     });
 
-    it('handles final response', async () => {
+    it('handles digits response', async () => {
+      // Create dummy request
+      const req = httpMocks.createRequest({
+        query: { trip: '1', relay: '10', clip: 'CLIP-NAME' },
+        body: { Digits: '123' }
+      });
+      const res = httpMocks.createResponse();
+
+      // Call the route
+      await twilioRoutes.callResponseRoute(req, res);
+
+      // Assert creates proper event and sends to trigger
+      assert.deepStrictEqual(
+        TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
+        [1, stubRelay, {
+          clip: 'CLIP-NAME',
+          partial: false,
+          response: '123',
+          type: 'clip_answered'
+        }]);
+      // Call doesn't need to be interrupted
+      sinon.assert.notCalled(TwilioCallHandler._interruptCall);
+
+      // Check result
+      assert.strictEqual(res.statusCode, 200);
+      assert.strictEqual(res._getData(), twimlSentinel.toString());
+    });
+
+    it('handles final speech response', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
         query: { trip: '1', relay: '10', clip: 'CLIP-NAME' },
@@ -243,7 +269,7 @@ describe('twilioRoutes', () => {
       assert.strictEqual(res._getData(), twimlSentinel.toString());
     });
 
-    it('handles partial response', async () => {
+    it('handles partial speech response', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
         query: {

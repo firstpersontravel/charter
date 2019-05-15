@@ -59,9 +59,8 @@ class TwilioCallOps {
 
   static async gather(tripId, relay, twimlResponse, twimlOp) {
     const twilioHost = config.env.TWILIO_HOST;
-    // build gather
-    const args = {
-      input: 'speech',
+    const gather = twimlResponse.gather(Object.assign({
+      input: 'dtmf speech',
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`
@@ -71,11 +70,7 @@ class TwilioCallOps {
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}` +
         '&partial=true'
       )
-    };
-    if (twimlOp.hints) {
-      args.hints = twimlOp.hints;
-    }
-    const gather = twimlResponse.gather(args);
+    }, twimlOp.hints ? { hints: twimlOp.hints } : null));
     // Interpret the subclause and add it to the gather clause.
     const subOp = twimlOp.subclause.clause;
     await this[subOp].call(this, tripId, relay, gather, twimlOp.subclause);

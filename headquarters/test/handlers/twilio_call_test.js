@@ -161,7 +161,7 @@ describe('TwilioCallHandler', () => {
       assert.strictEqual(
         twiml.toString(),
         '<?xml version="1.0" encoding="UTF-8"?>' +
-        '<Response><Gather input="speech" ' +
+        '<Response><Gather input="dtmf speech" ' +
         'action="http://twilio.test/endpoints/twilio/calls/response' +
         '?relay=100&amp;trip=1&amp;clip=CLIP-123" ' +
         'partialResultCallback=' +
@@ -189,9 +189,89 @@ describe('TwilioCallHandler', () => {
   });
 
   describe('#handleCallResponse', () => {
-    it.skip('returns twiml if final', () => {});
+    const relayId = 1;
+    const tripId = 2;
+    const callSid = 3;
+    const clipName = 'clip';
+    const mockRelay = { id: 1 };
 
-    it.skip('interrupts call if partial', () => {});
+    const twimlSentinel = new twilio.twiml.VoiceResponse();
+    twimlSentinel.say({}, 'message');
+
+    beforeEach(() => {
+      sandbox.stub(TwilioCallHandler, '_interruptCall').resolves();
+      sandbox.stub(models.Relay, 'findByPk').resolves(mockRelay);
+    });
+
+    it('returns twiml if final', async () => {
+      // Return twiml
+      sandbox
+        .stub(TwilioCallHandler, '_triggerEventAndGatherTwiml')
+        .resolves(twimlSentinel);
+
+      const res = await TwilioCallHandler.handleCallResponse(relayId, tripId,
+        callSid, clipName, 'abc', false);
+
+      // Test returns twiml sentinel
+      assert.strictEqual(res, twimlSentinel);
+
+      // Test event was called properly
+      sinon.assert.calledWith(
+        TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
+        tripId, mockRelay, {
+          type: 'clip_answered',
+          clip: 'clip',
+          partial: false,
+          response: 'abc'
+        });
+
+      // Call not interrupted
+      sinon.assert.notCalled(TwilioCallHandler._interruptCall);
+    });
+
+    it('returns hangup if no twiml returned', async () => {
+      // Return twiml
+      sandbox
+        .stub(TwilioCallHandler, '_triggerEventAndGatherTwiml')
+        .resolves(new twilio.twiml.VoiceResponse());
+
+      const res = await TwilioCallHandler.handleCallResponse(relayId, tripId,
+        callSid, clipName, 'abc', false);
+
+      // Test returns twiml sentinel
+      assert.strictEqual(res.toString(), '<?xml version="1.0" encoding="UTF-8"?><Response><Hangup/></Response>');
+
+      // Call not interrupted
+      sinon.assert.notCalled(TwilioCallHandler._interruptCall);
+    });
+
+    it('interrupts call if partial', async () => {
+      // Return twiml
+      sandbox
+        .stub(TwilioCallHandler, '_triggerEventAndGatherTwiml')
+        .resolves(twimlSentinel);
+
+      const res = await TwilioCallHandler.handleCallResponse(relayId, tripId,
+        callSid, clipName, 'abc', true);
+
+      // Test returns empty voice response -- not the actual twiml is sent
+      // to the interrupt call endpoint
+      assert.strictEqual(res.toString(), '<?xml version="1.0" encoding="UTF-8"?><Response/>');
+
+      // Test event was called properly
+      sinon.assert.calledWith(
+        TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
+        tripId, mockRelay, {
+          type: 'clip_answered',
+          clip: 'clip',
+          partial: true,
+          response: 'abc'
+        });
+
+      // Call interrupted
+      sinon.assert.calledWith(TwilioCallHandler._interruptCall.getCall(0),
+        callSid, twimlSentinel);
+    });
   });
 
   describe('#_interruptCall', () => {
