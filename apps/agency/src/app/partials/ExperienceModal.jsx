@@ -49,6 +49,7 @@ export default class ExperienceModal extends Component {
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
+    this.firstInputRef = React.createRef();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -58,7 +59,9 @@ export default class ExperienceModal extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.isOpen && !prevProps.isOpen) {
-      this.firstInput.focus();
+      if (this.firstInputRef.current) {
+        this.firstInputRef.current.focus();
+      }
     }
   }
 
@@ -180,7 +183,7 @@ export default class ExperienceModal extends Component {
                   id="exp_title"
                   className="form-control"
                   value={this.state.title}
-                  ref={(input) => { this.firstInput = input; }}
+                  ref={this.firstInputRef}
                   onChange={_.curry(this.handleChangeField)('title')}
                   placeholder="Title" />
               </div>
