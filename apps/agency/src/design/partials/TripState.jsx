@@ -68,7 +68,7 @@ export default class TripState extends Component {
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => ConditionCore.if(trip.evalContext, panel.active_if))
+      .filter(panel => ConditionCore.if(trip.evalContext, panel.visible_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,

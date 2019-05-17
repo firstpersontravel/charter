@@ -6,6 +6,10 @@ import PropTypes from 'prop-types';
 
 import { getStage } from '../utils';
 
+function titleForOrg(org) {
+  return org.isPersonal ? 'Home' : org.title;
+}
+
 function renderRight(authInfo, logout) {
   if (!authInfo || !authInfo.user) {
     return (
@@ -67,7 +71,7 @@ function renderBrand(org, experience) {
       activeClassName="active"
       className="navbar-brand mr-1"
       to={`/${org.name}`}>
-      {org.title.toUpperCase()}
+      {titleForOrg(org).toUpperCase()}
     </Link>
   );
 }

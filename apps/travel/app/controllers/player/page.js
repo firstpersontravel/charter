@@ -55,7 +55,7 @@ export default Ember.Controller.extend({
         pagePanels[outletName] = [];
       }
       partials[outletName].panels.forEach(function(panel) {
-        if (trip.evaluateIf(panel.active_if)) {
+        if (trip.evaluateIf(panel.visible_if)) {
           pagePanels[outletName].push(panel);
         }
       }, this);

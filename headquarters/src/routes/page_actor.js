@@ -67,7 +67,7 @@ function getPage(objs, evalContext, player) {
   const directiveText = TemplateUtil.templateText(evalContext,
     page.directive, timezone);
   const panels = _(page.panels || [])
-    .filter(panel => ConditionCore.if(evalContext, panel.active_if))
+    .filter(panel => ConditionCore.if(evalContext, panel.visible_if))
     .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
   return {

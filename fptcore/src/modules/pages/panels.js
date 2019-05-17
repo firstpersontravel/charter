@@ -32,7 +32,7 @@ module.exports = {
       style: {
         type: 'enum',
         options: PANEL_BUTTON_STYLE_OPTIONS,
-        help: 'Visual style of the button.'
+        display: { hidden: true }
       }
     }
   },
@@ -133,7 +133,11 @@ module.exports = {
     help: 'Displays simple text.',
     properties: {
       text: { type: 'markdown', required: true },
-      style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
+      style: {
+        type: 'enum',
+        options: PANEL_TEXT_STYLE_OPTIONS,
+        display: { hidden: true }
+      }
     }
   },
   video: {

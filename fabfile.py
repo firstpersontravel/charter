@@ -11,7 +11,7 @@ from fabric.api import require, run, sudo, local, env, settings, hide, cd, \
 from fabric.contrib.files import put, upload_template
 from fabric.contrib.console import confirm
 from fabric.utils import puts
-from fabric.decorators import roles, runs_once
+from fabric.decorators import roles
 from fabric.network import NetworkError
 
 import boto.ec2

@@ -8,7 +8,7 @@ var PANEL_COMMON_CLASS = {
       required: true,
       help: 'The type of panel.'
     },
-    active_if: {
+    visible_if: {
       type: 'ifClause',
       help: 'A test to determine if this panel is visible.'
     }

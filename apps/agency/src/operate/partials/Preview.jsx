@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { ConditionCore, TemplateUtil } from 'fptcore';
 
 function renderPanel(player, page, panel) {
-  if (!ConditionCore.if(player.trip.evalContext, panel.active_if)) {
+  if (!ConditionCore.if(player.trip.evalContext, panel.visible_if)) {
     return null;
   }
   if (panel.type === 'text' ||

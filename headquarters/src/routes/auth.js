@@ -32,7 +32,8 @@ async function getUserAuthInfo(user) {
     orgs: orgRoles.map(orgRole => ({
       id: orgRole.org.id,
       name: orgRole.org.name,
-      title: orgRole.org.title
+      title: orgRole.org.title,
+      isPersonal: orgRole.org.isPersonal
     }))
   };
 }
