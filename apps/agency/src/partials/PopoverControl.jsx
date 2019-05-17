@@ -109,7 +109,9 @@ export default class PopoverControl extends Component {
     };
     const edit = this.renderEdit();
     const helpText = this.props.helpText ? (
-      <p>{this.props.helpText}</p>
+      // Missing the constrain-text causes an infinite loop for help lines
+      // with more than one line... :(
+      <p className="constrain-text">{this.props.helpText}</p>
     ) : null;
     return (
       <span className="popover-control">
