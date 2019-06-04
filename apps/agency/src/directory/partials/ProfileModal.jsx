@@ -27,6 +27,7 @@ export default class ProfileModal extends Component {
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeValue = this.handleChangeValue.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
+    this.firstInputRef = React.createRef();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,8 +35,10 @@ export default class ProfileModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.isOpen && !prevProps.isOpen) {
-      this.firstInput.focus();
+    if (this.props.isOpen
+        && !prevProps.isOpen &&
+        this.firstInputRef.current) {
+      this.firstInputRef.current.focus();
     }
   }
 
@@ -165,7 +168,7 @@ export default class ProfileModal extends Component {
                   id="profile_photo"
                   className="form-control"
                   value={this.state.photo}
-                  ref={(input) => { this.firstInput = input; }}
+                  ref={this.firstInputRef}
                   onChange={_.curry(this.handleChangeField)('photo')}
                   placeholder="Photo media path" />
               </div>
@@ -176,7 +179,6 @@ export default class ProfileModal extends Component {
                   id="profile_email"
                   className="form-control"
                   value={this.state.email}
-                  ref={(input) => { this.firstInput = input; }}
                   onChange={_.curry(this.handleChangeField)('email')}
                   placeholder="Email" />
               </div>

@@ -30,6 +30,7 @@ export default class GroupModal extends Component {
     this.handleToggle = this.handleToggle.bind(this);
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleChangeScript = this.handleChangeScript.bind(this);
+    this.firstSelectRef = React.createRef();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,8 +44,10 @@ export default class GroupModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.isOpen && !prevProps.isOpen) {
-      this.firstSelect.focus();
+    if (this.props.isOpen &&
+        !prevProps.isOpen &&
+        this.firstSelectRef.current) {
+      this.firstSelectRef.current.focus();
     }
   }
 
@@ -108,8 +111,8 @@ export default class GroupModal extends Component {
                   className="form-control"
                   id="g_script"
                   onChange={this.handleChangeScript}
-                  ref={(input) => { this.firstSelect = input; }}
-                  value={this.state.scriptId}>
+                  ref={this.firstSelectRef}
+                  value={this.state.scriptId || ''}>
                   {scriptOptions}
                 </select>
               </div>

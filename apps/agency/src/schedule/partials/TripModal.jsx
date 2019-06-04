@@ -47,6 +47,7 @@ export default class TripModal extends Component {
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeVariant = this.handleChangeVariant.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
+    this.titleInputRef = React.createRef();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -57,8 +58,10 @@ export default class TripModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.isOpen && !prevProps.isOpen) {
-      this.titleInput.focus();
+    if (this.props.isOpen &&
+        !prevProps.isOpen &&
+        this.titleInputRef.current) {
+      this.titleInputRef.current.focus();
     }
   }
 
@@ -167,7 +170,7 @@ export default class TripModal extends Component {
                   id="trip_title"
                   className="form-control"
                   value={this.state.title}
-                  ref={(input) => { this.titleInput = input; }}
+                  ref={this.titleInputRef}
                   onChange={_.curry(this.handleChangeField)('title')}
                   placeholder="Title" />
               </div>

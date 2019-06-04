@@ -6,12 +6,12 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export default class AreYouSure extends Component {
   constructor(props) {
     super(props);
-    this.cancelButton = React.createRef();
+    this.cancelButtonRef = React.createRef();
   }
 
   componentDidUpdate() {
-    if (this.cancelButton.current) {
-      this.cancelButton.current.focus();
+    if (this.cancelButtonRef.current) {
+      this.cancelButtonRef.current.focus();
     }
   }
 
@@ -35,7 +35,7 @@ export default class AreYouSure extends Component {
           </button>
           {' '}
           <button
-            ref={this.cancelButton}
+            ref={this.cancelButtonRef}
             className="btn btn-secondary"
             onClick={this.props.onToggle}>
             Cancel
