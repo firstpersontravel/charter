@@ -56,6 +56,8 @@
 
 - model: Trip
   data:
+    createdAt: 2018-01-01T00:00:00Z
+    updatedAt: 2018-01-01T00:00:00Z
     id: 1
     org: 1
     experience: 1

@@ -3,15 +3,17 @@ const request = require('supertest');
 const moment = require('moment');
 
 const app = require('../../src/app');
+const { sandbox } = require('../mocks');
 const TestUtil = require('../util');
 
 describe('API retrieve', () => {
-
+  const now = moment.utc();
   const today = moment.utc().format('YYYY-MM-DD');
   let group;
   let trip;
 
   beforeEach(async () => {
+    sandbox.stub(moment, 'utc').returns(now);
     trip = await TestUtil.createDummyTrip();
     group = await trip.getGroup();
   });
@@ -26,6 +28,8 @@ describe('API retrieve', () => {
           assert.deepStrictEqual(res.body, {
             data: {
               trip: {
+                createdAt: now.toISOString(),
+                updatedAt: now.toISOString(),
                 id: trip.id,
                 experienceId: trip.experienceId,
                 scriptId: trip.scriptId,
@@ -35,8 +39,9 @@ describe('API retrieve', () => {
                 date: today,
                 history: {},
                 isArchived: false,
-                lastScheduledTime: null,
                 schedule: {},
+                scheduleUpdatedAt: null,
+                scheduleAt: null,
                 departureName: '',
                 galleryName: '',
                 variantNames: '',

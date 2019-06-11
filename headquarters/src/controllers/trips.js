@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const TripCore = require('../../../fptcore/src/cores/trip');
 const PlayerCore = require('../../../fptcore/src/cores/player');
 
@@ -35,6 +37,8 @@ class TripsController {
     const scenes = group.script.content.scenes || [];
     const firstScene = scenes[0] || { name: '' };
     const tripFields = Object.assign({
+      createdAt: moment.utc(),
+      updatedAt: moment.utc(),
       orgId: group.orgId,
       experienceId: group.experience.id,
       groupId: group.id,

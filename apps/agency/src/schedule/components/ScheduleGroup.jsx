@@ -142,8 +142,7 @@ class ScheduleGroup extends Component {
       galleryName: _.kebabCase(fields.title),
       departureName: fields.departureName,
       variantNames: fields.variantNames.join(','),
-      currentSceneName: '',
-      lastScheduledTime: null
+      currentSceneName: ''
     });
     if (this.state.isEditingTrip) {
       // update existing trip

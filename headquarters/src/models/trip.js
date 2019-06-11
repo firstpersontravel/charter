@@ -21,6 +21,8 @@ const {
  * Trip model.
  */
 const Trip = database.define('Trip', snakeCaseColumns({
+  createdAt: datetimeField(),
+  updatedAt: mutableModifier(datetimeField()),
   title: mutableModifier(requiredStringField(255)),
   date: dateField('date'),
   departureName: mutableModifier(optionalStringField(32)),
@@ -34,7 +36,8 @@ const Trip = database.define('Trip', snakeCaseColumns({
   schedule: mutableModifier(jsonField(database, 'Trip', 'schedule')),
   history: mutableModifier(jsonField(database, 'Trip', 'history')),
   galleryName: mutableModifier(optionalStringField(64)),
-  lastScheduledTime: mutableModifier(allowNullModifier(datetimeField())),
+  scheduleAt: mutableModifier(allowNullModifier(datetimeField())),
+  scheduleUpdatedAt: mutableModifier(allowNullModifier(datetimeField())),
   isArchived: mutableModifier(booleanField(false))
 }));
 

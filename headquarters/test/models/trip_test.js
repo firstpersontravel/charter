@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const models = require('../../src/models');
 const TestUtil = require('../util');
 const { assertValidation } = require('./utils');
@@ -7,6 +9,8 @@ describe('Trip', () => {
 
   beforeEach(() => {
     trip = models.Trip.build({
+      createdAt: moment.utc(),
+      updatedAt: moment.utc(),
       orgId: 100,
       experienceId: 3,
       scriptId: 1,

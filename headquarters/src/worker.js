@@ -18,9 +18,13 @@ async function scheduleActions() {
   }
   isSchedulingActions = true;
   try {
+    // Update scheduleAt times for any trip or script that was updated recently
+    await SchedulerWorker.updateScheduleAts();
+
     // Schedule actions up to five minutes ahead of time
     const aMinuteAhead = moment.utc().clone().add(5, 'minutes');
     await SchedulerWorker.scheduleActions(aMinuteAhead);
+
     isSchedulingActions = false;
   } catch (err) {
     console.error(`Uncaught exception running scheduler: ${err.message}`);

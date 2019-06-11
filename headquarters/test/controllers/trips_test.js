@@ -1,5 +1,5 @@
-const assert = require('assert');
 const sinon = require('sinon');
+const moment = require('moment');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
@@ -8,6 +8,8 @@ const TripsController = require('../../src/controllers/trips');
 describe('TripsController', () => {
   describe('#createTrip', () => {
     it('creates a trip and players', async () => {
+      const now = moment.utc();
+      sandbox.stub(moment, 'utc').returns(now);
       const stubExperience = {
         id: 3,
         timezone: 'US/Pacific',
@@ -58,40 +60,38 @@ describe('TripsController', () => {
           { model: models.Experience, as: 'experience' }
         ]
       });
-      sinon.assert.calledOnce(models.Trip.create);
       // Create trip
-      assert.deepStrictEqual(
-        models.Trip.create.firstCall.args[0], {
-          orgId: 200,
-          date: '2018-01-01',
-          currentSceneName: 'SCENE-MAIN',
-          groupId: 1,
-          schedule: {
-            basicIntro: '2018-01-01T18:00:00.000Z',
-            startAt: '2018-01-01T16:00:00.000Z'
-          },
-          departureName: 'T1',
-          scriptId: 2,
-          experienceId: 3,
-          variantNames: 'basic',
-          customizations: { oysters: 'omg' },
-          title: 'title',
-          values: { one: 1, two: 2 },
-          waypointOptions: {},
-          history: {}
-        });
+      sinon.assert.calledWith(models.Trip.create.getCall(0), {
+        createdAt: now,
+        updatedAt: now,
+        orgId: 200,
+        date: '2018-01-01',
+        currentSceneName: 'SCENE-MAIN',
+        groupId: 1,
+        schedule: {
+          basicIntro: '2018-01-01T18:00:00.000Z',
+          startAt: '2018-01-01T16:00:00.000Z'
+        },
+        departureName: 'T1',
+        scriptId: 2,
+        experienceId: 3,
+        variantNames: 'basic',
+        customizations: { oysters: 'omg' },
+        title: 'title',
+        values: { one: 1, two: 2 },
+        waypointOptions: {},
+        history: {}
+      });
       // Create player
-      sinon.assert.calledOnce(models.Player.create);
-      assert.deepStrictEqual(
-        models.Player.create.firstCall.args[0], {
-          orgId: 200,
-          currentPageName: '',
-          tripId: 3,
-          roleName: 'fake',
-          userId: null,
-          acknowledgedPageAt: null,
-          acknowledgedPageName: ''
-        });
+      sinon.assert.calledWith(models.Player.create.getCall(0), {
+        orgId: 200,
+        currentPageName: '',
+        tripId: 3,
+        roleName: 'fake',
+        userId: null,
+        acknowledgedPageAt: null,
+        acknowledgedPageName: ''
+      });
     });
   });
 });

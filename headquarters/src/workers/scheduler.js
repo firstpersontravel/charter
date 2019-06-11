@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
@@ -13,9 +14,21 @@ const logger = config.logger.child({ name: 'workers.scheduler' });
 
 class SchedulerWorker {
   /**
+   * Get time that a trigger is supposed to be triggered at.
+   */
+  static _getTriggerIntendedAt(trigger, actionContext) {
+    const timeOccurredTriggerEvent = (
+      TriggerEventCore.triggerEventForEventType(trigger, 'time_occurred')
+    );
+    const intendedAt = EventsRegistry.time_occurred.timeForSpec(
+      timeOccurredTriggerEvent, actionContext.evalContext);
+    return intendedAt;    
+  }
+
+  /**
    * Get all triggers that should fire based on time elapsing.
    */
-  static _getTimeOccuranceActions(objs, actionContext, threshold) {
+  static _getTimeOccuranceActions(trip, actionContext, threshold) {
     const now = moment.utc();
     const toTimestamp = threshold.unix();
 
@@ -28,18 +41,13 @@ class SchedulerWorker {
     const triggers = TriggerEventCore.triggersForEvent(timeOccurredEvent,
       actionContext);
 
-    return triggers.map(function(trigger) {
-      // Get intended time of time occurred trigger
-      const timeOccurredTriggerEvent = (
-        TriggerEventCore.triggerEventForEventType(trigger, 'time_occurred')
-      );
-      const intendedAt = EventsRegistry.time_occurred.timeForSpec(
-        timeOccurredTriggerEvent, actionContext.evalContext);
+    return triggers.map((trigger) => {
+      const intendedAt = this._getTriggerIntendedAt(trigger, actionContext);
       const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
       // Construct schdeduled action
       return {
-        orgId: objs.trip.orgId,
-        tripId: objs.trip.id,
+        orgId: trip.orgId,
+        tripId: trip.id,
         type: 'trigger',
         name: trigger.name,
         params: {},
@@ -48,6 +56,81 @@ class SchedulerWorker {
         scheduledAt: scheduleAt
       };
     });
+  }
+
+  /**
+   * Update scheduleAt time for all trpis
+   */
+  static async updateScheduleAts() {
+    // Find all trips where the scheduleAt needs updating -- which means if
+    // the trip or script was updated more recently than scheduling happened.
+    const trips = await models.Trip.findAll({
+      where: {
+        isArchived: false,
+        scheduleUpdatedAt: {
+          [Sequelize.Op.or]: [{
+            [Sequelize.Op.lte]: Sequelize.col('updatedAt'),
+            [Sequelize.Op.lte]: Sequelize.col('script.updatedAt')
+          }]
+        }
+      },
+      include: [{
+        model: models.Experience,
+        as: 'experience',
+        where: { isArchived: false }
+      }, {
+        model: models.Script,
+        as: 'script'
+      }]
+    });
+    for (const trip of trips) {
+      logger.info(`Updating scheduleAt for ${trip.experience.title} "${trip.title}".`);
+      await this._updateTripNextScheduleAt(trip);
+    }
+  }
+
+  /**
+   * Update scheduleAt time for a single trip.
+   */
+  static async _updateTripNextScheduleAt(trip) {
+    const now = moment.utc();
+    const objs = await TripUtil.getObjectsForTrip(trip.id);
+    const actionContext = TripUtil.prepareActionContext(objs, now);
+    const nextTime = _(objs.script.content.triggers)
+      .filter(trigger => _.some(trigger.events, { type: 'time_occurred' }))
+      .filter(trigger => !trip.history[trigger.name])
+      .map(trigger => this._getTriggerIntendedAt(trigger, actionContext))
+      .sortBy(time => time.unix())
+      .value()[0];
+
+    await trip.update({
+      scheduleUpdatedAt: now,
+      scheduleAt: nextTime || null
+    });
+  }
+
+  /**
+   * Schedule actions for all active trips.
+   */
+  static async scheduleActions(threshold) {
+    // Find all trips where the schedule needs updating -- which means if
+    // the trip or script was updated more recently than scheduling happened.
+    const trips = await models.Trip.findAll({
+      where: {
+        isArchived: false,
+        scheduleAt: { [Sequelize.Op.lte]: threshold.toDate() }
+      },
+      include: [{
+        model: models.Experience,
+        as: 'experience',
+        where: { isArchived: false }
+      }]
+    });
+    for (const trip of trips) {
+      logger.info(`Checking ${trip.experience.title} "${trip.title}" up to ${threshold}`);
+      await this._scheduleTripActions(trip.id, threshold);
+      await this._updateTripNextScheduleAt(trip);
+    }
   }
 
   /**
@@ -60,13 +143,13 @@ class SchedulerWorker {
     const actionContext = TripUtil.prepareActionContext(objs, now);
 
     // Get actions based on occurance of time.
-    const actions = this._getTimeOccuranceActions(objs, actionContext,
+    const actions = this._getTimeOccuranceActions(trip, actionContext,
       threshold);
 
     // Add scene start event if needed -- only if we have just reset since
     // otherwise we might get into an infinite loop if the workers are backed
     // up or not running.
-    if (!trip.lastScheduledTime && !trip.currentSceneName) {
+    if (!trip.currentSceneName) {
       const firstSceneName = SceneCore.getStartingSceneName(
         objs.script.content, actionContext.evalContext);
       if (firstSceneName) {
@@ -87,31 +170,6 @@ class SchedulerWorker {
       logger.info({ action: action },
         `Scheduling ${action.type} ${action.name}.`);
       await models.Action.create(action);
-    }
-  }
-
-  /**
-   * Schedule actions for all active trips.
-   */
-  static async scheduleActions(threshold) {
-    const trips = await models.Trip.findAll({
-      where: {
-        isArchived: false,
-        lastScheduledTime: {
-          [Sequelize.Op.or]: [
-            null,
-            { [Sequelize.Op.lte]: threshold.toDate() },
-          ]
-        }
-      },
-      include: [{
-        model: models.Experience, as: 'experience'
-      }]
-    });
-    for (const trip of trips) {
-      logger.info(`Checking ${trip.experience.title} "${trip.title}" up to ${threshold}`);
-      await this._scheduleTripActions(trip.id, threshold);
-      await trip.update({ lastScheduledTime: threshold.toDate() });
     }
   }
 }
