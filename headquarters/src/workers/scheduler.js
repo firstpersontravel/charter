@@ -59,21 +59,20 @@ class SchedulerWorker {
   }
 
   /**
-   * Update scheduleAt time for all trpis
+   * Update scheduleAt time for all trips where the trip or the script has
+   * been updated after the schedule was updated.
    */
   static async updateScheduleAts() {
     // Find all trips where the scheduleAt needs updating -- which means if
     // the trip or script was updated more recently than scheduling happened.
     const trips = await models.Trip.findAll({
-      where: {
-        isArchived: false,
-        scheduleUpdatedAt: {
-          [Sequelize.Op.or]: [{
-            [Sequelize.Op.lte]: Sequelize.col('updatedAt'),
-            [Sequelize.Op.lte]: Sequelize.col('script.updatedAt')
-          }]
-        }
-      },
+      where: Sequelize.literal(
+        '`Trip`.`is_archived` = 0 AND (' +
+          '`Trip`.`updated_at` > `Trip`.`schedule_updated_at` OR ' +
+          '`script`.`updated_at` > `Trip`.`schedule_updated_at` OR ' +
+          '`Trip`.`schedule_updated_at` IS NULL' +
+        ')'
+      ),
       include: [{
         model: models.Experience,
         as: 'experience',
@@ -85,27 +84,27 @@ class SchedulerWorker {
     });
     for (const trip of trips) {
       logger.info(`Updating scheduleAt for ${trip.experience.title} "${trip.title}".`);
-      await this._updateTripNextScheduleAt(trip);
+      await this._updateTripNextScheduleAt(trip.id);
     }
   }
 
   /**
    * Update scheduleAt time for a single trip.
    */
-  static async _updateTripNextScheduleAt(trip) {
+  static async _updateTripNextScheduleAt(tripId) {
     const now = moment.utc();
-    const objs = await TripUtil.getObjectsForTrip(trip.id);
+    const objs = await TripUtil.getObjectsForTrip(tripId);
     const actionContext = TripUtil.prepareActionContext(objs, now);
     const nextTime = _(objs.script.content.triggers)
       .filter(trigger => _.some(trigger.events, { type: 'time_occurred' }))
-      .filter(trigger => !trip.history[trigger.name])
+      .filter(trigger => !objs.trip.history[trigger.name])
       .map(trigger => this._getTriggerIntendedAt(trigger, actionContext))
       .sortBy(time => time.unix())
       .value()[0];
 
-    await trip.update({
-      scheduleUpdatedAt: now,
-      scheduleAt: nextTime || null
+    await objs.trip.update({
+      scheduleUpdatedAt: now.toDate(),
+      scheduleAt: nextTime ? nextTime.toDate() : null
     });
   }
 

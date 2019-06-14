@@ -1,12 +1,11 @@
 const assert = require('assert');
 const moment = require('moment');
 const sinon = require('sinon');
-const Sequelize = require('sequelize');
 
 const { sandbox } = require('../mocks');
-const models = require('../../src/models');
 const SchedulerWorker = require('../../src/workers/scheduler');
 // const TripActionController = require('../../src/controllers/trip_action');
+const TestUtil = require('../util');
 const TripUtil = require('../../src/controllers/trip_util');
 
 describe('SchedulerWorker', () => {
@@ -98,32 +97,55 @@ describe('SchedulerWorker', () => {
   });
 
   describe('#updateScheduleAts', () => {
-    it('queries trips and updates scheduleAt', async () => {
-      const mockTrip = { id: 1, experience: { title: 'test' }, title: 'test' };
+    const now = moment.utc();
+    let trip;
+
+    beforeEach(async () => {
+      sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(SchedulerWorker, '_updateTripNextScheduleAt').resolves();
-      sandbox.stub(models.Trip, 'findAll').resolves([mockTrip]);
+      trip = await TestUtil.createDummyTrip();
+      await trip.update({ scheduleUpdatedAt: now.toDate() });
+    });
+
+    it('does not update scheduleAt trip if no recent update', async () => {
+      await SchedulerWorker.updateScheduleAts();
+
+      sinon.assert.notCalled(SchedulerWorker._updateTripNextScheduleAt);
+    });
+
+    it('updates trip scheduleAt if hasn\'t been updated', async () => {
+      await trip.update({ scheduleUpdatedAt: null, updatedAt: now.toDate() });
 
       await SchedulerWorker.updateScheduleAts();
 
-      sinon.assert.calledWith(models.Trip.findAll.getCall(0), {
-        where: {
-          isArchived: false,
-          scheduleUpdatedAt: {
-            [Sequelize.Op.or]: [{
-              [Sequelize.Op.lte]: Sequelize.col('updatedAt'),
-              [Sequelize.Op.lte]: Sequelize.col('script.updatedAt')
-            }]
-          }
-        },
-        include: [{
-          model: models.Experience,
-          as: 'experience',
-          where: { isArchived: false }
-        }, {
-          model: models.Script,
-          as: 'script'
-        }]
+      sinon.assert.calledOnce(SchedulerWorker._updateTripNextScheduleAt);
+      sinon.assert.calledWith(SchedulerWorker._updateTripNextScheduleAt,
+        trip.id);
+    });
+
+    it('updates trip scheduleAt after trip update', async () => {
+      await trip.update({
+        updatedAt: now.clone().add(1, 'minute').toDate()
       });
+
+      await SchedulerWorker.updateScheduleAts();
+
+      sinon.assert.calledOnce(SchedulerWorker._updateTripNextScheduleAt);
+      sinon.assert.calledWith(SchedulerWorker._updateTripNextScheduleAt,
+        trip.id);
+    });
+
+    it('updates trip scheduleAt after script update', async () => {
+      const script = await trip.getScript();
+      await script.update({
+        updatedAt: now.clone().add(1, 'minute').toDate()
+      });
+
+      await SchedulerWorker.updateScheduleAts();
+
+      sinon.assert.calledOnce(SchedulerWorker._updateTripNextScheduleAt);
+      sinon.assert.calledWith(SchedulerWorker._updateTripNextScheduleAt,
+        trip.id);
     });
   });
 
@@ -160,12 +182,12 @@ describe('SchedulerWorker', () => {
         evalContext: { schedule: { now: now.toISOString() } }
       });
 
-      await SchedulerWorker._updateTripNextScheduleAt(objs.trip);
+      await SchedulerWorker._updateTripNextScheduleAt(1);
 
-      const args = objs.trip.update.getCall(0).args;
-      assert.strictEqual(args[0].scheduleUpdatedAt.unix(), now.unix());
-      assert.strictEqual(args[0].scheduleAt.unix(),
-        now.clone().subtract(10, 'minutes').unix());
+      sinon.assert.calledWith(objs.trip.update.getCall(0), {
+        scheduleUpdatedAt: now.toDate(),
+        scheduleAt: now.clone().subtract(10, 'minutes').toDate()
+      });
     });
 
     it('sets scheduleAt to null if no relevant trigger time', async () => {
@@ -179,11 +201,12 @@ describe('SchedulerWorker', () => {
         evalContext: { schedule: { now: now.toISOString() } }
       });
 
-      await SchedulerWorker._updateTripNextScheduleAt(objs.trip);
+      await SchedulerWorker._updateTripNextScheduleAt(1);
 
-      const args = objs.trip.update.getCall(0).args;
-      assert.strictEqual(args[0].scheduleUpdatedAt.unix(), now.unix());
-      assert.strictEqual(args[0].scheduleAt, null);
+      sinon.assert.calledWith(objs.trip.update.getCall(0), {
+        scheduleUpdatedAt: now.toDate(),
+        scheduleAt: null
+      });
     });
 
     it('skips trigger if in history', async () => {
@@ -201,12 +224,12 @@ describe('SchedulerWorker', () => {
         evalContext: { schedule: { now: now.toISOString() } }
       });
 
-      await SchedulerWorker._updateTripNextScheduleAt(objs.trip);
+      await SchedulerWorker._updateTripNextScheduleAt(1);
 
-      const args = objs.trip.update.getCall(0).args;
-      assert.strictEqual(args[0].scheduleUpdatedAt.unix(), now.unix());
-      assert.strictEqual(args[0].scheduleAt.unix(),
-        now.clone().add(10, 'minutes').unix());
+      sinon.assert.calledWith(objs.trip.update.getCall(0), {
+        scheduleUpdatedAt: now.toDate(),
+        scheduleAt: now.clone().add(10, 'minutes').toDate()
+      });
     });
   });
 

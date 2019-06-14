@@ -1,4 +1,5 @@
 const moment = require('moment');
+const Sentry = require('@sentry/node');
 
 // Import for configuration
 require('./config');
@@ -27,6 +28,7 @@ async function scheduleActions() {
 
     isSchedulingActions = false;
   } catch (err) {
+    Sentry.captureException(err);
     console.error(`Uncaught exception running scheduler: ${err.message}`);
     console.error(err.stack);
     process.exit(1);
@@ -42,6 +44,7 @@ async function runActions() {
     await RunnerWorker.runScheduledActions(moment.utc(), null, true);
     isRunningActions = false;
   } catch (err) {
+    Sentry.captureException(err);
     console.error(`Uncaught exception running worker: ${err.message}`);
     console.error(err.stack);
     process.exit(1);

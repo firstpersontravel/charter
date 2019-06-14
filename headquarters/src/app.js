@@ -17,13 +17,6 @@ const {
   shortcutRouter
 } = require('./routers/page');
 
-// Configure raven
-Sentry.init({
-  dsn: config.env.SENTRY_DSN,
-  environment: config.env.SENTRY_ENVIRONMENT,
-  release: config.env.GIT_HASH
-});
-
 // Initialize server
 const app = express();
 app.enable('trust proxy');

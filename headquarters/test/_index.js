@@ -57,7 +57,10 @@ require('../src/models');
 
 before(() => {
   // Sync DB
-  return config.database.sync({ force: true });  
+  return config.database.sync({
+    force: true,
+    // logging: console.log
+  });  
 });
 
 beforeEach(() => {

@@ -105,6 +105,10 @@
 
     # build travel app in xcode
 
+### Getting a nice console
+
+    dc exec server node --experimental-repl-await
+
 ### Creating a user
 
     dc exec server node

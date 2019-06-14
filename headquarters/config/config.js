@@ -24,7 +24,8 @@ module.exports = {
     dialect: 'sqlite',
     username: 'galaxy_test',
     database: 'galaxy_test',
-    password: 'galaxy_test_pw'
+    password: 'galaxy_test_pw',
+    // logging: console.log
   }),
   production: config
 };
