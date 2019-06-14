@@ -173,7 +173,12 @@ describe('SchedulerWorker', () => {
 
     it('updates scheduleAt to next trigger time', async () => {
       const objs = {
-        trip: { id: 1, update: sinon.stub().resolves(), history: {} },
+        trip: {
+          id: 1,
+          update: sinon.stub().resolves(),
+          history: {},
+          experience: {}
+        },
         script: { content: scriptContent }
       };
       sandbox.stub(TripUtil, 'getObjectsForTrip').resolves(objs);
@@ -192,7 +197,12 @@ describe('SchedulerWorker', () => {
 
     it('sets scheduleAt to null if no relevant trigger time', async () => {
       const objs = {
-        trip: { id: 1, update: sinon.stub().resolves(), history: {} },
+        trip: {
+          id: 1,
+          update: sinon.stub().resolves(),
+          history: {},
+          experience: {}
+        },
         script: { content: { triggers: [] } }
       };
       sandbox.stub(TripUtil, 'getObjectsForTrip').resolves(objs);
@@ -214,7 +224,8 @@ describe('SchedulerWorker', () => {
         trip: {
           id: 1,
           update: sinon.stub().resolves(),
-          history: { t3: true }
+          history: { t3: true },
+          experience: {}
         },
         script: { content: scriptContent }
       };

@@ -83,7 +83,6 @@ class SchedulerWorker {
       }]
     });
     for (const trip of trips) {
-      logger.info(`Updating scheduleAt for ${trip.experience.title} "${trip.title}".`);
       await this._updateTripNextScheduleAt(trip.id);
     }
   }
@@ -99,6 +98,7 @@ class SchedulerWorker {
       .filter(trigger => _.some(trigger.events, { type: 'time_occurred' }))
       .filter(trigger => !objs.trip.history[trigger.name])
       .map(trigger => this._getTriggerIntendedAt(trigger, actionContext))
+      .filter(Boolean)
       .sortBy(time => time.unix())
       .value()[0];
 
@@ -106,6 +106,12 @@ class SchedulerWorker {
       scheduleUpdatedAt: now.toDate(),
       scheduleAt: nextTime ? nextTime.toDate() : null
     });
+
+    logger.info(
+      `Updating scheduleAt for ${objs.trip.experience.title} ` + 
+      `"${objs.trip.title}" to ${nextTime ? nextTime.toString() : 'none'}.`
+    );
+
   }
 
   /**
