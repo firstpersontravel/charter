@@ -2,11 +2,11 @@ const assert = require('assert');
 const sinon = require('sinon');
 
 const EventsRegistry = require('../../src/registries/events');
-const TriggerEventCore = require('../../src/cores/trigger_event');
+const KernelTriggers = require('../../src/kernel/triggers');
 
 var sandbox = sinon.sandbox.create();
 
-describe('TriggerEventCore', () => {
+describe('KernelTriggers', () => {
   afterEach(() => {
     sandbox.restore();
   });
@@ -41,7 +41,7 @@ describe('TriggerEventCore', () => {
         scriptContent: scriptContent,
         evalContext: { currentSceneName: 'SCENE-1' }
       };
-      const res = TriggerEventCore.isSceneActive('SCENE-1', actionContext);
+      const res = KernelTriggers.isSceneActive('SCENE-1', actionContext);
       assert.strictEqual(res, true);
     });
 
@@ -53,7 +53,7 @@ describe('TriggerEventCore', () => {
           currentSceneName: 'SCENE-2'
         }
       };
-      const res = TriggerEventCore.isSceneActive('SCENE-1', actionContext);
+      const res = KernelTriggers.isSceneActive('SCENE-1', actionContext);
       assert.strictEqual(res, false);
     });
 
@@ -65,7 +65,7 @@ describe('TriggerEventCore', () => {
           currentSceneName: 'SCENE-0'
         }
       };
-      const res = TriggerEventCore.isSceneActive('SCENE-1', actionContext);
+      const res = KernelTriggers.isSceneActive('SCENE-1', actionContext);
       assert.strictEqual(res, false);
     });
 
@@ -74,7 +74,7 @@ describe('TriggerEventCore', () => {
         scriptContent: scriptContent,
         evalContext: { currentSceneName: 'SCENE-2' }
       };
-      const res = TriggerEventCore.isSceneActive('GLOBAL-1', actionContext);
+      const res = KernelTriggers.isSceneActive('GLOBAL-1', actionContext);
       assert.strictEqual(res, true);
     });
 
@@ -83,7 +83,7 @@ describe('TriggerEventCore', () => {
         scriptContent: scriptContent,
         evalContext: { currentSceneName: 'SCENE-2', val: 1 }
       };
-      const res = TriggerEventCore.isSceneActive('COND-1', actionContext);
+      const res = KernelTriggers.isSceneActive('COND-1', actionContext);
       assert.strictEqual(res, true);
     });
 
@@ -92,7 +92,7 @@ describe('TriggerEventCore', () => {
         scriptContent: scriptContent,
         evalContext: { currentSceneName: 'SCENE-2', val: 0 }
       };
-      const res = TriggerEventCore.isSceneActive('COND-1', actionContext);
+      const res = KernelTriggers.isSceneActive('COND-1', actionContext);
       assert.strictEqual(res, false);
     });
 
@@ -104,7 +104,7 @@ describe('TriggerEventCore', () => {
           currentSceneName: 'SCENE-2'
         }
       };
-      const res = TriggerEventCore.isSceneActive('SCENE-0', actionContext);
+      const res = KernelTriggers.isSceneActive('SCENE-0', actionContext);
       assert.strictEqual(res, false);
     });
   });
@@ -112,49 +112,49 @@ describe('TriggerEventCore', () => {
   describe('#isTriggerActive', () => {
     it('returns true if no filters', () => {
       const trigger = {};
-      const res = TriggerEventCore.isTriggerActive(trigger, {});
+      const res = KernelTriggers.isTriggerActive(trigger, {});
       assert.strictEqual(res, true);
     });
 
     it('returns true if active scene', () => {
-      sandbox.stub(TriggerEventCore, 'isSceneActive').returns(true);
+      sandbox.stub(KernelTriggers, 'isSceneActive').returns(true);
       const trigger = { scene: 'SCENE-1' };
-      const res = TriggerEventCore.isTriggerActive(trigger, {});
+      const res = KernelTriggers.isTriggerActive(trigger, {});
       assert.strictEqual(res, true);
     });
 
     it('returns false if inactive scene', () => {
-      sandbox.stub(TriggerEventCore, 'isSceneActive').returns(false);
+      sandbox.stub(KernelTriggers, 'isSceneActive').returns(false);
       const trigger = { scene: 'SCENE-1' };
-      const res = TriggerEventCore.isTriggerActive(trigger, {});
+      const res = KernelTriggers.isTriggerActive(trigger, {});
       assert.strictEqual(res, false);
     });
 
     it('returns true if if test passes', () => {
       const trigger = { active_if: { op: 'istrue', ref: 'test' } };
       const actionContext = { evalContext: { test: true } };
-      const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
+      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, true);
     });
 
     it('returns false if if test fails', () => {
       const trigger = { active_if: { op: 'istrue', ref: 'test' } };
       const actionContext = { evalContext: { test: false } };
-      const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
+      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, false);
     });
 
     it('returns true if non-repeatable and not previously run', () => {
       const trigger = { name: 't', repeatable: false };
       const actionContext = { evalContext: {} };
-      const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
+      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, true);
     });
 
     it('returns false if non-repeatable and previously run', () => {
       const trigger = { name: 't', repeatable: false };
       const actionContext = { evalContext: { history: { t: 'past time' } } };
-      const res = TriggerEventCore.isTriggerActive(trigger, actionContext);
+      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, false);
     });
   });
@@ -163,7 +163,7 @@ describe('TriggerEventCore', () => {
     it('returns false on non-matching event', () => {
       const trigger = { event: { call_ended: {} } };
       const event = { type: 'cue_signaled', };
-      const res = TriggerEventCore.doesEventFireTriggerEvent(trigger.event,
+      const res = KernelTriggers.doesEventFireTriggerEvent(trigger.event,
         event, null);
       assert.strictEqual(res, false);
     });
@@ -174,12 +174,12 @@ describe('TriggerEventCore', () => {
         .returns(true);
       const triggerEvent = { type: 'cue_signaled' };
       const event = { type: 'cue_signaled' };
-      const res = TriggerEventCore.doesEventFireTriggerEvent(triggerEvent, 
+      const res = KernelTriggers.doesEventFireTriggerEvent(triggerEvent, 
         event, null);
       assert.strictEqual(res, true);
 
       stub.returns(false);
-      const res2 = TriggerEventCore.doesEventFireTriggerEvent(triggerEvent, 
+      const res2 = KernelTriggers.doesEventFireTriggerEvent(triggerEvent, 
         event, null);
       assert.strictEqual(res2, false);
     });
@@ -192,10 +192,10 @@ describe('TriggerEventCore', () => {
       const trigger = { event: { type: 'cue_signaled' } };
       const event = { type: 'cue_signaled' };
       const stub2 = sandbox
-        .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
+        .stub(KernelTriggers, 'doesEventFireTriggerEvent')
         .returns(true);
 
-      const res = TriggerEventCore.doesEventFireTrigger(trigger, event,
+      const res = KernelTriggers.doesEventFireTrigger(trigger, event,
         actionContext);
       assert.strictEqual(res, true);
 
@@ -206,10 +206,10 @@ describe('TriggerEventCore', () => {
       const trigger = { event: { type: 'cue_signaled' } };
       const event = { type: 'cue_signaled' };
       const stub2 = sandbox
-        .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
+        .stub(KernelTriggers, 'doesEventFireTriggerEvent')
         .returns(false);
 
-      const res = TriggerEventCore.doesEventFireTrigger(trigger, event,
+      const res = KernelTriggers.doesEventFireTrigger(trigger, event,
         actionContext);
       assert.strictEqual(res, false);
 
@@ -220,13 +220,13 @@ describe('TriggerEventCore', () => {
   describe('#triggersForEvent', () => {
     it('returns active and matching triggers', () => {
       sandbox
-        .stub(TriggerEventCore, 'isTriggerActive')
+        .stub(KernelTriggers, 'isTriggerActive')
         .callsFake(function(trigger, actionContext) {
           return trigger.scene !== 'SCENE-1';
         });
 
       sandbox
-        .stub(TriggerEventCore, 'doesEventFireTrigger')
+        .stub(KernelTriggers, 'doesEventFireTrigger')
         .callsFake(function(trigger, event, actionContext) {
           return trigger.scene !== 'SCENE-3';
         });
@@ -243,7 +243,7 @@ describe('TriggerEventCore', () => {
         evalContext: { currentSceneName: 'SCENE-1' }
       };
 
-      const res = TriggerEventCore.triggersForEvent(event, actionContext);
+      const res = KernelTriggers.triggersForEvent(event, actionContext);
 
       assert.deepStrictEqual(res, [actionContext.scriptContent.triggers[1]]);
     });

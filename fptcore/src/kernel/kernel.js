@@ -1,11 +1,11 @@
 const _ = require('lodash');
 
-const ActionResultCore = require('./action_result');
 const ActionsRegistry = require('../registries/actions');
-const TriggerActionCore = require('./trigger_action');
-const TriggerEventCore = require('./trigger_event');
+const KernelResult = require('./result');
+const KernelActions = require('./actions');
+const KernelTriggers = require('./triggers');
 
-class ActionCore {
+class Kernel {
   /**
    * Merge event into action context.
    */
@@ -37,14 +37,14 @@ class ActionCore {
   static resultForImmediateAction(action, actionContext) {
     // Apply simple action
     const actionOps = this.opsForImmediateAction(action, actionContext);
-    let result = ActionResultCore.resultForOps(actionOps, actionContext);
+    let result = KernelResult.resultForOps(actionOps, actionContext);
 
     // Apply any events from the action.
     const eventOps = _.filter(result.resultOps, { operation: 'event' });
     for (const eventOp of eventOps) {
       const event = eventOp.event;
       const eventResult = this.resultForEvent(event, result.nextContext);
-      result = ActionResultCore.concatResult(result, eventResult);
+      result = KernelResult.concatResult(result, eventResult);
     }
     return result;
   }
@@ -54,14 +54,14 @@ class ActionCore {
    */
   static resultForEvent(event, actionContext) {
     // Get blank result.
-    let result = ActionResultCore.initialResult(actionContext);
+    let result = KernelResult.initialResult(actionContext);
     
     // Assemble all triggers. Include event with context because if statements
     // on the triggers may include the event context. This will filter out
     // non-repeatable triggers, or ones with failing if statements, or ones
     // in the wrong scene or page.
     const contextWithEvent = this.addEventToContext(event, actionContext);
-    const nextTriggers = TriggerEventCore.triggersForEvent(event,
+    const nextTriggers = KernelTriggers.triggersForEvent(event,
       contextWithEvent);
 
     // Apply each trigger with original context
@@ -69,7 +69,7 @@ class ActionCore {
     for (const trigger of nextTriggers) {
       const triggerResult = this.resultForTrigger(
         trigger, event, result.nextContext, actionContextWhenTriggered);
-      result = ActionResultCore.concatResult(result, triggerResult);
+      result = KernelResult.concatResult(result, triggerResult);
     }
     // Return concatenated results.
     return result;
@@ -88,20 +88,20 @@ class ActionCore {
     }];
     // Create an initial result with this history update, so that subsequent
     // events can register that this was triggered.
-    let result = ActionResultCore.resultForOps(historyOps, actionContext);
+    let result = KernelResult.resultForOps(historyOps, actionContext);
 
     // Add event to context for consideration for if logic. Figure out which
     // actions should be called, either now or later.
     const contextWithEvent = this.addEventToContext(event,
       actionContextWhenTriggered);
-    const nextActions = TriggerActionCore.unpackedActionsForTrigger(
+    const nextActions = KernelActions.unpackedActionsForTrigger(
       trigger, contextWithEvent);
 
     // Either call or schedule each action.
     for (const action of nextActions) {
       const actionResult = this.resultForFutureAction(action,
         result.nextContext);
-      result = ActionResultCore.concatResult(result, actionResult);
+      result = KernelResult.concatResult(result, actionResult);
     }
 
     // Return all results
@@ -125,4 +125,4 @@ class ActionCore {
   }
 }
 
-module.exports = ActionCore;
+module.exports = Kernel;

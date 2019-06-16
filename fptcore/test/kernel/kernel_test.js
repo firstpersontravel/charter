@@ -2,14 +2,14 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const ActionCore = require('../../src/cores/action');
 const ActionsRegistry = require('../../src/registries/actions');
-const TriggerActionCore = require('../../src/cores/trigger_action');
-const TriggerEventCore = require('../../src/cores/trigger_event');
+const Kernel = require('../../src/kernel/kernel');
+const KernelActions = require('../../src/kernel/actions');
+const KernelTriggers = require('../../src/kernel/triggers');
 
 const sandbox = sinon.sandbox.create();
 
-describe('ActionCore', () => {
+describe('Kernel', () => {
   const addAction = {
     getOps(params, actionContext) {
       return [{
@@ -35,7 +35,7 @@ describe('ActionCore', () => {
       const action = { name: 'add', params: {} };
       const actionContext = { scriptContent: {}, evaluateAt: now };
 
-      const ops = ActionCore.opsForImmediateAction(action, actionContext);
+      const ops = Kernel.opsForImmediateAction(action, actionContext);
 
       assert.deepStrictEqual(ops, [{
         operation: 'updateTripValues',
@@ -49,7 +49,7 @@ describe('ActionCore', () => {
       const event = { type: 'event' };
       const actionContext = { evalContext: { abc: '123' } };
 
-      const result = ActionCore.addEventToContext(event, actionContext);
+      const result = Kernel.addEventToContext(event, actionContext);
 
       assert.deepEqual(result.evalContext, { abc: '123', event: event });      
     });
@@ -60,7 +60,7 @@ describe('ActionCore', () => {
       const action = { name: 'add', params: {} };
       const actionContext = { scriptContent: {}, evaluateAt: now };
 
-      const result = ActionCore.resultForImmediateAction(action, actionContext);
+      const result = Kernel.resultForImmediateAction(action, actionContext);
 
       assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
@@ -70,11 +70,11 @@ describe('ActionCore', () => {
     });
 
     it('returns action and subsequent event results', () => {
-      sandbox.stub(ActionCore, 'opsForImmediateAction')
+      sandbox.stub(Kernel, 'opsForImmediateAction')
         .callsFake(function(action, actionContext) {
           return [{ operation: 'event', event: { type: '123' }}];
         });
-      sandbox.stub(ActionCore, 'resultForEvent')
+      sandbox.stub(Kernel, 'resultForEvent')
         .callsFake(function(event, actionContext) {
           return {
             nextContext: { evalContext: { number: 1 } },
@@ -89,10 +89,10 @@ describe('ActionCore', () => {
       const action = { name: 'add', params: {} };
       const actionContext = { scriptContent: {}, evaluateAt: now };
 
-      const result = ActionCore.resultForImmediateAction(action, actionContext);
+      const result = Kernel.resultForImmediateAction(action, actionContext);
 
-      sinon.assert.calledOnce(ActionCore.resultForEvent);
-      sinon.assert.calledWith(ActionCore.resultForEvent, { type: '123' });
+      sinon.assert.calledOnce(Kernel.resultForEvent);
+      sinon.assert.calledWith(Kernel.resultForEvent, { type: '123' });
 
       assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
       assert.deepStrictEqual(result.resultOps, [{
@@ -109,11 +109,11 @@ describe('ActionCore', () => {
     const actionContext = { scriptContent: {}, evaluateAt: now };
 
     it('returns nothing if no triggers', () => {
-      sandbox.stub(TriggerEventCore, 'triggersForEvent').callsFake(() => {
+      sandbox.stub(KernelTriggers, 'triggersForEvent').callsFake(() => {
         return [];
       });
       const event = { type: 'added' };
-      const result = ActionCore.resultForEvent(event, actionContext);
+      const result = Kernel.resultForEvent(event, actionContext);
 
       assert.deepStrictEqual(result, {
         nextContext: actionContext,
@@ -129,17 +129,17 @@ describe('ActionCore', () => {
         scheduledActions: []
       };
       const trigger = { name: 'trigger1' };
-      sandbox.stub(TriggerEventCore, 'triggersForEvent').callsFake(() => {
+      sandbox.stub(KernelTriggers, 'triggersForEvent').callsFake(() => {
         return [trigger];
       });
-      sandbox.stub(ActionCore, 'resultForTrigger')
+      sandbox.stub(Kernel, 'resultForTrigger')
         .callsFake(() => (resultSentinel));
 
       const event = { type: 'added' };
-      const result = ActionCore.resultForEvent(event, actionContext);
+      const result = Kernel.resultForEvent(event, actionContext);
 
       assert.deepStrictEqual(result, resultSentinel);
-      sinon.assert.calledWith(ActionCore.resultForTrigger,
+      sinon.assert.calledWith(Kernel.resultForTrigger,
         trigger, event, actionContext, actionContext);
     });
   });
@@ -150,11 +150,11 @@ describe('ActionCore', () => {
     it('applies action if scheduled immediately', () => {
       const action = { scheduleAt: now };
       const stubContext = {};
-      sandbox.stub(ActionCore, 'resultForImmediateAction').returns(stubContext);
-      const result = ActionCore.resultForFutureAction(action, actionContext);
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns(stubContext);
+      const result = Kernel.resultForFutureAction(action, actionContext);
 
       assert.strictEqual(result, stubContext);
-      sinon.assert.calledOnce(ActionCore.resultForImmediateAction);
+      sinon.assert.calledOnce(Kernel.resultForImmediateAction);
     });
 
     it('schedule action if scheduled in the future', () => {
@@ -165,8 +165,8 @@ describe('ActionCore', () => {
         triggerName: '123',
         event: {}
       };
-      sandbox.stub(ActionCore, 'resultForImmediateAction').returns({});
-      const result = ActionCore.resultForFutureAction(
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns({});
+      const result = Kernel.resultForFutureAction(
         unpackedAction, actionContext);
 
       assert.deepStrictEqual(result, {
@@ -174,7 +174,7 @@ describe('ActionCore', () => {
         resultOps: [],
         scheduledActions: [unpackedAction]
       });
-      sinon.assert.notCalled(ActionCore.resultForImmediateAction);
+      sinon.assert.notCalled(Kernel.resultForImmediateAction);
     });
   });
 
@@ -182,11 +182,11 @@ describe('ActionCore', () => {
     const actionContext = { evalContext: {}, evaluateAt: now };
 
     it('returns history op even if no actions', () => {
-      sandbox.stub(TriggerActionCore, 'unpackedActionsForTrigger').returns([]);
+      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([]);
 
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const res = ActionCore.resultForTrigger(trigger, event, actionContext,
+      const res = Kernel.resultForTrigger(trigger, event, actionContext,
         actionContext);
 
       assert.deepEqual(res.nextContext.evalContext, {
@@ -199,12 +199,12 @@ describe('ActionCore', () => {
     });
 
     it('returns immediate result', () => {
-      sandbox.stub(TriggerActionCore, 'unpackedActionsForTrigger')
+      sandbox.stub(KernelActions, 'unpackedActionsForTrigger')
         .returns([{ name: 'add',  params: {}, scheduleAt: now }]);
 
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const res = ActionCore.resultForTrigger(trigger, event,
+      const res = Kernel.resultForTrigger(trigger, event,
         actionContext, actionContext);
 
       assert.deepEqual(res.nextContext.evalContext, {
@@ -231,10 +231,10 @@ describe('ActionCore', () => {
         triggerName: 'trigger',
         event: event
       };
-      sandbox.stub(TriggerActionCore, 'unpackedActionsForTrigger')
+      sandbox.stub(KernelActions, 'unpackedActionsForTrigger')
         .returns([unpackedAction]);
 
-      const res = ActionCore.resultForTrigger(trigger, event,
+      const res = Kernel.resultForTrigger(trigger, event,
         actionContext, actionContext);
 
       assert.deepEqual(res.nextContext.evalContext, {

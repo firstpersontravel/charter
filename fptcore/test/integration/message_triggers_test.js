@@ -2,7 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const ActionCore = require('../../src/cores/action');
+const Kernel = require('../../src/kernel/kernel');
 
 var sandbox = sinon.sandbox.create();
 
@@ -39,7 +39,7 @@ describe('Integration - Message Triggers', () => {
       evaluateAt: now
     };
     const event = { type: 'text_received', message: { from: 'A', to: 'B' } };
-    const result = ActionCore.resultForEvent(event, actionContext);
+    const result = Kernel.resultForEvent(event, actionContext);
 
     // Should not fire shouldn't be set
     assert.equal(result.nextContext.evalContext.SHOULD_NOT_FIRE, undefined);
@@ -76,7 +76,7 @@ describe('Integration - Message Triggers', () => {
       }
     };
     // Ok result should fire
-    const hitResult = ActionCore.resultForEvent(okEvent, actionContext);
+    const hitResult = Kernel.resultForEvent(okEvent, actionContext);
     assert.equal(hitResult.nextContext.evalContext.trigger, true);
   });
 
@@ -111,7 +111,7 @@ describe('Integration - Message Triggers', () => {
       }
     };
     // Ok result should fire
-    const missResult = ActionCore.resultForEvent(missEvent, actionContext);
+    const missResult = Kernel.resultForEvent(missEvent, actionContext);
     assert.equal(missResult.nextContext.evalContext.trigger, undefined);
   });
 });

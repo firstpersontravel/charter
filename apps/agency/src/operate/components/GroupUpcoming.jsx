@@ -3,13 +3,13 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { EventsRegistry, TriggerEventCore } from 'fptcore';
+import { EventsRegistry, KernelTriggers } from 'fptcore';
 
 function getScheduledTripTriggers(trip) {
   const now = moment.utc();
   const inOneHour = now.clone().add(1, 'hour');
   const event = { type: 'time_occurred', timestamp: inOneHour };
-  const triggers = TriggerEventCore.triggersForEvent(event,
+  const triggers = KernelTriggers.triggersForEvent(event,
     trip.actionContext);
   return triggers.map(trigger => ({
     id: trigger.name,

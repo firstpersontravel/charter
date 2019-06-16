@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const moment = require('moment-timezone');
 
-const ConditionCore = require('./condition');
+const ConditionCore = require('../cores/condition');
 const TimeUtil = require('../utils/time');
 
-class TriggerActionCore {
+class KernelActions {
   /**
    * Walk the trigger actions and call the iterees for each child.
    */
@@ -144,4 +144,4 @@ class TriggerActionCore {
   }
 }
 
-module.exports = TriggerActionCore;
+module.exports = KernelActions;

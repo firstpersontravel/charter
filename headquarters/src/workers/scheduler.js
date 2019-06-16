@@ -2,9 +2,9 @@ const _ = require('lodash');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-const TriggerEventCore = require('../../../fptcore/src/cores/trigger_event');
-const SceneCore = require('../../../fptcore/src/cores/scene');
 const EventsRegistry = require('../../../fptcore/src/registries/events');
+const KernelTriggers = require('../../../fptcore/src/kernel/triggers');
+const SceneCore = require('../../../fptcore/src/cores/scene');
 
 const config = require('../config');
 const models = require('../models');
@@ -35,7 +35,7 @@ class SchedulerWorker {
       timestamp: toTimestamp
     };
 
-    const triggers = TriggerEventCore.triggersForEvent(timeOccurredEvent,
+    const triggers = KernelTriggers.triggersForEvent(timeOccurredEvent,
       actionContext);
 
     return triggers.map((trigger) => {

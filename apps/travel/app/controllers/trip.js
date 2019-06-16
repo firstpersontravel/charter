@@ -172,14 +172,15 @@ export default Ember.Controller.extend(RealtimeMixin, {
     console.log('applying action', name, params);
     var action = { name: name, params: params };
     var actionContext = this.prepareActionContext(applyAt);
-    var result = fptCore.ActionCore.resultForImmediateAction(action, actionContext);
+    var result = fptCore.Kernel.resultForImmediateAction(action,
+      actionContext);
     this.applyResult(result);
   },
 
   applyEvent: function(event, applyAt) {
     console.log('applying event', event);
     var actionContext = this.prepareActionContext(applyAt);
-    var result = fptCore.ActionCore.resultForEvent(event, actionContext);
+    var result = fptCore.Kernel.resultForEvent(event, actionContext);
     this.applyResult(result);
   },
 
@@ -187,7 +188,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
     console.log('applying trigger', triggerName);
     var trigger = this.get('model.script.content').findBy('name', triggerName);
     var actionContext = this.prepareActionContext(applyAt);
-    var result = fptCore.ActionCore.resultForTrigger(trigger, null, actionContext,
+    var result = fptCore.Kernel.resultForTrigger(trigger, null, actionContext,
       actionContext);
     this.applyResult(result);
   },

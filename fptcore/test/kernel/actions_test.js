@@ -2,27 +2,27 @@ const assert = require('assert');
 const moment = require('moment');
 const sinon = require('sinon');
 
-const TriggerActionCore = require('../../src/cores/trigger_action');
+const KernelActions = require('../../src/kernel/actions');
 
 const sandbox = sinon.sandbox.create();
 
 const now = moment.utc();
 
-describe('TriggerActionCore', () => {
+describe('KernelActions', () => {
   afterEach(() => {
     sandbox.restore();
   });
 
   describe('#unpackedActionsForTrigger', () => {
     it('returns actions with added event and trigger info', () => {
-      sandbox.stub(TriggerActionCore, 'packedActionsForTrigger').callsFake(() => {
+      sandbox.stub(KernelActions, 'packedActionsForTrigger').callsFake(() => {
         return [{ name: 'fake', param1: 1 }];
       });
       const trigger = { name: 'trigger' };
       const contextWithEvent = { event: { type: 'event' } };
       const actionContext = { evalContext: contextWithEvent, evaluateAt: now };
 
-      const result = TriggerActionCore.unpackedActionsForTrigger(trigger,
+      const result = KernelActions.unpackedActionsForTrigger(trigger,
         actionContext);
 
       assert.deepStrictEqual(result, [{
@@ -33,11 +33,11 @@ describe('TriggerActionCore', () => {
         event: contextWithEvent.event
       }]);
 
-      // Ensure TriggerActionCore.packedActionsForTrigger was called with the
+      // Ensure KernelActions.packedActionsForTrigger was called with the
       // event added to the context -- for when triggers have if statements
       // that depend on the contextual event.
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForTrigger.firstCall.args,
+        KernelActions.packedActionsForTrigger.firstCall.args,
         [trigger, actionContext]);
     });
   });
@@ -51,7 +51,7 @@ describe('TriggerActionCore', () => {
 
     it('handles simple list', () => {
       const clause = {actions: [simpleAction]};
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
@@ -60,7 +60,7 @@ describe('TriggerActionCore', () => {
         if: { op: 'istrue', ref: 'valueA' },
         actions: [simpleAction]
       };
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
@@ -69,7 +69,7 @@ describe('TriggerActionCore', () => {
         if: { op: 'not', item: { op: 'istrue', ref: 'valueA' } },
         actions: [simpleAction]
       };
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, []);
     });
 
@@ -79,7 +79,7 @@ describe('TriggerActionCore', () => {
         actions: [simpleAction],
         else: [otherAction]
       };
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [otherAction]);
     });
 
@@ -92,7 +92,7 @@ describe('TriggerActionCore', () => {
           else: [otherAction]
         }]
       };
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [otherAction]);
     });
 
@@ -106,7 +106,7 @@ describe('TriggerActionCore', () => {
           else: [otherAction]
         }]
       };
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [thirdAction]);
     });
 
@@ -124,7 +124,7 @@ describe('TriggerActionCore', () => {
           }
         ]
       };
-      const res = TriggerActionCore.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.packedActionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction, thirdAction]);
     });
 
@@ -142,27 +142,27 @@ describe('TriggerActionCore', () => {
         else: [fourthAction]
       };
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForClause(
+        KernelActions.packedActionsForClause(
           clause, { evalContext: { a: true } }
         ), [simpleAction]);
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForClause(
+        KernelActions.packedActionsForClause(
           clause, { evalContext: { a: true, b: true } }
         ), [simpleAction]);
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForClause(
+        KernelActions.packedActionsForClause(
           clause, { evalContext: { b: true } }
         ), [otherAction]);
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForClause(
+        KernelActions.packedActionsForClause(
           clause, { evalContext: { b: true, c: true } }
         ), [otherAction]);
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForClause(
+        KernelActions.packedActionsForClause(
           clause, { evalContext: { c: true } }
         ), [thirdAction]);
       assert.deepStrictEqual(
-        TriggerActionCore.packedActionsForClause(
+        KernelActions.packedActionsForClause(
           clause, { evalContext: {} }
         ), [fourthAction]);
     });
@@ -187,15 +187,15 @@ describe('TriggerActionCore', () => {
       const actionContextAll = {
         evalContext: { val1: true, val2: true, val3: true }
       };
-      assert.deepStrictEqual(TriggerActionCore.packedActionsForClause(
+      assert.deepStrictEqual(KernelActions.packedActionsForClause(
         clause, actionContextAll), [cue1]);
 
       const actionContext12 = { evalContext: { val1: true, val2: true } };
-      assert.deepStrictEqual(TriggerActionCore.packedActionsForClause(
+      assert.deepStrictEqual(KernelActions.packedActionsForClause(
         clause, actionContext12), [cue2]);
 
       const actionContext3 = { evalContext: { val3: true } };
-      assert.deepStrictEqual(TriggerActionCore.packedActionsForClause(
+      assert.deepStrictEqual(KernelActions.packedActionsForClause(
         clause, actionContext3), []);
     });
   });
@@ -223,7 +223,7 @@ describe('TriggerActionCore', () => {
 
     it('unpacks an action object', () => {
       const packed = { name: 'x', param1: 'y', offset: '10m' };
-      const res = TriggerActionCore.unpackAction(packed, actionContext);
+      const res = KernelActions.unpackAction(packed, actionContext);
       assert.deepStrictEqual(res, {
         name: 'x',
         params: { param1: 'y' },
@@ -233,31 +233,31 @@ describe('TriggerActionCore', () => {
 
     it('schedules for now when no modifier', () => {
       const packed = { name: 'x', param1: 'y' };
-      const res = TriggerActionCore.unpackAction(packed, actionContext);
+      const res = KernelActions.unpackAction(packed, actionContext);
       assertOffset(res.scheduleAt, now, 0);
     });
 
     it('schedules with relative time modifier', () => {
       const packed = { name: 'x', param1: 'y', offset: '3m' };
-      const res = TriggerActionCore.unpackAction(packed, actionContext);
+      const res = KernelActions.unpackAction(packed, actionContext);
       assertOffset(res.scheduleAt, now, 180);
     });
 
     it('schedules with absolute time modifier', () => {
       const packed = { name: 'x', param1: 'y', when: 'time134p' };
-      const res = TriggerActionCore.unpackAction(packed, actionContext);
+      const res = KernelActions.unpackAction(packed, actionContext);
       assertOffset(res.scheduleAt, time134p, 0);
     });
 
     it('schedules with complex time modifier', () => {
       const packed = { name: 'x', when: 'time134p', offset: '10m' };
-      const res = TriggerActionCore.unpackAction(packed, actionContext);
+      const res = KernelActions.unpackAction(packed, actionContext);
       assertOffset(res.scheduleAt, time134p, 600);
     });
 
     it('schedules with complex negative time modifier', () => {
       const packed = { name: 'x', when: 'time134p', offset: '-10s' };
-      const res = TriggerActionCore.unpackAction(packed, actionContext);
+      const res = KernelActions.unpackAction(packed, actionContext);
       assertOffset(res.scheduleAt, time134p, -10);
     });
   });

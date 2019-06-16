@@ -2,7 +2,7 @@ const assert = require('assert');
 const moment = require('moment');
 const sinon = require('sinon');
 
-const ActionCore = require('../../../fptcore/src/cores/action');
+const Kernel = require('../../../fptcore/src/kernel/kernel');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
@@ -24,7 +24,7 @@ describe('TripActionController', () => {
         fields: { newField: true }
       }];
       sandbox.stub(TripOpController, 'applyOp').resolves();
-      sandbox.stub(ActionCore, 'resultForImmediateAction')
+      sandbox.stub(Kernel, 'resultForImmediateAction')
         .returns({
           resultOps: resultOps,
           scheduledActions: []
@@ -48,7 +48,7 @@ describe('TripActionController', () => {
       };
       sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'create').resolves();
-      sandbox.stub(ActionCore, 'resultForImmediateAction').returns({
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns({
         resultOps: [],
         scheduledActions: [scheduleAction]
       });

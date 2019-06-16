@@ -1,12 +1,12 @@
 module.exports = {
   ActionsRegistry: require('./registries/actions'),
-  ActionCore: require('./cores/action'),
-  ActionResultCore: require('./cores/action_result'),
   ConditionCore: require('./cores/condition'),
   ContextCore: require('./cores/context'),
   Errors: require('./errors'),
   EventsRegistry: require('./registries/events'),
   GeofenceCore: require('./cores/geofence'),
+  Kernel: require('./kernel/kernel'),
+  KernelTriggers: require('./kernel/triggers'),
   ModulesRegistry: require('./registries/modules'),
   PlayerCore: require('./cores/player'),
   ResourcesRegistry: require('./registries/resources'),
@@ -17,8 +17,6 @@ module.exports = {
   TextUtil: require('./utils/text'),
   TimeUtil: require('./utils/time'),
   TripCore: require('./cores/trip'),
-  TriggerActionCore: require('./cores/trigger_action'),
-  TriggerEventCore: require('./cores/trigger_event'),
   ValidationCore: require('./cores/validation'),
   WaypointCore: require('./cores/waypoint')
 };

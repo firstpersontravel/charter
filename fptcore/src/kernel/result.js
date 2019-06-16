@@ -1,32 +1,47 @@
-var _ = require('lodash');
+const resultOpTempUpdateFunctions = {
+  updatePlayerFields(resultOp, actionContext) {
+    const oldPlayer = actionContext.evalContext[resultOp.roleName];
+    return Object.assign({}, actionContext, {
+      evalContext: Object.assign({}, actionContext.evalContext, {
+        [resultOp.roleName]: Object.assign({}, oldPlayer, resultOp.fields)
+      })
+    });
+  },
+  updateTripFields(resultOp, actionContext) {
+    return Object.assign({}, actionContext, {
+      evalContext: Object.assign({}, actionContext.evalContext,
+        resultOp.fields)
+    });
+  },
+  updateTripValues(resultOp, actionContext) {
+    return Object.assign({}, actionContext, {
+      evalContext: Object.assign({}, actionContext.evalContext,
+        resultOp.values)
+    });
+  },
+  updateTripHistory(resultOp, actionContext) {
+    var oldHistory = actionContext.evalContext.history || {};
+    return Object.assign({}, actionContext, {
+      evalContext: Object.assign({}, actionContext.evalContext, {
+        history: Object.assign({}, oldHistory, resultOp.history)
+      })
+    });
+  }
+};
 
-class ActionResultCore {
+class KernelResult {
   /**
    * Go through result ops from a given action, and update the context with the
    * results. This is a temporary stub designed to update the context in order
    * to allow processing to continue... the real update will happen after the
    * whole order processing is complete by resultOps handling.
    */
-  static _tempApplyResultOp(resultOp, evalContext) {
-    switch (resultOp.operation) {
-    case 'updatePlayerFields': {
-      var oldPlayer = evalContext[resultOp.roleName];
-      var player = Object.assign({}, oldPlayer, resultOp.fields);
-      return Object.assign({}, evalContext, _.set({}, resultOp.roleName, player));
+  static _tempUpdateContextForOp(resultOp, actionContext) {
+    const resultOpFunc = resultOpTempUpdateFunctions[resultOp.operation];
+    if (!resultOpFunc) {
+      return actionContext;
     }
-    case 'updateTripFields': {
-      return Object.assign({}, evalContext, resultOp.fields);
-    }
-    case 'updateTripValues': {
-      return Object.assign({}, evalContext, resultOp.values);
-    }
-    case 'updateTripHistory': {
-      var oldHistory = evalContext.history || {};
-      var history = Object.assign({}, oldHistory, resultOp.history);
-      return Object.assign({}, evalContext, { history: history });
-    }
-    }
-    return evalContext;
+    return resultOpFunc(resultOp, actionContext);
   }
 
   /**
@@ -36,11 +51,11 @@ class ActionResultCore {
    * whole order processing is complete by resultOps handling.
    */
   static tempUpdateContext(resultOps, actionContext) {
-    var nextEvalContext = actionContext.evalContext;
+    let nextContext = actionContext;
     for (const resultOp of resultOps) {
-      nextEvalContext = this._tempApplyResultOp(resultOp, nextEvalContext);
+      nextContext = this._tempUpdateContextForOp(resultOp, nextContext);
     }
-    return Object.assign({}, actionContext, { evalContext: nextEvalContext });
+    return nextContext;
   }
 
   /**
@@ -79,4 +94,4 @@ class ActionResultCore {
   }
 }
 
-module.exports = ActionResultCore;
+module.exports = KernelResult;

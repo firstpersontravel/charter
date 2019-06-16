@@ -3,7 +3,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const ActionCore = require('../../src/cores/action');
+const Kernel = require('../../src/kernel/kernel');
 const ActionsRegistry = require('../../src/registries/actions');
 
 var sandbox = sinon.sandbox.create();
@@ -116,7 +116,7 @@ describe('Integration - Nested Triggers', () => {
       name: 'send_to_page',
       params: { role_name: 'Farmer', page_name: 'BACK-HOME' }
     };
-    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
+    const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.Farmer.currentPageName,
       'BACK-HOME');
@@ -133,7 +133,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-PICK-APPLES' }
     };
 
-    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
+    const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
@@ -155,7 +155,7 @@ describe('Integration - Nested Triggers', () => {
       geofence: 'GEOFENCE-FARM'
     };
 
-    const result = ActionCore.resultForEvent(event, actionContext);
+    const result = Kernel.resultForEvent(event, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 0);
     assert.deepStrictEqual(result.resultOps, [{
@@ -174,7 +174,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-SUNRISE' }
     };
 
-    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
+    const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
@@ -206,7 +206,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-GREET' }
     };
 
-    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
+    const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
     // Test intermediate action calls
     // First cue should have been called with no event
@@ -294,7 +294,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-NAV-1' }
     };
 
-    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
+    const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'event',
@@ -374,7 +374,7 @@ describe('Integration - Nested Triggers', () => {
     };
     const event = { type: 'cue_signaled', cue: 'end-of-1' };
 
-    const result = ActionCore.resultForEvent(event, sceneActionContext);
+    const result = Kernel.resultForEvent(event, sceneActionContext);
 
     assert.deepStrictEqual(result.nextContext.evalContext, {
       currentSceneName: 'SCENE-2',

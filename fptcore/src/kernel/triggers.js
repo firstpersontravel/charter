@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
-const ConditionCore = require('./condition');
+const ConditionCore = require('../cores/condition');
 const EventsRegistry = require('../registries/events');
 
-class TriggerEventCore {
+class KernelTriggers {
   /**
    * Test if a single trigger event spec is set off by an event.
    */
@@ -112,4 +112,4 @@ class TriggerEventCore {
   }
 }
 
-module.exports = TriggerEventCore;
+module.exports = KernelTriggers;

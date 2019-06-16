@@ -1,8 +1,8 @@
 const assert = require('assert');
 
-const ActionResultCore = require('../../src/cores/action_result');
+const KernelResult = require('../../src/kernel/result');
 
-describe('ActionResultCore', () => {
+describe('KernelResult', () => {
   describe('#tempUpdateContext', () => {
     describe('#updateTrip', () => {
       it('updates trip fields', () => {
@@ -12,7 +12,7 @@ describe('ActionResultCore', () => {
           fields: { newField: 123 }
         }];
         
-        const res = ActionResultCore.tempUpdateContext(ops, actionContext);
+        const res = KernelResult.tempUpdateContext(ops, actionContext);
 
         assert.deepStrictEqual(res.evalContext, { newField: 123 });
       });
@@ -26,7 +26,7 @@ describe('ActionResultCore', () => {
           values: { newField: 123 }
         }];
         
-        const res = ActionResultCore.tempUpdateContext(ops, actionContext);
+        const res = KernelResult.tempUpdateContext(ops, actionContext);
 
         assert.deepStrictEqual(res.evalContext, { newField: 123 });
       });
@@ -40,7 +40,7 @@ describe('ActionResultCore', () => {
           history: { newField: 123 }
         }];
         
-        const res = ActionResultCore.tempUpdateContext(ops, actionContext);
+        const res = KernelResult.tempUpdateContext(ops, actionContext);
 
         assert.deepStrictEqual(res.evalContext, { history: { newField: 123 } });
       });
@@ -55,7 +55,7 @@ describe('ActionResultCore', () => {
           fields: { otherField: '456' }
         }];
         
-        const res = ActionResultCore.tempUpdateContext(ops, actionContext);
+        const res = KernelResult.tempUpdateContext(ops, actionContext);
 
         assert.deepStrictEqual(res.evalContext,
           { Phone: { otherField: '456' } });

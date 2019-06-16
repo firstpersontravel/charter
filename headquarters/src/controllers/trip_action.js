@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const ActionCore = require('../../../fptcore/src/cores/action');
+const Kernel = require('../../../fptcore/src/kernel/kernel');
 
 const config = require('../config');
 const TripOpController = require('./trip_op');
@@ -17,17 +17,17 @@ class TripActionController {
    */
   static _resultForImmediateActionAndObjs(objs, action, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.resultForImmediateAction(action, actionContext);
+    return Kernel.resultForImmediateAction(action, actionContext);
   }
 
   static _resultForEventAndObjs(objs, event, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.resultForEvent(event, actionContext);
+    return Kernel.resultForEvent(event, actionContext);
   }
 
   static _resultForTriggerAndObjs(objs, trigger, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.resultForTrigger(trigger, null, actionContext,
+    return Kernel.resultForTrigger(trigger, null, actionContext,
       actionContext);
   }
   
