@@ -1,5 +1,5 @@
 meta:
-  version: 13
+  version: 14
 
 roles:
   - name: player
@@ -19,16 +19,25 @@ scenes:
   - name: scene
     title: First scene
 
-emails:
-  - name: email-1
-    from: inbox
-    to: player
-    title: First email
+cues:
+  - name: start
     scene: scene
-    subject: test
-    body: |
-      # Hello there!
+    title: start
 
-      Greetings from the System
+triggers:
+  - name: start
+    scene: scene
+    events:
+      - type: cue_signaled
+        cue: start
+    actions:
+      - name: send_email
+        from: inbox
+        to: player
+        subject: test
+        body: |
+          # Hello there!
 
-      Sincerely yours
+          Greetings from the System
+
+          Sincerely yours

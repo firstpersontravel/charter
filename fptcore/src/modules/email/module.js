@@ -2,7 +2,7 @@ module.exports = {
   name: 'email',
   resources: {
     email: {
-      resource: require('./email'),
+      resource: null,
       actions: {
         send_email: require('./email_send')
       }

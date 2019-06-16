@@ -14,13 +14,6 @@ describe('#send_email', () => {
         name: 'INBOX',
         role: 'System',
         address: 'system@system.com'
-      }],
-      emails: [{
-        name: 'EMAIL',
-        from: 'INBOX',
-        to: 'Player',
-        subject: 'Your {{productName}} is ready!',
-        body: 'Your order of {{num}} {{productName}}(s) is ready.'
       }]
     },
     evalContext: {
@@ -31,9 +24,14 @@ describe('#send_email', () => {
     }
   };
 
-  it('sends email', () => {
-    const params = { email_name: 'EMAIL' };
+  const params = {
+    from: 'INBOX',
+    to: 'Player',
+    subject: 'Your {{productName}} is ready!',
+    body: 'Your order of {{num}} {{productName}}(s) is ready.'
+  };
 
+  it('sends email', () => {
     const res = send_email.applyAction(params, actionContext);
 
     assert.deepStrictEqual(res, [{
@@ -49,23 +47,9 @@ describe('#send_email', () => {
     }]);
   });
 
-  it('logs eror if email is not found', () => {
-    const params = { email_name: 'EMAIL2' };
-
-    const res = send_email.applyAction(params, actionContext);
-
-    assert.deepStrictEqual(res, [{
-      operation: 'log',
-      level: 'error',
-      message: 'Could not find email named "EMAIL2".'
-    }]);
-  });
-
   it('logs warning if to email is not present', () => {
     const clonedActionContext = _.cloneDeep(actionContext);
     delete clonedActionContext.evalContext.player.email;
-
-    const params = { email_name: 'EMAIL' };
 
     const res = send_email.applyAction(params, clonedActionContext);
 

@@ -4,48 +4,62 @@ const TextUtil = require('../../utils/text');
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
-  help: 'Send a pre-defined email from one player to another.',
+  help: 'Send an email from one player to another.',
   params: {
-    email_name: {
-      required: true,
+    from: {
       type: 'reference',
-      collection: 'emails',
-      display: { label: false },
-      help: 'Predefined email to send.'
+      collection: 'inboxes',
+      required: true,
+      help: 'Inbox to send from.'
+    },
+    to: {
+      type: 'reference',
+      collection: 'roles',
+      required: true,
+      help: 'Role to send to.'
+    },
+    subject: {
+      type: 'string',
+      required: true,
+      help: 'Subject line for the email.'
+    },
+    body: {
+      type: 'markdown',
+      required: true,
+      help: 'Body of the email.'
+    },
+    cc: {
+      type: 'email',
+      help: 'Email address to CC.'
+    },
+    bcc: {
+      type: 'email',
+      help: 'Email address to BCC.'
     }
   },
   applyAction: function(params, actionContext) {
-    const name = params.email_name;
-    const emailData = _.find(actionContext.scriptContent.emails, { name: name });
-    if (!emailData) {
-      return [{
-        operation: 'log',
-        level: 'error',
-        message: 'Could not find email named "' + name + '".'
-      }];
-    }
     const subject = TemplateUtil.templateText(actionContext.evalContext,
-      emailData.subject, actionContext.timezone);
+      params.subject, actionContext.timezone);
     const bodyMarkdown = TemplateUtil.templateText(actionContext.evalContext,
-      emailData.body, actionContext.timezone);
+      params.body, actionContext.timezone);
 
     const fromInbox = _.find(actionContext.scriptContent.inboxes,
-      { name: emailData.from });
+      { name: params.from });
     if (!fromInbox) {
       return [{
         operation: 'log',
         level: 'error',
-        message: 'Could not find inbox named "' + emailData.from + '".'
+        message: 'Could not find inbox named "' + params.from + '".'
       }];
     }
 
     const toRole = _.find(actionContext.scriptContent.roles,
-      { name: emailData.to });
+      { name: params.to });
     if (!toRole) {
       return [{
         operation: 'log',
         level: 'error',
-        message: 'Could not find role named "' + emailData.to + '".'
+        message: 'Could not find role named "' + params.to + '".'
       }];
     }
 
@@ -54,7 +68,7 @@ module.exports = {
       return [{
         operation: 'log',
         level: 'error',
-        message: 'Could not generate slug for role "' + emailData.to + '".'
+        message: 'Could not generate slug for role "' + params.to + '".'
       }];      
     }
     const toPlayerContext = actionContext.evalContext[toRoleSlug];
@@ -80,8 +94,8 @@ module.exports = {
       params: {
         from: fromInbox.address,
         to: toPlayerContext.email,
-        cc: emailData.cc,
-        bcc: emailData.bcc,
+        cc: params.cc,
+        bcc: params.bcc,
         subject: subject,
         bodyMarkdown: bodyMarkdown
       }

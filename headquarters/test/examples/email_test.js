@@ -43,10 +43,11 @@ describe('EmailExample', () => {
   });
 
   it('sends email via sendgrid', async () => {
-    await TripActionController.applyAction(trip.id, {
-      name: 'send_email',
-      params: { email_name: 'email-1' }
-    });
+    const action = {
+      name: 'signal_cue',
+      params: { cue_name: 'start' }
+    };
+    await TripActionController.applyAction(trip.id, action);
 
     // Test email sent
     sinon.assert.calledOnce(config.getSendgridClient().send);
