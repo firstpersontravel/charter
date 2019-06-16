@@ -113,21 +113,6 @@ describe('ConditionCore', () => {
       it.skip('evaluates', () => {});
     });
 
-    describe('#matches', () => {
-      it('evaluates', () => {
-        assertIfEq({ a: '9144844223', },
-          {op: 'matches', string_ref: 'a', regex_ref: '"^\\d{10}$"'}, true);
-        assertIfEq({ a: '91448442233', },
-          {op: 'matches', string_ref: 'a', regex_ref: '"^\\d{10}$"'}, false);
-        assertIfEq({ a: '914484422', },
-          {op: 'matches', string_ref: 'a', regex_ref: '"^\\d{10}$"'}, false);
-        assertIfEq({ a: 'abcd', },
-          {op: 'matches', string_ref: 'a', regex_ref: '"^[a-d]+$"'}, true);
-        assertIfEq({ a: 'abcde', },
-          {op: 'matches', string_ref: 'a', regex_ref: '"^[a-d]+$"'}, false);
-      });
-    });
-
     describe('#or', () => {
       it('evaluates', () => {
         const op = {

@@ -81,19 +81,6 @@ const ifOpClasses = {
       return _.some(affirmativeParts, part => lower.indexOf(part) > -1);
     }
   },
-  matches: {
-    properties: {
-      string_ref: { type: 'lookupable', required: true },
-      regex_ref: { type: 'string', required: true }
-    },
-    eval: function(params, evalContext) {
-      const a = TemplateUtil.lookupRef(evalContext, params.string_ref);
-      const regex = TemplateUtil.lookupRef(evalContext, params.regex_ref);
-      return (
-        typeof a === 'string' && RegExp(regex, 'i').test(a)
-      );
-    }
-  },
   and: {
     properties: {
       items: {
