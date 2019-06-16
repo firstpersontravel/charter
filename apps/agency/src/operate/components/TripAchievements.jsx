@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
+import yaml from 'js-yaml';
 
 import { ConditionCore, TemplateUtil, TextUtil } from 'fptcore';
 
@@ -54,7 +55,13 @@ export default function TripAchievements({ trip }) {
   const achievementsRendered = renderAchievements(trip,
     trip.script.content.achievements || []);
   return (
-    <div>{achievementsRendered}</div>
+    <div>
+      <div>
+        <strong>Values:</strong>
+        <pre>{yaml.safeDump(trip.values)}</pre>
+      </div>
+      {achievementsRendered}
+    </div>
   );
 }
 

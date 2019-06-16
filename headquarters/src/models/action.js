@@ -27,7 +27,7 @@ const Action = database.define('Action', snakeCaseColumns({
   triggerName: optionalStringField(64),
   event: allowNullModifier(jsonField(database, 'Action', 'event')),
   createdAt: datetimeField(),
-  scheduledAt: datetimeField(),
+  scheduledAt: mutableModifier(datetimeField()),
   appliedAt: mutableModifier(allowNullModifier(datetimeField())),
   failedAt: mutableModifier(allowNullModifier(datetimeField())),
   isArchived: mutableModifier(booleanField(false))

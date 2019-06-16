@@ -32,10 +32,12 @@ class TripActionController {
   }
   
   static async _scheduleAction(orgId, tripId, action) {
-    logger.info(
-      action.params,
-      `Scheduling action ${action.scheduleAt.fromNow()}: ` + 
-      `${action.name}.`);
+    const scheduleAtLocal = action.scheduleAt
+      .clone()
+      .tz('US/Pacific')
+      .format('h:mm:ssa z');
+    logger.info(action.params,
+      `Scheduling ${action.name} for ${scheduleAtLocal}.`);
     const fields = {
       orgId: orgId,
       tripId: tripId,

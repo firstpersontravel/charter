@@ -2,18 +2,8 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import yaml from 'js-yaml';
-
-import { TriggerEventCore } from 'fptcore';
 
 import { isProduction } from '../../utils';
-
-const TRIGGER_CLASSIFICATIONS = [
-  'Active',
-  'Inactive',
-  'Triggered'
-];
-
 
 function renderAlert() {
   if (!isProduction()) {
@@ -38,57 +28,10 @@ export default class TripControls extends Component {
     };
     this.handleAdminAction = this.handleAdminAction.bind(this);
     this.handleNotifyAction = this.handleNotifyAction.bind(this);
-    this.handleTriggerChange = this.handleTriggerChange.bind(this);
-    this.handleTriggerApply = this.handleTriggerApply.bind(this);
     this.handleCheckpointApply = this.handleCheckpointApply.bind(this);
     this.handleCheckpointChange = this.handleCheckpointChange.bind(this);
     this.handleCommandApply = this.handleCommandApply.bind(this);
     this.handleCommandChange = this.handleCommandChange.bind(this);
-    this.handleCueChange = this.handleCueChange.bind(this);
-    this.handleCueApply = this.handleCueApply.bind(this);
-  }
-
-  getClassifiedTriggers() {
-    const triggers = this.props.trip.script.content.triggers || [];
-    return _(triggers)
-      .map(trigger => ({
-        trigger: trigger,
-        classification: this.classifyTrigger(trigger)
-      }))
-      .groupBy('classification')
-      .value();
-  }
-
-  getCueTriggerContent(cueName) {
-    const event = { type: 'cue_signaled', cue: cueName };
-    const triggers = TriggerEventCore.triggersForEvent(event,
-      this.props.trip.actionContext);
-    const renderedTriggers = triggers.map(trigger => (
-      <li key={trigger.name}>
-        <pre className="mb-0">{trigger.name}:</pre>
-        <pre className="mb-0">{yaml.safeDump(trigger.actions)}</pre>
-      </li>
-    ));
-    return (
-      <ul>
-        {renderedTriggers}
-      </ul>
-    );
-  }
-
-  classifyTrigger(trigger) {
-    const script = this.props.trip.script;
-    const context = this.props.trip.evalContext;
-    const isActive = TriggerEventCore.isTriggerActive(
-      script, context, trigger);
-    const hasBeenTriggered = !!this.props.trip.history[trigger.name];
-    if (hasBeenTriggered) {
-      return 'Triggered';
-    }
-    if (isActive) {
-      return 'Active';
-    }
-    return 'Inactive';
   }
 
   handleAdminAction(name, params) {
@@ -113,14 +56,6 @@ export default class TripControls extends Component {
     this.setState({ pendingCheckpointName: event.target.value });
   }
 
-  handleTriggerChange(event) {
-    this.setState({ pendingTriggerName: event.target.value });
-  }
-
-  handleCueChange(event) {
-    this.setState({ pendingCueName: event.target.value });
-  }
-
   handleCommandApply(event) {
     event.preventDefault();
     this.handleAdminAction('phrase',
@@ -129,13 +64,6 @@ export default class TripControls extends Component {
       sendingCommand: this.state.pendingCommand,
       pendingCommand: ''
     });
-  }
-
-  handleTriggerApply(event) {
-    event.preventDefault();
-    this.handleAdminAction('trigger',
-      { trigger_name: this.state.pendingTriggerName });
-    this.setState({ pendingTriggerName: '' });
   }
 
   handleCueApply(event) {
@@ -227,101 +155,6 @@ export default class TripControls extends Component {
     );
   }
 
-  renderCues() {
-    const script = this.props.trip.script;
-    const cues = script.content.cues || [];
-    const pendingCueName = this.state.pendingCueName;
-    const cueOptions = cues.map(cue => (
-      <option key={cue.name} value={cue.name}>{cue.name}</option>
-    ));
-    const cueContent = pendingCueName ? (
-      this.getCueTriggerContent(pendingCueName)
-    ) : null;
-    const btnDangerClass = isProduction() ? 'btn-danger' : 'btn-primary';
-    return (
-      <div>
-        <h5>Cues</h5>
-        <form className="row" onSubmit={this.handleCueApply}>
-          <div className="col-sm-8">
-            <select
-              className="form-control"
-              value={pendingCueName}
-              onChange={this.handleCueChange}>
-              <option value="">---</option>
-              {cueOptions}
-            </select>
-            {cueContent}
-          </div>
-          <div className="col-sm-4">
-            <button
-              type="submit"
-              disabled={!pendingCueName}
-              className={`btn btn-block ${btnDangerClass}`}>
-              Signal {pendingCueName || 'cue'}
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
-
-  renderTriggers() {
-    const triggers = this.props.trip.script.content.triggers || [];
-    const pendingTrigger = _.find(triggers,
-      { name: this.state.pendingTriggerName });
-    const classifiedTriggers = this.getClassifiedTriggers();
-    const triggerOptionGroups = _(TRIGGER_CLASSIFICATIONS)
-      .map((classification) => {
-        const classTriggers = classifiedTriggers[classification] || [];
-        const triggerOpts = classTriggers.map(trigger => (
-          <option
-            key={trigger.trigger.name}
-            value={trigger.trigger.name}>
-            {trigger.trigger.name}
-          </option>
-        ));
-        return (
-          <optgroup
-            key={classification}
-            label={classification}>
-            {triggerOpts}
-          </optgroup>
-        );
-      })
-      .value();
-    const triggerContent = pendingTrigger ? (
-      <pre className="mb-0">
-        {yaml.safeDump(pendingTrigger.actions)}
-      </pre>
-    ) : null;
-    const btnDangerClass = isProduction() ? 'btn-danger' : 'btn-primary';
-    return (
-      <div>
-        <h5>Triggers</h5>
-        <form className="row" onSubmit={this.handleTriggerApply}>
-          <div className="col-sm-8">
-            <select
-              className="form-control"
-              value={this.state.pendingTriggerName}
-              onChange={this.handleTriggerChange}>
-              <option value="">---</option>
-              {triggerOptionGroups}
-            </select>
-            {triggerContent}
-          </div>
-          <div className="col-sm-4">
-            <button
-              type="submit"
-              disabled={!pendingTrigger}
-              className={`btn btn-block ${btnDangerClass}`}>
-              Fire {pendingTrigger ? pendingTrigger.name : 'trigger'}
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
-
   renderCommand() {
     const btnDangerClass = isProduction() ? 'btn-danger' : 'btn-primary';
     const isCommandApplyDisabled = this.state.pendingCommand === '';
@@ -396,8 +229,6 @@ export default class TripControls extends Component {
         {renderAlert()}
         {this.renderRefresh()}
         {this.renderCommandError()}
-        {this.renderCues()}
-        {this.renderTriggers()}
         {this.renderCommand()}
         {this.renderReset()}
       </div>
