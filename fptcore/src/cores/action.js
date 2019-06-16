@@ -32,18 +32,14 @@ class ActionCore {
   }
 
   /**
-   * Just apply a simple action and return the result.
-   */
-  static applyActionSimple(action, actionContext) {
-    var ops = this.opsForAction(action, actionContext);
-    return ActionResultCore.resultFromOps(ops, actionContext);
-  }
-
-  /**
    * Apply an action, including any triggers started by a resulting events.
    */
   static applyAction(action, actionContext) {
-    let result = this.applyActionSimple(action, actionContext);
+    // Apply simple action
+    const actionOps = this.opsForAction(action, actionContext);
+    let result = ActionResultCore.resultForOps(actionOps, actionContext);
+
+    // Apply any events from the action.
     const eventOps = _.filter(result.resultOps, { operation: 'event' });
     for (const eventOp of eventOps) {
       const event = eventOp.event;
@@ -92,7 +88,7 @@ class ActionCore {
     }];
     // Create an initial result with this history update, so that subsequent
     // events can register that this was triggered.
-    let result = ActionResultCore.resultFromOps(historyOps, actionContext);
+    let result = ActionResultCore.resultForOps(historyOps, actionContext);
 
     // Add event to context for consideration for if logic. Figure out which
     // actions should be called, either now or later.

@@ -31,7 +31,17 @@ describe('ActionCore', () => {
   });
 
   describe('#opsForAction', () => {
-    it.skip('tbd');
+    it('returns action ops', () => {
+      const action = { name: 'add', params: {} };
+      const actionContext = { scriptContent: {}, evaluateAt: now };
+
+      const ops = ActionCore.opsForAction(action, actionContext);
+
+      assert.deepStrictEqual(ops, [{
+        operation: 'updateTripValues',
+        values: { number: 1 }
+      }]);
+    });
   });
 
   describe('#addEventToContext', () => {
@@ -42,21 +52,6 @@ describe('ActionCore', () => {
       const result = ActionCore.addEventToContext(event, actionContext);
 
       assert.deepEqual(result.evalContext, { abc: '123', event: event });      
-    });
-  });
-
-  describe('#applyActionSimple', () => {
-    it('returns action results', () => {
-      const action = { name: 'add', params: {} };
-      const actionContext = { scriptContent: {}, evaluateAt: now };
-
-      const result = ActionCore.applyActionSimple(action, actionContext);
-
-      assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
-      assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updateTripValues',
-        values: { number: 1 }
-      }]);
     });
   });
 
@@ -75,13 +70,9 @@ describe('ActionCore', () => {
     });
 
     it('returns action and subsequent event results', () => {
-      sandbox.stub(ActionCore, 'applyActionSimple')
+      sandbox.stub(ActionCore, 'opsForAction')
         .callsFake(function(action, actionContext) {
-          return {
-            nextContext: actionContext,
-            resultOps: [{ operation: 'event', event: { type: '123' }}],
-            scheduledActions: []
-          };
+          return [{ operation: 'event', event: { type: '123' }}];
         });
       sandbox.stub(ActionCore, 'applyEvent')
         .callsFake(function(event, actionContext) {

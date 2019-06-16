@@ -57,7 +57,7 @@ class ActionResultCore {
   /**
    * Get an object representing a simple application of ops to a context
    */
-  static resultFromOps(ops, actionContext) {
+  static resultForOps(ops, actionContext) {
     var nextContext = this.tempUpdateContext(ops, actionContext);
     return {
       nextContext: nextContext,

@@ -11,6 +11,7 @@ const modules = [
   require('../modules/relays/module'),
   require('../modules/roles/module'),
   require('../modules/scenes/module'),
+  require('../modules/time/module'),
   require('../modules/values/module'),
   require('../modules/variants/module'),
 ];
