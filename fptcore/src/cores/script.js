@@ -59,6 +59,7 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
     return;
   }
 
+  // Wait on this until conditionals are turned into a first-order obj type
   // For if clauses, call iteree for all if clauses, both parent and child
   // if (paramSpec.type === 'ifClause') {
   //   if (paramType === 'ifClause') {

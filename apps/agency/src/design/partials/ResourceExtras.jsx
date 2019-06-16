@@ -8,9 +8,9 @@ const assetComponentsByResourceType = {
   audio: MediaAssets,
   page: MediaAssets,
   content_page: MediaAssets,
-  message: MediaAssets,
   route: RouteAssets,
-  relay: MediaAssets
+  relay: MediaAssets,
+  trigger: MediaAssets
 };
 
 export default class ResourceExtras extends Component {

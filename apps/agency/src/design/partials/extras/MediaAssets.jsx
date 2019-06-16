@@ -1,10 +1,9 @@
-import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactS3Uploader from 'react-s3-uploader';
 
-import { ResourcesRegistry, SubresourcesRegistry } from 'fptcore';
+import { ScriptCore } from 'fptcore';
 
 const MEDIA_MIME_TYPES = {
   image: 'image/*',
@@ -12,41 +11,13 @@ const MEDIA_MIME_TYPES = {
   audio: 'audio/*'
 };
 
-function extractMediaPaths(resourceClass, resource) {
-  const props = Object.keys(resourceClass.properties);
-  return props
-    .filter(key => resourceClass.properties[key].type === 'media')
-    .map(key => ({
-      medium: resourceClass.properties[key].medium,
-      path: resource[key]
-    }));
-}
-
-function extractPanelPaths(panel) {
-  if (!panel.type) {
-    return [];
-  }
-  const panelClass = SubresourcesRegistry[`${panel.type}_panel`];
-  if (!panelClass) {
-    throw new Error(`Could not find panel ${panel.type}.`);
-  }
-  return extractMediaPaths(panelClass, panel);
-}
-
 function extraMediaReferences(resourceType, resource) {
-  if (resourceType === 'page' || resourceType === 'content_page') {
-    return _(resource.panels)
-      .map(panel => extractPanelPaths(panel))
-      .flatten()
-      .value();
-  }
-  if (resourceType === 'message') {
-    if (_.includes(['audio', 'image', 'video'], resource.medium)) {
-      return [{ medium: resource.medium, path: resource.content }];
-    }
-  }
-  const resourceClass = ResourcesRegistry[resourceType];
-  return extractMediaPaths(resourceClass, resource);
+  const paths = [];
+  ScriptCore.walkResourceParams(resourceType, resource, 'media',
+    (path, spec) => {
+      paths.push({ path: path, medium: spec.medium });
+    });
+  return paths;
 }
 
 class MediaAsset extends Component {

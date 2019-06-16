@@ -20,6 +20,7 @@ module.exports = {
     content: {
       required: true,
       type: 'media',
+      medium: 'image',
       help: 'The content of the message to send.'
     },
     latitude: { required: false, type: 'number', display: { hidden: true } },
