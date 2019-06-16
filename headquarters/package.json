@@ -6,7 +6,8 @@
     "pretest": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
     "db:migrate": "sequelize",
-    "scripts:migrate": "node cmd/migrate-scripts.js | pino -c"
+    "scripts:migrate": "node cmd/migrate-scripts.js | pino -c",
+    "scripts:dryrun": "node cmd/migrate-scripts.js --dry-run | pino -c"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",

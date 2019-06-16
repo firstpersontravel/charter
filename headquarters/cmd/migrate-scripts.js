@@ -1,13 +1,19 @@
 const _ = require('lodash');
-const config = require('../src/config');
-const models = require('../src/models');
+const program = require('commander');
 
 const ScriptCore = require('../../fptcore/src/cores/script');
 const Migrator = require('../../fptcore/src/migrator');
 
+const config = require('../src/config');
+const models = require('../src/models');
+
 const logger = config.logger.child({ name: 'bin.migrate' });
 
-async function migrateScript(script) {
+program
+  .option('--dry-run', 'Dry run mode: do not save models.')
+  .parse(process.argv);
+
+async function migrateScript(script, isDryRun) {
 
   // For some reason, getting script.content updates `dataValues` which
   // triggers a validation error on the json field. So we do the get *after*
@@ -20,12 +26,7 @@ async function migrateScript(script) {
     return;
   }
   const migrated = Migrator.migrateScriptContent(script.content);
-  try {
-    await script.update({ content: migrated });
-    logger.info(`Script #${script.id} migrated from version ${oldVersion} to ${migrated.meta.version}.`);
-  } catch (err) {
-    logger.error(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
-  }
+  script.set({ content: migrated });
 
   try {
     await script.validate();
@@ -37,16 +38,24 @@ async function migrateScript(script) {
     });
   }
 
-}
-
-async function migrateAll() {
-  const scripts = await models.Script.findAll();
-  for (const script of scripts) {
-    await migrateScript(script);
+  if (!isDryRun) {
+    try {
+      await script.save({ fields: ['content'] });
+      logger.info(`Script #${script.id} migrated from version ${oldVersion} to ${migrated.meta.version}.`);
+    } catch (err) {
+      logger.error(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
+    }
   }
 }
 
-migrateAll()
+async function migrateAll(isDryRun) {
+  const scripts = await models.Script.findAll();
+  for (const script of scripts) {
+    await migrateScript(script, isDryRun);
+  }
+}
+
+migrateAll(program.dryRun)
   .then(() => {
     process.exit(0);
   })
