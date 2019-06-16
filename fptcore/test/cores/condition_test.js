@@ -105,12 +105,12 @@ describe('ConditionCore', () => {
       });
     });
 
-    describe('#message_contains', () => {
+    describe('#text_contains', () => {
       it.skip('evaluates', () => {});
     });
 
-    describe('#message_is_affirmative', () => {
-      
+    describe('#text_is_affirmative', () => {
+      it.skip('evaluates', () => {});
     });
 
     describe('#matches', () => {

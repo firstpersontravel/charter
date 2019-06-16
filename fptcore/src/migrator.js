@@ -85,7 +85,8 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
   }
   var resourceType = TextUtil.singularize(collectionName);
   if (!ResourcesRegistry[resourceType]) {
-    throw new Error('Illegal collection name ' + collectionName);
+    // throw new Error('Illegal collection name ' + collectionName);
+    return;
   }
   if (!scriptContent[collectionName]) {
     return;

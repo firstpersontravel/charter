@@ -57,7 +57,7 @@ const ifOpClasses = {
       );
     }
   },
-  message_contains: {
+  text_contains: {
     properties: {
       part: { type: 'string', required: true, display: { label: false } }
     },
@@ -69,7 +69,7 @@ const ifOpClasses = {
       );
     }
   },
-  message_is_affirmative: {
+  text_is_affirmative: {
     properties: {},
     eval: function(params, evalContext) {
       const msg = TemplateUtil.lookupRef(evalContext, 'event.message.content');

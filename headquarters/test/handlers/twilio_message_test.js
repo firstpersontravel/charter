@@ -44,11 +44,10 @@ describe('TwilioMessageHandler', () => {
       assert.deepStrictEqual(
         TripActionController.applyAction.firstCall.args,
         [100, {
-          name: 'custom_message',
+          name: 'send_text',
           params: {
             from_role_name: 'From',
             content: 'incomïng mêssage',
-            medium: 'text',
             from_relay_id: 2,
             to_role_name: 'To'
           }
@@ -66,11 +65,10 @@ describe('TwilioMessageHandler', () => {
       assert.deepStrictEqual(
         TripActionController.applyAction.firstCall.args,
         [100, {
-          name: 'custom_message',
+          name: 'send_image',
           params: {
             from_role_name: 'From',
             content: 'http://test/image.jpg',
-            medium: 'image',
             from_relay_id: 2,
             to_role_name: 'To'
           }
@@ -85,11 +83,11 @@ describe('TwilioMessageHandler', () => {
       assert.strictEqual(result, true);
       sinon.assert.calledTwice(TripActionController.applyAction);
       assert.deepStrictEqual(
-        TripActionController.applyAction.firstCall.args[1].params.medium,
-        'text');
+        TripActionController.applyAction.firstCall.args[1].name,
+        'send_text');
       assert.deepStrictEqual(
-        TripActionController.applyAction.secondCall.args[1].params.medium,
-        'image');
+        TripActionController.applyAction.secondCall.args[1].name,
+        'send_image');
     });
   });
 });

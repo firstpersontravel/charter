@@ -42,8 +42,10 @@ const actionContext = {
       events: [{ type: 'cue_signaled', cue: 'CUE-SUNRISE' }],
       actions: [{
         offset: '120m',
-        name: 'send_message',
-        message_name: 'MESSAGE-CROW'
+        name: 'send_audio',
+        from_role_name: 'Rooster',
+        to_role_name: 'Farmer',
+        content: 'crow.mp3'
       }]
     }, {
       name: 'TRIGGER-GREET-1',
@@ -53,10 +55,9 @@ const actionContext = {
       name: 'TRIGGER-GREET-2',
       events: [{ type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }],
       actions: [{
-        name: 'custom_message',
+        name: 'send_text',
         from_role_name: 'Cowboy',
         to_role_name: 'Farmer',
-        medium: 'text',
         content: 'howdy'
       }]
     }, {
@@ -75,10 +76,9 @@ const actionContext = {
       events: [{ type: 'cue_signaled', cue: 'CUE-NAV-2' }],
       if: { op: 'istrue', ref: 'is_navigating' },
       actions: [{
-        name: 'custom_message',
+        name: 'send_text',
         from_role_name: 'Cowboy',
         to_role_name: 'Farmer',
-        medium: 'text',
         content: 'geewhiz'
       }]
     }],
@@ -87,14 +87,7 @@ const actionContext = {
       { name: 'TRACTOR', scene: 'MAIN' },
       { name: 'BACK-HOME', scene: 'MAIN' }
     ],
-    geofences: [{ name: 'GEOFENCE-FARM' }],
-    messages: [{
-      name: 'MESSAGE-CROW',
-      type: 'text',
-      from: 'Rooster',
-      to: 'Farmer',
-      content: 'cock-a-doodle-doo!'
-    }]
+    geofences: [{ name: 'GEOFENCE-FARM' }]
   },
   evalContext: { Farmer: { page: 'TRACTOR' }, apples: 2 },
   evaluateAt: now
@@ -104,7 +97,7 @@ describe('Integration - Nested Triggers', () => {
 
   beforeEach(() => {
     const oldActions = Object.assign({}, ActionsRegistry);
-    const spyActions = ['custom_message', 'signal_cue', 'send_to_page'];
+    const spyActions = ['send_text', 'signal_cue', 'send_to_page'];
     spyActions.forEach((spyAction) => {
       sandbox
         .stub(ActionsRegistry, spyAction)
@@ -192,9 +185,11 @@ describe('Integration - Nested Triggers', () => {
       history: { 'TRIGGER-SUNRISE': now.toISOString() }
     }]);
     assert.strictEqual(result.scheduledActions.length, 1);
-    assert.strictEqual(result.scheduledActions[0].name, 'send_message');
+    assert.strictEqual(result.scheduledActions[0].name, 'send_audio');
     assert.deepStrictEqual(result.scheduledActions[0].params, {
-      message_name: 'MESSAGE-CROW'
+      from_role_name: 'Rooster',
+      to_role_name: 'Farmer',
+      content: 'crow.mp3'
     });
     assert(result.scheduledActions[0].scheduleAt.isSame(inTwoHours));
     assert.strictEqual(result.scheduledActions[0].triggerName,
@@ -232,24 +227,19 @@ describe('Integration - Nested Triggers', () => {
           }
         })]);
 
-    // Then custom_message with event 'cue CUE-GREET-REPLY'
-    assert.deepStrictEqual(
-      ActionsRegistry.custom_message.applyAction.firstCall.args, [
-        {
-          from_role_name: 'Cowboy',
-          to_role_name: 'Farmer',
-          content: 'howdy',
-          medium: 'text'
-        },
-        _.merge({}, actionContext, {
-          evalContext: {
-            event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
-            history: {
-              'TRIGGER-GREET-1': now.toISOString(),
-              'TRIGGER-GREET-2': now.toISOString()
-            }
+    // Then send_text with event 'cue CUE-GREET-REPLY'
+    sinon.assert.calledWith(ActionsRegistry.send_text.applyAction.getCall(0),
+      { from_role_name: 'Cowboy', to_role_name: 'Farmer', content: 'howdy' },
+      _.merge({}, actionContext, {
+        evalContext: {
+          event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
+          history: {
+            'TRIGGER-GREET-1': now.toISOString(),
+            'TRIGGER-GREET-2': now.toISOString()
           }
-        })]);
+        }
+      })
+    );
 
     // Test results
     assert.deepStrictEqual(result.resultOps, [{
@@ -282,7 +272,7 @@ describe('Integration - Nested Triggers', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_received',
+        type: 'text_received',
         message: {
           content: 'howdy',
           from: 'Cowboy',
@@ -339,7 +329,7 @@ describe('Integration - Nested Triggers', () => {
     }, {
       operation: 'event',
       event: {
-        type: 'message_received',
+        type: 'text_received',
         message: {
           content: 'geewhiz',
           from: 'Cowboy',

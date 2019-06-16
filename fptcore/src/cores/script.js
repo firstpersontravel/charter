@@ -7,7 +7,7 @@ const ResourcesRegistry = require('../registries/resources');
 const ValidationCore = require('../cores/validation');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 12;
+const CURRENT_VERSION = 13;
 
 const metaSchema = {
   type: 'object',
@@ -78,14 +78,14 @@ function walkObjectParams(parent, key, obj, spec, paramType, iteree) {
   if (!obj) {
     return;
   }
-  Object.keys(spec).forEach(function(paramName) {
+  for (const paramName of Object.keys(spec)) {
     if (paramName === 'self') {
       walkObjectParam(parent, key, obj, spec[paramName], paramType, iteree);
       return;
     }
     walkObjectParam(obj, paramName, obj[paramName], spec[paramName], paramType,
       iteree);
-  });
+  }
 }
 
 class ScriptCore {
@@ -94,6 +94,9 @@ class ScriptCore {
    */
   static walkResourceParams(resourceType, resource, paramType, iteree) {
     const resourceClass = ResourcesRegistry[resourceType];
+    if (!resourceClass) {
+      return;
+    }
     walkObjectParams(null, null, resource, resourceClass.properties, 
       paramType, iteree);
   }
@@ -102,18 +105,16 @@ class ScriptCore {
    * Walk all resources in the script to iterate over all params
    */
   static walkParams(scriptContent, paramType, iteree) {
-    Object
-      .keys(scriptContent)
-      .forEach((collectionName) => {
-        if (collectionName === 'meta') {
-          return;
-        }
-        const collection = scriptContent[collectionName];
-        const resourceType = TextUtil.singularize(collectionName);
-        collection.forEach((resource) => {
-          this.walkResourceParams(resourceType, resource, paramType, iteree);
-        });
-      });
+    for (const collectionName of Object.keys(scriptContent)) {
+      if (collectionName === 'meta') {
+        continue;
+      }
+      const collection = scriptContent[collectionName];
+      const resourceType = TextUtil.singularize(collectionName);
+      for (const resource of collection) {
+        this.walkResourceParams(resourceType, resource, paramType, iteree);
+      }
+    }
   }
 
   static getResourceErrors(script, collectionName, resource) {
@@ -130,13 +131,11 @@ class ScriptCore {
     const errors = ValidationCore.validateResource(script, resourceClass, 
       resource);
 
-    return errors.map(function(err) {
-      return {
-        path: collectionName + '[name=' + resourceName + ']',
-        collection: collectionName,
-        message: err
-      };
-    });
+    return errors.map(err => ({
+      path: `${collectionName}[name=${resourceName}]`,
+      collection: collectionName,
+      message: err
+    }));
   }
 
   static validateScriptContent(script) {

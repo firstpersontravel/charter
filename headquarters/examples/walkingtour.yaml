@@ -1,5 +1,5 @@
 meta:
-  version: 12
+  version: 13
 
 layouts:
   - name: tablet
@@ -98,8 +98,9 @@ triggers:
     events: [{ type: cue_signaled, cue: CUE-ATLAS-ARRIVE }]
     scene: SCENE-MAIN
     actions:
-      - name: send_message
-        message_name: MESSAGE-ATLAS-WELCOME
+      - name: send_text
+        content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
+        from_role_name: Guide
         to_role_name: Player
       - name: send_to_page
         role_name: Player
@@ -107,16 +108,16 @@ triggers:
 
   - name: msg
     events:
-      - type: message_received
-        medium: image
+      - type: image_received
         from: Player
         to: Guide
         geofence: GEOFENCE-ATLAS
     scene: SCENE-MAIN
     actions:
-      - name: send_message
-        message_name: MESSAGE-ATLAS-REC
+      - name: send_text
+        from_role_name: Guide
         to_role_name: Player
+        content: Try the trout sandwich.
         offset: 10s
       - name: increment_value
         value_ref: points
@@ -129,31 +130,10 @@ triggers:
         geofence: GEOFENCE-BON-NENE
     scene: SCENE-MAIN
     actions:
-      - name: send_message
-        message_name: MESSAGE-BON-NENE-WELCOME
+      - name: send_text
+        from_role_name: Guide
         to_role_name: Player
+        content: The mushroom spaghetti bowl is amazing.
       - name: increment_value
         value_ref: points
         delta: 10
-
-messages:
-  - name: MESSAGE-ATLAS-WELCOME
-    title: Welcome
-    scene: SCENE-MAIN
-    medium: text
-    from: Guide
-    content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
-
-  - name: MESSAGE-ATLAS-REC
-    title: Atlas
-    scene: SCENE-MAIN
-    medium: text
-    from: Guide
-    content: Try the trout sandwich.
-
-  - name: MESSAGE-BON-NENE-WELCOME
-    title: Bon Nene
-    scene: SCENE-MAIN
-    medium: text
-    from: Guide
-    content: The mushroom spaghetti bowl is amazing.

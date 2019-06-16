@@ -1,5 +1,5 @@
 meta:
-  version: 12
+  version: 13
 
 roles:
   - name: Knight
@@ -17,42 +17,13 @@ relays:
     with: Sage
     trailhead: true
 
-messages:
-  - name: MESSAGE-HELLO
-    title: Hello
-    scene: SCENE-MAIN
-    medium: text
-    from: Sage
-    content: Why hello there, fine sir/lady/being! What is your name?
-
-  - name: MESSAGE-HELLO-RUDE
-    title: Rude
-    scene: SCENE-MAIN
-    medium: text
-    from: Sage
-    content: How rude, not even a greeting! What is your name?
-
-  - name: MESSAGE-RETURN-GREETING
-    scene: SCENE-MAIN
-    title: Greet
-    medium: text
-    from: Sage
-    content: Greetings, {{player_name}}. You may now await your righteous quest.
-
-  - name: MESSAGE-QUEST
-    scene: SCENE-MAIN
-    title: Quest
-    medium: text
-    from: Sage
-    content: Your quest is... the holy grail!
-
 scenes:
   - name: SCENE-MAIN
     title: Main
 
 triggers:
   - name: hello
-    events: [{type: message_received, from: Knight, to: Sage, medium: text}]
+    events: [{type: text_received, from: Knight, to: Sage}]
     scene: SCENE-MAIN
     active_if:
       op: not
@@ -75,16 +46,18 @@ triggers:
               string_ref: event.message.content
               part_ref: '"hey"'
         actions:
-          - name: send_message
-            message_name: MESSAGE-HELLO
+          - name: send_text
+            from_role_name: Sage
             to_role_name: Knight
+            content: Why hello there, fine sir/lady/being! What is your name?
         else:
-          - name: send_message
-            message_name: MESSAGE-HELLO-RUDE
+          - name: send_text
+            from_role_name: Sage
             to_role_name: Knight
+            content: How rude, not even a greeting! What is your name?
 
   - name: getname
-    events: [{type: message_received, from: Knight, to: Sage, medium: text}]
+    events: [{type: text_received, from: Knight, to: Sage}]
     scene: SCENE-MAIN
     active_if:
       op: istrue
@@ -93,10 +66,12 @@ triggers:
       - name: set_value
         value_ref: player_name
         new_value_ref: event.message.content
-      - name: send_message
-        message_name: MESSAGE-RETURN-GREETING
+      - name: send_text
+        from_role_name: Sage
         to_role_name: Knight
-      - name: send_message
-        message_name: MESSAGE-QUEST
+        content: Greetings, {{player_name}}. You may now await your righteous quest.
+      - name: send_text
+        from_role_name: Sage
         to_role_name: Knight
+        content: Your quest is... the holy grail!
         offset: 10s

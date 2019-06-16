@@ -1,14 +1,31 @@
 module.exports = {
   name: 'messages',
   resources: {
-    message: {
-      resource: require('./message'),
+    text: {
+      resource: null,
       actions: {
-        custom_message: require('./message_custom'),
-        send_message: require('./message_send')
+        send_text: require('./text_send')
       },
       events: {
-        message_received: require('./message_received')
+        text_received: require('./text_received')
+      }
+    },
+    image: {
+      resource: null,
+      actions: {
+        send_image: require('./image_send')
+      },
+      events: {
+        image_received: require('./image_received')
+      }
+    },
+    audio: {
+      resource: null,
+      actions: {
+        send_audio: require('./audio_send')
+      },
+      events: {
+        audio_received: require('./audio_received')
       }
     }
   }

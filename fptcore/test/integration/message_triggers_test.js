@@ -18,7 +18,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'message_received', from: 'A', to: 'B' }],
+          events: [{ type: 'text_received', from: 'A', to: 'B' }],
           actions: [{
             name: 'set_value', 
             value_ref: 'trigger',
@@ -26,7 +26,7 @@ describe('Integration - Message Triggers', () => {
           }]
         }, {
           name: 'trigger2',
-          events: [{ type: 'message_received', from: 'A', to: 'B' }],
+          events: [{ type: 'text_received', from: 'A', to: 'B' }],
           if: { op: 'istrue', ref: 'trigger' },
           actions: [{
             name: 'set_value',
@@ -38,7 +38,7 @@ describe('Integration - Message Triggers', () => {
       evalContext: {},
       evaluateAt: now
     };
-    const event = { type: 'message_received', message: { from: 'A', to: 'B' } };
+    const event = { type: 'text_received', message: { from: 'A', to: 'B' } };
     const result = ActionCore.applyEvent(event, actionContext);
 
     // Should not fire shouldn't be set
@@ -50,7 +50,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'message_received', medium: 'text' }],
+          events: [{ type: 'text_received' }],
           if: {
             op: 'contains',
             string_ref: 'event.message.content',
@@ -67,7 +67,7 @@ describe('Integration - Message Triggers', () => {
       evaluateAt: now
     };
     const okEvent = {
-      type: 'message_received',
+      type: 'text_received',
       message: {
         from: 'A',
         to: 'B',
@@ -85,7 +85,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'message_received', medium: 'text' }],
+          events: [{ type: 'text_received' }],
           if: {
             op: 'contains',
             string_ref: 'event.message.content',
@@ -102,7 +102,7 @@ describe('Integration - Message Triggers', () => {
       evaluateAt: now
     };
     const missEvent = {
-      type: 'message_received',
+      type: 'text_received',
       message: {
         from: 'A',
         to: 'B',

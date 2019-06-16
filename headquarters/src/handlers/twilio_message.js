@@ -12,11 +12,10 @@ function getMessageActions(relay, body, media) {
   // Message text
   if (body) {
     actions.push({
-      name: 'custom_message',
+      name: 'send_text',
       params: {
         from_role_name: relay.asRoleName,
         to_role_name: relay.withRoleName,
-        medium: 'text',
         content: body,
         from_relay_id: relay.id
       }
@@ -24,11 +23,10 @@ function getMessageActions(relay, body, media) {
   }
   // Message images
   actions.push(...media.map(mediaItem => ({
-    name: 'custom_message',
+    name: 'send_image',
     params: {
       from_role_name: relay.asRoleName,
       to_role_name: relay.withRoleName,
-      medium: 'image',
       content: mediaItem.url,
       from_relay_id: relay.id
     }

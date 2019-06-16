@@ -24,7 +24,6 @@ const sliceContent = {
   scene: sliceName => ({
     pages: { scene: sliceName },
     triggers: { scene: sliceName },
-    messages: { scene: sliceName },
     emails: { scene: sliceName },
     cues: { scene: sliceName },
     audio: { scene: sliceName },

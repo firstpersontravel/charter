@@ -1,17 +1,12 @@
 var _ = require('lodash');
 
-var MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio'];
-
 var WaypointCore = require('../../cores/waypoint');
 var distance = require('../../utils/distance');
 
 module.exports = {
-  help: 'Occurs when a message has been received.',
+  help: 'Occurs when am image message has been received.',
   getTitle: function(scriptContent, spec) {
-    var parts = [spec.medium || 'message'];
-    if (spec.contains) {
-      parts.push('containing "' + spec.contains + '"');
-    }
+    var parts = ['image'];
     if (spec.geofence) {
       parts.push('within geofence');
     }
@@ -42,17 +37,6 @@ module.exports = {
       collection: 'roles',
       help: 'The recipient of the message.'
     },
-    medium: {
-      required: false,
-      type: 'enum',
-      options: MESSAGE_MEDIUM_OPTIONS,
-      help: 'The type of the message.'
-    },
-    contains: {
-      required: false,
-      type: 'string',
-      help: 'Optionally, a message that the message must contain.'
-    },
     geofence: {
       required: false,
       type: 'reference',
@@ -61,7 +45,7 @@ module.exports = {
     }
   },
   matchEvent: function(spec, event, actionContext) {
-    if (spec.medium && spec.medium !== event.message.medium) {
+    if (event.message.medium !== 'image') {
       return false;
     }
     if (spec.from && spec.from !== event.message.from) {
@@ -69,12 +53,6 @@ module.exports = {
     }
     if (spec.to && spec.to !== event.message.to) {
       return false;
-    }
-    if (spec.contains) {
-      if (event.message.content.toLowerCase().indexOf(
-        spec.contains.toLowerCase()) === -1) {
-        return false;
-      }
     }
     if (spec.geofence) {
       if (!event.location.latitude || !event.location.longitude) {

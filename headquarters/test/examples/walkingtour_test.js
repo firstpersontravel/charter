@@ -60,11 +60,10 @@ describe('WalkingTourExample', () => {
 
     // Send an image from somewhere else -- nothing should happen.
     await TripActionController.applyAction(trip.id, {
-      name: 'custom_message',
+      name: 'send_image',
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        medium: 'image',
         content: 'url',
         latitude: 33.758273,
         longitude: -121.411681,
@@ -82,11 +81,10 @@ describe('WalkingTourExample', () => {
     // Send an image from Atlas Cafe
     const now = moment.utc();
     await TripActionController.applyAction(trip.id, {
-      name: 'custom_message',
+      name: 'send_image',
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        medium: 'image',
         content: 'another_url',
         latitude: 37.759002,
         longitude: -122.411496,
@@ -101,10 +99,11 @@ describe('WalkingTourExample', () => {
     });
     assert(scheduledAction);
     assert.strictEqual(scheduledAction.type, 'action');
-    assert.strictEqual(scheduledAction.name, 'send_message');
+    assert.strictEqual(scheduledAction.name, 'send_text');
     assert.deepStrictEqual(scheduledAction.params, {
-      message_name: 'MESSAGE-ATLAS-REC',
-      to_role_name: 'Player'
+      from_role_name: 'Guide',
+      to_role_name: 'Player',
+      content: 'Try the trout sandwich.'
     });
     const tenSecFromNow = now.clone().add(10, 'seconds');
     assert(moment.utc(scheduledAction.scheduledAt).isSame(tenSecFromNow));

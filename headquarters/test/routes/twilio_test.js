@@ -44,11 +44,10 @@ describe('twilioRoutes', () => {
       // Check called with correct args
       sinon.assert.calledOnce(TripActionController.applyAction);
       const expectedAction = {
-        name: 'custom_message',
+        name: 'send_text',
         params: {
           from_role_name: 'Player',
           to_role_name: 'Actor',
-          medium: 'text',
           content: 'Reply',
           from_relay_id: 3
         }
