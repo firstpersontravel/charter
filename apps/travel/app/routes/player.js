@@ -74,7 +74,7 @@ export default Ember.Route.extend({
 
     // Locally enter geofences
     // Don't send geofence_entered events to the server because they are
-    // created by the native location update endpoint and the UserController
+    // created by the native location update endpoint and DeviceStateHandler
     // on the server, and notified out with a client id (so therefore ignored)
     // by this one.
     this.enterGeofences(

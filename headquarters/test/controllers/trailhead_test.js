@@ -4,8 +4,7 @@ const sinon = require('sinon');
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
-const RelayTrailheadController = require(
-  '../../src/controllers/relay_trailhead');
+const TrailheadController = require('../../src/controllers/trailhead');
 const TripsController = require('../../src/controllers/trips');
 
 const mockTrailhead = {
@@ -39,16 +38,16 @@ const mockScript = {
   }
 };
 
-describe('RelayTrailheadController', () => {
+describe('TrailheadController', () => {
   describe('#assignActors', () => {
     it('assigns users for actor roles only', async () => {
-      sandbox.stub(RelayTrailheadController, 'assignActor').resolves();
+      sandbox.stub(TrailheadController, 'assignActor').resolves();
 
-      await RelayTrailheadController.assignActors(mockScript, mockTrip);
+      await TrailheadController.assignActors(mockScript, mockTrip);
 
       // Test called only once with the actor
-      sinon.assert.calledOnce(RelayTrailheadController.assignActor);
-      sinon.assert.calledWith(RelayTrailheadController.assignActor,
+      sinon.assert.calledOnce(TrailheadController.assignActor);
+      sinon.assert.calledWith(TrailheadController.assignActor,
         mockScript.experience, mockTrip, mockScript.content.roles[0]);
     });
   });
@@ -62,7 +61,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Profile, 'findAll').resolves(users);
       sandbox.stub(models.Player, 'update').resolves();
 
-      await RelayTrailheadController.assignActor(
+      await TrailheadController.assignActor(
         mockScript.experience, mockTrip, { name: 'role' });
 
       // Test assertions
@@ -84,7 +83,7 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(models.Profile, 'findAll').resolves([]);
       sandbox.stub(models.Player, 'update').resolves();
 
-      await RelayTrailheadController.assignActor(
+      await TrailheadController.assignActor(
         mockScript.experience, mockTrip, { name: 'role' });
 
       // Test assertions
@@ -113,10 +112,10 @@ describe('RelayTrailheadController', () => {
       sandbox.stub(TripsController, 'createTrip')
         .resolves(mockTrip);
       sandbox.stub(models.Player, 'update').resolves();
-      sandbox.stub(RelayTrailheadController, 'assignActors').resolves();
+      sandbox.stub(TrailheadController, 'assignActors').resolves();
 
       // Create from trailhead
-      await RelayTrailheadController.createTrip(mockTrailhead, '123');
+      await TrailheadController.createTrip(mockTrailhead, '123');
 
       // Test calls
       sinon.assert.calledWith(models.Group.findOrCreate, {
@@ -153,7 +152,7 @@ describe('RelayTrailheadController', () => {
           isArchived: false
         }
       });
-      sinon.assert.calledWith(RelayTrailheadController.assignActors,
+      sinon.assert.calledWith(TrailheadController.assignActors,
         mockScript, mockTrip);
     });
   });

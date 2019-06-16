@@ -3,13 +3,13 @@ const _ = require('lodash');
 const config = require('../config');
 const EmailController = require('../controllers/email');
 const MessageController = require('../controllers/message');
-const TripLogController = require('../controllers/trip_log');
+const KernelLogger = require('./logger');
 const TripRelaysController = require('../controllers/trip_relays');
 const models = require('../models');
 
-const logger = config.logger.child({ name: 'controllers.trip_op' });
+const logger = config.logger.child({ name: 'kernel.op' });
 
-class TripOpController {
+class KernelOpController {
 
   static async twiml() { /* ignore */ }
   static async updateAudio() { /* ignore */ }
@@ -19,7 +19,7 @@ class TripOpController {
 
   static async log(objs, op) {
     logger[op.level].call(logger, op.message);
-    TripLogController.log(objs.trip, op.level, op.message);
+    KernelLogger.log(objs.trip, op.level, op.message);
   }
 
   static async updateTripFields(objs, op) {
@@ -97,4 +97,4 @@ class TripOpController {
   }
 }
 
-module.exports = TripOpController;
+module.exports = KernelOpController;

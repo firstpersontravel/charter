@@ -4,11 +4,11 @@ const SceneCore = require('../../../fptcore/src/cores/scene');
 const TripCore = require('../../../fptcore/src/cores/trip');
 const PlayerCore = require('../../../fptcore/src/cores/player');
 
-const TripNotifyController = require('./trip_notify');
-const TripUtil = require('./trip_util');
+const NotifyController = require('../controllers/notify');
+const KernelUtil = require('../kernel/util');
 const models = require('../models');
 
-class TripResetController {
+class TripResetHandler {
   /**
    * Reset a trip.
    */
@@ -69,7 +69,7 @@ class TripResetController {
         { model: models.Experience, as: 'experience' }
       ]
     });
-    const evalContext = await TripUtil.getEvalContext(tripId);
+    const evalContext = await KernelUtil.getEvalContext(tripId);
     const players = await models.Player.findAll({ where: { tripId: tripId } });
     // Create hardcoded default 'start' checkpoint
     const startingScene = SceneCore.getStartingSceneName(trip.script.content,
@@ -88,8 +88,8 @@ class TripResetController {
     await models.Action.destroy({ where: { tripId: tripId }});
     await models.Message.destroy({ where: { tripId: tripId }});
     // Notify
-    await TripNotifyController.notify(tripId, 'reload');
+    await NotifyController.notify(tripId, 'reload');
   }
 }
 
-module.exports = TripResetController;
+module.exports = TripResetHandler;

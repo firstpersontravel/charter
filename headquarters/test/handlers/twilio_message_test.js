@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const { sandbox } = require('../mocks');
 const RelayController = require('../../src/controllers/relay');
 const RelaysController = require('../../src/controllers/relays');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 const TwilioMessageHandler = require('../../src/handlers/twilio_message');
 const TwilioUtil = require('../../src/handlers/twilio_util');
 
@@ -31,7 +31,7 @@ describe('TwilioMessageHandler', () => {
       sandbox.stub(RelayController, 'scriptForRelay').resolves(script);
       sandbox.stub(RelaysController, 'findByNumber').resolves(relaySentinel);
       sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(100);
-      sandbox.stub(TripActionController, 'applyAction').resolves();
+      sandbox.stub(KernelController, 'applyAction').resolves();
     });
 
     it('handles incoming text message', async () => {
@@ -40,9 +40,9 @@ describe('TwilioMessageHandler', () => {
           '123', '456', 'incomïng mêssage', []));
 
       assert.strictEqual(result, true);
-      sinon.assert.calledOnce(TripActionController.applyAction);
+      sinon.assert.calledOnce(KernelController.applyAction);
       assert.deepStrictEqual(
-        TripActionController.applyAction.firstCall.args,
+        KernelController.applyAction.firstCall.args,
         [100, {
           name: 'send_text',
           params: {
@@ -61,9 +61,9 @@ describe('TwilioMessageHandler', () => {
           [{ url: 'http://test/image.jpg', contentType: 'image/jpg' }]));
 
       assert.strictEqual(result, true);
-      sinon.assert.calledOnce(TripActionController.applyAction);
+      sinon.assert.calledOnce(KernelController.applyAction);
       assert.deepStrictEqual(
-        TripActionController.applyAction.firstCall.args,
+        KernelController.applyAction.firstCall.args,
         [100, {
           name: 'send_image',
           params: {
@@ -81,12 +81,12 @@ describe('TwilioMessageHandler', () => {
         [{ url: 'http://test/image.jpg', contentType: 'image/jpg' }]);
 
       assert.strictEqual(result, true);
-      sinon.assert.calledTwice(TripActionController.applyAction);
+      sinon.assert.calledTwice(KernelController.applyAction);
       assert.deepStrictEqual(
-        TripActionController.applyAction.firstCall.args[1].name,
+        KernelController.applyAction.firstCall.args[1].name,
         'send_text');
       assert.deepStrictEqual(
-        TripActionController.applyAction.secondCall.args[1].name,
+        KernelController.applyAction.secondCall.args[1].name,
         'send_image');
     });
   });

@@ -4,7 +4,6 @@ const models = require('../models');
 const RelaysController = require('./relays');
 
 class ExperienceController {
-
   /**
    * Locate the one active script for new trips etc.
    */

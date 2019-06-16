@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const RelayController = require('../../src/controllers/relay');
-const RelayTrailheadController = require('../../src/controllers/relay_trailhead');
+const TrailheadController = require('../../src/controllers/trailhead');
 const TwilioUtil = require('../../src/handlers/twilio_util');
 
 describe('TwilioUtil', () => {
@@ -14,7 +14,7 @@ describe('TwilioUtil', () => {
     it('returns player trip id if exists', async () => {
       const relay = { id: 10, userPhoneNumber: '2223334444' };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(player);
-      sandbox.stub(RelayTrailheadController, 'createTrip');
+      sandbox.stub(TrailheadController, 'createTrip');
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
 
@@ -26,14 +26,14 @@ describe('TwilioUtil', () => {
         relay, phoneNumber);
 
       // Doesn't try to create a new trip.
-      sinon.assert.notCalled(RelayTrailheadController.createTrip);
+      sinon.assert.notCalled(TrailheadController.createTrip);
     });
 
     it('creates a trip if none exist', async () => {
       const relay = { id: 10, userPhoneNumber: '' };
       const stubTrip = { id: 2 };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
-      sandbox.stub(RelayTrailheadController, 'createTrip').resolves(stubTrip);
+      sandbox.stub(TrailheadController, 'createTrip').resolves(stubTrip);
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
 
@@ -41,7 +41,7 @@ describe('TwilioUtil', () => {
       assert.strictEqual(res, stubTrip.id);
 
       // Calls create trip OK.
-      sinon.assert.calledWith(RelayTrailheadController.createTrip,
+      sinon.assert.calledWith(TrailheadController.createTrip,
         relay, phoneNumber);
     });
 
@@ -49,7 +49,7 @@ describe('TwilioUtil', () => {
       const relay = { id: 10, userPhoneNumber: '4445556666' };
       const stubTrip = { id: 2 };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
-      sandbox.stub(RelayTrailheadController, 'createTrip').resolves(stubTrip);
+      sandbox.stub(TrailheadController, 'createTrip').resolves(stubTrip);
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
 
@@ -57,7 +57,7 @@ describe('TwilioUtil', () => {
       assert.strictEqual(res, null);
 
       // Doesn't try to create a trip since it's not a universal relay.
-      sinon.assert.notCalled(RelayTrailheadController.createTrip);
+      sinon.assert.notCalled(TrailheadController.createTrip);
     });
   });
 });

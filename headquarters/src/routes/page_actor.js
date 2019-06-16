@@ -8,7 +8,7 @@ const TemplateUtil = require('../../../fptcore/src/utils/template');
 
 const config = require('../config');
 const models = require('../models');
-const TripUtil = require('../controllers/trip_util');
+const KernelUtil = require('../kernel/util');
 
 const supportedPartials = {
   button: (evalContext, panel, timezone) => ({
@@ -125,8 +125,8 @@ const playerShowRoute = async (req, res) => {
     res.redirect('/actor');
     return;
   }
-  const objs = await TripUtil.getObjectsForTrip(player.tripId);
-  const evalContext = TripUtil.prepareEvalContext(objs);
+  const objs = await KernelUtil.getObjectsForTrip(player.tripId);
+  const evalContext = KernelUtil.prepareEvalContext(objs);
   const page = getPage(objs, evalContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
@@ -165,13 +165,13 @@ const userShowRoute = async (req, res) => {
     .value();
 
   const objsList = await Promise.map(playersByDeparture, (player) => (
-    TripUtil.getObjectsForTrip(player.tripId)
+    KernelUtil.getObjectsForTrip(player.tripId)
   ));
 
   const pages = _(players)
     .map((player, i) => {
       const objs = objsList[i];
-      const evalContext = TripUtil.prepareEvalContext(objs);
+      const evalContext = KernelUtil.prepareEvalContext(objs);
       return getPage(objs, evalContext, player);
     })
     .filter(Boolean)

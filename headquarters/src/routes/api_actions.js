@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
-const TripActionController = require('../controllers/trip_action');
-const TripNotifyController = require('../controllers/trip_notify');
-const UserController = require('../controllers/user');
+const KernelController = require('../kernel/kernel');
+const NotifyController = require('../controllers/notify');
+const DeviceStateHandler = require('../handlers/device_state');
 
 /**
  * Create a new action. Also send out a notification to all clients listening
@@ -17,8 +17,8 @@ const createActionRoute = async (req, res) => {
     return;
   }
   const action = { name: req.body.name, params: req.body.params || {} };
-  await TripActionController.applyAction(tripId, action);
-  await TripNotifyController.notifyAction(tripId, action, clientId);
+  await KernelController.applyAction(tripId, action);
+  await NotifyController.notifyAction(tripId, action, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 };
@@ -31,8 +31,8 @@ const createEventRoute = async (req, res) => {
   const tripId = req.params.tripId;
   const clientId = req.body.client_id;
   const event = _.omit(req.body, ['client_id']);
-  await TripActionController.applyEvent(tripId, event);
-  await TripNotifyController.notifyEvent(tripId, event, clientId);
+  await KernelController.applyEvent(tripId, event);
+  await NotifyController.notifyEvent(tripId, event, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 };
@@ -53,7 +53,7 @@ const updateDeviceStateRoute = async (req, res) => {
     deviceBattery: _.isUndefined(req.body.device_battery) ?
       null : Number(req.body.device_battery)
   };
-  await UserController.updateDeviceState(userId, params, clientId);
+  await DeviceStateHandler.updateDeviceState(userId, params, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 };

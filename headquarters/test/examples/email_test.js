@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 
 const config = require('../../src/config');
 const models = require('../../src/models');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');
 
 const examplePath = path.join(__dirname, '../../examples/email.yaml');
@@ -47,7 +47,7 @@ describe('EmailExample', () => {
       name: 'signal_cue',
       params: { cue_name: 'start' }
     };
-    await TripActionController.applyAction(trip.id, action);
+    await KernelController.applyAction(trip.id, action);
 
     // Test email sent
     sinon.assert.calledOnce(config.getSendgridClient().send);

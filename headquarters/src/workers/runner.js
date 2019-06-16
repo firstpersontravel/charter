@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 
 const config = require('../config');
 const models = require('../models');
-const TripActionController = require('../controllers/trip_action');
+const KernelController = require('../kernel/kernel');
 
 const logger = config.logger.child({ name: 'workers.runner' });
 
@@ -19,14 +19,14 @@ class RunnerWorker {
     const tripId = action.tripId;
     if (action.type === 'action') {
       const scheduledAction = _.pick(action, ['name', 'params', 'event']);
-      await TripActionController.applyAction(tripId, scheduledAction,
+      await KernelController.applyAction(tripId, scheduledAction,
         applyAt);
     } else if (action.type === 'trigger') {
-      await TripActionController.applyTrigger(tripId, action.name,
+      await KernelController.applyTrigger(tripId, action.name,
         applyAt);
     } else if (action.type === 'event') {
       const event = Object.assign({ type: action.name }, action.params);
-      await TripActionController.applyEvent(tripId, event, applyAt);
+      await KernelController.applyEvent(tripId, event, applyAt);
     }
   }
 

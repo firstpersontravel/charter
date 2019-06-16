@@ -6,7 +6,7 @@ const ContextCore = require('../../../fptcore/src/cores/context');
 const config = require('../config');
 const models = require('../models');
 
-class TripUtil {
+class KernelUtil {
   /**
    * Create player context with the user and profile objects.
    */
@@ -115,4 +115,4 @@ class TripUtil {
   }
 }
 
-module.exports = TripUtil;
+module.exports = KernelUtil;

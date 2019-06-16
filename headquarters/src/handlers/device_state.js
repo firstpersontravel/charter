@@ -3,11 +3,11 @@ const moment = require('moment');
 
 const GeofenceCore = require('../../../fptcore/src/cores/geofence');
 
-const TripActionController = require('./trip_action');
-const TripNotifyController = require('./trip_notify');
+const KernelController = require('../kernel/kernel');
+const NotifyController = require('../controllers/notify');
 const models = require('../models');
 
-class UserController {
+class DeviceStateHandler {
   /**
    * Update the user device state.
    */
@@ -54,11 +54,11 @@ class UserController {
         role: player.roleName,
         geofence: geofenceName
       };
-      await TripActionController.applyEvent(player.tripId, event);
-      await TripNotifyController.notifyEvent(trip.id, event, clientId);
+      await KernelController.applyEvent(player.tripId, event);
+      await NotifyController.notifyEvent(trip.id, event, clientId);
     }
     // Notify new device state
-    await TripNotifyController.notifyUserDeviceState(trip.id, user, clientId);
+    await NotifyController.notifyUserDeviceState(trip.id, user, clientId);
   }
 
   /**
@@ -114,4 +114,4 @@ class UserController {
   }
 }
 
-module.exports = UserController;
+module.exports = DeviceStateHandler;

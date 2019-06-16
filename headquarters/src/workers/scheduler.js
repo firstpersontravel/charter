@@ -8,7 +8,7 @@ const SceneCore = require('../../../fptcore/src/cores/scene');
 
 const config = require('../config');
 const models = require('../models');
-const TripUtil = require('../controllers/trip_util');
+const KernelUtil = require('../kernel/util');
 
 const logger = config.logger.child({ name: 'workers.scheduler' });
 
@@ -89,8 +89,8 @@ class SchedulerWorker {
    */
   static async _updateTripNextScheduleAt(tripId) {
     const now = moment.utc();
-    const objs = await TripUtil.getObjectsForTrip(tripId);
-    const actionContext = TripUtil.prepareActionContext(objs, now);
+    const objs = await KernelUtil.getObjectsForTrip(tripId);
+    const actionContext = KernelUtil.prepareActionContext(objs, now);
     const nextTime = _(objs.script.content.triggers)
       .filter(trigger => trigger.event.type === 'time_occurred')
       .filter(trigger => !objs.trip.history[trigger.name])
@@ -139,10 +139,10 @@ class SchedulerWorker {
    * Schedule actions for a trip.
    */
   static async _scheduleTripActions(tripId, threshold) {
-    const objs = await TripUtil.getObjectsForTrip(tripId);
+    const objs = await KernelUtil.getObjectsForTrip(tripId);
     const trip = objs.trip;
     const now = moment.utc();
-    const actionContext = TripUtil.prepareActionContext(objs, now);
+    const actionContext = KernelUtil.prepareActionContext(objs, now);
 
     // Get actions based on occurance of time.
     const actions = this._getTimeOccuranceActions(trip, actionContext,

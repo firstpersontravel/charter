@@ -3,8 +3,8 @@ const twilio = require('twilio');
 
 const config = require('../config');
 const models = require('../models');
-const TripActionController = require('../controllers/trip_action');
-const TripNotifyController = require('../controllers/trip_notify');
+const KernelController = require('../kernel/kernel');
+const NotifyController = require('../controllers/notify');
 const RelayController = require('../controllers/relay');
 const RelaysController = require('../controllers/relays');
 const TwilioUtil = require('./twilio_util');
@@ -40,8 +40,8 @@ class TwilioCallHandler {
    * Trigger an event in the system and gather twiml from the response.
    */
   static async _triggerEventAndGatherTwiml(tripId, relay, event) {
-    const result = await TripActionController.applyEvent(tripId, event);
-    await TripNotifyController.notifyEvent(tripId, event);
+    const result = await KernelController.applyEvent(tripId, event);
+    await NotifyController.notifyEvent(tripId, event);
     const twimlOps = _.filter(result.resultOps, { operation: 'twiml' });
     const twimlResult = await this._interpretTwimlOps(tripId, relay, twimlOps);
     return twimlResult;

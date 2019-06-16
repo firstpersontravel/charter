@@ -2,10 +2,9 @@ const moment = require('moment');
 
 const config = require('../config');
 
-var logger = config.logger.child({ name: 'controllers.trip_notify' });
+const logger = config.logger.child({ name: 'controllers.notify' });
 
-class TripNotifyController {
-
+class NotifyController {
   static async _notifyFaye(channel, message) {
     if (!config.getFayeClient()) {
       return;
@@ -85,4 +84,4 @@ class TripNotifyController {
   }
 }
 
-module.exports = TripNotifyController;
+module.exports = NotifyController;

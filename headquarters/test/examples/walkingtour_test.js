@@ -5,7 +5,7 @@ const yaml = require('js-yaml');
 const moment = require('moment');
 
 const models = require('../../src/models');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');
 
 const examplePath = path.join(__dirname, '../../examples/walkingtour.yaml');
@@ -23,7 +23,7 @@ describe('WalkingTourExample', () => {
 
   it('visits bon nene via geofence', async () => {
     // Visit Bon Nene
-    await TripActionController.applyEvent(trip.id, {
+    await KernelController.applyEvent(trip.id, {
       type: 'geofence_entered',
       role: 'Player',
       geofence: 'GEOFENCE-BON-NENE'
@@ -44,7 +44,7 @@ describe('WalkingTourExample', () => {
   });
 
   it('visits atlas via sending an image', async () => {
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'signal_cue',
       params: { cue_name: 'CUE-ATLAS-ARRIVE' }
     });
@@ -59,7 +59,7 @@ describe('WalkingTourExample', () => {
       'Welcome to Atlas Cafe! Send me an picture and i\'ll give you a sandwich recommendation.');
 
     // Send an image from somewhere else -- nothing should happen.
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'send_image',
       params: {
         from_role_name: 'Player',
@@ -80,7 +80,7 @@ describe('WalkingTourExample', () => {
 
     // Send an image from Atlas Cafe
     const now = moment.utc();
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'send_image',
       params: {
         from_role_name: 'Player',

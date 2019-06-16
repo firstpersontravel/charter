@@ -4,9 +4,9 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const apiActionsRoutes = require('../../src/routes/api_actions');
-const TripActionController = require('../../src/controllers/trip_action');
-const TripNotifyController = require('../../src/controllers/trip_notify');
-const UserController = require('../../src/controllers/user');
+const DeviceStateHandler = require('../../src/handlers/device_state');
+const KernelController = require('../../src/kernel/kernel');
+const NotifyController = require('../../src/controllers/notify');
 
 describe('apiActionsRoutes', () => {
   describe('#createActionRoute', () => {
@@ -18,8 +18,8 @@ describe('apiActionsRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub action response
-      sandbox.stub(TripActionController, 'applyAction').resolves();
-      sandbox.stub(TripNotifyController, 'notifyAction').resolves();
+      sandbox.stub(KernelController, 'applyAction').resolves();
+      sandbox.stub(NotifyController, 'notifyAction').resolves();
 
       await apiActionsRoutes.createActionRoute(req, res);
 
@@ -30,14 +30,14 @@ describe('apiActionsRoutes', () => {
 
       // Check apply called with correct args
       const action = { name: 'action_name', params: { param: true } };
-      sinon.assert.calledOnce(TripActionController.applyAction);
+      sinon.assert.calledOnce(KernelController.applyAction);
       assert.deepStrictEqual(
-        TripActionController.applyAction.firstCall.args, [100, action]);
+        KernelController.applyAction.firstCall.args, [100, action]);
 
       // Check notify called with correct args
-      sinon.assert.calledOnce(TripNotifyController.notifyAction);
+      sinon.assert.calledOnce(NotifyController.notifyAction);
       assert.deepStrictEqual(
-        TripNotifyController.notifyAction.firstCall.args,
+        NotifyController.notifyAction.firstCall.args,
         [100, action, req.body.client_id]);
     });
   });
@@ -51,8 +51,8 @@ describe('apiActionsRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub action response
-      sandbox.stub(TripActionController, 'applyEvent').resolves();
-      sandbox.stub(TripNotifyController, 'notifyEvent').resolves();
+      sandbox.stub(KernelController, 'applyEvent').resolves();
+      sandbox.stub(NotifyController, 'notifyEvent').resolves();
 
       await apiActionsRoutes.createEventRoute(req, res);
 
@@ -63,14 +63,14 @@ describe('apiActionsRoutes', () => {
 
       // Check apply called with correct args
       const event = { type: 'cue_signaled', cue_name: 'hi' };
-      sinon.assert.calledOnce(TripActionController.applyEvent);
+      sinon.assert.calledOnce(KernelController.applyEvent);
       assert.deepStrictEqual(
-        TripActionController.applyEvent.firstCall.args, [100, event]);
+        KernelController.applyEvent.firstCall.args, [100, event]);
 
       // Check notify called with correct args
-      sinon.assert.calledOnce(TripNotifyController.notifyEvent);
+      sinon.assert.calledOnce(NotifyController.notifyEvent);
       assert.deepStrictEqual(
-        TripNotifyController.notifyEvent.firstCall.args,
+        NotifyController.notifyEvent.firstCall.args,
         [100, event, req.body.client_id]);
     });
   });
@@ -92,7 +92,7 @@ describe('apiActionsRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub update response
-      sandbox.stub(UserController, 'updateDeviceState').resolves();
+      sandbox.stub(DeviceStateHandler, 'updateDeviceState').resolves();
 
       await apiActionsRoutes.updateDeviceStateRoute(req, res);
 
@@ -110,9 +110,9 @@ describe('apiActionsRoutes', () => {
         deviceIsActive: false,
         deviceBattery: 0.5
       };
-      sinon.assert.calledOnce(UserController.updateDeviceState);
+      sinon.assert.calledOnce(DeviceStateHandler.updateDeviceState);
       assert.deepStrictEqual(
-        UserController.updateDeviceState.firstCall.args, [100, params, 123]);
+        DeviceStateHandler.updateDeviceState.firstCall.args, [100, params, 123]);
     });
   });
 });

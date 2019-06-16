@@ -4,7 +4,7 @@ const assert = require('assert');
 const yaml = require('js-yaml');
 
 const models = require('../../src/models');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');
 
 const examplePath = path.join(__dirname, '../../examples/roadtrip.yaml');
@@ -26,7 +26,7 @@ describe('RoadTripExample', () => {
     assert.strictEqual(driver.currentPageName, 'Start');
 
     // Start first drive
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'signal_cue',
       params: { cue_name: 'CUE-EMBARKED-1' }
     });
@@ -36,7 +36,7 @@ describe('RoadTripExample', () => {
     assert.strictEqual(driver.currentPageName, 'Drive1');
 
     // Finish first drive
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'signal_cue',
       params: { cue_name: 'CUE-ARRIVED-1' }
     });
@@ -46,7 +46,7 @@ describe('RoadTripExample', () => {
     assert.strictEqual(driver.currentPageName, 'Break');
 
     // Start second drive
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'signal_cue',
       params: { cue_name: 'CUE-EMBARKED-2' }
     });
@@ -56,7 +56,7 @@ describe('RoadTripExample', () => {
     assert.strictEqual(driver.currentPageName, 'Drive2');
 
     // Finish second drive
-    await TripActionController.applyAction(trip.id, {
+    await KernelController.applyAction(trip.id, {
       name: 'signal_cue',
       params: { cue_name: 'CUE-ARRIVED-2' }
     });

@@ -6,10 +6,10 @@ const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const EmailController = require('../../src/controllers/email');
 const MessageController = require('../../src/controllers/message');
-const TripOpController = require('../../src/controllers/trip_op');
+const KernelOpController = require('../../src/kernel/op');
 const TripRelaysController = require('../../src/controllers/trip_relays');
 
-describe('TripOpController', () => {
+describe('KernelOpController', () => {
   describe('#applyOp', () => {
     it.skip('calls op function by name', () => {});
   });
@@ -22,7 +22,7 @@ describe('TripOpController', () => {
         fields: { newField: '123' }
       };
 
-      await TripOpController.applyOp(objs, op);
+      await KernelOpController.applyOp(objs, op);
 
       sinon.assert.calledWith(objs.trip.update, { newField: '123' });
     });
@@ -38,7 +38,7 @@ describe('TripOpController', () => {
         values: { game_won: true }
       };
 
-      await TripOpController.applyOp(objs, op);
+      await KernelOpController.applyOp(objs, op);
 
       const newValues = { abc: 123, game_won: true };
       sinon.assert.calledWith(objs.trip.update, { values: newValues });
@@ -55,7 +55,7 @@ describe('TripOpController', () => {
         history: { t2: 456 }
       };
 
-      await TripOpController.applyOp(objs, op);
+      await KernelOpController.applyOp(objs, op);
 
       const newHistory = { t1: 123, t2: 456 };
       sinon.assert.calledWith(objs.trip.update, { history: newHistory });
@@ -73,7 +73,7 @@ describe('TripOpController', () => {
         fields: { field: true }
       };
 
-      await TripOpController.applyOp(objs, op);
+      await KernelOpController.applyOp(objs, op);
 
       sinon.assert.calledWith(objs.players[0].update, { field: true });
     });
@@ -105,7 +105,7 @@ describe('TripOpController', () => {
       sandbox.stub(MessageController, 'sendMessage');
       sandbox.stub(TripRelaysController, 'relayMessage');
 
-      await TripOpController.applyOp(objs, op);
+      await KernelOpController.applyOp(objs, op);
 
       sinon.assert.calledOnce(models.Message.create);
       assert.deepStrictEqual(models.Message.create.firstCall.args, [{
@@ -144,7 +144,7 @@ describe('TripOpController', () => {
         }
       };
 
-      await TripOpController.applyOp({}, op);
+      await KernelOpController.applyOp({}, op);
 
       sinon.assert.calledOnce(EmailController.sendEmail);
       sinon.assert.calledWith(EmailController.sendEmail, op.params);

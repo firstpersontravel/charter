@@ -5,7 +5,7 @@ const models = require('../models');
 const RelayController = require('./relay');
 const TripsController = require('./trips');
 
-class RelayTrailheadController {
+class TrailheadController {
   /**
    * Update the player to assign a user when starting a new trip
    * for a trailhead.
@@ -41,7 +41,7 @@ class RelayTrailheadController {
       if (role.type !== 'performer') {
         continue;
       }
-      await RelayTrailheadController.assignActor(script.experience, trip,
+      await TrailheadController.assignActor(script.experience, trip,
         role);
     }
   }
@@ -105,11 +105,11 @@ class RelayTrailheadController {
     });
 
     // Update all other users
-    await RelayTrailheadController.assignActors(script, trip);
+    await TrailheadController.assignActors(script, trip);
 
     // And return!
     return trip;
   }
 }
 
-module.exports = RelayTrailheadController;
+module.exports = TrailheadController;

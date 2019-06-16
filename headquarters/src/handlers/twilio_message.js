@@ -1,6 +1,6 @@
 const config = require('../config');
-const TripActionController = require('../controllers/trip_action');
-const TripNotifyController = require('../controllers/trip_notify');
+const KernelController = require('../kernel/kernel');
+const NotifyController = require('../controllers/notify');
 const RelayController = require('../controllers/relay');
 const RelaysController = require('../controllers/relays');
 const TwilioUtil = require('./twilio_util');
@@ -69,8 +69,8 @@ async function handleIncomingMessage(fromNumber, toNumber, body, media) {
   // Whether it's a trailhead or not, 
   const actions = getMessageActions(relay, body, media);
   for (let action of actions) {
-    await TripActionController.applyAction(tripId, action);
-    await TripNotifyController.notifyAction(tripId, action);
+    await KernelController.applyAction(tripId, action);
+    await NotifyController.notifyAction(tripId, action);
   }
   return true;
 }

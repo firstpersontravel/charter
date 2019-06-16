@@ -1,6 +1,6 @@
 const config = require('../config');
 const RelayController = require('../controllers/relay');
-const RelayTrailheadController = require('../controllers/relay_trailhead');
+const TrailheadController = require('../controllers/trailhead');
 
 var logger = config.logger.child({ name: 'handlers.twilio_util' });
 
@@ -20,7 +20,7 @@ class TwilioUtil {
       return null;
     }
     // If no player, and it's a trailhead, then we need to create a new trip.
-    const trip = await RelayTrailheadController.createTrip(relay, 
+    const trip = await TrailheadController.createTrip(relay, 
       userPhoneNumber);
     // Just return the id.
     return trip.id;

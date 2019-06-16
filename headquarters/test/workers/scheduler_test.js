@@ -4,9 +4,9 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const SchedulerWorker = require('../../src/workers/scheduler');
-// const TripActionController = require('../../src/controllers/trip_action');
+// const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');
-const TripUtil = require('../../src/controllers/trip_util');
+const KernelUtil = require('../../src/kernel/util');
 
 describe('SchedulerWorker', () => {
   describe('#_getTriggerIntendedAt', () => {
@@ -181,8 +181,8 @@ describe('SchedulerWorker', () => {
         },
         script: { content: scriptContent }
       };
-      sandbox.stub(TripUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(TripUtil, 'prepareActionContext').returns({
+      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
+      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
         evalContext: { schedule: { now: now.toISOString() } }
       });
@@ -205,8 +205,8 @@ describe('SchedulerWorker', () => {
         },
         script: { content: { triggers: [] } }
       };
-      sandbox.stub(TripUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(TripUtil, 'prepareActionContext').returns({
+      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
+      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: objs.script.content,
         evalContext: { schedule: { now: now.toISOString() } }
       });
@@ -229,8 +229,8 @@ describe('SchedulerWorker', () => {
         },
         script: { content: scriptContent }
       };
-      sandbox.stub(TripUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(TripUtil, 'prepareActionContext').returns({
+      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
+      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
         evalContext: { schedule: { now: now.toISOString() } }
       });

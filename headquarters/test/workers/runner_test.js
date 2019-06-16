@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RunnerWorker = require('../../src/workers/runner');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 
 describe('RunnerWorker', () => {
   describe('#scheduleActions', () => {
@@ -26,7 +26,7 @@ describe('RunnerWorker', () => {
       };
       sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'findAll').resolves([stubAction]);
-      sandbox.stub(TripActionController, 'applyAction').resolves();
+      sandbox.stub(KernelController, 'applyAction').resolves();
 
       await RunnerWorker.runScheduledActions();
       sinon.assert.calledWith(models.Action.findAll, {
@@ -39,7 +39,7 @@ describe('RunnerWorker', () => {
         }]
       });
       sinon.assert.calledWith(stubAction.update, { appliedAt: now });
-      sinon.assert.calledWith(TripActionController.applyAction,
+      sinon.assert.calledWith(KernelController.applyAction,
         123, {
           name: 'name',
           params: stubAction.params,
@@ -60,7 +60,7 @@ describe('RunnerWorker', () => {
       };
       sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'findAll').resolves([stubAction]);
-      sandbox.stub(TripActionController, 'applyAction')
+      sandbox.stub(KernelController, 'applyAction')
         .rejects(new Error('failed action'));
 
       await RunnerWorker.runScheduledActions(null, null, true);
@@ -74,7 +74,7 @@ describe('RunnerWorker', () => {
         }]
       });
       sinon.assert.calledWith(stubAction.update, { failedAt: now });
-      sinon.assert.calledWith(TripActionController.applyAction,
+      sinon.assert.calledWith(KernelController.applyAction,
         123, {
           name: 'name',
           params: stubAction.params,

@@ -6,7 +6,7 @@ const { sandbox } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 
 describe('TwilioCallHandler', () => {
@@ -32,7 +32,7 @@ describe('TwilioCallHandler', () => {
         .resolves(stubPlayer);
       // Apply event returns a dial operation
       sandbox
-        .stub(TripActionController, 'applyEvent')
+        .stub(KernelController, 'applyEvent')
         .resolves({
           resultOps: [{
             operation: 'twiml',
@@ -71,7 +71,7 @@ describe('TwilioCallHandler', () => {
     it('returns say', async () => {
       // Apply event returns a say operation
       sandbox
-        .stub(TripActionController, 'applyEvent')
+        .stub(KernelController, 'applyEvent')
         .resolves({
           resultOps: [{
             operation: 'twiml',
@@ -101,7 +101,7 @@ describe('TwilioCallHandler', () => {
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       // Apply event returns a play operation
       sandbox
-        .stub(TripActionController, 'applyEvent')
+        .stub(KernelController, 'applyEvent')
         .resolves({
           resultOps: [{
             operation: 'twiml',
@@ -136,7 +136,7 @@ describe('TwilioCallHandler', () => {
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       // Apply event returns a play operation
       sandbox
-        .stub(TripActionController, 'applyEvent')
+        .stub(KernelController, 'applyEvent')
         .resolves({
           resultOps: [{
             operation: 'twiml',

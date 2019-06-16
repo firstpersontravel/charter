@@ -6,11 +6,11 @@ const Kernel = require('../../../fptcore/src/kernel/kernel');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
-const TripActionController = require('../../src/controllers/trip_action');
-const TripOpController = require('../../src/controllers/trip_op');
+const KernelController = require('../../src/kernel/kernel');
+const KernelOpController = require('../../src/kernel/op');
 const TestUtil = require('../util');
 
-describe('TripActionController', () => {
+describe('KernelController', () => {
   describe('#applyAction', () => {
     let trip;
 
@@ -23,7 +23,7 @@ describe('TripActionController', () => {
         operation: 'updateTripFields',
         fields: { newField: true }
       }];
-      sandbox.stub(TripOpController, 'applyOp').resolves();
+      sandbox.stub(KernelOpController, 'applyOp').resolves();
       sandbox.stub(Kernel, 'resultForImmediateAction')
         .returns({
           resultOps: resultOps,
@@ -31,10 +31,10 @@ describe('TripActionController', () => {
         });
 
       const action = { name: 'signal_cue', params: {} };
-      await TripActionController.applyAction(trip.id, action);
-      sinon.assert.calledOnce(TripOpController.applyOp);
+      await KernelController.applyAction(trip.id, action);
+      sinon.assert.calledOnce(KernelOpController.applyOp);
       assert.deepStrictEqual(
-        TripOpController.applyOp.firstCall.args[1],
+        KernelOpController.applyOp.firstCall.args[1],
         resultOps[0]);
     });
 
@@ -54,7 +54,7 @@ describe('TripActionController', () => {
       });
 
       const action = { name: 'signal_cue', params: {} };
-      await TripActionController.applyAction(trip.id, action);
+      await KernelController.applyAction(trip.id, action);
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
         orgId: trip.orgId,
         tripId: trip.id,

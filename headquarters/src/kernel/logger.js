@@ -10,7 +10,7 @@ const LEVELS = {
   fatal: 40
 };
 
-class TripLogController {
+class KernelLogger {
   static async debug(trip, message) {
     await this.log(trip, 'debug', message);
   }
@@ -45,4 +45,4 @@ class TripLogController {
   }
 }
 
-module.exports = TripLogController;
+module.exports = KernelLogger;

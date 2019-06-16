@@ -10,7 +10,7 @@ const yaml = require('js-yaml');
 const { sandbox } = require('../mocks');
 const twilioRoutes = require('../../src/routes/twilio');
 const models = require('../../src/models');
-const TripActionController = require('../../src/controllers/trip_action');
+const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 
 describe('twilioRoutes', () => {
@@ -36,13 +36,13 @@ describe('twilioRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub response
-      sandbox.stub(TripActionController, 'applyAction').resolves(null);
+      sandbox.stub(KernelController, 'applyAction').resolves(null);
 
       // Call the route
       await twilioRoutes.incomingMessageRoute(req, res);
 
       // Check called with correct args
-      sinon.assert.calledOnce(TripActionController.applyAction);
+      sinon.assert.calledOnce(KernelController.applyAction);
       const expectedAction = {
         name: 'send_text',
         params: {
@@ -53,7 +53,7 @@ describe('twilioRoutes', () => {
         }
       };
       assert.deepEqual(
-        TripActionController.applyAction.firstCall.args,
+        KernelController.applyAction.firstCall.args,
         [1, expectedAction]);
 
       // Check response
@@ -77,7 +77,7 @@ describe('twilioRoutes', () => {
 
       // We're simulating a Player call to the Player relay, so have the
       // action return a dial out to the Actor.
-      sandbox.stub(TripActionController, 'applyEvent').resolves({
+      sandbox.stub(KernelController, 'applyEvent').resolves({
         resultOps: [{
           operation: 'twiml',
           clause: 'dial',
@@ -90,7 +90,7 @@ describe('twilioRoutes', () => {
       await twilioRoutes.incomingCallRoute(req, res);
 
       // Check calls made correctly
-      sinon.assert.calledWith(TripActionController.applyEvent, 1, {
+      sinon.assert.calledWith(KernelController.applyEvent, 1, {
         from: 'Player',
         to: 'Actor',
         type: 'call_received'
@@ -115,7 +115,7 @@ describe('twilioRoutes', () => {
     beforeEach(() => {
       // We're simulating an outgoing call from the Actor to the Player,
       // so the player's phone is dialing -- we need to add the Actor phone.
-      sandbox.stub(TripActionController, 'applyEvent').resolves({
+      sandbox.stub(KernelController, 'applyEvent').resolves({
         resultOps: [{
           operation: 'twiml',
           clause: 'dial',
@@ -145,9 +145,9 @@ describe('twilioRoutes', () => {
       await twilioRoutes.outgoingCallRoute(req, res);
 
       // Check calls made correctly
-      sinon.assert.calledOnce(TripActionController.applyEvent);
+      sinon.assert.calledOnce(KernelController.applyEvent);
       assert.deepStrictEqual(
-        TripActionController.applyEvent.firstCall.args,
+        KernelController.applyEvent.firstCall.args,
         [1, {
           from: 'Actor',
           to: 'Player',
@@ -185,7 +185,7 @@ describe('twilioRoutes', () => {
       await twilioRoutes.outgoingCallRoute(req, res);
 
       // Check 'answered_by_machine' set in call
-      const applyEventStub = TripActionController.applyEvent;
+      const applyEventStub = KernelController.applyEvent;
       sinon.assert.calledOnce(applyEventStub);
       assert.deepStrictEqual(
         applyEventStub.firstCall.args[1].answered_by_machine, false);
