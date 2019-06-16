@@ -2,7 +2,7 @@ module.exports = {
   name: 'audio',
   resources: {
     audio: {
-      resource: require('./audio'),
+      resource: null,
       actions: {
         play_audio: require('./audio_play'),
         pause_audio: require('./audio_pause'),

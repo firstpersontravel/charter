@@ -25,7 +25,6 @@ const sliceContent = {
     pages: { scene: sliceName },
     triggers: { scene: sliceName },
     cues: { scene: sliceName },
-    audio: { scene: sliceName },
     clips: { scene: sliceName }
   }),
   section: sliceName => sectionContent[sliceName]

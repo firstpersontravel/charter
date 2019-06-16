@@ -54,9 +54,12 @@ const walkers = {
 };
 
 function walkReferences(collectionName, resource) {
-  const references = [];
   const resourceType = TextUtil.singularize(collectionName);
   const resourceClass = ResourcesRegistry[resourceType];
+  if (!resourceClass) {
+    return [];
+  }
+  const references = [];
   walkers.params(resourceClass.properties, resource, (c, r) => {
     references.push(`${c}.${r}`);
   });

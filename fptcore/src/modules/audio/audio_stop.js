@@ -13,7 +13,6 @@ module.exports = {
     return [{
       operation: 'updateTripValues',
       values: {
-        audio_name: null,
         audio_role: null,
         audio_path: null,
         audio_started_at: null,
