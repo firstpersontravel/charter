@@ -27,19 +27,19 @@ const actionContext = {
     ],
     triggers: [{
       name: 'TRIGGER-PICK-APPLES',
-      events: [{ type: 'cue_signaled', cue: 'CUE-PICK-APPLES' }],
+      event: { type: 'cue_signaled', cue: 'CUE-PICK-APPLES' },
       actions: [{ name: 'increment_value', value_ref: 'apples', delta: 5 }],
     }, {
       name: 'TRIGGER-UNLOAD-APPLES',
-      events: [{
+      event: {
         type: 'geofence_entered',
         role: 'Farmer',
         geofence: 'GEOFENCE-FARM'
-      }],
+      },
       actions: [{ name: 'set_value', value_ref: 'apples', new_value_ref: '0' }]
     }, {
       name: 'TRIGGER-SUNRISE',
-      events: [{ type: 'cue_signaled', cue: 'CUE-SUNRISE' }],
+      event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' },
       actions: [{
         offset: '120m',
         name: 'send_audio',
@@ -49,11 +49,11 @@ const actionContext = {
       }]
     }, {
       name: 'TRIGGER-GREET-1',
-      events: [{ type: 'cue_signaled', cue: 'CUE-GREET' }],
+      event: { type: 'cue_signaled', cue: 'CUE-GREET' },
       actions: [{ name: 'signal_cue', cue_name: 'CUE-GREET-REPLY' }]
     }, {
       name: 'TRIGGER-GREET-2',
-      events: [{ type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }],
+      event: { type: 'cue_signaled', cue: 'CUE-GREET-REPLY' },
       actions: [{
         name: 'send_text',
         from_role_name: 'Cowboy',
@@ -62,7 +62,7 @@ const actionContext = {
       }]
     }, {
       name: 'TRIGGER-NAV-1',
-      events: [{ type: 'cue_signaled', cue: 'CUE-NAV-1' }],
+      event: { type: 'cue_signaled', cue: 'CUE-NAV-1' },
       actions: [{
         name: 'set_value',
         value_ref: 'is_navigating',
@@ -73,7 +73,7 @@ const actionContext = {
       }]
     }, {
       name: 'TRIGGER-NAV-2',
-      events: [{ type: 'cue_signaled', cue: 'CUE-NAV-2' }],
+      event: { type: 'cue_signaled', cue: 'CUE-NAV-2' },
       if: { op: 'istrue', ref: 'is_navigating' },
       actions: [{
         name: 'send_text',
@@ -355,12 +355,12 @@ describe('Integration - Nested Triggers', () => {
         }],
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'cue_signaled', cue: 'end-of-1' }],
+          event: { type: 'cue_signaled', cue: 'end-of-1' },
           scene: 'SCENE-1',
           actions: [{ name: 'start_scene', scene_name: 'SCENE-2' }]
         }, {
           name: 'trigger2',
-          events: [{ type: 'scene_started' }],
+          event: { type: 'scene_started' },
           scene: 'SCENE-2',
           actions: [{
             name: 'set_value',

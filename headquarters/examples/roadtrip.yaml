@@ -1,5 +1,5 @@
 meta:
-  version: 15
+  version: 16
 
 roles:
   - name: Driver
@@ -131,21 +131,21 @@ cues:
 
 triggers:
   - name: embarked1
-    events: [{ type: cue_signaled, cue: CUE-EMBARKED-1 }]
+    event: { type: cue_signaled, cue: CUE-EMBARKED-1 }
     scene: main
     actions: [{ name: send_to_page, role_name: Driver, page_name: Drive1 }]
 
   - name: arrived1
-    events: [{ type: cue_signaled, cue: CUE-ARRIVED-1 }]
+    event: { type: cue_signaled, cue: CUE-ARRIVED-1 }
     scene: main
     actions: [{ name: send_to_page, role_name: Driver, page_name: Break }]
 
   - name: embarked2
-    events: [{ type: cue_signaled, cue: CUE-EMBARKED-2 }]
+    event: { type: cue_signaled, cue: CUE-EMBARKED-2 }
     scene: main
     actions: [{ name: send_to_page, role_name: Driver, page_name: Drive2 }]
 
   - name: arrived2
-    events: [{ type: cue_signaled, cue: CUE-ARRIVED-2 }]
+    event: { type: cue_signaled, cue: CUE-ARRIVED-2 }
     scene: main
     actions: [{ name: send_to_page, role_name: Driver, page_name: End }]

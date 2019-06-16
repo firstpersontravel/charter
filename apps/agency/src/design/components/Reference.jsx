@@ -107,7 +107,7 @@ function labelForSpecType(spec, key) {
     return 'Action';
   }
   // HACK
-  if (_.startsWith(key, 'events')) {
+  if (_.startsWith(key, 'event')) {
     return 'Event';
   }
   if (!spec.type) {

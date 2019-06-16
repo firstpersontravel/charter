@@ -18,7 +18,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'text_received', from: 'A', to: 'B' }],
+          event: { type: 'text_received', from: 'A', to: 'B' },
           actions: [{
             name: 'set_value', 
             value_ref: 'trigger',
@@ -26,7 +26,7 @@ describe('Integration - Message Triggers', () => {
           }]
         }, {
           name: 'trigger2',
-          events: [{ type: 'text_received', from: 'A', to: 'B' }],
+          event: { type: 'text_received', from: 'A', to: 'B' },
           if: { op: 'istrue', ref: 'trigger' },
           actions: [{
             name: 'set_value',
@@ -50,7 +50,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'text_received' }],
+          event: { type: 'text_received' },
           if: {
             op: 'contains',
             string_ref: 'event.message.content',
@@ -85,7 +85,7 @@ describe('Integration - Message Triggers', () => {
       scriptContent: {
         triggers: [{
           name: 'trigger1',
-          events: [{ type: 'text_received' }],
+          event: { type: 'text_received' },
           if: {
             op: 'contains',
             string_ref: 'event.message.content',

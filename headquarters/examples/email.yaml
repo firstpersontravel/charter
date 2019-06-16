@@ -1,5 +1,5 @@
 meta:
-  version: 15
+  version: 16
 
 roles:
   - name: player
@@ -27,9 +27,7 @@ cues:
 triggers:
   - name: start
     scene: scene
-    events:
-      - type: cue_signaled
-        cue: start
+    event: {type: cue_signaled, cue: start}
     actions:
       - name: send_email
         from: inbox

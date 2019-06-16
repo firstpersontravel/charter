@@ -1,5 +1,5 @@
 meta:
-  version: 15
+  version: 16
 
 layouts:
   - name: tablet
@@ -95,7 +95,7 @@ cues:
 
 triggers:
   - name: atlas
-    events: [{ type: cue_signaled, cue: CUE-ATLAS-ARRIVE }]
+    event: { type: cue_signaled, cue: CUE-ATLAS-ARRIVE }
     scene: SCENE-MAIN
     actions:
       - name: send_text
@@ -107,11 +107,11 @@ triggers:
         page_name: PAGE-ATLAS
 
   - name: msg
-    events:
-      - type: image_received
-        from: Player
-        to: Guide
-        geofence: GEOFENCE-ATLAS
+    event:
+      type: image_received
+      from: Player
+      to: Guide
+      geofence: GEOFENCE-ATLAS
     scene: SCENE-MAIN
     actions:
       - name: send_text
@@ -124,10 +124,10 @@ triggers:
         delta: 5
 
   - name: geofence
-    events:
-      - type: geofence_entered
-        role: Player
-        geofence: GEOFENCE-BON-NENE
+    event:
+      type: geofence_entered
+      role: Player
+      geofence: GEOFENCE-BON-NENE
     scene: SCENE-MAIN
     actions:
       - name: send_text

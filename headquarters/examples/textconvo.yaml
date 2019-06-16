@@ -1,5 +1,5 @@
 meta:
-  version: 15
+  version: 16
 
 roles:
   - name: Knight
@@ -23,7 +23,7 @@ scenes:
 
 triggers:
   - name: hello
-    events: [{type: text_received, from: Knight, to: Sage}]
+    event: {type: text_received, from: Knight, to: Sage}
     scene: SCENE-MAIN
     active_if:
       op: not
@@ -57,7 +57,7 @@ triggers:
             content: How rude, not even a greeting! What is your name?
 
   - name: getname
-    events: [{type: text_received, from: Knight, to: Sage}]
+    event: {type: text_received, from: Knight, to: Sage}
     scene: SCENE-MAIN
     active_if:
       op: istrue

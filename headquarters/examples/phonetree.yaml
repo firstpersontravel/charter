@@ -1,5 +1,5 @@
 meta:
-  version: 15
+  version: 16
 
 roles:
   - name: Player
@@ -52,12 +52,12 @@ clips:
 
 triggers:
   - name: t1
-    events: [{type: call_received, from: Player, to: PhoneTree}]
+    event: {type: call_received, from: Player, to: PhoneTree}
     scene: SCENE-MAIN
     actions: [{ name: 'play_clip', clip_name: 'CLIP-GREETING' }]
 
   - name: trigger-greeting-answered
-    events: [{type: clip_answered, clip: CLIP-GREETING}]
+    event: {type: clip_answered, clip: CLIP-GREETING}
     scene: SCENE-MAIN
     actions:
       - name: conditional  
@@ -66,7 +66,7 @@ triggers:
         else: [{ name: 'play_clip', clip_name: 'CLIP-JOKE' }]
 
   - name: trigger-drink-answered
-    events: [{type: clip_answered, clip: CLIP-DRINK}]
+    event: {type: clip_answered, clip: CLIP-DRINK}
     scene: SCENE-MAIN
     actions:
       - name: conditional  

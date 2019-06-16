@@ -12,7 +12,7 @@ describe('SchedulerWorker', () => {
   describe('#_getTriggerIntendedAt', () => {
     it('gets time for trigger', () => {
       const trigger = {
-        events: [{ type: 'time_occurred', time: 'time', offset: '10m' }]
+        event: { type: 'time_occurred', time: 'time', offset: '10m' }
       };
       const actionContext = {
         evalContext: {
@@ -37,13 +37,13 @@ describe('SchedulerWorker', () => {
     const oneHourAgo = now.clone().subtract(1, 'hours');
     const scriptContent = {
       triggers: [{
-        events: [{ type: 'time_occurred', time: '1hAgo', offset: '10m' }],
+        event: { type: 'time_occurred', time: '1hAgo', offset: '10m' },
         name: 't1'
       }, {
-        events: [{ type: 'scene_started' }],
+        event: { type: 'scene_started' },
         name: 't2'
       }, {
-        events: [{ type: 'time_occurred', time: '1hAgo', offset: '-10m' }],
+        event: { type: 'time_occurred', time: '1hAgo', offset: '-10m' },
         name: 't3'
       }]
     };
@@ -153,13 +153,13 @@ describe('SchedulerWorker', () => {
     const now = moment.utc();
     const scriptContent = {
       triggers: [{
-        events: [{ type: 'time_occurred', time: 'now', offset: '10m' }],
+        event: { type: 'time_occurred', time: 'now', offset: '10m' },
         name: 't1'
       }, {
-        events: [{ type: 'scene_started' }],
+        event: { type: 'scene_started' },
         name: 't2'
       }, {
-        events: [{ type: 'time_occurred', time: 'now', offset: '-10m' }],
+        event: { type: 'time_occurred', time: 'now', offset: '-10m' },
         name: 't3'
       }]
     };

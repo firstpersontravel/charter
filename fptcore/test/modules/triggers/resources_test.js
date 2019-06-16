@@ -8,7 +8,7 @@ describe('#validateResource', () => {
   it('warns on actions that lack a required triggering event', () => {
     const script = {};
     const trigger = {
-      events: [{ type: 'message_received', from: 'Role' }],
+      event: { type: 'message_received', from: 'Role' },
       actions: [{ name: 'play_clip', params: { clip_name: 'CLIP-NAME' } }]
     };
 

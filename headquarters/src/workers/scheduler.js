@@ -17,11 +17,8 @@ class SchedulerWorker {
    * Get time that a trigger is supposed to be triggered at.
    */
   static _getTriggerIntendedAt(trigger, actionContext) {
-    const timeOccurredTriggerEvent = (
-      TriggerEventCore.triggerEventForEventType(trigger, 'time_occurred')
-    );
     const intendedAt = EventsRegistry.time_occurred.timeForSpec(
-      timeOccurredTriggerEvent, actionContext.evalContext);
+      trigger.event, actionContext.evalContext);
     return intendedAt;    
   }
 
@@ -95,7 +92,7 @@ class SchedulerWorker {
     const objs = await TripUtil.getObjectsForTrip(tripId);
     const actionContext = TripUtil.prepareActionContext(objs, now);
     const nextTime = _(objs.script.content.triggers)
-      .filter(trigger => _.some(trigger.events, { type: 'time_occurred' }))
+      .filter(trigger => trigger.event.type === 'time_occurred')
       .filter(trigger => !objs.trip.history[trigger.name])
       .map(trigger => this._getTriggerIntendedAt(trigger, actionContext))
       .filter(Boolean)

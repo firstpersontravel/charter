@@ -11,20 +11,15 @@ function getScheduledTripTriggers(trip) {
   const event = { type: 'time_occurred', timestamp: inOneHour };
   const triggers = TriggerEventCore.triggersForEvent(event,
     trip.actionContext);
-  return triggers.map((trigger) => {
-    const triggerEvent = TriggerEventCore.triggerEventForEventType(
-      trigger, event.type);
-    const scheduledAt = EventsRegistry.time_occurred.timeForSpec(
-      triggerEvent, trip.evalContext);
-    return {
-      id: trigger.name,
-      type: 'trigger',
-      tripId: trip.id,
-      scheduledAt: scheduledAt,
-      departureName: trip.departureName,
-      name: trigger.name
-    };
-  });
+  return triggers.map(trigger => ({
+    id: trigger.name,
+    type: 'trigger',
+    tripId: trip.id,
+    scheduledAt: EventsRegistry.time_occurred.timeForSpec(
+      trigger.event, trip.evalContext),
+    departureName: trip.departureName,
+    name: trigger.name
+  }));
 }
 
 function getScheduledGroupTriggers(group) {

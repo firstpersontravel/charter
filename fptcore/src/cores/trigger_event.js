@@ -17,24 +17,11 @@ class TriggerEventCore {
   }
 
   /**
-   * Return the first trigger event
-   */
-  static triggerEventForEventType(trigger, eventType) {
-    return _.find(trigger.events, { type: eventType }) || null;
-  }
-
-  /**
    * Test if a trigger is set off by an event.
    */
   static doesEventFireTrigger(trigger, event, actionContext) {
     // If no matcher for this event type, exit
     if (!EventsRegistry[event.type]) {
-      return false;
-    }
-    const triggerEvent = this.triggerEventForEventType(trigger, event.type);
-
-    // If trigger isn't caused by this event, skip
-    if (!triggerEvent) {
       return false;
     }
 
@@ -49,7 +36,7 @@ class TriggerEventCore {
       return false;
     }
 
-    return this.doesEventFireTriggerEvent(triggerEvent, event, actionContext);
+    return this.doesEventFireTriggerEvent(trigger.event, event, actionContext);
   }
 
   /**

@@ -76,11 +76,9 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
     return;
   }
   if (collectionName === 'eventSpecs') {
-    triggers.forEach(function(trigger) {
-      trigger.events.forEach(function(eventSpec) {
-        migration(eventSpec, scriptContent);
-      });
-    });
+    for (const trigger of triggers) {
+      migration(trigger.event, scriptContent);
+    }
     return;
   }
   var resourceType = TextUtil.singularize(collectionName);

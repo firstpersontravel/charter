@@ -122,14 +122,11 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     }
     // Check against required event types if present.
     if (actionClass.requiredEventTypes) {
-      const resourceEventTypes = _.uniq(_.map(trigger.events, 'type'));
-      resourceEventTypes.forEach(function(resourceEventType) {
-        if (!_.includes(actionClass.requiredEventTypes, resourceEventType)) {
-          warnings.push('Action "' + path + '" ("' + action.name + '") is triggered by event "' + resourceEventType +
-            '", but requires one of: ' +
-            actionClass.requiredEventTypes.join(', ') + '.');
-        }
-      });
+      if (!_.includes(actionClass.requiredEventTypes, trigger.event.type)) {
+        warnings.push('Action "' + path + '" ("' + action.name + '") is triggered by event "' + trigger.event.type +
+          '", but requires one of: ' +
+          actionClass.requiredEventTypes.join(', ') + '.');
+      }
     }
     return warnings;
   }
@@ -161,12 +158,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     properties: {
       name: { type: 'name', required: true },
       scene: { type: 'reference', collection: 'scenes', required: true },
-      events: {
-        type: 'list',
-        items: createEventResource(eventsRegistry),
-        required: true,
-        default: [{}]
-      },
+      event: createEventResource(eventsRegistry),
       repeatable: { type: 'boolean', default: true },
       active_if: { type: 'ifClause' },
       actions: createActionListProperty(actionsRegistry)
@@ -189,26 +181,21 @@ module.exports = function (actionsRegistry, eventsRegistry) {
       return warnings;
     },
     getTitle: function(scriptContent, resource) {
-      if (!resource.events.length) {
-        return 'Untriggerable';
-      }
-      const firstEvent = resource.events[0];
-      const firstEventClass = eventsRegistry[firstEvent.type];
-      if (!firstEventClass) {
+      const eventClass = eventsRegistry[resource.event.type];
+      if (!eventClass) {
         return 'No event';
       }
-      if (firstEventClass.getTitle) {
-        const customTitle = firstEventClass.getTitle(scriptContent, firstEvent);
+      if (eventClass.getTitle) {
+        const customTitle = eventClass.getTitle(scriptContent, resource.event);
         if (customTitle) {
           return customTitle;
         }
       }
-      return firstEvent.type.replace(/_/g, ' ');
+      return resource.event.type.replace(/_/g, ' ');
     },
     getParentClaims: function(resource) {
-      return resource.events
-        .map(eventSpec => getEventParent(resource, eventSpec))
-        .filter(Boolean);
+      const parent = getEventParent(resource, resource.event);
+      return parent ? [parent] : [];
     },
     getChildClaims: function(resource) {
       const childClaims = [];

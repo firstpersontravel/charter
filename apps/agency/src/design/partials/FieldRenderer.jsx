@@ -571,6 +571,7 @@ export default class FieldRenderer {
   }
 
   renderObject(spec, value, name, path, opts) {
+    console.log('renderObject', spec, value, name, path, opts);
     const props = _(Object.keys(spec.properties))
       .sortBy(key => !!_.get(spec.properties[key], 'display.last'))
       .value();
@@ -578,7 +579,11 @@ export default class FieldRenderer {
       this.internalObjectKey(spec, value, name, path, opts,
         spec.properties[key], key)
     ));
-    const divStyle = _.get(opts, 'inline') ? { display: 'inline-block' } : {};
+    const isInline = (
+      _.get(spec, 'display.form') === 'inline' ||
+      _.get(opts, 'inline')
+    );
+    const divStyle = isInline ? { display: 'inline-block' } : {};
     return (
       <div style={divStyle} className="object">
         {renderedItems}

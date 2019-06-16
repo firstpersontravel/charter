@@ -173,7 +173,7 @@ describe('Migrator', () => {
     it('migrates event specs', () => {
       const scriptContent = {
         triggers: [{
-          events: [{ spec: 3 }]
+          event: { spec: 3 }
         }]
       };
       const migration = sinon.stub();

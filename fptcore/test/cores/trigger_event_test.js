@@ -161,10 +161,10 @@ describe('TriggerEventCore', () => {
 
   describe('#doesEventFireTriggerEvent', () => {
     it('returns false on non-matching event', () => {
-      const trigger = { events: [{ call_ended: {} }] };
+      const trigger = { event: { call_ended: {} } };
       const event = { type: 'cue_signaled', };
-      const res = TriggerEventCore.doesEventFireTriggerEvent(trigger, event, 
-        null);
+      const res = TriggerEventCore.doesEventFireTriggerEvent(trigger.event,
+        event, null);
       assert.strictEqual(res, false);
     });
 
@@ -185,51 +185,12 @@ describe('TriggerEventCore', () => {
     });
   });
 
-  describe('#triggerEventForEventType', () => {
-    it('returns matching event', () => {
-      const trigger = {
-        events: [{ type: 'thing_happened', params: true }]
-      };
-      const eventType = 'thing_happened';
-      const res = TriggerEventCore.triggerEventForEventType(trigger,
-        eventType);
-      assert.strictEqual(res, trigger.events[0]);
-    });
-
-    it('skips non-matching event', () => {
-      const trigger = {
-        events: [{ type: 'thing_happened', params: true }]
-      };
-      const eventType = 'other_thing_happened';
-      const res = TriggerEventCore.triggerEventForEventType(trigger,
-        eventType);
-      assert.strictEqual(res, null);
-    });
-
-    it('goes through multiple events to return matching one', () => {
-      const trigger = {
-        events: [
-          { type: 'this_happened', params: true },
-          { type: 'that_happened', params: true },
-          { type: 'another_thing_happened', params: true }
-        ]
-      };
-      const eventType = 'that_happened';
-      const res = TriggerEventCore.triggerEventForEventType(trigger,
-        eventType);
-      assert.strictEqual(res, trigger.events[1]);
-    });
-  });
-
   describe('#doesEventFireTrigger', () => {
     const actionContext = { evalContext: {} };
 
     it('detects matching case', () => {
-      const trigger = { events: [{ type: 'cue_signaled' }] };
+      const trigger = { event: { type: 'cue_signaled' } };
       const event = { type: 'cue_signaled' };
-      const stub = sandbox
-        .stub(TriggerEventCore, 'triggerEventForEventType')
-        .returns(trigger.events[0]);
       const stub2 = sandbox
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(true);
@@ -238,16 +199,12 @@ describe('TriggerEventCore', () => {
         actionContext);
       assert.strictEqual(res, true);
 
-      sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.calledWith(stub2, trigger.events[0], event, actionContext);
+      sinon.assert.calledWith(stub2, trigger.event, event, actionContext);
     });
 
-    it('detects coarse non-matching case', () => {
-      const trigger = { events: [{ type: 'cue_signaled' }] };
+    it('detects non-matching case', () => {
+      const trigger = { event: { type: 'cue_signaled' } };
       const event = { type: 'cue_signaled' };
-      const stub = sandbox
-        .stub(TriggerEventCore, 'triggerEventForEventType')
-        .returns(null);
       const stub2 = sandbox
         .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
         .returns(false);
@@ -256,26 +213,7 @@ describe('TriggerEventCore', () => {
         actionContext);
       assert.strictEqual(res, false);
 
-      sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.notCalled(stub2);
-    });
-
-    it('detects fine non-matching case', () => {
-      const trigger = { events: [{ type: 'cue_signaled' }] };
-      const event = { type: 'cue_signaled' };
-      const stub = sandbox
-        .stub(TriggerEventCore, 'triggerEventForEventType')
-        .returns(trigger.events[0]);
-      const stub2 = sandbox
-        .stub(TriggerEventCore, 'doesEventFireTriggerEvent')
-        .returns(false);
-
-      const res = TriggerEventCore.doesEventFireTrigger(trigger, event,
-        actionContext);
-      assert.strictEqual(res, false);
-
-      sinon.assert.calledWith(stub, trigger, event.type);
-      sinon.assert.calledWith(stub2, trigger.events[0], event, actionContext);
+      sinon.assert.calledWith(stub2, trigger.event, event, actionContext);
     });
   });
 
@@ -297,9 +235,9 @@ describe('TriggerEventCore', () => {
       const actionContext = {
         scriptContent: {
           triggers: [
-            { scene: 'SCENE-1', events: [] },
-            { scene: 'SCENE-2', events: [] },
-            { scene: 'SCENE-3', events: [] }
+            { scene: 'SCENE-1', event: {} },
+            { scene: 'SCENE-2', event: {} },
+            { scene: 'SCENE-3', event: {} }
           ]
         },
         evalContext: { currentSceneName: 'SCENE-1' }
