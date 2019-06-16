@@ -6,7 +6,8 @@ export const sections = [
   ['messaging', 'Messaging', 'comment'],
   ['locations', 'Location', 'map-pin'],
   ['variants', 'Variants', 'space-shuttle'],
-  ['interface', 'Interface', 'file-image-o']
+  ['interface', 'Interface', 'file-image-o'],
+  ['operations', 'Operations', 'gear']
 ];
 
 const sectionContent = {
@@ -15,7 +16,8 @@ const sectionContent = {
   messaging: { relays: {}, inboxes: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
   variants: { variants: {}, departures: {}, times: {} },
-  interface: { layouts: {}, content_pages: {} }
+  interface: { layouts: {}, content_pages: {} },
+  operations: { achievements: {}, checkpoints: {} }
 };
 
 const sliceContent = {
@@ -25,8 +27,6 @@ const sliceContent = {
     messages: { scene: sliceName },
     emails: { scene: sliceName },
     cues: { scene: sliceName },
-    achievements: { scene: sliceName },
-    checkpoints: { scene: sliceName },
     audio: { scene: sliceName },
     clips: { scene: sliceName }
   }),
