@@ -28,7 +28,7 @@ module.exports = {
     accuracy: { required: false, type: 'number', display: { hidden: true } },
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     const roles = actionContext.scriptContent.roles || [];
     const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content);

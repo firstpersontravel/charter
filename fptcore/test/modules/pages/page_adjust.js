@@ -7,7 +7,7 @@ describe('#adjust_page', () => {
     const params = { role_name: 'Player', new_value: 'tab1' };
     const actionContext = {};
 
-    const res = adjust_page.applyAction(params, actionContext);
+    const res = adjust_page.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateUi',

@@ -32,7 +32,7 @@ describe('#send_email', () => {
   };
 
   it('sends email', () => {
-    const res = send_email.applyAction(params, actionContext);
+    const res = send_email.getOps(params, actionContext);
 
     assert.deepStrictEqual(res, [{
       operation: 'sendEmail',
@@ -51,7 +51,7 @@ describe('#send_email', () => {
     const clonedActionContext = _.cloneDeep(actionContext);
     delete clonedActionContext.evalContext.player.email;
 
-    const res = send_email.applyAction(params, clonedActionContext);
+    const res = send_email.getOps(params, clonedActionContext);
 
     assert.deepStrictEqual(res, [{
       operation: 'log',

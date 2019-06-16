@@ -18,7 +18,7 @@ describe('#send_text', () => {
       to_role_name: 'Babbit'
     };
 
-    const res = send_text.applyAction(params, actionContext);
+    const res = send_text.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'createMessage',
@@ -62,7 +62,7 @@ describe('#send_text', () => {
       to_role_name: 'Babbit'
     };
 
-    const res = send_text.applyAction(params, actionContext);
+    const res = send_text.getOps(params, actionContext);
 
     assert.strictEqual(res[0].fields.content, 'We are meeting at the bar.');
   });
@@ -83,7 +83,7 @@ describe('#send_text', () => {
       to_role_name: 'Babbit'
     };
 
-    const res = send_text.applyAction(params, actionContextWithActor);
+    const res = send_text.getOps(params, actionContextWithActor);
 
     assert.strictEqual(res[0].fields.isReplyNeeded, true);
   });

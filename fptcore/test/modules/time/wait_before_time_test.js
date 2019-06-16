@@ -13,7 +13,7 @@ describe('#wait_before_time', () => {
       evalContext: { schedule: { t: waitFor.toISOString() } }
     };
 
-    const res = wait_before_time.applyAction(params, actionContext);
+    const res = wait_before_time.getOps(params, actionContext);
 
     assert.deepStrictEqual(res, [{
       operation: 'wait',
@@ -26,7 +26,7 @@ describe('#wait_before_time', () => {
     const params = { until: 't', offset: '5m' };
     const actionContext = { evaluateAt: now, evalContext: { schedule: {} } };
 
-    const res = wait_before_time.applyAction(params, actionContext);
+    const res = wait_before_time.getOps(params, actionContext);
 
     assert.deepStrictEqual(res, [{
       operation: 'log',

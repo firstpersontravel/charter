@@ -11,7 +11,7 @@ module.exports = {
       help: 'The cue to signal.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     var cue = _.find(actionContext.scriptContent.cues,
       { name: params.cue_name });
     if (!cue) {

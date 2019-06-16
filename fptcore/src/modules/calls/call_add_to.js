@@ -12,7 +12,7 @@ module.exports = {
       help: 'The role to add to the call.'
     }
   },
-  applyAction: function (params, actionContext) {
+  getOps(params, actionContext) {
     var evt = actionContext.evalContext.event || {};
     // If triggered by an incoming call
     if (evt.type === 'call_received') {

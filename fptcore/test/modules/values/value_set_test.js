@@ -9,7 +9,7 @@ describe('#set_value', () => {
       evalContext: {}
     };
 
-    const res = set_value.applyAction(params, actionContext);
+    const res = set_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -23,7 +23,7 @@ describe('#set_value', () => {
       evalContext: { count: 6 }
     };
 
-    const res = set_value.applyAction(params, actionContext);
+    const res = set_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -37,7 +37,7 @@ describe('#set_value', () => {
       evalContext: { count: 6 }
     };
 
-    const res = set_value.applyAction(params, actionContext);
+    const res = set_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -51,7 +51,7 @@ describe('#set_value', () => {
       evalContext: { count: 6 }
     };
 
-    const res = set_value.applyAction(params, actionContext);
+    const res = set_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -68,7 +68,7 @@ describe('#set_value', () => {
       evalContext: { count: 6, 'cabana.bananas': 10 }
     };
 
-    const res = set_value.applyAction(params, actionContext);
+    const res = set_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -85,7 +85,7 @@ describe('#set_value', () => {
       evalContext: { cabana: { bananas: 10 } }
     };
 
-    const res = set_value.applyAction(params, actionContext);
+    const res = set_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',

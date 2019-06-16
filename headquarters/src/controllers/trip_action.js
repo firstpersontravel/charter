@@ -15,19 +15,19 @@ class TripActionController {
   /**
    * Intermediate function.
    */
-  static _getResultsForActionAndObjs(objs, action, evaluateAt) {
+  static _resultForImmediateActionAndObjs(objs, action, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.applyAction(action, actionContext);
+    return ActionCore.resultForImmediateAction(action, actionContext);
   }
 
-  static _getResultsForEventAndObjs(objs, event, evaluateAt) {
+  static _resultForEventAndObjs(objs, event, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.applyEvent(event, actionContext);
+    return ActionCore.resultForEvent(event, actionContext);
   }
 
-  static _getResultsForTriggerAndObjs(objs, trigger, evaluateAt) {
+  static _resultForTriggerAndObjs(objs, trigger, evaluateAt) {
     const actionContext = TripUtil.prepareActionContext(objs, evaluateAt);
-    return ActionCore.applyTrigger(trigger, null, actionContext,
+    return ActionCore.resultForTrigger(trigger, null, actionContext,
       actionContext);
   }
   
@@ -79,7 +79,8 @@ class TripActionController {
     logger.info(action.params, `Applying action: ${action.name}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await TripUtil.getObjectsForTrip(tripId);
-    const result = this._getResultsForActionAndObjs(objs, action, evaluateAt);
+    const result = this._resultForImmediateActionAndObjs(objs, action,
+      evaluateAt);
     await this._applyResult(objs, result);
     return result;
   }
@@ -91,7 +92,7 @@ class TripActionController {
     logger.info(event, `Applying event: ${event.type}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await TripUtil.getObjectsForTrip(tripId);
-    const result = this._getResultsForEventAndObjs(objs, event, evaluateAt);
+    const result = this._resultForEventAndObjs(objs, event, evaluateAt);
     await this._applyResult(objs, result);
     return result;
   }
@@ -108,7 +109,7 @@ class TripActionController {
     if (!trigger) {
       return null;
     }
-    const result = this._getResultsForTriggerAndObjs(objs, trigger,
+    const result = this._resultForTriggerAndObjs(objs, trigger,
       evaluateAt);
     await this._applyResult(objs, result);
     return result;

@@ -21,7 +21,7 @@ describe('#send_image', () => {
       accuracy: 30
     };
 
-    const res = send_image.applyAction(params, actionContext);
+    const res = send_image.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'createMessage',

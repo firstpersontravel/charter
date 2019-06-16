@@ -11,11 +11,11 @@ module.exports = {
     },
     delta: { required: false, type: 'number' }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     var valueRef = params.value_ref;
     var existingValue = Number(actionContext.evalContext[valueRef] || 0);
     var newValue = existingValue + (parseFloat(params.delta, 10) || 1);
     var setValueParams = { value_ref: valueRef, new_value_ref: newValue };
-    return set_value.applyAction(setValueParams, actionContext);
+    return set_value.getOps(setValueParams, actionContext);
   }
 };

@@ -24,7 +24,7 @@ describe('TripActionController', () => {
         fields: { newField: true }
       }];
       sandbox.stub(TripOpController, 'applyOp').resolves();
-      sandbox.stub(ActionCore, 'applyAction')
+      sandbox.stub(ActionCore, 'resultForImmediateAction')
         .returns({
           resultOps: resultOps,
           scheduledActions: []
@@ -48,7 +48,7 @@ describe('TripActionController', () => {
       };
       sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'create').resolves();
-      sandbox.stub(ActionCore, 'applyAction').returns({
+      sandbox.stub(ActionCore, 'resultForImmediateAction').returns({
         resultOps: [],
         scheduledActions: [scheduleAction]
       });

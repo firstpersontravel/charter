@@ -9,7 +9,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     const durationSecs = TimeUtil.secondsForOffsetShorthand(params.duration);
     const until = actionContext.evaluateAt
       .clone()

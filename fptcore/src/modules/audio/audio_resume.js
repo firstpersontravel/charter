@@ -9,7 +9,7 @@ module.exports = {
       help: 'The role to resume the audio for.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     if (actionContext.evalContext.audio_is_playing) {
       return [{
         operation: 'log',

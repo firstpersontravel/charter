@@ -14,7 +14,7 @@ module.exports = {
       help: 'The adjustment value to send.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     return [{
       operation: 'updateUi',
       roleName: params.role_name,

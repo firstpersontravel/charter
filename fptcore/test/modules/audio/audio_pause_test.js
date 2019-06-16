@@ -6,7 +6,7 @@ const pause_audio = require('../../../src/modules/audio/audio_pause');
 describe('#pause_audio', () => {
   it('logs info if no audio', () => {
     const actionContext = { evalContext: {} };
-    const res = pause_audio.applyAction(
+    const res = pause_audio.getOps(
       { role_name: 'Tablet' }, actionContext);
     assert.deepStrictEqual(res, [{
       operation: 'log',
@@ -17,7 +17,7 @@ describe('#pause_audio', () => {
 
   it('logs info if audio is paused', () => {
     const context = { evalContext: { audio_is_playing: false } };
-    const res = pause_audio.applyAction(
+    const res = pause_audio.getOps(
       {}, context, { role_name: 'Tablet' }, null);
     assert.deepStrictEqual(res, [{
       operation: 'log',
@@ -37,7 +37,7 @@ describe('#pause_audio', () => {
       },
       evaluateAt: now
     };
-    const res = pause_audio.applyAction({ role_name: 'Tablet' }, 
+    const res = pause_audio.getOps({ role_name: 'Tablet' }, 
       actionContext);
     assert.deepEqual(res, [{
       operation: 'updateTripValues',

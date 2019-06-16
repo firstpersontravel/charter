@@ -9,7 +9,7 @@ module.exports = {
       help: 'The role to stop the audio for.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     return [{
       operation: 'updateTripValues',
       values: {

@@ -21,29 +21,29 @@ class ActionCore {
   /**
    * Get the results for a given action.
    */
-  static opsForAction(action, actionContext) {
+  static opsForImmediateAction(action, actionContext) {
     const contextWithEvent = this.addEventToContext(action.event,
       actionContext);
     const actionClass = ActionsRegistry[action.name];
     if (!actionClass) {
       throw new Error(`Invalid action ${action.name}.`);
     }
-    return actionClass.applyAction(action.params, contextWithEvent) || [];
+    return actionClass.getOps(action.params, contextWithEvent) || [];
   }
 
   /**
    * Apply an action, including any triggers started by a resulting events.
    */
-  static applyAction(action, actionContext) {
+  static resultForImmediateAction(action, actionContext) {
     // Apply simple action
-    const actionOps = this.opsForAction(action, actionContext);
+    const actionOps = this.opsForImmediateAction(action, actionContext);
     let result = ActionResultCore.resultForOps(actionOps, actionContext);
 
     // Apply any events from the action.
     const eventOps = _.filter(result.resultOps, { operation: 'event' });
     for (const eventOp of eventOps) {
       const event = eventOp.event;
-      const eventResult = this.applyEvent(event, result.nextContext);
+      const eventResult = this.resultForEvent(event, result.nextContext);
       result = ActionResultCore.concatResult(result, eventResult);
     }
     return result;
@@ -52,7 +52,7 @@ class ActionCore {
   /**
    * Trigger any triggers applied by an event.
    */
-  static applyEvent(event, actionContext) {
+  static resultForEvent(event, actionContext) {
     // Get blank result.
     let result = ActionResultCore.initialResult(actionContext);
     
@@ -67,7 +67,7 @@ class ActionCore {
     // Apply each trigger with original context
     const actionContextWhenTriggered = actionContext;
     for (const trigger of nextTriggers) {
-      const triggerResult = this.applyTrigger(
+      const triggerResult = this.resultForTrigger(
         trigger, event, result.nextContext, actionContextWhenTriggered);
       result = ActionResultCore.concatResult(result, triggerResult);
     }
@@ -78,7 +78,7 @@ class ActionCore {
   /**
    * Apply a trigger, including subsequent actions.
    */
-  static applyTrigger(trigger, event, actionContext,
+  static resultForTrigger(trigger, event, actionContext,
     actionContextWhenTriggered) {
     // History op to update history in db. This is required because some
     // scripts check the history.
@@ -99,7 +99,7 @@ class ActionCore {
 
     // Either call or schedule each action.
     for (const action of nextActions) {
-      const actionResult = this.applyOrScheduleAction(action,
+      const actionResult = this.resultForFutureAction(action,
         result.nextContext);
       result = ActionResultCore.concatResult(result, actionResult);
     }
@@ -112,7 +112,7 @@ class ActionCore {
    * Generate a result for a given action, either schedule it for later, or
    * apply it now.
    */
-  static applyOrScheduleAction(unpackedAction, actionContext) {
+  static resultForFutureAction(unpackedAction, actionContext) {
     if (unpackedAction.scheduleAt.isAfter(actionContext.evaluateAt)) {
       return {
         nextContext: actionContext,
@@ -121,7 +121,7 @@ class ActionCore {
       };
     }
     // Otherwise apply them now, including any nested triggers!
-    return this.applyAction(unpackedAction, actionContext);
+    return this.resultForImmediateAction(unpackedAction, actionContext);
   }
 }
 

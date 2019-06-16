@@ -11,7 +11,7 @@ module.exports = {
       help: 'The role to pause the audio for.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     if (!actionContext.evalContext.audio_is_playing) {
       return [{
         operation: 'log',

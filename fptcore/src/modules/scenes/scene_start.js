@@ -10,7 +10,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     var newSceneName = params.scene_name;
     var newScene = _.find(actionContext.scriptContent.scenes,
       { name: newSceneName });

@@ -18,7 +18,7 @@ module.exports = {
       help: 'The page to send the player to.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     var newPageName = params.page_name !== 'null' ? params.page_name : '';
     if (newPageName !== '') {
       var page = _.find(actionContext.scriptContent.pages,

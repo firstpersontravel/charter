@@ -11,7 +11,7 @@ describe('#stop_audio', () => {
       evalContext: { audio_is_playing: false, audio_paused_time: 10 },
       evaluateAt: moment.utc()
     };
-    const res = stop_audio.applyAction(params, actionContext);
+    const res = stop_audio.getOps(params, actionContext);
     assert.deepEqual(res, [
       {
         operation: 'updateTripValues',

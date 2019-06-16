@@ -186,14 +186,14 @@ export default class TripTestHarness extends Component {
     console.log('Action', name);
     const action = { name: name, params: params };
     const actionContext = this.getActionContext();
-    const result = ActionCore.applyAction(action, actionContext);
+    const result = ActionCore.resultForImmediateAction(action, actionContext);
     this.processResult(result);
   }
 
   handleEvent(event) {
     console.log('Event', event);
     const actionContext = this.getActionContext();
-    const result = ActionCore.applyEvent(event, actionContext);
+    const result = ActionCore.resultForEvent(event, actionContext);
     this.processResult(result);
   }
 
@@ -201,7 +201,7 @@ export default class TripTestHarness extends Component {
     console.log('Trigger', name);
     const trigger = _.find(this.props.script.content.triggers, { name: name });
     const actionContext = this.getActionContext();
-    const result = ActionCore.applyTrigger(trigger, null, actionContext,
+    const result = ActionCore.resultForTrigger(trigger, null, actionContext,
       actionContext);
     this.processResult(result);
   }

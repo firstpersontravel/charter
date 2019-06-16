@@ -9,7 +9,7 @@ describe('#play_clip', () => {
       scriptContent: {}
     };
 
-    const res = play_clip.applyAction(params, actionContext);
+    const res = play_clip.getOps(params, actionContext);
 
     assert.deepStrictEqual(res, [{
       operation: 'log',
@@ -29,7 +29,7 @@ describe('#play_clip', () => {
       }
     };
 
-    const res = play_clip.applyAction(params, actionContext);
+    const res = play_clip.getOps(params, actionContext);
 
     assert.deepEqual(res, [
       { operation: 'twiml', clause: 'play', media: 'audio.mp3' }
@@ -47,7 +47,7 @@ describe('#play_clip', () => {
       }
     };
 
-    const res = play_clip.applyAction(params, actionContext);
+    const res = play_clip.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',
@@ -69,7 +69,7 @@ describe('#play_clip', () => {
         }]
       }
     };
-    const res = play_clip.applyAction(params, actionContext);
+    const res = play_clip.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',
@@ -96,7 +96,7 @@ describe('#play_clip', () => {
       }
     };
 
-    const res = play_clip.applyAction(params, actionContext);
+    const res = play_clip.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',

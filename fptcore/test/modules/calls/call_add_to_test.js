@@ -11,7 +11,7 @@ describe('#add_to_call', () => {
       }
     };
 
-    const res = add_to_call.applyAction(params, actionContext);
+    const res = add_to_call.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'twiml',

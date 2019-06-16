@@ -39,7 +39,7 @@ describe('Integration - Message Triggers', () => {
       evaluateAt: now
     };
     const event = { type: 'text_received', message: { from: 'A', to: 'B' } };
-    const result = ActionCore.applyEvent(event, actionContext);
+    const result = ActionCore.resultForEvent(event, actionContext);
 
     // Should not fire shouldn't be set
     assert.equal(result.nextContext.evalContext.SHOULD_NOT_FIRE, undefined);
@@ -76,7 +76,7 @@ describe('Integration - Message Triggers', () => {
       }
     };
     // Ok result should fire
-    const hitResult = ActionCore.applyEvent(okEvent, actionContext);
+    const hitResult = ActionCore.resultForEvent(okEvent, actionContext);
     assert.equal(hitResult.nextContext.evalContext.trigger, true);
   });
 
@@ -111,7 +111,7 @@ describe('Integration - Message Triggers', () => {
       }
     };
     // Ok result should fire
-    const missResult = ActionCore.applyEvent(missEvent, actionContext);
+    const missResult = ActionCore.resultForEvent(missEvent, actionContext);
     assert.equal(missResult.nextContext.evalContext.trigger, undefined);
   });
 });

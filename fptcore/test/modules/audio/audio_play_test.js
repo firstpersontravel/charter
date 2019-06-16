@@ -13,7 +13,7 @@ describe('#play_audio', () => {
       evalContext: { audio_is_playing: false },
       evaluateAt: now
     };
-    const res = play_audio.applyAction(params, actionContext);
+    const res = play_audio.getOps(params, actionContext);
     assert.deepEqual(res, [
       {
         operation: 'updateTripValues',

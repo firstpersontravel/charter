@@ -17,7 +17,7 @@ module.exports = {
       help: 'The clip to play.'
     }
   },
-  applyAction: function (params, actionContext) {
+  getOps(params, actionContext) {
     // Find the clip.
     const clip = _.find(actionContext.scriptContent.clips,
       { name: params.clip_name });

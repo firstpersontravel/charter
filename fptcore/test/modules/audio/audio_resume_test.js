@@ -20,7 +20,7 @@ describe('#resume_audio', () => {
       evalContext: {},
       evaluateAt: now
     };
-    const res = resume_audio.applyAction(params, actionContext);
+    const res = resume_audio.getOps(params, actionContext);
     assert.deepStrictEqual(res, [{
       operation: 'log',
       level: 'error',
@@ -35,7 +35,7 @@ describe('#resume_audio', () => {
       evalContext: { audio_is_playing: true },
       evaluateAt: now
     };
-    const res = resume_audio.applyAction(params, actionContext);
+    const res = resume_audio.getOps(params, actionContext);
     assert.deepStrictEqual(res, [{
       operation: 'log',
       level: 'warning',
@@ -50,7 +50,7 @@ describe('#resume_audio', () => {
       evalContext: { audio_is_playing: false, audio_paused_time: 10 },
       evaluateAt: now
     };
-    const res = resume_audio.applyAction(params, actionContext);
+    const res = resume_audio.getOps(params, actionContext);
     assert.deepEqual(res, [
       {
         operation: 'updateTripValues',

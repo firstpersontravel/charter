@@ -14,7 +14,7 @@ module.exports = {
       help: 'The audio file to play.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     return [{
       operation: 'updateTripValues',
       values: {

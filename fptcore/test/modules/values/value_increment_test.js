@@ -7,7 +7,7 @@ describe('#increment_value', () => {
     const params = { value_ref: 'count' };
     const actionContext = { evalContext: {} };
 
-    const res = increment_value.applyAction(params, actionContext);
+    const res = increment_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -19,7 +19,7 @@ describe('#increment_value', () => {
     const params = { value_ref: 'count' };
     const actionContext = { evalContext: { count: 2 } };
 
-    const res = increment_value.applyAction(params, actionContext);
+    const res = increment_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -31,7 +31,7 @@ describe('#increment_value', () => {
     const params = { value_ref: 'count', delta: 10 };
     const actionContext = { evalContext: { count: 2 } };
 
-    const res = increment_value.applyAction(params, actionContext);
+    const res = increment_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',
@@ -43,7 +43,7 @@ describe('#increment_value', () => {
     const params = { value_ref: 'cabana.monkeys', delta: 10 };
     const actionContext = { evalContext: { 'cabana.monkeys': 2 } };
 
-    const res = increment_value.applyAction(params, actionContext);
+    const res = increment_value.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateTripValues',

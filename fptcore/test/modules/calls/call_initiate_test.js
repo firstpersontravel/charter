@@ -7,7 +7,7 @@ describe('#initiate_call', () => {
     const params = { to_role_name: 'Callee', as_role_name: 'Actor' };
     const actionContext = { evalContext: {} };
 
-    const res = initiate_call.applyAction(params, actionContext);
+    const res = initiate_call.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'initiateCall',

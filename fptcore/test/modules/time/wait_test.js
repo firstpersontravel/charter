@@ -9,7 +9,7 @@ describe('#wait', () => {
     const params = { duration: '10h' };
     const actionContext = { evaluateAt: now };
 
-    const res = wait.applyAction(params, actionContext);
+    const res = wait.getOps(params, actionContext);
 
     assert.deepStrictEqual(res, [{
       operation: 'wait',

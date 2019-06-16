@@ -37,7 +37,7 @@ module.exports = {
       help: 'Email address to BCC.'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     const subject = TemplateUtil.templateText(actionContext.evalContext,
       params.subject, actionContext.timezone);
     const bodyMarkdown = TemplateUtil.templateText(actionContext.evalContext,

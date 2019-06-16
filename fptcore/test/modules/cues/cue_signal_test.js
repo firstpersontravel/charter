@@ -4,7 +4,7 @@ const signal_cue = require('../../../src/modules/cues/cue_signal');
 
 describe('#signal_cue', () => {
   it('generates an event', () => {
-    const res = signal_cue.applyAction({ cue_name: 'hi' }, {
+    const res = signal_cue.getOps({ cue_name: 'hi' }, {
       scriptContent: { cues: [{ name: 'hi' }] }
     });
     assert.deepStrictEqual(res, [{
@@ -14,7 +14,7 @@ describe('#signal_cue', () => {
   });
 
   it('logs an error if cue is not found', () => {
-    const res = signal_cue.applyAction({ cue_name: 'hi2' }, {
+    const res = signal_cue.getOps({ cue_name: 'hi2' }, {
       scriptContent: { cues: [{ name: 'hi' }] }
     });
     assert.deepStrictEqual(res, [{

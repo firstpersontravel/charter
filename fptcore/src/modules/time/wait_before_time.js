@@ -17,7 +17,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     const untilTimestamp = actionContext.evalContext.schedule[params.until];
     const beforeSecs = TimeUtil.secondsForOffsetShorthand(params.offset);
     if (!untilTimestamp) {

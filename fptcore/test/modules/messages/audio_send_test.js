@@ -18,7 +18,7 @@ describe('#send_audio', () => {
       to_role_name: 'Babbit'
     };
 
-    const res = send_audio.applyAction(params, actionContext);
+    const res = send_audio.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'createMessage',

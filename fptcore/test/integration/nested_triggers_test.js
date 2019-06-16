@@ -102,7 +102,7 @@ describe('Integration - Nested Triggers', () => {
       sandbox
         .stub(ActionsRegistry, spyAction)
         .value(Object.assign({}, ActionsRegistry[spyAction], {
-          applyAction: sinon.spy(oldActions[spyAction].applyAction)
+          getOps: sinon.spy(oldActions[spyAction].getOps)
         }));
     });
   });
@@ -116,7 +116,7 @@ describe('Integration - Nested Triggers', () => {
       name: 'send_to_page',
       params: { role_name: 'Farmer', page_name: 'BACK-HOME' }
     };
-    const result = ActionCore.applyAction(unpackedAction, actionContext);
+    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.Farmer.currentPageName,
       'BACK-HOME');
@@ -133,7 +133,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-PICK-APPLES' }
     };
 
-    const result = ActionCore.applyAction(unpackedAction, actionContext);
+    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
@@ -155,7 +155,7 @@ describe('Integration - Nested Triggers', () => {
       geofence: 'GEOFENCE-FARM'
     };
 
-    const result = ActionCore.applyEvent(event, actionContext);
+    const result = ActionCore.resultForEvent(event, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 0);
     assert.deepStrictEqual(result.resultOps, [{
@@ -174,7 +174,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-SUNRISE' }
     };
 
-    const result = ActionCore.applyAction(unpackedAction, actionContext);
+    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.strictEqual(result.nextContext.evalContext.apples, 2);
     assert.deepStrictEqual(result.resultOps, [{
@@ -206,19 +206,19 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-GREET' }
     };
 
-    const result = ActionCore.applyAction(unpackedAction, actionContext);
+    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
 
     // Test intermediate action calls
     // First cue should have been called with no event
     assert.deepStrictEqual(
-      ActionsRegistry.signal_cue.applyAction.firstCall.args, [
+      ActionsRegistry.signal_cue.getOps.firstCall.args, [
         { cue_name: 'CUE-GREET' },
         _.merge({}, actionContext, { evalContext: { event: null } })
       ]);
 
     // Second cue should have been called with the event 'cue CUE-GREET',
     assert.deepStrictEqual(
-      ActionsRegistry.signal_cue.applyAction.secondCall.args, [
+      ActionsRegistry.signal_cue.getOps.secondCall.args, [
         { cue_name: 'CUE-GREET-REPLY' },
         _.merge({}, actionContext, {
           evalContext: {
@@ -228,7 +228,7 @@ describe('Integration - Nested Triggers', () => {
         })]);
 
     // Then send_text with event 'cue CUE-GREET-REPLY'
-    sinon.assert.calledWith(ActionsRegistry.send_text.applyAction.getCall(0),
+    sinon.assert.calledWith(ActionsRegistry.send_text.getOps.getCall(0),
       { from_role_name: 'Cowboy', to_role_name: 'Farmer', content: 'howdy' },
       _.merge({}, actionContext, {
         evalContext: {
@@ -294,7 +294,7 @@ describe('Integration - Nested Triggers', () => {
       params: { cue_name: 'CUE-NAV-1' }
     };
 
-    const result = ActionCore.applyAction(unpackedAction, actionContext);
+    const result = ActionCore.resultForImmediateAction(unpackedAction, actionContext);
 
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'event',
@@ -374,7 +374,7 @@ describe('Integration - Nested Triggers', () => {
     };
     const event = { type: 'cue_signaled', cue: 'end-of-1' };
 
-    const result = ActionCore.applyEvent(event, sceneActionContext);
+    const result = ActionCore.resultForEvent(event, sceneActionContext);
 
     assert.deepStrictEqual(result.nextContext.evalContext, {
       currentSceneName: 'SCENE-2',

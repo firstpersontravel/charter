@@ -10,7 +10,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     const untilTimestamp = actionContext.evalContext.schedule[params.until];
     if (!untilTimestamp) {
       return [{

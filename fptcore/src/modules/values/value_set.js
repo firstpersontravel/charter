@@ -17,7 +17,7 @@ module.exports = {
       title: 'To'
     }
   },
-  applyAction: function(params, actionContext) {
+  getOps(params, actionContext) {
     const newValue = TemplateUtil.lookupRef(actionContext.evalContext,
       params.new_value_ref);
     return [{

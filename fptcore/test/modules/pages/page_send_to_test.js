@@ -14,7 +14,7 @@ describe('#send_to_page', () => {
   it('sends to page', () => {
     const params = { role_name: 'Tablet', page_name: 'PAGE-ONE' };
 
-    const res = send_to_page.applyAction(params, actionContext);
+    const res = send_to_page.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updatePlayerFields',
@@ -26,7 +26,7 @@ describe('#send_to_page', () => {
   it('sends to null', () => {
     const params = { role_name: 'Tablet', page_name: 'null' };
 
-    const res = send_to_page.applyAction(params, actionContext);
+    const res = send_to_page.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updatePlayerFields',

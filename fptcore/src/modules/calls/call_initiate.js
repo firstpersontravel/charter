@@ -20,7 +20,7 @@ module.exports = {
       display: { hidden: true }
     }
   },
-  applyAction: function (params, actionContext) {
+  getOps(params, actionContext) {
     return [{
       operation: 'initiateCall',
       toRoleName: params.to_role_name,
