@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const moment = require('moment');
 
 const ActionsRegistry = require('../registries/actions');
 const KernelResult = require('./result');
@@ -10,11 +10,10 @@ class Kernel {
    * Merge event into action context.
    */
   static addEventToContext(event, actionContext) {
-    const evalContextWithEvent = Object.assign({}, actionContext.evalContext, {
-      event: event || null
-    });
     return Object.assign({}, actionContext, {
-      evalContext: evalContextWithEvent
+      evalContext: Object.assign({}, actionContext.evalContext, {
+        event: event || null
+      })
     });
   }
 
@@ -40,7 +39,7 @@ class Kernel {
     let result = KernelResult.resultForOps(actionOps, actionContext);
 
     // Apply any events from the action.
-    const eventOps = _.filter(result.resultOps, { operation: 'event' });
+    const eventOps = result.resultOps.filter(op => op.operation === 'event');
     for (const eventOp of eventOps) {
       const event = eventOp.event;
       const eventResult = this.resultForEvent(event, result.nextContext);
@@ -84,7 +83,7 @@ class Kernel {
     // scripts check the history.
     const historyOps = [{
       operation: 'updateTripHistory',
-      history: _.set({}, trigger.name, actionContext.evaluateAt.toISOString())
+      history: { [trigger.name]: actionContext.evaluateAt.toISOString() }
     }];
     // Create an initial result with this history update, so that subsequent
     // events can register that this was triggered.
@@ -99,7 +98,7 @@ class Kernel {
 
     // Either call or schedule each action.
     for (const action of nextActions) {
-      const actionResult = this.resultForFutureAction(action,
+      const actionResult = this.resultForTriggeredAction(action,
         result.nextContext);
       result = KernelResult.concatResult(result, actionResult);
     }
@@ -112,15 +111,23 @@ class Kernel {
    * Generate a result for a given action, either schedule it for later, or
    * apply it now.
    */
-  static resultForFutureAction(unpackedAction, actionContext) {
-    if (unpackedAction.scheduleAt.isAfter(actionContext.evaluateAt)) {
+  static resultForTriggeredAction(unpackedAction, actionContext) {
+    // If it's to be scheduled later, just add it to the schedule.
+    const evaluateAt = actionContext.evaluateAt;
+    const waitingUntil = actionContext.waitingUntil;
+    const scheduleAt = waitingUntil ?
+      moment.max(waitingUntil, unpackedAction.scheduleAt) :
+      unpackedAction.scheduleAt;
+    const scheduleForFuture = scheduleAt.isAfter(evaluateAt);
+    if (scheduleForFuture) {
       return {
         nextContext: actionContext,
+        waitingUntil: null,
         resultOps: [],
         scheduledActions: [unpackedAction]
       };
     }
-    // Otherwise apply them now, including any nested triggers!
+    // Otherwise apply them now, including any nested triggers.
     return this.resultForImmediateAction(unpackedAction, actionContext);
   }
 }

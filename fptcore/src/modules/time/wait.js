@@ -11,7 +11,7 @@ module.exports = {
   },
   getOps(params, actionContext) {
     const durationSecs = TimeUtil.secondsForOffsetShorthand(params.duration);
-    const until = actionContext.evaluateAt
+    const until = (actionContext.waitingUntil || actionContext.evaluateAt)
       .clone()
       .add(durationSecs, 'seconds');
     return [{

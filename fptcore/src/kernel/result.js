@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const resultOpTempUpdateFunctions = {
   updatePlayerFields(resultOp, actionContext) {
     const oldPlayer = actionContext.evalContext[resultOp.roleName];
@@ -20,7 +22,7 @@ const resultOpTempUpdateFunctions = {
     });
   },
   updateTripHistory(resultOp, actionContext) {
-    var oldHistory = actionContext.evalContext.history || {};
+    const oldHistory = actionContext.evalContext.history || {};
     return Object.assign({}, actionContext, {
       evalContext: Object.assign({}, actionContext.evalContext, {
         history: Object.assign({}, oldHistory, resultOp.history)
@@ -64,18 +66,27 @@ class KernelResult {
   static initialResult(actionContext) {
     return {
       nextContext: actionContext,
+      waitingUntil: null,
       resultOps: [],
       scheduledActions: []
     };
   }
 
   /**
-   * Get an object representing a simple application of ops to a context
+   * Get an object representing a simple application of ops to a context.
+   * Calculate waitingUntil based on any `wait` operations in the ops list.
    */
   static resultForOps(ops, actionContext) {
-    var nextContext = this.tempUpdateContext(ops, actionContext);
+    const nextContext = this.tempUpdateContext(ops, actionContext);
+    const waitingUntil = ops.reduce((previousValue, op) => {
+      if (op.operation === 'wait') {
+        return previousValue ? moment.max(previousValue, op.until) : op.until;
+      }
+      return previousValue;
+    }, null);
     return {
       nextContext: nextContext,
+      waitingUntil: waitingUntil,
       resultOps: ops,
       scheduledActions: []
     };
@@ -87,6 +98,7 @@ class KernelResult {
   static concatResult(existing, nextResult) {
     return {
       nextContext: nextResult.nextContext,
+      waitingUntil: nextResult.waitingUntil,
       resultOps: existing.resultOps.concat(nextResult.resultOps),
       scheduledActions: existing.scheduledActions
         .concat(nextResult.scheduledActions)

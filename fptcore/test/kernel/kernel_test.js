@@ -62,22 +62,37 @@ describe('Kernel', () => {
 
       const result = Kernel.resultForImmediateAction(action, actionContext);
 
-      assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
-      assert.deepStrictEqual(result.resultOps, [{
-        operation: 'updateTripValues',
-        values: { number: 1 }
-      }]);
+      assert.deepStrictEqual(result, {
+        nextContext: Object.assign({}, actionContext, {
+          evalContext: { number: 1 }
+        }),
+        waitingUntil: null,
+        resultOps: [{
+          operation: 'updateTripValues',
+          values: { number: 1 }
+        }],
+        scheduledActions: []
+      });
     });
 
     it('returns action and subsequent event results', () => {
-      sandbox.stub(Kernel, 'opsForImmediateAction')
+      sandbox
+        .stub(Kernel, 'opsForImmediateAction')
         .callsFake(function(action, actionContext) {
           return [{ operation: 'event', event: { type: '123' }}];
         });
-      sandbox.stub(Kernel, 'resultForEvent')
+
+      const action = { name: 'add', params: {} };
+      const actionContext = { scriptContent: {}, evaluateAt: now };
+
+      sandbox
+        .stub(Kernel, 'resultForEvent')
         .callsFake(function(event, actionContext) {
           return {
-            nextContext: { evalContext: { number: 1 } },
+            nextContext: Object.assign({}, actionContext, {
+              evalContext: { number: 1 }
+            }),
+            waitingUntil: null,
             resultOps: [{
               operation: 'updateTripValues',
               values: { number: 1 }
@@ -86,22 +101,25 @@ describe('Kernel', () => {
           };
         });
 
-      const action = { name: 'add', params: {} };
-      const actionContext = { scriptContent: {}, evaluateAt: now };
-
       const result = Kernel.resultForImmediateAction(action, actionContext);
 
       sinon.assert.calledOnce(Kernel.resultForEvent);
       sinon.assert.calledWith(Kernel.resultForEvent, { type: '123' });
 
-      assert.deepStrictEqual(result.nextContext.evalContext, { number: 1 });
-      assert.deepStrictEqual(result.resultOps, [{
-        operation: 'event',
-        event: { type: '123' }
-      }, {
-        operation: 'updateTripValues',
-        values: { number: 1 }
-      }]);
+      assert.deepStrictEqual(result, {
+        nextContext: Object.assign({}, actionContext, {
+          evalContext: { number: 1 }
+        }),
+        waitingUntil: null,
+        resultOps: [{
+          operation: 'event',
+          event: { type: '123' }
+        }, {
+          operation: 'updateTripValues',
+          values: { number: 1 }
+        }],
+        scheduledActions: []
+      });
     });
   });
 
@@ -117,6 +135,7 @@ describe('Kernel', () => {
 
       assert.deepStrictEqual(result, {
         nextContext: actionContext,
+        waitingUntil: null,
         resultOps: [],
         scheduledActions: []
       });
@@ -125,6 +144,7 @@ describe('Kernel', () => {
     it('returns trigger results if present', () => {
       const resultSentinel = {
         nextContext: {},
+        waitingUntil: null,
         resultOps: [{}],
         scheduledActions: []
       };
@@ -144,14 +164,14 @@ describe('Kernel', () => {
     });
   });
 
-  describe('#resultForFutureAction', () => {
+  describe('#resultForTriggeredAction', () => {
     const actionContext = { evaluateAt: now };
 
     it('applies action if scheduled immediately', () => {
       const action = { scheduleAt: now };
       const stubContext = {};
       sandbox.stub(Kernel, 'resultForImmediateAction').returns(stubContext);
-      const result = Kernel.resultForFutureAction(action, actionContext);
+      const result = Kernel.resultForTriggeredAction(action, actionContext);
 
       assert.strictEqual(result, stubContext);
       sinon.assert.calledOnce(Kernel.resultForImmediateAction);
@@ -166,11 +186,12 @@ describe('Kernel', () => {
         event: {}
       };
       sandbox.stub(Kernel, 'resultForImmediateAction').returns({});
-      const result = Kernel.resultForFutureAction(
-        unpackedAction, actionContext);
+      const result = Kernel.resultForTriggeredAction(unpackedAction,
+        actionContext);
 
       assert.deepStrictEqual(result, {
         nextContext: actionContext,
+        waitingUntil: null,
         resultOps: [],
         scheduledActions: [unpackedAction]
       });
@@ -186,39 +207,51 @@ describe('Kernel', () => {
 
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const res = Kernel.resultForTrigger(trigger, event, actionContext,
+      const result = Kernel.resultForTrigger(trigger, event, actionContext,
         actionContext);
 
-      assert.deepEqual(res.nextContext.evalContext, {
-        history: { trigger: now.toISOString() },
+      assert.deepStrictEqual(result, {
+        nextContext: Object.assign({}, actionContext, {
+          evalContext: {
+            history: { trigger: now.toISOString() }
+          }
+        }),
+        waitingUntil: null,
+        resultOps: [{
+          operation: 'updateTripHistory',
+          history: { trigger: now.toISOString() }
+        }],
+        scheduledActions: []
       });
-      assert.deepEqual(res.resultOps, [{
-        operation: 'updateTripHistory',
-        history: { trigger: now.toISOString() }
-      }]);
     });
 
     it('returns immediate result', () => {
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger')
+      sandbox
+        .stub(KernelActions, 'unpackedActionsForTrigger')
         .returns([{ name: 'add',  params: {}, scheduleAt: now }]);
 
       const trigger = { name: 'trigger' };
       const event = { type: 'event' };
-      const res = Kernel.resultForTrigger(trigger, event,
+      const result = Kernel.resultForTrigger(trigger, event,
         actionContext, actionContext);
 
-      assert.deepEqual(res.nextContext.evalContext, {
-        history: { trigger: now.toISOString() },
-        number: 1
+      assert.deepStrictEqual(result, {
+        nextContext: Object.assign({}, actionContext, {
+          evalContext: {
+            history: { trigger: now.toISOString() },
+            number: 1
+          }
+        }),
+        waitingUntil: null,
+        resultOps: [{
+          operation: 'updateTripHistory',
+          history: { trigger: now.toISOString() }
+        }, {
+          operation: 'updateTripValues',
+          values: { number: 1 }
+        }],
+        scheduledActions: []
       });
-      assert.deepEqual(res.resultOps, [{
-        operation: 'updateTripHistory',
-        history: { trigger: now.toISOString() }
-      }, {
-        operation: 'updateTripValues',
-        values: { number: 1 }
-      }]);
-      assert.deepEqual(res.scheduledActions, []);
     });
 
     it('returns scheduled result', () => {
@@ -231,20 +264,24 @@ describe('Kernel', () => {
         triggerName: 'trigger',
         event: event
       };
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger')
+      sandbox
+        .stub(KernelActions, 'unpackedActionsForTrigger')
         .returns([unpackedAction]);
 
-      const res = Kernel.resultForTrigger(trigger, event,
+      const result = Kernel.resultForTrigger(trigger, event,
         actionContext, actionContext);
 
-      assert.deepEqual(res.nextContext.evalContext, {
-        history: { trigger: now.toISOString() }
+      assert.deepStrictEqual(result, {
+        nextContext: Object.assign({}, actionContext, {
+          evalContext: { history: { trigger: now.toISOString() } }
+        }),
+        waitingUntil: null,
+        resultOps: [{
+          operation: 'updateTripHistory',
+          history: { trigger: now.toISOString() }
+        }],
+        scheduledActions: [unpackedAction]
       });
-      assert.deepEqual(res.resultOps, [{
-        operation: 'updateTripHistory',
-        history: { trigger: now.toISOString() }
-      }]);
-      assert.deepStrictEqual(res.scheduledActions, [unpackedAction]);
     });
   });
 });
