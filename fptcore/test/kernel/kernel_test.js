@@ -164,41 +164,6 @@ describe('Kernel', () => {
     });
   });
 
-  describe('#resultForTriggeredAction', () => {
-    const actionContext = { evaluateAt: now };
-
-    it('applies action if scheduled immediately', () => {
-      const action = { scheduleAt: now };
-      const stubContext = {};
-      sandbox.stub(Kernel, 'resultForImmediateAction').returns(stubContext);
-      const result = Kernel.resultForTriggeredAction(action, actionContext);
-
-      assert.strictEqual(result, stubContext);
-      sinon.assert.calledOnce(Kernel.resultForImmediateAction);
-    });
-
-    it('schedule action if scheduled in the future', () => {
-      const unpackedAction = { 
-        name: 'signal_cue',
-        params: { cue_name: 'cue' },
-        scheduleAt: now.clone().add(24, 'hours'),
-        triggerName: '123',
-        event: {}
-      };
-      sandbox.stub(Kernel, 'resultForImmediateAction').returns({});
-      const result = Kernel.resultForTriggeredAction(unpackedAction,
-        actionContext);
-
-      assert.deepStrictEqual(result, {
-        nextContext: actionContext,
-        waitingUntil: null,
-        resultOps: [],
-        scheduledActions: [unpackedAction]
-      });
-      sinon.assert.notCalled(Kernel.resultForImmediateAction);
-    });
-  });
-
   describe('#resultForTrigger', () => {
     const actionContext = { evalContext: {}, evaluateAt: now };
 
@@ -282,6 +247,92 @@ describe('Kernel', () => {
         }],
         scheduledActions: [unpackedAction]
       });
+    });
+
+    // it.only('returns results delayed by wait statements', () => {
+
+    // });
+  });
+
+  describe('#resultForTriggeredAction', () => {
+    it('applies action if scheduled immediately', () => {
+      const prevResult = { nextContext: { evaluateAt: now } };
+      const action = { scheduleAt: now };
+      const stubContext = {};
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns(stubContext);
+
+      const result = Kernel.resultForTriggeredAction(action, prevResult);
+
+      assert.strictEqual(result, stubContext);
+      sinon.assert.calledOnce(Kernel.resultForImmediateAction);
+    });
+
+    it('schedules action if we are waiting', () => {
+      const prevResult = {
+        nextContext: { evaluateAt: now },
+        waitingUntil: now.clone().add(10, 'minutes')
+      };
+      const action = { name: 'test', params: {}, scheduleAt: now };
+
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns({});
+
+      const result = Kernel.resultForTriggeredAction(action,
+        prevResult);
+
+      assert.deepStrictEqual(result, {
+        nextContext: prevResult.nextContext,
+        waitingUntil: prevResult.waitingUntil,
+        resultOps: [],
+        scheduledActions: [Object.assign({}, action, {
+          scheduleAt: prevResult.waitingUntil
+        })]
+      });
+      sinon.assert.notCalled(Kernel.resultForImmediateAction);
+    });
+
+    it('schedules action in future even if waiting smaller amount', () => {
+      const prevResult = {
+        nextContext: { evaluateAt: now },
+        waitingUntil: now.clone().add(10, 'minutes')
+      };
+      const action = {
+        name: 'test',
+        params: {},
+        scheduleAt: now.clone().add(2, 'hours')
+      };
+
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns({});
+
+      const result = Kernel.resultForTriggeredAction(action,
+        prevResult);
+
+      assert.deepStrictEqual(result, {
+        nextContext: prevResult.nextContext,
+        waitingUntil: prevResult.waitingUntil,
+        resultOps: [],
+        scheduledActions: [action]
+      });
+      sinon.assert.notCalled(Kernel.resultForImmediateAction);
+    });
+
+    it('schedule action if scheduled in the future', () => {
+      const prevResult = { nextContext: { evaluateAt: now } };
+      const action = { 
+        name: 'test',
+        params: {},
+        scheduleAt: now.clone().add(24, 'hours'),
+      };
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns({});
+
+      const result = Kernel.resultForTriggeredAction(action, prevResult);
+
+      assert.deepStrictEqual(result, {
+        nextContext: prevResult.nextContext,
+        waitingUntil: null,
+        resultOps: [],
+        scheduledActions: [action]
+      });
+      sinon.assert.notCalled(Kernel.resultForImmediateAction);
     });
   });
 });

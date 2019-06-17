@@ -98,8 +98,7 @@ class Kernel {
 
     // Either call or schedule each action.
     for (const action of nextActions) {
-      const actionResult = this.resultForTriggeredAction(action,
-        result.nextContext);
+      const actionResult = this.resultForTriggeredAction(action, result);
       result = KernelResult.concatResult(result, actionResult);
     }
 
@@ -111,24 +110,26 @@ class Kernel {
    * Generate a result for a given action, either schedule it for later, or
    * apply it now.
    */
-  static resultForTriggeredAction(unpackedAction, actionContext) {
+  static resultForTriggeredAction(unpackedAction, prevResult) {
     // If it's to be scheduled later, just add it to the schedule.
-    const evaluateAt = actionContext.evaluateAt;
-    const waitingUntil = actionContext.waitingUntil;
+    const evaluateAt = prevResult.nextContext.evaluateAt;
+    const waitingUntil = prevResult.waitingUntil || null;
     const scheduleAt = waitingUntil ?
       moment.max(waitingUntil, unpackedAction.scheduleAt) :
       unpackedAction.scheduleAt;
-    const scheduleForFuture = scheduleAt.isAfter(evaluateAt);
-    if (scheduleForFuture) {
+    if (scheduleAt.isAfter(evaluateAt)) {
       return {
-        nextContext: actionContext,
-        waitingUntil: null,
+        nextContext: prevResult.nextContext,
+        waitingUntil: waitingUntil,
         resultOps: [],
-        scheduledActions: [unpackedAction]
+        scheduledActions: [Object.assign({}, unpackedAction, {
+          scheduleAt: scheduleAt
+        })]
       };
     }
     // Otherwise apply them now, including any nested triggers.
-    return this.resultForImmediateAction(unpackedAction, actionContext);
+    return this.resultForImmediateAction(unpackedAction,
+      prevResult.nextContext);
   }
 }
 
