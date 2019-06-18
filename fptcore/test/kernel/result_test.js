@@ -3,6 +3,22 @@ const assert = require('assert');
 const KernelResult = require('../../src/kernel/result');
 
 describe('KernelResult', () => {
+
+  describe('#resultForOps', () => {
+    it.skip('creates result', () => {
+
+    });
+    it.skip('creates result with wait', () => {
+
+    });
+  });
+
+  describe('#concatResult', () => {
+    it.skip('concatenates results', () => {
+
+    });
+  });
+
   describe('#tempUpdateContext', () => {
     describe('#updateTrip', () => {
       it('updates trip fields', () => {

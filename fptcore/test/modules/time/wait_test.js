@@ -11,25 +11,6 @@ describe('#wait', () => {
 
     const res = wait.getOps(params, actionContext);
 
-    assert.deepStrictEqual(res, [{
-      operation: 'wait',
-      until: now.clone().add(10, 'hours')
-    }]);
-  });
-
-  it('adds period to waitingUntil if present', () => {
-    const now = moment.utc();
-    const params = { duration: '10h' };
-    const actionContext = {
-      evaluateAt: now,
-      waitingUntil: now.clone().add(3, 'hours')
-    };
-
-    const res = wait.getOps(params, actionContext);
-
-    assert.deepStrictEqual(res, [{
-      operation: 'wait',
-      until: now.clone().add(13, 'hours')
-    }]);
+    assert.deepStrictEqual(res, [{ operation: 'wait', seconds: 36000 }]);
   });
 });

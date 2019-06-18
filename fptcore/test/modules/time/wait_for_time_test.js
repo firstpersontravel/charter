@@ -21,6 +21,20 @@ describe('#wait_for_time', () => {
     }]);
   });
 
+  it('does nothing if time has already elapsed', () => {
+    const now = moment.utc();
+    const waitFor = moment.utc('2010-01-01T00:00:00.000Z');
+    const params = { until: 't' };
+    const actionContext = {
+      evaluateAt: now,
+      evalContext: { schedule: { t: waitFor.toISOString() } }
+    };
+
+    const res = wait_for_time.getOps(params, actionContext);
+
+    assert.deepStrictEqual(res, []);
+  });
+
   it('errors if time does not exist', () => {
     const now = moment.utc();
     const params = { until: 't' };

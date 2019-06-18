@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 const resultOpTempUpdateFunctions = {
   updatePlayerFields(resultOp, actionContext) {
     const oldPlayer = actionContext.evalContext[resultOp.roleName];
@@ -66,7 +64,6 @@ class KernelResult {
   static initialResult(actionContext) {
     return {
       nextContext: actionContext,
-      waitingUntil: null,
       resultOps: [],
       scheduledActions: []
     };
@@ -78,15 +75,8 @@ class KernelResult {
    */
   static resultForOps(ops, actionContext) {
     const nextContext = this.tempUpdateContext(ops, actionContext);
-    const waitingUntil = ops.reduce((previousValue, op) => {
-      if (op.operation === 'wait') {
-        return previousValue ? moment.max(previousValue, op.until) : op.until;
-      }
-      return previousValue;
-    }, null);
     return {
       nextContext: nextContext,
-      waitingUntil: waitingUntil,
       resultOps: ops,
       scheduledActions: []
     };
@@ -95,13 +85,11 @@ class KernelResult {
   /**
    * Concatenate two action result objects.
    */
-  static concatResult(existing, nextResult) {
+  static concatResult(existing, next) {
     return {
-      nextContext: nextResult.nextContext,
-      waitingUntil: nextResult.waitingUntil,
-      resultOps: existing.resultOps.concat(nextResult.resultOps),
-      scheduledActions: existing.scheduledActions
-        .concat(nextResult.scheduledActions)
+      nextContext: next.nextContext,
+      resultOps: existing.resultOps.concat(next.resultOps),
+      scheduledActions: existing.scheduledActions.concat(next.scheduledActions)
     };
   }
 }

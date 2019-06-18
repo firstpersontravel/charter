@@ -19,9 +19,17 @@ module.exports = {
         message: `Could not find time matching "${params.until}".`
       }];
     }
+
+    const waitUntil = moment.utc(untilTimestamp);
+
+    // If the time has already passed, don't do anything.
+    if (waitUntil.isBefore(actionContext.evaluateAt)) {
+      return [];
+    }
+
     return [{
       operation: 'wait',
-      until: moment.utc(untilTimestamp)
+      until: waitUntil
     }];
   }
 };

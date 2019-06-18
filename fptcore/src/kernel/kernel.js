@@ -6,6 +6,10 @@ const KernelActions = require('./actions');
 const KernelTriggers = require('./triggers');
 
 class Kernel {
+  static getActionClass(name) {
+    return ActionsRegistry[name];
+  }
+
   /**
    * Merge event into action context.
    */
@@ -23,7 +27,7 @@ class Kernel {
   static opsForImmediateAction(action, actionContext) {
     const contextWithEvent = this.addEventToContext(action.event,
       actionContext);
-    const actionClass = ActionsRegistry[action.name];
+    const actionClass = this.getActionClass(action.name);
     if (!actionClass) {
       throw new Error(`Invalid action ${action.name}.`);
     }
@@ -36,16 +40,16 @@ class Kernel {
   static resultForImmediateAction(action, actionContext) {
     // Apply simple action
     const actionOps = this.opsForImmediateAction(action, actionContext);
-    let result = KernelResult.resultForOps(actionOps, actionContext);
+    let latestResult = KernelResult.resultForOps(actionOps, actionContext);
 
     // Apply any events from the action.
-    const eventOps = result.resultOps.filter(op => op.operation === 'event');
-    for (const eventOp of eventOps) {
+    const evts = latestResult.resultOps.filter(op => op.operation === 'event');
+    for (const eventOp of evts) {
       const event = eventOp.event;
-      const eventResult = this.resultForEvent(event, result.nextContext);
-      result = KernelResult.concatResult(result, eventResult);
+      const eventResult = this.resultForEvent(event, latestResult.nextContext);
+      latestResult = KernelResult.concatResult(latestResult, eventResult);
     }
-    return result;
+    return latestResult;
   }
 
   /**
@@ -53,7 +57,7 @@ class Kernel {
    */
   static resultForEvent(event, actionContext) {
     // Get blank result.
-    let result = KernelResult.initialResult(actionContext);
+    let latestResult = KernelResult.initialResult(actionContext);
     
     // Assemble all triggers. Include event with context because if statements
     // on the triggers may include the event context. This will filter out
@@ -64,14 +68,13 @@ class Kernel {
       contextWithEvent);
 
     // Apply each trigger with original context
-    const actionContextWhenTriggered = actionContext;
     for (const trigger of nextTriggers) {
-      const triggerResult = this.resultForTrigger(
-        trigger, event, result.nextContext, actionContextWhenTriggered);
-      result = KernelResult.concatResult(result, triggerResult);
+      const triggerResult = this.resultForTrigger(trigger, event,
+        latestResult.nextContext, actionContext);
+      latestResult = KernelResult.concatResult(latestResult, triggerResult);
     }
     // Return concatenated results.
-    return result;
+    return latestResult;
   }
 
   /**
@@ -87,7 +90,7 @@ class Kernel {
     }];
     // Create an initial result with this history update, so that subsequent
     // events can register that this was triggered.
-    let result = KernelResult.resultForOps(historyOps, actionContext);
+    let latestResult = KernelResult.resultForOps(historyOps, actionContext);
 
     // Add event to context for consideration for if logic. Figure out which
     // actions should be called, either now or later.
@@ -97,39 +100,45 @@ class Kernel {
       trigger, contextWithEvent);
 
     // Either call or schedule each action.
-    for (const action of nextActions) {
-      const actionResult = this.resultForTriggeredAction(action, result);
-      result = KernelResult.concatResult(result, actionResult);
+    let waitingUntil = actionContext.evaluateAt;
+    for (const unpackedAction of nextActions) {
+      // Get results immediately -- to test if this is a wait or not.
+      const actionResult = this.resultForImmediateAction(unpackedAction,
+        latestResult.nextContext);
+
+      // If we have waits, increment the waitingUntil counter.
+      const waits = actionResult.resultOps.filter(o => o.operation === 'wait');
+      if (waits.length > 0) {
+        waits.forEach(op => {
+          const opUntil = op.until ?
+            op.until :
+            waitingUntil.clone().add(op.seconds, 'seconds');
+          waitingUntil = moment.max(opUntil, waitingUntil);
+        });
+        // Then continue -- no waits + other actions are allowed since ops
+        // can't be scheduled, only actions.
+        continue;
+      }
+
+      // If we reach here, the command did not have any wait statements.
+      // So we either want to apply it if we're not yet waiting, or schedule
+      // it, either if we are, or if the command had an internal wait from
+      // `time` or `offset` properties -- to be deprecated.
+      const scheduleAt = moment.max(waitingUntil, unpackedAction.scheduleAt);
+      // If it's later, schedule it
+      if (scheduleAt.isAfter(actionContext.evaluateAt)) {
+        latestResult.scheduledActions.push(Object.assign({}, unpackedAction, {
+          scheduleAt: scheduleAt
+        }));
+        continue;
+      }
+
+      // If it's to be scheduled now, apply immediately.
+      latestResult = KernelResult.concatResult(latestResult, actionResult);
     }
 
     // Return all results
-    return result;
-  }
-
-  /**
-   * Generate a result for a given action, either schedule it for later, or
-   * apply it now.
-   */
-  static resultForTriggeredAction(unpackedAction, prevResult) {
-    // If it's to be scheduled later, just add it to the schedule.
-    const evaluateAt = prevResult.nextContext.evaluateAt;
-    const waitingUntil = prevResult.waitingUntil || null;
-    const scheduleAt = waitingUntil ?
-      moment.max(waitingUntil, unpackedAction.scheduleAt) :
-      unpackedAction.scheduleAt;
-    if (scheduleAt.isAfter(evaluateAt)) {
-      return {
-        nextContext: prevResult.nextContext,
-        waitingUntil: waitingUntil,
-        resultOps: [],
-        scheduledActions: [Object.assign({}, unpackedAction, {
-          scheduleAt: scheduleAt
-        })]
-      };
-    }
-    // Otherwise apply them now, including any nested triggers.
-    return this.resultForImmediateAction(unpackedAction,
-      prevResult.nextContext);
+    return latestResult;
   }
 }
 
