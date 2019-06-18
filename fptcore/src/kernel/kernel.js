@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const moment = require('moment');
 
 const ActionsRegistry = require('../registries/actions');
@@ -96,12 +97,15 @@ class Kernel {
     // actions should be called, either now or later.
     const contextWithEvent = this.addEventToContext(event,
       actionContextWhenTriggered);
-    const nextActions = KernelActions.unpackedActionsForTrigger(
-      trigger, contextWithEvent);
+    const nextActions = KernelActions.actionsForTrigger(trigger, 
+      contextWithEvent);
 
     // Either call or schedule each action.
     let waitingUntil = actionContext.evaluateAt;
-    for (const unpackedAction of nextActions) {
+    for (const action of nextActions) {
+      const name = action.name;
+      const params = _.omit(action, 'name');
+      const unpackedAction = { name: name, params: params, event: event };
       // Get results immediately -- to test if this is a wait or not.
       const actionResult = this.resultForImmediateAction(unpackedAction,
         latestResult.nextContext);
@@ -124,9 +128,13 @@ class Kernel {
       // So we either want to apply it if we're not yet waiting, or schedule
       // it if we are.
       if (waitingUntil.isAfter(actionContext.evaluateAt)) {
-        latestResult.scheduledActions.push(Object.assign({}, unpackedAction, {
-          scheduleAt: waitingUntil.toDate()
-        }));
+        latestResult.scheduledActions.push({
+          name: name,
+          params: params,
+          scheduleAt: waitingUntil.toDate(),
+          triggerName: trigger.name,
+          event: event
+        });
         continue;
       }
 

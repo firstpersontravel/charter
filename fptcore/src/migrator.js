@@ -55,7 +55,7 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
   var triggers = scriptContent.triggers || [];
   if (collectionName === 'actions') {
     triggers.forEach(function(trigger) {
-      KernelActions.walkPackedActions(trigger.actions, '', action => (
+      KernelActions.walkActions(trigger.actions, '', action => (
         migration(action, scriptContent)
       ), () => {});
     });

@@ -168,7 +168,7 @@ describe('Kernel', () => {
     const actionContext = { evalContext: {}, evaluateAt: now };
 
     it('returns history op even if no actions', () => {
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([]);
+      sandbox.stub(KernelActions, 'actionsForTrigger').returns([]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
         actionContext);
@@ -188,8 +188,8 @@ describe('Kernel', () => {
     });
 
     it('returns immediate result', () => {
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'add', params: {} }
+      sandbox.stub(KernelActions, 'actionsForTrigger').returns([
+        { name: 'add' }
       ]);
 
       const result = Kernel.resultForTrigger(trigger,
@@ -220,9 +220,9 @@ describe('Kernel', () => {
           return [{ operation: 'wait', until: in1Hour }];
         }
       };
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'waitUntil1Hour', params: {} },
-        { name: 'add', params: {} },
+      sandbox.stub(KernelActions, 'actionsForTrigger').returns([
+        { name: 'waitUntil1Hour' },
+        { name: 'add' },
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
@@ -239,7 +239,9 @@ describe('Kernel', () => {
         scheduledActions: [{
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(1, 'hours').toDate()
+          scheduleAt: now.clone().add(1, 'hours').toDate(),
+          triggerName: 'trigger',
+          event: event
         }]
       });
     });
@@ -250,10 +252,10 @@ describe('Kernel', () => {
           return [{ operation: 'wait', seconds: 20 }];
         }
       };
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'wait20SecsRelative', params: {} },
-        { name: 'wait20SecsRelative', params: {} },
-        { name: 'add', params: {} }
+      sandbox.stub(KernelActions, 'actionsForTrigger').returns([
+        { name: 'wait20SecsRelative' },
+        { name: 'wait20SecsRelative' },
+        { name: 'add' }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
@@ -270,7 +272,9 @@ describe('Kernel', () => {
         scheduledActions: [{
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(40, 'seconds').toDate()
+          scheduleAt: now.clone().add(40, 'seconds').toDate(),
+          triggerName: 'trigger',
+          event: event
         }]
       });
     });
@@ -287,12 +291,12 @@ describe('Kernel', () => {
           return [{ operation: 'wait', seconds: 20 }];
         }
       };
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'wait20SecsRelative', params: {} },
-        { name: 'add', params: {} },
-        { name: 'waitUntil1Hour', params: {} },
-        { name: 'wait20SecsRelative', params: {} },
-        { name: 'add', params: {} }
+      sandbox.stub(KernelActions, 'actionsForTrigger').returns([
+        { name: 'wait20SecsRelative' },
+        { name: 'add' },
+        { name: 'waitUntil1Hour' },
+        { name: 'wait20SecsRelative' },
+        { name: 'add' }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext, 
@@ -309,11 +313,15 @@ describe('Kernel', () => {
         scheduledActions: [{
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(20, 'seconds').toDate()
+          scheduleAt: now.clone().add(20, 'seconds').toDate(),
+          triggerName: 'trigger',
+          event: event
         }, {
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(1, 'hour').add(20, 'seconds').toDate()
+          scheduleAt: now.clone().add(1, 'hour').add(20, 'seconds').toDate(),
+          triggerName: 'trigger',
+          event: event
         }]
       });
     });

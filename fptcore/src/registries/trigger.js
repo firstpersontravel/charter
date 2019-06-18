@@ -167,7 +167,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
 
       const ifIteree = function(ifClause, path) {};
       
-      KernelActions.walkPackedActions(resource.actions, 'actions',
+      KernelActions.walkActions(resource.actions, 'actions',
         actionIteree, ifIteree);
       return warnings;
     },
@@ -190,7 +190,7 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     },
     getChildClaims: function(resource) {
       const childClaims = [];
-      KernelActions.walkPackedActions(resource.actions, '',
+      KernelActions.walkActions(resource.actions, '',
         function(action, path) {
           const actionClass = actionsRegistry[action.name];
           if (actionClass.getChildClaims) {

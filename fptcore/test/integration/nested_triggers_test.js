@@ -224,22 +224,21 @@ describe('Integration - Nested Triggers', () => {
 
     // Test intermediate action calls
     // First cue should have been called with no event
-    assert.deepStrictEqual(
-      ActionsRegistry.signal_cue.getOps.firstCall.args, [
-        { cue_name: 'CUE-GREET' },
-        _.merge({}, actionContext, { evalContext: { event: null } })
-      ]);
+    sinon.assert.calledWith(
+      ActionsRegistry.signal_cue.getOps.getCall(0),
+      { cue_name: 'CUE-GREET' },
+      _.merge({}, actionContext, { evalContext: { event: null } }));
 
     // Second cue should have been called with the event 'cue CUE-GREET',
-    assert.deepStrictEqual(
-      ActionsRegistry.signal_cue.getOps.secondCall.args, [
-        { cue_name: 'CUE-GREET-REPLY' },
-        _.merge({}, actionContext, {
-          evalContext: {
-            event: { cue: 'CUE-GREET', type: 'cue_signaled' },
-            history: { 'TRIGGER-GREET-1': now.toISOString() }
-          }
-        })]);
+    sinon.assert.calledWith(
+      ActionsRegistry.signal_cue.getOps.getCall(1),
+      { cue_name: 'CUE-GREET-REPLY' },
+      _.merge({}, actionContext, {
+        evalContext: {
+          event: { cue: 'CUE-GREET', type: 'cue_signaled' },
+          history: { 'TRIGGER-GREET-1': now.toISOString() }
+        }
+      }));
 
     // Then send_text with event 'cue CUE-GREET-REPLY'
     sinon.assert.calledWith(ActionsRegistry.send_text.getOps.getCall(0),

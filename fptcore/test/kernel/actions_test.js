@@ -1,47 +1,16 @@
 const assert = require('assert');
-const moment = require('moment');
 const sinon = require('sinon');
 
 const KernelActions = require('../../src/kernel/actions');
 
 const sandbox = sinon.sandbox.create();
 
-const now = moment.utc();
-
 describe('KernelActions', () => {
   afterEach(() => {
     sandbox.restore();
   });
 
-  describe('#unpackedActionsForTrigger', () => {
-    it('returns actions with added event and trigger info', () => {
-      sandbox.stub(KernelActions, 'packedActionsForTrigger').callsFake(() => {
-        return [{ name: 'fake', param1: 1 }];
-      });
-      const trigger = { name: 'trigger' };
-      const contextWithEvent = { event: { type: 'event' } };
-      const actionContext = { evalContext: contextWithEvent, evaluateAt: now };
-
-      const result = KernelActions.unpackedActionsForTrigger(trigger,
-        actionContext);
-
-      assert.deepStrictEqual(result, [{
-        name: 'fake',
-        params: { param1: 1 },
-        triggerName: trigger.name,
-        event: contextWithEvent.event
-      }]);
-
-      // Ensure KernelActions.packedActionsForTrigger was called with the
-      // event added to the context -- for when triggers have if statements
-      // that depend on the contextual event.
-      assert.deepStrictEqual(
-        KernelActions.packedActionsForTrigger.firstCall.args,
-        [trigger, actionContext]);
-    });
-  });
-
-  describe('#packedActionsForClause', () => {
+  describe('#actionsForClause', () => {
     const actionContext = { evalContext: { valueA: true, valueB: false } };
     const simpleAction = { name: 'act', params: {} };
     const otherAction = { name: 'other', params: {} };
@@ -50,7 +19,7 @@ describe('KernelActions', () => {
 
     it('handles simple list', () => {
       const clause = {actions: [simpleAction]};
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
@@ -59,7 +28,7 @@ describe('KernelActions', () => {
         if: { op: 'istrue', ref: 'valueA' },
         actions: [simpleAction]
       };
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction]);
     });
 
@@ -68,7 +37,7 @@ describe('KernelActions', () => {
         if: { op: 'not', item: { op: 'istrue', ref: 'valueA' } },
         actions: [simpleAction]
       };
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, []);
     });
 
@@ -78,7 +47,7 @@ describe('KernelActions', () => {
         actions: [simpleAction],
         else: [otherAction]
       };
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [otherAction]);
     });
 
@@ -91,7 +60,7 @@ describe('KernelActions', () => {
           else: [otherAction]
         }]
       };
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [otherAction]);
     });
 
@@ -105,7 +74,7 @@ describe('KernelActions', () => {
           else: [otherAction]
         }]
       };
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [thirdAction]);
     });
 
@@ -123,7 +92,7 @@ describe('KernelActions', () => {
           }
         ]
       };
-      const res = KernelActions.packedActionsForClause(clause, actionContext);
+      const res = KernelActions.actionsForClause(clause, actionContext);
       assert.deepStrictEqual(res, [simpleAction, thirdAction]);
     });
 
@@ -141,27 +110,27 @@ describe('KernelActions', () => {
         else: [fourthAction]
       };
       assert.deepStrictEqual(
-        KernelActions.packedActionsForClause(
+        KernelActions.actionsForClause(
           clause, { evalContext: { a: true } }
         ), [simpleAction]);
       assert.deepStrictEqual(
-        KernelActions.packedActionsForClause(
+        KernelActions.actionsForClause(
           clause, { evalContext: { a: true, b: true } }
         ), [simpleAction]);
       assert.deepStrictEqual(
-        KernelActions.packedActionsForClause(
+        KernelActions.actionsForClause(
           clause, { evalContext: { b: true } }
         ), [otherAction]);
       assert.deepStrictEqual(
-        KernelActions.packedActionsForClause(
+        KernelActions.actionsForClause(
           clause, { evalContext: { b: true, c: true } }
         ), [otherAction]);
       assert.deepStrictEqual(
-        KernelActions.packedActionsForClause(
+        KernelActions.actionsForClause(
           clause, { evalContext: { c: true } }
         ), [thirdAction]);
       assert.deepStrictEqual(
-        KernelActions.packedActionsForClause(
+        KernelActions.actionsForClause(
           clause, { evalContext: {} }
         ), [fourthAction]);
     });
@@ -186,24 +155,16 @@ describe('KernelActions', () => {
       const actionContextAll = {
         evalContext: { val1: true, val2: true, val3: true }
       };
-      assert.deepStrictEqual(KernelActions.packedActionsForClause(
+      assert.deepStrictEqual(KernelActions.actionsForClause(
         clause, actionContextAll), [cue1]);
 
       const actionContext12 = { evalContext: { val1: true, val2: true } };
-      assert.deepStrictEqual(KernelActions.packedActionsForClause(
+      assert.deepStrictEqual(KernelActions.actionsForClause(
         clause, actionContext12), [cue2]);
 
       const actionContext3 = { evalContext: { val3: true } };
-      assert.deepStrictEqual(KernelActions.packedActionsForClause(
+      assert.deepStrictEqual(KernelActions.actionsForClause(
         clause, actionContext3), []);
-    });
-  });
-
-  describe('#unpackAction', () => {
-    it('unpacks an action object', () => {
-      const packed = { name: 'x', param1: 'y' };
-      const res = KernelActions.unpackAction(packed, {});
-      assert.deepStrictEqual(res, { name: 'x', params: { param1: 'y' } });
     });
   });
 });

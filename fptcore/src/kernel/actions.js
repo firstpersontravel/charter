@@ -6,7 +6,7 @@ class KernelActions {
   /**
    * Walk the trigger actions and call the iterees for each child.
    */
-  static walkPackedActions(actions, path, actionIteree, ifIteree) {
+  static walkActions(actions, path, actionIteree, ifIteree) {
     if (!actions) {
       return;
     }
@@ -26,19 +26,19 @@ class KernelActions {
         ifIteree(action.if, indexPath + '.if');
       }
       if (action.actions) {
-        this.walkPackedActions(action.actions, indexPath + '.actions', 
+        this.walkActions(action.actions, indexPath + '.actions', 
           actionIteree, ifIteree);
       }
       if (action.elseifs) {
         for (const [j, elseif] of Object.entries(action.elseifs)) {
           const elseifPath = indexPath + '.elseifs[' + j + ']';
           ifIteree(elseif.if, elseifPath + '.if');
-          this.walkPackedActions(elseif.actions, elseifPath + '.actions', 
+          this.walkActions(elseif.actions, elseifPath + '.actions', 
             actionIteree, ifIteree);
         }
       }
       if (action.else) {
-        this.walkPackedActions(action.else, indexPath + '.else',
+        this.walkActions(action.else, indexPath + '.else',
           actionIteree, ifIteree);
       }
     }
@@ -47,7 +47,7 @@ class KernelActions {
   /**
    * Get the right set of actions for a conditional clause
    */
-  static packedActionsForConditional(clause, actionContext) {
+  static actionsForConditional(clause, actionContext) {
     // If no if statement, then pick from actions.
     if (!clause.if) {
       return clause.actions;
@@ -75,9 +75,9 @@ class KernelActions {
   /**
    * Get executable actions for a given trigger or subclause.
    */
-  static packedActionsForClause(clause, actionContext) {
+  static actionsForClause(clause, actionContext) {
     // Figure out which if clause is active
-    const actions = this.packedActionsForConditional(clause, actionContext);
+    const actions = this.actionsForConditional(clause, actionContext);
 
     // Ensure an array is returned
     if (!_.isArray(actions)) {
@@ -91,7 +91,7 @@ class KernelActions {
       }
       // Detect conditional clauses
       if (action.name === 'conditional' || action.if) {
-        return this.packedActionsForClause(action, actionContext);
+        return this.actionsForClause(action, actionContext);
       }
       // Otherwise it's a simple action.
       return [action];
@@ -101,30 +101,8 @@ class KernelActions {
   /**
    * Get executable actions for a given trigger.
    */
-  static packedActionsForTrigger(trigger, actionContext) {
-    return this.packedActionsForClause(trigger, actionContext);
-  }
-
-  /**
-   * Parse an action when modifier ("in 3m") into a time.
-   */
-  static unpackAction(action, actionContext) {
-    return { name: action.name, params: _.omit(action, 'name') };
-  }
-
-  /**
-   * Calculate actions for a trigger and event -- include the trigger name
-   * and event in the action result.
-   */
-  static unpackedActionsForTrigger(trigger, actionContext) {
-    const packedActions = this.packedActionsForTrigger(trigger, actionContext);
-    return packedActions.map((packedAction) => {
-      const unpackedAction = this.unpackAction(packedAction, actionContext);
-      return Object.assign(unpackedAction, {
-        triggerName: trigger.name,
-        event: actionContext.evalContext.event
-      });
-    });
+  static actionsForTrigger(trigger, actionContext) {
+    return this.actionsForClause(trigger, actionContext);
   }
 }
 
