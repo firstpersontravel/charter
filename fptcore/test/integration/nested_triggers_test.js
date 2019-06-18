@@ -41,7 +41,9 @@ const actionContext = {
       name: 'TRIGGER-SUNRISE',
       event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' },
       actions: [{
-        offset: '120m',
+        name: 'wait',
+        duration: '120m'
+      }, {
         name: 'send_audio',
         from_role_name: 'Rooster',
         to_role_name: 'Farmer',

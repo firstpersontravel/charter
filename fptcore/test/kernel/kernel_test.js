@@ -189,7 +189,7 @@ describe('Kernel', () => {
 
     it('returns immediate result', () => {
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'add',  params: {}, scheduleAt: now.toDate() }
+        { name: 'add', params: {} }
       ]);
 
       const result = Kernel.resultForTrigger(trigger,
@@ -213,31 +213,6 @@ describe('Kernel', () => {
       });
     });
 
-    it('returns scheduled result', () => {
-      const in1Hour = now.clone().add(1, 'hours');
-      sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'add', params: {}, scheduleAt: in1Hour.toDate() }
-      ]);
-
-      const result = Kernel.resultForTrigger(trigger, event, actionContext, 
-        actionContext);
-
-      assert.deepStrictEqual(result, {
-        nextContext: Object.assign({}, actionContext, {
-          evalContext: { history: { trigger: now.toISOString() } }
-        }),
-        resultOps: [{
-          operation: 'updateTripHistory',
-          history: { trigger: now.toISOString() }
-        }],
-        scheduledActions: [{
-          name: 'add',
-          params: {},
-          scheduleAt: in1Hour.toDate()
-        }]
-      });
-    });
-
     it('returns result scheduled by wait with absolute time', () => {
       stubActions.waitUntil1Hour = {
         getOps(params, actionContext) {
@@ -246,8 +221,8 @@ describe('Kernel', () => {
         }
       };
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'waitUntil1Hour', params: {}, scheduleAt: now.toDate() },
-        { name: 'add', params: {}, scheduleAt: now.toDate() },
+        { name: 'waitUntil1Hour', params: {} },
+        { name: 'add', params: {} },
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
@@ -276,9 +251,9 @@ describe('Kernel', () => {
         }
       };
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
-        { name: 'add', params: {}, scheduleAt: now.toDate() }
+        { name: 'wait20SecsRelative', params: {} },
+        { name: 'wait20SecsRelative', params: {} },
+        { name: 'add', params: {} }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
@@ -313,11 +288,11 @@ describe('Kernel', () => {
         }
       };
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
-        { name: 'add', params: {}, scheduleAt: now.toDate() },
-        { name: 'waitUntil1Hour', params: {}, scheduleAt: now.toDate() },
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
-        { name: 'add', params: {}, scheduleAt: now.toDate() }
+        { name: 'wait20SecsRelative', params: {} },
+        { name: 'add', params: {} },
+        { name: 'waitUntil1Hour', params: {} },
+        { name: 'wait20SecsRelative', params: {} },
+        { name: 'add', params: {} }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext, 

@@ -1,8 +1,6 @@
 const _ = require('lodash');
-const moment = require('moment-timezone');
 
 const ConditionCore = require('../cores/condition');
-const TimeUtil = require('../utils/time');
 
 class KernelActions {
   /**
@@ -111,20 +109,7 @@ class KernelActions {
    * Parse an action when modifier ("in 3m") into a time.
    */
   static unpackAction(action, actionContext) {
-    const params = _.omit(action, 'name', 'when', 'offset');
-    const baseTimestamp = action.when ?
-      actionContext.evalContext.schedule[action.when] :
-      actionContext.evaluateAt;
-    const offsetSecs = TimeUtil.secondsForOffsetShorthand(action.offset);
-    const scheduleAt = moment
-      .utc(baseTimestamp)
-      .add(offsetSecs, 'seconds')
-      .toDate();
-    return {
-      name: action.name,
-      params: params,
-      scheduleAt: scheduleAt
-    };
+    return { name: action.name, params: _.omit(action, 'name') };
   }
 
   /**

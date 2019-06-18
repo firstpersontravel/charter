@@ -28,7 +28,6 @@ describe('KernelActions', () => {
       assert.deepStrictEqual(result, [{
         name: 'fake',
         params: { param1: 1 },
-        scheduleAt: now.toDate(),
         triggerName: trigger.name,
         event: contextWithEvent.event
       }]);
@@ -201,64 +200,10 @@ describe('KernelActions', () => {
   });
 
   describe('#unpackAction', () => {
-    function assertOffset(actual, expected, offsetInSeconds) {
-      assert.equal(
-        actual.getTime(),
-        expected.clone().add(offsetInSeconds, 'seconds').valueOf());
-    }
-
-    const now = moment.utc('2017-02-01T20:57:22Z');
-
-    const actionContext = {
-      evalContext: {
-        schedule: {
-          time134p: '2017-03-23T20:34:00.000Z',
-          time734a: '2017-03-25T10:34:00.000Z',
-          future: '2017-10-25T10:34:00.000Z'
-        }
-      },
-      evaluateAt: now
-    };
-    const time134p = moment.utc(actionContext.evalContext.schedule.time134p);
-
     it('unpacks an action object', () => {
-      const packed = { name: 'x', param1: 'y', offset: '10m' };
-      const res = KernelActions.unpackAction(packed, actionContext);
-      assert.deepStrictEqual(res, {
-        name: 'x',
-        params: { param1: 'y' },
-        scheduleAt: now.clone().add(10, 'minutes').toDate()
-      });
-    });
-
-    it('schedules for now when no modifier', () => {
       const packed = { name: 'x', param1: 'y' };
-      const res = KernelActions.unpackAction(packed, actionContext);
-      assertOffset(res.scheduleAt, now, 0);
-    });
-
-    it('schedules with relative time modifier', () => {
-      const packed = { name: 'x', param1: 'y', offset: '3m' };
-      const res = KernelActions.unpackAction(packed, actionContext);
-      assertOffset(res.scheduleAt, now, 180);
-    });
-
-    it('schedules with absolute time modifier', () => {
-      const packed = { name: 'x', param1: 'y', when: 'time134p' };
-      const res = KernelActions.unpackAction(packed, actionContext);
-      assertOffset(res.scheduleAt, time134p, 0);
-    });
-
-    it('schedules with complex time modifier', () => {
-      const packed = { name: 'x', when: 'time134p', offset: '10m' };
-      const res = KernelActions.unpackAction(packed, actionContext);
-      assertOffset(res.scheduleAt, time134p, 600);
-    });
-
-    it('schedules with complex negative time modifier', () => {
-      const packed = { name: 'x', when: 'time134p', offset: '-10s' };
-      const res = KernelActions.unpackAction(packed, actionContext);
-      assertOffset(res.scheduleAt, time134p, -10);
+      const res = KernelActions.unpackAction(packed, {});
+      assert.deepStrictEqual(res, { name: 'x', params: { param1: 'y' } });
     });
   });
 });
