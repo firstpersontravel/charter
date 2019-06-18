@@ -1,24 +1,88 @@
 const assert = require('assert');
-const fs = require('fs');
 const httpMocks = require('node-mocks-http');
-const path = require('path');
-const sequelizeFixtures = require('sequelize-fixtures');
 const sinon = require('sinon');
 const twilio = require('twilio');
-const yaml = require('js-yaml');
 
 const { sandbox } = require('../mocks');
 const twilioRoutes = require('../../src/routes/twilio');
 const models = require('../../src/models');
+const ScriptCore = require('../../../fptcore/src/cores/script');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
+const TestUtil = require('../util');
+
+const scriptContent = {
+  meta: { version: ScriptCore.CURRENT_VERSION },
+  departures: [{ name: 'T1', title: 'T1' }],
+  roles: [
+    { name: 'Actor', title: 'Actor', type: 'performer' },
+    { name: 'Player', title: 'Player', type: 'traveler' }
+  ],
+  relays: [
+    { name: 'r1', for: 'Actor', as: 'Actor', with: 'Player' },
+    { name: 'r2', for: 'Player', as: 'Player', with: 'Actor', trailhead: true }
+  ]
+};
 
 describe('twilioRoutes', () => {
-  const fixturePath = path.join(__dirname, '../fixtures/relays.yaml');
-  const fixtures = yaml.safeLoad(fs.readFileSync(fixturePath, 'utf8'));
+
+  let trip;
+  let travelerUser;
+  let actorUser;
+  let travelerRelay;
 
   beforeEach(async () => {
-    await sequelizeFixtures.loadFixtures(fixtures, models);
+    const script = await TestUtil.createScriptWithContent(scriptContent);
+    trip = await TestUtil.createDummyTripForScript(script, []);
+    travelerUser = await models.User.create({
+      orgId: trip.orgId,
+      experienceId: trip.experienceId,
+      firstName: 'tester1',
+      phoneNumber: '1111111111',
+      isArchived: false,
+      isActive: true
+    });
+    actorUser = await models.User.create({
+      orgId: trip.orgId,
+      experienceId: trip.experienceId,
+      firstName: 'actor2',
+      phoneNumber: '2222222222',
+      isArchived: false,
+      isActive: true
+    });
+
+    await models.Player.update(
+      { userId: travelerUser.id },
+      { where: { tripId: trip.id, roleName: 'Player' } });
+    await models.Player.update(
+      { userId: actorUser.id },
+      { where: { tripId: trip.id, roleName: 'Actor' } });
+
+    travelerRelay = await models.Relay.create({
+      orgId: trip.orgId,
+      experienceId: trip.experienceId,
+      departureName: 'T1',
+      stage: 'test',
+      isActive: true,
+      forRoleName: 'Player',
+      asRoleName: 'Player',
+      withRoleName: 'Actor',
+      relayPhoneNumber: '9999999999',
+      userPhoneNumber: ''
+    });
+    
+    await models.Relay.create({
+      orgId: trip.orgId,
+      experienceId: trip.experienceId,
+      departureName: 'T1',
+      stage: 'test',
+      isActive: true,
+      forRoleName: 'Actor',
+      asRoleName: 'Actor',
+      withRoleName: 'Player',
+      relayPhoneNumber: '9999999998',
+      userPhoneNumber: ''
+    });
   });
 
   describe('#incomingMessageRoute', () => {
@@ -27,8 +91,8 @@ describe('twilioRoutes', () => {
       const req = httpMocks.createRequest({
         body: {
           SmsStatus: 'incoming',
-          From: '+11111111111', // user
-          To: '+19999999999',   // relay
+          From: `+1${travelerUser.phoneNumber}`, // user
+          To: `+1${travelerRelay.relayPhoneNumber}`,   // relay
           Body: 'Reply',
           NumMedia: '0'
         }
@@ -49,12 +113,12 @@ describe('twilioRoutes', () => {
           from_role_name: 'Player',
           to_role_name: 'Actor',
           content: 'Reply',
-          from_relay_id: 3
+          from_relay_id: travelerRelay.id
         }
       };
       assert.deepEqual(
         KernelController.applyAction.firstCall.args,
-        [1, expectedAction]);
+        [trip.id, expectedAction]);
 
       // Check response
       assert.strictEqual(res.statusCode, 200);
@@ -62,15 +126,14 @@ describe('twilioRoutes', () => {
   });
 
   describe('#incomingCallRoute', () => {
-
     it('handles incoming call to start conference', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
         body: {
           CallStatus: 'ringing',
           Direction: 'inbound',
-          From: '+11111111111', // player
-          To: '+19999999999'    // player relay
+          From: `+1${travelerUser.phoneNumber}`,
+          To: `+1${travelerRelay.relayPhoneNumber}`
         }
       });
       const res = httpMocks.createResponse();
@@ -90,7 +153,7 @@ describe('twilioRoutes', () => {
       await twilioRoutes.incomingCallRoute(req, res);
 
       // Check calls made correctly
-      sinon.assert.calledWith(KernelController.applyEvent, 1, {
+      sinon.assert.calledWith(KernelController.applyEvent, trip.id, {
         from: 'Player',
         to: 'Actor',
         type: 'call_received'
@@ -128,16 +191,13 @@ describe('twilioRoutes', () => {
     it('handles outgoing call to start conference', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
-        query: {
-          trip: 1,
-          relay: 3
-        },
+        query: { trip: trip.id, relay: travelerRelay.id },
         body: {
           CallStatus: 'in-progress',
           AnsweredBy: 'machine_beep_end',
           Direction: 'outbound-api',
-          From: '+19999999999',  // Player relay
-          To: '+11111111111'     // Player user
+          From: `+1${travelerRelay.relayPhoneNumber}`,  // Player relay
+          To: `+1${travelerUser.phoneNumber}`     // Player user
         }
       });
       const res = httpMocks.createResponse();
@@ -148,7 +208,7 @@ describe('twilioRoutes', () => {
       sinon.assert.calledOnce(KernelController.applyEvent);
       assert.deepStrictEqual(
         KernelController.applyEvent.firstCall.args,
-        [1, {
+        [trip.id, {
           from: 'Actor',
           to: 'Player',
           type: 'call_answered',
@@ -171,13 +231,13 @@ describe('twilioRoutes', () => {
     it('sets answered_by_machine when answered by a human', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
-        query: { trip: '1', relay: '3' },
+        query: { trip: trip.id, relay: travelerRelay.id },
         body: {
           CallStatus: 'in-progress',
           AnsweredBy: 'human',
           Direction: 'outbound-api',
-          From: '+19999999999',  // Player relay
-          To: '+11111111111'     // Player user
+          From: `+1${travelerRelay.relayPhoneNumber}`,  // Player relay
+          To: `+1${travelerUser.phoneNumber}`     // Player user
         }
       });
       const res = httpMocks.createResponse();
@@ -215,7 +275,7 @@ describe('twilioRoutes', () => {
     it('handles digits response', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
-        query: { trip: '1', relay: '10', clip: 'CLIP-NAME' },
+        query: { trip: trip.id, relay: travelerRelay.id, clip: 'CLIP-NAME' },
         body: { Digits: '123' }
       });
       const res = httpMocks.createResponse();
@@ -226,7 +286,7 @@ describe('twilioRoutes', () => {
       // Assert creates proper event and sends to trigger
       assert.deepStrictEqual(
         TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
-        [1, stubRelay, {
+        [trip.id, stubRelay, {
           clip: 'CLIP-NAME',
           partial: false,
           response: '123',
@@ -243,7 +303,7 @@ describe('twilioRoutes', () => {
     it('handles final speech response', async () => {
       // Create dummy request
       const req = httpMocks.createRequest({
-        query: { trip: '1', relay: '10', clip: 'CLIP-NAME' },
+        query: { trip: trip.id, relay: travelerRelay.id, clip: 'CLIP-NAME' },
         body: { SpeechResult: 'test result', Confidence: 0.5 }
       });
       const res = httpMocks.createResponse();
@@ -254,7 +314,7 @@ describe('twilioRoutes', () => {
       // Assert creates proper event and sends to trigger
       assert.deepStrictEqual(
         TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
-        [1, stubRelay, {
+        [trip.id, stubRelay, {
           clip: 'CLIP-NAME',
           partial: false,
           response: 'test result',
@@ -272,8 +332,8 @@ describe('twilioRoutes', () => {
       // Create dummy request
       const req = httpMocks.createRequest({
         query: {
-          trip: '1',
-          relay: '10',
+          trip: trip.id,
+          relay: travelerRelay.id,
           clip: 'CLIP-NAME',
           partial: 'true'
         },
@@ -287,7 +347,7 @@ describe('twilioRoutes', () => {
       // Assert creates proper event and sends to trigger
       assert.deepStrictEqual(
         TwilioCallHandler._triggerEventAndGatherTwiml.firstCall.args,
-        [1, stubRelay, {
+        [trip.id, stubRelay, {
           clip: 'CLIP-NAME',
           partial: true,
           response: 'prelim result',
