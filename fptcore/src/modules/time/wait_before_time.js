@@ -13,7 +13,7 @@ module.exports = {
     },
     before: {
       required: true,
-      type: 'duration',
+      type: 'timeOffset',
       display: { label: false }
     }
   },

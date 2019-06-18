@@ -1,5 +1,5 @@
 meta:
-  version: 16
+  version: 17
 
 layouts:
   - name: tablet
@@ -114,11 +114,12 @@ triggers:
       geofence: GEOFENCE-ATLAS
     scene: SCENE-MAIN
     actions:
+      - name: wait
+        duration: 10s
       - name: send_text
         from_role_name: Guide
         to_role_name: Player
         content: Try the trout sandwich.
-        offset: 10s
       - name: increment_value
         value_ref: points
         delta: 5

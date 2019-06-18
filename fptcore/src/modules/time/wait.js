@@ -5,7 +5,7 @@ module.exports = {
   params: {
     duration: {
       required: true,
-      type: 'duration',
+      type: 'timeOffset',
       display: { label: false }
     }
   },

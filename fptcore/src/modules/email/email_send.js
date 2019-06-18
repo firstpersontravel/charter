@@ -100,8 +100,5 @@ module.exports = {
         bodyMarkdown: bodyMarkdown
       }
     }];
-  },
-  getChildClaims: function(params) {
-    return ['emails.' + params.email_name];
   }
 };

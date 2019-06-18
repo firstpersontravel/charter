@@ -7,7 +7,7 @@ const ResourcesRegistry = require('../registries/resources');
 const ValidationCore = require('../cores/validation');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 16;
+const CURRENT_VERSION = 17;
 
 const metaSchema = {
   type: 'object',

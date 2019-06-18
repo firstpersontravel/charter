@@ -22,15 +22,6 @@ function createActionListProperty(actionsRegistry) {
           type: 'enum',
           options: ACTION_NAME_OPTIONS,
           required: true
-        },
-        when: {
-          type: 'reference',
-          collection: 'times',
-          display: { last: true, placeholder: 'At once' }
-        },
-        offset: {
-          type: 'timeOffset',
-          display: { last: true, placeholder: 'None' }
         }
       }
     },

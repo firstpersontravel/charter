@@ -157,16 +157,19 @@ body {
   }
 
   .script-editor-container {
+
+    height: calc(100% - 100px);
+
     .script-editor-nav {
-      max-height: calc(100% - 100px);
+      max-height: 100%;
       overflow-y: scroll; 
     }
     .script-editor-tree {
-      max-height: calc(100% - 100px);
+      max-height: 100%;
       overflow-y: scroll;
     }
     .script-editor-resource {
-      max-height: calc(100% - 100px);
+      max-height: 100%;
       overflow-y: scroll; 
     }
   }

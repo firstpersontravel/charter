@@ -1,5 +1,5 @@
 meta:
-  version: 16
+  version: 17
 
 roles:
   - name: Knight
@@ -70,8 +70,9 @@ triggers:
         from_role_name: Sage
         to_role_name: Knight
         content: Greetings, {{player_name}}. You may now await your righteous quest.
+      - name: wait
+        duration: 10s
       - name: send_text
         from_role_name: Sage
         to_role_name: Knight
         content: Your quest is... the holy grail!
-        offset: 10s

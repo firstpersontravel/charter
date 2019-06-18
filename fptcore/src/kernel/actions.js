@@ -13,18 +13,16 @@ class KernelActions {
       return;
     }
     if (!_.isArray(actions)) {
-      throw new Error('Expected actions to be an array, was ' + typeof actions +
-        '.');
+      throw new Error(`Expected actions to be array, was ${typeof actions}.`);
     }
-    actions.forEach((action, i) => {
+    for (const [i, action] of Object.entries(actions)) {
       if (!_.isPlainObject(action)) {
-        throw new Error('Expected action to be object, was ' + typeof action +
-          '.');
+        throw new Error(`Expected action to be object, was ${typeof action}.`);
       }
       const indexPath = path + '[' + i + ']';
       if (action.name && action.name !== 'conditional') {
         actionIteree(action, indexPath);
-        return;
+        continue;
       }
       if (action.if) {
         ifIteree(action.if, indexPath + '.if');
@@ -34,18 +32,18 @@ class KernelActions {
           actionIteree, ifIteree);
       }
       if (action.elseifs) {
-        action.elseifs.forEach((elseif, j) => {
+        for (const [j, elseif] of Object.entries(action.elseifs)) {
           const elseifPath = indexPath + '.elseifs[' + j + ']';
           ifIteree(elseif.if, elseifPath + '.if');
           this.walkPackedActions(elseif.actions, elseifPath + '.actions', 
             actionIteree, ifIteree);
-        });
+        }
       }
       if (action.else) {
         this.walkPackedActions(action.else, indexPath + '.else',
           actionIteree, ifIteree);
       }
-    });
+    }
   }
 
   /**
@@ -62,9 +60,9 @@ class KernelActions {
     }
     // Check for elseifs and iterate in order.
     if (clause.elseifs) {
-      for (let i = 0; i < clause.elseifs.length; i++) {
-        if (ConditionCore.if(actionContext.evalContext, clause.elseifs[i].if)) {
-          return clause.elseifs[i].actions;
+      for (const elseif of clause.elseifs) {
+        if (ConditionCore.if(actionContext.evalContext, elseif.if)) {
+          return elseif.actions;
         }
       }
     }

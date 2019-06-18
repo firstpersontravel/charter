@@ -571,7 +571,6 @@ export default class FieldRenderer {
   }
 
   renderObject(spec, value, name, path, opts) {
-    console.log('renderObject', spec, value, name, path, opts);
     const props = _(Object.keys(spec.properties))
       .sortBy(key => !!_.get(spec.properties[key], 'display.last'))
       .value();
