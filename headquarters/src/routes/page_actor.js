@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const Promise = require('bluebird');
 const Sequelize = require('sequelize');
 
 const ConditionCore = require('../../../fptcore/src/cores/condition');
@@ -164,9 +163,9 @@ const userShowRoute = async (req, res) => {
     .sortBy(player => player.trip.departureName)
     .value();
 
-  const objsList = await Promise.map(playersByDeparture, (player) => (
+  const objsList = await Promise.all(playersByDeparture.map(player => (
     KernelUtil.getObjectsForTrip(player.tripId)
-  ));
+  )));
 
   const pages = _(players)
     .map((player, i) => {
