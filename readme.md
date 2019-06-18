@@ -81,7 +81,7 @@
     # Clear contaniers
     docker kill $(docker ps -q)
     docker rm $(docker ps -a -q)
-    docker rmi $(docker images -q)
+    docker rmi $(docker images -q) --force
     docker volume ls -qf dangling=true | xargs docker volume rm
 
     # Clean non-tracked cruft

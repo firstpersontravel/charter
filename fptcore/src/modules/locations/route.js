@@ -19,6 +19,12 @@ module.exports = {
       required: true,
       help: 'The ending waypoint'
     },
+    mode: {
+      type: 'enum',
+      options: ROUTE_VIA_OPTIONS,
+      default: 'driving',
+      help: 'The method of transit for directions.'
+    },
     via: {
       type: 'list',
       items: {
@@ -26,12 +32,6 @@ module.exports = {
         help: 'A coord that the route must pass through.'
       },
       help: 'An optional list of coordinates through through which the route must pass.'
-    },
-    mode: {
-      type: 'enum',
-      options: ROUTE_VIA_OPTIONS,
-      default: 'driving',
-      help: 'The method of transit for directions.'
     }
   },
   getParentClaims: function(resource) {
