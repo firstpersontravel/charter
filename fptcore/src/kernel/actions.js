@@ -120,7 +120,8 @@ class KernelActions {
     const offsetSecs = TimeUtil.secondsForOffsetShorthand(action.offset);
     const scheduleAt = moment
       .utc(baseTimestamp)
-      .add(offsetSecs, 'seconds');
+      .add(offsetSecs, 'seconds')
+      .toDate();
     return {
       name: action.name,
       params: params,

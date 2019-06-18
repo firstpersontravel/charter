@@ -157,14 +157,22 @@ describe('Integration - Nested Triggers', () => {
 
     const result = Kernel.resultForEvent(event, actionContext);
 
-    assert.strictEqual(result.nextContext.evalContext.apples, 0);
-    assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updateTripHistory',
-      history: { 'TRIGGER-UNLOAD-APPLES': now.toISOString() } 
-    }, {
-      operation: 'updateTripValues',
-      values: { apples: 0 }
-    }]);
+    assert.deepStrictEqual(result, {
+      nextContext: Object.assign({}, actionContext, {
+        evalContext: Object.assign({}, actionContext.evalContext, {
+          apples: 0,
+          history: { 'TRIGGER-UNLOAD-APPLES': now.toISOString() } 
+        })
+      }),
+      resultOps: [{
+        operation: 'updateTripHistory',
+        history: { 'TRIGGER-UNLOAD-APPLES': now.toISOString() } 
+      }, {
+        operation: 'updateTripValues',
+        values: { apples: 0 }
+      }],
+      scheduledActions: []
+    });
   });
 
   it('applies cue triggering action later', () => {
@@ -176,27 +184,31 @@ describe('Integration - Nested Triggers', () => {
 
     const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
-    assert.strictEqual(result.nextContext.evalContext.apples, 2);
-    assert.deepStrictEqual(result.resultOps, [{
-      operation: 'event',
-      event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' }
-    }, {
-      operation: 'updateTripHistory',
-      history: { 'TRIGGER-SUNRISE': now.toISOString() }
-    }]);
-    assert.strictEqual(result.scheduledActions.length, 1);
-    assert.strictEqual(result.scheduledActions[0].name, 'send_audio');
-    assert.deepStrictEqual(result.scheduledActions[0].params, {
-      from_role_name: 'Rooster',
-      to_role_name: 'Farmer',
-      content: 'crow.mp3'
-    });
-    assert(result.scheduledActions[0].scheduleAt.isSame(inTwoHours));
-    assert.strictEqual(result.scheduledActions[0].triggerName,
-      'TRIGGER-SUNRISE');
-    assert.deepStrictEqual(result.scheduledActions[0].event, {
-      type: 'cue_signaled',
-      cue: 'CUE-SUNRISE'
+    assert.deepStrictEqual(result, {
+      nextContext: Object.assign({}, actionContext, {
+        evalContext: Object.assign({}, actionContext.evalContext, {
+          apples: 2,
+          history: { 'TRIGGER-SUNRISE': now.toISOString() }
+        })
+      }),
+      resultOps: [{
+        operation: 'event',
+        event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' }
+      }, {
+        operation: 'updateTripHistory',
+        history: { 'TRIGGER-SUNRISE': now.toISOString() }
+      }],
+      scheduledActions: [{
+        name: 'send_audio',
+        params: {
+          from_role_name: 'Rooster',
+          to_role_name: 'Farmer',
+          content: 'crow.mp3'
+        },
+        scheduleAt: inTwoHours.toDate(),
+        triggerName: 'TRIGGER-SUNRISE',
+        event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' }
+      }]
     });
   });
 

@@ -40,7 +40,7 @@ describe('KernelController', () => {
 
     it('schedules an action', async () => {
       const now = moment.utc();
-      const inOneHour = now.clone().add(1, 'hours');
+      const inOneHour = now.clone().add(1, 'hours').toDate();
       const scheduleAction = {
         name: 'set_value',
         params: { value_ref: 'ABC', new_value_ref: 'DEF' },
@@ -65,7 +65,7 @@ describe('KernelController', () => {
         failedAt: null,
         name: 'set_value',
         params: scheduleAction.params,
-        scheduledAt: inOneHour.toDate(),
+        scheduledAt: inOneHour,
         triggerName: ''
       });
     });

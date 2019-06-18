@@ -124,11 +124,13 @@ class Kernel {
       // So we either want to apply it if we're not yet waiting, or schedule
       // it, either if we are, or if the command had an internal wait from
       // `time` or `offset` properties -- to be deprecated.
-      const scheduleAt = moment.max(waitingUntil, unpackedAction.scheduleAt);
+      const scheduleAt = moment.max(
+        waitingUntil,
+        moment(unpackedAction.scheduleAt).utc());
       // If it's later, schedule it
       if (scheduleAt.isAfter(actionContext.evaluateAt)) {
         latestResult.scheduledActions.push(Object.assign({}, unpackedAction, {
-          scheduleAt: scheduleAt
+          scheduleAt: scheduleAt.toDate()
         }));
         continue;
       }

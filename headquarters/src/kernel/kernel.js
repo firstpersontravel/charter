@@ -31,7 +31,8 @@ class KernelController {
   }
   
   static async _scheduleAction(orgId, tripId, action) {
-    const scheduleAtLocal = action.scheduleAt
+    const scheduleAtLocal = moment(action.scheduleAt)
+      .utc()
       .clone()
       .tz('US/Pacific')
       .format('h:mm:ssa z');
@@ -46,7 +47,7 @@ class KernelController {
       triggerName: action.triggerName || '',
       event: action.event || null,
       createdAt: moment.utc().toDate(),
-      scheduledAt: action.scheduleAt.toDate(),
+      scheduledAt: action.scheduleAt,
       appliedAt: null,
       failedAt: null
     };

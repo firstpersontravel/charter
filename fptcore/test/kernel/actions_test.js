@@ -28,7 +28,7 @@ describe('KernelActions', () => {
       assert.deepStrictEqual(result, [{
         name: 'fake',
         params: { param1: 1 },
-        scheduleAt: now,
+        scheduleAt: now.toDate(),
         triggerName: trigger.name,
         event: contextWithEvent.event
       }]);
@@ -203,8 +203,8 @@ describe('KernelActions', () => {
   describe('#unpackAction', () => {
     function assertOffset(actual, expected, offsetInSeconds) {
       assert.equal(
-        actual.format(),
-        expected.clone().add(offsetInSeconds, 'seconds').format());
+        actual.getTime(),
+        expected.clone().add(offsetInSeconds, 'seconds').valueOf());
     }
 
     const now = moment.utc('2017-02-01T20:57:22Z');
@@ -227,7 +227,7 @@ describe('KernelActions', () => {
       assert.deepStrictEqual(res, {
         name: 'x',
         params: { param1: 'y' },
-        scheduleAt: now.clone().add(10, 'minutes')
+        scheduleAt: now.clone().add(10, 'minutes').toDate()
       });
     });
 

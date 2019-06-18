@@ -189,7 +189,7 @@ describe('Kernel', () => {
 
     it('returns immediate result', () => {
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'add',  params: {}, scheduleAt: now }
+        { name: 'add',  params: {}, scheduleAt: now.toDate() }
       ]);
 
       const result = Kernel.resultForTrigger(trigger,
@@ -216,7 +216,7 @@ describe('Kernel', () => {
     it('returns scheduled result', () => {
       const in1Hour = now.clone().add(1, 'hours');
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'add', params: {}, scheduleAt: in1Hour }
+        { name: 'add', params: {}, scheduleAt: in1Hour.toDate() }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext, 
@@ -230,7 +230,11 @@ describe('Kernel', () => {
           operation: 'updateTripHistory',
           history: { trigger: now.toISOString() }
         }],
-        scheduledActions: [{ name: 'add', params: {}, scheduleAt: in1Hour }]
+        scheduledActions: [{
+          name: 'add',
+          params: {},
+          scheduleAt: in1Hour.toDate()
+        }]
       });
     });
 
@@ -242,8 +246,8 @@ describe('Kernel', () => {
         }
       };
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'waitUntil1Hour', params: {}, scheduleAt: now },
-        { name: 'add', params: {}, scheduleAt: now },
+        { name: 'waitUntil1Hour', params: {}, scheduleAt: now.toDate() },
+        { name: 'add', params: {}, scheduleAt: now.toDate() },
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
@@ -260,7 +264,7 @@ describe('Kernel', () => {
         scheduledActions: [{
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(1, 'hours')
+          scheduleAt: now.clone().add(1, 'hours').toDate()
         }]
       });
     });
@@ -272,9 +276,9 @@ describe('Kernel', () => {
         }
       };
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now },
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now },
-        { name: 'add', params: {}, scheduleAt: now }
+        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
+        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
+        { name: 'add', params: {}, scheduleAt: now.toDate() }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext,
@@ -291,7 +295,7 @@ describe('Kernel', () => {
         scheduledActions: [{
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(40, 'seconds')
+          scheduleAt: now.clone().add(40, 'seconds').toDate()
         }]
       });
     });
@@ -309,11 +313,11 @@ describe('Kernel', () => {
         }
       };
       sandbox.stub(KernelActions, 'unpackedActionsForTrigger').returns([
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now },
-        { name: 'add', params: {}, scheduleAt: now },
-        { name: 'waitUntil1Hour', params: {}, scheduleAt: now },
-        { name: 'wait20SecsRelative', params: {}, scheduleAt: now },
-        { name: 'add', params: {}, scheduleAt: now }
+        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
+        { name: 'add', params: {}, scheduleAt: now.toDate() },
+        { name: 'waitUntil1Hour', params: {}, scheduleAt: now.toDate() },
+        { name: 'wait20SecsRelative', params: {}, scheduleAt: now.toDate() },
+        { name: 'add', params: {}, scheduleAt: now.toDate() }
       ]);
 
       const result = Kernel.resultForTrigger(trigger, event, actionContext, 
@@ -330,11 +334,11 @@ describe('Kernel', () => {
         scheduledActions: [{
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(20, 'seconds')
+          scheduleAt: now.clone().add(20, 'seconds').toDate()
         }, {
           name: 'add',
           params: {},
-          scheduleAt: now.clone().add(1, 'hour').add(20, 'seconds')
+          scheduleAt: now.clone().add(1, 'hour').add(20, 'seconds').toDate()
         }]
       });
     });
