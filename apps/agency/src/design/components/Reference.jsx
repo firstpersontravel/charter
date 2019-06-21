@@ -6,7 +6,7 @@ import { ModulesRegistry, TextUtil } from 'fptcore';
 import ResourceBadge from '../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
 
-function renderActions(module, actionNames) {
+function renderSidebarActions(module, actionNames) {
   return _.map(actionNames, actionName => (
     <div key={actionName} className="constrain-text pl-2">
       <a href={`#${actionName}`}>{actionName}</a>
@@ -14,7 +14,7 @@ function renderActions(module, actionNames) {
   ));
 }
 
-function renderEvents(module, eventTypes) {
+function renderSidebarEvents(module, eventTypes) {
   return _.map(eventTypes, eventType => (
     <div key={eventType} className="constrain-text pl-2">
       <a href={`#${eventType}`}>{eventType}</a>
@@ -23,26 +23,19 @@ function renderEvents(module, eventTypes) {
 }
 
 function renderResourceLink(resourceType, moduleResource) {
-  const resourceClass = moduleResource.resource || moduleResource.subresource;
+  const resourceClass = moduleResource.resource;
   const resourceIconName = resourceClass && resourceClass.icon;
   const resourceIcon = resourceIconName ? (
     <i className={`fa fa-${resourceIconName} mr-1`} />
   ) : null;
 
   const resourceLabel = (
-    <span>
-      {resourceIcon}{TextUtil.titleForKey(resourceType)}
-    </span>
+    <span>{resourceIcon}{TextUtil.titleForKey(resourceType)}</span>
   );
 
   if (moduleResource.resource) {
     return (
       <a href={`#r_${resourceType}`}>{resourceLabel}</a>
-    );
-  }
-  if (moduleResource.subresource) {
-    return (
-      <a href={`#s_${resourceType}`}>{resourceLabel}</a>
     );
   }
   return resourceLabel;
@@ -59,8 +52,8 @@ function renderSidebarResource(resourceType, moduleResource) {
       <div className="constrain-text">
         {renderResourceLink(resourceType, moduleResource)}
       </div>
-      {renderActions(module, actionNames)}
-      {renderEvents(module, eventTypes)}
+      {renderSidebarActions(module, actionNames)}
+      {renderSidebarEvents(module, eventTypes)}
     </div>
   );
 }
@@ -93,14 +86,6 @@ function renderSidebar() {
   );
 }
 
-function labelForSubresource(resourceType) {
-  return (
-    <a href={`#s_${resourceType}`}>
-      <ResourceBadge resourceType={resourceType} className="mb-1" />
-    </a>
-  );
-}
-
 function labelForSpecType(spec, key) {
   // HACK
   if (_.startsWith(key, 'actions')) {
@@ -110,17 +95,12 @@ function labelForSpecType(spec, key) {
   if (_.startsWith(key, 'event')) {
     return 'Event';
   }
+  // HACK HACK HACK
+  if (_.includes(key, 'panel')) {
+    return 'Panel';
+  }
   if (!spec.type) {
     return 'unknown';
-  }
-  // HACK: Only for panel at the moment
-  if (spec.type === 'variegated') {
-    return Object.keys(spec.classes)
-      .map(k => (
-        <span key={k} className="mr-1">
-          {labelForSubresource(`${k}_panel`)}
-        </span>
-      ));
   }
   if (spec.type === 'list') {
     return <span>List</span>;
@@ -224,18 +204,14 @@ function renderFields(properties) {
 }
 
 function renderResourceSimple(resourceType, moduleResource) {
-  const resource = moduleResource.resource || moduleResource.subresource;
+  const resource = moduleResource.resource;
   if (!resource) {
     return null;
   }
-  const isPrimaryResource = !!moduleResource.resource;
-  const resourceTypeTitle = isPrimaryResource ?
-    'Resource' :
-    'Embedded resource';
   return (
     <div key={resourceType}>
-      <h3 id={`${isPrimaryResource ? 'r' : 's'}_${resourceType}`}>
-        {resourceTypeTitle}: <ResourceBadge resourceType={resourceType} />
+      <h3 id={`r_${resourceType}`}>
+        Resource: <ResourceBadge resourceType={resourceType} />
       </h3>
       <p>{resource.help}</p>
       {renderFields(resource.properties)}
@@ -267,8 +243,26 @@ function renderEvent(eventType, eventSpec) {
   );
 }
 
+function renderPanel(panelType, panelSpec) {
+  return (
+    <div key={panelType}>
+      <h4 id={panelType}>
+        Panel: <strong>{panelType}</strong>
+      </h4>
+      <p>{panelSpec.help}</p>
+      {renderFields(panelSpec.properties)}
+    </div>
+  );
+}
+
+
 function renderResource(resourceType, moduleResource) {
   const renderedResource = renderResourceSimple(resourceType, moduleResource);
+  const renderedPanels = Object
+    .keys(moduleResource.panels || {})
+    .map(panelType => (
+      renderPanel(panelType, moduleResource.panels[panelType])
+    ));
   const renderedActions = Object
     .keys(moduleResource.actions || {})
     .map(actionName => (
@@ -281,6 +275,7 @@ function renderResource(resourceType, moduleResource) {
     ));
   return (
     <div key={resourceType}>
+      {renderedPanels}
       {renderedResource}
       {renderedActions}
       {renderedEvents}

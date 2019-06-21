@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 
+const panel = require('../../src/modules/pages/panel');
 const ResourcesRegistry = require('../../src/registries/resources');
-const SubresourcesRegistry = require('../../src/registries/subresources');
 const ScriptCore = require('../../src/cores/script');
 
 describe('ScriptCore', () => {
@@ -46,7 +46,7 @@ describe('ScriptCore', () => {
         ResourcesRegistry.achievement.properties.test,
         scriptContent.achievements[0], 'test');
       sinon.assert.calledWith(iteree.getCall(2), 'test3',
-        SubresourcesRegistry.panel.common.properties.visible_if,
+        panel.common.properties.visible_if,
         scriptContent.pages[0].panels[0], 'visible_if');  // panel common
       sinon.assert.calledWith(iteree.getCall(3), 'test4',
         ResourcesRegistry.trigger.properties.active_if,

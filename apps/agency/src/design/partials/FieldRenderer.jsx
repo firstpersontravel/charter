@@ -588,19 +588,14 @@ export default class FieldRenderer {
     );
   }
 
-  renderSubresource(spec, value, name, path, opts) {
-    const properties = Object.keys(spec.class.properties);
-    if (properties.length === 1 && properties[0] === 'self') {
-      return this.renderFieldValue(spec.class.properties.self, value,
-        name, path);
-    }
-    return this.renderObject(spec.class, value, name, path, opts);
-  }
-
   renderVariegated(spec, value, name, path, opts) {
     const variety = ValidationCore.getVariegatedVariety(spec, value);
     const varietyClass = ValidationCore.getVariegatedClass(spec, variety);
-    return this.renderSubresource({ class: varietyClass }, value, name, path,
-      opts);
+    const properties = Object.keys(varietyClass.properties);
+    if (properties.length === 1 && properties[0] === 'self') {
+      return this.renderFieldValue(varietyClass.properties.self, value,
+        name, path);
+    }
+    return this.renderObject(varietyClass, value, name, path, opts);
   }
 }

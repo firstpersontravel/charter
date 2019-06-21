@@ -22,10 +22,12 @@ const ModulesRegistry = {};
 modules.forEach(function(mod) {
   mod.actions = {};
   mod.events = {};
+  mod.panels = {};
   Object.keys(mod.resources).forEach(resourceType => {
     const resourceDef = mod.resources[resourceType];
     Object.assign(mod.actions, resourceDef.actions);
     Object.assign(mod.events, resourceDef.events);
+    Object.assign(mod.panels, resourceDef.panels);
   });
   ModulesRegistry[mod.name] = mod;
 });
@@ -33,10 +35,12 @@ modules.forEach(function(mod) {
 // Gather actions and events
 const allActions = {};
 const allEvents = {};
+const allPanels = {};
 
 Object.values(ModulesRegistry).forEach(module => {
   Object.assign(allActions, module.actions);
   Object.assign(allEvents, module.events);
+  Object.assign(allPanels, module.panels);
 });
 
 // Create trigger module
