@@ -3,37 +3,12 @@ const _ = require('lodash');
 const KernelActions = require('../kernel/actions');
 
 function createActionListProperty(actionsRegistry) {
-  const actionsClasses = _.mapValues(actionsRegistry, function(actionClass) {
-    return { properties: actionClass.params };
-  });
-
-  const ACTION_NAME_OPTIONS = Object
-    .keys(actionsRegistry)
-    .concat(['conditional']);
-
-  const singleActionParam = {
-    type: 'variegated',
-    key: 'name',
-    common: {
-      display: { form: 'inline' },
-      properties: {
-        name: {
-          display: { label: false, placeholder: 'Action' },
-          type: 'enum',
-          options: ACTION_NAME_OPTIONS,
-          required: true
-        }
-      }
-    },
-    classes: actionsClasses
-  };
-
-  const singleActionResource = {
-    properties: { self: singleActionParam }
-  };
-
   // Filled in later to avoid circular dependency
   const actionListParam = {};
+
+  const actionsClasses = _.mapValues(actionsRegistry, actionClass => ({
+    properties: actionClass.params
+  }));
 
   const elseIfParam = {
     type: 'object',
@@ -43,11 +18,11 @@ function createActionListProperty(actionsRegistry) {
     }
   };
 
-  const conditionalActionResource = {
+  actionsClasses.conditional = {
     properties: {
       name: {
         type: 'enum',
-        options: ACTION_NAME_OPTIONS,
+        options: Object.keys(actionsClasses),
         required: true,
         display: { label: false, placeholder: 'Action' }
       },
@@ -58,22 +33,28 @@ function createActionListProperty(actionsRegistry) {
     }
   };
 
-  const actionOrClauseParam = {
+  const actionParam = {
     type: 'variegated',
-    key: function(obj) {
-      return obj.name === 'conditional' ? 'conditionalAction' : 'singleAction';
+    key: 'name',
+    common: {
+      display: { form: 'inline' },
+      properties: {
+        name: {
+          display: { label: false, placeholder: 'Action' },
+          type: 'enum',
+          options: Object.keys(actionsClasses),
+          required: true
+        }
+      }
     },
-    classes: {
-      singleAction: singleActionResource,
-      conditionalAction: conditionalActionResource
-    }
+    classes: actionsClasses
   };
 
   // Filled in now to avoid a circular dependency
   Object.assign(actionListParam, {
     type: 'list',
     default: [{}],
-    items: actionOrClauseParam
+    items: actionParam
   });
 
   return actionListParam;

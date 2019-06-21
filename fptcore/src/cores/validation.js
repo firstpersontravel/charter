@@ -340,39 +340,32 @@ class ValidationCore {
   static validateParams(script, paramsSpec, params, prefix) {
     const warnings = [];
 
-    const paramNames = Object.keys(paramsSpec);
-
     // If you only have a 'self' parameter, then apply the parameter checking
     // passing through the object. Otherwise require an object and do parameter
     // checking on each key/value pair.
-    const isPassthrough = paramNames.length === 1 && paramNames[0] === 'self';
-    if (!isPassthrough && !_.isPlainObject(params)) {
+    if (!_.isPlainObject(params)) {
       return ['Parameters should be an object.'];
     }
 
     // Check for required params and do individual parameter validation.
-    paramNames.forEach(paramName => {
+    for (const paramName of Object.keys(paramsSpec)) {
       const paramSpec = paramsSpec[paramName];
-      const param = isPassthrough ? params : params[paramName];
-      const paramNameWithPrefix = isPassthrough
-        ? prefix.replace(/\.$/, '')
-        : prefix + paramName;
+      const param = params[paramName];
+      const paramNameWithPrefix = prefix + paramName;
       warnings.push(...this.validateParamEntry(script, paramSpec, param, 
         paramNameWithPrefix));
-    });
+    }
 
     // Check for unexpected params -- events sometimes have string paramss,
     // like in `{ event: { cue: CUE-NAME } }`.
-    if (!isPassthrough) {
-      Object.keys(params).forEach(paramName => {
-        const paramNameWithPrefix = prefix + paramName;
-        if (!paramsSpec[paramName]) {
-          warnings.push(
-            'Unexpected param "' + paramNameWithPrefix +
-            '" (expected one of: ' + Object.keys(paramsSpec).join(', ') + ').'
-          );
-        }
-      });
+    for (const paramName of Object.keys(params)) {
+      const paramNameWithPrefix = prefix + paramName;
+      if (!paramsSpec[paramName]) {
+        warnings.push(
+          'Unexpected param "' + paramNameWithPrefix +
+          '" (expected one of: ' + Object.keys(paramsSpec).join(', ') + ').'
+        );
+      }
     }
 
     // Return gathered warnings

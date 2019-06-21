@@ -75,10 +75,6 @@ function walkObjectParams(parent, key, obj, spec, paramType, iteree) {
     return;
   }
   for (const paramName of Object.keys(spec)) {
-    if (paramName === 'self') {
-      walkObjectParam(parent, key, obj, spec[paramName], paramType, iteree);
-      return;
-    }
     walkObjectParam(obj, paramName, obj[paramName], spec[paramName], paramType,
       iteree);
   }
