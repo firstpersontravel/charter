@@ -235,17 +235,6 @@ class ValidationCore {
   }
 
   /**
-   * Embed a subresource validator
-   */
-  static subresource(script, name, spec, param) {
-    if (!spec.class) {
-      throw new Error('Invalid subresource spec: requires class.');
-    }
-    const prefix = name + '.';
-    return this.validateResource(script, spec.class, param, prefix);
-  }
-
-  /**
    * Get the variety of a param by spec.
    */
   static getVariegatedVariety(spec, param) {

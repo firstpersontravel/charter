@@ -15,7 +15,7 @@ module.exports = {
       type: 'list',
       required: true,
       help: 'List of user interface panels.',
-      items: { type: 'subresource', class: panel, name: 'panel' }
+      items: panel
     }
   }
 };

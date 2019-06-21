@@ -10,8 +10,7 @@ import ResourceBadge from './ResourceBadge';
 import LabelWithTip from './LabelWithTip';
 import { defaultForSpec, doesSpecHaveDefault } from '../utils/resource-utils';
 
-const COMPLEX_TYPES = ['dictionary', 'object', 'subresource', 'list',
-  'variegated'];
+const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'variegated'];
 
 const booleanLabels = ['No', 'Yes'];
 
@@ -77,7 +76,6 @@ const newItemsForSpecType = {
   dictionary: {},
   list: [],
   object: {},
-  subresource: {},
   variegated: {}
 };
 

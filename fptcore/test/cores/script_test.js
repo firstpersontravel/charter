@@ -46,7 +46,7 @@ describe('ScriptCore', () => {
         ResourcesRegistry.achievement.properties.test,
         scriptContent.achievements[0], 'test');
       sinon.assert.calledWith(iteree.getCall(2), 'test3',
-        SubresourcesRegistry.panel.properties.self.common.properties.visible_if,
+        SubresourcesRegistry.panel.common.properties.visible_if,
         scriptContent.pages[0].panels[0], 'visible_if');  // panel common
       sinon.assert.calledWith(iteree.getCall(3), 'test4',
         ResourcesRegistry.trigger.properties.active_if,

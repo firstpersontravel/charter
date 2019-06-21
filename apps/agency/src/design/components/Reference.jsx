@@ -113,9 +113,6 @@ function labelForSpecType(spec, key) {
   if (!spec.type) {
     return 'unknown';
   }
-  if (spec.type === 'subresource') {
-    return labelForSubresource(spec.name);
-  }
   // HACK: Only for panel at the moment
   if (spec.type === 'variegated') {
     return Object.keys(spec.classes)

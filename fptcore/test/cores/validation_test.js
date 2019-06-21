@@ -481,14 +481,14 @@ describe('ValidationCore', () => {
     });
 
     it('warns if extra item', () => {
-      var withExtra = { name: 'test', extra: true };
+      const withExtra = { name: 'test', extra: true };
       err(ValidationCore.object({}, 's', spec, withExtra),
         'Unexpected param "s.extra" (expected one of: name, count).');
     });
 
     it('gathers multiple warnings', () => {
-      var invalid = { count: [123], extra: true };
-      var res = ValidationCore.object({}, 's', spec, invalid);
+      const invalid = { count: [123], extra: true };
+      const res = ValidationCore.object({}, 's', spec, invalid);
       eq(res, [
         'Required param "s.name" not present.',
         'Unexpected param "s.extra" (expected one of: name, count).'
@@ -497,48 +497,6 @@ describe('ValidationCore', () => {
 
     it('warns if not an object', () => {
       err(ValidationCore.object({}, 's', spec, 'abc'),
-        'Parameters should be an object.');
-    });
-  });
-
-  describe('#subresource', () => {
-    const spec = {
-      type: 'subresource',
-      class: {
-        properties: {
-          name: { type: 'name', required: true },
-          count: { type: 'number' }
-        }
-      }
-    };
-
-    it('checks subresource', () => {
-      const valid = { name: 'test', count: 123 };
-      ok(ValidationCore.subresource({}, 's', spec, valid));
-    });
-
-    it('warns if missing item', () => {
-      err(ValidationCore.subresource({}, 's', spec, { count: 2 }),
-        'Required param "s.name" not present.');
-    });
-
-    it('warns if extra item', () => {
-      var withExtra = { name: 'test', extra: true };
-      err(ValidationCore.subresource({}, 's', spec, withExtra),
-        'Unexpected param "s.extra" (expected one of: name, count).');
-    });
-
-    it('gathers multiple warnings', () => {
-      var invalid = { count: [123], extra: true };
-      var res = ValidationCore.subresource({}, 's', spec, invalid);
-      eq(res, [
-        'Required param "s.name" not present.',
-        'Unexpected param "s.extra" (expected one of: name, count).'
-      ]);
-    });
-
-    it('warns if not an object', () => {
-      err(ValidationCore.subresource({}, 's', spec, 'abc'),
         'Parameters should be an object.');
     });
   });
@@ -697,7 +655,7 @@ describe('ValidationCore', () => {
 
   describe('#validateResource', () => {
     it('works when nested', () => {
-      var value = {
+      const value = {
         name: 'sarai1',
         section: 'contacts',
         title: 'Sarai Medouin',
@@ -712,14 +670,14 @@ describe('ValidationCore', () => {
         if: 'contact_sarai1'
       };
 
-      var panelCommon = {
+      const panelCommon = {
         properties: {
           type: { type: 'string', required: true },
           if: { type: 'string' }
         }
       };
 
-      var panelClasses = {
+      const panelClasses = {
         image: {
           properties: {
             path: { type: 'media', required: true },
@@ -734,33 +692,20 @@ describe('ValidationCore', () => {
         },
       };
 
-      var panel = {
-        properties: {
-          self: {
-            type: 'variegated',
-            key: 'type',
-            common: panelCommon,
-            classes: panelClasses
-          }
-        }
+      const panel = {
+        type: 'variegated',
+        key: 'type',
+        common: panelCommon,
+        classes: panelClasses
       };
 
-      var panelList = {
-        properties: {
-          self: {
-            type: 'list',
-            items: { type: 'subresource', class: panel }
-          }
-        }
-      };
-
-      var contentPage = {
+      const contentPage = {
         properties: {
           name: { type: 'name', required: true },
           section: { type: 'string', required: true },
           title: { type: 'string', required: true },
           if: { type: 'string' },
-          panels: { type: 'subresource', class: panelList }
+          panels: { type: 'list', items: panel }
         }
       };
 

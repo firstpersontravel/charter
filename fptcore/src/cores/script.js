@@ -29,11 +29,6 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
       iteree);
     return;
   }
-  if (paramSpec.type === 'subresource') {
-    walkObjectParams(parent, key, obj, paramSpec.class.properties,
-      paramType, iteree);
-    return;
-  }
   if (paramSpec.type === 'object') {
     walkObjectParams(parent, key, obj, paramSpec.properties, paramType,
       iteree);

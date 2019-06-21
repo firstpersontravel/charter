@@ -41,9 +41,6 @@ const walkers = {
       }
     });
   },
-  subresource: (spec, value, iteree) => {
-    walkers.object(spec.class, value, iteree);
-  },
   variegated: (spec, value, iteree) => {
     const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
     const commonClass = spec.common;

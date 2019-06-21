@@ -1,4 +1,4 @@
-var panel = require('./panel');
+const panel = require('./panel');
 
 module.exports = {
   icon: 'sticky-note',
@@ -50,7 +50,7 @@ module.exports = {
     panels: {
       type: 'list',
       default: [{}],
-      items: { type: 'subresource', class: panel, name: 'panel' },
+      items: panel,
       help: 'List of user interface panels.',
     }
   },

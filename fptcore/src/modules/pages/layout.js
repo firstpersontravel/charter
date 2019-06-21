@@ -1,6 +1,6 @@
-var panel = require('./panel');
+const panel = require('./panel');
 
-var LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
+const LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
 
 module.exports = {
   icon: 'mobile-phone',
@@ -21,7 +21,7 @@ module.exports = {
     header_panels: {
       type: 'list',
       help: 'List of user interface panels to display at the top.',
-      items: { type: 'subresource', class: panel, name: 'panel' }
+      items: panel
     }
   },
   validateResource: function(script, resource) {
