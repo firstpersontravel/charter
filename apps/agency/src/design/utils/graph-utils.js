@@ -41,7 +41,7 @@ const walkers = {
       }
     });
   },
-  variegated: (spec, value, iteree) => {
+  component: (spec, value, iteree) => {
     const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
     const commonClass = spec.common;
     const varietyClass = spec.classes[variety];

@@ -501,11 +501,11 @@ describe('ValidationCore', () => {
     });
   });
 
-  describe('#getVariegatedVariety', () => {
+  describe('#getComponentVariety', () => {
     it('gets variety by key', () => {
       const spec = { key: 'type' };
       const param = { type: 'frog' };
-      const res = ValidationCore.getVariegatedVariety(spec, param);
+      const res = ValidationCore.getComponentVariety(spec, param);
 
       assert.strictEqual(res, 'frog');
     });
@@ -513,20 +513,20 @@ describe('ValidationCore', () => {
     it('gets variety by function', () => {
       const spec = { key: obj => obj.type };
       const param = { type: 'frog' };
-      const res = ValidationCore.getVariegatedVariety(spec, param);
+      const res = ValidationCore.getComponentVariety(spec, param);
 
       assert.strictEqual(res, 'frog');
     });
 
     it('returns null for null param', () => {
       const spec = { key: obj => obj.type };
-      const res = ValidationCore.getVariegatedVariety(spec, null);
+      const res = ValidationCore.getComponentVariety(spec, null);
 
       assert.strictEqual(res, null);
     });
   });
 
-  describe('#getVariegatedClass', () => {
+  describe('#getComponentClass', () => {
     const spec = {
       common: { properties: { type: { type: 'string' } } },
       classes: {
@@ -535,7 +535,7 @@ describe('ValidationCore', () => {
     };
 
     it('returns merged class by variety', () => {
-      const res = ValidationCore.getVariegatedClass(spec, 'frog');
+      const res = ValidationCore.getComponentClass(spec, 'frog');
 
       assert.deepStrictEqual(res, {
         properties: {
@@ -546,21 +546,21 @@ describe('ValidationCore', () => {
     });
 
     it('returns only common class if null variety', () => {
-      const res = ValidationCore.getVariegatedClass(spec, null);
+      const res = ValidationCore.getComponentClass(spec, null);
 
       assert.deepStrictEqual(res, spec.common);
     });
 
     it('throws error if invalid class', () => {
       assert.throws(() => {
-        ValidationCore.getVariegatedClass(spec, 'parrot');
+        ValidationCore.getComponentClass(spec, 'parrot');
       });
     });
   });
 
-  describe('#variegated', () => {
+  describe('#component', () => {
     const spec = {
-      type: 'variegated',
+      type: 'component',
       key: 'family',
       common: {
         properties: {
@@ -584,51 +584,51 @@ describe('ValidationCore', () => {
 
     it('allows members of either class', () => {
       const snake = { family: 'snake', name: 'rattler', isVenomous: true };
-      ok(ValidationCore.variegated({}, 's', spec, snake));
+      ok(ValidationCore.component({}, 's', spec, snake));
 
       const fish = { family: 'fish', name: 'zebrafish' };
-      ok(ValidationCore.variegated({}, 's', spec, fish));
+      ok(ValidationCore.component({}, 's', spec, fish));
     });
 
     it('warns if missing key', () => {
       const invalid = {};
-      err(ValidationCore.variegated({}, 's', spec, invalid),
+      err(ValidationCore.component({}, 's', spec, invalid),
         'Required param "s[family]" not present.');
     });
 
     it('warns if non-string key', () => {
       const invalid = { family: 123 };
-      err(ValidationCore.variegated({}, 's', spec, invalid),
-        'Variegated param "s" property "family" should be a string.');
+      err(ValidationCore.component({}, 's', spec, invalid),
+        'Component param "s" property "family" should be a string.');
     });
 
     it('warns if invalid key', () => {
       const invalid = { family: 'marsupial' };
-      err(ValidationCore.variegated({}, 's', spec, invalid),
-        'Variegated param "s" property "family" ("marsupial") should be one of: snake, fish.');
+      err(ValidationCore.component({}, 's', spec, invalid),
+        'Component param "s" property "family" ("marsupial") should be one of: snake, fish.');
     });
 
     it('warns if invalid items in common class', () => {
       const invalid = { family: 'snake', name: false, isVenomous: true };
-      err(ValidationCore.variegated({}, 's', spec, invalid),
+      err(ValidationCore.component({}, 's', spec, invalid),
         'String param "s.name" should be a string.');
     });
 
     it('warns if invalid items in varied class', () => {
       const invalid = { family: 'snake', isVenomous: 'abc' };
-      err(ValidationCore.variegated({}, 's', spec, invalid),
+      err(ValidationCore.component({}, 's', spec, invalid),
         'Boolean param "s.isVenomous" ("abc") should be true or false.');
     });
 
     it('warns if extra items', () => {
       const invalid = { family: 'snake', isVenomous: false, extra: 'hi' };
-      err(ValidationCore.variegated({}, 's', spec, invalid),
+      err(ValidationCore.component({}, 's', spec, invalid),
         'Unexpected param "s.extra" (expected one of: family, name, isVenomous).');
     });
 
     it('warns if has items from non-chosen variety', () => {
       const invalid = { family: 'snake', isVenomous: false, numFins: 3 };
-      err(ValidationCore.variegated({}, 's', spec, invalid),
+      err(ValidationCore.component({}, 's', spec, invalid),
         'Unexpected param "s.numFins" (expected one of: family, name, isVenomous).');
     });
   });
@@ -693,7 +693,7 @@ describe('ValidationCore', () => {
       };
 
       const panel = {
-        type: 'variegated',
+        type: 'component',
         key: 'type',
         common: panelCommon,
         classes: panelClasses

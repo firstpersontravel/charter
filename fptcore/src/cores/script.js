@@ -22,9 +22,9 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
   if (!paramSpec.type) {
     throw new Error('Param spec with no type.');
   }
-  if (paramSpec.type === 'variegated') {
-    const variety = ValidationCore.getVariegatedVariety(paramSpec, obj);
-    const varietyClass = ValidationCore.getVariegatedClass(paramSpec, variety);
+  if (paramSpec.type === 'component') {
+    const variety = ValidationCore.getComponentVariety(paramSpec, obj);
+    const varietyClass = ValidationCore.getComponentClass(paramSpec, variety);
     walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
       iteree);
     return;

@@ -34,7 +34,7 @@ function createActionListProperty(actionsRegistry) {
   };
 
   const actionParam = {
-    type: 'variegated',
+    type: 'component',
     key: 'name',
     common: {
       display: { form: 'inline' },
@@ -68,7 +68,7 @@ function createEventResource(eventsRegistry) {
     .value();
 
   return {
-    type: 'variegated',
+    type: 'component',
     key: 'type',
     common: {
       display: { form: 'inline' },

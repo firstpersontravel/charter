@@ -1,6 +1,8 @@
 const _ = require('lodash');
 
+// TODO -- move this into the registries
 const ConditionCore = require('../cores/condition');
+
 const TimeUtil = require('../utils/time');
 
 class ValidationCore {
@@ -237,7 +239,7 @@ class ValidationCore {
   /**
    * Get the variety of a param by spec.
    */
-  static getVariegatedVariety(spec, param) {
+  static getComponentVariety(spec, param) {
     if (!param) {
       return null;
     }
@@ -245,9 +247,9 @@ class ValidationCore {
   }
 
   /**
-   * Get resource class of a variegated property, merging common and variety.
+   * Get resource class of a component property, merging common and variety.
    */
-  static getVariegatedClass(spec, variety) {
+  static getComponentClass(spec, variety) {
     const commonClass = spec.common;
     // For display in the editor, it's useful to just show the common
     // class if you have a null object, that way users can select
@@ -265,37 +267,37 @@ class ValidationCore {
   }
 
   /**
-   * Embed a variegated validator which hinges on a key param.
+   * Embed a component validator which hinges on a key param.
    */
-  static variegated(script, name, spec, param) {
+  static component(script, name, spec, param) {
     if (!spec.key) {
-      throw new Error('Invalid variegated spec: requires key.');
+      throw new Error('Invalid component spec: requires key.');
     }
     if (!spec.classes) {
-      throw new Error('Invalid variegated spec: requires classes.');
+      throw new Error('Invalid component spec: requires classes.');
     }
     if (!_.isFunction(spec.key)) {
       if (!_.isPlainObject(param)) {
-        return ['Variegated param "' + name + '" should be an object.'];
+        return ['Component param "' + name + '" should be an object.'];
       }
     }
     // HACK TO SUPPORT FUNCTION KEYS FOR NOW UNTIL WE SIMPLIFY THE EVENT
     // STRUCTURE -- should be {type: event_type, ...params}.
     const keyName = _.isFunction(spec.key) ? 'key' : spec.key;
-    const variety = this.getVariegatedVariety(spec, param);
+    const variety = this.getComponentVariety(spec, param);
     if (!variety) {
       return ['Required param "' + name + '[' + keyName + ']" not present.'];
     }
     if (!_.isString(variety)) {
-      return ['Variegated param "' + name + '" property "' + keyName +
+      return ['Component param "' + name + '" property "' + keyName +
         '" should be a string.'];
     }
     if (!spec.classes[variety]) {
-      return ['Variegated param "' + name + '" property "' + keyName +
+      return ['Component param "' + name + '" property "' + keyName +
         '" ("' + variety + '") should be one of: ' +
         Object.keys(spec.classes).join(', ') + '.'];
     }
-    const varietyClass = this.getVariegatedClass(spec, variety);
+    const varietyClass = this.getComponentClass(spec, variety);
     const prefix = name + '.';
     return this.validateResource(script, varietyClass, param, prefix);
   }

@@ -10,7 +10,7 @@ import ResourceBadge from './ResourceBadge';
 import LabelWithTip from './LabelWithTip';
 import { defaultForSpec, doesSpecHaveDefault } from '../utils/resource-utils';
 
-const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'variegated'];
+const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
 const booleanLabels = ['No', 'Yes'];
 
@@ -76,7 +76,7 @@ const newItemsForSpecType = {
   dictionary: {},
   list: [],
   object: {},
-  variegated: {}
+  component: {}
 };
 
 function newItemForSpec(spec) {
@@ -588,9 +588,9 @@ export default class FieldRenderer {
     );
   }
 
-  renderVariegated(spec, value, name, path, opts) {
-    const variety = ValidationCore.getVariegatedVariety(spec, value);
-    const varietyClass = ValidationCore.getVariegatedClass(spec, variety);
+  renderComponent(spec, value, name, path, opts) {
+    const variety = ValidationCore.getComponentVariety(spec, value);
+    const varietyClass = ValidationCore.getComponentClass(spec, variety);
     const properties = Object.keys(varietyClass.properties);
     if (properties.length === 1 && properties[0] === 'self') {
       return this.renderFieldValue(varietyClass.properties.self, value,

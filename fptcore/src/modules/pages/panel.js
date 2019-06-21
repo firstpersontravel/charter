@@ -16,7 +16,7 @@ const PANEL_COMMON_CLASS = {
 };
 
 const panel = {
-  type: 'variegated',
+  type: 'component',
   key: 'type',
   common: PANEL_COMMON_CLASS,
   classes: panels

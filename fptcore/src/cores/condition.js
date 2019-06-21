@@ -127,7 +127,7 @@ const ifOpClasses = {
 };
 
 _.assign(ifSpec, {
-  type: 'variegated',
+  type: 'component',
   key: 'op',
   common: {
     properties: {
