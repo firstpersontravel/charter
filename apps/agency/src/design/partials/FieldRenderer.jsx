@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { ConditionCore, TextUtil, ValidationCore } from 'fptcore';
+import { ConditionCore, TextUtil, Validations, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
@@ -13,6 +13,8 @@ import { defaultForSpec, doesSpecHaveDefault } from '../utils/resource-utils';
 const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
 const booleanLabels = ['No', 'Yes'];
+
+const validator = new Validator();
 
 function isEmpty(warnings) {
   if (!warnings) {
@@ -205,7 +207,7 @@ export default class FieldRenderer {
 
   renderEmail(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.email(this.script, name, spec, val))
+      isEmpty(Validations.email(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -231,7 +233,7 @@ export default class FieldRenderer {
   // Aliases
   renderName(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.name(this.script, name, spec, val))
+      isEmpty(Validations.name(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -239,7 +241,7 @@ export default class FieldRenderer {
 
   renderTimeOffset(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.timeOffset(this.script, name, spec, val))
+      isEmpty(Validations.timeOffset(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -247,7 +249,7 @@ export default class FieldRenderer {
 
   renderLookupable(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.lookupable(this.script, name, spec, val))
+      isEmpty(Validations.lookupable(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -255,7 +257,7 @@ export default class FieldRenderer {
 
   renderSimpleAttribute(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.simpleAttribute(this.script, name, spec, val))
+      isEmpty(Validations.simpleAttribute(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -263,7 +265,7 @@ export default class FieldRenderer {
 
   renderMedia(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.media(this.script, name, spec, val))
+      isEmpty(Validations.media(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -271,7 +273,7 @@ export default class FieldRenderer {
 
   renderTimeShorthand(spec, value, name, path, opts) {
     const validate = val => (
-      isEmpty(ValidationCore.timeShorthand(this.script, name, spec, val))
+      isEmpty(Validations.timeShorthand(this.script, name, spec, val))
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
@@ -543,7 +545,7 @@ export default class FieldRenderer {
           );
         }
       } else {
-        const validatorErrors = ValidationCore[keySpec.type](this.script,
+        const validatorErrors = validator.validateParam(this.script,
           name, keySpec, itemValue);
         if (validatorErrors && validatorErrors.length > 0) {
           invalidWarning = (
@@ -589,8 +591,8 @@ export default class FieldRenderer {
   }
 
   renderComponent(spec, value, name, path, opts) {
-    const variety = ValidationCore.getComponentVariety(spec, value);
-    const varietyClass = ValidationCore.getComponentClass(spec, variety);
+    const variety = validator.getComponentVariety(spec, value);
+    const varietyClass = validator.getComponentClass(spec, variety);
     const properties = Object.keys(varietyClass.properties);
     if (properties.length === 1 && properties[0] === 'self') {
       return this.renderFieldValue(varietyClass.properties.self, value,

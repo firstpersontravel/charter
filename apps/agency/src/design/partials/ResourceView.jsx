@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ResourcesRegistry, TextUtil, ValidationCore } from 'fptcore';
+import { ResourcesRegistry, TextUtil, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { getChildResourceTypes } from '../utils/graph-utils';
@@ -15,6 +15,8 @@ import FieldRenderer from './FieldRenderer';
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title'];
 
+const validator = new Validator();
+
 export default class ResourceView extends Component {
   constructor(props) {
     super(props);
@@ -23,8 +25,7 @@ export default class ResourceView extends Component {
       isConfirmingDelete: false,
       hasPendingChanges: false,
       pendingResource: pendingResource,
-      errors: ValidationCore.validateResource(
-        props.script,
+      errors: validator.validateResource(props.script,
         ResourcesRegistry[TextUtil.singularize(props.collectionName)],
         pendingResource, '')
     };
@@ -43,8 +44,7 @@ export default class ResourceView extends Component {
         isConfirmingDelete: false,
         hasPendingChanges: false,
         pendingResource: pendingResource,
-        errors: ValidationCore.validateResource(
-          nextProps.script,
+        errors: validator.validateResource(nextProps.script,
           ResourcesRegistry[TextUtil.singularize(nextProps.collectionName)],
           pendingResource, '')
       });
@@ -91,8 +91,7 @@ export default class ResourceView extends Component {
   }
 
   handleResourceUpdate(newResource) {
-    const errors = ValidationCore.validateResource(
-      this.props.script,
+    const errors = validator.validateResource(this.props.script,
       ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
       newResource, '');
     // If there are errors, set the pending state so we can correct them.

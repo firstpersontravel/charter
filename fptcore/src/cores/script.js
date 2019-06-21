@@ -4,7 +4,7 @@ const jsonschema = require('jsonschema');
 // const ConditionCore = require('./condition');
 const TextUtil = require('../utils/text');
 const ResourcesRegistry = require('../registries/resources');
-const ValidationCore = require('../cores/validation');
+const Validator = require('../utils/validator');
 const Errors = require('../errors');
 
 const CURRENT_VERSION = 17;
@@ -18,13 +18,15 @@ const metaSchema = {
   additionalProperties: false
 };
 
+const validator = new Validator();
+
 function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
   if (!paramSpec.type) {
     throw new Error('Param spec with no type.');
   }
   if (paramSpec.type === 'component') {
-    const variety = ValidationCore.getComponentVariety(paramSpec, obj);
-    const varietyClass = ValidationCore.getComponentClass(paramSpec, variety);
+    const variety = validator.getComponentVariety(paramSpec, obj);
+    const varietyClass = validator.getComponentClass(paramSpec, variety);
     walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
       iteree);
     return;
@@ -120,7 +122,7 @@ class ScriptCore {
         message: 'Invalid collection: ' + collectionName
       }];
     }
-    const errors = ValidationCore.validateResource(script, resourceClass, 
+    const errors = validator.validateResource(script, resourceClass, 
       resource);
 
     return errors.map(err => ({

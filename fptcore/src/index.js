@@ -17,6 +17,7 @@ module.exports = {
   TextUtil: require('./utils/text'),
   TimeUtil: require('./utils/time'),
   TripCore: require('./cores/trip'),
-  ValidationCore: require('./cores/validation'),
+  Validations: require('./utils/validations'),
+  Validator: require('./utils/validator'),
   WaypointCore: require('./cores/waypoint')
 };
