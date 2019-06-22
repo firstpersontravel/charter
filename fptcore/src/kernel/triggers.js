@@ -1,7 +1,9 @@
 const _ = require('lodash');
 
-const ConditionCore = require('../cores/condition');
-const EventsRegistry = require('../registries/events');
+const Evaluator = require('../utils/evaluator');
+const Registry = require('../registries/registry');
+
+const evaluator = new Evaluator(Registry);
 
 class KernelTriggers {
   /**
@@ -13,7 +15,7 @@ class KernelTriggers {
       return false;
     }
     // Get matching function and calculate match.
-    return EventsRegistry[event.type].matchEvent(spec, event, actionContext);
+    return Registry.events[event.type].matchEvent(spec, event, actionContext);
   }
 
   /**
@@ -21,7 +23,7 @@ class KernelTriggers {
    */
   static doesEventFireTrigger(trigger, event, actionContext) {
     // If no matcher for this event type, exit
-    if (!EventsRegistry[event.type]) {
+    if (!Registry.events[event.type]) {
       return false;
     }
 
@@ -51,7 +53,7 @@ class KernelTriggers {
     }
 
     // If we have a conditional, return false if it's not true.
-    if (!ConditionCore.if(actionContext.evalContext, scene.active_if)) {
+    if (!evaluator.if(actionContext.evalContext, scene.active_if)) {
       return false;
     }
 
@@ -80,7 +82,7 @@ class KernelTriggers {
       }
     }
     // Skip inactive triggers
-    if (!ConditionCore.if(actionContext.evalContext, trigger.active_if)) {
+    if (!evaluator.if(actionContext.evalContext, trigger.active_if)) {
       return false;
     }
     // Skip non-repeatable triggers that have already fired.

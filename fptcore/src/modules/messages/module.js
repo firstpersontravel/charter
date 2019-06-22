@@ -8,7 +8,8 @@ module.exports = {
       },
       events: {
         text_received: require('./text_received')
-      }
+      },
+      conditions: require('./text_conditions')
     },
     image: {
       resource: null,

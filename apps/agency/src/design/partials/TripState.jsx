@@ -2,18 +2,20 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ConditionCore, ResourcesRegistry, TemplateUtil } from 'fptcore';
+import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
 import ResourceBadge from './ResourceBadge';
 import { sortForRole } from '../../operate/utils';
 import { isProduction } from '../../utils';
+
+const evaluator = new Evaluator(Registry);
 
 export default class TripState extends Component {
   getPlayersForScene(scene) {
     const trip = this.props.trip;
     return _(trip.players)
       .filter(player => (
-        ConditionCore.if(trip.evalContext, player.role.active_if)
+        evaluator.if(trip.evalContext, player.role.active_if)
       ))
       .filter(player => (
         _.find(trip.script.content.pages, {
@@ -68,7 +70,7 @@ export default class TripState extends Component {
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => ConditionCore.if(trip.evalContext, panel.visible_if))
+      .filter(panel => evaluator.if(trip.evalContext, panel.visible_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
@@ -111,16 +113,16 @@ export default class TripState extends Component {
 
   renderTriggerBtn(scene, trigger) {
     const trip = this.props.trip;
-    const triggerResourceClass = ResourcesRegistry.trigger;
+    const triggerResourceClass = Registry.resources.trigger;
     const isCurrentScene = scene.name === this.props.trip.currentSceneName;
     const isActiveGlobalScene = scene.global && (
-      ConditionCore.if(trip.evalContext, scene.active_if)
+      evaluator.if(trip.evalContext, scene.active_if)
     );
     const hasBeenTriggered = !!trip.history[trigger.name];
     const canTrigger = isCurrentScene || isActiveGlobalScene;
     // const isForbidden = (
     //   (trigger.repeatable === false && hasBeenTriggered) ||
-    //   (!ConditionCore.if(trip.evalContext, trigger.active_if))
+    //   (!evaluator.if(trip.evalContext, trigger.active_if))
     // );
     const style = {
       marginTop: 0,

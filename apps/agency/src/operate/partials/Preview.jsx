@@ -2,10 +2,12 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ConditionCore, TemplateUtil } from 'fptcore';
+import { Evaluator, Registry, TemplateUtil } from 'fptcore';
+
+const evaluator = new Evaluator(Registry);
 
 function renderPanel(player, page, panel) {
-  if (!ConditionCore.if(player.trip.evalContext, panel.visible_if)) {
+  if (!evaluator.if(player.trip.evalContext, panel.visible_if)) {
     return null;
   }
   if (panel.type === 'text' ||

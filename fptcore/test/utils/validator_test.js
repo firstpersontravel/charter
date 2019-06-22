@@ -1,7 +1,6 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const ConditionCore = require('../../src/cores/condition');
 const Validations = require('../../src/utils/validations');
 const Validator = require('../../src/utils/validator');
 
@@ -9,8 +8,16 @@ const eq = assert.deepStrictEqual;
 const ok = (res) => eq(res === undefined ? [] : res, []);
 const err = (res, expected) => eq(res, [expected]);
 
+const fakeRegistry = {
+  conditions: {
+    fake: {
+      eval: () => true
+    }
+  }
+};
+
 const sandbox = sinon.sandbox.create();
-const validator = new Validator();
+const validator = new Validator(fakeRegistry);
 
 describe('Validator', () => {
   beforeEach(() => {
@@ -38,8 +45,13 @@ describe('Validator', () => {
       const resp = validator.ifClause(script, 's', spec, param);
 
       assert.strictEqual(resp, stubResponse);
-      sinon.assert.calledWith(validator.validateParam.firstCall,
-        script, 's', ConditionCore.ifSpec, param);
+      sinon.assert.calledOnce(validator.validateParam);
+      const calledWith = validator.validateParam.getCall(0).args;
+      assert.strictEqual(calledWith[0], script);
+      assert.strictEqual(calledWith[1], 's');
+      assert.deepStrictEqual(Object.keys(calledWith[2].classes),
+        ['and', 'or', 'not', 'fake']);
+      assert.strictEqual(calledWith[3], param);
     });
   });
 

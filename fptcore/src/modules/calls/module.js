@@ -20,7 +20,8 @@ module.exports = {
       },
       events: {
         clip_answered: require('./clip_answered')
-      }
+      },
+      conditions: require('./clip_conditions')
     }
   }
 };

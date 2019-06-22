@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
-import { ConditionCore, PlayerCore } from 'fptcore';
+import { Evaluator, Registry, PlayerCore } from 'fptcore';
+
+const evaluator = new Evaluator(Registry);
 
 export function sortForRole(role) {
   return {
@@ -26,7 +28,7 @@ export function getPlayerPageInfo(trip, player) {
 function getGroupPlayersForRole(group, roleName) {
   const role = _.find(group.script.content.roles, { name: roleName });
   return group.trips
-    .filter(trip => ConditionCore.if(trip.evalContext, role.active_if))
+    .filter(trip => evaluator.if(trip.evalContext, role.active_if))
     .map(trip => _.find(trip.players, { roleName: role.name }))
     .filter(Boolean)
     .filter(player => player.currentPageName);
@@ -35,7 +37,7 @@ function getGroupPlayersForRole(group, roleName) {
 function getTripPlayersForRoles(trip, roleFilters) {
   const roles = _.filter(trip.script.content.roles, roleFilters);
   return roles
-    .filter(role => ConditionCore.if(trip.evalContext, role.active_if))
+    .filter(role => evaluator.if(trip.evalContext, role.active_if))
     .map(role => _.find(trip.players, { roleName: role.name }))
     .filter(Boolean)
     .filter(player => player.currentPageName);

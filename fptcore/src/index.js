@@ -1,6 +1,6 @@
 module.exports = {
   ActionsRegistry: require('./registries/actions'),
-  ConditionCore: require('./cores/condition'),
+  Evaluator: require('./utils/evaluator'),
   ContextCore: require('./cores/context'),
   Errors: require('./errors'),
   EventsRegistry: require('./registries/events'),
@@ -10,6 +10,7 @@ module.exports = {
   ModulesRegistry: require('./registries/modules'),
   PanelsRegistry: require('./registries/panels'),
   PlayerCore: require('./cores/player'),
+  Registry: require('./registries/registry'),
   ResourcesRegistry: require('./registries/resources'),
   SceneCore: require('./cores/scene'),
   ScriptCore: require('./cores/script'),

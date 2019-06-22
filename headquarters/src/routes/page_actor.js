@@ -1,13 +1,16 @@
 const _ = require('lodash');
 const Sequelize = require('sequelize');
 
-const ConditionCore = require('../../../fptcore/src/cores/condition');
+const Evaluator = require('../../../fptcore/src/utils/evaluator');
+const Registry = require('../../../fptcore/src/registries/registry');
 const PlayerCore = require('../../../fptcore/src/cores/player');
 const TemplateUtil = require('../../../fptcore/src/utils/template');
 
 const config = require('../config');
 const models = require('../models');
 const KernelUtil = require('../kernel/util');
+
+const evaluator = new Evaluator(Registry);
 
 const supportedPartials = {
   button: (evalContext, panel, timezone) => ({
@@ -66,7 +69,7 @@ function getPage(objs, evalContext, player) {
   const directiveText = TemplateUtil.templateText(evalContext,
     page.directive, timezone);
   const panels = _(page.panels || [])
-    .filter(panel => ConditionCore.if(evalContext, panel.visible_if))
+    .filter(panel => evaluator.if(evalContext, panel.visible_if))
     .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
   return {

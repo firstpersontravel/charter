@@ -1,6 +1,9 @@
 const _ = require('lodash');
 
-const ConditionCore = require('../cores/condition');
+const Registry = require('../registries/registry');
+const Evaluator = require('../utils/evaluator');
+
+const evaluator = new Evaluator(Registry);
 
 class KernelActions {
   /**
@@ -53,13 +56,13 @@ class KernelActions {
       return clause.actions;
     }
     // If .if is true, use normal actions.
-    if (ConditionCore.if(actionContext.evalContext, clause.if)) {
+    if (evaluator.if(actionContext.evalContext, clause.if)) {
       return clause.actions;
     }
     // Check for elseifs and iterate in order.
     if (clause.elseifs) {
       for (const elseif of clause.elseifs) {
-        if (ConditionCore.if(actionContext.evalContext, elseif.if)) {
+        if (evaluator.if(actionContext.evalContext, elseif.if)) {
           return elseif.actions;
         }
       }

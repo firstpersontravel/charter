@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { ConditionCore, TextUtil, Validations, Validator } from 'fptcore';
+import { Evaluator, Registry, TextUtil, Validations, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
@@ -14,7 +14,8 @@ const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
 const booleanLabels = ['No', 'Yes'];
 
-const validator = new Validator();
+const evaluator = new Evaluator(Registry);
+const validator = new Validator(Registry);
 
 function isEmpty(warnings) {
   if (!warnings) {
@@ -282,7 +283,7 @@ export default class FieldRenderer {
   renderIfClause(spec, value, name, path, opts) {
     if (!value) {
       const choices = [{ value: '', label: '---' }]
-        .concat(Object.keys(ConditionCore.ifOpClasses).map(op => ({
+        .concat(Object.keys(evaluator.ifOpClasses).map(op => ({
           value: op,
           label: op
         })));
@@ -305,7 +306,7 @@ export default class FieldRenderer {
     }
     return (
       <div className="ifClause" style={inlineStyle}>
-        {this.renderFieldValue(ConditionCore.ifSpec, value, name, path, inlineOpts)}
+        {this.renderFieldValue(evaluator.ifSpec, value, name, path, inlineOpts)}
       </div>
     );
   }

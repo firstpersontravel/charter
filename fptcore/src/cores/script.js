@@ -3,7 +3,7 @@ const jsonschema = require('jsonschema');
 
 // const ConditionCore = require('./condition');
 const TextUtil = require('../utils/text');
-const ResourcesRegistry = require('../registries/resources');
+const Registry = require('../registries/registry');
 const Validator = require('../utils/validator');
 const Errors = require('../errors');
 
@@ -18,7 +18,7 @@ const metaSchema = {
   additionalProperties: false
 };
 
-const validator = new Validator();
+const validator = new Validator(Registry);
 
 function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
   if (!paramSpec.type) {
@@ -87,7 +87,7 @@ class ScriptCore {
    * Walk over all params in a resource.
    */
   static walkResourceParams(resourceType, resource, paramType, iteree) {
-    const resourceClass = ResourcesRegistry[resourceType];
+    const resourceClass = Registry.resources[resourceType];
     if (!resourceClass) {
       return;
     }
@@ -114,7 +114,7 @@ class ScriptCore {
   static getResourceErrors(script, collectionName, resource) {
     const resourceType = TextUtil.singularize(collectionName);
     const resourceName = resource.name || '<unknown>';
-    const resourceClass = ResourcesRegistry[resourceType];
+    const resourceClass = Registry.resources[resourceType];
     if (!resourceClass) {
       return [{
         path: collectionName,

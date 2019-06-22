@@ -6,7 +6,8 @@ module.exports = {
       actions: {
         set_value: require('./value_set'),
         increment_value: require('./value_increment')
-      }
+      },
+      conditions: require('./value_conditions')
     }
   }
 };

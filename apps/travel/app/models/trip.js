@@ -42,7 +42,7 @@ export default DS.Model.extend({
   },
 
   evaluateIf: function(ifClause) {
-    return fptCore.ConditionCore.if(this.get('evalContext'), ifClause);
+    return fptCore.evaluator.if(this.get('evalContext'), ifClause);
   },
 
   generateTrip: function() {

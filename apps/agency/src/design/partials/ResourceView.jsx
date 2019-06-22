@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ResourcesRegistry, TextUtil, Validator } from 'fptcore';
+import { Registry, TextUtil, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { getChildResourceTypes } from '../utils/graph-utils';
@@ -15,7 +15,7 @@ import FieldRenderer from './FieldRenderer';
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title'];
 
-const validator = new Validator();
+const validator = new Validator(Registry);
 
 export default class ResourceView extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ export default class ResourceView extends Component {
       hasPendingChanges: false,
       pendingResource: pendingResource,
       errors: validator.validateResource(props.script,
-        ResourcesRegistry[TextUtil.singularize(props.collectionName)],
+        Registry.resources[TextUtil.singularize(props.collectionName)],
         pendingResource, '')
     };
     this.handleDelete = this.handleDelete.bind(this);
@@ -45,14 +45,14 @@ export default class ResourceView extends Component {
         hasPendingChanges: false,
         pendingResource: pendingResource,
         errors: validator.validateResource(nextProps.script,
-          ResourcesRegistry[TextUtil.singularize(nextProps.collectionName)],
+          Registry.resources[TextUtil.singularize(nextProps.collectionName)],
           pendingResource, '')
       });
     }
   }
 
   getResourceClass() {
-    return ResourcesRegistry[TextUtil.singularize(this.props.collectionName)];
+    return Registry.resources[TextUtil.singularize(this.props.collectionName)];
   }
 
   getFieldNames() {
@@ -92,7 +92,7 @@ export default class ResourceView extends Component {
 
   handleResourceUpdate(newResource) {
     const errors = validator.validateResource(this.props.script,
-      ResourcesRegistry[TextUtil.singularize(this.props.collectionName)],
+      Registry.resources[TextUtil.singularize(this.props.collectionName)],
       newResource, '');
     // If there are errors, set the pending state so we can correct them.
     // If this is a new resource, also wait for an explicit confirm.
@@ -297,7 +297,7 @@ export default class ResourceView extends Component {
   renderCreateChildResourceBtn(childResourceType) {
     const script = this.props.script;
     const collectionName = this.props.collectionName;
-    const resourceClass = ResourcesRegistry[childResourceType];
+    const resourceClass = Registry.resources[childResourceType];
     const childParentField = _(resourceClass.properties)
       .keys()
       .find(key => (

@@ -255,6 +255,18 @@ function renderPanel(panelType, panelSpec) {
   );
 }
 
+function renderCondition(conditionOp, conditionSpec) {
+  return (
+    <div key={conditionOp}>
+      <h4 id={conditionOp}>
+        Condition: <strong>{conditionOp}</strong>
+      </h4>
+      <p>{conditionSpec.help}</p>
+      {renderFields(conditionSpec.properties)}
+    </div>
+  );
+}
+
 
 function renderResource(resourceType, moduleResource) {
   const renderedResource = renderResourceSimple(resourceType, moduleResource);
@@ -273,12 +285,18 @@ function renderResource(resourceType, moduleResource) {
     .map(eventName => (
       renderEvent(eventName, moduleResource.events[eventName])
     ));
+  const renderedConditions = Object
+    .keys(moduleResource.conditions || {})
+    .map(conditionOp => (
+      renderCondition(conditionOp, moduleResource.conditions[conditionOp])
+    ));
   return (
     <div key={resourceType}>
       {renderedPanels}
       {renderedResource}
       {renderedActions}
       {renderedEvents}
+      {renderedConditions}
     </div>
   );
 }

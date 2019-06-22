@@ -1,7 +1,5 @@
 const _ = require('lodash');
 
-const KernelActions = require('../kernel/actions');
-
 function createActionListProperty(actionsRegistry) {
   // Filled in later to avoid circular dependency
   const actionListParam = {};
@@ -148,6 +146,8 @@ module.exports = function (actionsRegistry, eventsRegistry) {
 
       const ifIteree = function(ifClause, path) {};
       
+      // HACK A HOLIC
+      const KernelActions = require('../kernel/actions');
       KernelActions.walkActions(resource.actions, 'actions',
         actionIteree, ifIteree);
       return warnings;
@@ -171,6 +171,9 @@ module.exports = function (actionsRegistry, eventsRegistry) {
     },
     getChildClaims: function(resource) {
       const childClaims = [];
+
+      // HACK A HOLIC
+      const KernelActions = require('../kernel/actions');
       KernelActions.walkActions(resource.actions, '',
         function(action, path) {
           const actionClass = actionsRegistry[action.name];

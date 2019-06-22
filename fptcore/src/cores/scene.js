@@ -1,6 +1,9 @@
 const _ = require('lodash');
 
-const ConditionCore = require('./condition');
+const Evaluator = require('../utils/evaluator');
+const Registry = require('../registries/registry');
+
+const evaluator = new Evaluator(Registry);
 
 class SceneCore {
   static getStartingSceneName(scriptContent, evalContext) {
@@ -9,7 +12,7 @@ class SceneCore {
       if (scene.global) {
         return false;
       }
-      return ConditionCore.if(evalContext, scene.active_if);
+      return evaluator.if(evalContext, scene.active_if);
     });
     return firstScene && firstScene.name;
   }

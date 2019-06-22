@@ -1,7 +1,6 @@
 const _ = require('lodash');
 
-// TODO -- move this into the registries
-const ConditionCore = require('../cores/condition');
+const Evaluator = require('./evaluator');
 const Validations = require('./validations');
 
 class Validator {
@@ -62,7 +61,8 @@ class Validator {
     if (!_.isPlainObject(param)) {
       return ['If param "' + name + '" should be an object.'];
     }
-    return this.validateParam(script, name, ConditionCore.ifSpec, param);
+    const evaluator = new Evaluator(this.registry);
+    return this.validateParam(script, name, evaluator.ifSpec, param);
   }
 
   /**

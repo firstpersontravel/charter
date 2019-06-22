@@ -3,9 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ConditionCore } from 'fptcore';
+import { Evaluator, Registry } from 'fptcore';
 
 import { sortForRole, canRoleHaveUser } from '../utils';
+
+const evaluator = new Evaluator(Registry);
 
 export default function Trip({ trip, params, children }) {
   if (!trip.script) {
@@ -13,7 +15,7 @@ export default function Trip({ trip, params, children }) {
   }
   const roles = _(trip.script.content.roles)
     .filter(role => canRoleHaveUser(role))
-    .filter(role => ConditionCore.if(trip.evalContext, role.active_if))
+    .filter(role => evaluator.if(trip.evalContext, role.active_if))
     .sortBy([sortForRole, 'name'])
     .value();
   const roleLinks = roles.map((role => (
