@@ -15,7 +15,8 @@ module.exports = {
       help: '"Completion" achievements are active if the test resolves to true. "Choice" achievements can have multiple titles based on the evaluation of the test.'
     },
     test: {
-      type: 'ifClause',
+      type: 'component',
+      component: 'conditions',
       required: true,
       help: 'The value to test for to determine if this achievement has been activated.'
     },

@@ -32,36 +32,36 @@ module.exports = {
   tests: [{
     before: {
       triggers: [{
-        actions: [{ name: 'act1', when: 't' }]
+        actions: [{ name: 'set_value', when: 't', num: 1 }]
       }, {
-        actions: [{ name: 'act2', offset: '20s' }]
+        actions: [{ name: 'set_value', offset: '20s', num: 2 }]
       }, {
-        actions: [{ name: 'act3', when: 'x', offset: '20m' }]
+        actions: [{ name: 'set_value', when: 'x', offset: '20m', num: 3 }]
       }, {
-        actions: [{ name: 'act4', when: 'x', offset: '-4h' }]
+        actions: [{ name: 'set_value', when: 'x', offset: '-4h', num: 4 }]
       }]
     },
     after: {
       triggers: [{
         actions: [
           { name: 'wait_for_time', until: 't' },
-          { name: 'act1' }
+          { name: 'set_value', num: 1 }
         ]
       }, {
         actions: [
           { name: 'wait', duration: '20s' },
-          { name: 'act2' }
+          { name: 'set_value', num: 2 }
         ]
       }, {
         actions: [
           { name: 'wait_for_time', until: 'x' },
           { name: 'wait', duration: '20m' },
-          { name: 'act3' }
+          { name: 'set_value', num: 3 }
         ]
       }, {
         actions: [
           { name: 'wait_before_time', until: 'x', before: '4h' },
-          { name: 'act4' }
+          { name: 'set_value', num: 4 }
         ]
       }]
     }

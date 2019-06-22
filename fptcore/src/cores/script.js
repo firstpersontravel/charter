@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const jsonschema = require('jsonschema');
 
-// const ConditionCore = require('./condition');
 const TextUtil = require('../utils/text');
 const Registry = require('../registry/registry');
 const Validator = require('../utils/validator');
@@ -25,6 +24,12 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
     throw new Error('Param spec with no type.');
   }
   if (paramSpec.type === 'component') {
+    // If we're looking for this kind of component, call the iteree, but don't
+    // return, in case this component can be recursively nested inside itself.
+    if (paramType === paramSpec.component) {
+      iteree(obj, paramSpec, parent, key);
+    }
+    // Create the compoment class and iterate over all of its params.
     const variety = validator.getComponentVariety(paramSpec, obj);
     const varietyClass = validator.getComponentClass(paramSpec, variety);
     walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
@@ -55,17 +60,6 @@ function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
     });
     return;
   }
-
-  // Wait on this until conditionals are turned into a first-order obj type
-  // For if clauses, call iteree for all if clauses, both parent and child
-  // if (paramSpec.type === 'ifClause') {
-  //   if (paramType === 'ifClause') {
-  //     iteree(obj, paramSpec, parent, key);
-  //   }
-  //   walkObjectParam(parent, key, obj, ConditionCore.ifSpec, 'ifClause',
-  //     iteree);
-  // }
-
   // If we've made it to here, we're a simple type.
   if (paramSpec.type === paramType) {
     iteree(obj, paramSpec, parent, key);

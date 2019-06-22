@@ -1,5 +1,3 @@
-const panel = require('./panel');
-
 module.exports = {
   icon: 'sticky-note',
   help: 'A user interface that can be displayed to a player when the corresponding scene and state is active.',
@@ -50,7 +48,7 @@ module.exports = {
     panels: {
       type: 'list',
       default: [{}],
-      items: panel,
+      items: { type: 'component', component: 'panels' },
       help: 'List of user interface panels.',
     }
   },

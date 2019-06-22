@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { Evaluator, Registry, TextUtil, Validations, Validator } from 'fptcore';
+import { Registry, TextUtil, Validations, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import { labelForSpec } from '../utils/spec-utils';
@@ -14,7 +14,6 @@ const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
 const booleanLabels = ['No', 'Yes'];
 
-const evaluator = new Evaluator(Registry);
 const validator = new Validator(Registry);
 
 function isEmpty(warnings) {
@@ -51,14 +50,6 @@ function internalEmpty(spec) {
   );
 }
 
-function defaultIfForOp(op) {
-  // Need default item for not, otherwise will error when showing choice.
-  if (op === 'not') {
-    return { op: 'not', item: { op: '' } };
-  }
-  return { op: op };
-}
-
 const newItemsForSpecType = {
   string: '',
   email: '',
@@ -74,7 +65,6 @@ const newItemsForSpecType = {
   simpleAttribute: '',
   lookupable: '',
   reference: '',
-  ifClause: { op: '' },
   markdown: '',
   dictionary: {},
   list: [],
@@ -278,37 +268,6 @@ export default class FieldRenderer {
     );
     const clean = val => val;
     return this.internalStringlike(spec, value, name, path, opts, validate, clean);
-  }
-
-  renderIfClause(spec, value, name, path, opts) {
-    if (!value) {
-      const choices = [{ value: '', label: '---' }]
-        .concat(Object.keys(evaluator.ifOpClasses).map(op => ({
-          value: op,
-          label: op
-        })));
-      const clean = val => (val === '' ? null : defaultIfForOp(val));
-      const label = <em className="faint">Always</em>;
-      return this.internalEnumlike(spec, '', name, path, opts,
-        choices, clean, label);
-    }
-    const inlineOpts = Object.assign({}, opts);
-    const inlineStyle = {};
-    if (_.includes(['and', 'or'], value.op)) {
-      inlineOpts.inline = false;
-      inlineOpts.insideCompoundIf = true;
-      if (!_.get(opts, 'insideCompoundIf')) {
-        inlineStyle.paddingLeft = '1em';
-      }
-    } else {
-      inlineOpts.inline = true;
-      inlineStyle.display = 'inline-block';
-    }
-    return (
-      <div className="ifClause" style={inlineStyle}>
-        {this.renderFieldValue(evaluator.ifSpec, value, name, path, inlineOpts)}
-      </div>
-    );
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -530,6 +489,10 @@ export default class FieldRenderer {
       _.get(spec, 'display.form') === 'inline' ||
       _.get(opts, 'inline')
     );
+    // Nest inline
+    const optsWithInline = isInline ?
+      Object.assign({}, opts, { inline: true }) :
+      opts;
     const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
 
     const itemStyle = isInline ? inlineStyle : {};
@@ -564,7 +527,7 @@ export default class FieldRenderer {
       <div key={key} style={itemStyle} className="object-key">
         {this.internalLabel(keySpec, key)}
         {this.renderFieldValue(keySpec, itemValue, _.startCase(key),
-          itemPath, opts)}
+          itemPath, optsWithInline)}
         {clear}
         {invalidWarning}
       </div>

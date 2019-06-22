@@ -10,7 +10,8 @@ module.exports = {
       help: 'Enable if this scene is always active.'
     },
     active_if: {
-      type: 'ifClause',
+      type: 'component',
+      component: 'conditions',
       help: 'Global scenes can be activated or deactived by a conditional.'
     }
   }

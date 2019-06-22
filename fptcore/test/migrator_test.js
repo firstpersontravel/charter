@@ -80,42 +80,47 @@ describe('Migrator', () => {
     });
 
     it('migrates actions', () => {
-      const scriptContent = {
-        triggers: [{
-          actions: [{ name: 'play_audio', audio_name: '2' }]
-        }, {
-          actions: [{
-            name: 'conditional',
-            if: { op: 'istrue', ref: '123' },
-            actions: [{ name: 'play_audio', audio_name: '4' }],
-            elseifs: [{
-              if: { op: 'istrue', ref: '456' },
-              actions: [{ name: 'play_audio', audio_name: '6' }],
-            }],
-            else: [{ name: 'play_audio', audio_name: '8' }],
-          }]
+      const trigger1 = {
+        actions: [{ name: 'play_audio', audio_name: '2' }]
+      };
+      const trigger2 = {
+        actions: [{
+          name: 'conditional',
+          if: { op: 'istrue', ref: '123' },
+          actions: [{ name: 'play_audio', audio_name: '4' }],
+          elseifs: [{
+            if: { op: 'istrue', ref: '456' },
+            actions: [{ name: 'play_audio', audio_name: '6' }],
+          }],
+          else: [{ name: 'play_audio', audio_name: '8' }],
         }]
       };
+      const scriptContent = { triggers: [trigger1, trigger2] };
       const migration = sinon.stub();
 
       Migrator.runMigration('actions', migration, scriptContent);
 
-      sinon.assert.callCount(migration, 4);
+      sinon.assert.callCount(migration, 5);
       sinon.assert.calledWith(
         migration.getCall(0), { name: 'play_audio', audio_name: '2' });
+      // Then conditional
       sinon.assert.calledWith(
-        migration.getCall(1), { name: 'play_audio', audio_name: '4' });
+        migration.getCall(1), trigger2.actions[0]);
+      // Then nested
       sinon.assert.calledWith(
-        migration.getCall(2), { name: 'play_audio', audio_name: '6' });
+        migration.getCall(2), { name: 'play_audio', audio_name: '4' });
       sinon.assert.calledWith(
-        migration.getCall(3), { name: 'play_audio', audio_name: '8' });
+        migration.getCall(3), { name: 'play_audio', audio_name: '6' });
+      sinon.assert.calledWith(
+        migration.getCall(4), { name: 'play_audio', audio_name: '8' });
     });
 
-    const lotsOfIfs = {
-      triggers: [{
+    it('migrates conditions', () => {
+      const trigger1 = {
         active_if: { op: 'istrue', ref: 'test1' },
         actions: [{ name: 'play_audio', audio_name: '2' }]
-      }, {
+      };
+      const trigger2 = {
         actions: [{
           name: 'conditional',
           if: { op: 'istrue', ref: 'test2' },
@@ -132,42 +137,24 @@ describe('Migrator', () => {
           }],
           else: [{ name: 'play_audio', audio_name: '8' }]
         }]
-      }]
-    };
-
-    it('migrates if clauses', () => {
+      };
+      const sc = { triggers: [trigger1, trigger2] };
       const migration = sinon.stub();
 
-      Migrator.runMigration('ifClauses', migration, lotsOfIfs);
+      Migrator.runMigration('conditions', migration, sc);
 
-      sinon.assert.callCount(migration, 4);
-      sinon.assert.calledWith(
-        migration.getCall(0), { op: 'istrue', ref: 'test1' }, lotsOfIfs);
-      sinon.assert.calledWith(
-        migration.getCall(1), undefined, lotsOfIfs);
-      sinon.assert.calledWith(
-        migration.getCall(2), { op: 'istrue', ref: 'test2' }, lotsOfIfs);
-      // Complex if statement
-      sinon.assert.calledWith(
-        migration.getCall(3), lotsOfIfs.triggers[1].actions[0].elseifs[0].if,
-        lotsOfIfs);
-    });
-
-    it('migrates if expressions', () => {
-      const migration = sinon.stub();
-
-      Migrator.runMigration('ifExpressions', migration, lotsOfIfs);
-
-      sinon.assert.callCount(migration, 4);
-      sinon.assert.calledWith(
-        migration.getCall(0), { op: 'istrue', ref: 'test1' }, lotsOfIfs);
-      sinon.assert.calledWith(
-        migration.getCall(1), { op: 'istrue', ref: 'test2' }, lotsOfIfs);
-      sinon.assert.calledWith(
-        migration.getCall(2), { op: 'istrue', ref: 'test3' }, lotsOfIfs);
-      sinon.assert.calledWith(
-        migration.getCall(3), { op: 'equals', ref1: 'a', ref2: 'b' },
-        lotsOfIfs);
+      sinon.assert.callCount(migration, 7);
+      sinon.assert.calledWith(migration.getCall(0), trigger1.active_if, sc);
+      // trigger2.active_if
+      sinon.assert.calledWith(migration.getCall(1), undefined, sc);
+      const t2act1 = trigger2.actions[0];
+      const t2elseif1 = t2act1.elseifs[0];
+      sinon.assert.calledWith(migration.getCall(2), t2act1.if, sc);
+      sinon.assert.calledWith(migration.getCall(3), t2elseif1.if, sc);
+      sinon.assert.calledWith(migration.getCall(4), t2elseif1.if.items[0], sc);
+      sinon.assert.calledWith(migration.getCall(5), t2elseif1.if.items[1], sc);
+      sinon.assert.calledWith(migration.getCall(6), t2elseif1.if.items[1].item,
+        sc);
     });
 
     it('migrates event specs', () => {
@@ -178,7 +165,7 @@ describe('Migrator', () => {
       };
       const migration = sinon.stub();
 
-      Migrator.runMigration('eventSpecs', migration, scriptContent);
+      Migrator.runMigration('events', migration, scriptContent);
 
       sinon.assert.calledOnce(migration);
       sinon.assert.calledWith(migration.getCall(0), { spec: 3 });

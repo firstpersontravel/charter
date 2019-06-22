@@ -12,24 +12,26 @@ const modules = [
   require('../modules/roles/module'),
   require('../modules/scenes/module'),
   require('../modules/time/module'),
+  require('../modules/triggers/module'),
   require('../modules/values/module'),
   require('../modules/variants/module'),
 ];
 
-const componentTypes = ['actions', 'events', 'panels', 'conditions'];
-const registry = { modules: {}, resources: {} };
-for (const componentType of componentTypes) {
+const components = require('./components');
+
+const registry = { modules: {}, resources: {}, components: components };
+for (const componentType of Object.keys(components)) {
   registry[componentType] = {};
 }
 
 // Load modules
 for (const mod of modules) {
-  for (const componentType of componentTypes) {
+  for (const componentType of Object.keys(components)) {
     mod[componentType] = {};
   }
   for (const resourceType of Object.keys(mod.resources)) {
     const resourceDef = mod.resources[resourceType];
-    for (const componentType of componentTypes) {
+    for (const componentType of Object.keys(components)) {
       Object.assign(mod[componentType], resourceDef[componentType]);
       Object.assign(registry[componentType], resourceDef[componentType]);
     }
@@ -39,12 +41,5 @@ for (const mod of modules) {
   }
   registry.modules[mod.name] = mod;
 }
-
-// Create trigger module
-const createTriggerResource = require('./trigger');
-const trigger = createTriggerResource(registry.actions, registry.events);
-const triggerModule = { resources: { trigger: { resource: trigger } } };
-registry.modules.triggers = triggerModule;
-registry.resources.trigger = trigger;
 
 module.exports = registry;

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Registry, TextUtil } from 'fptcore';
+import { Registry, TextUtil, Validator } from 'fptcore';
 
 const walkers = {
   reference: (spec, value, iteree) => {
@@ -39,11 +39,10 @@ const walkers = {
     });
   },
   component: (spec, value, iteree) => {
-    const variety = _.isFunction(spec.key) ? spec.key(value) : value[spec.key];
-    const commonClass = spec.common;
-    const varietyClass = spec.classes[variety];
-    const mergedClass = _.merge({}, commonClass, varietyClass);
-    walkers.object(mergedClass, value, iteree);
+    const validator = new Validator(Registry);
+    const variety = validator.getComponentVariety(spec, value);
+    const mergedClass = validator.getComponentClass(spec, variety);
+    walkers.object(mergedClass.properties, value, iteree);
   }
 };
 

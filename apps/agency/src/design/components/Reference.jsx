@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 
-import { ModulesRegistry, TextUtil } from 'fptcore';
+import { Registry, TextUtil } from 'fptcore';
 
 import ResourceBadge from '../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
@@ -76,8 +76,8 @@ function renderSidebarModule(moduleName, module) {
 }
 
 function renderSidebar() {
-  const renderedModules = Object.keys(ModulesRegistry).map(moduleName => (
-    renderSidebarModule(moduleName, ModulesRegistry[moduleName])
+  const renderedModules = Object.keys(Registry.modules).map(moduleName => (
+    renderSidebarModule(moduleName, Registry.modules[moduleName])
   ));
   return (
     <div className="col-sm-2 script-editor-full-height d-none d-sm-block">
@@ -87,17 +87,8 @@ function renderSidebar() {
 }
 
 function labelForSpecType(spec, key) {
-  // HACK
-  if (_.startsWith(key, 'actions')) {
-    return 'Action';
-  }
-  // HACK
-  if (_.startsWith(key, 'event')) {
-    return 'Event';
-  }
-  // HACK HACK HACK
-  if (_.includes(key, 'panel')) {
-    return 'Panel';
+  if (spec.type === 'component') {
+    return `One of component "${spec.component}"`;
   }
   if (!spec.type) {
     return 'unknown';
@@ -116,9 +107,6 @@ function labelForSpecType(spec, key) {
       </a>
     );
   }
-  if (spec.type === 'ifClause') {
-    return 'If Statement';
-  }
   if (spec.type === 'enum') {
     return spec.options.map(s => `"${s}"`).join(' | ');
   }
@@ -131,7 +119,7 @@ function renderResourceFieldItem(key, spec, prefix) {
   }
   const specStyle = spec.required ? { fontWeight: 'bold' } : {};
   return (
-    <tr key={`${prefix}-${key}`}>
+    <tr key={`${spec.type}-${key}`}>
       <td
         className="constrain-text"
         style={specStyle}>
@@ -318,8 +306,8 @@ function renderModule(moduleName, module) {
 
 
 function renderMain() {
-  const renderedModules = Object.keys(ModulesRegistry).map(moduleName => (
-    renderModule(moduleName, ModulesRegistry[moduleName])
+  const renderedModules = Object.keys(Registry.modules).map(moduleName => (
+    renderModule(moduleName, Registry.modules[moduleName])
   ));
   return (
     <div className="col-sm-10 script-editor-full-height">

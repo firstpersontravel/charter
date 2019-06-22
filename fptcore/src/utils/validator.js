@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-const Evaluator = require('./evaluator');
 const Validations = require('./validations');
 
 class Validator {
@@ -57,78 +56,71 @@ class Validator {
     return this.validateParams(script, spec.properties, param, prefix);
   }
 
-  ifClause(script, name, spec, param) {
-    if (!_.isPlainObject(param)) {
-      return ['If param "' + name + '" should be an object.'];
+  getComponentVariety(spec, value) {
+    const componentType = spec.component;
+    const componentDef = this.registry.components[componentType];
+    if (!componentDef) {
+      throw new Error(`Invalid component type "${spec.component}".`);
     }
-    const evaluator = new Evaluator(this.registry);
-    return this.validateParam(script, name, evaluator.ifSpec, param);
-  }
-
-  /**
-   * Get the variety of a param by spec.
-   */
-  getComponentVariety(spec, param) {
-    if (!param) {
-      return null;
-    }
-    return _.isFunction(spec.key) ? spec.key(param) : param[spec.key];
+    return value ? value[componentDef.typeKey] : null;
   }
 
   /**
    * Get resource class of a component property, merging common and variety.
    */
   getComponentClass(spec, variety) {
-    const commonClass = spec.common;
-    // For display in the editor, it's useful to just show the common
-    // class if you have a null object, that way users can select
-    // the variety to get the extra fields.
+    const componentType = spec.component;
+    const componentDef = this.registry.components[componentType];
+    if (!componentDef) {
+      throw new Error(`Invalid component type "${componentType}".`);
+    }
+    const componentsRegistry = this.registry[componentType];
+    const typeClass = {
+      properties: {
+        [componentDef.typeKey]: {
+          type: 'enum',
+          options: Object.keys(componentsRegistry),
+          required: true,
+          help: `Type of ${componentType}.`,
+          display: { label: false }
+        }
+      }
+    };
+    // Return type object if no existing component to allow you to choose one
+    // in the interface.
     if (!variety) {
-      return commonClass;
+      return Object.assign({ display: { form: 'inline' } }, typeClass);
     }
-    if (!spec.classes[variety]) {
-      throw new Error('Invalid variety ' + variety +
-        ', should be one of: ' +
-        Object.keys(spec.classes).join(', ') + '.');
+    if (!componentsRegistry[variety]) {
+      throw new Error(`"${variety}" is not one of the "${componentType}" components.`);
     }
-    const variedClass = spec.classes[variety];
-    return _.merge({}, commonClass, variedClass);
+    const commonClass = componentDef.common || {};
+    const varietyClass = {
+      properties: componentsRegistry[variety][componentDef.propertiesKey]
+    };
+    return _.merge({}, typeClass, commonClass, varietyClass);
   }
 
   /**
    * Embed a component validator which hinges on a key param.
    */
   component(script, name, spec, param) {
-    if (!spec.key) {
-      throw new Error('Invalid component spec: requires key.');
+    const componentType = spec.component;
+    const componentDef = this.registry.components[componentType];
+    if (!componentDef) {
+      throw new Error(`Invalid component "${componentType}".`);
     }
-    if (!spec.classes) {
-      throw new Error('Invalid component spec: requires classes.');
-    }
-    if (!_.isFunction(spec.key)) {
-      if (!_.isPlainObject(param)) {
-        return ['Component param "' + name + '" should be an object.'];
-      }
-    }
-    // HACK TO SUPPORT FUNCTION KEYS FOR NOW UNTIL WE SIMPLIFY THE EVENT
-    // STRUCTURE -- should be {type: event_type, ...params}.
-    const keyName = _.isFunction(spec.key) ? 'key' : spec.key;
     const variety = this.getComponentVariety(spec, param);
     if (!variety) {
-      return ['Required param "' + name + '[' + keyName + ']" not present.'];
+      return [`Required param "${name}[${componentDef.typeKey}]" not present.`];
     }
-    if (!_.isString(variety)) {
-      return ['Component param "' + name + '" property "' + keyName +
-        '" should be a string.'];
+    const componentsRegistry = this.registry[componentType];
+    if (!componentsRegistry[variety]) {
+      return [`"${variety}" is not one of the "${componentType}" components.`];
     }
-    if (!spec.classes[variety]) {
-      return ['Component param "' + name + '" property "' + keyName +
-        '" ("' + variety + '") should be one of: ' +
-        Object.keys(spec.classes).join(', ') + '.'];
-    }
-    const varietyClass = this.getComponentClass(spec, variety);
+    const componentClass = this.getComponentClass(spec, variety);
     const prefix = name + '.';
-    return this.validateResource(script, varietyClass, param, prefix);
+    return this.validateResource(script, componentClass, param, prefix);
   }
 
   /**
