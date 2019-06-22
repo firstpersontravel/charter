@@ -2,7 +2,7 @@ const _ = require('lodash');
 const program = require('commander');
 
 const models = require('../src/models');
-const ResourcesRegistry = require('../../fptcore/src/registries/resources');
+const Registry = require('../../fptcore/src/registry/registry');
 const TextUtil = require('../../fptcore/src/utils/text');
 
 program
@@ -19,7 +19,7 @@ function hashCode(s) {
 }
 
 async function previewUsage(resourceType, property) {
-  if (!ResourcesRegistry[resourceType]) {
+  if (!Registry.resources[resourceType]) {
     throw new Error(`Invalid resource "${resourceType}".`);
   }
   const scripts = await models.Script.findAll({

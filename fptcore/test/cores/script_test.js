@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 
 const panel = require('../../src/modules/pages/panel');
-const ResourcesRegistry = require('../../src/registries/resources');
+const Registry = require('../../src/registry/registry');
 const ScriptCore = require('../../src/cores/script');
 
 describe('ScriptCore', () => {
@@ -40,16 +40,16 @@ describe('ScriptCore', () => {
 
       sinon.assert.callCount(iteree, 6);
       sinon.assert.calledWith(iteree.getCall(0), 'test1',
-        ResourcesRegistry.scene.properties.active_if,
+        Registry.resources.scene.properties.active_if,
         scriptContent.scenes[0], 'active_if');
       sinon.assert.calledWith(iteree.getCall(1), 'test2',
-        ResourcesRegistry.achievement.properties.test,
+        Registry.resources.achievement.properties.test,
         scriptContent.achievements[0], 'test');
       sinon.assert.calledWith(iteree.getCall(2), 'test3',
         panel.common.properties.visible_if,
         scriptContent.pages[0].panels[0], 'visible_if');  // panel common
       sinon.assert.calledWith(iteree.getCall(3), 'test4',
-        ResourcesRegistry.trigger.properties.active_if,
+        Registry.resources.trigger.properties.active_if,
         scriptContent.triggers[0], 'active_if');
       sinon.assert.calledWith(iteree.getCall(4), 'test5',
         { required: true, type: 'ifClause' },
@@ -77,16 +77,16 @@ describe('ScriptCore', () => {
 
       sinon.assert.callCount(iteree, 4);
       sinon.assert.calledWith(iteree.getCall(0), 'def',
-        ResourcesRegistry.scene.properties.title,
+        Registry.resources.scene.properties.title,
         scriptContent.scenes[0], 'title');
       sinon.assert.calledWith(iteree.getCall(1), undefined,
-        ResourcesRegistry.achievement.properties.title,
+        Registry.resources.achievement.properties.title,
         scriptContent.achievements[0], 'title');
       sinon.assert.calledWith(iteree.getCall(2), 'yes',
-        ResourcesRegistry.achievement.properties.titles.keys,
+        Registry.resources.achievement.properties.titles.keys,
         scriptContent.achievements[0].titles, 'keys');
       sinon.assert.calledWith(iteree.getCall(3), '123',
-        ResourcesRegistry.achievement.properties.titles.values,
+        Registry.resources.achievement.properties.titles.values,
         scriptContent.achievements[0].titles, 'yes');
     });
   });

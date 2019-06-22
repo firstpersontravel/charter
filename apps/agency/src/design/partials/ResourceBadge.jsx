@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ResourcesRegistry, TextUtil } from 'fptcore';
+import { Registry, TextUtil } from 'fptcore';
 
 const colors = [
   '#2e4d2e',
@@ -31,14 +31,14 @@ const colors = [
   '#e57e88'
 ];
 
-const COLORS = _(ResourcesRegistry)
+const COLORS = _(Registry.resources)
   .keys()
   .map((key, i) => [key, colors[i % colors.length]])
   .fromPairs()
   .value();
 
 export function iconForResourceType(resourceType) {
-  const resourceClass = ResourcesRegistry[resourceType];
+  const resourceClass = Registry.resources[resourceType];
   if (!resourceClass || !resourceClass.icon) {
     return null;
   }

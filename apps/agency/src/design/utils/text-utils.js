@@ -1,8 +1,8 @@
-import { TextUtil, ResourcesRegistry } from 'fptcore';
+import { TextUtil, Registry } from 'fptcore';
 
 export function titleForResource(scriptContent, collectionName, resource) {
   const resourceName = TextUtil.singularize(collectionName);
-  const resourceClass = ResourcesRegistry[resourceName];
+  const resourceClass = Registry.resources[resourceName];
   if (resourceClass && resourceClass.getTitle) {
     return `(${resourceClass.getTitle(scriptContent, resource)})`;
   }

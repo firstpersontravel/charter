@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var fs = require('fs');
 
-var ResourcesRegistry = require('./registries/resources');
+var Registry = require('./registry/registry');
 var ScriptCore = require('./cores/script');
 var TextUtil = require('./utils/text');
 var KernelActions = require('./kernel/actions');
@@ -82,7 +82,7 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
     return;
   }
   var resourceType = TextUtil.singularize(collectionName);
-  if (!ResourcesRegistry[resourceType]) {
+  if (!Registry.resources[resourceType]) {
     // throw new Error('Illegal collection name ' + collectionName);
     return;
   }

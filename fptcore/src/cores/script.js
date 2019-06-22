@@ -3,7 +3,7 @@ const jsonschema = require('jsonschema');
 
 // const ConditionCore = require('./condition');
 const TextUtil = require('../utils/text');
-const Registry = require('../registries/registry');
+const Registry = require('../registry/registry');
 const Validator = require('../utils/validator');
 const Errors = require('../errors');
 

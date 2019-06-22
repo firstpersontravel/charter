@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const Registry = require('../registries/registry');
+const Registry = require('../registry/registry');
 const Evaluator = require('../utils/evaluator');
 
 const evaluator = new Evaluator(Registry);

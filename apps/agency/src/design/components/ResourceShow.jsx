@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link, browserHistory } from 'react-router';
 
-import { TextUtil, ResourcesRegistry } from 'fptcore';
+import { TextUtil, Registry } from 'fptcore';
 
 import ResourceBadge from '../partials/ResourceBadge';
 import ResourceView from '../partials/ResourceView';
@@ -52,7 +52,7 @@ export default class ResourceShow extends Component {
     const sliceType = this.props.params.sliceType;
     const sliceName = this.props.params.sliceName;
     const resourceType = TextUtil.singularize(collectionName);
-    const resourceClass = ResourcesRegistry[resourceType];
+    const resourceClass = Registry.resources[resourceType];
     const newName = newResourceNameForType(resourceType);
     const defaultFields = defaultFieldsForClass(resourceClass);
     const fields = Object.assign({ name: newName }, defaultFields);
@@ -330,7 +330,7 @@ export default class ResourceShow extends Component {
     const script = this.props.script;
     const collectionName = this.props.params.collectionName;
     const resourceType = TextUtil.singularize(collectionName);
-    if (!ResourcesRegistry[resourceType]) {
+    if (!Registry.resources[resourceType]) {
       return (
         <div className="alert alert-warning">
           Invalid collection.

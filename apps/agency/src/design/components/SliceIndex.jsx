@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 
-import { ResourcesRegistry, TextUtil } from 'fptcore';
+import { Registry, TextUtil } from 'fptcore';
 
 import ResourceBadge from '../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
   const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = ResourcesRegistry[resourceType];
+  const resourceClass = Registry.resources[resourceType];
   return (
     <p key={collectionName} className="mb-3">
       <ResourceBadge resourceType={resourceType} className="mr-1" />

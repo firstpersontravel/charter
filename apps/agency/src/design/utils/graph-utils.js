@@ -1,9 +1,6 @@
 import _ from 'lodash';
 
-import {
-  ResourcesRegistry,
-  TextUtil
-} from 'fptcore';
+import { Registry, TextUtil } from 'fptcore';
 
 const walkers = {
   reference: (spec, value, iteree) => {
@@ -52,7 +49,7 @@ const walkers = {
 
 function walkReferences(collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = ResourcesRegistry[resourceType];
+  const resourceClass = Registry.resources[resourceType];
   if (!resourceClass) {
     return [];
   }
@@ -86,10 +83,10 @@ export function assembleReverseReferences(scriptContent) {
 }
 
 export function getChildResourceTypes(collectionName) {
-  return _(ResourcesRegistry)
+  return _(Registry.resources)
     .keys()
     .filter(childResourceType => (
-      _.some(ResourcesRegistry[childResourceType].properties, property => (
+      _.some(Registry.resources[childResourceType].properties, property => (
         property.type === 'reference' &&
         property.collection === collectionName &&
         property.parent

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Sequelize = require('sequelize');
 
 const Evaluator = require('../../../fptcore/src/utils/evaluator');
-const Registry = require('../../../fptcore/src/registries/registry');
+const Registry = require('../../../fptcore/src/registry/registry');
 const PlayerCore = require('../../../fptcore/src/cores/player');
 const TemplateUtil = require('../../../fptcore/src/utils/template');
 

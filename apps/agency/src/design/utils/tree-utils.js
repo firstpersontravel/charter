@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import { TextUtil, ResourcesRegistry } from 'fptcore';
+import { TextUtil, Registry } from 'fptcore';
 
 function getChildClaims(collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = ResourcesRegistry[resourceType];
+  const resourceClass = Registry.resources[resourceType];
   return resourceClass.getChildClaims ?
     resourceClass.getChildClaims(resource) :
     null;
@@ -11,7 +11,7 @@ function getChildClaims(collectionName, resource) {
 
 function getParentClaims(collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = ResourcesRegistry[resourceType];
+  const resourceClass = Registry.resources[resourceType];
   return resourceClass.getParentClaims ?
     resourceClass.getParentClaims(resource) :
     null;

@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { EventsRegistry, KernelTriggers } from 'fptcore';
+import { Registry, KernelTriggers } from 'fptcore';
 
 function getScheduledTripTriggers(trip) {
   const now = moment.utc();
@@ -15,7 +15,7 @@ function getScheduledTripTriggers(trip) {
     id: trigger.name,
     type: 'trigger',
     tripId: trip.id,
-    scheduledAt: EventsRegistry.time_occurred.timeForSpec(
+    scheduledAt: Registry.events.time_occurred.timeForSpec(
       trigger.event, trip.evalContext),
     departureName: trip.departureName,
     name: trigger.name
