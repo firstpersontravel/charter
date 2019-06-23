@@ -10,7 +10,7 @@ import { getChildResourceTypes } from '../utils/graph-utils';
 import { getSliceContent } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
 import ResourceBadge from './ResourceBadge';
-import FieldRenderer from './FieldRenderer';
+import ResourceField from './compound/Resource';
 
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title'];
@@ -259,10 +259,15 @@ export default class ResourceView extends Component {
     const whitelistedParams = {
       properties: _.pick(resourceClass.properties, ...fieldNames)
     };
-    const renderer = new FieldRenderer(script, this.state.pendingResource,
-      this.props.isNew, this.handlePropertyUpdate, this.handleArrayUpdate);
-    return renderer.renderObject(whitelistedParams, this.state.pendingResource,
-      '', '');
+    return (
+      <ResourceField
+        script={script}
+        resource={this.state.pendingResource}
+        onPropUpdate={this.handlePropertyUpdate}
+        onArrayUpdate={this.handleArrayUpdate}
+        spec={whitelistedParams}
+        value={this.state.pendingResource} />
+    );
   }
 
   renderErrors() {

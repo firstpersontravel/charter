@@ -27,7 +27,7 @@ function EnumField({ spec, value, name, path, opts, onPropUpdate }) {
   return (
     <BaseEnum
       spec={spec}
-      value={value}
+      value={value || ''}
       name={name}
       path={path}
       opts={opts}

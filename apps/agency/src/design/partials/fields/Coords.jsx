@@ -29,7 +29,7 @@ function CoordsField({ spec, value, name, path, opts, onPropUpdate }) {
 
 CoordsField.propTypes = {
   spec: PropTypes.object.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.array,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
   opts: PropTypes.object,
@@ -37,7 +37,7 @@ CoordsField.propTypes = {
 };
 
 CoordsField.defaultProps = {
-  value: '',
+  value: [0, 0],
   opts: {}
 };
 
