@@ -284,19 +284,70 @@ describe('Validator', () => {
 
       sinon.assert.calledWith(Validations.string, {}, 'name', spec, null);
     });
+
+    it('warns on invalid param type', () => {
+      const spec = { type: 'invalid' };
+      assert.throws(() => {
+        validator.validateParam({}, 'name', spec, null);
+      }, err => err.message === 'Invalid param type "invalid".');
+    });
   });
 
   describe('#validateParams', () => {
-    it.skip('warns on non-object input', () => {});
-    it.skip('warns on unexpected param', () => {});
-    it.skip('warns on missing required param', () => {});
-    it.skip('passes through if just one key equaling self', () => {});
-    it.skip('does not pass through if multiple keys', () => {});
-    it.skip('allows non-object input if passthrough', () => {});
+    it('warns on non-object input', () => {
+      const invalid = 'abc';
+      const paramsSpec = { field: { type: 'string' } };
+      err(validator.validateParams({}, paramsSpec, invalid, ''),
+        'Parameters should be an object.');
+    });
+
+    it('warns on unexpected param', () => {
+      const params = { field2: 'abc' };
+      const paramsSpec = { field: { type: 'string' } };
+      err(validator.validateParams({}, paramsSpec, params, ''),
+        'Unexpected param "field2" (expected one of: field).');
+    });
+
+    it('warns on missing required param', () => {
+      const params = {};
+      const paramsSpec = { field: { type: 'string', required: true } };
+      err(validator.validateParams({}, paramsSpec, params, ''),
+        'Required param "field" not present.');
+    });
   });
 
   describe('#validateResource', () => {
-    it.skip('works when nested', () => {
+    const panelsRegistry = {
+      components: {
+        panels: {
+          typeKey: 'type',
+          propertiesKey: 'properties',
+          common: {
+            properties: {
+              type: { type: 'string', required: true },
+              if: { type: 'string' }
+            }
+          }
+        }
+      },
+      panels: {
+        image: {
+          properties: {
+            path: { type: 'media', required: true },
+            style: { type: 'enum', options: ['float-right'] }
+          }
+        },
+        text: {
+          properties: {
+            text: { type: 'string', required: true },
+            style: { type: 'enum', options: ['centered', 'quest'] }
+          }
+        }
+      }
+    };
+    const panelsValidator = new Validator(panelsRegistry);
+
+    it('validates nested components', () => {
       const value = {
         name: 'sarai1',
         section: 'contacts',
@@ -312,46 +363,20 @@ describe('Validator', () => {
         if: 'contact_sarai1'
       };
 
-      const panelCommon = {
-        properties: {
-          type: { type: 'string', required: true },
-          if: { type: 'string' }
-        }
-      };
-
-      const panelClasses = {
-        image: {
-          properties: {
-            path: { type: 'media', required: true },
-            style: { type: 'enum', options: ['float-right'] }
-          }
-        },
-        text: {
-          properties: {
-            text: { type: 'string', required: true },
-            style: { type: 'enum', options: ['centered', 'quest'] }
-          }
-        },
-      };
-
-      const panel = {
-        type: 'component',
-        key: 'type',
-        common: panelCommon,
-        classes: panelClasses
-      };
-
       const contentPage = {
         properties: {
           name: { type: 'name', required: true },
           section: { type: 'string', required: true },
           title: { type: 'string', required: true },
           if: { type: 'string' },
-          panels: { type: 'list', items: panel }
+          panels: {
+            type: 'list',
+            items: { type: 'component', component: 'panels' }
+          }
         }
       };
 
-      ok(validator.validateResource({}, contentPage, value, ''));
+      ok(panelsValidator.validateResource({}, contentPage, value, ''));
     });
   });
 });
