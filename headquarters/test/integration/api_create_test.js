@@ -1,5 +1,8 @@
 const assert = require('assert');
 const request = require('supertest');
+const fs = require('fs');
+const path = require('path');
+const yaml = require('js-yaml');
 
 const ScriptCore = require('../../../fptcore/src/cores/script');
 
@@ -126,7 +129,7 @@ describe('API create', () => {
       experience = await TestUtil.createDummyExperience();
     });
 
-    it('creates script', () => {
+    it('creates simple script', () => {
       return request(app)
         .post('/api/scripts')
         .send({
@@ -146,6 +149,30 @@ describe('API create', () => {
         });
     });
 
+    const examples = ['email', 'phonetree', 'roadtrip', 'textconvo'];
+    
+    for (const example of examples) {
+      const examplePath = `../../examples/${example}.yaml`;
+      const scriptPath = path.join(__dirname, examplePath);
+      const scriptContent = yaml.safeLoad(fs.readFileSync(scriptPath, 'utf8'));
+
+      it(`creates ${example} example`, () => {
+        return request(app)
+          .post('/api/scripts')
+          .send({
+            orgId: experience.orgId,
+            experienceId: experience.id,
+            revision: 0,
+            content: scriptContent
+          })
+          .set('Accept', 'application/json')
+          .expect(201)
+          .then((res) => {
+            assert.deepStrictEqual(res.body.data.script.content,
+              scriptContent);
+          });
+      });
+    }
 
     it('fails on missing meta', () => {
       return request(app)
