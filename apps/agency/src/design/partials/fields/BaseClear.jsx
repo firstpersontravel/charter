@@ -1,0 +1,38 @@
+import _ from 'lodash';
+import React from 'react';
+import PropTypes from 'prop-types';
+
+function BaseClear({ spec, value, path, onPropUpdate }) {
+  const shouldAllowClear = (
+    !spec.required &&
+    !spec.parent &&
+    !_.isUndefined(value) &&
+    !_.isNull(value)
+  );
+  if (!shouldAllowClear) {
+    return null;
+  }
+  return (
+    <span>
+      &nbsp;
+      <button
+        className="btn-unstyled clear-btn faint"
+        onClick={() => onPropUpdate(path, null)}>
+        <i className="fa fa-close" />
+      </button>
+    </span>
+  );
+}
+
+BaseClear.propTypes = {
+  spec: PropTypes.object.isRequired,
+  value: PropTypes.any,
+  path: PropTypes.string.isRequired,
+  onPropUpdate: PropTypes.func.isRequired
+};
+
+BaseClear.defaultProps = {
+  value: null
+};
+
+export default BaseClear;
