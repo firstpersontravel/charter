@@ -7,7 +7,7 @@ function SimpleValueField({ spec, value, name, path, opts, onPropUpdate }) {
   return (
     <BaseString
       spec={spec}
-      value={value}
+      value={value.toString()}
       name={name}
       path={path}
       opts={opts}
@@ -23,7 +23,10 @@ function SimpleValueField({ spec, value, name, path, opts, onPropUpdate }) {
 
 SimpleValueField.propTypes = {
   spec: PropTypes.object.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.bool,
+    PropTypes.number]),
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
   opts: PropTypes.object,

@@ -11,6 +11,43 @@ const validator = new Validator(Registry);
 
 const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
+function invalidWarningForSpec(script, keySpec, itemValue) {
+  const isSimpleType = !_.includes(COMPLEX_TYPES, keySpec.type);
+  if (isSimpleType) {
+    if (_.isNull(itemValue) || _.isUndefined(itemValue)) {
+      if (keySpec.required) {
+        return (
+          <i className="fa fa-exclamation-circle text-danger ml-1" />
+        );
+      }
+    } else {
+      const validatorErrors = validator.validateParam(script,
+        name, keySpec, itemValue);
+      if (validatorErrors && validatorErrors.length > 0) {
+        return (
+          <i className="fa fa-exclamation-circle text-danger ml-1" />
+        );
+      }
+    }
+  }
+  return null;
+}
+
+function clearForSpec(keySpec, itemValue, itemPath, onPropUpdate) {
+  const isSimpleType = !_.includes(COMPLEX_TYPES, keySpec.type);
+  const shouldShowClear = isSimpleType && keySpec.type !== 'boolean';
+  if (!shouldShowClear) {
+    return null;
+  }
+  return (
+    <BaseClear
+      spec={keySpec}
+      value={itemValue}
+      path={itemPath}
+      onPropUpdate={onPropUpdate} />
+  );
+}
+
 function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
   keyName, onPropUpdate, onArrayUpdate, renderAny }) {
   // Hide hidden fields
@@ -35,41 +72,11 @@ function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
     Object.assign({}, opts, { inline: true }) :
     opts;
   const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
-
   const itemStyle = isInline ? inlineStyle : {};
   const itemPath = `${path}${path ? '.' : ''}${keyName}`;
-  const isSimpleType = !_.includes(COMPLEX_TYPES, keySpec.type);
   const itemValue = _.get(value, keyName);
-
-  let invalidWarning = null;
-  if (isSimpleType) {
-    if (_.isNull(itemValue) || _.isUndefined(itemValue)) {
-      if (keySpec.required) {
-        invalidWarning = (
-          <i className="fa fa-exclamation-circle text-danger ml-1" />
-        );
-      }
-    } else {
-      const validatorErrors = validator.validateParam(script,
-        name, keySpec, itemValue);
-      if (validatorErrors && validatorErrors.length > 0) {
-        invalidWarning = (
-          <i className="fa fa-exclamation-circle text-danger ml-1" />
-        );
-      }
-    }
-  }
-
-  const shouldShowClear = isSimpleType && keySpec.type !== 'boolean';
-  const clear = shouldShowClear ? (
-    <BaseClear
-      spec={keySpec}
-      value={itemValue}
-      path={itemPath}
-      onPropUpdate={onPropUpdate} />
-  ) : null;
   return (
-    <div key={keyName} style={itemStyle} className="object-key">
+    <div style={itemStyle}>
       <Label spec={keySpec} name={keyName} />
       {renderAny({
         script: script,
@@ -82,8 +89,8 @@ function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
         onPropUpdate: onPropUpdate,
         onArrayUpdate: onArrayUpdate
       })}
-      {clear}
-      {invalidWarning}
+      {clearForSpec(keySpec, itemValue, itemPath, onPropUpdate)}
+      {invalidWarningForSpec(script, keySpec, itemValue)}
     </div>
   );
 }

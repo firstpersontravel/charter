@@ -12,16 +12,16 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
     // eslint-disable-next-line react/no-array-index-key
     <div key={key}>
       <button
-        onClick={() => this.onPropUpdate(`${path}[${key}]`, null)}
+        onClick={() => onPropUpdate(`${path}[${key}]`, null)}
         className="btn btn-xs btn-outline-secondary">
         <i className="fa fa-minus" />
       </button>
       &nbsp;
       <AnyField
-        script={this.script}
-        resource={this.resource}
-        onPropUpdate={this.onPropUpdate}
-        onArrayUpdate={this.onArrayUpdate}
+        script={script}
+        resource={resource}
+        onPropUpdate={onPropUpdate}
+        onArrayUpdate={onArrayUpdate}
         spec={spec.keys}
         value={key}
         name={`${name} Key`}
@@ -29,10 +29,10 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         opts={{ editable: false }} />
       :&nbsp;
       <AnyField
-        script={this.script}
-        resource={this.resource}
-        onPropUpdate={this.onPropUpdate}
-        onArrayUpdate={this.onArrayUpdate}
+        script={script}
+        resource={resource}
+        onPropUpdate={onPropUpdate}
+        onArrayUpdate={onArrayUpdate}
         spec={spec.values}
         value={val}
         name={`${name} Value`}
@@ -41,7 +41,7 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         spec={spec}
         value={val}
         path={`${path}[${key}]`}
-        onPropUpdate={this.onPropUpdate} />
+        onPropUpdate={onPropUpdate} />
     </div>
   ));
   const newItem = newItemsForSpecType[spec.values.type];
@@ -52,16 +52,16 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
       </button>
       &nbsp;
       <AnyField
-        script={this.script}
-        resource={this.resource}
-        onPropUpdate={this.onPropUpdate}
-        onArrayUpdate={this.onArrayUpdate}
+        script={script}
+        resource={resource}
+        onPropUpdate={onPropUpdate}
+        onArrayUpdate={onArrayUpdate}
         spec={spec.keys}
         value={'New item'}
         name={`${name} New Key`}
         path={'INVALID'}
         opts={{
-          onConfirm: val => this.onPropUpdate(`${path}[${val}]`, newItem)
+          onConfirm: val => onPropUpdate(`${path}[${val}]`, newItem)
         }} />
     </div>
   );
