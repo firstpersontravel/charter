@@ -126,6 +126,7 @@ export default class PopoverControl extends Component {
         </button>
         <Popover
           placement="top"
+          flip={false}
           isOpen={this.state.isOpen}
           target={this.labelId}
           toggle={this.handleClose}>

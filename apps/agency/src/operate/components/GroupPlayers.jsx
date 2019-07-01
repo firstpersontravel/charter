@@ -58,6 +58,7 @@ export default class GroupPlayers extends Component {
     if (!experience || !script || tripsWithRole.length === 0) {
       return null;
     }
+    const role = _.find(script.content.roles, { name: roleName });
     const departureNames = _.uniq(_.map(tripsWithRole, 'departureName'));
     const departureName = departureNames.length === 1 ? departureNames[0] : null;
     const users = _.uniq(tripsWithRole
@@ -118,7 +119,7 @@ export default class GroupPlayers extends Component {
     return (
       <div>
         <PopoverControl
-          title={roleName}
+          title={role.title}
           choices={userChoicesWithNone}
           onConfirm={_.curry(this.handleAssignUser)(roleName, tripsWithRole)}
           value={userId}

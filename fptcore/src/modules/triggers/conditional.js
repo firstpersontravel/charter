@@ -5,6 +5,7 @@ const actionList = {
 
 module.exports = {
   help: 'A conditional branch.',
+  display: { form: 'block' }, // override general action form: 'inline'
   params: {
     if: { type: 'component', component: 'conditions', required: true },
     actions: actionList,

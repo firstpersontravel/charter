@@ -48,21 +48,27 @@ function clearForSpec(keySpec, itemValue, itemPath, onPropUpdate) {
   );
 }
 
-function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
-  keyName, onPropUpdate, onArrayUpdate, renderAny }) {
+function shouldHideSpec(script, value, spec, keySpec, keyName) {
   // Hide hidden fields
   if (_.get(keySpec, 'display.hidden')) {
-    return null;
+    return true;
   }
   // Hide optional references if no objects exist in that reference.
   if (keySpec.type === 'reference' && !keySpec.required && !value[keyName]) {
     const collectionName = keySpec.collection;
     const collection = script.content[collectionName];
     if (!collection || !collection.length) {
-      return null;
+      return true;
     }
   }
+  return false;
+}
 
+function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
+  keyName, onPropUpdate, onArrayUpdate, renderAny }) {
+  if (shouldHideSpec(script, value, spec, keySpec)) {
+    return null;
+  }
   const isInline = (
     _.get(spec, 'display.form') === 'inline' ||
     _.get(opts, 'inline')

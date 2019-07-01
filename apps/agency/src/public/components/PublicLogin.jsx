@@ -61,7 +61,6 @@ export default class PublicLogin extends Component {
               <input
                 type="email"
                 name="email"
-                autoComplete="new-password"
                 className="form-control"
                 id="exampleInputEmail1"
                 value={this.state.email}
