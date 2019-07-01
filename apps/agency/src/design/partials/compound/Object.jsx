@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -6,10 +5,7 @@ import ObjectKey from './ObjectKey';
 
 function ObjectField({ script, resource, spec, value, name, path, opts,
   onPropUpdate, onArrayUpdate, renderAny }) {
-  const props = _(Object.keys(spec.properties))
-    .sortBy(key => !!_.get(spec.properties[key], 'display.last'))
-    .value();
-  const renderedItems = _.map(props, key => (
+  return Object.keys(spec.properties).map(key => (
     <ObjectKey
       key={key}
       script={script}
@@ -25,19 +21,9 @@ function ObjectField({ script, resource, spec, value, name, path, opts,
       onArrayUpdate={onArrayUpdate}
       renderAny={renderAny} />
   ));
-  const isInline = (
-    _.get(spec, 'display.form') === 'inline' ||
-    _.get(opts, 'inline')
-  );
-  const divStyle = isInline ? { display: 'inline-block' } : {};
-  return (
-    <div style={divStyle} className="object">
-      {renderedItems}
-    </div>
-  );
 }
 
-ObjectField.defaultProps = { opts: {}, value: {} };
+ObjectField.defaultProps = { opts: {}, value: null };
 ObjectField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,

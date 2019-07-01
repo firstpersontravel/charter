@@ -15,10 +15,16 @@ function BaseString({ spec, value, name, path, opts, validate, clean, onPropUpda
   }
   // Special overrides just for dictionary keys
   const onConfirm = opts.onConfirm || (val => onPropUpdate(path, clean(val)));
+  const validateWithBlank = (val) => {
+    if (spec.required && val === '') {
+      return false;
+    }
+    return validate(val);
+  };
   return (
     <PopoverControl
       title={name}
-      validate={validate}
+      validate={validateWithBlank}
       helpText={spec.help}
       onConfirm={onConfirm}
       label={label}

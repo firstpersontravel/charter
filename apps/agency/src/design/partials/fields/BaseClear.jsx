@@ -13,14 +13,11 @@ function BaseClear({ spec, value, path, onPropUpdate }) {
     return null;
   }
   return (
-    <span>
-      &nbsp;
-      <button
-        className="btn-unstyled clear-btn faint"
-        onClick={() => onPropUpdate(path, null)}>
-        <i className="fa fa-close" />
-      </button>
-    </span>
+    <button
+      className="btn-unstyled clear-btn faint ml-1"
+      onClick={() => onPropUpdate(path, null)}>
+      <i className="fa fa-close" />
+    </button>
   );
 }
 

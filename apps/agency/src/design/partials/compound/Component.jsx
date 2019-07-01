@@ -26,7 +26,7 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
   );
 }
 
-ComponentField.defaultProps = { opts: {}, value: {} };
+ComponentField.defaultProps = { opts: {}, value: null };
 ComponentField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
