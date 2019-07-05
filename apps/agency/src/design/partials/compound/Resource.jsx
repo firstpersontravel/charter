@@ -5,7 +5,7 @@ import AnyField from './Any';
 import ObjectField from './Object';
 
 function ResourceField({ script, resource, spec, value,
-  onPropUpdate, onArrayUpdate }) {
+  onPropUpdate }) {
   return (
     <ObjectField
       script={script}
@@ -16,8 +16,7 @@ function ResourceField({ script, resource, spec, value,
       path={''}
       opts={{}}
       renderAny={AnyField}
-      onPropUpdate={onPropUpdate}
-      onArrayUpdate={onArrayUpdate} />
+      onPropUpdate={onPropUpdate} />
   );
 }
 
@@ -26,7 +25,6 @@ ResourceField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   value: PropTypes.object.isRequired
 };

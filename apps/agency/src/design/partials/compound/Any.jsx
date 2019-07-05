@@ -44,7 +44,7 @@ const fieldComponents = {
 };
 
 function AnyField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, onArrayUpdate }) {
+  onPropUpdate }) {
   const fieldType = spec.type;
   if (!fieldComponents[fieldType]) {
     return `??? (${fieldType})`;
@@ -60,7 +60,6 @@ function AnyField({ script, resource, spec, value, name, path, opts,
       path={path}
       opts={opts}
       onPropUpdate={onPropUpdate}
-      onArrayUpdate={onArrayUpdate}
       renderAny={AnyField} />
   );
 }
@@ -70,7 +69,6 @@ AnyField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,

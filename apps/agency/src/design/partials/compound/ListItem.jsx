@@ -2,13 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function ListItem({ script, resource, spec, value, name, path, opts,
-  item, index, onPropUpdate, onArrayUpdate, renderAny }) {
+  item, index, onPropUpdate, renderAny }) {
   const AnyField = renderAny;
   const itemPath = `${path}[${index}]`;
   const rmBtn = (
     <button
       className="btn btn-sm btn-outline-secondary"
-      onClick={() => onArrayUpdate(path, index, null)}>
+      onClick={() => {
+        const updated = value.slice(0, index).concat(value.slice(index + 1));
+        onPropUpdate(path, updated);
+      }}>
       <i className="fa fa-minus" />
     </button>
   );
@@ -23,7 +26,6 @@ function ListItem({ script, resource, spec, value, name, path, opts,
           script={script}
           resource={resource}
           onPropUpdate={onPropUpdate}
-          onArrayUpdate={onArrayUpdate}
           spec={spec.items}
           value={item}
           name={`${name} Item`}
@@ -39,7 +41,6 @@ ListItem.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,

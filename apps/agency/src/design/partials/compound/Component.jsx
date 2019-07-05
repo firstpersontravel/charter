@@ -8,7 +8,7 @@ import ObjectField from './Object';
 const validator = new Validator(Registry);
 
 function ComponentField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, onArrayUpdate, renderAny }) {
+  onPropUpdate, renderAny }) {
   const variety = validator.getComponentVariety(spec, value);
   const varietyClass = validator.getComponentClass(spec, variety);
   return (
@@ -21,7 +21,6 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
       path={path}
       opts={opts}
       onPropUpdate={onPropUpdate}
-      onArrayUpdate={onArrayUpdate}
       renderAny={renderAny} />
   );
 }
@@ -31,7 +30,6 @@ ComponentField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,

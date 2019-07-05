@@ -6,7 +6,7 @@ import BaseClear from '../fields/BaseClear';
 import { newItemsForSpecType } from './utils';
 
 function DictionaryField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, onArrayUpdate, renderAny }) {
+  onPropUpdate, renderAny }) {
   const AnyField = renderAny;
   const items = _.map(value, (val, key) => (
     // eslint-disable-next-line react/no-array-index-key
@@ -21,7 +21,6 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         script={script}
         resource={resource}
         onPropUpdate={onPropUpdate}
-        onArrayUpdate={onArrayUpdate}
         spec={spec.keys}
         value={key}
         name={`${name} Key`}
@@ -32,7 +31,6 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         script={script}
         resource={resource}
         onPropUpdate={onPropUpdate}
-        onArrayUpdate={onArrayUpdate}
         spec={spec.values}
         value={val}
         name={`${name} Value`}
@@ -55,7 +53,6 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         script={script}
         resource={resource}
         onPropUpdate={onPropUpdate}
-        onArrayUpdate={onArrayUpdate}
         spec={spec.keys}
         value={'New item'}
         name={`${name} New Key`}
@@ -79,7 +76,6 @@ DictionaryField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,

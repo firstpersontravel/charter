@@ -34,7 +34,6 @@ export default class ResourceView extends Component {
     this.handleRevertChanges = this.handleRevertChanges.bind(this);
     this.handleApplyChanges = this.handleApplyChanges.bind(this);
     this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
-    this.handleArrayUpdate = this.handleArrayUpdate.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -107,20 +106,6 @@ export default class ResourceView extends Component {
     }
     // Otherwise apply immediately.
     this.props.onUpdate(newResource);
-  }
-
-  handleArrayUpdate(path, index, newValue) {
-    console.log('handleArrayUpdate', path, index, newValue);
-    // updates can be handled by prop update
-    if (newValue !== null) {
-      this.handlePropertyUpdate(`${path}[${index}]`, newValue);
-      return;
-    }
-    // deletes must be done by splice
-    const newResource = _.cloneDeep(this.state.pendingResource);
-    const arr = _.get(newResource, path);
-    arr.splice(index, 1);
-    this.handleResourceUpdate(newResource);
   }
 
   handlePropertyUpdate(path, newValue) {
@@ -264,7 +249,6 @@ export default class ResourceView extends Component {
         script={script}
         resource={this.state.pendingResource}
         onPropUpdate={this.handlePropertyUpdate}
-        onArrayUpdate={this.handleArrayUpdate}
         spec={whitelistedParams}
         value={this.state.pendingResource} />
     );

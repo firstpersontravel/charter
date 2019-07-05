@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ObjectKey from './ObjectKey';
 
 function ObjectField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, onArrayUpdate, renderAny }) {
+  onPropUpdate, renderAny }) {
   return Object.keys(spec.properties).map(key => (
     <ObjectKey
       key={key}
@@ -18,7 +18,6 @@ function ObjectField({ script, resource, spec, value, name, path, opts,
       keySpec={spec.properties[key]}
       keyName={key}
       onPropUpdate={onPropUpdate}
-      onArrayUpdate={onArrayUpdate}
       renderAny={renderAny} />
   ));
 }
@@ -28,7 +27,6 @@ ObjectField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,

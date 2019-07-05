@@ -7,7 +7,7 @@ import ListItem from './ListItem';
 import { newItemForSpec } from './utils';
 
 function ListField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, onArrayUpdate, renderAny }) {
+  onPropUpdate, renderAny }) {
   const items = _.map(value, (item, i) => (
     <ListItem
       script={script}
@@ -21,7 +21,6 @@ function ListField({ script, resource, spec, value, name, path, opts,
       index={i}
       key={`${path}-${i}`}
       onPropUpdate={onPropUpdate}
-      onArrayUpdate={onArrayUpdate}
       renderAny={renderAny} />
   ));
   const listIsEmpty = !value || value.length === 0;
@@ -51,7 +50,6 @@ ListField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,

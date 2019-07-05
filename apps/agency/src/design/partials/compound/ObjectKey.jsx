@@ -87,7 +87,7 @@ function shouldHideSpec(script, value, spec, keySpec, keyName) {
 }
 
 function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
-  keyName, onPropUpdate, onArrayUpdate, renderAny }) {
+  keyName, onPropUpdate, renderAny }) {
   if (shouldHideSpec(script, value, spec, keySpec)) {
     return null;
   }
@@ -114,8 +114,7 @@ function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
         name: _.startCase(keyName),
         path: itemPath,
         opts: optsWithInline,
-        onPropUpdate: onPropUpdate,
-        onArrayUpdate: onArrayUpdate
+        onPropUpdate: onPropUpdate
       })}
       {clearForSpec(keySpec, itemValue, itemPath, onPropUpdate)}
       {invalidWarningForSpec(script, keySpec, value, itemValue)}
@@ -128,7 +127,6 @@ ObjectKey.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
   onPropUpdate: PropTypes.func.isRequired,
-  onArrayUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
