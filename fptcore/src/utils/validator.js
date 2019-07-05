@@ -95,9 +95,11 @@ class Validator {
       throw new Error(`"${variety}" is not one of the "${componentType}" components.`);
     }
     const commonClass = componentDef.common || {};
-    const varietyClass = {
+    // For component class, rename `params` / `specParams` to `properties`.
+    // TODO: all components should just use `properties` as a name.
+    const varietyClass = Object.assign({
       properties: componentsRegistry[variety][componentDef.propertiesKey]
-    };
+    }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
     return _.merge({}, typeClass, commonClass, varietyClass);
   }
 

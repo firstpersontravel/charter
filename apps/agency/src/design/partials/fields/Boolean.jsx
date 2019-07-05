@@ -15,7 +15,7 @@ function BooleanField({ spec, value, name, path, opts, onPropUpdate }) {
     <input
       style={style}
       type="checkbox"
-      checked={existing}
+      checked={!!existing}
       onChange={e => onPropUpdate(path, e.target.checked)} />
   );
 }
