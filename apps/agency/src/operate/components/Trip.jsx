@@ -15,7 +15,7 @@ export default function Trip({ trip, params, children }) {
   }
   const roles = _(trip.script.content.roles)
     .filter(role => canRoleHaveUser(role))
-    .filter(role => evaluator.if(trip.evalContext, role.active_if))
+    .filter(role => evaluator.if(trip.actionContext, role.active_if))
     .sortBy([sortForRole, 'name'])
     .value();
   const roleLinks = roles.map((role => (

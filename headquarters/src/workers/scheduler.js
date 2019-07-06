@@ -153,7 +153,7 @@ class SchedulerWorker {
     // up or not running.
     if (!trip.currentSceneName) {
       const firstSceneName = SceneCore.getStartingSceneName(
-        objs.script.content, actionContext.evalContext);
+        objs.script.content, actionContext);
       if (firstSceneName) {
         actions.push({
           orgId: objs.trip.orgId,

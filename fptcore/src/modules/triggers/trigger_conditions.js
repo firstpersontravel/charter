@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 module.exports = {
   and: {
+    display: { form: 'block' },
     properties: {
       items: {
         type: 'list',
@@ -9,11 +10,12 @@ module.exports = {
         display: { label: false }
       }
     },
-    eval: (params, evalContext, subIf) => {
-      return _.every(params.items, item => subIf(evalContext, item));
+    eval: (params, actionContext, subIf) => {
+      return _.every(params.items, item => subIf(actionContext, item));
     }
   },
   or: {
+    display: { form: 'block' },
     properties: {
       items: {
         type: 'list',
@@ -21,8 +23,8 @@ module.exports = {
         display: { label: false }
       }
     },
-    eval: (params, evalContext, subIf) => {
-      return _.some(params.items, item => subIf(evalContext, item));
+    eval: (params, actionContext, subIf) => {
+      return _.some(params.items, item => subIf(actionContext, item));
     }
   },
   not: {
@@ -34,8 +36,8 @@ module.exports = {
         display: { label: false }
       }
     },
-    eval: (params, evalContext, subIf) => {
-      return !params.item || !subIf(evalContext, params.item);
+    eval: (params, actionContext, subIf) => {
+      return !params.item || !subIf(actionContext, params.item);
     }
   },
 };

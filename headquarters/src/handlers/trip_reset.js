@@ -69,11 +69,11 @@ class TripResetHandler {
         { model: models.Experience, as: 'experience' }
       ]
     });
-    const evalContext = await KernelUtil.getEvalContext(tripId);
+    const actionContext = await KernelUtil.getActionContext(tripId);
     const players = await models.Player.findAll({ where: { tripId: tripId } });
     // Create hardcoded default 'start' checkpoint
     const startingScene = SceneCore.getStartingSceneName(trip.script.content,
-      evalContext);
+      actionContext);
     const start = { name: '__start', scene: startingScene };
     // Load checkpoint
     const checkpoints = [start].concat(trip.script.content.checkpoints || []);

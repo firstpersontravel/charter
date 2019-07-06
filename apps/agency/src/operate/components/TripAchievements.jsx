@@ -14,7 +14,7 @@ function renderCompletedAchievementStatus(trip, achievement) {
     return statusTitle || 'Unknown value';
   }
   if (achievement.type === 'completion') {
-    const isPassed = evaluator.if(trip.evalContext, achievement.test);
+    const isPassed = evaluator.if(trip.actionContext, achievement.test);
     const statusClass = isPassed ? 'text-success' : 'text-danger';
     const statusTitle = (
       isPassed ? achievement.titles.true : achievement.titles.false

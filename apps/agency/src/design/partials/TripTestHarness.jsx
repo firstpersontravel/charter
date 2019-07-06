@@ -122,7 +122,7 @@ export default class TripTestHarness extends Component {
     delete this.pendingState;
   }
 
-  getTripObject() {
+  getBaseTripObject() {
     const state = this.pendingState || this.state;
     const script = this.props.script;
     const trip = Object.assign({}, state.trip, {
@@ -136,15 +136,26 @@ export default class TripTestHarness extends Component {
         trip: trip
       })
     ));
-    const env = { host: '' };
-    trip.evalContext = ContextCore.gatherEvalContext(env, trip);
     return trip;
+  }
+
+  getTripObject() {
+    const trip = this.getBaseTripObject();
+    trip.evalContext = this.getEvalContext();
+    trip.actionContext = { evalContext: trip.evalContext };
+    return trip;
+  }
+
+  getEvalContext() {
+    const trip = this.getBaseTripObject();
+    const env = { host: '' };
+    return ContextCore.gatherEvalContext(env, trip);
   }
 
   getActionContext() {
     return {
       scriptContent: this.props.script.content,
-      evalContext: this.getTripObject().evalContext,
+      evalContext: this.getEvalContext(),
       evaluateAt: moment.utc(),
       timezone: this.props.script.experience.timezone
     };
@@ -208,7 +219,7 @@ export default class TripTestHarness extends Component {
 
   startTrip() {
     const firstSceneName = SceneCore.getStartingSceneName(
-      this.props.script.content, this.state.trip.evalContext);
+      this.props.script.content, this.state.trip.actionContext);
     if (firstSceneName) {
       this.handleAction('start_scene', { scene_name: firstSceneName });
     }

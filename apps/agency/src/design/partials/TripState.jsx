@@ -15,7 +15,7 @@ export default class TripState extends Component {
     const trip = this.props.trip;
     return _(trip.players)
       .filter(player => (
-        evaluator.if(trip.evalContext, player.role.active_if)
+        evaluator.if(trip.actionContext, player.role.active_if)
       ))
       .filter(player => (
         _.find(trip.script.content.pages, {
@@ -70,7 +70,7 @@ export default class TripState extends Component {
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => evaluator.if(trip.evalContext, panel.visible_if))
+      .filter(panel => evaluator.if(trip.actionContext, panel.visible_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
@@ -116,14 +116,10 @@ export default class TripState extends Component {
     const triggerResourceClass = Registry.resources.trigger;
     const isCurrentScene = scene.name === this.props.trip.currentSceneName;
     const isActiveGlobalScene = scene.global && (
-      evaluator.if(trip.evalContext, scene.active_if)
+      evaluator.if(trip.actionContext, scene.active_if)
     );
     const hasBeenTriggered = !!trip.history[trigger.name];
     const canTrigger = isCurrentScene || isActiveGlobalScene;
-    // const isForbidden = (
-    //   (trigger.repeatable === false && hasBeenTriggered) ||
-    //   (!evaluator.if(trip.evalContext, trigger.active_if))
-    // );
     const style = {
       marginTop: 0,
       marginBottom: '0.25em',

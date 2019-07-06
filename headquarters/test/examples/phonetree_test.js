@@ -12,8 +12,14 @@ const TestUtil = require('../util');
 const examplePath = path.join(__dirname, '../../examples/phonetree.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 
-describe('PhoneTreeExample', () => {
+function assertTwimlContains(res, expected) {
+  const str = res.toString();
+  if (str.indexOf(expected) === -1) {
+    assert.fail(`Expected "${str}" to contain "${expected}".`);
+  }
+}
 
+describe('PhoneTreeExample', () => {
   let script;
   let trailhead;
 
@@ -34,7 +40,7 @@ describe('PhoneTreeExample', () => {
       trailhead.relayPhoneNumber);
 
     // Test greeting is returned
-    assert(twiml1.toString().indexOf('<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>') > -1);
+    assertTwimlContains(twiml1, '<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>');
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
@@ -45,13 +51,13 @@ describe('PhoneTreeExample', () => {
       trailhead.id, trip.id, 123, 'CLIP-GREETING', '1', false);
 
     // Test question is returned
-    assert(twiml2.toString().indexOf('<Say voice="alice">Would you like a refreshing beverage?</Say>') > -1);
+    assertTwimlContains(twiml2, '<Say voice="alice">Would you like a refreshing beverage?</Say>');
 
     // Handle response
     const twiml3 = await TwilioCallHandler.handleCallResponse(
       trailhead.id, trip.id, 123, 'CLIP-DRINK', 'yes', false);
 
-    assert(twiml3.toString().indexOf('<Say voice="alice">Here you go!</Say>') > -1);
+    assertTwimlContains(twiml3, '<Say voice="alice">Here you go!</Say>');
   });
 
   it('runs through drink no path', async () => {
@@ -60,7 +66,7 @@ describe('PhoneTreeExample', () => {
       trailhead.relayPhoneNumber);
 
     // Test greeting is returned
-    assert(twiml1.toString().indexOf('<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>') > -1);
+    assertTwimlContains(twiml1, '<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>');
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
@@ -71,13 +77,13 @@ describe('PhoneTreeExample', () => {
       trailhead.id, trip.id, 123, 'CLIP-GREETING', '1', false);
 
     // Test question is returned
-    assert(twiml2.toString().indexOf('<Say voice="alice">Would you like a refreshing beverage?</Say>') > -1);
+    assertTwimlContains(twiml2, '<Say voice="alice">Would you like a refreshing beverage?</Say>');
 
     // Handle response
     const twiml3 = await TwilioCallHandler.handleCallResponse(
       trailhead.id, trip.id, 123, 'CLIP-DRINK', 'no', false);
 
-    assert(twiml3.toString().indexOf('<Say voice="alice">Next time!</Say>') > -1);
+    assertTwimlContains(twiml3, '<Say voice="alice">Next time!</Say>');
   });
 
   it('runs through joke path', async () => {
@@ -86,7 +92,7 @@ describe('PhoneTreeExample', () => {
       trailhead.relayPhoneNumber);
 
     // Test greeting is returned
-    assert(twiml1.toString().indexOf('<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>') > -1);
+    assertTwimlContains(twiml1, '<Say voice="alice">Press 1 for a beverage, or 2 for a joke.</Say>');
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
@@ -97,6 +103,6 @@ describe('PhoneTreeExample', () => {
       trailhead.id, trip.id, 123, 'CLIP-GREETING', '2', false);
 
     // Test joke is returned
-    assert(twiml2.toString().indexOf('<Say voice="alice">Why did the chicken cross the road?</Say>') > -1);
+    assertTwimlContains(twiml2, '<Say voice="alice">Why did the chicken cross the road?</Say>');
   });
 });

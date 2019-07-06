@@ -17,7 +17,7 @@ function getAllPlayers(trips) {
     .map('players')
     .flatten()
     .filter(player => evaluator.if(
-      tripsById[player.tripId].evalContext,
+      tripsById[player.tripId].actionContext,
       player.role.active_if
     ))
     .value();

@@ -7,7 +7,7 @@ import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 const evaluator = new Evaluator(Registry);
 
 function renderPanel(player, page, panel) {
-  if (!evaluator.if(player.trip.evalContext, panel.visible_if)) {
+  if (!evaluator.if(player.trip.actionContext, panel.visible_if)) {
     return null;
   }
   if (panel.type === 'text' ||

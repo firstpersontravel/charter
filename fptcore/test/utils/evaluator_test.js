@@ -25,12 +25,12 @@ describe('Evaluator', () => {
   describe('#if', () => {
     it('throw error if invalid if command', () => {
       assert.throws(() => {
-        testEvaluator.if({}, { op: 'greaterthan' });
+        testEvaluator.if({ evalContext: {} }, { op: 'greaterthan' });
       });
     });
 
     it('returns true if null', () => {
-      assertIfEq({}, null, true);
+      assertIfEq({ evalContext: {} }, null, true);
     });
 
     it.skip('calls if statements in registry', () => {

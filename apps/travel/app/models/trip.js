@@ -42,7 +42,7 @@ export default DS.Model.extend({
   },
 
   evaluateIf: function(ifClause) {
-    return fptCore.evaluator.if(this.get('evalContext'), ifClause);
+    return fptCore.evaluator.if(this.get('actionContext'), ifClause);
   },
 
   generateTrip: function() {
@@ -75,6 +75,10 @@ export default DS.Model.extend({
     }));
     return trip;
   },
+
+  actionContext: function() {
+    return { evalContext: this.get('evalContext') };
+  }.property('evalContext'),
 
   evalContext: function() {
     var env = { host: this.get('environment.host') };

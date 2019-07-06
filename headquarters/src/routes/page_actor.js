@@ -55,9 +55,10 @@ function getPanel(trip, evalContext, timezone, pageInfo, panel) {
 /**
  * Construct an object of the page
  */
-function getPage(objs, evalContext, player) {
+function getPage(objs, actionContext, player) {
   const script = objs.script;
   const trip = objs.trip;
+  const evalContext = actionContext.evalContext;
   const timezone = objs.experience.timezone;
   const pageInfo = PlayerCore.getPageInfo(script, evalContext, player);
   if (!pageInfo) {
@@ -69,7 +70,7 @@ function getPage(objs, evalContext, player) {
   const directiveText = TemplateUtil.templateText(evalContext,
     page.directive, timezone);
   const panels = _(page.panels || [])
-    .filter(panel => evaluator.if(evalContext, panel.visible_if))
+    .filter(panel => evaluator.if(actionContext, panel.visible_if))
     .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
   return {
@@ -128,8 +129,8 @@ const playerShowRoute = async (req, res) => {
     return;
   }
   const objs = await KernelUtil.getObjectsForTrip(player.tripId);
-  const evalContext = KernelUtil.prepareEvalContext(objs);
-  const page = getPage(objs, evalContext, player);
+  const actionContext = KernelUtil.prepareActionContext(objs);
+  const page = getPage(objs, actionContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const params = {
     userId: '',

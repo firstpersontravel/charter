@@ -56,13 +56,13 @@ class KernelActions {
       return clause.actions;
     }
     // If .if is true, use normal actions.
-    if (evaluator.if(actionContext.evalContext, clause.if)) {
+    if (evaluator.if(actionContext, clause.if)) {
       return clause.actions;
     }
     // Check for elseifs and iterate in order.
     if (clause.elseifs) {
       for (const elseif of clause.elseifs) {
-        if (evaluator.if(actionContext.evalContext, elseif.if)) {
+        if (evaluator.if(actionContext, elseif.if)) {
           return elseif.actions;
         }
       }

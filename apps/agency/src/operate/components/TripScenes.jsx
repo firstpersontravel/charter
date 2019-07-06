@@ -105,7 +105,7 @@ export default class TripScenes extends Component {
 
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => evaluator.if(trip.evalContext, panel.visible_if))
+      .filter(panel => evaluator.if(trip.actionContext, panel.visible_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
@@ -170,7 +170,7 @@ export default class TripScenes extends Component {
     const triggerResourceClass = Registry.resources.trigger;
     const isCurrentScene = scene.name === this.props.trip.currentSceneName;
     const isActiveGlobalScene = scene.global && (
-      evaluator.if(trip.evalContext, scene.active_if)
+      evaluator.if(trip.actionContext, scene.active_if)
     );
     const hasBeenTriggered = !!trip.history[trigger.name];
     const canTrigger = isCurrentScene || isActiveGlobalScene;

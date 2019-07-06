@@ -4,7 +4,8 @@ const textConditions = require('../../../src/modules/messages/text_conditions');
 
 describe('#text_contains', () => {
   function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(textConditions.text_contains.eval(stmt, ctx), val);
+    assert.strictEqual(textConditions.text_contains.eval(
+      stmt, { evalContext: ctx }), val);
   }
 
   it('finds text in middle', () => {
@@ -22,7 +23,8 @@ describe('#text_contains', () => {
 
 describe('#text_is_affirmative', () => {
   function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(textConditions.text_is_affirmative.eval(stmt, ctx), val);
+    assert.strictEqual(textConditions.text_is_affirmative.eval(stmt,
+      { evalContext: ctx }), val);
   }
 
   it('finds yes', () => {

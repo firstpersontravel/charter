@@ -3,7 +3,7 @@ class Evaluator {
     this.registry = registry;
   }
 
-  if(evalContext, ifStatement) {
+  if(actionContext, ifStatement) {
     // Null if statements resolve to true.
     if (!ifStatement) {
       return true;
@@ -15,7 +15,7 @@ class Evaluator {
     }
     // Recursively pass in a reference to `this.if` so compound if statements
     // can call it back.
-    return ifClass.eval(ifStatement, evalContext, this.if.bind(this));
+    return ifClass.eval(ifStatement, actionContext, this.if.bind(this));
   }
 }
 

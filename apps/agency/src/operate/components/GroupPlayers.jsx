@@ -13,7 +13,7 @@ const evaluator = new Evaluator(Registry);
 
 function doesTripHaveRole(trip, roleName) {
   const role = _.find(trip.script.content.roles, { name: roleName });
-  return evaluator.if(trip.evalContext, role.active_if);
+  return evaluator.if(trip.actionContext, role.active_if);
 }
 
 export default class GroupPlayers extends Component {

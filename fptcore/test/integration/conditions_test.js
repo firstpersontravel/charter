@@ -6,7 +6,7 @@ const Registry = require('../../src/registry/registry');
 const evaluator = new Evaluator(Registry);
 
 function assertIfEq(ctx, stmt, val) {
-  assert.strictEqual(evaluator.if(ctx, stmt), val);
+  assert.strictEqual(evaluator.if({ evalContext: ctx }, stmt), val);
 }
 
 describe('Integration - Conditions', () => {

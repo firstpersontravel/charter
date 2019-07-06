@@ -53,7 +53,7 @@ class KernelTriggers {
     }
 
     // If we have a conditional, return false if it's not true.
-    if (!evaluator.if(actionContext.evalContext, scene.active_if)) {
+    if (!evaluator.if(actionContext, scene.active_if)) {
       return false;
     }
 
@@ -82,7 +82,7 @@ class KernelTriggers {
       }
     }
     // Skip inactive triggers
-    if (!evaluator.if(actionContext.evalContext, trigger.active_if)) {
+    if (!evaluator.if(actionContext, trigger.active_if)) {
       return false;
     }
     // Skip non-repeatable triggers that have already fired.

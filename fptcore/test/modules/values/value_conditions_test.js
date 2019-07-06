@@ -4,7 +4,8 @@ const valueConditions = require('../../../src/modules/values/value_conditions');
 
 describe('#istrue', () => {
   function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(valueConditions.istrue.eval(stmt, ctx), val);
+    assert.strictEqual(
+      valueConditions.istrue.eval(stmt, { evalContext: ctx }), val);
   }
 
   it('evaluates', () => {
@@ -27,7 +28,8 @@ describe('#istrue', () => {
 
 describe('#equals', () => {
   function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(valueConditions.equals.eval(stmt, ctx), val);
+    assert.strictEqual(
+      valueConditions.equals.eval(stmt, { evalContext: ctx }), val);
   }
 
   it('evaluates with constants', () => {
@@ -76,7 +78,8 @@ describe('#equals', () => {
 
 describe('#contains', () => {
   function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(valueConditions.contains.eval(stmt, ctx), val);
+    assert.strictEqual(
+      valueConditions.contains.eval(stmt, { evalContext: ctx }), val);
   }
 
   it('evaluates', () => {
