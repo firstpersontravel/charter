@@ -1,7 +1,7 @@
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
-  istrue: {
+  value_is_true: {
     properties: {
       ref: {
         type: 'lookupable',
@@ -14,21 +14,19 @@ module.exports = {
         params.ref);
     }
   },
-  equals: {
+  value_equals: {
     properties: {
       ref1: { type: 'lookupable', required: true },
       ref2: { type: 'lookupable', required: true }
     },
     eval: (params, actionContext) => {
       return (
-        TemplateUtil.lookupRef(actionContext.evalContext,
-          params.ref1) ===
-        TemplateUtil.lookupRef(actionContext.evalContext,
-          params.ref2)
+        TemplateUtil.lookupRef(actionContext.evalContext, params.ref1) ===
+        TemplateUtil.lookupRef(actionContext.evalContext, params.ref2)
       );
     }
   },
-  contains: {
+  value_contains: {
     properties: {
       string_ref: { type: 'lookupable', required: true },
       part_ref: { type: 'lookupable', required: true }

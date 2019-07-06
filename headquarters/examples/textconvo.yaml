@@ -1,5 +1,5 @@
 meta:
-  version: 17
+  version: 18
 
 roles:
   - name: Knight
@@ -28,7 +28,7 @@ triggers:
     active_if:
       op: not
       item:
-        op: istrue
+        op: value_is_true
         ref: game_started
     actions:
       - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
@@ -36,13 +36,13 @@ triggers:
         if:
           op: or
           items:
-            - op: contains
+            - op: value_contains
               string_ref: event.message.content
               part_ref: '"hello"'
-            - op: contains
+            - op: value_contains
               string_ref: event.message.content
               part_ref: '"hi"'
-            - op: contains
+            - op: value_contains
               string_ref: event.message.content
               part_ref: '"hey"'
         actions:
@@ -60,7 +60,7 @@ triggers:
     event: {type: text_received, from: Knight, to: Sage}
     scene: SCENE-MAIN
     active_if:
-      op: istrue
+      op: value_is_true
       ref: game_started
     actions:
       - name: set_value

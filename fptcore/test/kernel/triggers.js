@@ -32,7 +32,7 @@ describe('KernelTriggers', () => {
       }, {
         name: 'COND-1',
         global: true,
-        active_if: { op: 'istrue', ref: 'val' }
+        active_if: { op: 'value_is_true', ref: 'val' }
       }]
     };
 
@@ -131,14 +131,14 @@ describe('KernelTriggers', () => {
     });
 
     it('returns true if if test passes', () => {
-      const trigger = { active_if: { op: 'istrue', ref: 'test' } };
+      const trigger = { active_if: { op: 'value_is_true', ref: 'test' } };
       const actionContext = { evalContext: { test: true } };
       const res = KernelTriggers.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, true);
     });
 
     it('returns false if if test fails', () => {
-      const trigger = { active_if: { op: 'istrue', ref: 'test' } };
+      const trigger = { active_if: { op: 'value_is_true', ref: 'test' } };
       const actionContext = { evalContext: { test: false } };
       const res = KernelTriggers.isTriggerActive(trigger, actionContext);
       assert.strictEqual(res, false);

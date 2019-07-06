@@ -27,7 +27,7 @@ describe('Integration - Message Triggers', () => {
         }, {
           name: 'trigger2',
           event: { type: 'text_received', from: 'A', to: 'B' },
-          if: { op: 'istrue', ref: 'trigger' },
+          if: { op: 'value_is_true', ref: 'trigger' },
           actions: [{
             name: 'set_value',
             value_ref: 'SHOULD_NOT_FIRE',
@@ -52,7 +52,7 @@ describe('Integration - Message Triggers', () => {
           name: 'trigger1',
           event: { type: 'text_received' },
           if: {
-            op: 'contains',
+            op: 'value_contains',
             string_ref: 'event.message.content',
             part_ref: '"1234"'
           },
@@ -87,7 +87,7 @@ describe('Integration - Message Triggers', () => {
           name: 'trigger1',
           event: { type: 'text_received' },
           if: {
-            op: 'contains',
+            op: 'value_contains',
             string_ref: 'event.message.content',
             part_ref: '"1234"'
           },

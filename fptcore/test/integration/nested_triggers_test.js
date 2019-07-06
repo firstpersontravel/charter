@@ -76,7 +76,7 @@ const actionContext = {
     }, {
       name: 'TRIGGER-NAV-2',
       event: { type: 'cue_signaled', cue: 'CUE-NAV-2' },
-      if: { op: 'istrue', ref: 'is_navigating' },
+      if: { op: 'value_is_true', ref: 'is_navigating' },
       actions: [{
         name: 'send_text',
         from_role_name: 'Cowboy',

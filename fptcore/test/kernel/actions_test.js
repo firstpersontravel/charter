@@ -25,7 +25,7 @@ describe('KernelActions', () => {
 
     it('handles single passing if', () => {
       const clause = {
-        if: { op: 'istrue', ref: 'valueA' },
+        if: { op: 'value_is_true', ref: 'valueA' },
         actions: [simpleAction]
       };
       const res = KernelActions.actionsForClause(clause, actionContext);
@@ -34,7 +34,7 @@ describe('KernelActions', () => {
 
     it('handles single failing if', () => {
       const clause = {
-        if: { op: 'not', item: { op: 'istrue', ref: 'valueA' } },
+        if: { op: 'not', item: { op: 'value_is_true', ref: 'valueA' } },
         actions: [simpleAction]
       };
       const res = KernelActions.actionsForClause(clause, actionContext);
@@ -43,7 +43,7 @@ describe('KernelActions', () => {
 
     it('handles single failing if with else', () => {
       const clause = {
-        if: { op: 'istrue', ref: 'valueB' },
+        if: { op: 'value_is_true', ref: 'valueB' },
         actions: [simpleAction],
         else: [otherAction]
       };
@@ -53,9 +53,9 @@ describe('KernelActions', () => {
 
     it('handles nested actions', () => {
       const clause = {
-        if: { op: 'not', item: { op: 'istrue', ref: 'valueB' } },
+        if: { op: 'not', item: { op: 'value_is_true', ref: 'valueB' } },
         actions: [{
-          if: {op: 'istrue', ref: 'valueB' },
+          if: {op: 'value_is_true', ref: 'valueB' },
           actions: [thirdAction],
           else: [otherAction]
         }]
@@ -66,10 +66,10 @@ describe('KernelActions', () => {
 
     it('handles nested else', () => {
       const clause = {
-        if: {op: 'istrue', ref: 'valueB' },
+        if: {op: 'value_is_true', ref: 'valueB' },
         actions: ['action'],
         else: [{
-          if: {op: 'istrue', ref: 'valueA' },
+          if: {op: 'value_is_true', ref: 'valueA' },
           actions: [thirdAction],
           else: [otherAction]
         }]
@@ -80,14 +80,14 @@ describe('KernelActions', () => {
 
     it('handles list of clauses', () => {
       const clause = {
-        if: {op: 'istrue', ref: 'valueA' },
+        if: {op: 'value_is_true', ref: 'valueA' },
         actions: [
           simpleAction,
           {
-            if: { op: 'istrue', ref: 'valueB' },
+            if: { op: 'value_is_true', ref: 'valueB' },
             actions: [otherAction]
           }, {
-            if: { op: 'not', item: { op: 'istrue', ref: 'valueB' } },
+            if: { op: 'not', item: { op: 'value_is_true', ref: 'valueB' } },
             actions: [thirdAction]
           }
         ]
@@ -98,13 +98,13 @@ describe('KernelActions', () => {
 
     it('handles else ifs', () => {
       const clause = {
-        if: {op: 'istrue', ref: 'a' },
+        if: {op: 'value_is_true', ref: 'a' },
         actions: [simpleAction],
         elseifs: [{
-          if: {op: 'istrue', ref: 'b' },
+          if: {op: 'value_is_true', ref: 'b' },
           actions: [otherAction]
         }, {
-          if: {op: 'istrue', ref: 'c' },
+          if: {op: 'value_is_true', ref: 'c' },
           actions: [thirdAction]
         }],
         else: [fourthAction]
@@ -142,12 +142,12 @@ describe('KernelActions', () => {
         if: {
           op: 'and',
           items: [
-            { op: 'istrue', ref: 'val1' },
-            { op: 'istrue', ref: 'val2' }
+            { op: 'value_is_true', ref: 'val1' },
+            { op: 'value_is_true', ref: 'val2' }
           ]
         },
         actions: [{
-          if: { op: 'istrue', ref: 'val3' },
+          if: { op: 'value_is_true', ref: 'val3' },
           actions: [cue1],
           else: [cue2]
         }]

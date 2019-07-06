@@ -14,7 +14,10 @@ describe('Integration - Conditions', () => {
     it('evaluates', () => {
       const op = {
         op: 'or',
-        items: [{ op: 'istrue', ref: 'a'}, { op: 'istrue', ref: 'b'}]
+        items: [
+          { op: 'value_is_true', ref: 'a'},
+          { op: 'value_is_true', ref: 'b'}
+        ]
       };
       assertIfEq({ a: true, b: false }, op, true);
       assertIfEq({ a: false, b: true }, op, true);
@@ -25,13 +28,13 @@ describe('Integration - Conditions', () => {
       const op = {
         op: 'or',
         items: [
-          { op: 'istrue', ref: 'a'},
-          { op: 'istrue', ref: 'b'},
+          { op: 'value_is_true', ref: 'a'},
+          { op: 'value_is_true', ref: 'b'},
           {
             op: 'or',
             items: [
-              { op: 'istrue', ref: 'c' },
-              { op: 'istrue', ref: 'd' }
+              { op: 'value_is_true', ref: 'c' },
+              { op: 'value_is_true', ref: 'd' }
             ]
           }
         ]
@@ -48,8 +51,8 @@ describe('Integration - Conditions', () => {
       const op = {
         op: 'and',
         items: [
-          { op: 'istrue', ref: 'a'},
-          { op: 'istrue', ref: 'b'}
+          { op: 'value_is_true', ref: 'a'},
+          { op: 'value_is_true', ref: 'b'}
         ]
       };
       assertIfEq({ a: true, b: true }, op, true);
@@ -62,9 +65,9 @@ describe('Integration - Conditions', () => {
       const op = {
         op: 'and',
         items: [
-          { op: 'istrue', ref: 'a'},
-          { op: 'istrue', ref: 'b' },
-          { op: 'and', items: [{ op: 'istrue', ref: 'c' }] }
+          { op: 'value_is_true', ref: 'a'},
+          { op: 'value_is_true', ref: 'b' },
+          { op: 'and', items: [{ op: 'value_is_true', ref: 'c' }] }
         ]
       };
       assertIfEq({ a: true, b: true, c: true }, op, true);
@@ -74,7 +77,7 @@ describe('Integration - Conditions', () => {
 
   describe('#not', () => {
     it('evaluates not', () => {
-      const stmt = { op: 'not', item: { op: 'istrue', ref: 'v' } };
+      const stmt = { op: 'not', item: { op: 'value_is_true', ref: 'v' } };
       assertIfEq({ v: true }, stmt, false);
       assertIfEq({ v: 1 }, stmt, false);
       assertIfEq({ v: '1' }, stmt, false);
@@ -88,11 +91,11 @@ describe('Integration - Conditions', () => {
     it('evaluates nested', () => {
       assertIfEq(
         { a: true },
-        { op: 'not', item: { op: 'istrue', ref: 'a' } },
+        { op: 'not', item: { op: 'value_is_true', ref: 'a' } },
         false);
       assertIfEq(
         { a: false },
-        { op: 'not', item: { op: 'istrue', ref: 'a' } },
+        { op: 'not', item: { op: 'value_is_true', ref: 'a' } },
         true);
     });
   });

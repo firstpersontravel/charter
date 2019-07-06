@@ -86,10 +86,10 @@ describe('Migrator', () => {
       const trigger2 = {
         actions: [{
           name: 'conditional',
-          if: { op: 'istrue', ref: '123' },
+          if: { op: 'value_is_true', ref: '123' },
           actions: [{ name: 'play_audio', audio_name: '4' }],
           elseifs: [{
-            if: { op: 'istrue', ref: '456' },
+            if: { op: 'value_is_true', ref: '456' },
             actions: [{ name: 'play_audio', audio_name: '6' }],
           }],
           else: [{ name: 'play_audio', audio_name: '8' }],
@@ -117,20 +117,20 @@ describe('Migrator', () => {
 
     it('migrates conditions', () => {
       const trigger1 = {
-        active_if: { op: 'istrue', ref: 'test1' },
+        active_if: { op: 'value_is_true', ref: 'test1' },
         actions: [{ name: 'play_audio', audio_name: '2' }]
       };
       const trigger2 = {
         actions: [{
           name: 'conditional',
-          if: { op: 'istrue', ref: 'test2' },
+          if: { op: 'value_is_true', ref: 'test2' },
           actions: [{ name: 'play_audio', audio_name: '4' }],
           elseifs: [{
             if: {
               op: 'and',
               items: [
-                { op: 'istrue', ref: 'test3' },
-                { op: 'not', item: { op: 'equals', ref1: 'a', ref2: 'b' } }
+                { op: 'value_is_true', ref: 'test3' },
+                { op: 'not', item: { op: 'value_equals', ref1: 'a', ref2: 'b' } }
               ],
             },
             actions: [{ name: 'play_audio', audio_name: '6' }]

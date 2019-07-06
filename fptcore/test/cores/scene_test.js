@@ -32,7 +32,7 @@ describe('SceneCore', () => {
     it('returns active conditional scene', () => {
       const scriptContent = {
         scenes: [
-          { name: '1', active_if: { op: 'istrue', ref: 'v' } },
+          { name: '1', active_if: { op: 'value_is_true', ref: 'v' } },
           { name: '2' }
         ]
       };

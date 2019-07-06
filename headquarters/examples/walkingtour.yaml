@@ -1,5 +1,5 @@
 meta:
-  version: 17
+  version: 18
 
 layouts:
   - name: tablet
@@ -11,7 +11,7 @@ layouts:
         style: quest
         text: "{{Player.directive}}"
         visible_if:
-          op: istrue
+          op: value_is_true
           ref: Player.directive
     
 content_pages:
