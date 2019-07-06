@@ -3,7 +3,6 @@ import _ from 'lodash';
 export const sections = [
   ['roles', 'Roles', 'user'],
   ['scenes', 'Scenes', 'map'],
-  ['messaging', 'Messaging', 'comment'],
   ['locations', 'Location', 'map-pin'],
   ['variants', 'Variants', 'space-shuttle'],
   ['interface', 'Interface', 'file-image-o'],
@@ -11,9 +10,8 @@ export const sections = [
 ];
 
 const sectionContent = {
-  roles: { roles: {}, appearances: {} },
+  roles: { roles: {}, appearances: {}, relays: {}, inboxes: {} },
   scenes: { scenes: {} },
-  messaging: { relays: {}, inboxes: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
   variants: { variants: {}, departures: {}, times: {} },
   interface: { layouts: {}, content_pages: {} },
