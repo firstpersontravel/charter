@@ -1,6 +1,10 @@
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
+  // TEMP TO BE REMOVED
+  istrue: { properties: {}, eval: () => true },
+  equals: { properties: {}, eval: () => true },
+  contains: { properties: {}, eval: () => true },
   value_is_true: {
     properties: {
       ref: {

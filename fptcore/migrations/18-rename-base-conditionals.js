@@ -6,25 +6,46 @@ const replacements = {
 
 module.exports = {
   migrations: {
-    events: (eventSpec) => {
-      if (replacements[eventSpec.op]) {
-        eventSpec.op = replacements[eventSpec.op];
+    conditions: (condition) => {
+      if (!condition) {
+        return;
+      }
+      if (replacements[condition.op]) {
+        condition.op = replacements[condition.op];
       }
     }
   },
   tests: [{
     before: {
       triggers: [{
-        event: { op: 'contains', ref: 'a' }
+        active_if: { op: 'contains', ref: 'a' }
       }, {
-        event: { op: 'other', ref: 'a' }
+        actions: [{
+          name: 'conditional',
+          if: { op: 'equals', ref: 'a' }
+        }]
+      }],
+      pages: [{
+        panels: [{
+          type: 'button',
+          visible_if: { op: 'istrue', ref: 'a' }
+        }]
       }]
     },
     after: {
       triggers: [{
-        event: { op: 'value_contains', ref: 'a' }
+        active_if: { op: 'value_contains', ref: 'a' }
       }, {
-        event: { op: 'other', ref: 'a' }
+        actions: [{
+          name: 'conditional',
+          if: { op: 'value_equals', ref: 'a' }
+        }]
+      }],
+      pages: [{
+        panels: [{
+          type: 'button',
+          visible_if: { op: 'value_is_true', ref: 'a' }
+        }]
       }]
     }
   }]
