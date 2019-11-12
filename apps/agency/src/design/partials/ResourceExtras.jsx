@@ -6,8 +6,9 @@ import RouteAssets from './extras/RouteAssets';
 
 const assetComponentsByResourceType = {
   audio: MediaAssets,
-  page: MediaAssets,
+  clip: MediaAssets,
   content_page: MediaAssets,
+  page: MediaAssets,
   route: RouteAssets,
   relay: MediaAssets,
   trigger: MediaAssets
