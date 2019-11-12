@@ -161,7 +161,7 @@ describe('TwilioCallHandler', () => {
       assert.strictEqual(
         twiml.toString(),
         '<?xml version="1.0" encoding="UTF-8"?>' +
-        '<Response><Gather input="dtmf speech" ' +
+        '<Response><Gather input="dtmf speech" timeout="10" ' +
         'action="http://twilio.test/endpoints/twilio/calls/response' +
         '?relay=100&amp;trip=1&amp;clip=CLIP-123" ' +
         'partialResultCallback=' +

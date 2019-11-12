@@ -61,6 +61,7 @@ class TwilioCallOps {
     const twilioHost = config.env.TWILIO_HOST;
     const gather = twimlResponse.gather(Object.assign({
       input: 'dtmf speech',
+      timeout: 10, // longer timeout
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`
