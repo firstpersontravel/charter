@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 
 import { getStage } from '../utils';
 
+const globalTitle = 'FPT Quill';
+
 function titleForOrg(org) {
   return org.isPersonal ? 'Home' : org.title;
 }
@@ -54,6 +56,18 @@ function renderRight(authInfo, logout) {
 }
 
 function renderBrand(org, experience) {
+  const inkwellStyle = {
+    height: '1.2em',
+    top: '-.3em',
+    position: 'relative',
+    marginRight: '.2em'
+  };
+  const inkwell = (
+    <img
+      style={inkwellStyle}
+      alt="First Person Travel logo"
+      src="/static/images/logo-03.png" />
+  );
   if (!org) {
     return (
       <Link
@@ -61,7 +75,8 @@ function renderBrand(org, experience) {
         activeClassName="active"
         className="navbar-brand mr-1"
         to="/">
-        MULTIVERSE
+        {inkwell}
+        {globalTitle.toUpperCase()}
       </Link>
     );
   }
@@ -71,6 +86,7 @@ function renderBrand(org, experience) {
       activeClassName="active"
       className="navbar-brand mr-1"
       to={`/${org.name}`}>
+      {inkwell}
       {titleForOrg(org).toUpperCase()}
     </Link>
   );
@@ -90,7 +106,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     <li className="nav-item dropdown">
       <div
         style={{ cursor: 'pointer' }}
-        className="text-dark bold nav-link dropdown-toggle constrain-text"
+        className="bold nav-link dropdown-toggle constrain-text"
         id="experiencesDropdown"
         data-toggle="dropdown">
         {experience ? experience.title : 'Experiences'}
@@ -175,11 +191,11 @@ function renderMenu(org, experience, experiences, groups, groupId) {
 export default function Nav({
   authInfo, logout, org, experience, experiences, groups, groupId
 }) {
-  const orgTitle = org ? org.title : 'Multiverse';
+  const orgTitle = org ? org.title : globalTitle;
   document.title = `${orgTitle}`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
-  const navClass = `navbar navbar-expand-sm navbar-light bg-faded ${navStageClass}`;
+  const navClass = `navbar navbar-expand-sm navbar-light navbar-faded ${navStageClass}`;
 
   return (
     <nav className={navClass}>

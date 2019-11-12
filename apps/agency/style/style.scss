@@ -1,5 +1,19 @@
 $grid-gutter-width: 15px;
 
+@import "./fonts.scss";
+
+$font-family-sans-serif: FFMarkPro;
+$font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
+$font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base:       $font-family-sans-serif !default;
+
+$font-weight-lighter:         100;
+$font-weight-light:           300;
+$font-weight-normal:          400;
+$font-weight-bold:            500;
+$font-weight-bolder:          700;
+$font-weight-base:            $font-weight-normal;
+
 @import "../node_modules/bootstrap/scss/bootstrap";
 @import "../node_modules/react-datepicker/dist/react-datepicker";
 
@@ -7,6 +21,10 @@ $grid-gutter-width: 15px;
 
 $fa-font-path: "~font-awesome/fonts";
 @import "../node_modules/font-awesome/scss/font-awesome";
+
+h1, .h1, h2, .h2 {
+  font-family: RecoletaAlt-SemiBold;
+}
 
 body {
   height: 100%;
@@ -68,15 +86,12 @@ body {
 }
 
 .navbar {
+  background: #ccc;
   &.navbar-development {
-    // background: linear-gradient(to bottom, #bfb 0, white 100px);
     background: #bfb;
   }
   &.navbar-staging {
     background: #ffb;
-  }
-  &.navbar-production {
-    background: #fbb;
   }
 }
 

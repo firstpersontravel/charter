@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 
@@ -22,35 +23,42 @@ export default class App extends Component {
     });
   }
 
-  renderContent() {
-    if (this.state.error) {
-      return (
-        <div className="container-fluid">
-          <div className="alert alert-danger">
-            <h4 className="alert-heading">
-              <i className="fa fa-exclamation-triangle" />&nbsp;
-              Sorry, there was an error.
-            </h4>
-            <p>Please reload the page and try again.</p>
-            <hr />
-            <p>
-              <a
-                className="btn btn-block btn-danger"
-                onClick={() => Sentry.showReportDialog()}>
-                Report feedback
-              </a>
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
+  renderError() {
+    return (
+      <Modal
+        isOpen={this.state.error || this.props.hasError}
+        centered
+        zIndex={3000}>
+        <ModalHeader>
+          <i className="fa fa-exclamation-triangle" />&nbsp;
+          We&apos;re sorry, there was an error.
+        </ModalHeader>
+        <ModalBody>
+          We&apos;ve been notified and we&apos;ll fix this right away.
+          In the meantime, you can reload the page and try what you were doing again.
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="secondary"
+            onClick={() => Sentry.showReportDialog()}>
+            Report feedback
+          </Button>
+          &nbsp;
+          <Button
+            color="primary"
+            onClick={() => { window.location = window.location.href; }}>
+            Reload the page
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
   }
 
   render() {
     return (
       <div>
-        {this.renderContent()}
+        {this.renderError()}
+        {this.props.children}
       </div>
     );
   }
@@ -58,5 +66,10 @@ export default class App extends Component {
 
 App.propTypes = {
   children: PropTypes.node.isRequired,
+  hasError: PropTypes.bool,
   fetchAuthInfo: PropTypes.func.isRequired
+};
+
+App.defaultProps = {
+  hasError: false
 };

@@ -22,7 +22,8 @@ export default class PublicLogin extends Component {
     return this.props.loginRequest === 'pending';
   }
 
-  handleSubmit() {
+  handleSubmit(e) {
+    e.preventDefault();
     this.props.login(this.state.email, this.state.password);
   }
 
@@ -55,7 +56,7 @@ export default class PublicLogin extends Component {
           <h1>Log in</h1>
           {this.renderLoginErrorAlert()}
           {this.renderLoginFailedAlert()}
-          <form>
+          <form onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label htmlFor="exampleInputEmail1">Email address</label>
               <input
@@ -72,7 +73,6 @@ export default class PublicLogin extends Component {
               <input
                 type="password"
                 name="password"
-                autoComplete="new-password"
                 className="form-control"
                 id="exampleInputPassword1"
                 value={this.state.password}

@@ -145,11 +145,9 @@ export default class OrgIndex extends Component {
     const example = this.getCreatingExample();
     return (
       <div className="container-fluid">
-        <h1>Welcome to the Multiverse!</h1>
+        <h1>Home</h1>
         <p>
-          This toolkit will help you create the immersive experience of
-          your dreams. To get started, you can try out one of the below
-          examples.
+          To get started, you can try out one of the below examples.
         </p>
         {this.renderExamples()}
 
