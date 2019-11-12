@@ -53,7 +53,7 @@ export default class PublicLogin extends Component {
     return (
       <div className="container-fluid">
         <div className="col-md-6 offset-md-3">
-          <h1>Log in</h1>
+          <h1>Welcome!</h1>
           {this.renderLoginErrorAlert()}
           {this.renderLoginFailedAlert()}
           <form onSubmit={this.handleSubmit}>
