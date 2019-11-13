@@ -38,7 +38,7 @@ export default DS.Model.extend({
 
     var contentPath = this.get('environment.contentPath');
     var scriptFolder = this.get('experience.name');
-    return `${contentPath}/${scriptFolder}/${path}`;
+    return `${contentPath}/firstpersontravel/${scriptFolder}/${path}`;
   },
 
   getRoleNames: function() {
