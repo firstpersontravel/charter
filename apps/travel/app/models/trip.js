@@ -42,6 +42,9 @@ export default DS.Model.extend({
   },
 
   evaluateIf: function(ifClause) {
+    if (!ifClause) {
+      return true;
+    }
     return fptCore.evaluator.if(this.get('actionContext'), ifClause);
   },
 
