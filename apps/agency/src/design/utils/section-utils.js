@@ -21,9 +21,9 @@ const sectionContent = {
 const sliceContent = {
   scene: sliceName => ({
     pages: { scene: sliceName },
-    triggers: { scene: sliceName },
     cues: { scene: sliceName },
-    clips: { scene: sliceName }
+    clips: { scene: sliceName },
+    triggers: { scene: sliceName }
   }),
   section: sliceName => sectionContent[sliceName]
 };

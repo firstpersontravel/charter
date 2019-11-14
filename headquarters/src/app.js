@@ -13,7 +13,9 @@ const twilioRouter = require('./routers/twilio');
 const {
   actorRouter,
   contentRouter,
+  entrywayRouter,
   galleryRouter,
+  redirectRouter,
   shortcutRouter
 } = require('./routers/page');
 
@@ -54,9 +56,11 @@ app.use('/actor', actorRouter);
 app.use('/api', apiRouter);
 app.use('/auth', authRouter);
 app.use('/content', contentRouter);
-app.use('/endpoints/twilio', twilioRouter);
+app.use('/entry', entrywayRouter);
 app.use('/gallery', galleryRouter);
+app.use('/r', redirectRouter);
 app.use('/s', shortcutRouter);
+app.use('/endpoints/twilio', twilioRouter);
 
 // S3 signing url
 app.use('/s3', s3Router({

@@ -18,6 +18,7 @@ const mockTrip = { id: 100 };
 const mockScript = {
   id: 10,
   orgId: 9,
+  experienceId: 20,
   experience: {
     id: 20,
     name: 'script',
@@ -99,7 +100,7 @@ describe('TrailheadController', () => {
     });
   });
 
-  describe('#createTrip', () => {
+  describe('#createTripFromRelay', () => {
     it('creates group and user when they don\'t exist', async () => {
       const mockGroup = { id: 1 };
       const mockUser = { id: 2 };
@@ -109,13 +110,12 @@ describe('TrailheadController', () => {
       sandbox.stub(models.Group, 'findOrCreate').resolves([mockGroup]);
       sandbox.stub(models.User, 'findOrCreate').resolves([mockUser]);
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
-      sandbox.stub(TripsController, 'createTrip')
-        .resolves(mockTrip);
+      sandbox.stub(TripsController, 'createTrip').resolves(mockTrip);
       sandbox.stub(models.Player, 'update').resolves();
       sandbox.stub(TrailheadController, 'assignActors').resolves();
 
       // Create from trailhead
-      await TrailheadController.createTrip(mockTrailhead, '123');
+      await TrailheadController.createTripFromRelay(mockTrailhead, '123');
 
       // Test calls
       sinon.assert.calledWith(models.Group.findOrCreate, {

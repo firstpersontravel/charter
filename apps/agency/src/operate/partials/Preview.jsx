@@ -7,8 +7,38 @@ import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 const evaluator = new Evaluator(Registry);
 
 function renderPanel(player, page, panel) {
+  const script = player.trip.script;
   if (!evaluator.if(player.trip.actionContext, panel.visible_if)) {
     return null;
+  }
+  if (panel.type === 'qr_display') {
+    const qrCode = _.find(script.content.qr_codes, { name: panel.qr_code });
+    const redirectParams = {
+      tripId: player.trip.id || 0,
+      cueName: qrCode.cue || '',
+      pageName: qrCode.page || ''
+    };
+    const queryString = Object
+      .keys(redirectParams)
+      .map(key => `${key}=${encodeURIComponent(redirectParams[key])}`)
+      .join('&');
+    const redirectUrl = `${window.location.origin}/r?${queryString}`;
+    const qrParams = {
+      cht: 'qr',
+      chs: '500x500',
+      ch1: redirectUrl
+    };
+    const qrString = Object
+      .keys(qrParams)
+      .map(key => `${key}=${encodeURIComponent(qrParams[key])}`)
+      .join('&');
+    const qrUrl = `https://chart.googleapis.com/chart?${qrString}`;
+    return (
+      <img
+        className="img-fluid"
+        src={qrUrl}
+        alt="QR code" />
+    );
   }
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
@@ -23,7 +53,6 @@ function renderPanel(player, page, panel) {
   if (panel.type === 'button' ||
       panel.type === 'numberpad') {
     const isSceneActive = page.scene === player.trip.currentSceneName;
-    const script = player.trip.script;
     const panelText = TemplateUtil.templateText(player.trip.evalContext,
       panel.text || panel.placeholder, player.trip.experience.timezone);
     const scene = _.find(script.content.scenes, { name: page.scene });
@@ -53,7 +82,10 @@ const archivedIcon = (
   <i className="fa fa-archive ml-1" />
 );
 
-function renderPage(page, player) {
+export default function Preview({ player, page }) {
+  if (!page) {
+    return null;
+  }
   const trip = player.trip;
   const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const panels = page.panels || [];
@@ -87,17 +119,11 @@ function renderPage(page, player) {
   );
 }
 
-export default function Preview({ player }) {
-  const trip = player.trip;
-  const script = trip.script;
-  const page = _.find(script.content.pages,
-    { name: player.currentPageName });
-  if (!page) {
-    return null;
-  }
-  return renderPage(page, player);
-}
-
 Preview.propTypes = {
-  player: PropTypes.object.isRequired
+  player: PropTypes.object.isRequired,
+  page: PropTypes.object
+};
+
+Preview.defaultProps = {
+  page: null
 };

@@ -78,7 +78,7 @@ function renderPlayerCell(player, isFirst) {
   return (
     <div className="row" key={player.id}>
       <div className="col-sm-6">
-        <Preview player={player} />
+        <Preview player={player} page={page} />
       </div>
       <div className="col-sm-6">
         {renderedMap}

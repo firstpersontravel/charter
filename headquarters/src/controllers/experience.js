@@ -13,7 +13,11 @@ class ExperienceController {
         experienceId: experienceId,
         isActive: true,
         isArchived: false
-      }
+      },
+      include: [{
+        model: models.Experience,
+        as: 'experience'
+      }]
     });
   }
 

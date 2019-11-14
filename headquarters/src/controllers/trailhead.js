@@ -49,13 +49,21 @@ class TrailheadController {
   /**
    * Create a new trip from an incoming trailhead message or call.
    */
-  static async createTrip(trailheadRelay, fromNumber) {
+  static async createTripFromRelay(trailheadRelay, fromNumber) {
     const script = await RelayController.scriptForRelay(trailheadRelay);
+    return this.createTrip(script, trailheadRelay.departureName,
+      trailheadRelay.forRoleName, fromNumber);
+  }
+
+  /**
+   * Create a new trip with properties.
+   */
+  static async createTrip(script, departureName, userRoleName, userNumber) {
     const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {
         orgId: script.orgId,
-        experienceId: script.experience.id,
+        experienceId: script.experienceId,
         scriptId: script.id,
         date: localTime.format('YYYY-MM-DD'),
         isArchived: false
@@ -63,15 +71,15 @@ class TrailheadController {
     });
     const title = localTime.format('h:mm a z');
     const trip = await TripsController.createTrip(
-      group.id, title, trailheadRelay.departureName, ['default']);
+      group.id, title, departureName, ['default']);
 
     // Look for a user, or create if doesn't exist.
     const [trailheadUser, ] = await models.User.findOrCreate({
       where: {
-        orgId: trailheadRelay.orgId,
-        experienceId: trailheadRelay.experienceId,
+        orgId: script.orgId,
+        experienceId: script.experienceId,
         isActive: true,
-        phoneNumber: fromNumber
+        phoneNumber: userNumber
       },
       defaults: { firstName: `${script.experience.title} Player` }
     });
@@ -80,9 +88,9 @@ class TrailheadController {
     const [trailheadProfile, ] = await models.Profile.findOrCreate({
       where: {
         userId: trailheadUser.id,
-        orgId: trailheadRelay.orgId,
-        experienceId: trailheadRelay.experienceId,
-        roleName: trailheadRelay.forRoleName,
+        orgId: script.orgId,
+        experienceId: script.experienceId,
+        roleName: userRoleName,
         isArchived: false
       },
       defaults: {
@@ -98,10 +106,7 @@ class TrailheadController {
 
     // Update the trailhead player to be assigned to trailhead user.
     await models.Player.update({ userId: trailheadUser.id }, {
-      where: {
-        tripId: trip.id,
-        roleName: trailheadRelay.forRoleName
-      }
+      where: { tripId: trip.id, roleName: userRoleName }
     });
 
     // Update all other users

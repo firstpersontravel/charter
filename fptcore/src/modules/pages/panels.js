@@ -31,8 +31,7 @@ module.exports = {
       },
       style: {
         type: 'enum',
-        options: PANEL_BUTTON_STYLE_OPTIONS,
-        display: { hidden: true }
+        options: PANEL_BUTTON_STYLE_OPTIONS
       }
     }
   },

@@ -172,10 +172,13 @@ function renderVars(orgName, player) {
 export default function PlayerOverview({ player }) {
   const map = renderMap(player.org.name, player);
   const vars = renderVars(player.org.name, player);
+  const page = _.find(player.trip.script.content.pages, {
+    name: player.currentPageName
+  });
   return (
     <div className="row">
       <div className="col-sm-6">
-        <Preview player={player} />
+        <Preview player={player} page={page} />
       </div>
       <div className="col-sm-6">
         {map}

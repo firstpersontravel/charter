@@ -20,7 +20,7 @@ class TwilioUtil {
       return null;
     }
     // If no player, and it's a trailhead, then we need to create a new trip.
-    const trip = await TrailheadController.createTrip(relay, 
+    const trip = await TrailheadController.createTripFromRelay(relay, 
       userPhoneNumber);
     // Just return the id.
     return trip.id;

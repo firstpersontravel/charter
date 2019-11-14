@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
+import Preview from '../../operate/partials/Preview';
 import ResourceBadge from './ResourceBadge';
 import { sortForRole } from '../../operate/utils';
 import { isProduction } from '../../utils';
@@ -83,8 +85,18 @@ export default class TripState extends Component {
             resourceType="page"
             className="mr-1"
             showType={false} />
-          {pageTitle}
+          <span id={`popover-target-${page.name}`}>
+            {pageTitle}
+          </span>
           {cueButtons}
+          <UncontrolledPopover
+            trigger="legacy"
+            target={`popover-target-${page.name}`}>
+            <PopoverHeader>{pageTitle}</PopoverHeader>
+            <PopoverBody>
+              <Preview player={player} page={page} />
+            </PopoverBody>
+          </UncontrolledPopover>
         </td>
       </tr>
     );
