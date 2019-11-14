@@ -15,11 +15,8 @@ module.exports = {
   matchEvent: function(spec, event, actionContext) {
     return spec.cue === event.cue;
   },
-  getTitle: function(scriptContent, spec) {
-    var cue = _.find(scriptContent.cues, { name: spec.cue });
-    if (!cue) {
-      return null;
-    }
-    return 'cue "' + cue.title + '"';
+  getTitle: function(scriptContent, resource, registry) {
+    var cue = _.find(scriptContent.cues, { name: resource.cue });
+    return `cue "${cue ? cue.title : 'unknown'}"`;
   }
 };

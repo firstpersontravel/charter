@@ -22,6 +22,7 @@ function variantOptionsForSection(script, section) {
 
 function initialStateForScript(script) {
   return {
+    startedAt: new Date().getTime(),
     departureName: _.get(script, 'content.departures[0].name') || '',
     variantSections: _(variantSectionsForScript(script))
       .map(section => (
@@ -39,6 +40,7 @@ export default class Test extends Component {
     this.state = initialStateForScript(props.script);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeVariant = this.handleChangeVariant.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
   handleChangeField(fieldName, event) {
@@ -53,6 +55,10 @@ export default class Test extends Component {
         [sectionName]: event.target.value
       })
     });
+  }
+
+  handleReset() {
+    this.setState(initialStateForScript(this.props.script));
   }
 
   renderVariantSelect(section) {
@@ -95,6 +101,16 @@ export default class Test extends Component {
     );
   }
 
+  renderReset() {
+    return (
+      <button
+        className="btn btn-block btn-primary"
+        onClick={this.handleReset}>
+        Reset
+      </button>
+    );
+  }
+
   render() {
     const variantNames = Object.values(this.state.variantSections);
     return (
@@ -102,11 +118,13 @@ export default class Test extends Component {
         <div className="row">
           <div className="col-sm-1 script-editor-full-height">
             {this.renderParams()}
+            {this.renderReset()}
           </div>
           <div className="col-sm-11">
             <TripTestHarness
               script={this.props.script}
-              variantNames={variantNames} />
+              variantNames={variantNames}
+              startedAt={this.state.startedAt} />
           </div>
         </div>
       </div>

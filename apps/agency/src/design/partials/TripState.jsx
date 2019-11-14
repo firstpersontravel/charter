@@ -132,7 +132,8 @@ export default class TripState extends Component {
           onClick={() => this.props.onTrigger(trigger.name)}
           style={style}
           className="constrain-text btn btn-block btn-xs btn-outline-secondary">
-          {triggerResourceClass.getTitle(trip.script.content, trigger)}
+          Fire {triggerResourceClass.getEventTitle(trip.script.content, trigger,
+            Registry)}
         </button>
       </span>
     );
@@ -183,12 +184,12 @@ export default class TripState extends Component {
           {globalMarker}
           {startSceneButton}
         </div>
-        <div className="col-sm-8">
+        <div className="col-sm-7">
           <div className="row">
             {columns}
           </div>
         </div>
-        <div className="col-sm-2">
+        <div className="col-sm-3">
           {triggerBtns}
         </div>
       </div>

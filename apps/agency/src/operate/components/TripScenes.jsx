@@ -192,7 +192,7 @@ export default class TripScenes extends Component {
           'trigger', { trigger_name: trigger.name })}
         style={style}
         className="constrain-text btn btn-block btn-xs btn-outline-secondary">
-        {triggerResourceClass.getTitle(trip.script.content, trigger)}
+        Fire {triggerResourceClass.getEventTitle(trip.script.content, trigger, Registry)}
       </button>
     );
   }

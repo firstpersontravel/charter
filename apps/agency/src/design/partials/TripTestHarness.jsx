@@ -35,7 +35,12 @@ function getInitialState(script, variantNames) {
     players: _(script.content.roles)
       .map(role => getInitialPlayerFields(script, variantNames, role.name))
       .value(),
-    log: []
+    log: [{
+      id: 0,
+      time: moment(),
+      level: 'info',
+      message: 'Trip started.'
+    }]
   };
 }
 
@@ -85,12 +90,12 @@ class TripKernel {
 
   log({ level, message }) {
     this.updateState({
-      log: [{
+      log: this.state.log.concat([{
         id: this.state.log.length,
         time: moment(),
         level: level,
         message: message
-      }].concat(this.state.log).slice(0, 100)
+      }]).slice(0, 100)
     });
   }
 }
@@ -99,7 +104,8 @@ class TripKernel {
 export default class TripTestHarness extends Component {
   constructor(props) {
     super(props);
-    this.state = getInitialState(props.script, props.variantNames);
+    this.state = getInitialState(props.script, props.variantNames,
+      props.startedAt);
     this.handleAction = this.handleAction.bind(this);
     this.handleTrigger = this.handleTrigger.bind(this);
     this.handleEvent = this.handleEvent.bind(this);
@@ -113,7 +119,8 @@ export default class TripTestHarness extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.script.id !== this.props.script.id ||
         nextProps.variantNames.join(',') !==
-        this.props.variantNames.join(',')) {
+        this.props.variantNames.join(',') ||
+        nextProps.startedAt !== this.props.startedAt) {
       this.resetState(nextProps.script, nextProps.variantNames);
     }
   }
@@ -233,14 +240,15 @@ export default class TripTestHarness extends Component {
   }
 
   renderLogEntry(logEntry) {
-    const logEntryIcons = {
-      info: <i className="fa fa-info-circle mr-1" />,
-      warning: <i className="fa fa-exclamation-circle mr-1" />
+    const badgeClasses = {
+      info: 'badge-info',
+      warning: 'badge-warning'
     };
     return (
-      <div key={logEntry.id}>
-        <span className="mr-1">{logEntry.time.format('h:mma')}</span>
-        {logEntryIcons[logEntry.level]}
+      <div key={logEntry.id} style={{ wordBreak: 'break-word', overflow: 'hidden' }}>
+        <span className={`badge ${badgeClasses[logEntry.level]} mr-1`}>
+          {logEntry.time.format('h:mma')}
+        </span>
         {logEntry.message}
       </div>
     );
@@ -272,5 +280,6 @@ export default class TripTestHarness extends Component {
 
 TripTestHarness.propTypes = {
   script: PropTypes.object.isRequired,
-  variantNames: PropTypes.arrayOf(PropTypes.string).isRequired
+  variantNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+  startedAt: PropTypes.number.isRequired
 };

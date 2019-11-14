@@ -1,3 +1,5 @@
+const TextUtil = require('../../utils/text');
+
 module.exports = {
   icon: 'certificate',
   help: 'A fires when a defined event occurs. Once fired, it will apply a set of actions, which change the trip state.',
@@ -12,7 +14,16 @@ module.exports = {
       items: { type: 'component', component: 'actions' }
     }
   },
-  getTitle: function(scriptContent, resource) {
-    return resource.event ? resource.event.type : 'no event';
+  getEventTitle: function(scriptContent, resource, registry) {
+    if (!resource.event || !resource.event.type) {
+      return 'No triggering event';
+    }
+    const eventClass = registry.events[resource.event.type];
+    return eventClass.getTitle
+      ? eventClass.getTitle(scriptContent, resource.event, registry)
+      : TextUtil.titleForKey(resource.event.type).toLowerCase();
+  },
+  getTitle: function(scriptContent, resource, registry) {
+    return `On ${this.getEventTitle(scriptContent, resource, registry)}`;
   }
 };

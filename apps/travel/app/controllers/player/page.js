@@ -14,18 +14,23 @@ export default Ember.Controller.extend({
     var page = this.get('pageModel');
     var player = this.get('player.model');
     var pageLayoutName = player.get('role').layout || null;
-    if (page.layout !== undefined) { pageLayoutName = page.layout; }
+    if (page && page.layout) { pageLayoutName = page.layout; }
     return pageLayoutName;
   }.property('pageModel'),
 
   pageLayoutComponentName: function() {
+    if (!this.get('pageModel')) {
+      return 'page-layouts/null';
+    }
     return 'page-layouts/' + (this.get('pageLayout.type') || 'simple');
   }.property('pageLayout'),
 
   pageModel: function() {
     var player = this.get('player.model');
     var script = player.get('trip.script');
-    if (!player) {
+    if (!player ||
+      !player.get('currentPageName') ||
+      player.get('currentPageName') === 'null') {
       return null;
     }
     return script.findPageByName(player.get('currentPageName'));
@@ -43,6 +48,10 @@ export default Ember.Controller.extend({
   pagePanels: function() {
     var trip = this.get('trip.model');
     var page = this.get('pageModel');
+    if (!page) {
+      return {};
+    }
+
     var pagePanels = {};
     // Assemble list of partials with panels
     var partials = Ember.$.extend({
