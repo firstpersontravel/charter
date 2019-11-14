@@ -132,11 +132,7 @@ module.exports = {
     help: 'Displays simple text.',
     properties: {
       text: { type: 'markdown', required: true },
-      style: {
-        type: 'enum',
-        options: PANEL_TEXT_STYLE_OPTIONS,
-        display: { hidden: true }
-      }
+      style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
     }
   },
   video: {
