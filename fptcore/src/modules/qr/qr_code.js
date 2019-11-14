@@ -4,6 +4,11 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
+    role: {
+      type: 'reference',
+      collection: 'roles',
+      help: 'The role that is expected to scan this code.'
+    },
     page: {
       type: 'reference',
       collection: 'pages',

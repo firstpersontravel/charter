@@ -14,9 +14,10 @@ function renderPanel(player, page, panel) {
   if (panel.type === 'qr_display') {
     const qrCode = _.find(script.content.qr_codes, { name: panel.qr_code });
     const redirectParams = {
-      tripId: player.trip.id || 0,
-      cueName: qrCode.cue || '',
-      pageName: qrCode.page || ''
+      e: player.trip.experience.id || 0,
+      r: page.role || player.roleName,
+      c: qrCode.cue || '',
+      p: qrCode.page || ''
     };
     const queryString = Object
       .keys(redirectParams)
