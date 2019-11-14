@@ -4,6 +4,14 @@ import { Evaluator, Registry, PlayerCore } from 'fptcore';
 
 const evaluator = new Evaluator(Registry);
 
+export function fullMediaUrl(org, experience, url) {
+  if (_.startsWith(url, 'http')) {
+    return url;
+  }
+  const host = 'https://fpt-agency-content.s3.amazonaws.com';
+  return `${host}/${org.name}/${experience.name}/${url}`;
+}
+
 export function sortForRole(role) {
   return {
     traveler: -1,
@@ -118,5 +126,6 @@ export function sortPlayers(group) {
 export default {
   sortForRole: sortForRole,
   getPlayerPageInfo: getPlayerPageInfo,
-  sortPlayers: sortPlayers
+  sortPlayers: sortPlayers,
+  fullMediaUrl: fullMediaUrl
 };

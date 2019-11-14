@@ -276,6 +276,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   realtimeEvents: {
     action: function(content) {
+      console.log('action', content);
       if (content.client_id === this.get('api').get('clientId')) {
         console.log('self-originated remote action ignored:',
           content.action.attributes.name);

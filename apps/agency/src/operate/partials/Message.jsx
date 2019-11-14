@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
-import { canRoleHaveUser } from '../utils';
+import { canRoleHaveUser, fullMediaUrl } from '../utils';
 
 function renderMessageContent(message) {
   if (message.medium === 'image' && message.name) {
@@ -15,11 +15,13 @@ function renderMessageContent(message) {
     return `[Audio: ${TextUtil.titleForTypedKey(message.name)}]`;
   }
   if (message.medium === 'image') {
+    const imageUrl = fullMediaUrl(message.trip.org, message.trip.experience,
+      message.content);
     return (
       <img
         alt={message.content}
         className="img-fluid"
-        src={message.content}
+        src={imageUrl}
         style={{ maxHeight: '200px' }} />
     );
   }

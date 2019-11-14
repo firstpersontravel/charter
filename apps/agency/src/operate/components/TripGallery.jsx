@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { isProduction } from '../../utils';
+import { fullMediaUrl } from '../utils';
 
 function updateInGallery(messageId, isInGallery, updateInstance) {
   updateInstance('messages', messageId, { isInGallery: isInGallery });
 }
 
-function renderMessage(message, updateInstance) {
-  const mediaUrl = message.content;
+function renderMessage(trip, message, updateInstance) {
+  const mediaUrl = fullMediaUrl(trip.org, trip.experience, message.content);
   const cellStyle = {
     float: 'left',
     width: '33%',
@@ -23,7 +24,7 @@ function renderMessage(message, updateInstance) {
     <div key={message.id} style={cellStyle}>
       <div>
         <img
-          alt={mediaUrl}
+          alt={message.content}
           src={mediaUrl}
           style={imageStyle}
           onClick={() => updateInGallery(
@@ -120,7 +121,7 @@ export default class TripGallery extends Component {
 
   renderMessageRows() {
     return this.props.messages.map(message => (
-      renderMessage(message, this.props.updateInstance)
+      renderMessage(this.props.trip, message, this.props.updateInstance)
     ));
   }
 
