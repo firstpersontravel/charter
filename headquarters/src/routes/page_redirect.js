@@ -18,13 +18,15 @@ const redirectRoute = async (req, res) => {
     return;
   }
 
-  const loggedInPlayerId = req.cookies[`exp-${experience.id}`];
-  if (loggedInPlayerId) {
+  const loggedInPlayerId = req.cookies[`exp-${experienceId}`];
+  console.log('loggedInPlayerId', loggedInPlayerId);
+  if (!loggedInPlayerId) {
     res.status(401).send('You must be logged in already to scan this code.  Make sure you scanned the code in the same browser that you signed in with.');
     return;
   }
 
   const loggedInPlayer = await models.Player.findByPk(loggedInPlayerId);
+  console.log('loggedInPlayer', loggedInPlayer.roleName, roleName);
   if (!loggedInPlayer || loggedInPlayer.roleName !== roleName) {
     res.status(401).send('You must be logged into the correct role to scan this code. Make sure you scanned the code in the same browser that you signed in with.');
     return;
@@ -46,7 +48,7 @@ const redirectRoute = async (req, res) => {
     } else {
       tripFilters.id = loggedInTrip.id;
     }
-    const trips = await models.Trip.find({ where: tripFilters });
+    const trips = await models.Trip.findAll({ where: tripFilters });
     const event = { type: 'cue_signaled', cue: cueName };
     for (const cueTrip of trips) {
       await KernelController.applyEvent(cueTrip.id, event);

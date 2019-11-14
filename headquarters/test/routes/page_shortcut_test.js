@@ -16,9 +16,10 @@ describe('pageShortcutRoutes', () => {
       const mockPlayer = {
         userId: 10,
         tripId: 2,
+        trip: { experienceId: 3 },
         roleName: 'Phone'
       };
-      sandbox.stub(models.Player, 'findByPk').resolves(mockPlayer);
+      sandbox.stub(models.Player, 'findOne').resolves(mockPlayer);
 
       await pageShortcutRoutes.playerShortcutRoute(req, res);
 
@@ -27,8 +28,11 @@ describe('pageShortcutRoutes', () => {
       assert.strictEqual(res._getRedirectUrl(), '/travel/u/10/p/2/role/Phone');
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.Player.findByPk);
-      assert.deepEqual(models.Player.findByPk.firstCall.args, [1]);
+      sinon.assert.calledOnce(models.Player.findOne);
+      assert.deepEqual(models.Player.findOne.firstCall.args, [{
+        where: { id: 1 },
+        include: [{ model: models.Trip, as: 'trip' }]
+      }]);
     });
 
     it('returns 404 if player not found', async () => {
@@ -36,7 +40,7 @@ describe('pageShortcutRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub response
-      sandbox.stub(models.Player, 'findByPk').resolves(null);
+      sandbox.stub(models.Player, 'findOne').resolves(null);
 
       await pageShortcutRoutes.playerShortcutRoute(req, res);
 
@@ -44,8 +48,11 @@ describe('pageShortcutRoutes', () => {
       assert.strictEqual(res.statusCode, 404);
 
       // Test call made correctly
-      sinon.assert.calledOnce(models.Player.findByPk);
-      assert.deepEqual(models.Player.findByPk.firstCall.args, [1]);
+      sinon.assert.calledOnce(models.Player.findOne);
+      assert.deepEqual(models.Player.findOne.firstCall.args, [{
+        where: { id: 1 },
+        include: [{ model: models.Trip, as: 'trip' }]
+      }]);
     });
   });
 

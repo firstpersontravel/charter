@@ -15,7 +15,7 @@ function renderPanel(player, page, panel) {
     const qrCode = _.find(script.content.qr_codes, { name: panel.qr_code });
     const redirectParams = {
       e: player.trip.experience.id || 0,
-      r: page.role || player.roleName,
+      r: qrCode.role,
       c: qrCode.cue || '',
       p: qrCode.page || ''
     };
@@ -23,7 +23,7 @@ function renderPanel(player, page, panel) {
       .keys(redirectParams)
       .map(key => `${key}=${encodeURIComponent(redirectParams[key])}`)
       .join('&');
-    const redirectUrl = `${window.location.origin}/r?${queryString}`;
+    const redirectUrl = `${window.location.origin}/r/?${queryString}`;
     const qrParams = {
       cht: 'qr',
       chs: '500x500',
@@ -35,10 +35,13 @@ function renderPanel(player, page, panel) {
       .join('&');
     const qrUrl = `https://chart.googleapis.com/chart?${qrString}`;
     return (
-      <img
-        className="img-fluid"
-        src={qrUrl}
-        alt="QR code" />
+      <div>
+        <img
+          className="img-fluid"
+          src={qrUrl}
+          alt="QR code" />
+        <a href={redirectUrl}>{redirectUrl}</a>
+      </div>
     );
   }
   if (panel.type === 'text' ||
