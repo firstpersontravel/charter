@@ -140,6 +140,7 @@ describe('Integration - Nested Triggers', () => {
     assert.strictEqual(result.nextContext.evalContext.apples, 7);
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'event',
+      scope: 'trip',
       event: { type: 'cue_signaled', cue: 'CUE-PICK-APPLES' }
     }, {
       operation: 'updateTripHistory',
@@ -195,6 +196,7 @@ describe('Integration - Nested Triggers', () => {
       }),
       resultOps: [{
         operation: 'event',
+        scope: 'trip',
         event: { type: 'cue_signaled', cue: 'CUE-SUNRISE' }
       }, {
         operation: 'updateTripHistory',
@@ -257,12 +259,14 @@ describe('Integration - Nested Triggers', () => {
     // Test results
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'event',
+      scope: 'trip',
       event: { type: 'cue_signaled', cue: 'CUE-GREET' }
     }, {
       operation: 'updateTripHistory',
       history: { 'TRIGGER-GREET-1': now.toISOString() }
     }, {
       operation: 'event',
+      scope: 'trip',
       event: { type: 'cue_signaled', cue: 'CUE-GREET-REPLY' }
     }, {
       operation: 'updateTripHistory',
@@ -311,6 +315,7 @@ describe('Integration - Nested Triggers', () => {
 
     assert.deepStrictEqual(result.resultOps, [{
       operation: 'event',
+      scope: 'trip',
       event: { type: 'cue_signaled', cue: 'CUE-NAV-1' }
     }, {
       operation: 'updateTripHistory',
@@ -320,6 +325,7 @@ describe('Integration - Nested Triggers', () => {
       values: { is_navigating: true }
     }, {
       operation: 'event',
+      scope: 'trip',
       event: { type: 'cue_signaled', cue: 'CUE-NAV-2' }
     }, {
       operation: 'updateTripHistory',

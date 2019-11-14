@@ -14,7 +14,7 @@ const sectionContent = {
   scenes: { scenes: {} },
   locations: { waypoints: {}, geofences: {}, routes: {} },
   variants: { variants: {}, departures: {}, times: {} },
-  interface: { layouts: {}, content_pages: {} },
+  interface: { layouts: {}, content_pages: {}, qr_codes: {} },
   operations: { achievements: {}, checkpoints: {} }
 };
 

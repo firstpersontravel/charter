@@ -23,10 +23,8 @@ module.exports = {
     }
     return [{
       operation: 'event',
+      scope: cue.scope || 'trip',
       event: { type: 'cue_signaled', cue: params.cue_name }
     }];
-  },
-  getChildClaims: function(params) {
-    // return ['cues.' + params.cue_name];
   }
 };

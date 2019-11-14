@@ -14,8 +14,8 @@ class KernelOpController {
   static async twiml() { /* ignore */ }
   static async updateAudio() { /* ignore */ }
   static async updateUi() { /* ignore */ }
-  static async event() { /* ignore - handled internally */ }
   static async wait() { /* ignore - handled internally */ }
+  static async event() { /* special case - handled directly in kernely */ }
 
   static async log(objs, op) {
     logger[op.level].call(logger, op.message);

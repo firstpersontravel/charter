@@ -1,5 +1,6 @@
 const assert = require('assert');
 const moment = require('moment');
+const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
 const Kernel = require('../../../fptcore/src/kernel/kernel');
@@ -11,6 +12,57 @@ const KernelOpController = require('../../src/kernel/op');
 const TestUtil = require('../util');
 
 describe('KernelController', () => {
+  describe('#_applyResult', () => {
+    const stubTrip = { id: 4 };
+    const objs = {
+      trip: { id: 1, experienceId: 2, groupId: 3 }
+    };
+
+    beforeEach(async () => {
+      sandbox.stub(models.Trip, 'findAll').resolves([stubTrip]);
+      sandbox.stub(KernelController, 'applyEvent').resolves(null);
+    });
+
+    it('applies cross-group events', async () => {
+      await KernelController._applyResult(objs, {
+        scheduledActions: [],
+        resultOps: [
+          { operation: 'event', scope: 'group', event: { type: 'hi' } }
+        ]
+      });
+
+      sinon.assert.calledWith(models.Trip.findAll.firstCall, {
+        where: {
+          isArchived: false,
+          id: { [Sequelize.Op.not]: 1 },
+          experienceId: 2,
+          groupId: 3
+        }
+      });
+      sinon.assert.calledOnce(KernelController.applyEvent);
+      sinon.assert.calledWith(KernelController.applyEvent, 4, { type: 'hi' });
+    });
+
+    it('applies cross-experience events', async () => {
+      await KernelController._applyResult(objs, {
+        scheduledActions: [],
+        resultOps: [
+          { operation: 'event', scope: 'experience', event: { type: 'hi' } }
+        ]
+      });
+
+      sinon.assert.calledWith(models.Trip.findAll.firstCall, {
+        where: {
+          isArchived: false,
+          id: { [Sequelize.Op.not]: 1 },
+          experienceId: 2
+        }
+      });
+      sinon.assert.calledOnce(KernelController.applyEvent);
+      sinon.assert.calledWith(KernelController.applyEvent, 4, { type: 'hi' });
+    });
+  });
+
   describe('#applyAction', () => {
     let trip;
 

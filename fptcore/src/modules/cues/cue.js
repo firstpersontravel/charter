@@ -4,6 +4,12 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    scene: { type: 'reference', collection: 'scenes', required: true }
+    scene: { type: 'reference', collection: 'scenes', required: true },
+    scope: {
+      type: 'enum',
+      options: ['trip', 'group', 'experience'],
+      default: 'trip',
+      help: 'The scope determines how widely a cue is signaled.'
+    },
   }
 };

@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const moment = require('moment');
+const Sequelize = require('sequelize');
 
 const Kernel = require('../../../fptcore/src/kernel/kernel');
 
@@ -60,9 +61,36 @@ class KernelController {
     }
   }
 
+  // Handle events with scopes beyond this specific trip in a special
+  // case handler.
+  static async _applyEvent(objs, op) {
+    const tripFilters = {
+      isArchived: false,
+      id: { [Sequelize.Op.not]: objs.trip.id },
+      experienceId: objs.trip.experienceId
+    };
+    if (op.scope === 'group') {
+      tripFilters.groupId = objs.trip.groupId;
+    }
+    const scopedTrips = await models.Trip.findAll({
+      where: tripFilters
+    });
+    for (const scopedTrip of scopedTrips) {
+      await this.applyEvent(scopedTrip.id, op.event);
+    }
+  }
+
+  static async _applyOp(objs, op) {
+    await KernelOpController.applyOp(objs, op);
+    // Special case for cross-trip events.
+    if (op.operation === 'event' && op.scope !== 'trip') {
+      await this._applyEvent(objs, op);
+    }
+  }
+
   static async _applyOps(objs, ops) {
     for (const op of ops) {
-      await KernelOpController.applyOp(objs, op);
+      await this._applyOp(objs, op);
     }
   }
 

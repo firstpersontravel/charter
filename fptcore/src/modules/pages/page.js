@@ -48,6 +48,7 @@ module.exports = {
     panels: {
       type: 'list',
       items: { type: 'component', component: 'panels' },
+      default: [{}],
       help: 'List of user interface panels.',
     }
   },
@@ -60,13 +61,5 @@ module.exports = {
     return resource.appearance ?
       ['appearances.' + resource.appearance] :
       ['roles.' + resource.role];
-  },
-  getChildClaims: function(resource) {
-    // return _(resource.panels)
-    //   .filter('cue')
-    //   .map(function(panel) {
-    //     return 'cues.' + panel.cue;
-    //   })
-    //   .value();
   }
 };

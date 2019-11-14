@@ -1,4 +1,5 @@
 module.exports = {
+  name: 'triggers',
   resources: {
     trigger: {
       resource: require('./trigger'),
