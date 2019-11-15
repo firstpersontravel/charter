@@ -153,7 +153,7 @@ export default class TripScenes extends Component {
                 `/${player.roleName}`,
               query: { scene: scene.name }
             }}>
-            {player.roleName}
+            {player.role.title}
           </Link>
         </h4>
         <table className="table table-sm table-striped" style={{ margin: 0 }}>

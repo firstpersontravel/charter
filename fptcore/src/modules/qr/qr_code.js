@@ -7,6 +7,7 @@ module.exports = {
     role: {
       type: 'reference',
       collection: 'roles',
+      required: true,
       help: 'The role that is expected to scan this code.'
     },
     page: {
