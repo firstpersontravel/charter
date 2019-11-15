@@ -46,13 +46,7 @@ class KernelUtil {
    */
   static prepareEvalContext(objs) {
     const trip = this._assembleTripFields(objs);
-    // Only allow custom hosts in production.
-    const isDeployed = config.env.STAGE !== 'development';
-    const customDomainBase = config.env.SERVER_CUSTOM_DOMAIN_BASE;
-    const defaultCustomDomain = `${objs.experience.name}.${customDomainBase}`;
-    const customDomain = objs.experience.domain || defaultCustomDomain;
-    const customHost = isDeployed ? `https://${customDomain}` : '';
-    const host = customHost || config.env.SERVER_HOST_PUBLIC;
+    const host = objs.experience.domain || config.env.SERVER_HOST_PUBLIC;
     const env = { host: host };
     // Create the context.
     return ContextCore.gatherEvalContext(env, trip);
