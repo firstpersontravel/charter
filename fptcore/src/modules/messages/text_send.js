@@ -32,9 +32,7 @@ module.exports = {
     const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content);
     const sentByRole = _.find(roles, { name: params.from_role_name });
-    const sentToRole = _.find(roles, { name: params.to_role_name });
-    // Messages need replies if they are sent from non-actors to actors.
-    const isReplyNeeded = !!sentToRole.actor && !sentByRole.actor;
+    const isReplyNeeded = sentByRole.type === 'traveler';
     return [{
       operation: 'createMessage',
       suppressRelayId: params.from_relay_id || null,

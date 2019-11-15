@@ -71,8 +71,8 @@ describe('#send_text', () => {
     const actionContextWithActor = Object.assign({}, actionContext, {
       scriptContent: {
         roles: [
-          { name: 'Ally', actor: false },
-          { name: 'Babbit', actor: true }
+          { name: 'Ally', type: 'traveler' },
+          { name: 'Babbit', type: 'performer' }
         ]
       }
     });
