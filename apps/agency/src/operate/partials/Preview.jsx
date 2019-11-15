@@ -27,7 +27,7 @@ function renderPanel(player, page, panel) {
     const qrParams = {
       cht: 'qr',
       chs: '500x500',
-      ch1: redirectUrl
+      chl: redirectUrl
     };
     const qrString = Object
       .keys(qrParams)
