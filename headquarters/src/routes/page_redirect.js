@@ -21,14 +21,14 @@ const redirectRoute = async (req, res) => {
   const loggedInPlayerId = req.cookies[`exp-${experienceId}`];
   console.log('loggedInPlayerId', loggedInPlayerId);
   if (!loggedInPlayerId) {
-    res.status(401).send('You must be logged in already to scan this code.  Make sure you scanned the code in the same browser that you signed in with.');
+    res.status(401).send('Text "PENELOPE" to the Detective...');
     return;
   }
 
   const loggedInPlayer = await models.Player.findByPk(loggedInPlayerId);
   console.log('loggedInPlayer', loggedInPlayer.roleName, roleName);
   if (!loggedInPlayer || loggedInPlayer.roleName !== roleName) {
-    res.status(401).send('You must be logged into the correct role to scan this code. Make sure you scanned the code in the same browser that you signed in with.');
+    res.status(401).send('Text "PENELOPE" to the Detective...');
     return;
   }
 
