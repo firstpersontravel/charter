@@ -19,7 +19,7 @@ describe('KernelUtil', () => {
 
       const objs = {
         experience: {
-          domain: 'test.x.com'
+          domain: 'https://test.x.com'
         },
         script: models.Script.build({
           content: {
