@@ -6,7 +6,7 @@ import GroupReplies from '../components/GroupReplies';
 
 const mapStateToProps = (state, ownProps) => ({
   group: lookupGroup(state, ownProps),
-  messages: lookupMessages(state, ownProps, 10)
+  messages: lookupMessages(state, ownProps, 30)
 });
 
 const mapDispatchToProps = dispatch => ({
