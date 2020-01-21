@@ -6,7 +6,7 @@ const wait_for_time = require('../../../src/modules/time/wait_for_time');
 describe('#wait_for_time', () => {
   it('waits for a time', () => {
     const now = moment.utc();
-    const waitFor = moment.utc('2020-01-01T00:00:00.000Z');
+    const waitFor = moment.utc('2030-01-01T00:00:00.000Z');
     const params = { until: 't' };
     const actionContext = {
       evaluateAt: now,
