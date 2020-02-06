@@ -1,4 +1,4 @@
-version: '2'
+version: '3.7'
 services:
   web:
     image: fpt:latest
@@ -37,6 +37,7 @@ services:
     working_dir: /var/app/headquarters
     command: bash -c "nodemon --legacy-watch --polling-interval 1000 bin/server.js | pino -c"
     links: [mysql]
+    depends_on: [mysql]
 
   worker:
     image: fpt:latest
@@ -51,6 +52,7 @@ services:
     working_dir: /var/app/headquarters
     command: bash -c "nodemon --legacy-watch --polling-interval 1000 bin/worker.js | pino -c"
     links: [mysql]
+    depends_on: [mysql]
 
   pubsub:
     image: fpt:latest

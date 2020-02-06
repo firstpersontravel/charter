@@ -1,5 +1,6 @@
 const moment = require('moment');
 const Sentry = require('@sentry/node');
+const Sequelize = require('sequelize');
 
 // Import for configuration
 require('./config');
@@ -12,6 +13,17 @@ const RUN_INTERVAL = 1000;
 
 let isRunningActions = false;
 let isSchedulingActions = false;
+
+function handleWorkerError(err) {
+  if (err instanceof Sequelize.SequelizeConnectionRefusedError) {
+    console.warn('Connnection refused accessing database. Will try again.');
+    return;
+  }
+  Sentry.captureException(err);
+  console.error(`Uncaught exception running scheduler: ${err.message}`);
+  console.error(err.stack);
+  process.exit(1);
+}
 
 async function scheduleActions() {
   if (isSchedulingActions) {
@@ -28,10 +40,7 @@ async function scheduleActions() {
 
     isSchedulingActions = false;
   } catch (err) {
-    Sentry.captureException(err);
-    console.error(`Uncaught exception running scheduler: ${err.message}`);
-    console.error(err.stack);
-    process.exit(1);
+    handleWorkerError(err);
   }
 }
 
@@ -44,10 +53,7 @@ async function runActions() {
     await RunnerWorker.runScheduledActions(moment.utc(), null, true);
     isRunningActions = false;
   } catch (err) {
-    Sentry.captureException(err);
-    console.error(`Uncaught exception running worker: ${err.message}`);
-    console.error(err.stack);
-    process.exit(1);
+    handleWorkerError(err);
   }
 }
 
