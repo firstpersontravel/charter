@@ -111,18 +111,8 @@
 
 ### Creating a user
 
-    dc exec server node
-
-    const email = "NEW_EMAIL";
-    const pw = "NEW_PASSWORD";
-
-    const bcrypt = require('bcrypt');
-    const models = require('./src/models');
-
-    // Creating a user
-    bcrypt.hash(pw, 10).then((hash) => {
-      console.log('Password hash: ' + hash);
-    });
+    node ./cmd/create-org.js <name> <title>
+    node ./cmd/create-user.js <org-name> <email> <pw>
 
 ### Todo later:
     

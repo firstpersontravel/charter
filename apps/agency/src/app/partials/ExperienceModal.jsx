@@ -133,7 +133,11 @@ export default class ExperienceModal extends Component {
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
 
-    const timezones = ['US/Eastern', 'US/Pacific'];
+    const timezones = [
+      'US/Eastern',
+      'US/Pacific',
+      'Europe/London'
+    ];
     const timezoneOptions = timezones.map(timezone => (
       <option key={timezone} value={timezone}>
         {timezone}
