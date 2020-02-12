@@ -1,4 +1,4 @@
 Instance     Stage        Role         Host                
 --------------------------------------------------------------------------------
-i-04f74750f2fe877a9   staging      app          ec2-35-162-20-11.us-west-2.compute.amazonaws.com
 i-07b85c5945cd72d2e   production   app          ec2-34-212-224-168.us-west-2.compute.amazonaws.com
+i-04f74750f2fe877a9   staging      app          ec2-35-162-20-11.us-west-2.compute.amazonaws.com
