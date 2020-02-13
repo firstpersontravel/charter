@@ -22,17 +22,14 @@ export default class ResourceView extends Component {
     super(props);
     const pendingResource = _.cloneDeep(props.resource);
     this.state = {
-      isConfirmingDelete: false,
-      hasPendingChanges: false,
+      hasUnsavableChanges: false,
       pendingResource: pendingResource,
       errors: validator.validateResource(props.script,
         Registry.resources[TextUtil.singularize(props.collectionName)],
         pendingResource, '')
     };
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleDeleteConfirm = this.handleDeleteConfirm.bind(this);
     this.handleRevertChanges = this.handleRevertChanges.bind(this);
-    this.handleApplyChanges = this.handleApplyChanges.bind(this);
     this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
   }
 
@@ -40,8 +37,7 @@ export default class ResourceView extends Component {
     if (nextProps.resource !== this.props.resource) {
       const pendingResource = _.cloneDeep(nextProps.resource);
       this.setState({
-        isConfirmingDelete: false,
-        hasPendingChanges: false,
+        hasUnsavableChanges: false,
         pendingResource: pendingResource,
         errors: validator.validateResource(nextProps.script,
           Registry.resources[TextUtil.singularize(nextProps.collectionName)],
@@ -60,29 +56,15 @@ export default class ResourceView extends Component {
       ...HIDE_FIELD_NAMES);
   }
 
-  handleApplyChanges() {
-    if (this.state.errors && this.state.errors.length > 0) {
-      return;
-    }
-    this.props.onUpdate(this.state.pendingResource);
-  }
-
   handleRevertChanges() {
     this.setState({
-      hasPendingChanges: false,
+      hasUnsavableChanges: false,
       pendingResource: _.cloneDeep(this.props.resource),
       errors: null
     });
   }
 
   handleDelete() {
-    if (!this.props.canDelete) {
-      return;
-    }
-    this.setState({ isConfirmingDelete: true });
-  }
-
-  handleDeleteConfirm() {
     if (!this.props.canDelete) {
       return;
     }
@@ -94,12 +76,11 @@ export default class ResourceView extends Component {
       Registry.resources[TextUtil.singularize(this.props.collectionName)],
       newResource, '');
     // If there are errors, set the pending state so we can correct them.
-    // If this is a new resource, also wait for an explicit confirm.
     const hasErrors = errors && errors.length > 0;
-    if (hasErrors || this.props.isNew) {
+    if (hasErrors) {
       this.setState({
         pendingResource: newResource,
-        hasPendingChanges: true,
+        hasUnsavableChanges: true,
         errors: errors
       });
       return;
@@ -125,11 +106,8 @@ export default class ResourceView extends Component {
     const script = this.props.script;
 
     const isNew = this.props.isNew;
-    const hasPendingChanges = this.state.hasPendingChanges;
-    const hasErrors = this.state.errors && this.state.errors.length > 0;
-    const canDelete = this.props.canDelete && !hasPendingChanges;
-    const showCreate = isNew;
-    const canApply = !hasErrors;
+    const hasUnsavableChanges = this.state.hasUnsavableChanges;
+    const canDelete = this.props.canDelete && !hasUnsavableChanges;
 
     const deleteBtnClass = `btn btn-sm btn-outline-secondary ${canDelete ? '' : 'disabled'}`;
     const deleteBtn = (
@@ -140,16 +118,6 @@ export default class ResourceView extends Component {
         {canDelete ? 'Delete' : 'Can\'t delete'}
       </button>
     );
-    const confirmDeleteBtn = (
-      <button
-        className="btn btn-sm btn-danger"
-        onClick={this.handleDeleteConfirm}>
-        <i className="fa fa-trash-o" />&nbsp;
-        Confirm delete
-      </button>
-    );
-    const deleteBtnToShow = this.state.isConfirmingDelete ?
-      confirmDeleteBtn : deleteBtn;
 
     const cancelBtn = (
       <Link
@@ -164,6 +132,7 @@ export default class ResourceView extends Component {
       </Link>
     );
 
+    // Only shown in case errors make there be pending unsaveable changes.
     const revertBtn = (
       <button
         className="btn btn-sm btn-secondary mr-1"
@@ -173,22 +142,12 @@ export default class ResourceView extends Component {
       </button>
     );
 
-    const createBtn = (
-      <button
-        className={`btn btn-sm btn-primary ${canApply ? '' : 'disabled'} mr-1`}
-        onClick={this.handleApplyChanges}>
-        <i className="fa fa-plus" />&nbsp;
-        Create
-      </button>
-    );
-
     return (
       <h5 className="card-header">
         <div style={{ float: 'right' }}>
           {isNew ? cancelBtn : null}
-          {(hasPendingChanges && !isNew) ? revertBtn : null}
-          {showCreate ? createBtn : null}
-          {(!hasPendingChanges && !isNew) ? deleteBtnToShow : null}
+          {(hasUnsavableChanges && !isNew) ? revertBtn : null}
+          {(!hasUnsavableChanges && !isNew) ? deleteBtn : null}
         </div>
         <ResourceBadge resourceType={resourceType} />
         &nbsp;
