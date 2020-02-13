@@ -6,13 +6,18 @@ import { Link, browserHistory } from 'react-router';
 import { TextUtil, Registry } from 'fptcore';
 
 import ResourceBadge from '../partials/ResourceBadge';
-import ResourceView from '../partials/ResourceView';
-import ResourceExtras from '../partials/ResourceExtras';
-import ResourceVisual, { hasVisual } from '../partials/ResourceVisual';
-import { assembleParentClaims, getParenthoodPaths } from '../utils/tree-utils';
+import ResourceContainer from '../partials/ResourceContainer';
+import { assembleParentClaims } from '../utils/tree-utils';
 import { titleForResource } from '../utils/text-utils';
-import { getContentList, urlForResource } from '../utils/section-utils';
-import { assembleReverseReferences } from '../utils/graph-utils';
+import {
+  getContentList,
+  getSliceContent,
+  urlForResource
+} from '../utils/section-utils';
+import {
+  assembleReverseReferences,
+  getChildResourceTypes
+} from '../utils/graph-utils';
 import {
   defaultFieldsForClass,
   newResourceNameForType
@@ -21,8 +26,7 @@ import {
 export default class ResourceShow extends Component {
   constructor(props) {
     super(props);
-    this.handleResourceDelete = this.handleResourceDelete.bind(this);
-    this.handleResourceUpdate = this.handleResourceUpdate.bind(this);
+    this.handleMainResourceUpdate = this.handleMainResourceUpdate.bind(this);
     this.state = {
       redirectToRevision: null,
       redirectToResource: null
@@ -125,11 +129,7 @@ export default class ResourceShow extends Component {
     return this.props.params.resourceName === 'new';
   }
 
-  handleResourceDelete() {
-    this.handleResourceUpdate(null);
-  }
-
-  handleResourceUpdate(updatedResource) {
+  handleMainResourceUpdate(updatedResource) {
     const script = this.props.script;
     const shouldDeleteResource = updatedResource === null;
     const redirectToResource = shouldDeleteResource ? '' :
@@ -166,73 +166,6 @@ export default class ResourceShow extends Component {
         `/${redirectToResource}`
       );
     }
-  }
-
-  renderParentPath(parentPath) {
-    const script = this.props.script;
-    const sliceType = this.props.params.sliceType;
-    const sliceName = this.props.params.sliceName;
-    const pathItems = _(parentPath)
-      .reverse()
-      .map((resourceStr, i) => {
-        if (i === parentPath.length - 1) {
-          return null;
-        }
-        const [collectionName, resourceName] = resourceStr.split('.');
-        const resourceType = TextUtil.singularize(collectionName);
-        const resource = _.find(script.content[collectionName], {
-          name: resourceName
-        });
-        return (
-          <span key={resourceStr}>
-            <Link
-              className="text-dark"
-              to={
-                `/${script.org.name}/${script.experience.name}` +
-                `/script/${script.revision}` +
-                `/design/${sliceType}/${sliceName}` +
-                `/${collectionName}/${resourceName}`
-              }>
-              <ResourceBadge resourceType={resourceType} />
-              &nbsp;
-              {titleForResource(script.content, collectionName, resource)}
-            </Link>
-            &nbsp;&rarr;&nbsp;
-          </span>
-        );
-      })
-      .filter(Boolean)
-      .value();
-    if (!pathItems.length) {
-      return null;
-    }
-    return (
-      <div
-        key={parentPath.join(',')}
-        className="constrain-text mb-1">
-        {pathItems}
-      </div>
-    );
-  }
-
-  renderParentPaths(parenthoodPaths) {
-    if (!parenthoodPaths.length) {
-      return null;
-    }
-    const renderedPaths = _(parenthoodPaths)
-      .map(parenthoodPath => (
-        this.renderParentPath(parenthoodPath)
-      ))
-      .filter(Boolean)
-      .value();
-    if (!renderedPaths.length) {
-      return null;
-    }
-    return (
-      <div className="mb-2">
-        {renderedPaths}
-      </div>
-    );
   }
 
   renderChild(childStr) {
@@ -272,60 +205,73 @@ export default class ResourceShow extends Component {
     );
   }
 
-  renderReverseRefs(reverseRefs) {
-    if (!reverseRefs || !reverseRefs.length) {
-      return null;
-    }
-
-    const renderedReverseRefs = reverseRefs.map(reverseRef => (
-      this.renderChild(reverseRef)
-    ));
-
+  renderResourceContainer(canDelete) {
     return (
-      <div className="mb-2">
-        <div><strong>All references:</strong></div>
-        {renderedReverseRefs}
-      </div>
-    );
-  }
-
-  renderResource(canDelete) {
-    return (
-      <ResourceView
+      <ResourceContainer
         script={this.props.script}
         sliceType={this.props.params.sliceType}
         sliceName={this.props.params.sliceName}
         collectionName={this.props.params.collectionName}
         isNew={this.isNewResource()}
         resource={this.getResource()}
-        canDelete={canDelete}
-        onDelete={this.handleResourceDelete}
-        onUpdate={this.handleResourceUpdate} />
-    );
-  }
-
-  renderExtras() {
-    return (
-      <ResourceExtras
         assets={this.props.assets}
-        resourceType={this.getResourceType()}
-        resource={this.getResource()}
-        script={this.props.script}
+        canDelete={canDelete}
         createInstance={this.props.createInstance}
-        updateInstance={this.props.updateInstance} />
+        updateInstance={this.props.updateInstance}
+        onResourceUpdate={this.handleMainResourceUpdate} />
     );
   }
 
-  renderVisual() {
-    if (!hasVisual(this.getResourceType())) {
+  renderCreateChildResourceBtn(childResourceType) {
+    const script = this.props.script;
+    const collectionName = this.props.params.collectionName;
+    const resourceClass = Registry.resources[childResourceType];
+    const childParentField = _(resourceClass.properties)
+      .keys()
+      .find(key => (
+        resourceClass.properties[key].type === 'reference' &&
+        resourceClass.properties[key].collection === collectionName &&
+        resourceClass.properties[key].parent
+      ));
+    return (
+      <Link
+        key={childResourceType}
+        className="btn btn-outline-secondary mr-2"
+        to={
+          `/${script.org.name}/${script.experience.name}` +
+          `/script/${script.revision}` +
+          `/design/${this.props.params.sliceType}/${this.props.params.sliceName}` +
+          `/${TextUtil.pluralize(childResourceType)}/new` +
+          `?${childParentField}=${this.props.params.resourceName}`}>
+          Create {childResourceType}
+      </Link>
+    );
+  }
+
+  renderCreateChildren() {
+    if (this.isNewResource()) {
+      return null;
+    }
+    const collectionName = this.props.params.collectionName;
+    const sliceContentList = getSliceContent(this.props.params.sliceType,
+      this.props.params.sliceName);
+    const childResourceTypes = getChildResourceTypes(collectionName);
+    if (!childResourceTypes.length) {
+      return null;
+    }
+    const createChildBtns = childResourceTypes
+      .filter(childResourceType => (
+        !!sliceContentList[TextUtil.pluralize(childResourceType)]
+      ))
+      .map(childResourceType => (
+        this.renderCreateChildResourceBtn(childResourceType)
+      ));
+    if (!createChildBtns.length) {
       return null;
     }
     return (
-      <div className="col-sm-4">
-        <ResourceVisual
-          resourceType={this.getResourceType()}
-          resource={this.getResource()}
-          script={this.props.script} />
+      <div>
+        {createChildBtns}
       </div>
     );
   }
@@ -353,8 +299,6 @@ export default class ResourceShow extends Component {
     const contentList = getContentList(script.content, sliceType, sliceName);
     const parentClaims = assembleParentClaims(script.content, contentList);
     const resourceStr = `${collectionName}.${resource.name}`;
-    const parenthoodPaths = getParenthoodPaths(script.content,
-      `${collectionName}.${resource.name}`, parentClaims);
 
     const childrenStrs = _(parentClaims)
       .keys()
@@ -364,19 +308,11 @@ export default class ResourceShow extends Component {
     const reverseRefGraph = assembleReverseReferences(script.content);
     const reverseRefs = reverseRefGraph[resourceStr];
     const canDelete = !reverseRefs || !reverseRefs.length;
-    const mainClassName = hasVisual(resourceType) ? 'col-sm-8' : 'col';
     return (
       <div>
-        {this.renderParentPaths(parenthoodPaths)}
-        <div className="row">
-          <div className={mainClassName}>
-            {this.renderResource(canDelete)}
-            {this.renderExtras()}
-            {this.renderChildren(childrenStrs)}
-            {this.renderReverseRefs(reverseRefs)}
-          </div>
-          {this.renderVisual()}
-        </div>
+        {this.renderResourceContainer(canDelete)}
+        {this.renderCreateChildren()}
+        {this.renderChildren(childrenStrs)}
       </div>
     );
   }

@@ -6,8 +6,6 @@ import { Link } from 'react-router';
 import { Registry, TextUtil, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
-import { getChildResourceTypes } from '../utils/graph-utils';
-import { getSliceContent } from '../utils/section-utils';
 import PopoverControl from '../../partials/PopoverControl';
 import ResourceBadge from './ResourceBadge';
 import ResourceField from './compound/Resource';
@@ -236,62 +234,8 @@ export default class ResourceView extends Component {
       return null;
     }
     return (
-      <div className="alert alert-danger">
+      <div className="alert alert-warning">
         {renderedErrors}
-      </div>
-    );
-  }
-
-  renderCreateChildResourceBtn(childResourceType) {
-    const script = this.props.script;
-    const collectionName = this.props.collectionName;
-    const resourceClass = Registry.resources[childResourceType];
-    const childParentField = _(resourceClass.properties)
-      .keys()
-      .find(key => (
-        resourceClass.properties[key].type === 'reference' &&
-        resourceClass.properties[key].collection === collectionName &&
-        resourceClass.properties[key].parent
-      ));
-    return (
-      <Link
-        key={childResourceType}
-        className="btn btn-outline-secondary mr-2"
-        to={
-          `/${script.org.name}/${script.experience.name}` +
-          `/script/${script.revision}` +
-          `/design/${this.props.sliceType}/${this.props.sliceName}` +
-          `/${TextUtil.pluralize(childResourceType)}/new` +
-          `?${childParentField}=${this.props.resource.name}`}>
-          Create {childResourceType}
-      </Link>
-    );
-  }
-
-  renderFooter() {
-    if (this.props.isNew) {
-      return null;
-    }
-    const collectionName = this.props.collectionName;
-    const sliceContentList = getSliceContent(this.props.sliceType,
-      this.props.sliceName);
-    const childResourceTypes = getChildResourceTypes(collectionName);
-    if (!childResourceTypes.length) {
-      return null;
-    }
-    const createChildBtns = childResourceTypes
-      .filter(childResourceType => (
-        !!sliceContentList[TextUtil.pluralize(childResourceType)]
-      ))
-      .map(childResourceType => (
-        this.renderCreateChildResourceBtn(childResourceType)
-      ));
-    if (!createChildBtns.length) {
-      return null;
-    }
-    return (
-      <div className="card-footer">
-        {createChildBtns}
       </div>
     );
   }
@@ -304,7 +248,6 @@ export default class ResourceView extends Component {
           {this.renderErrors()}
           {this.renderFields()}
         </div>
-        {this.renderFooter()}
       </div>
     );
   }
