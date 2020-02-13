@@ -35,7 +35,7 @@ services:
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: bash -c "nodemon --legacy-watch --polling-interval 1000 bin/server.js | pino -c"
+    command: bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/server.js | pino -c"
     links: [mysql]
     depends_on: [mysql]
 

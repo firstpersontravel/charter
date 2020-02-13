@@ -19,6 +19,7 @@ var waypointOptionSpec = {
     },
     address: {
       type: 'address',
+      required: true,
       help: 'The address of the location.'
     },
     coords: {

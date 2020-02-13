@@ -1,5 +1,5 @@
 meta:
-  version: 18
+  version: 19
 
 layouts:
   - name: tablet
@@ -68,18 +68,21 @@ waypoints:
     options:
       - name: cottage
         title: Cottage
+        address: 828 Alabama St, SF CA
         coords: [37.758273, -122.411681]
   - name: WAYPOINT-ATLAS
     title: Atlas Cafe
     options:
       - name: atlas
         title: Atlas Cafe
+        address: Atlas Cafe, SF CA
         coords: [37.759010, -122.411497]
   - name: WAYPOINT-BON-NENE
     title: Bon Nene
     options:
       - name: bonnene
         title: Bon Nene
+        address: Bon Nene, SF CA
         coords: [37.757528, -122.411499]
 
 geofences:
