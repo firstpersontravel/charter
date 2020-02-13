@@ -17,16 +17,17 @@ var waypointOptionSpec = {
       display: { hidden: true },
       default: defaultWaypointOptionName
     },
-    title: { type: 'string', required: true },
+    address: {
+      type: 'address',
+      help: 'The address of the location.'
+    },
     coords: {
       type: 'coords',
       required: true,
+      display: { hidden: true },
       help: 'The coordinates of the location.'
     },
-    address: {
-      type: 'string',
-      help: 'The address of the location.'
-    },
+    title: { type: 'string' },
     values: {
       type: 'dictionary',
       keys: { type: 'simpleAttribute' },

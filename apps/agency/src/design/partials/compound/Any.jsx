@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import AddressField from '../fields/Address';
 import BooleanField from '../fields/Boolean';
 import ComponentField from './Component';
 import CoordsField from '../fields/Coords';
@@ -22,6 +23,7 @@ import TimeOffsetField from '../fields/TimeOffset';
 import TimeShorthandField from '../fields/TimeShorthand';
 
 const fieldComponents = {
+  address: AddressField,
   boolean: BooleanField,
   component: ComponentField,
   coords: CoordsField,

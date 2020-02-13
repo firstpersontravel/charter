@@ -37,7 +37,7 @@ CoordsField.propTypes = {
 };
 
 CoordsField.defaultProps = {
-  value: [0, 0],
+  value: null,
   opts: {}
 };
 

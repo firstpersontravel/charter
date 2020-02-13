@@ -3,6 +3,15 @@ const _ = require('lodash');
 const TimeUtil = require('./time');
 
 class Validations {
+  static address(script, name, spec, param) {
+    if (!_.isString(param)) {
+      return ['Address param "' + name + '" should be a string.'];
+    }
+    if (spec.required && param === '') {
+      return ['Address param "' + name + '" should not be blank.'];
+    }
+  }
+
   static string(script, name, spec, param) {
     if (!_.isString(param)) {
       return ['String param "' + name + '" should be a string.'];

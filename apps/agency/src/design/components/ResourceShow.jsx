@@ -57,6 +57,10 @@ export default class ResourceShow extends Component {
     const defaultFields = defaultFieldsForClass(resourceClass);
     const fields = Object.assign({ name: newName }, defaultFields);
 
+    if (resourceClass.properties.title) {
+      fields.title = `New ${resourceType}`;
+    }
+
     if (resourceClass.properties.scene && sliceType === 'scene') {
       fields.scene = sliceName;
     }
