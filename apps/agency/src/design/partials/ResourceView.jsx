@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
 
 import { Registry, TextUtil, Validator } from 'fptcore';
 
@@ -101,7 +100,6 @@ export default class ResourceView extends Component {
   renderHeader() {
     const resourceType = TextUtil.singularize(this.props.collectionName);
     const resource = this.props.resource;
-    const script = this.props.script;
 
     const isNew = this.props.isNew;
     const hasUnsavableChanges = this.state.hasUnsavableChanges;
@@ -118,16 +116,12 @@ export default class ResourceView extends Component {
     );
 
     const cancelBtn = (
-      <Link
-        to={
-          `/${script.org.name}/${script.experience.name}` +
-          `/script/${script.revision}` +
-          `/design/${this.props.sliceType}/${this.props.sliceName}`
-        }
-        className="btn btn-sm btn-outline-secondary mr-1">
+      <button
+        className="btn btn-sm btn-outline-secondary mr-1"
+        onClick={this.props.onDelete}>
         <i className="fa fa-trash-o" />&nbsp;
         Cancel
-      </Link>
+      </button>
     );
 
     // Only shown in case errors make there be pending unsaveable changes.
@@ -255,8 +249,6 @@ export default class ResourceView extends Component {
 
 ResourceView.propTypes = {
   script: PropTypes.object.isRequired,
-  sliceType: PropTypes.string.isRequired,
-  sliceName: PropTypes.string.isRequired,
   collectionName: PropTypes.string.isRequired,
   isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,

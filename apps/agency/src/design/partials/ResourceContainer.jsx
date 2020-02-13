@@ -8,38 +8,22 @@ import ResourceExtras from './ResourceExtras';
 import ResourceVisual, { hasVisual } from './ResourceVisual';
 
 export default class ResourceContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.handleResourceDelete = this.handleResourceDelete.bind(this);
-    this.handleResourceUpdate = this.handleResourceUpdate.bind(this);
-  }
-
   getResourceType() {
     const collectionName = this.props.collectionName;
     const resourceType = TextUtil.singularize(collectionName);
     return resourceType;
   }
 
-  handleResourceDelete() {
-    this.props.onResourceUpdate(null);
-  }
-
-  handleResourceUpdate(updatedResource) {
-    this.props.onResourceUpdate(updatedResource);
-  }
-
   renderResource(canDelete) {
     return (
       <ResourceView
         script={this.props.script}
-        sliceType={this.props.sliceType}
-        sliceName={this.props.sliceName}
         collectionName={this.props.collectionName}
         isNew={this.props.isNew}
         resource={this.props.resource}
         canDelete={canDelete}
-        onDelete={this.handleResourceDelete}
-        onUpdate={this.handleResourceUpdate} />
+        onDelete={this.props.onDelete}
+        onUpdate={this.props.onUpdate} />
     );
   }
 
@@ -87,14 +71,13 @@ export default class ResourceContainer extends Component {
 
 ResourceContainer.propTypes = {
   script: PropTypes.object.isRequired,
-  sliceType: PropTypes.string.isRequired,
-  sliceName: PropTypes.string.isRequired,
   collectionName: PropTypes.string.isRequired,
   assets: PropTypes.array.isRequired,
   isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,
   canDelete: PropTypes.bool.isRequired,
-  onResourceUpdate: PropTypes.func.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

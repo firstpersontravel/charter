@@ -26,7 +26,9 @@ import {
 export default class ResourceShow extends Component {
   constructor(props) {
     super(props);
-    this.handleMainResourceUpdate = this.handleMainResourceUpdate.bind(this);
+    this.handleUpdateMainResource = this.handleUpdateMainResource.bind(this);
+    this.handleDeleteMainResource = this.handleDeleteMainResource.bind(this);
+    this.handleUpdateScript = this.handleUpdateScript.bind(this);
     this.state = {
       redirectToRevision: null,
       redirectToResource: null
@@ -88,9 +90,8 @@ export default class ResourceShow extends Component {
     return _.find(collection, { name: resourceName });
   }
 
-  getScriptContentWithUpdatedResource(updatedResource) {
-    const collectionName = this.props.params.collectionName;
-    const resourceName = this.props.params.resourceName;
+  getScriptContentWithUpdatedResource(collectionName, resourceName,
+    updatedResource) {
     const existingScriptContent = this.props.script.content;
     const existingCollection = existingScriptContent[collectionName] || [];
     const index = _.findIndex(existingCollection, { name: resourceName });
@@ -129,13 +130,41 @@ export default class ResourceShow extends Component {
     return this.props.params.resourceName === 'new';
   }
 
-  handleMainResourceUpdate(updatedResource) {
-    const script = this.props.script;
-    const shouldDeleteResource = updatedResource === null;
-    const redirectToResource = shouldDeleteResource ? '' :
-      `${this.props.params.collectionName}/${updatedResource.name}`;
+  handleUpdateMainResource(updatedResource) {
+    const collectionName = this.props.params.collectionName;
+    const resourceName = this.props.params.resourceName;
     const newScriptContent = this.getScriptContentWithUpdatedResource(
-      updatedResource);
+      collectionName, resourceName, updatedResource);
+    // Save, and always redirect if this is a new resource. Otherwise only
+    // redirect if this is saving a new resource and therefore will have a
+    // new name besides 'new'.
+    this.handleUpdateScript(newScriptContent,
+      `${this.props.params.collectionName}/${updatedResource.name}`,
+      this.isNewResource());
+  }
+
+  handleDeleteMainResource() {
+    // If we're deleting a new resource, just redirect to the main slice page.
+    if (this.isNewResource()) {
+      const script = this.props.script;
+      browserHistory.push(
+        `/${script.org.name}/${script.experience.name}` +
+        `/script/${script.revision}` +
+        `/design/${this.props.params.sliceType}/${this.props.params.sliceName}`
+      );
+      return;
+    }
+    // Otherwise update the script.
+    const collectionName = this.props.params.collectionName;
+    const resourceName = this.props.params.resourceName;
+    const newScriptContent = this.getScriptContentWithUpdatedResource(
+      collectionName, resourceName, null);
+    // Save and redirect to slice root
+    this.handleUpdateScript(newScriptContent, '', true);
+  }
+
+  handleUpdateScript(newScriptContent, redirectToResource, forceRedirect) {
+    const script = this.props.script;
 
     // If we're editing the active script, then make a new one
     if (script.isLocked) {
@@ -157,12 +186,14 @@ export default class ResourceShow extends Component {
     this.props.updateInstance('scripts', script.id, {
       content: newScriptContent
     });
-    // Redirect to slice root if deleted.
-    if (shouldDeleteResource || this.isNewResource()) {
+
+    // Redirect always if we've made a new resource or deleted one.
+    if (forceRedirect) {
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
         `/script/${script.revision}` +
-        `/design/${this.props.params.sliceType}/${this.props.params.sliceName}` +
+        `/design/${this.props.params.sliceType}` +
+        `/${this.props.params.sliceName}` +
         `/${redirectToResource}`
       );
     }
@@ -209,8 +240,6 @@ export default class ResourceShow extends Component {
     return (
       <ResourceContainer
         script={this.props.script}
-        sliceType={this.props.params.sliceType}
-        sliceName={this.props.params.sliceName}
         collectionName={this.props.params.collectionName}
         isNew={this.isNewResource()}
         resource={this.getResource()}
@@ -218,7 +247,8 @@ export default class ResourceShow extends Component {
         canDelete={canDelete}
         createInstance={this.props.createInstance}
         updateInstance={this.props.updateInstance}
-        onResourceUpdate={this.handleMainResourceUpdate} />
+        onUpdate={this.handleUpdateMainResource}
+        onDelete={this.handleDeleteMainResource} />
     );
   }
 
