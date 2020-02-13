@@ -1,35 +1,54 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, browserHistory } from 'react-router';
+import { browserHistory } from 'react-router';
 
 import { TextUtil, Registry } from 'fptcore';
 
-import ResourceBadge from '../partials/ResourceBadge';
 import ResourceContainer from '../partials/ResourceContainer';
-import { assembleParentClaims } from '../utils/tree-utils';
-import { titleForResource } from '../utils/text-utils';
-import {
-  getContentList,
-  getSliceContent,
-  urlForResource
-} from '../utils/section-utils';
-import {
-  assembleReverseReferences,
-  getChildResourceTypes
-} from '../utils/graph-utils';
+import ResourceBadge from '../partials/ResourceBadge';
+import { getSliceContent } from '../utils/section-utils';
+import { assembleReverseReferences, getChildren } from '../utils/graph-utils';
 import {
   defaultFieldsForClass,
   newResourceNameForType
 } from '../utils/resource-utils';
+import { titleForResource } from '../utils/text-utils';
+
+function updateScriptContent(scriptContent, collectionName, resourceName,
+  updatedResource) {
+  const existingCollection = scriptContent[collectionName] || [];
+  const index = _.findIndex(existingCollection, { name: resourceName });
+  const newCollection = _.clone(existingCollection);
+  const shouldDeleteResource = updatedResource === null;
+  if (shouldDeleteResource) {
+    // Remove
+    newCollection.splice(index, 1);
+  } else if (index === -1) {
+    // Create
+    newCollection.push(updatedResource);
+  } else {
+    // Update
+    newCollection[index] = updatedResource;
+  }
+  const updatedScriptContent = _.assign({}, scriptContent, {
+    [collectionName]: newCollection
+  });
+  return updatedScriptContent;
+}
 
 export default class ResourceShow extends Component {
   constructor(props) {
     super(props);
     this.handleUpdateMainResource = this.handleUpdateMainResource.bind(this);
     this.handleDeleteMainResource = this.handleDeleteMainResource.bind(this);
+    this.handleUpdateChildResource = this.handleUpdateChildResource.bind(this);
+    this.handleDeleteChildResource = this.handleDeleteChildResource.bind(this);
     this.handleUpdateScript = this.handleUpdateScript.bind(this);
     this.state = {
+      expandedChildStr: null,
+      pendingChildCollectionName: null,
+      pendingChildResource: null,
       redirectToRevision: null,
       redirectToResource: null
     };
@@ -45,18 +64,14 @@ export default class ResourceShow extends Component {
         redirectToResource: null
       });
     }
+    if (nextProps.params.resourceName !== this.props.params.resourceName) {
+      this.setState({
+        expandedChildStr: null
+      });
+    }
   }
 
-  getResourceType() {
-    const collectionName = this.props.params.collectionName;
-    const resourceType = TextUtil.singularize(collectionName);
-    return resourceType;
-  }
-
-  getNewResourceFields() {
-    const collectionName = this.props.params.collectionName;
-    const sliceType = this.props.params.sliceType;
-    const sliceName = this.props.params.sliceName;
+  getNewResourceFields(collectionName, defaults) {
     const resourceType = TextUtil.singularize(collectionName);
     const resourceClass = Registry.resources[resourceType];
     const newName = newResourceNameForType(resourceType);
@@ -67,11 +82,7 @@ export default class ResourceShow extends Component {
       fields.title = `New ${resourceType}`;
     }
 
-    if (resourceClass.properties.scene && sliceType === 'scene') {
-      fields.scene = sliceName;
-    }
-
-    _.each(this.props.location.query, (val, key) => {
+    _.each(defaults, (val, key) => {
       if (resourceClass.properties[key]) {
         fields[key] = val;
       }
@@ -80,12 +91,22 @@ export default class ResourceShow extends Component {
     return fields;
   }
 
-  getResource() {
+  getNewMainResourceFields() {
+    const defaults = Object.assign({}, this.props.location.query);
+    if (this.props.params.sliceType === 'scene') {
+      defaults.scene = this.props.params.sliceName;
+    }
+
+    const collectionName = this.props.params.collectionName;
+    return this.getNewResourceFields(collectionName, defaults);
+  }
+
+  getMainResource() {
     const collectionName = this.props.params.collectionName;
     const collection = this.props.script.content[collectionName];
     const resourceName = this.props.params.resourceName;
-    if (this.isNewResource()) {
-      return this.getNewResourceFields();
+    if (this.isNewMainResource()) {
+      return this.getNewMainResourceFields();
     }
     return _.find(collection, { name: resourceName });
   }
@@ -93,24 +114,20 @@ export default class ResourceShow extends Component {
   getScriptContentWithUpdatedResource(collectionName, resourceName,
     updatedResource) {
     const existingScriptContent = this.props.script.content;
-    const existingCollection = existingScriptContent[collectionName] || [];
-    const index = _.findIndex(existingCollection, { name: resourceName });
-    const newCollection = _.clone(existingCollection);
-    const shouldDeleteResource = updatedResource === null;
-    if (shouldDeleteResource) {
-      // Remove
-      newCollection.splice(index, 1);
-    } else if (this.isNewResource()) {
-      // Create
-      newCollection.push(updatedResource);
-    } else {
-      // Update
-      newCollection[index] = updatedResource;
+    return updateScriptContent(existingScriptContent, collectionName,
+      resourceName, updatedResource);
+  }
+
+  getChildCollectionNames() {
+    const collectionName = this.props.params.collectionName;
+    const sliceContent = getSliceContent(this.props.params.sliceType,
+      this.props.params.sliceName);
+    const thisContentMapItem = _.find(sliceContent,
+      { collection: collectionName });
+    if (!thisContentMapItem) {
+      return [];
     }
-    const newScriptContent = _.assign({}, existingScriptContent, {
-      [collectionName]: newCollection
-    });
-    return newScriptContent;
+    return thisContentMapItem.children || [];
   }
 
   checkForNewRevision(props) {
@@ -126,8 +143,17 @@ export default class ResourceShow extends Component {
     }
   }
 
-  isNewResource() {
+  isNewMainResource() {
     return this.props.params.resourceName === 'new';
+  }
+
+  handleCreateChildResource(collectionName, defaults) {
+    const newChildResource = this.getNewResourceFields(collectionName,
+      defaults);
+    this.setState({
+      pendingChildCollectionName: collectionName,
+      pendingChildResource: newChildResource
+    });
   }
 
   handleUpdateMainResource(updatedResource) {
@@ -140,12 +166,12 @@ export default class ResourceShow extends Component {
     // new name besides 'new'.
     this.handleUpdateScript(newScriptContent,
       `${this.props.params.collectionName}/${updatedResource.name}`,
-      this.isNewResource());
+      this.isNewMainResource());
   }
 
   handleDeleteMainResource() {
     // If we're deleting a new resource, just redirect to the main slice page.
-    if (this.isNewResource()) {
+    if (this.isNewMainResource()) {
       const script = this.props.script;
       browserHistory.push(
         `/${script.org.name}/${script.experience.name}` +
@@ -161,6 +187,39 @@ export default class ResourceShow extends Component {
       collectionName, resourceName, null);
     // Save and redirect to slice root
     this.handleUpdateScript(newScriptContent, '', true);
+  }
+
+  handleUpdateChildResource(collectionName, updatedResource) {
+    if (this.state.pendingChildResource &&
+        updatedResource.name === this.state.pendingChildResource.name) {
+      this.setState({
+        pendingChildCollectionName: null,
+        pendingChildResource: null,
+        expandedChildStr: `${collectionName}.${updatedResource.name}`
+      });
+    }
+    const newScriptContent = this.getScriptContentWithUpdatedResource(
+      collectionName, updatedResource.name, updatedResource);
+    this.handleUpdateScript(newScriptContent,
+      `${this.props.params.collectionName}/${this.props.params.resourceName}`,
+      false);
+  }
+
+  handleDeleteChildResource(collectionName, resourceName) {
+    if (this.state.pendingChildResource &&
+        resourceName === this.state.pendingChildResource.name) {
+      this.setState({
+        pendingChildCollectionName: null,
+        pendingChildResource: null,
+        expandedChildStr: null
+      });
+      return;
+    }
+    const newScriptContent = this.getScriptContentWithUpdatedResource(
+      collectionName, resourceName, null);
+    this.handleUpdateScript(newScriptContent,
+      `${this.props.params.collectionName}/${this.props.params.resourceName}`,
+      false);
   }
 
   handleUpdateScript(newScriptContent, redirectToResource, forceRedirect) {
@@ -199,50 +258,13 @@ export default class ResourceShow extends Component {
     }
   }
 
-  renderChild(childStr) {
-    const script = this.props.script;
-    const [collectionName, resourceName] = childStr.split('.');
-    const resourceType = TextUtil.singularize(collectionName);
-    const resource = _.find(script.content[collectionName], {
-      name: resourceName
-    });
-    return (
-      <div key={childStr}>
-        &nbsp;&rarr;&nbsp;
-        <Link
-          className="text-dark"
-          to={urlForResource(script, collectionName, resourceName)}>
-          <ResourceBadge resourceType={resourceType} />
-          &nbsp;
-          {titleForResource(script.content, collectionName, resource)}
-        </Link>
-      </div>
-    );
-  }
-
-  renderChildren(childrenStrs) {
-    if (!childrenStrs.length) {
-      return null;
-    }
-    const renderedChildren = childrenStrs.map(childStr => (
-      this.renderChild(childStr)
-    ));
-
-    return (
-      <div className="mb-2">
-        <div><strong>Children:</strong></div>
-        {renderedChildren}
-      </div>
-    );
-  }
-
-  renderResourceContainer(canDelete) {
+  renderMainResource(canDelete) {
     return (
       <ResourceContainer
         script={this.props.script}
         collectionName={this.props.params.collectionName}
-        isNew={this.isNewResource()}
-        resource={this.getResource()}
+        isNew={this.isNewMainResource()}
+        resource={this.getMainResource()}
         assets={this.props.assets}
         canDelete={canDelete}
         createInstance={this.props.createInstance}
@@ -252,9 +274,95 @@ export default class ResourceShow extends Component {
     );
   }
 
-  renderCreateChildResourceBtn(childResourceType) {
-    const script = this.props.script;
+  renderChildResource(collectionName, childResource, isNew, canDelete) {
+    const mainCollectionName = this.props.params.collectionName;
+    const mainResourceName = this.props.params.resourceName;
+    const childResourceType = TextUtil.singularize(collectionName);
+    const childResourceClass = Registry.resources[childResourceType];
+    const excludeFields = _(childResourceClass.properties)
+      .keys()
+      .filter(key => (
+        childResourceClass.properties[key].type === 'reference' &&
+        childResourceClass.properties[key].collection === mainCollectionName &&
+        childResourceClass.properties[key].parent &&
+        childResource[key] === mainResourceName
+      ))
+      .value();
+
+    return (
+      <ResourceContainer
+        key={`${collectionName}:${childResource.name}`}
+        script={this.props.script}
+        collectionName={collectionName}
+        excludeFields={excludeFields}
+        isNew={isNew}
+        resource={childResource}
+        assets={this.props.assets}
+        canDelete={canDelete}
+        createInstance={this.props.createInstance}
+        updateInstance={this.props.updateInstance}
+        onUpdate={updatedResource => this.handleUpdateChildResource(
+          collectionName, updatedResource)}
+        onDelete={() => this.handleDeleteChildResource(
+          collectionName, childResource.name)} />
+    );
+  }
+
+  renderChildStub(collectionName, childResource) {
+    const resourceType = TextUtil.singularize(collectionName);
+    const title = childResource.title || titleForResource(
+      this.props.script.content, collectionName, childResource);
+    return (
+      <div
+        className="card mb-3"
+        key={`${collectionName}:${childResource.name}`}>
+        <div className="card-body py-2 px-3">
+          <div className="float-right">
+            <button
+              className="btn btn-sm btn-outline-secondary mr-1"
+              onClick={() => {
+                this.setState({
+                  expandedChildStr: `${collectionName}.${childResource.name}`,
+                  pendingChildCollectionName: null,
+                  pendingChildResource: null
+                });
+              }}>
+              Expand
+            </button>
+          </div>
+          <h5 className="m-0">
+            <ResourceBadge resourceType={resourceType} />
+            &nbsp;
+            {title}
+          </h5>
+        </div>
+      </div>
+    );
+  }
+
+  renderChild(reverseRefGraph, collectionName, resource) {
+    const childStr = `${collectionName}.${resource.name}`;
+    if (this.state.expandedChildStr !== childStr) {
+      return this.renderChildStub(collectionName, resource);
+    }
+    const reverseRefs = reverseRefGraph[childStr];
+    const canDelete = !reverseRefs || !reverseRefs.length;
+    return this.renderChildResource(collectionName, resource, false,
+      canDelete);
+  }
+
+  renderPendingChild() {
+    if (!this.state.pendingChildCollectionName) {
+      return null;
+    }
+    return this.renderChildResource(
+      this.state.pendingChildCollectionName,
+      this.state.pendingChildResource, true, true);
+  }
+
+  renderCreateChildResourceBtn(childCollectionName) {
     const collectionName = this.props.params.collectionName;
+    const childResourceType = TextUtil.singularize(childCollectionName);
     const resourceClass = Registry.resources[childResourceType];
     const childParentField = _(resourceClass.properties)
       .keys()
@@ -263,38 +371,29 @@ export default class ResourceShow extends Component {
         resourceClass.properties[key].collection === collectionName &&
         resourceClass.properties[key].parent
       ));
+    const childDefaults = {
+      [childParentField]: this.props.params.resourceName
+    };
     return (
-      <Link
+      <button
         key={childResourceType}
-        className="btn btn-outline-secondary mr-2"
-        to={
-          `/${script.org.name}/${script.experience.name}` +
-          `/script/${script.revision}` +
-          `/design/${this.props.params.sliceType}/${this.props.params.sliceName}` +
-          `/${TextUtil.pluralize(childResourceType)}/new` +
-          `?${childParentField}=${this.props.params.resourceName}`}>
-          Create {childResourceType}
-      </Link>
+        className="btn btn-sm btn-outline-secondary mr-2"
+        onClick={() => {
+          this.handleCreateChildResource(childCollectionName, childDefaults);
+        }}>
+        Add {childResourceType}
+      </button>
     );
   }
 
   renderCreateChildren() {
-    if (this.isNewResource()) {
+    if (this.isNewMainResource()) {
       return null;
     }
-    const collectionName = this.props.params.collectionName;
-    const sliceContentList = getSliceContent(this.props.params.sliceType,
-      this.props.params.sliceName);
-    const childResourceTypes = getChildResourceTypes(collectionName);
-    if (!childResourceTypes.length) {
-      return null;
-    }
-    const createChildBtns = childResourceTypes
-      .filter(childResourceType => (
-        !!sliceContentList[TextUtil.pluralize(childResourceType)]
-      ))
-      .map(childResourceType => (
-        this.renderCreateChildResourceBtn(childResourceType)
+    const childCollectionNames = this.getChildCollectionNames();
+    const createChildBtns = childCollectionNames
+      .map(childCollectionName => (
+        this.renderCreateChildResourceBtn(childCollectionName)
       ));
     if (!createChildBtns.length) {
       return null;
@@ -302,6 +401,32 @@ export default class ResourceShow extends Component {
     return (
       <div>
         {createChildBtns}
+      </div>
+    );
+  }
+
+  renderChildren(reverseRefGraph) {
+    if (this.isNewMainResource()) {
+      return null;
+    }
+    const mainResource = this.getMainResource();
+    const childCollectionNames = this.getChildCollectionNames();
+    const childrenByCollection = childCollectionNames
+      .map((childCollectionName) => {
+        const children = getChildren(this.props.script.content,
+          mainResource, childCollectionName);
+        const renderedChildren = children.map(childResource => (
+          this.renderChild(reverseRefGraph, childCollectionName, childResource)
+        ));
+        return renderedChildren;
+      })
+      .flat();
+
+    return (
+      <div className="mb-2 ml-4">
+        {childrenByCollection}
+        {this.renderPendingChild()}
+        {this.renderCreateChildren()}
       </div>
     );
   }
@@ -317,32 +442,21 @@ export default class ResourceShow extends Component {
         </div>
       );
     }
-    const resource = this.getResource();
+    const resource = this.getMainResource();
     if (!resource) {
       return (
         <div className="alert alert-warning">Not found.</div>
       );
     }
 
-    const sliceType = this.props.params.sliceType;
-    const sliceName = this.props.params.sliceName;
-    const contentList = getContentList(script.content, sliceType, sliceName);
-    const parentClaims = assembleParentClaims(script.content, contentList);
     const resourceStr = `${collectionName}.${resource.name}`;
-
-    const childrenStrs = _(parentClaims)
-      .keys()
-      .filter(key => _.includes(parentClaims[key], resourceStr))
-      .value();
-
     const reverseRefGraph = assembleReverseReferences(script.content);
     const reverseRefs = reverseRefGraph[resourceStr];
     const canDelete = !reverseRefs || !reverseRefs.length;
     return (
       <div>
-        {this.renderResourceContainer(canDelete)}
-        {this.renderCreateChildren()}
-        {this.renderChildren(childrenStrs)}
+        {this.renderMainResource(canDelete)}
+        {this.renderChildren(reverseRefGraph)}
       </div>
     );
   }

@@ -21,8 +21,5 @@ module.exports = {
   getTitle: function(scriptContent, resource) {
     var waypoint = _.find(scriptContent.waypoints, { name: resource.center });
     return resource.distance + 'm around ' + waypoint.title;
-  },
-  getParentClaims: function(resource) {
-    return ['waypoints.' + resource.center];
   }
 };

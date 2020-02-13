@@ -10,7 +10,6 @@ module.exports = {
       type: 'reference',
       collection: 'waypoints',
       required: true,
-      parent: true,
       help: 'The starting waypoint.'
     },
     to: {
@@ -33,8 +32,5 @@ module.exports = {
       },
       help: 'An optional list of coordinates through through which the route must pass.'
     }
-  },
-  getParentClaims: function(resource) {
-    return ['waypoints.' + resource.from];
   }
 };

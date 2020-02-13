@@ -5,38 +5,9 @@ import PropTypes from 'prop-types';
 import ContentTree from '../partials/ContentTree';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
-import { prepareContentTree } from '../utils/tree-utils';
 import { sections, getContentList } from '../utils/section-utils';
 
 export default class Slice extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contentList: null,
-      contentTree: null
-    };
-  }
-
-  componentWillMount() {
-    this.prepareContentTree(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.prepareContentTree(nextProps);
-  }
-
-  prepareContentTree(props) {
-    const sliceType = props.params.sliceType;
-    const sliceName = props.params.sliceName;
-    const scriptContent = props.script.content;
-    const contentList = getContentList(scriptContent, sliceType, sliceName);
-    const contentTree = prepareContentTree(scriptContent, contentList);
-    this.setState({
-      contentList: contentList,
-      contentTree: contentTree
-    });
-  }
-
   renderSidenav() {
     const script = this.props.script;
     const sceneLinks = _.map(script.content.scenes, scene => ({
@@ -96,6 +67,10 @@ export default class Slice extends Component {
   }
 
   render() {
+    const sliceType = this.props.params.sliceType;
+    const sliceName = this.props.params.sliceName;
+    const scriptContent = this.props.script.content;
+    const contentList = getContentList(scriptContent, sliceType, sliceName);
     return (
       <div className="row row-eq-height script-editor-container">
         <div className="script-editor-col col-sm-2">
@@ -108,8 +83,7 @@ export default class Slice extends Component {
             <ContentTree
               sliceType={this.props.params.sliceType}
               sliceName={this.props.params.sliceName}
-              contentList={this.state.contentList}
-              contentTree={this.state.contentTree}
+              contentList={contentList}
               script={this.props.script} />
           </div>
         </div>

@@ -16,8 +16,5 @@ module.exports = {
       collection: 'times',
       help: 'The time at which the appearance starts. Used for sorting scenes in the actor interface.'
     }
-  },
-  getParentClaims: function(resource) {
-    return ['roles.' + resource.role];
   }
 };

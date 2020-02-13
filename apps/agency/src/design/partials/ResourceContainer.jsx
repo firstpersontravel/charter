@@ -19,6 +19,7 @@ export default class ResourceContainer extends Component {
       <ResourceView
         script={this.props.script}
         collectionName={this.props.collectionName}
+        excludeFields={this.props.excludeFields}
         isNew={this.props.isNew}
         resource={this.props.resource}
         canDelete={canDelete}
@@ -28,6 +29,9 @@ export default class ResourceContainer extends Component {
   }
 
   renderExtras() {
+    if (this.props.isNew) {
+      return null;
+    }
     return (
       <ResourceExtras
         assets={this.props.assets}
@@ -72,6 +76,7 @@ export default class ResourceContainer extends Component {
 ResourceContainer.propTypes = {
   script: PropTypes.object.isRequired,
   collectionName: PropTypes.string.isRequired,
+  excludeFields: PropTypes.array,
   assets: PropTypes.array.isRequired,
   isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,
@@ -80,4 +85,8 @@ ResourceContainer.propTypes = {
   onDelete: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
+};
+
+ResourceContainer.defaultProps = {
+  excludeFields: []
 };

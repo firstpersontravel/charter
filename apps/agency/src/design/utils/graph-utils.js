@@ -81,6 +81,15 @@ export function assembleReverseReferences(scriptContent) {
   return graph;
 }
 
+function getParentKey(resourceType) {
+  return Object
+    .keys(Registry.resources[resourceType].properties)
+    .find((key) => {
+      const property = Registry.resources[resourceType].properties[key];
+      return property.type === 'reference' && property.parent;
+    });
+}
+
 export function getChildResourceTypes(collectionName) {
   return _(Registry.resources)
     .keys()
@@ -92,4 +101,12 @@ export function getChildResourceTypes(collectionName) {
       ))
     ))
     .value();
+}
+
+export function getChildren(scriptContent, resource, childCollectionName) {
+  const childResourceType = TextUtil.singularize(childCollectionName);
+  const parentKey = getParentKey(childResourceType);
+  return _.filter(scriptContent[childCollectionName], {
+    [parentKey]: resource.name
+  });
 }

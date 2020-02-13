@@ -18,8 +18,5 @@ module.exports = {
   },
   getTitle: function(scriptContent, spec) {
     return spec.address;
-  },
-  getParentClaims: function(resource) {
-    return ['roles.' + resource.role];
   }
 };

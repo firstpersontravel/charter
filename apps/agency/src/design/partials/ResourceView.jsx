@@ -199,6 +199,7 @@ export default class ResourceView extends Component {
       <ResourceField
         script={script}
         resource={this.state.pendingResource}
+        excludeFields={this.props.excludeFields}
         onPropUpdate={this.handlePropertyUpdate}
         spec={whitelistedParams}
         value={this.state.pendingResource} />
@@ -250,9 +251,14 @@ export default class ResourceView extends Component {
 ResourceView.propTypes = {
   script: PropTypes.object.isRequired,
   collectionName: PropTypes.string.isRequired,
+  excludeFields: PropTypes.array,
   isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,
   canDelete: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
   onUpdate: PropTypes.func.isRequired
+};
+
+ResourceView.defaultProps = {
+  excludeFields: []
 };

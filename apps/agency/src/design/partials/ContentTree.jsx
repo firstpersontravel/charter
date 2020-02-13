@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -8,23 +7,13 @@ import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from './ResourceBadge';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
-function walkContentTree(contentTree, path, iteree) {
-  _.each(contentTree, (value, key) => {
-    iteree(path, key);
-    walkContentTree(value, path.concat(key), iteree);
-  });
-}
-
 export default class ContentTree extends Component {
-  renderItem(collectionName, item, path, isInContentList) {
+  renderItem(collectionName, item) {
     const resourceType = TextUtil.singularize(collectionName);
     const script = this.props.script;
     const itemTitle = titleForResource(script.content, collectionName, item);
-    const prefix = path.map(pathEntry => (
-      <span className="faint" key={pathEntry}>&ndash;&nbsp;</span>
-    ));
     return ({
-      key: `${path.join('-')}-${item.name}`,
+      key: `${collectionName}-${item.name}`,
       url: (
         `/${script.org.name}/${script.experience.name}` +
         `/script/${script.revision}` +
@@ -34,7 +23,6 @@ export default class ContentTree extends Component {
       text: `${TextUtil.titleForKey(resourceType)}: ${itemTitle}`,
       label: (
         <span>
-          {prefix}
           <ResourceBadge resourceType={resourceType} /> {itemTitle}
         </span>
       )
@@ -66,37 +54,27 @@ export default class ContentTree extends Component {
     });
   }
 
-  renderNewItems() {
-    const collectionNames = Object.keys(this.props.contentList);
-    return collectionNames.map(collectionName => (
-      this.renderNewItem(collectionName)
+  renderCollectionItems(collectionName) {
+    const header = {
+      key: `${collectionName}-header`,
+      url: '',
+      label: TextUtil.titleForKey(collectionName),
+      text: TextUtil.titleForKey(collectionName),
+      disabled: true
+    };
+    const collection = this.props.contentList[collectionName] || [];
+    const items = collection.map(item => (
+      this.renderItem(collectionName, item)
     ));
+    const newItem = this.renderNewItem(collectionName);
+    return [header].concat(items).concat([newItem]);
   }
 
   render() {
-    const script = this.props.script;
     const contentList = this.props.contentList;
-    const contentTree = this.props.contentTree;
-
-    const items = [];
-
-    walkContentTree(contentTree, [], (path, key) => {
-      const [collectionName, resourceName] = key.split('.');
-      const isInContentList = !!_.find(contentList[collectionName],
-        { name: resourceName });
-      const collection = script.content[collectionName];
-      const resource = _.find(collection, { name: resourceName });
-      if (!resource) {
-        console.log(`Resource not found ${key}`);
-        return null;
-      }
-      const renderedItem = this.renderItem(collectionName, resource, path,
-        isInContentList);
-      items.push(renderedItem);
-      return null;
-    });
-
-    const allItems = items.concat(this.renderNewItems());
+    const allItems = Object.keys(contentList)
+      .map(collectionName => this.renderCollectionItems(collectionName))
+      .flat();
 
     return (
       <ResponsiveListGroup items={allItems} />
@@ -108,6 +86,5 @@ ContentTree.propTypes = {
   sliceType: PropTypes.string.isRequired,
   sliceName: PropTypes.string.isRequired,
   contentList: PropTypes.object.isRequired,
-  contentTree: PropTypes.object.isRequired,
   script: PropTypes.object.isRequired
 };

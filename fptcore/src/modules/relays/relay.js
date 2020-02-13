@@ -54,8 +54,5 @@ module.exports = {
       return 'new';
     }
     return parts.join(' ');
-  },
-  getParentClaims: function(resource) {
-    return ['roles.' + resource.for];
   }
 };

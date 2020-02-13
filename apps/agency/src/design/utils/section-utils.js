@@ -10,21 +10,54 @@ export const sections = [
 ];
 
 const sectionContent = {
-  roles: { roles: {}, appearances: {}, relays: {}, inboxes: {} },
-  scenes: { scenes: {} },
-  locations: { waypoints: {}, geofences: {}, routes: {} },
-  variants: { variants: {}, departures: {}, times: {} },
-  interface: { layouts: {}, content_pages: {}, qr_codes: {} },
-  operations: { achievements: {}, checkpoints: {} }
+  roles: [{
+    collection: 'roles',
+    children: ['appearances', 'relays', 'inboxes']
+  }],
+  scenes: [{
+    collection: 'scenes'
+  }],
+  locations: [{
+    collection: 'waypoints',
+    children: ['geofences']
+  }, {
+    collection: 'routes'
+  }],
+  variants: [{
+    collection: 'variants'
+  }, {
+    collection: 'departures'
+  }, {
+    collection: 'times'
+  }],
+  interface: [{
+    collection: 'layouts'
+  }, {
+    collection: 'content_pages'
+  }, {
+    collection: 'qr_codes'
+  }],
+  operations: [{
+    collection: 'achievements'
+  }, {
+    collection: 'checkpoints'
+  }]
 };
 
 const sliceContent = {
-  scene: sliceName => ({
-    pages: { scene: sliceName },
-    cues: { scene: sliceName },
-    clips: { scene: sliceName },
-    triggers: { scene: sliceName }
-  }),
+  scene: sliceName => ([{
+    collection: 'pages',
+    filter: { scene: sliceName }
+  }, {
+    collection: 'cues',
+    filter: { scene: sliceName }
+  }, {
+    collection: 'clips',
+    filter: { scene: sliceName }
+  }, {
+    collection: 'triggers',
+    filter: { scene: sliceName }
+  }]),
   section: sliceName => sectionContent[sliceName]
 };
 
@@ -37,9 +70,13 @@ export function getSliceContent(sliceType, sliceName) {
 
 export function getContentList(scriptContent, sliceType, sliceName) {
   const contentMap = getSliceContent(sliceType, sliceName);
-  return _.mapValues(contentMap, (filters, collectionName) => (
-    _.filter(scriptContent[collectionName], filters)
-  ));
+  return Object.fromEntries(contentMap.map((contentMapItem) => {
+    const collectionName = contentMapItem.collection;
+    const items = contentMapItem.filter
+      ? _.filter(scriptContent[collectionName], contentMapItem.filter)
+      : scriptContent[collectionName];
+    return [contentMapItem.collection, items];
+  }));
 }
 
 function sliceForResource(collectionName, resource) {

@@ -55,10 +55,5 @@ module.exports = {
     if (resource.route && resource.waypoint) {
       return ['Page resource cannot have both a route and a waypoint.'];
     }
-  },
-  getParentClaims: function(resource) {
-    return resource.appearance ?
-      ['appearances.' + resource.appearance] :
-      ['roles.' + resource.role];
   }
 };

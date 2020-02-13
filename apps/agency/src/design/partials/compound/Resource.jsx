@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import AnyField from './Any';
 import ObjectField from './Object';
 
-function ResourceField({ script, resource, spec, value,
+function ResourceField({ script, resource, excludeFields, spec, value,
   onPropUpdate }) {
   // If value is missing any required fields, then just show the required
   // fields before allowing you to fill in any others. In practice the only
@@ -17,9 +17,16 @@ function ResourceField({ script, resource, spec, value,
     .filter(key => !value[key])
     .length;
 
-  const displayProperties = numMissingRequiredKeys > 0
-    ? Object.fromEntries(requiredKeys.map(key => [key, spec.properties[key]]))
-    : spec.properties;
+  const displayProperties = Object.fromEntries(Object.keys(spec.properties)
+    .filter((key) => {
+      // If we're missing keys, only show required ones first.
+      if (numMissingRequiredKeys > 0) {
+        return spec.properties[key].required;
+      }
+      // Otherwise include as long as we're not excluded.
+      return excludeFields.indexOf(key) === -1;
+    })
+    .map(key => [key, spec.properties[key]]));
 
   return (
     <ObjectField
@@ -35,13 +42,18 @@ function ResourceField({ script, resource, spec, value,
   );
 }
 
-ResourceField.defaultProps = { opts: {} };
 ResourceField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
+  excludeFields: PropTypes.array,
   onPropUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   value: PropTypes.object.isRequired
+};
+
+ResourceField.defaultProps = {
+  opts: {},
+  excludeFields: []
 };
 
 export default ResourceField;

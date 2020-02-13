@@ -33,7 +33,7 @@ export default function SliceIndex({ script, params }) {
   if (!sliceContent) {
     return 'Invalid section.';
   }
-  const collectionNames = Object.keys(sliceContent);
+  const collectionNames = sliceContent.map(i => i.collection);
   const renderedCreateItems = collectionNames.map(collectionName => (
     renderCreateResource(script, params.sliceType, params.sliceName,
       collectionName)
