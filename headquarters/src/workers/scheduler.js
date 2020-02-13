@@ -84,12 +84,14 @@ class SchedulerWorker {
     }
   }
 
-  /**
-   * Update scheduleAt time for a single trip.
-   */
-  static async _updateTripNextScheduleAt(tripId) {
+  static getNextScheduleAt(objs) {
     const now = moment.utc();
-    const objs = await KernelUtil.getObjectsForTrip(tripId);
+
+    // If trip has no scene, schedule right away.
+    if (!objs.trip.currentSceneName) {
+      return now;
+    }
+
     const actionContext = KernelUtil.prepareActionContext(objs, now);
     const nextTime = _(objs.script.content.triggers)
       .filter(trigger => trigger.event.type === 'time_occurred')
@@ -98,6 +100,17 @@ class SchedulerWorker {
       .filter(Boolean)
       .sortBy(time => time.unix())
       .value()[0];
+
+    return nextTime;
+  }
+
+  /**
+   * Update scheduleAt time for a single trip.
+   */
+  static async _updateTripNextScheduleAt(tripId) {
+    const now = moment.utc();
+    const objs = await KernelUtil.getObjectsForTrip(tripId);
+    const nextTime = this.getNextScheduleAt(objs);
 
     await objs.trip.update({
       scheduleUpdatedAt: now.toDate(),
@@ -131,7 +144,7 @@ class SchedulerWorker {
     for (const trip of trips) {
       logger.info(`Checking ${trip.experience.title} "${trip.title}" up to ${threshold}`);
       await this._scheduleTripActions(trip.id, threshold);
-      await this._updateTripNextScheduleAt(trip);
+      await this._updateTripNextScheduleAt(trip.id);
     }
   }
 

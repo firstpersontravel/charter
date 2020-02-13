@@ -175,6 +175,7 @@ describe('SchedulerWorker', () => {
       const objs = {
         trip: {
           id: 1,
+          currentSceneName: 'main',
           update: sinon.stub().resolves(),
           history: {},
           experience: {}
@@ -195,10 +196,36 @@ describe('SchedulerWorker', () => {
       });
     });
 
+    it('updates scheduleAt to now if no current scene', async () => {
+      const objs = {
+        trip: {
+          id: 1,
+          currentSceneName: null,
+          update: sinon.stub().resolves(),
+          history: {},
+          experience: {}
+        },
+        script: { content: scriptContent }
+      };
+      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
+      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
+        scriptContent: scriptContent,
+        evalContext: { schedule: { now: now.toISOString() } }
+      });
+
+      await SchedulerWorker._updateTripNextScheduleAt(1);
+
+      sinon.assert.calledWith(objs.trip.update.getCall(0), {
+        scheduleUpdatedAt: now.toDate(),
+        scheduleAt: now.toDate()
+      });
+    });
+
     it('sets scheduleAt to null if no relevant trigger time', async () => {
       const objs = {
         trip: {
           id: 1,
+          currentSceneName: 'main',
           update: sinon.stub().resolves(),
           history: {},
           experience: {}
@@ -223,6 +250,7 @@ describe('SchedulerWorker', () => {
       const objs = {
         trip: {
           id: 1,
+          currentSceneName: 'main',
           update: sinon.stub().resolves(),
           history: { t3: true },
           experience: {}
