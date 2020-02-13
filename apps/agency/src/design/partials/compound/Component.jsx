@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Registry, Validator } from 'fptcore';
+import { Registry, Validator, TextUtil } from 'fptcore';
 
-import ObjectField from './Object';
+import ObjectKey from './ObjectKey';
 import NewComponentBtn from './NewComponentBtn';
 
 const validator = new Validator(Registry);
@@ -18,19 +19,48 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
         onPropUpdate={onPropUpdate} />
     );
   }
+
+  const componentType = spec.component;
+  const componentClass = Registry.components[componentType];
+  const componentTypeKey = componentClass.typeKey;
+
   const variety = validator.getComponentVariety(spec, value);
   const varietyClass = validator.getComponentClass(spec, variety);
+
+  const objectFields = Object
+    .keys(varietyClass.properties)
+    .filter(key => key !== componentTypeKey)
+    .map(key => (
+      <ObjectKey
+        key={key}
+        script={script}
+        resource={resource}
+        spec={varietyClass}
+        value={value}
+        name={name}
+        path={path}
+        opts={opts}
+        keySpec={varietyClass.properties[key]}
+        keyName={key}
+        onPropUpdate={onPropUpdate}
+        renderAny={renderAny} />
+    ));
+
+  // Nest inline
+  const isInline = (
+    _.get(varietyClass, 'display.form') === 'inline' ||
+    _.get(opts, 'inline')
+  );
+  const titleBaseStyle = { fontWeight: 'bold' };
+  const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
+  const titleStyle = Object.assign(titleBaseStyle,
+    isInline ? inlineStyle : {});
+
   return (
-    <ObjectField
-      script={script}
-      resource={resource}
-      spec={varietyClass}
-      value={value}
-      name={name}
-      path={path}
-      opts={opts}
-      onPropUpdate={onPropUpdate}
-      renderAny={renderAny} />
+    <>
+      <div style={titleStyle}>{TextUtil.titleForKey(variety)}</div>
+      {objectFields}
+    </>
   );
 }
 

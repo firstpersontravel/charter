@@ -48,7 +48,6 @@ module.exports = {
     panels: {
       type: 'list',
       items: { type: 'component', component: 'panels' },
-      default: [{}],
       help: 'List of user interface panels.',
     }
   },
