@@ -62,6 +62,7 @@ const authOrgs = _.get(authData[0], 'data.orgs') || [];
 const initialState = {
   requests: {},
   requestErrors: {},
+  revisionHistory: {},
   datastore: {
     auth: authData,
     orgs: authOrgs,

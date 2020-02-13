@@ -39,6 +39,15 @@ function clearInstances(collectionName) {
   };
 }
 
+function updateRevisionHistory(recordName, oldContent, newContent) {
+  return {
+    type: 'updateRevisionHistory',
+    recordName: recordName,
+    oldContent: oldContent,
+    newContent: newContent
+  };
+}
+
 function modelNameForCollectionName(collectionName) {
   return collectionName.substring(0, collectionName.length - 1);
 }
@@ -383,4 +392,8 @@ export function createInstances(collection, fields, nextItems) {
       ))
       .catch(processError);
   };
+}
+
+export function saveRevision(recordName, oldContent, newContent) {
+  return updateRevisionHistory(recordName, oldContent, newContent);
 }

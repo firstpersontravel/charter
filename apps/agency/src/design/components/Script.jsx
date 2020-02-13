@@ -40,7 +40,21 @@ class Script extends Component {
       .bind(this);
     this.handleArchiveExperienceConfirm = this.handleArchiveExperienceConfirm
       .bind(this);
-    this.state = { isArchiveExperienceModalOpen: false };
+    this.handleUndo = this.handleUndo.bind(this);
+    this.handleRedo = this.handleRedo.bind(this);
+    this.state = {
+      isArchiveExperienceModalOpen: false,
+      revisionHistoryIndex: props.revisionHistory.length - 1
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.script.id !== nextProps.script.id ||
+      this.props.revisionHistoryUpdated !== nextProps.revisionHistoryUpdated) {
+      this.setState({
+        revisionHistoryIndex: nextProps.revisionHistory.length - 1
+      });
+    }
   }
 
   handleActivateScript() {
@@ -129,6 +143,31 @@ class Script extends Component {
       `${this.props.params.orgName}/${fields.name}` +
       `/script/${this.props.script.revision}`
     );
+  }
+
+  handleUndo() {
+    const nextIndex = this.state.revisionHistoryIndex - 1;
+    if (nextIndex < 0) {
+      return;
+    }
+    this.updateScriptToRevisionHistoryIndex(nextIndex);
+  }
+
+  handleRedo() {
+    const nextIndex = this.state.revisionHistoryIndex + 1;
+    if (nextIndex >= this.props.revisionHistory.length) {
+      return;
+    }
+    this.updateScriptToRevisionHistoryIndex(nextIndex);
+  }
+
+  updateScriptToRevisionHistoryIndex(revisionHistoryIndex) {
+    const scriptId = this.props.script.id;
+    const revisionContent = this.props.revisionHistory[revisionHistoryIndex];
+    this.props.updateInstance('scripts', scriptId, {
+      content: revisionContent
+    });
+    this.setState({ revisionHistoryIndex: revisionHistoryIndex });
   }
 
   renderNav() {
@@ -231,8 +270,32 @@ class Script extends Component {
       </span>
     ) : null;
 
-    const newDraftBtns = isMaxRevision && (script.isActive || script.isLocked) ?
-      newDraftBtn : null;
+    const newDraftBtns = isMaxRevision && (script.isActive || script.isLocked)
+      ? newDraftBtn : null;
+
+    const historyLength = this.props.revisionHistory.length;
+    const curHistoryIndex = this.state.revisionHistoryIndex;
+    const numUndosAvail = curHistoryIndex;
+    const numRedosAvail = historyLength - curHistoryIndex - 1;
+    const undoBtn = (
+      <button
+        disabled={numUndosAvail <= 0}
+        onClick={this.handleUndo}
+        className="btn btn-xs btn-outline-secondary ml-2">
+        <i className="fa fa-undo" />&nbsp;
+        Undo
+      </button>
+    );
+
+    const redoBtn = (
+      <button
+        disabled={numRedosAvail <= 0}
+        onClick={this.handleRedo}
+        className="btn btn-xs btn-outline-secondary ml-2">
+        <i className="fa fa-rotate-right" />&nbsp;
+        Redo
+      </button>
+    );
 
     const goToLatestLink = !isMaxRevision ? (
       <span className="ml-2 p-0">
@@ -306,6 +369,8 @@ class Script extends Component {
               {activateBtns}
               {script.isActive ? lockBtn : null}
               {newDraftBtns}
+              {undoBtn}
+              {redoBtn}
               {goToLatestLink}
               {expOpts}
             </div>
@@ -356,12 +421,18 @@ Script.propTypes = {
   children: PropTypes.node.isRequired,
   script: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
+  revisionHistory: PropTypes.array.isRequired,
+  revisionHistoryUpdated: PropTypes.number,
   experiences: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   bulkUpdate: PropTypes.func.isRequired
+};
+
+Script.defaultProps = {
+  revisionHistoryUpdated: null
 };
 
 export default withLoader(Script, ['script.id'], (props) => {

@@ -241,6 +241,9 @@ export default class ResourceShow extends Component {
       return;
     }
 
+    // Save current as an old revision
+    this.props.saveRevision(script.id, script.content, newScriptContent);
+
     // Otherwise we're updating existing script.
     this.props.updateInstance('scripts', script.id, {
       content: newScriptContent
@@ -469,6 +472,7 @@ ResourceShow.propTypes = {
   // eslint-disable-next-line react/no-unused-prop-types
   scripts: PropTypes.array.isRequired,
   params: PropTypes.object.isRequired,
+  saveRevision: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

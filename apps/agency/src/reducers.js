@@ -51,11 +51,33 @@ function clearInstancesHandler(state, action) {
   });
 }
 
+function updateRevisionHistoryHandler(state, action) {
+  const maxRevisions = 100;
+  // If we're saving our first revision history update, save both the old
+  // content and the new, so we can undo and redo as many times as we want
+  const existing = state.revisionHistory[action.recordName]
+    || [action.oldContent];
+  // Add the new content all the time.
+  const updated = existing.concat([action.newContent]);
+  const trimmed = updated.slice(updated.length - maxRevisions);
+  // Replace the revision history object entirely -- we only save one
+  // script's history at a time.
+  return update(state, {
+    revisionHistory: {
+      $set: {
+        lastUpdated: new Date().valueOf(),
+        [action.recordName]: trimmed
+      }
+    }
+  });
+}
+
 const handlers = {
   saveInstances: saveInstancesHandler,
   clearInstances: clearInstancesHandler,
   updateInstanceFields: updateInstanceFieldsHandler,
-  saveRequest: saveRequestHandler
+  saveRequest: saveRequestHandler,
+  updateRevisionHistory: updateRevisionHistoryHandler
 };
 
 export default function reducer(state, action) {
