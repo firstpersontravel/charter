@@ -104,8 +104,10 @@ export default class PopoverControl extends Component {
 
   render() {
     const valueStyle = {
-      borderBottom: '1px dashed rgba(0, 0, 0, 0.5)',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      borderBottom: this.props.underlined ?
+        '1px dashed rgba(0, 0, 0, 0.5)' :
+        'none'
     };
     const edit = this.renderEdit();
     const helpText = this.props.helpText ? (
@@ -162,7 +164,8 @@ PopoverControl.propTypes = {
   title: PropTypes.string.isRequired,
   choices: PropTypes.array,
   validate: PropTypes.func,
-  onConfirm: PropTypes.func.isRequired
+  onConfirm: PropTypes.func.isRequired,
+  underlined: PropTypes.bool
 };
 
 PopoverControl.defaultProps = {
@@ -170,5 +173,6 @@ PopoverControl.defaultProps = {
   label: '',
   choices: null,
   validate: null,
-  helpText: null
+  helpText: null,
+  underlined: true
 };

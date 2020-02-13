@@ -3,8 +3,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import ListItem from './ListItem';
+import NewComponentBtn from './NewComponentBtn';
 
 import { newItemForSpec } from './utils';
+
+function renderNewItemBtn(itemSpec, newPath, onPropUpdate) {
+  if (itemSpec.type === 'component') {
+    return (
+      <NewComponentBtn
+        componentSpec={itemSpec}
+        newPath={newPath}
+        onPropUpdate={onPropUpdate} />
+    );
+  }
+  const newItem = newItemForSpec(itemSpec);
+  return (
+    <button
+      className="btn btn-sm btn-outline-secondary"
+      onClick={() => onPropUpdate(newPath, newItem)}>
+      <i className="fa fa-plus" />
+    </button>
+  );
+}
 
 function ListField({ script, resource, spec, value, name, path, opts,
   onPropUpdate, renderAny }) {
@@ -26,17 +46,8 @@ function ListField({ script, resource, spec, value, name, path, opts,
   const listIsEmpty = !value || value.length === 0;
   const newIndex = value ? value.length : 0;
   const newPath = `${path}[${newIndex}]`;
-  const newItem = newItemForSpec(spec.items);
   const newBtnStyle = { display: listIsEmpty ? 'inline' : 'block' };
-  const newItemBtn = (
-    <div style={newBtnStyle}>
-      <button
-        className="btn btn-sm btn-outline-secondary"
-        onClick={() => onPropUpdate(newPath, newItem)}>
-        <i className="fa fa-plus" />
-      </button>
-    </div>
-  );
+  const newItemBtn = renderNewItemBtn(spec.items, newPath, onPropUpdate);
   return (
     <div style={newBtnStyle}>
       {items}

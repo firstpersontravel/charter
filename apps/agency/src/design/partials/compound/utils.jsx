@@ -24,7 +24,7 @@ export const newItemsForSpecType = {
   dictionary: {},
   list: [],
   object: {},
-  component: {}
+  component: null
 };
 
 export function newItemForSpec(spec) {

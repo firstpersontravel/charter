@@ -15,15 +15,15 @@ module.exports = {
     }
   },
   getEventTitle: function(scriptContent, resource, registry) {
-    if (!resource.event || !resource.event.type) {
-      return 'No triggering event';
-    }
     const eventClass = registry.events[resource.event.type];
     return eventClass.getTitle
       ? eventClass.getTitle(scriptContent, resource.event, registry)
       : TextUtil.titleForKey(resource.event.type).toLowerCase();
   },
   getTitle: function(scriptContent, resource, registry) {
+    if (!resource.event || !resource.event.type) {
+      return 'Untriggerable';
+    }
     return `On ${this.getEventTitle(scriptContent, resource, registry)}`;
   }
 };

@@ -4,11 +4,20 @@ import PropTypes from 'prop-types';
 import { Registry, Validator } from 'fptcore';
 
 import ObjectField from './Object';
+import NewComponentBtn from './NewComponentBtn';
 
 const validator = new Validator(Registry);
 
 function ComponentField({ script, resource, spec, value, name, path, opts,
   onPropUpdate, renderAny }) {
+  if (!value) {
+    return (
+      <NewComponentBtn
+        componentSpec={spec}
+        newPath={path}
+        onPropUpdate={onPropUpdate} />
+    );
+  }
   const variety = validator.getComponentVariety(spec, value);
   const varietyClass = validator.getComponentClass(spec, variety);
   return (
