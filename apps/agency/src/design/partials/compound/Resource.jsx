@@ -19,9 +19,11 @@ function ResourceField({ script, resource, excludeFields, spec, value,
 
   const displayProperties = Object.fromEntries(Object.keys(spec.properties)
     .filter((key) => {
-      // If we're missing keys, only show required ones first.
+      // If we're missing keys, only show required ones.
       if (numMissingRequiredKeys > 0) {
-        return spec.properties[key].required;
+        if (!spec.properties[key].required) {
+          return false;
+        }
       }
       // Otherwise include as long as we're not excluded.
       return excludeFields.indexOf(key) === -1;
