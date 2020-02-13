@@ -108,6 +108,26 @@ class Schedule extends Component {
     );
   }
 
+  renderGroupItem(group) {
+    const archivedStyle = { textDecoration: 'line-through' };
+    const archivedIcon = <i className="fa fa-archive ml-1" />;
+    const groupDate = moment.utc(group.date).format('MMM D, YYYY');
+    const groupTitle = groupDate + (group.isArchived ? ' (archived)' : '');
+    return {
+      key: group.id,
+      text: groupTitle,
+      label: (
+        <span style={group.isArchived ? archivedStyle : null}>
+          {groupDate}{group.isArchived ? archivedIcon : null}
+        </span>
+      ),
+      url: (
+        `/${this.props.org.name}/${this.props.experience.name}` +
+        `/schedule/${moment(group.date).format('YYYY/MM')}/${group.id}`
+      )
+    };
+  }
+
   renderGroups() {
     const now = moment.utc().format('YYYY-MM');
     const cur = `${this.props.params.year}-${this.props.params.month}`;
@@ -119,20 +139,10 @@ class Schedule extends Component {
       url: `/${this.props.org.name}/${this.props.experience.name}/schedule?group=new`
     }] : [];
 
-    const groupItems = this.props.groups.map(group => ({
-      key: group.id,
-      text: moment.utc(group.date).format('MMM D, YYYY'),
-      label: (
-        <span>
-          {moment.utc(group.date).format('MMM D, YYYY')}
-          {group.isArchived ? <i className="fa fa-archive ml-1" /> : null}
-        </span>
-      ),
-      url: (
-        `/${this.props.org.name}/${this.props.experience.name}` +
-        `/schedule/${moment(group.date).format('YYYY/MM')}/${group.id}`
-      )
-    })).concat(newGroupItem);
+    const groupItems = this.props.groups
+      .sort((a, b) => (a.isArchived < b.isArchived ? -1 : 1))
+      .map(group => this.renderGroupItem(group))
+      .concat(newGroupItem);
 
     if (!groupItems.length) {
       if (this.props.groups.isLoading) {

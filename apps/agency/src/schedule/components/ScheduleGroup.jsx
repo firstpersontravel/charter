@@ -181,12 +181,13 @@ class ScheduleGroup extends Component {
       </button>
     ) : null;
 
+    const archivedStyle = { textDecoration: 'line-through' };
     return (
       <tr key={trip.id}>
         <td>
           <strong>{trip.departureName}</strong>
         </td>
-        <td>
+        <td style={trip.isArchived ? archivedStyle : null}>
           <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
             {trip.title}
           </IndexLink>
