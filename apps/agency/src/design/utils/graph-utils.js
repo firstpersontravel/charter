@@ -31,7 +31,7 @@ const walkers = {
     });
   },
   object: (spec, value, iteree) => {
-    _.each(spec.properties, (propSpec, key) => {
+    _.each(spec, (propSpec, key) => {
       if (walkers[propSpec.type]) {
         const propValue = value && value[key];
         walkers[propSpec.type](propSpec, propValue, iteree);
@@ -54,7 +54,9 @@ function walkReferences(collectionName, resource) {
   }
   const references = [];
   walkers.params(resourceClass.properties, resource, (c, r) => {
-    references.push(`${c}.${r}`);
+    if (r) {
+      references.push(`${c}.${r}`);
+    }
   });
   return references;
 }
