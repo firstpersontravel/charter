@@ -122,3 +122,4 @@
     - https://thecode.pub/easy-deploy-your-docker-applications-to-aws-using-ecs-and-fargate-a988a1cc842f
     - http://vilkeliskis.com/blog/2016/02/10/bootstrapping-docker-with-terraform.html
     - https://rhasspy.readthedocs.io/en/latest/
+    - swc instead of babel

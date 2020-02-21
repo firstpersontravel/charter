@@ -15,8 +15,8 @@ let isRunningActions = false;
 let isSchedulingActions = false;
 
 function handleWorkerError(err) {
-  if (err instanceof Sequelize.SequelizeConnectionRefusedError) {
-    console.warn('Connnection refused accessing database. Will try again.');
+  if (err instanceof Sequelize.ConnectionError) {
+    console.warn(`${err.name} accessing database, will try again.`);
     return;
   }
   Sentry.captureException(err);
