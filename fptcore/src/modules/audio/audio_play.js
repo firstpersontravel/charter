@@ -10,6 +10,7 @@ module.exports = {
     },
     path: {
       type: 'media',
+      display: { hidden: true },
       required: true, medium: 'audio',
       help: 'The audio file to play.'
     }

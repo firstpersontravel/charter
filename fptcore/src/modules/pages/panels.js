@@ -10,6 +10,7 @@ module.exports = {
       path: {
         type: 'media',
         medium: 'audio',
+        display: { hidden: true },
         help: 'The audio file to play.'
       }
     }
@@ -89,7 +90,12 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays an image.',
     properties: {
-      path: { type: 'media', medium: 'image', required: true },
+      path: {
+        type: 'media',
+        medium: 'image',
+        display: { hidden: true },
+        required: true
+      },
       style: { type: 'enum', options: PANEL_IMAGE_STYLE_OPTIONS }
     }
   },
@@ -139,7 +145,12 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays a video.',
     properties: {
-      path: { type: 'media', medium: 'video', required: true }
+      path: {
+        type: 'media',
+        medium: 'video',
+        display: { hidden: true },
+        required: true
+      }
     }
   },
   yesno: {

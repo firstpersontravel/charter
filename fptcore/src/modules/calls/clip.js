@@ -19,8 +19,8 @@ module.exports = {
     },
     path: {
       type: 'media',
+      display: { hidden: true },
       medium: 'audio',
-      extensions: ['m4a', 'mp3'],
       help: 'Media path for an audio clip to play.'
     },
     answer_expected: {

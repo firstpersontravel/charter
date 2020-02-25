@@ -11,7 +11,8 @@ const assetComponentsByResourceType = {
   page: MediaAssets,
   route: RouteAssets,
   relay: MediaAssets,
-  trigger: MediaAssets
+  trigger: MediaAssets,
+  layout: MediaAssets
 };
 
 export default class ResourceExtras extends Component {

@@ -13,9 +13,11 @@ const MEDIA_MIME_TYPES = {
 
 function extraMediaReferences(resourceType, resource) {
   const paths = [];
+  console.log('resource', resource);
   ScriptCore.walkResourceParams(resourceType, resource, 'media',
-    (path, spec) => {
-      paths.push({ path: path, medium: spec.medium });
+    (path, spec, parent, key) => {
+      const label = parent.type || key;
+      paths.push({ path: path, label: label, medium: spec.medium });
     });
   return paths;
 }
@@ -159,11 +161,10 @@ class MediaAsset extends Component {
     ) : null;
 
     return (
-      <div>
-        {this.props.path}: {this.renderStatus()}
+      <li className="mb-2">
+        {this.props.label}: {this.renderStatus()} {link}
         {this.renderUploader()}
-        {link}
-      </div>
+      </li>
     );
   }
 }
@@ -172,6 +173,7 @@ MediaAsset.propTypes = {
   script: PropTypes.object.isRequired,
   assets: PropTypes.array.isRequired,
   path: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
   medium: PropTypes.string.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
@@ -188,6 +190,7 @@ export default function MediaAssets({ script, resourceType, resource, assets,
     <MediaAsset
       key={mediaReference.path}
       path={mediaReference.path}
+      label={mediaReference.label}
       medium={mediaReference.medium}
       script={script}
       assets={assets}
@@ -200,7 +203,9 @@ export default function MediaAssets({ script, resourceType, resource, assets,
         Attached media
       </h5>
       <div className="card-body">
-        {renderedMediaAssets}
+        <ol>
+          {renderedMediaAssets}
+        </ol>
       </div>
     </div>
   );

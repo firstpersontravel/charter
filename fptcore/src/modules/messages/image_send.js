@@ -20,6 +20,7 @@ module.exports = {
     content: {
       required: true,
       type: 'media',
+      display: { hidden: true },
       medium: 'image',
       help: 'The content of the message to send.'
     },

@@ -1,7 +1,17 @@
 import _ from 'lodash';
 
+const defaultFnsBySpecType = {
+  media: () => `media-${Math.floor(Math.random() * 10000000).toString()}`
+};
+
 export function doesSpecHaveDefault(spec) {
-  return !!spec.default;
+  if (spec.default) {
+    return true;
+  }
+  if (defaultFnsBySpecType[spec.type]) {
+    return true;
+  }
+  return false;
 }
 
 export function defaultForSpec(spec) {
@@ -10,6 +20,9 @@ export function defaultForSpec(spec) {
   }
   if (!_.isUndefined(spec.default)) {
     return spec.default;
+  }
+  if (defaultFnsBySpecType[spec.type]) {
+    return defaultFnsBySpecType[spec.type]();
   }
   return null;
 }

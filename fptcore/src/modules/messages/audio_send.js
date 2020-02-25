@@ -20,6 +20,7 @@ module.exports = {
     content: {
       required: true,
       type: 'media',
+      display: { hidden: true },
       medium: 'audio',
       help: 'The content of the message to send.'
     },
