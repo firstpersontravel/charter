@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import AnyField from './Any';
 import ObjectField from './Object';
 
-function ResourceField({ script, resource, excludeFields, spec, value,
-  onPropUpdate }) {
+function ResourceField({ script, resource, spec, value, onPropUpdate }) {
   // If value is missing any required fields, then just show the required
   // fields before allowing you to fill in any others. In practice the only
   // resources that are missing required fields should be new ones.
@@ -26,7 +25,7 @@ function ResourceField({ script, resource, excludeFields, spec, value,
         }
       }
       // Otherwise include as long as we're not excluded.
-      return excludeFields.indexOf(key) === -1;
+      return true;
     })
     .map(key => [key, spec.properties[key]]));
 
@@ -47,15 +46,13 @@ function ResourceField({ script, resource, excludeFields, spec, value,
 ResourceField.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired,
-  excludeFields: PropTypes.array,
   onPropUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   value: PropTypes.object.isRequired
 };
 
 ResourceField.defaultProps = {
-  opts: {},
-  excludeFields: []
+  opts: {}
 };
 
 export default ResourceField;

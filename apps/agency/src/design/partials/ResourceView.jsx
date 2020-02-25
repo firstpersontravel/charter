@@ -50,7 +50,7 @@ export default class ResourceView extends Component {
   getFieldNames() {
     return _.without(
       Object.keys(this.getResourceClass().properties),
-      ...HIDE_FIELD_NAMES);
+      ...HIDE_FIELD_NAMES.concat(this.props.excludeFields));
   }
 
   handleRevertChanges() {
@@ -186,8 +186,8 @@ export default class ResourceView extends Component {
     const fieldNames = this.getFieldNames();
     if (!fieldNames.length) {
       return (
-        <div className="alert alert-info">
-          This resource has no customizable fields.
+        <div style={{ textAlign: 'center' }}>
+          <em>No customizable fields.</em>
         </div>
       );
     }
@@ -199,7 +199,6 @@ export default class ResourceView extends Component {
       <ResourceField
         script={script}
         resource={this.state.pendingResource}
-        excludeFields={this.props.excludeFields}
         onPropUpdate={this.handlePropertyUpdate}
         spec={whitelistedParams}
         value={this.state.pendingResource} />

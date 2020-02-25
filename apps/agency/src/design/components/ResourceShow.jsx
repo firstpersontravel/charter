@@ -130,6 +130,13 @@ export default class ResourceShow extends Component {
     return thisContentMapItem.children || [];
   }
 
+  getParentFields() {
+    if (this.props.params.sliceType === 'scene') {
+      return ['scene'];
+    }
+    return [];
+  }
+
   checkForNewRevision(props) {
     const script = props.script;
     const existingRevisions = _.map(props.scripts, 'revision');
@@ -269,6 +276,7 @@ export default class ResourceShow extends Component {
         isNew={this.isNewMainResource()}
         resource={this.getMainResource()}
         assets={this.props.assets}
+        excludeFields={this.getParentFields()}
         canDelete={canDelete}
         createInstance={this.props.createInstance}
         updateInstance={this.props.updateInstance}
@@ -290,7 +298,8 @@ export default class ResourceShow extends Component {
         childResourceClass.properties[key].parent &&
         childResource[key] === mainResourceName
       ))
-      .value();
+      .value()
+      .concat(this.getParentFields());
 
     return (
       <ResourceContainer
