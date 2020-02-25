@@ -1,7 +1,4 @@
-const _ = require('lodash');
-
 const models = require('../models');
-const ExperienceController = require('../controllers/experience');
 const KernelController = require('../kernel/kernel');
 
 const redirectRoute = async (req, res) => {
@@ -11,7 +8,6 @@ const redirectRoute = async (req, res) => {
   const pageName = req.query.p;
 
   const experience = await models.Experience.findByPk(experienceId);
-  const script = await ExperienceController.findActiveScript(experience.id);
 
   if (!experience) {
     res.status(400).send('Invalid QR code.');
@@ -39,20 +35,8 @@ const redirectRoute = async (req, res) => {
   }
 
   if (cueName) {
-    const cue = _.find(script.content.cues, { name: cueName });
-    const tripFilters = { isArchived: false };
-    if (cue.scope === 'experience') {
-      tripFilters.experienceId = experienceId;
-    } else if (cue.scope === 'group') {
-      tripFilters.groupId = loggedInTrip.groupId;
-    } else {
-      tripFilters.id = loggedInTrip.id;
-    }
-    const trips = await models.Trip.findAll({ where: tripFilters });
     const event = { type: 'cue_signaled', cue: cueName };
-    for (const cueTrip of trips) {
-      await KernelController.applyEvent(cueTrip.id, event);
-    }
+    await KernelController.applyEvent(loggedInTrip.id, event);
   }
 
   res.redirect(

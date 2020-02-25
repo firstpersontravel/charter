@@ -23,7 +23,6 @@ module.exports = {
     }
     return [{
       operation: 'event',
-      scope: cue.scope || 'trip',
       event: { type: 'cue_signaled', cue: params.cue_name }
     }];
   }

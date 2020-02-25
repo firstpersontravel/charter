@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const moment = require('moment');
-const Sequelize = require('sequelize');
 
 const Kernel = require('../../../fptcore/src/kernel/kernel');
 
@@ -8,7 +7,6 @@ const config = require('../config');
 const ActionController = require('../controllers/action');
 const KernelOpController = require('./op');
 const KernelUtil = require('./util');
-const models = require('../models');
 
 const logger = config.logger.child({ name: 'kernel.kernel' });
 
@@ -32,31 +30,8 @@ class KernelController {
       actionContext);
   }
 
-  // Handle events with scopes beyond this specific trip in a special
-  // case handler.
-  static async _applyEvent(objs, op) {
-    const tripFilters = {
-      isArchived: false,
-      id: { [Sequelize.Op.not]: objs.trip.id },
-      experienceId: objs.trip.experienceId
-    };
-    if (op.scope === 'group') {
-      tripFilters.groupId = objs.trip.groupId;
-    }
-    const scopedTrips = await models.Trip.findAll({
-      where: tripFilters
-    });
-    for (const scopedTrip of scopedTrips) {
-      await this.applyEvent(scopedTrip.id, op.event);
-    }
-  }
-
   static async _applyOp(objs, op) {
     await KernelOpController.applyOp(objs, op);
-    // Special case for cross-trip events.
-    if (op.operation === 'event' && op.scope !== 'trip') {
-      await this._applyEvent(objs, op);
-    }
   }
 
   static async _applyOps(objs, ops) {
@@ -76,7 +51,7 @@ class KernelController {
    * Apply an action and gather the results.
    */
   static async applyAction(tripId, action, applyAt) {
-    logger.info(action.params, `Applying action: ${action.name}.`);
+    logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
     const result = this._resultForImmediateActionAndObjs(objs, action,
@@ -89,7 +64,7 @@ class KernelController {
    * Apply an action and gather the results.
    */
   static async applyEvent(tripId, event, applyAt) {
-    logger.info(event, `Applying event: ${event.type}.`);
+    logger.info(event, `(Trip #${tripId}) Applying event: ${event.type}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
     const result = this._resultForEventAndObjs(objs, event, evaluateAt);
@@ -101,7 +76,7 @@ class KernelController {
    * Apply an action and gather the results.
    */
   static async applyTrigger(tripId, triggerName, applyAt) {
-    logger.info(`Applying trigger: ${triggerName}.`);
+    logger.info(`(Trip #${tripId}) Applying trigger: ${triggerName}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
     const trigger = _.find(objs.script.content.triggers || [],
