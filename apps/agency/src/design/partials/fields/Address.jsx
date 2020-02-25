@@ -11,7 +11,7 @@ function AddressField({ spec, value, name, path, opts, onPropUpdate }) {
     <PopoverControl
       title={name}
       validate={val => !!val}
-      helpText={'Enter an address, including city, to find its coordinates.'}
+      helpText={'Enter an address, including the city.'}
       onConfirm={(val) => {
         geocoder.geocode({ address: val }, (results, status) => {
           if (status !== 'OK') {

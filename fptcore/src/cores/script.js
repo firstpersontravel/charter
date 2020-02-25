@@ -6,7 +6,7 @@ const Registry = require('../registry/registry');
 const Validator = require('../utils/validator');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 21;
+const CURRENT_VERSION = 22;
 
 const metaSchema = {
   type: 'object',
@@ -126,6 +126,41 @@ class ScriptCore {
     }));
   }
 
+  static validateCollection(script, collectionName) {
+    const collection = script.content[collectionName];
+    const errors = [];
+    const names = new Set();
+
+    // Check is array
+    if (!_.isArray(collection)) {
+      errors.push({
+        path: collectionName,
+        collection: collectionName,
+        message: 'Collection must be an array: ' + collectionName + '.'
+      });
+      return;
+    }
+
+    // Check each resource
+    for (const resource of collection) {
+      // Check for duplicate names
+      if (names.has(resource.name)) {
+        errors.push({
+          path: collectionName,
+          collection: collectionName,
+          message: `Duplicate names: ${resource.name}`
+        });
+      }
+
+      // Get errors
+      const resourceErrors = ScriptCore.getResourceErrors(script, collectionName, resource);
+      errors.push(...resourceErrors);
+      names.add(resource.name);
+    }
+
+    return errors;
+  }
+
   static validateScriptContent(script) {
     // Check meta block
     const metaValidator = new jsonschema.Validator();
@@ -146,25 +181,13 @@ class ScriptCore {
 
     // Check resources
     const errors = [];
-    Object.keys(script.content).forEach(function(collectionName) {
+    for (const collectionName of Object.keys(script.content)) {
       if (collectionName === 'meta') {
-        return;
+        continue;
       }
-      const collection = script.content[collectionName];
-      if (!_.isArray(collection)) {
-        errors.push({
-          path: collectionName,
-          collection: collectionName,
-          message: 'Collection must be an array: ' + collectionName + '.'
-        });
-        return;
-      }
-      collection.forEach(function(resource) {
-        const resourceErrors = ScriptCore.getResourceErrors(script, collectionName,
-          resource);
-        errors.push.apply(errors, resourceErrors);
-      });
-    });
+      errors.push(...this.validateCollection(script, collectionName));
+    }
+
     if (errors.length > 0) {
       const collectionNames = _.uniq(_.map(errors, 'collection'));
       const onlyOne = errors.length === 1;
