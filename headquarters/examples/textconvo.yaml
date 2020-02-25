@@ -36,15 +36,12 @@ triggers:
         if:
           op: or
           items:
-            - op: value_contains
-              string_ref: event.message.content
-              part_ref: '"hello"'
-            - op: value_contains
-              string_ref: event.message.content
-              part_ref: '"hi"'
-            - op: value_contains
-              string_ref: event.message.content
-              part_ref: '"hey"'
+            - op: text_contains
+              part: 'hello'
+            - op: text_contains
+              part: 'hi'
+            - op: text_contains
+              part: 'hey'
         actions:
           - name: send_text
             from_role_name: Sage

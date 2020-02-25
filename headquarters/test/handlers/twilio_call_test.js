@@ -95,6 +95,7 @@ describe('TwilioCallHandler', () => {
     it('returns play', async () => {
       // Stubs script for media lookups
       const stubScript = {
+        org: { name: 'test_org' },
         experience: { name: 'test_script' },
         content: {}
       };
@@ -123,13 +124,14 @@ describe('TwilioCallHandler', () => {
         twiml.toString(),
         '<?xml version="1.0" encoding="UTF-8"?>' +
         '<Response>' +
-        '<Play>http://twilio.media/test_script/audio.mp3</Play>' +
+        '<Play>http://twilio.media/test_org/test_script/audio.mp3</Play>' +
         '</Response>');
     });
 
     it('returns gather', async () => {
       // Stubs script for media lookups
       const stubScript = {
+        org: { name: 'test_org' },
         experience: { name: 'test_script' },
         content: {}
       };
@@ -167,7 +169,7 @@ describe('TwilioCallHandler', () => {
         'partialResultCallback=' +
         '"http://twilio.test/endpoints/twilio/calls/response?' +
         'relay=100&amp;trip=1&amp;clip=CLIP-123&amp;partial=true">' +
-        '<Play>http://twilio.media/test_script/audio.mp3</Play>' +
+        '<Play>http://twilio.media/test_org/test_script/audio.mp3</Play>' +
         '</Gather></Response>');
     });
   });

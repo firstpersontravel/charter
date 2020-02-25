@@ -35,7 +35,7 @@ async function incomingCallStatusRoute(req, res) {
     return;
   }
 
-  const player = RelayController.lookupPlayer(relay, fromNumber);
+  const player = await RelayController.lookupPlayer(relay, fromNumber);
   if (!player) {
     logger.warn('Status received without matching player.');
     res.status(500).send('No player match.');

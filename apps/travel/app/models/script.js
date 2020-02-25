@@ -11,6 +11,7 @@ export default DS.Model.extend({
   timezone: Ember.computed.oneWay('experience.timezone'),
 
   experience: DS.belongsTo('experience', {async: false}),
+  org: DS.belongsTo('org', {async: false}),
 
   findResourceByName: function(resourceType, name) {
     var resources = this.get('content')[resourceType + 's'];
@@ -37,8 +38,9 @@ export default DS.Model.extend({
     if (path.slice(0, 8) === 'https://') { return path; }
 
     var contentPath = this.get('environment.contentPath');
+    var orgName = this.get('org.name');
     var scriptFolder = this.get('experience.name');
-    return `${contentPath}/firstpersontravel/${scriptFolder}/${path}`;
+    return `${contentPath}/${orgName}/${scriptFolder}/${path}`;
   },
 
   getRoleNames: function() {

@@ -55,7 +55,8 @@ async function getTripRoute(req, res) {
     where: { id: req.params.id },
     include: [
       { model: models.Script, as: 'script' },
-      { model: models.Experience, as: 'experience' }
+      { model: models.Experience, as: 'experience' },
+      { model: models.Org, as: 'org' }
     ]
   });
   if (!trip) {
@@ -104,6 +105,7 @@ async function getTripRoute(req, res) {
   if (includeScript) {
     objs.push(trip.script);
     objs.push(trip.experience);
+    objs.push(trip.org);
   }
 
   const data = jsonApiSerialize(trip);
