@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const { sandbox } = require('../mocks');
 const RelayController = require('../../src/controllers/relay');
 const TrailheadController = require('../../src/controllers/trailhead');
+const TripResetHandler = require('../../src/handlers/trip_reset');
 const TwilioUtil = require('../../src/handlers/twilio_util');
 
 describe('TwilioUtil', () => {
@@ -35,6 +36,7 @@ describe('TwilioUtil', () => {
       sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
       sandbox.stub(TrailheadController, 'createTripFromRelay')
         .resolves(stubTrip);
+      sandbox.stub(TripResetHandler, 'resetToStart').resolves(null);
 
       const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
 
@@ -44,6 +46,9 @@ describe('TwilioUtil', () => {
       // Calls create trip OK.
       sinon.assert.calledWith(TrailheadController.createTripFromRelay,
         relay, phoneNumber);
+
+      // And calls reset to start
+      sinon.assert.calledWith(TripResetHandler.resetToStart, 2);
     });
 
     it('does not create a trip for non-trailhead', async () => {

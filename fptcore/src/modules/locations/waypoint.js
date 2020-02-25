@@ -49,5 +49,10 @@ module.exports = {
       items: waypointOptionSpec,
       help: 'A list of locations that this waypoint could refer to.'
     }
+  },
+  validateResource: function(script, resource) {
+    if (!resource.options || !resource.options.length) {
+      return ['A waypoint must have at least one option.'];
+    }
   }
 };

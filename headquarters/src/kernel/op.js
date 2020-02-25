@@ -47,9 +47,21 @@ class KernelOpController {
     const sentBy = _.find(objs.players, {
       roleName: op.fields.sentByRoleName
     });
+    if (!sentBy) {
+      logger.error(
+        'Could not create message, ' +
+        `sentBy ${op.fields.sentByRoleName} not found.`);
+      return;
+    }
     const sentTo = _.find(objs.players, {
       roleName: op.fields.sentToRoleName
     });
+    if (!sentTo) {
+      logger.error(
+        'Could not create message, ' +
+        `sentTo ${op.fields.sentToRoleName} not found.`);
+      return;
+    }
     const fields = {
       orgId: objs.trip.orgId,
       experienceId: objs.trip.experienceId,

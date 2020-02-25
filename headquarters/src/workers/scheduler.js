@@ -4,7 +4,6 @@ const Sequelize = require('sequelize');
 
 const Registry = require('../../../fptcore/src/registry/registry');
 const KernelTriggers = require('../../../fptcore/src/kernel/triggers');
-const SceneCore = require('../../../fptcore/src/cores/scene');
 
 const config = require('../config');
 const models = require('../models');
@@ -160,26 +159,6 @@ class SchedulerWorker {
     // Get actions based on occurance of time.
     const actions = this._getTimeOccuranceActions(trip, actionContext,
       threshold);
-
-    // Add scene start event if needed -- only if we have just reset since
-    // otherwise we might get into an infinite loop if the workers are backed
-    // up or not running.
-    if (!trip.currentSceneName) {
-      const firstSceneName = SceneCore.getStartingSceneName(
-        objs.script.content, actionContext);
-      if (firstSceneName) {
-        actions.push({
-          orgId: objs.trip.orgId,
-          tripId: objs.trip.id,
-          type: 'action',
-          name: 'start_scene',
-          params: { scene_name: firstSceneName },
-          triggerName: '',
-          createdAt: now,
-          scheduledAt: now
-        });
-      }
-    }
 
     for (let action of actions) {
       logger.info({ action: action },

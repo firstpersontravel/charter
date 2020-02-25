@@ -117,7 +117,7 @@ export default function GroupAll({ children, group,
           `/operate/${group.id}` +
           `/trip/${trip.id}`
         ),
-        text: `${trip.departureName} ${trip.title}`,
+        text: `${trip.departureName} ${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
         label: (
           <span>
             {trip.departureName} {trip.title}

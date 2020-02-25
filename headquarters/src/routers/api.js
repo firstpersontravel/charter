@@ -47,22 +47,24 @@ function createModelRouter(model, opts={}) {
 }
 
 // REST API routers for Organization-filtered models
-const orgOpts = { requireFilters: ['orgId'] };
-apiRouter.use('/experiences', createModelRouter(models.Experience, orgOpts));
+const orgRecordOpts = { requireFilters: ['orgId'] };
+apiRouter.use('/experiences', createModelRouter(models.Experience,
+  orgRecordOpts));
 
-const expOpts = { requireFilters: ['orgId', 'experienceId'] };
-apiRouter.use('/assets', createModelRouter(models.Asset, expOpts));
-apiRouter.use('/groups', createModelRouter(models.Group, expOpts));
-apiRouter.use('/profiles', createModelRouter(models.Profile, expOpts));
-apiRouter.use('/relays', createModelRouter(models.Relay, expOpts));
-apiRouter.use('/scripts', createModelRouter(models.Script, expOpts));
-apiRouter.use('/trips', createModelRouter(models.Trip, expOpts));
+const expRecordOpts = { requireFilters: ['orgId', 'experienceId'] };
+apiRouter.use('/assets', createModelRouter(models.Asset, expRecordOpts));
+apiRouter.use('/groups', createModelRouter(models.Group, expRecordOpts));
+apiRouter.use('/profiles', createModelRouter(models.Profile, expRecordOpts));
+apiRouter.use('/relays', createModelRouter(models.Relay, expRecordOpts));
+apiRouter.use('/scripts', createModelRouter(models.Script, expRecordOpts));
+apiRouter.use('/trips', createModelRouter(models.Trip, expRecordOpts));
 
-const tripOpts = { requireFilters: ['orgId', 'tripId'] };
-apiRouter.use('/actions', createModelRouter(models.Action, tripOpts));
-apiRouter.use('/log-entries', createModelRouter(models.LogEntry, tripOpts));
-apiRouter.use('/messages', createModelRouter(models.Message, tripOpts));
-apiRouter.use('/players', createModelRouter(models.Player, tripOpts));
+const tripRecordOpts = { requireFilters: ['orgId', 'tripId'] };
+apiRouter.use('/actions', createModelRouter(models.Action, tripRecordOpts));
+apiRouter.use('/messages', createModelRouter(models.Message, tripRecordOpts));
+apiRouter.use('/players', createModelRouter(models.Player, tripRecordOpts));
+apiRouter.use('/log-entries', createModelRouter(models.LogEntry,
+  tripRecordOpts));
 
 
 // And for users, which are shared

@@ -114,9 +114,11 @@ export default class GroupOverview extends Component {
 
   renderAllPlayers() {
     const group = this.props.group;
-    const trips = group.trips.map(trip => (
-      this.renderTrip(trip)
-    ));
+    const trips = group.trips
+      .filter(trip => !trip.isArchived)
+      .map(trip => (
+        this.renderTrip(trip)
+      ));
     const allPlayers = sortPlayers(group);
     const players = allPlayers.playersByTrip.map(p => (
       this.renderTripAndPlayers(p)

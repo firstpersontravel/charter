@@ -158,7 +158,8 @@ export default class GroupPlayers extends Component {
   }
 
   render() {
-    const trips = this.props.group.trips;
+    const trips = this.props.group.trips
+      .filter(trip => !trip.isArchived);
     const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
     const roleRows = this.renderRoleRows(trips);
     return (

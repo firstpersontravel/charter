@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 const Kernel = require('../../../fptcore/src/kernel/kernel');
 
 const config = require('../config');
+const ActionController = require('../controllers/action');
 const KernelOpController = require('./op');
 const KernelUtil = require('./util');
 const models = require('../models');
@@ -29,36 +30,6 @@ class KernelController {
     const actionContext = KernelUtil.prepareActionContext(objs, evaluateAt);
     return Kernel.resultForTrigger(trigger, null, actionContext,
       actionContext);
-  }
-  
-  static async _scheduleAction(orgId, tripId, action) {
-    const scheduleAtLocal = moment(action.scheduleAt)
-      .utc()
-      .clone()
-      .tz('US/Pacific')
-      .format('h:mm:ssa z');
-    logger.info(action.params,
-      `Scheduling ${action.name} for ${scheduleAtLocal}.`);
-    const fields = {
-      orgId: orgId,
-      tripId: tripId,
-      type: 'action',
-      name: action.name,
-      params: action.params,
-      triggerName: action.triggerName || '',
-      event: action.event || null,
-      createdAt: moment.utc().toDate(),
-      scheduledAt: action.scheduleAt,
-      appliedAt: null,
-      failedAt: null
-    };
-    return await models.Action.create(fields);
-  }
-
-  static async _scheduleActions(orgId, tripId, actions) {
-    for (const action of actions) {
-      await this._scheduleAction(orgId, tripId, action);
-    }
   }
 
   // Handle events with scopes beyond this specific trip in a special
@@ -96,8 +67,9 @@ class KernelController {
 
   static async _applyResult(objs, result) {
     await this._applyOps(objs, result.resultOps);
-    await this._scheduleActions(objs.trip.orgId, objs.trip.id,
-      result.scheduledActions);
+    for (const action of result.scheduledActions) {
+      await ActionController.scheduleAction(objs.trip, action);
+    }
   }
 
   /**

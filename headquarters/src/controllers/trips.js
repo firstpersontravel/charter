@@ -34,8 +34,6 @@ class TripsController {
     const initialFields = TripCore.getInitialFields(
       group.script.content, group.date,
       group.experience.timezone, variantNames);
-    const scenes = group.script.content.scenes || [];
-    const firstScene = scenes[0] || { name: '' };
     const tripFields = Object.assign({
       createdAt: moment.utc(),
       updatedAt: moment.utc(),
@@ -45,16 +43,19 @@ class TripsController {
       scriptId: group.script.id,
       date: group.date,
       title: title,
-      currentSceneName: firstScene.name,
+      currentSceneName: '',
       departureName: departureName,
       variantNames: variantNames.join(','),
       history: {}
     }, initialFields);
+
+    // Create trip on first scene
     const trip = await models.Trip.create(tripFields);
     const roles = group.script.content.roles || [];
     for (let role of roles) {
       await this._createPlayer(group.script.content, trip, role, variantNames);
     }
+
     return trip;
   }
 }

@@ -5,6 +5,7 @@ const TripCore = require('../../../fptcore/src/cores/trip');
 const PlayerCore = require('../../../fptcore/src/cores/player');
 
 const NotifyController = require('../controllers/notify');
+const Kernel = require('../kernel/kernel');
 const KernelUtil = require('../kernel/util');
 const models = require('../models');
 
@@ -17,18 +18,31 @@ class TripResetHandler {
     const variants = trip.variantNames.split(',');
     const resetFields = TripCore.getInitialFields(script.content,
       trip.date, timezone, variants);
-    const resetSceneName = checkpoint.scene || script.content.scenes[0].name;
+
+    const firstSceneName = ((script.content.scenes || [])[0] || {}).name;
+    const resetSceneName = checkpoint.scene || firstSceneName;
 
     // Update values with checkpoint
     _.merge(resetFields.values, checkpoint.values);
 
-    // Update!
-    return await trip.update({
-      currentSceneName: resetSceneName,
+    // Update trip vars
+    await trip.update({
+      currentSceneName: '',
       schedule: resetFields.schedule,
       values: resetFields.values,
       history: {}
     });
+
+    // And reset to new scene.
+    if (resetSceneName) {
+      const startSceneAction = {
+        name: 'start_scene',
+        params: { scene_name: resetSceneName }
+      };
+      await Kernel.applyAction(trip.id, startSceneAction);
+    }
+
+    return trip;
   }
 
   /**
@@ -46,16 +60,14 @@ class TripResetHandler {
 
     // Reset user location
     await player.update(fields);
-    const user = await player.getUser();
-    if (!user) {
-      return;
+    if (player.user) {
+      await player.user.update({
+        locationLatitude: null,
+        locationLongitude: null,
+        locationAccuracy: null,
+        locationTimestamp: null
+      });
     }
-    return await user.update({
-      locationLatitude: null,
-      locationLongitude: null,
-      locationAccuracy: null,
-      locationTimestamp: null
-    });
   }
 
   /**
@@ -70,7 +82,10 @@ class TripResetHandler {
       ]
     });
     const actionContext = await KernelUtil.getActionContext(tripId);
-    const players = await models.Player.findAll({ where: { tripId: tripId } });
+    const players = await models.Player.findAll({
+      where: { tripId: tripId },
+      include: [{ model: models.User, as: 'user' }]
+    });
     // Create hardcoded default 'start' checkpoint
     const startingScene = SceneCore.getStartingSceneName(trip.script.content,
       actionContext);
@@ -89,6 +104,10 @@ class TripResetHandler {
     await models.Message.destroy({ where: { tripId: tripId }});
     // Notify
     await NotifyController.notify(tripId, 'reload');
+  }
+
+  static async resetToStart(tripId) {
+    await this.resetToCheckpoint(tripId, '__start');
   }
 }
 

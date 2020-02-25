@@ -1,6 +1,7 @@
 const config = require('../config');
 const RelayController = require('../controllers/relay');
 const TrailheadController = require('../controllers/trailhead');
+const TripResetHandler = require('./trip_reset');
 
 var logger = config.logger.child({ name: 'handlers.twilio_util' });
 
@@ -22,6 +23,11 @@ class TwilioUtil {
     // If no player, and it's a trailhead, then we need to create a new trip.
     const trip = await TrailheadController.createTripFromRelay(relay, 
       userPhoneNumber);
+
+    // If we created a trip, reset it to the start to initiate starting 
+    // actions like start scene
+    await TripResetHandler.resetToStart(trip.id);
+
     // Just return the id.
     return trip.id;
   }

@@ -4,6 +4,7 @@ const moment = require('moment');
 const ScriptCore = require('../../fptcore/src/cores/script');
 
 const TripsController = require('../src/controllers/trips');
+const TripResetHandler = require('../src/handlers/trip_reset');
 const models = require('../src/models');
 
 const dummyOrgFields = {
@@ -108,8 +109,11 @@ async function createDummyGroupForScript(script) {
 async function createDummyTripForScript(script, variantNames) {
   const group = await createDummyGroupForScript(script);
   const departureName = _.get(script, 'content.departures[0].name') || '';
-  return await TripsController.createTrip(
+  const trip = await TripsController.createTrip(
     group.id, 'test', departureName, variantNames || []);
+  // Start to get to right scene.
+  await TripResetHandler.resetToStart(trip.id);
+  return trip;
 }
 
 const TestUtil = {

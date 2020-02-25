@@ -6,7 +6,7 @@ import {
   bulkUpdate,
   createInstance,
   updateInstance,
-  createInstances,
+  createTrip,
   listCollection
 } from '../../actions';
 import { lookupGroup } from './utils';
@@ -25,7 +25,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
   bulkUpdate: (...args) => dispatch(bulkUpdate(...args)),
-  createInstances: (...args) => dispatch(createInstances(...args)),
+  createTrip: (...args) => dispatch(createTrip(...args)),
   createInstance: (...args) => dispatch(createInstance(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args)),
   listCollection: (...args) => dispatch(listCollection(...args))

@@ -377,18 +377,33 @@ export function updateRelays(orgId, experienceId) {
 }
 
 export function createInstances(collection, fields, nextItems) {
+  let firstCreatedItem;
   const nextItemsArray = nextItems || [];
   return function (dispatch) {
-    createInstance(collection, fields)(dispatch)
-      .then(createdItem => (
-        Promise.all(nextItemsArray, nextItemsArray.map((next) => {
-          const insertions = _.mapValues(next.insertions, (val, key) => (
-            createdItem[val]
-          ));
-          const nextFields = Object.assign({}, next.fields, insertions);
-          return createInstances(next.collection, nextFields,
-            next.nextItems)(dispatch);
-        }))
+    return createInstance(collection, fields)(dispatch)
+      .then((createdItem) => {
+        firstCreatedItem = createdItem;
+        return Promise
+          .all(nextItemsArray, nextItemsArray.map((next) => {
+            const insertions = _.mapValues(next.insertions, (val, key) => (
+              createdItem[val]
+            ));
+            const nextFields = Object.assign({}, next.fields, insertions);
+            return createInstances(next.collection, nextFields,
+              next.nextItems)(dispatch);
+          }));
+      })
+      .then(() => firstCreatedItem)
+      .catch(processError);
+  };
+}
+
+export function createTrip(fields, nextItems) {
+  return function (dispatch) {
+    createInstances('trips', fields, nextItems)(dispatch)
+      .then(trip => (
+        postAdminAction(trip.orgId, trip.experienceId, trip.id,
+          'reset', { checkpoint_name: '__start' })(dispatch)
       ))
       .catch(processError);
   };

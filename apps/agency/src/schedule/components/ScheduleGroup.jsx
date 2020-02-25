@@ -157,7 +157,7 @@ class ScheduleGroup extends Component {
 
   initializeTrip(group, tripFields) {
     const roles = group.script.content.roles;
-    this.props.createInstances('trips', tripFields, roles.map(role => ({
+    this.props.createTrip(tripFields, roles.map(role => ({
       collection: 'players',
       fields: this.initialFieldsForRole(group.experience, group.script,
         role, tripFields.departureName, tripFields.variantNames.split(',')),
@@ -331,7 +331,7 @@ ScheduleGroup.propTypes = {
   group: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
-  createInstances: PropTypes.func.isRequired,
+  createTrip: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   bulkUpdate: PropTypes.func.isRequired
 };
