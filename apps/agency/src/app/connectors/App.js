@@ -4,7 +4,10 @@ import App from '../components/App';
 import { fetchAuthInfo } from '../../actions';
 
 const mapStateToProps = state => ({
-  hasError: Object.keys(state.requestErrors).length > 0
+  hasError: Object
+    .keys(state.requestErrors)
+    .filter(key => !key.startsWith('auth.'))
+    .length > 0
 });
 
 const mapDispatchToProps = dispatch => ({

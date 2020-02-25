@@ -7,6 +7,7 @@ const authRouter = express.Router();
 
 authRouter.post('/login', asyncRoute(authRoutes.loginRoute));
 authRouter.post('/logout', asyncRoute(authRoutes.logoutRoute));
+authRouter.post('/signup', asyncRoute(authRoutes.signupRoute));
 authRouter.get('/info', asyncRoute(authRoutes.infoRoute));
 
 module.exports = authRouter;

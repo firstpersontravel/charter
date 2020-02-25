@@ -173,9 +173,17 @@ export function makeAuthRequest(url, params, name) {
           dispatch(saveInstances('auth', [{ id: 'latest', data: null }]));
           return null;
         }
+        // Signup failure
+        if (response.status === 422) {
+          return response.json()
+            .then((data) => {
+              dispatch(saveRequest(reqName, 'rejected', data.error));
+              return null;
+            });
+        }
         // Other network error
         if (response.status !== 200) {
-          dispatch(saveRequest(reqName, 'rejected', null));
+          dispatch(saveRequest(reqName, 'rejected', 'Network error'));
           return null;
         }
         // Login success
@@ -200,6 +208,19 @@ export function login(email, password) {
     body: JSON.stringify({ email: email, password: password })
   };
   return makeAuthRequest('/auth/login', params, 'login');
+}
+
+export function signup(email, password, orgTitle) {
+  const params = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+      orgTitle: orgTitle
+    })
+  };
+  return makeAuthRequest('/auth/signup', params, 'signup');
 }
 
 export function logout() {

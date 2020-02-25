@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import { getStage } from '../utils';
 
-const globalTitle = 'FPT Quill';
+const globalTitle = 'FPT Experience Editor';
 
 function titleForOrg(org) {
   return org.isPersonal ? 'Home' : org.title;

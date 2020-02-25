@@ -2,45 +2,52 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import PropTypes from 'prop-types';
 
-export default class PublicLogin extends Component {
+export default class PublicSignup extends Component {
   constructor(props) {
     super(props);
-    this.state = { email: '', password: '' };
+    this.state = { email: '', password: '', orgTitle: '' };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   canSubmit() {
-    if (!this.state.email || !this.state.password) {
+    if (!this.state.email || !this.state.password || !this.state.orgTitle) {
       return false;
     }
-    if (this.isLoggingIn()) {
+    if (this.isSigningUp()) {
       return false;
     }
     return true;
   }
 
-  isLoggingIn() {
-    return this.props.loginRequest === 'pending';
+  isSigningUp() {
+    return this.props.signupRequest === 'pending';
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.login(this.state.email, this.state.password);
+    this.props.signup(this.state.email, this.state.password,
+      this.state.orgTitle);
   }
 
-  renderLoginErrorAlert() {
-    if (this.props.loginRequest === 'rejected') {
+  renderSignupErrorAlert() {
+    if (this.props.signupRequest === 'rejected') {
+      const defaultErrorMsg = 'There was an error while trying to sign up.';
+      const errorMsg = this.props.signupError || defaultErrorMsg;
+      const includeLink = !!this.props.signupError;
+      const loginLink = includeLink ?
+        <Link to="/login" className="pl-1">Log in?</Link> :
+        null;
       return (
         <div className="alert alert-danger" role="alert">
-          There was an error while trying to log in.
+          {errorMsg}{loginLink}
         </div>
       );
     }
     return null;
   }
 
-  renderLoginFailedAlert() {
-    if (this.props.loginRequest === 'fulfilled' && !this.props.authInfo) {
+  renderSignupFailedAlert() {
+    if (this.props.signupRequest === 'fulfilled' && !this.props.authInfo) {
       return (
         <div className="alert alert-warning" role="alert">
           That email and password was incorrect.
@@ -56,39 +63,52 @@ export default class PublicLogin extends Component {
         <div className="col-md-6 offset-md-3">
           <h1>Welcome to First Person Travel!</h1>
           <p>
-            If you have an account, please sign in here. Otherwise you can <Link to="/signup">create an account.</Link>
+            You can create an account here. If you already have an account, <Link to="/login">please log in.</Link>
           </p>
-          {this.renderLoginErrorAlert()}
-          {this.renderLoginFailedAlert()}
+          {this.renderSignupErrorAlert()}
+          {this.renderSignupFailedAlert()}
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
-              <label htmlFor="exampleInputEmail1">Email address</label>
+              <label htmlFor="emailInput">Email address</label>
               <input
                 type="email"
                 name="email"
                 className="form-control"
-                id="exampleInputEmail1"
+                id="emailInput"
                 value={this.state.email}
                 onChange={e => this.setState({ email: e.target.value })}
                 placeholder="Enter email" />
             </div>
             <div className="form-group">
-              <label htmlFor="exampleInputPassword1">Password</label>
+              <label htmlFor="pwInput">Password</label>
               <input
                 type="password"
                 name="password"
                 className="form-control"
-                id="exampleInputPassword1"
+                id="pwInput"
                 value={this.state.password}
                 onChange={e => this.setState({ password: e.target.value })}
                 placeholder="Password" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="orgNameInput">
+                Workspace name (this could be a company or group name, or just your name)
+              </label>
+              <input
+                type="text"
+                name="orgTitle"
+                className="form-control"
+                id="orgNameInput"
+                value={this.state.orgTitle}
+                onChange={e => this.setState({ orgTitle: e.target.value })}
+                placeholder="Enter a name for your workspace" />
             </div>
             <button
               type="submit"
               disabled={!this.canSubmit()}
               onClick={this.handleSubmit}
               className="btn btn-primary">
-              {this.isLoggingIn() ? 'Logging in...' : 'Log in'}
+              {this.isSigningUp() ? 'Signing up...' : 'Sign up'}
             </button>
           </form>
           <p>Please remember that this is an experimental toolkit and very much a work-in-progress.
@@ -116,13 +136,15 @@ export default class PublicLogin extends Component {
   }
 }
 
-PublicLogin.propTypes = {
+PublicSignup.propTypes = {
   authInfo: PropTypes.object,
-  login: PropTypes.func.isRequired,
-  loginRequest: PropTypes.string
+  signup: PropTypes.func.isRequired,
+  signupRequest: PropTypes.string,
+  signupError: PropTypes.string
 };
 
-PublicLogin.defaultProps = {
+PublicSignup.defaultProps = {
   authInfo: null,
-  loginRequest: null
+  signupRequest: null,
+  signupError: null
 };
