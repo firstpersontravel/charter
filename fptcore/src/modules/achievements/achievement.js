@@ -17,7 +17,6 @@ module.exports = {
     test: {
       type: 'component',
       component: 'conditions',
-      required: true,
       help: 'The value to test for to determine if this achievement has been activated.'
     },
     titles: {

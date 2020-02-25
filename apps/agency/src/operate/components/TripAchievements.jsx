@@ -3,17 +3,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import yaml from 'js-yaml';
 
-import { Evaluator, TemplateUtil, TextUtil, Registry } from 'fptcore';
+import { Evaluator, TemplateUtil, Registry } from 'fptcore';
 
 const evaluator = new Evaluator(Registry);
 
 function renderCompletedAchievementStatus(trip, achievement) {
-  if (achievement.type === 'choice') {
+  console.log('achievement', achievement, trip.evalContext);
+  if (achievement.style === 'choice') {
     const value = TemplateUtil.lookupRef(trip.evalContext, achievement.test);
     const statusTitle = achievement.titles[value];
     return statusTitle || 'Unknown value';
   }
-  if (achievement.type === 'completion') {
+  if (achievement.style === 'completion') {
     const isPassed = evaluator.if(trip.actionContext, achievement.test);
     const statusClass = isPassed ? 'text-success' : 'text-danger';
     const statusTitle = (
@@ -41,7 +42,7 @@ function renderAchievement(trip, achievement) {
   const inProgress = isInProgress ? ' (scene in progress)' : '';
   return (
     <div key={achievement.name} className={achievementClass}>
-      <strong>{TextUtil.titleForTypedKey(achievement.name)}:</strong>
+      <strong>{achievement.title}:</strong>
       &nbsp;{status}{inProgress}
     </div>
   );
