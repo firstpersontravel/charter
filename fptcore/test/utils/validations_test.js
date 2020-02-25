@@ -228,12 +228,6 @@ describe('Validations', () => {
         'Media param "s" should be a string.');
     });
 
-    it('warns if not valid extension', () => {
-      const spec = { extensions: ['mp4', 'jpg'] };
-      err(Validations.media({}, 's', spec, 'gabe.mp3'),
-        'Media param "s" should have one of the following extensions: mp4, jpg.');
-    });
-
     it('warns if required and blank', () => {
       ok(Validations.media({}, 's', { required: true }, 'val'));
       err(Validations.media({}, 's', { required: true }, ''),

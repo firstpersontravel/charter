@@ -139,8 +139,7 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays a video.',
     properties: {
-      path: { type: 'media', medium: 'video', required: true },
-      poster: { type: 'media', medium: 'image' }
+      path: { type: 'media', medium: 'video', required: true }
     }
   },
   yesno: {

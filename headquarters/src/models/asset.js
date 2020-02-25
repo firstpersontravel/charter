@@ -56,17 +56,13 @@ const DIRECTIONS_SCHEMA = {
   additionalProperties: false
 };
 
-const ALLOWED_EXTENSIONS = {
-  audio: ['mp3', 'm4a'],
-  video: ['mp4'],
-  image: ['jpg', 'jpeg', 'png']
-};
+const MEDIUMS = ['audio', 'video', 'image'];
 
 // Schema for media assets
 const MEDIA_SCHEMA = {
   type: 'object',
   properties: {
-    medium: { enum: Object.keys(ALLOWED_EXTENSIONS) },
+    medium: { enum: MEDIUMS },
     path: STRING_SCHEMA,
     url: STRING_SCHEMA
   },
@@ -77,17 +73,6 @@ const MEDIA_SCHEMA = {
 const ASSET_DATA_SCHEMAS = {
   directions: DIRECTIONS_SCHEMA,
   media: MEDIA_SCHEMA
-};
-
-const ASSET_DATA_VALIDATORS = {
-  media: (data) => {
-    const components = data.path.split('.');
-    const ext = components[components.length - 1].toLowerCase();
-    const mediumExts = ALLOWED_EXTENSIONS[data.medium];
-    if (!_.includes(mediumExts, ext)) {
-      throw new ValidationError(`data.path for ${data.medium} must have one of the following extensions: ${mediumExts.join(', ')}`);
-    }
-  }
 };
 
 function assetValidator(type) {
@@ -106,9 +91,6 @@ function assetValidator(type) {
         .map(e => `${e.property} ${e.message}`)
         .join('; ');
       throw new ValidationError(errorMessages, result.errors);
-    }
-    if (ASSET_DATA_VALIDATORS[this.type]) {
-      ASSET_DATA_VALIDATORS[this.type](dataObj);
     }
   };
 }

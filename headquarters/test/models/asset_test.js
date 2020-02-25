@@ -114,10 +114,13 @@ describe('Asset', () => {
   });
 
   describe('media', () => {
-    it('validates with correct extension', async () => {
+    it('validates with or without extension', async () => {
       await createMediaAsset('audio', 'a/b/c.mp3').validate();
+      await createMediaAsset('audio', 'a/b/c').validate();
       await createMediaAsset('video', 'a/b/c.MP4').validate();
+      await createMediaAsset('video', 'a/b/c.abc').validate();
       await createMediaAsset('image', 'a/b/c.jpEg').validate();
+      await createMediaAsset('image', 'a/b/c.img').validate();
     });
 
     it('requires valid medium', async () => {
@@ -141,18 +144,6 @@ describe('Asset', () => {
       mediaAsset.data = { path: 'abc.mp4', url: null, medium: 'video' };
       await assertValidation(mediaAsset, {
         media: 'data.url is not of a type(s) string'
-      });
-    });
-
-    it('disallows incorrect extension', async () => {
-      await assertValidation(createMediaAsset('audio', 'a/b/c.mp4'), {
-        media: 'data.path for audio must have one of the following extensions: mp3, m4a'
-      });
-      await assertValidation(createMediaAsset('video', 'a/b/c.abc'), {
-        media: 'data.path for video must have one of the following extensions: mp4'
-      });
-      await assertValidation(createMediaAsset('image', 'a/b/c.mp4'), {
-        media: 'data.path for image must have one of the following extensions: jpg, jpeg, png'
       });
     });
   });

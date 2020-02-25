@@ -103,15 +103,6 @@ class Validations {
     if (spec.required && !param) {
       return ['Media param "' + name + '" should not be blank.'];
     }
-    // TODO: validate URL or media path
-    if (spec.extensions) {
-      const matchesExtension = _.some(spec.extensions, function(ext) {
-        return _.endsWith(param, '.' + ext);
-      });
-      if (!matchesExtension) {
-        return ['Media param "' + name + '" should have one of the following extensions: ' + spec.extensions.join(', ') + '.'];
-      }
-    }
   }
 
   static coords(script, name, spec, param) {

@@ -21,7 +21,7 @@ function BaseEmpty({ spec }) {
   const nullText = nullIsNone ? 'None' : 'Empty';
   let label = _.get(spec, 'display.placeholder') || nullText;
   if (spec.type === 'media') {
-    label = 'Enter a path (i.e. "sound.mp3", "img.jpg"). Save, then upload content.';
+    label = 'Name your media, then you can upload it.';
   } else if (doesSpecHaveDefault(spec)) {
     label = `${stringOrYesNo(defaultForSpec(spec))} by default`;
   }
