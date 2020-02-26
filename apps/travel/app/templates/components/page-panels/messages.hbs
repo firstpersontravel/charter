@@ -26,7 +26,7 @@
 {{#if canSend}}
   <div class='message-send'>
     <div class='image-upload-container'></div>
-    <form enctype="multipart/form-data" class="pure-form pure-g">
+    <form enctype="multipart/form-data" class="pure-g">
       {{#if canInitiateCalls}}
         <a class="pure-button pure-button-primary pure-u-1-12"
           href="{{callUrl}}">
@@ -47,7 +47,7 @@
         </a>
       {{/if}}
       {{input
-        class="pure-u-2-3"
+        class="pure-u-2-3 message-input"
         value=messageInput
         enter="sendMessage"
         placeholder=placeholder
