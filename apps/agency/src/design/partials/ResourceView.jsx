@@ -28,6 +28,7 @@ export default class ResourceView extends Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleRevertChanges = this.handleRevertChanges.bind(this);
     this.handlePropertyUpdate = this.handlePropertyUpdate.bind(this);
+    this.handleDuplicate = this.handleDuplicate.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -59,6 +60,10 @@ export default class ResourceView extends Component {
       pendingResource: _.cloneDeep(this.props.resource),
       errors: null
     });
+  }
+
+  handleDuplicate() {
+    this.props.onDuplicate();
   }
 
   handleDelete() {
@@ -105,6 +110,15 @@ export default class ResourceView extends Component {
     const hasUnsavableChanges = this.state.hasUnsavableChanges;
     const canDelete = this.props.canDelete && !hasUnsavableChanges;
 
+    const duplicateBtn = (
+      <button
+        className="btn btn-sm btn-outline-secondary mr-1"
+        onClick={(this.handleDuplicate)}>
+        <i className="fa fa-copy" />&nbsp;
+        Duplicate
+      </button>
+    );
+
     const deleteBtnClass = `btn btn-sm btn-outline-secondary ${canDelete ? '' : 'disabled'}`;
     const deleteBtn = (
       <button
@@ -138,6 +152,7 @@ export default class ResourceView extends Component {
       <h5 className="card-header">
         <div style={{ float: 'right' }}>
           {isNew ? cancelBtn : null}
+          {!hasUnsavableChanges && !isNew ? duplicateBtn : null}
           {(hasUnsavableChanges && !isNew) ? revertBtn : null}
           {(!hasUnsavableChanges && !isNew) ? deleteBtn : null}
         </div>
@@ -255,7 +270,8 @@ ResourceView.propTypes = {
   resource: PropTypes.object.isRequired,
   canDelete: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
-  onUpdate: PropTypes.func.isRequired
+  onUpdate: PropTypes.func.isRequired,
+  onDuplicate: PropTypes.func.isRequired
 };
 
 ResourceView.defaultProps = {

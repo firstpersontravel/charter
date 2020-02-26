@@ -42,8 +42,10 @@ export default class ResourceShow extends Component {
     super(props);
     this.handleUpdateMainResource = this.handleUpdateMainResource.bind(this);
     this.handleDeleteMainResource = this.handleDeleteMainResource.bind(this);
+    this.handleDupeMainResource = this.handleDupeMainResource.bind(this);
     this.handleUpdateChildResource = this.handleUpdateChildResource.bind(this);
     this.handleDeleteChildResource = this.handleDeleteChildResource.bind(this);
+    this.handleDupeChildResource = this.handleDupeChildResource.bind(this);
     this.handleUpdateScript = this.handleUpdateScript.bind(this);
     this.state = {
       expandedChildStr: null,
@@ -176,6 +178,18 @@ export default class ResourceShow extends Component {
       this.isNewMainResource());
   }
 
+  handleDupeMainResource() {
+    const collectionName = this.props.params.collectionName;
+    const resourceType = TextUtil.singularize(collectionName);
+    const existingResource = this.getMainResource();
+    const newName = newResourceNameForType(resourceType);
+    const newResource = Object.assign({}, existingResource, { name: newName });
+    const newScriptContent = this.getScriptContentWithUpdatedResource(
+      collectionName, newResource.name, newResource);
+    this.handleUpdateScript(newScriptContent,
+      `${this.props.params.collectionName}/${newName}`, true);
+  }
+
   handleDeleteMainResource() {
     // If we're deleting a new resource, just redirect to the main slice page.
     if (this.isNewMainResource()) {
@@ -227,6 +241,20 @@ export default class ResourceShow extends Component {
     this.handleUpdateScript(newScriptContent,
       `${this.props.params.collectionName}/${this.props.params.resourceName}`,
       false);
+  }
+
+  handleDupeChildResource(collectionName, resourceName) {
+    const resourceType = TextUtil.singularize(collectionName);
+    const collection = this.props.script.content[collectionName];
+    const existingResource = _.find(collection, { name: resourceName });
+    const newName = newResourceNameForType(resourceType);
+    const newResource = Object.assign({}, existingResource, { name: newName });
+    const newScriptContent = this.getScriptContentWithUpdatedResource(
+      collectionName, newResource.name, newResource);
+    this.handleUpdateScript(newScriptContent,
+      `${this.props.params.collectionName}/${this.props.params.resourceName}`,
+      false);
+    this.setState({ expandedChildStr: `${collectionName}.${newName}` });
   }
 
   handleUpdateScript(newScriptContent, redirectToResource, forceRedirect) {
@@ -281,7 +309,8 @@ export default class ResourceShow extends Component {
         createInstance={this.props.createInstance}
         updateInstance={this.props.updateInstance}
         onUpdate={this.handleUpdateMainResource}
-        onDelete={this.handleDeleteMainResource} />
+        onDelete={this.handleDeleteMainResource}
+        onDuplicate={this.handleDupeMainResource} />
     );
   }
 
@@ -316,6 +345,8 @@ export default class ResourceShow extends Component {
         onUpdate={updatedResource => this.handleUpdateChildResource(
           collectionName, updatedResource)}
         onDelete={() => this.handleDeleteChildResource(
+          collectionName, childResource.name)}
+        onDuplicate={() => this.handleDupeChildResource(
           collectionName, childResource.name)} />
     );
   }

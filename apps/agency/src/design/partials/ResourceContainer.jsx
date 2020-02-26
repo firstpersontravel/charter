@@ -24,7 +24,8 @@ export default class ResourceContainer extends Component {
         resource={this.props.resource}
         canDelete={canDelete}
         onDelete={this.props.onDelete}
-        onUpdate={this.props.onUpdate} />
+        onUpdate={this.props.onUpdate}
+        onDuplicate={this.props.onDuplicate} />
     );
   }
 
@@ -83,6 +84,7 @@ ResourceContainer.propTypes = {
   canDelete: PropTypes.bool.isRequired,
   onUpdate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  onDuplicate: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };
