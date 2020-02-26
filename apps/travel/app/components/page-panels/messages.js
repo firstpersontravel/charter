@@ -105,13 +105,13 @@ export default Ember.Component.extend({
   canSendTexts: function() {
     const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
     const hackValueName = `${lowerRoleName}_can_receive_texts`;
-    return !!this.get(`trip.values.${hackValueName}`);
+    return this.get(`trip.values.${hackValueName}`) !== false;
   }.property('trip.values'),
 
   canSendImages: function() {
     const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
     const hackValueName = `${lowerRoleName}_can_receive_images`;
-    return !!this.get(`trip.values.${hackValueName}`);
+    return this.get(`trip.values.${hackValueName}`) !== false;
   }.property('trip.values'),
 
   canInitiateCalls: function() {
@@ -120,7 +120,7 @@ export default Ember.Component.extend({
     }
     const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
     const hackValueName = `${lowerRoleName}_can_receive_calls`;
-    return !!this.get(`trip.values.${hackValueName}`);
+    return this.get(`trip.values.${hackValueName}`) !== false;
   }.property('trip.values', 'callUrl'),
 
   canSend: function() {
