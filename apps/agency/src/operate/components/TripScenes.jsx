@@ -26,14 +26,6 @@ export default class TripScenes extends Component {
 
   handleAction(actionName, actionParams) {
     const trip = this.props.trip;
-    const shouldConfirm = isProduction();
-    if (shouldConfirm) {
-      const confirmText = `Are you sure you want to apply the "${actionName}" action on ${trip.experience.title} ${trip.departureName} "${trip.title}"?`;
-      // eslint-disable-next-line no-alert
-      if (!confirm(confirmText)) {
-        return;
-      }
-    }
     this.props.postAction(trip.orgId, trip.experienceId, trip.id, actionName,
       actionParams);
   }

@@ -100,7 +100,7 @@ export default function Preview({ player, page }) {
     headerPanel = (
       <div className="card-header">
         <strong>
-          {trip.departureName} {trip.title}{tripArchivedLabel} as {player.roleName}
+          {trip.departureName} {trip.title}{tripArchivedLabel} as {player.role.title}
         </strong>
         &nbsp;
         {headerText}
