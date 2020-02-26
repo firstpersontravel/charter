@@ -119,7 +119,7 @@ export default Ember.Component.extend({
   }.property('trip.values'),
 
   canInitiateCalls: function() {
-    if (this.get('callUrl') === '') {
+    if (!this.get('callUrl')) {
       return false;
     }
     const roleTitle = this.get('withPlayer.role.title');

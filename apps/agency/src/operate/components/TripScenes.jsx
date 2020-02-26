@@ -39,15 +39,17 @@ export default class TripScenes extends Component {
     const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
     const panelText = TemplateUtil.templateText(trip.evalContext, panel.text || '',
       trip.experience.timezone);
-    const activeCueTitle = panel.type === 'button' ?
-      panelText : `Cue ${panel.cue}`;
+    const cueName = panel.cue;
+    const cue = _.find(trip.script.content.cues, { name: cueName });
+    const isButton = panel.type === 'button';
+    const activeCueTitle = isButton ? panelText : `Cue ${cue.title}`;
     const inactiveCueTitle = (
       <span>
         <span style={{ textDecoration: 'line-through' }}>{panelText}</span>
         &nbsp;(waiting for scene &quot;{pageSceneTitle}&quot;)
       </span>
     );
-    const cueTitle = isCurrentScene ? activeCueTitle : inactiveCueTitle;
+    const cueBtnTitle = isCurrentScene ? activeCueTitle : inactiveCueTitle;
     return (
       <div key={panel.cue} className="mt-1">
         <button
@@ -57,7 +59,7 @@ export default class TripScenes extends Component {
             this.handleAction('signal_cue', { cue_name: panel.cue })
           )}
           className={`wrap-text btn btn-block btn-sm mt-1 ${btnClass}`}>
-          {cueTitle}
+          {cueBtnTitle}
         </button>
       </div>
     );
