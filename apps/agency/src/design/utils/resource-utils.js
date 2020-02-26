@@ -5,7 +5,7 @@ const defaultFnsBySpecType = {
 };
 
 export function doesSpecHaveDefault(spec) {
-  if (spec.default) {
+  if (spec.default !== undefined) {
     return true;
   }
   if (defaultFnsBySpecType[spec.type]) {
@@ -18,7 +18,7 @@ export function defaultForSpec(spec) {
   if (_.isFunction(spec.default)) {
     return spec.default();
   }
-  if (!_.isUndefined(spec.default)) {
+  if (spec.default !== undefined) {
     return spec.default;
   }
   if (defaultFnsBySpecType[spec.type]) {

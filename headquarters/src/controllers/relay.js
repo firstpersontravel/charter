@@ -23,6 +23,10 @@ class RelayController {
         isArchived: false
       },
       include: [{
+        model: models.Org,
+        as: 'org',
+        where: { id: relay.orgId }
+      }, {
         model: models.Experience,
         as: 'experience',
         where: { id: relay.experienceId }

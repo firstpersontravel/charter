@@ -9,6 +9,7 @@ module.exports = {
     type: {
       type: 'enum',
       options: LAYOUT_TYPE_OPTIONS,
+      default: 'simple',
       required: true,
       help: 'What type of layout to use. Currently just simple or tabs.'
     },

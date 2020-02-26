@@ -19,7 +19,7 @@ module.exports = {
     },
     path: {
       type: 'media',
-      display: { hidden: true },
+      default: '',
       medium: 'audio',
       help: 'Media path for an audio clip to play.'
     },

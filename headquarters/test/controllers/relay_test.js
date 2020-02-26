@@ -10,7 +10,7 @@ describe('RelayController', () => {
   describe('#scriptForRelay', () => {
     it('looks up active script for a script name', async () => {
       const stubScript = { name: 'abc', experience: {} };
-      const relay = { experienceId: 10 };
+      const relay = { experienceId: 10, orgId: 20 };
 
       sandbox.stub(models.Script, 'findOne').resolves(stubScript);
       const res = await RelayController.scriptForRelay(relay);
@@ -18,6 +18,10 @@ describe('RelayController', () => {
       sinon.assert.calledWith(models.Script.findOne, {
         where: { isActive: true, isArchived: false },
         include: [{
+          model: models.Org,
+          as: 'org',
+          where: { id: 20 }
+        }, {
           model: models.Experience,
           as: 'experience',
           where: { id: 10 }
