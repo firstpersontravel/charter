@@ -1,14 +1,10 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Registry, TextUtil } from 'fptcore';
 
 import PopoverControl from '../../../partials/PopoverControl';
-import {
-  defaultForSpec,
-  doesSpecHaveDefault
-} from '../../utils/resource-utils';
+import { defaultFieldsForSpecs } from '../../utils/resource-utils';
 
 function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
   const componentType = componentSpec.component;
@@ -34,14 +30,11 @@ function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
           return;
         }
         const variantClass = Registry[componentType][val];
-        const newComponent = _(variantClass.properties)
-          .keys()
-          .filter(key => doesSpecHaveDefault(variantClass.properties[key]))
-          .map(key => [key, defaultForSpec(variantClass.properties[key])])
-          .concat([[componentTypeKey, val]])
-          .fromPairs()
-          .value();
-        onPropUpdate(newPath, newComponent);
+        const propertiesKey = componentClass.propertiesKey;
+        const newComponentFields = Object.assign(
+          defaultFieldsForSpecs(variantClass[propertiesKey]),
+          { [componentTypeKey]: val });
+        onPropUpdate(newPath, newComponentFields);
       }}
       label={newComponentBtn}
       value={''}

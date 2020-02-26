@@ -13,10 +13,9 @@ const MEDIA_MIME_TYPES = {
 
 function extraMediaReferences(resourceType, resource) {
   const paths = [];
-  console.log('resource', resource);
   ScriptCore.walkResourceParams(resourceType, resource, 'media',
     (path, spec, parent, key) => {
-      const label = parent.type || key;
+      const label = parent.type || parent.name || key;
       paths.push({ path: path, label: label, medium: spec.medium });
     });
   return paths;

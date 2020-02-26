@@ -27,15 +27,19 @@ export function defaultForSpec(spec) {
   return null;
 }
 
-export function defaultFieldsForClass(resourceClass) {
+export function defaultFieldsForSpecs(specs) {
   const fields = {};
-  Object.keys(resourceClass.properties).forEach((key) => {
-    const spec = resourceClass.properties[key];
+  Object.keys(specs).forEach((key) => {
+    const spec = specs[key];
     if (doesSpecHaveDefault(spec)) {
       fields[key] = defaultForSpec(spec);
     }
   });
   return fields;
+}
+
+export function defaultFieldsForClass(resourceClass) {
+  return defaultFieldsForSpecs(resourceClass.properties);
 }
 
 // Characters for resource ids.
