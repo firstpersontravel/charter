@@ -12,8 +12,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   stateDidChange: function() {
     var tabName = this.get('state');
-    if (!this.get('visibleTabs').findBy('name', tabName)) {
-      tabName = this.get('visibleTabs')[0].name;
+    if (!this.get('visibleTabs').findBy('title', tabName)) {
+      tabName = this.get('visibleTabs')[0].title;
     }
     this.set('selectedTabName', tabName);
   }.observes('state').on('init'),
@@ -40,7 +40,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   selectedTab: function() {
     var tabName = this.get('selectedTabName');
-    var tab = this.get('visibleTabs').findBy('name', tabName);
+    var tab = this.get('visibleTabs').findBy('title', tabName);
     return tab || this.get('visibleTabs')[0];
   }.property('tabs', 'selectedTabName'),
 
