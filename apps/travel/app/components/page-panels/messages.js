@@ -2,6 +2,8 @@ import Ember from 'ember';
 import config from '../../config/environment';
 import guid from '../../utils/guid';
 
+import fptCore from 'fptcore';
+
 export default Ember.Component.extend({
 
   environment: Ember.inject.service(),
@@ -103,14 +105,16 @@ export default Ember.Component.extend({
   }.property('withName', 'canSendTexts'),
 
   canSendTexts: function() {
-    const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
-    const hackValueName = `${lowerRoleName}_can_receive_texts`;
+    const roleTitle = this.get('withPlayer.role.title');
+    const roleVar = fptCore.TextUtil.varForText(roleTitle);
+    const hackValueName = `${roleVar}_can_receive_texts`;
     return this.get(`trip.values.${hackValueName}`) !== false;
   }.property('trip.values'),
 
   canSendImages: function() {
-    const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
-    const hackValueName = `${lowerRoleName}_can_receive_images`;
+    const roleTitle = this.get('withPlayer.role.title');
+    const roleVar = fptCore.TextUtil.varForText(roleTitle);
+    const hackValueName = `${roleVar}_can_receive_images`;
     return this.get(`trip.values.${hackValueName}`) !== false;
   }.property('trip.values'),
 
@@ -118,8 +122,9 @@ export default Ember.Component.extend({
     if (this.get('callUrl') === '') {
       return false;
     }
-    const lowerRoleName = this.get('withPlayer.roleName').toLowerCase();
-    const hackValueName = `${lowerRoleName}_can_receive_calls`;
+    const roleTitle = this.get('withPlayer.role.title');
+    const roleVar = fptCore.TextUtil.varForText(roleTitle);
+    const hackValueName = `${roleVar}_can_receive_calls`;
     return this.get(`trip.values.${hackValueName}`) !== false;
   }.property('trip.values', 'callUrl'),
 

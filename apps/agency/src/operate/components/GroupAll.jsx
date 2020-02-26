@@ -23,6 +23,54 @@ function getAllPlayers(trips) {
     .value();
 }
 
+const archivedIcon = <i className="fa fa-archive ml-1" />;
+
+function renderTripItem(group, trip) {
+  return {
+    key: trip.id,
+    url: (
+      `/${group.org.name}/${group.experience.name}` +
+      `/operate/${group.id}` +
+      `/trip/${trip.id}`
+    ),
+    text: `${trip.departureName} ${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
+    label: (
+      <span>
+        {trip.departureName} {trip.title}
+        {trip.isArchived ? archivedIcon : null}
+      </span>
+    )
+  };
+}
+
+function renderTripsItem(group, currentTripId) {
+  if (!group.trips.length) {
+    return null;
+  }
+  if (group.trips.length === 1) {
+    return renderTripItem(group, group.trips[0]);
+  }
+  let tripTitle = 'Trips';
+  let tripLabel = 'Trips';
+  if (currentTripId) {
+    const trip = _.find(group.trips, { id: Number(currentTripId) });
+    if (trip) {
+      tripTitle = `Trip: ${trip.departureName} ${trip.title}`;
+      tripLabel = (
+        <span>{tripTitle}{trip.isArchived ? archivedIcon : null}</span>
+      );
+    }
+  }
+  return {
+    text: tripTitle,
+    label: tripLabel,
+    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
+    subItems: _(group.trips)
+      .map(trip => renderTripItem(group, trip))
+      .value()
+  };
+}
+
 export default function GroupAll({ children, group,
   numMessagesNeedingReply, nextUnappliedAction, params }) {
   // Error or loading cases should be handled by `Group`
@@ -47,18 +95,7 @@ export default function GroupAll({ children, group,
     roleTitle = `Role: ${role.title} (${userTitle})`;
   }
 
-  const archivedIcon = <i className="fa fa-archive ml-1" />;
-  let tripTitle = 'Trips';
-  let tripLabel = 'Trips';
-  if (params.tripId) {
-    const trip = _.find(group.trips, { id: Number(params.tripId) });
-    if (trip) {
-      tripTitle = `Trip: ${trip.departureName} ${trip.title}`;
-      tripLabel = (
-        <span>{tripTitle}{trip.isArchived ? archivedIcon : null}</span>
-      );
-    }
-  }
+  const tripsItem = renderTripsItem(group, params.tripId);
 
   const replyWarning = numMessagesNeedingReply > 0 ? (
     <span style={{ position: 'relative', top: '-2px' }} className="badge badge-warning mr-1">
@@ -105,28 +142,7 @@ export default function GroupAll({ children, group,
       ))
       .flatten()
       .value()
-  }, {
-    text: tripTitle,
-    label: tripLabel,
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
-    subItems: _(group.trips)
-      .map(trip => ({
-        key: trip.id,
-        url: (
-          `/${group.org.name}/${group.experience.name}` +
-          `/operate/${group.id}` +
-          `/trip/${trip.id}`
-        ),
-        text: `${trip.departureName} ${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
-        label: (
-          <span>
-            {trip.departureName} {trip.title}
-            {trip.isArchived ? archivedIcon : null}
-          </span>
-        )
-      }))
-      .value()
-  }, {
+  }, tripsItem, {
     label: <span>{replyWarning} Messages</span>,
     text: 'Messages',
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/replies`

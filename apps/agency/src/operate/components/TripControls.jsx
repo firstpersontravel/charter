@@ -22,7 +22,7 @@ export default class TripControls extends Component {
     this.state = {
       sendingCommand: '',
       pendingCommand: '',
-      pendingCheckpointName: '',
+      pendingCheckpointName: '__start',
       pendingTriggerName: '',
       pendingCueName: ''
     };
@@ -49,7 +49,7 @@ export default class TripControls extends Component {
     event.preventDefault();
     this.handleAdminAction('reset',
       { checkpoint_name: this.state.pendingCheckpointName });
-    this.setState({ pendingCheckpointName: '' });
+    this.setState({ pendingCheckpointName: '__start' });
   }
 
   handleCheckpointChange(event) {
@@ -206,7 +206,6 @@ export default class TripControls extends Component {
               className="form-control"
               value={this.state.pendingCheckpointName}
               onChange={this.handleCheckpointChange}>
-              <option value="">---</option>
               {checkpointOptions}
             </select>
           </div>
