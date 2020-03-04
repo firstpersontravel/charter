@@ -174,8 +174,8 @@ const userShowRoute = async (req, res) => {
   const pages = _(players)
     .map((player, i) => {
       const objs = objsList[i];
-      const evalContext = KernelUtil.prepareEvalContext(objs);
-      return getPage(objs, evalContext, player);
+      const actionContext = KernelUtil.prepareActionContext(objs);
+      return getPage(objs, actionContext, player);
     })
     .filter(Boolean)
     .sortBy('sort')
