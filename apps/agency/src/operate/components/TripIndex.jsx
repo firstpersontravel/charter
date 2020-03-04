@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { browserHistory } from 'react-router';
@@ -26,15 +25,10 @@ export default class TripIndex extends Component {
         `/trip/${trip.id}/values`
       );
     }
-    const firstTravelerRole = (
-      _.find(trip.script.content.roles, { type: 'traveler' }) ||
-      trip.script.content.roles[0]
-    );
     return (
       `/${trip.org.name}/${trip.experience.name}` +
       `/operate/${trip.groupId}` +
-      `/trip/${trip.id}` +
-      `/players/${firstTravelerRole.name}`
+      `/trip/${trip.id}/scenes`
     );
   }
 
