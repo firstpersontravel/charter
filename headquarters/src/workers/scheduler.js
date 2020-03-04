@@ -93,7 +93,9 @@ class SchedulerWorker {
 
     const actionContext = KernelUtil.prepareActionContext(objs, now);
     const nextTime = _(objs.script.content.triggers)
-      .filter(trigger => trigger.event.type === 'time_occurred')
+      .filter(trigger => (
+        trigger.event && trigger.event.type === 'time_occurred'
+      ))
       .filter(trigger => !objs.trip.history[trigger.name])
       .map(trigger => this._getTriggerIntendedAt(trigger, actionContext))
       .filter(Boolean)

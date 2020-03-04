@@ -30,7 +30,7 @@ module.exports = {
   getOps(params, actionContext) {
     const roles = actionContext.scriptContent.roles || [];
     const content = TemplateUtil.templateText(actionContext.evalContext,
-      params.content);
+      params.content, actionContext.timezone);
     const sentByRole = _.find(roles, { name: params.from_role_name });
     const isReplyNeeded = sentByRole.type === 'traveler';
     return [{

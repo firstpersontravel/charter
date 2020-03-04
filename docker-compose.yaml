@@ -70,7 +70,7 @@ services:
     image: mysql:5.7
     environment: [MYSQL_ROOT_PASSWORD=root]
     volumes: ["./docker/mysql:/docker-entrypoint-initdb.d"]
-    ports: ["4306:3306"]
+    ports: ["4310:3306"]
 
   # ngrok:
   #   image: wernight/ngrok
