@@ -9,7 +9,7 @@
     "test_agency": "cd apps/agency; yarn test",
     "build_travel": "cd apps/travel && ember build --env production && echo `TZ=US/Pacific date` > dist/build_timestamp.txt && rm -rf dist/dist.zip; zip -q -r dist/dist.zip dist",
     "build_agency": "cd apps/agency; export NODE_ENV=production; webpack --colors",
-    "build": "yarn run test && yarn run build_travel && yarn run build_agency",
+    "build": "yarn run build_travel && yarn run build_agency",
     "watch_travel": "cd apps/travel; ./node_modules/.bin/ember build --watch --env development",
     "watch_agency": "export $(cat ./secrets/env-local | xargs); cd apps/agency; ./node_modules/.bin/webpack --watch",
     "watch_agency_devserver": "export $(cat ./secrets/env-local | xargs); cd apps/agency; ./node_modules/.bin/webpack-dev-server",
