@@ -55,7 +55,9 @@ export default class GroupOverview extends Component {
           {pageInfo.status}
         </IndexLink>
         {' '}
-        <pre>{window.location.origin}/actor/{actor.userId}</pre>
+        <a href={`/actor/${actor.userId}`}>
+          <i className="fa fa-link" />
+        </a>
         {this.renderAddUserIcon(actor)}
       </div>
     );
@@ -79,7 +81,9 @@ export default class GroupOverview extends Component {
           {pageInfo.status}
         </IndexLink>
         {' '}
-        <pre>{window.location.origin}/s/{player.id}</pre>
+        <a href={`/s/${player.id}`}>
+          <i className="fa fa-link" />
+        </a>
         {this.renderAddUserIcon(player)}
       </div>
     );
