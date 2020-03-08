@@ -225,9 +225,33 @@ export default class SceneGrid extends Component {
       .filter({ scene: scene.name })
       .value();
 
-    const triggerBtns = triggers.map(trigger => (
-      this.renderTriggerBtn(scene, trigger)
-    ));
+    // HACK -- filter all page buttons in this scene out of trigger list
+    // for this scene, since they're already available as part of that
+    // players page display.
+    const scenePageButtonCueNames = _(trip.script.content.pages)
+      .filter({ scene: scene.name })
+      .map(page => page.panels)
+      .flatten()
+      .filter(panel => panel && panel.type === 'button')
+      .map(panel => panel.cue)
+      .filter(Boolean)
+      .value();
+
+    const triggerBtns = triggers
+      .filter((trigger) => {
+        if (!trigger.event) {
+          return false;
+        }
+        if (trigger.event.type === 'cue_signaled') {
+          if (scenePageButtonCueNames.includes(trigger.event.cue)) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .map(trigger => (
+        this.renderTriggerBtn(scene, trigger)
+      ));
 
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>

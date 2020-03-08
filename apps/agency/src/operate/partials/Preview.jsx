@@ -46,8 +46,12 @@ function renderPanel(trip, player, page, panel) {
   }
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
-    const humanized = TemplateUtil.templateText(trip.evalContext,
+    const maxLength = 100;
+    let humanized = TemplateUtil.templateText(trip.evalContext,
       panel.text, trip.experience.timezone);
+    if (humanized.length > maxLength) {
+      humanized = `${humanized.slice(0, maxLength)}...`;
+    }
     return humanized.split('\n').filter(Boolean).map((p, i) => (
       // eslint-disable-next-line react/no-array-index-key
       <p key={`${i}-${p}`} className="card-text mb-2">
@@ -60,21 +64,12 @@ function renderPanel(trip, player, page, panel) {
     const isSceneActive = page.scene === trip.currentSceneName;
     const panelText = TemplateUtil.templateText(trip.evalContext,
       panel.text || panel.placeholder, trip.experience.timezone);
-    const scene = _.find(script.content.scenes, { name: page.scene });
-    const disabledPanelText = (
-      <span>
-        <span style={{ textDecoration: 'line-through' }}>{panelText}</span>
-        &nbsp;
-        (Waiting for scene &quot;{scene.title}&quot;)
-      </span>
-    );
-    const panelContent = isSceneActive ? panelText : disabledPanelText;
     return (
       <button
-        style={{ whiteSpace: 'initial' }}
+        style={isSceneActive ? null : { textDecoration: 'line-through' }}
         className="btn btn-block constrain-text btn-outline-secondary mb-2"
         disabled>
-        {panelContent}
+        {panelText}
       </button>
     );
   }
