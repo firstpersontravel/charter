@@ -11,7 +11,7 @@ import {
   TripCore
 } from 'fptcore';
 
-import TripState from './TripState';
+import SceneGrid from '../../scenegrid/SceneGrid';
 
 function getInitialTripFields(script, variantNames) {
   const date = moment.utc().format('YYYY-MM-DD');
@@ -107,6 +107,7 @@ export default class TripTestHarness extends Component {
     this.state = getInitialState(props.script, props.variantNames,
       props.startedAt);
     this.handleAction = this.handleAction.bind(this);
+    this.handleAdminAction = this.handleAdminAction.bind(this);
     this.handleTrigger = this.handleTrigger.bind(this);
     this.handleEvent = this.handleEvent.bind(this);
     this.processStateUpdate = this.processStateUpdate.bind(this);
@@ -208,6 +209,10 @@ export default class TripTestHarness extends Component {
     this.processResult(result);
   }
 
+  handleAdminAction(name, params) {
+    console.log('Admin action', name, params);
+  }
+
   handleEvent(event) {
     console.log('Event', event);
     const actionContext = this.getActionContext();
@@ -265,9 +270,10 @@ export default class TripTestHarness extends Component {
     return (
       <div className="row">
         <div className="col-sm-10 script-editor-full-height">
-          <TripState
+          <SceneGrid
             trip={trip}
             onAction={this.handleAction}
+            onAdminAction={this.handleAdminAction}
             onTrigger={this.handleTrigger} />
         </div>
         <div className="col-sm-2 script-editor-full-height">

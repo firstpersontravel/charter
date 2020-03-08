@@ -6,7 +6,7 @@ import { browserHistory } from 'react-router';
 import { TextUtil, Registry } from 'fptcore';
 
 import ResourceContainer from '../partials/ResourceContainer';
-import ResourceBadge from '../partials/ResourceBadge';
+import ResourceBadge from '../../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
 import { assembleReverseReferences, getChildren } from '../utils/graph-utils';
 import {

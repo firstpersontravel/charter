@@ -6,15 +6,15 @@ import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
 const evaluator = new Evaluator(Registry);
 
-function renderPanel(player, page, panel) {
-  const script = player.trip.script;
-  if (!evaluator.if(player.trip.actionContext, panel.visible_if)) {
+function renderPanel(trip, player, page, panel) {
+  const script = trip.script;
+  if (!evaluator.if(trip.actionContext, panel.visible_if)) {
     return null;
   }
   if (panel.type === 'qr_display') {
     const qrCode = _.find(script.content.qr_codes, { name: panel.qr_code });
     const redirectParams = {
-      e: player.trip.experience.id || 0,
+      e: trip.experience.id || 0,
       r: qrCode.role,
       c: qrCode.cue || '',
       p: qrCode.page || ''
@@ -46,19 +46,20 @@ function renderPanel(player, page, panel) {
   }
   if (panel.type === 'text' ||
       panel.type === 'yesno') {
-    const humanized = TemplateUtil.templateText(player.trip.evalContext,
-      panel.text, player.trip.experience.timezone);
-    return humanized.split('\n').filter(Boolean).map(p => (
-      <p key={p} className="card-text mb-2">
+    const humanized = TemplateUtil.templateText(trip.evalContext,
+      panel.text, trip.experience.timezone);
+    return humanized.split('\n').filter(Boolean).map((p, i) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <p key={`${i}-${p}`} className="card-text mb-2">
         {p}
       </p>
     ));
   }
   if (panel.type === 'button' ||
       panel.type === 'numberpad') {
-    const isSceneActive = page.scene === player.trip.currentSceneName;
-    const panelText = TemplateUtil.templateText(player.trip.evalContext,
-      panel.text || panel.placeholder, player.trip.experience.timezone);
+    const isSceneActive = page.scene === trip.currentSceneName;
+    const panelText = TemplateUtil.templateText(trip.evalContext,
+      panel.text || panel.placeholder, trip.experience.timezone);
     const scene = _.find(script.content.scenes, { name: page.scene });
     const disabledPanelText = (
       <span>
@@ -86,11 +87,10 @@ const archivedIcon = (
   <i className="fa fa-archive ml-1" />
 );
 
-export default function Preview({ player, page }) {
+export default function Preview({ trip, player, page }) {
   if (!page) {
     return null;
   }
-  const trip = player.trip;
   const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const panels = page.panels || [];
   let headerPanel = null;
@@ -110,7 +110,7 @@ export default function Preview({ player, page }) {
   const panelsRendered = panels
     .map(panel => (
       <div key={`${page.name}-${panel.type}-${panel.text || ''}`}>
-        {renderPanel(player, page, panel)}
+        {renderPanel(trip, player, page, panel)}
       </div>
     ));
   return (
@@ -124,6 +124,7 @@ export default function Preview({ player, page }) {
 }
 
 Preview.propTypes = {
+  trip: PropTypes.object.isRequired,
   player: PropTypes.object.isRequired,
   page: PropTypes.object
 };

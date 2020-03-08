@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
-import ResourceBadge from './ResourceBadge';
+import ResourceBadge from '../../partials/ResourceBadge';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
 export default class ContentTree extends Component {

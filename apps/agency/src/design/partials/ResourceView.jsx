@@ -6,7 +6,7 @@ import { Registry, TextUtil, Validator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import PopoverControl from '../../partials/PopoverControl';
-import ResourceBadge from './ResourceBadge';
+import ResourceBadge from '../../partials/ResourceBadge';
 import ResourceField from './compound/Resource';
 
 // Hide title, field, and name

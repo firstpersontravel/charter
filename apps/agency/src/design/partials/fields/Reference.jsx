@@ -7,7 +7,7 @@ import { TextUtil } from 'fptcore';
 import { titleForResource } from '../../utils/text-utils';
 import BaseEmpty from './BaseEmpty';
 import BaseEnum from './BaseEnum';
-import ResourceBadge from '../ResourceBadge';
+import ResourceBadge from '../../../partials/ResourceBadge';
 
 function labelForValue(script, spec, value) {
   const collection = script.content[spec.collection];

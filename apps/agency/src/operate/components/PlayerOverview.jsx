@@ -178,7 +178,7 @@ export default function PlayerOverview({ player }) {
   return (
     <div className="row">
       <div className="col-sm-6">
-        <Preview player={player} page={page} />
+        <Preview trip={player.trip} player={player} page={page} />
       </div>
       <div className="col-sm-6">
         {map}

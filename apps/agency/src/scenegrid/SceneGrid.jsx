@@ -1,18 +1,19 @@
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
-import Preview from '../../operate/partials/Preview';
-import ResourceBadge from './ResourceBadge';
-import { sortForRole } from '../../operate/utils';
-import { isProduction } from '../../utils';
+import Preview from '../operate/partials/Preview';
+import ResourceBadge from '../partials/ResourceBadge';
+import { sortForRole } from '../operate/utils';
+import { isProduction } from '../utils';
 
 const evaluator = new Evaluator(Registry);
 
-export default class TripState extends Component {
+export default class SceneGrid extends Component {
   getPlayersForScene(scene) {
     const trip = this.props.trip;
     return _(trip.players)
@@ -69,6 +70,7 @@ export default class TripState extends Component {
   renderPlayerPage(player, page) {
     const trip = this.props.trip;
     const isCurrentPage = page.name === player.currentPageName;
+    const isAckedPage = player.acknowledgedPageName === page.name;
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
@@ -78,23 +80,65 @@ export default class TripState extends Component {
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
       trip.experience.timezone);
 
+    const goToPageButton = (!isCurrentPage) ? (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      <a
+        style={{ cursor: 'pointer', float: 'right' }}
+        onClick={() => this.handleAction('send_to_page', {
+          role_name: player.roleName,
+          page_name: page.name
+        })}
+        className="ml-1">
+        <i className="fa fa-arrow-circle-right" />
+      </a>
+    ) : null;
+
+    const refreshButton = (isCurrentPage && !isAckedPage) ? (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+      <a
+        className="ml-1"
+        style={{ cursor: 'pointer', float: 'right' }}
+        onClick={() => this.props.onAdminAction(
+          trip.orgId, trip.experienceId, trip.id,
+          'notify', { notify_type: 'refresh' }
+        )}>
+        <i className="fa fa-hand-right" />
+      </a>
+    ) : null;
+
+    const isAckedIcon = isAckedPage ? (
+      <span>
+        &nbsp;
+        <i className="fa fa-check" />
+        {moment
+          .utc(player.acknowledgedPageAt)
+          .tz(trip.experience.timezone)
+          .format('h:mma')}
+      </span>
+    ) : null;
+
     return (
       <tr key={page.name} className={`cell-page ${pageClass}`}>
         <td>
+          {goToPageButton}
           <ResourceBadge
             resourceType="page"
             className="mr-1"
             showType={false} />
-          <span id={`popover-target-${page.name}`}>
+          <span
+            style={{ cursor: 'pointer' }}
+            id={`popover-target-${page.name}`}>
             {pageTitle}
           </span>
+          {refreshButton}
+          {isAckedIcon}
           {cueButtons}
           <UncontrolledPopover
             trigger="legacy"
             target={`popover-target-${page.name}`}>
             <PopoverHeader>{pageTitle}</PopoverHeader>
             <PopoverBody>
-              <Preview player={player} page={page} />
+              <Preview trip={trip} player={player} page={page} />
             </PopoverBody>
           </UncontrolledPopover>
         </td>
@@ -144,7 +188,7 @@ export default class TripState extends Component {
           onClick={() => this.props.onTrigger(trigger.name)}
           style={style}
           className="constrain-text btn btn-block btn-xs btn-outline-secondary">
-          Fire {triggerResourceClass.getEventTitle(trip.script.content, trigger,
+          {triggerResourceClass.getEventTitle(trip.script.content, trigger,
             Registry)}
         </button>
       </span>
@@ -159,8 +203,6 @@ export default class TripState extends Component {
     const columns = players.map(player => (
       this.renderScenePlayerColumn(scene, player, colWidth)
     ));
-    const btnClass = isProduction() ? 'btn-outline-danger' :
-      'btn-outline-secondary';
 
     const globalMarker = scene.global ? (
       <div><span className="faint">Global</span></div>
@@ -168,13 +210,14 @@ export default class TripState extends Component {
 
     const canStartScene = !scene.global && !isCurrentScene;
     const startSceneButton = canStartScene ? (
-      <button
+      <a
+        style={{ cursor: 'pointer' }}
         onClick={() => this.handleAction('start_scene', {
           scene_name: scene.name
         })}
-        className={`wrap-text btn btn-block btn-sm ${btnClass}`}>
-        Start {scene.title}
-      </button>
+        className="ml-1">
+        <i className="fa fa-arrow-circle-right" />
+      </a>
     ) : null;
 
     const trip = this.props.trip;
@@ -189,19 +232,18 @@ export default class TripState extends Component {
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="col-sm-2">
-          <h4 className={titleClass}>
+          <h5 className={titleClass}>
             <ResourceBadge resourceType="scene" className="mr-1" showType={false} />
-            {scene.title}
-          </h4>
+            {scene.title} {startSceneButton}
+          </h5>
           {globalMarker}
-          {startSceneButton}
         </div>
-        <div className="col-sm-7">
+        <div className="col-sm-8">
           <div className="row">
             {columns}
           </div>
         </div>
-        <div className="col-sm-3">
+        <div className="col-sm-2">
           {triggerBtns}
         </div>
       </div>
@@ -226,8 +268,9 @@ export default class TripState extends Component {
   }
 }
 
-TripState.propTypes = {
+SceneGrid.propTypes = {
   trip: PropTypes.object.isRequired,
   onAction: PropTypes.func.isRequired,
-  onTrigger: PropTypes.func.isRequired
+  onTrigger: PropTypes.func.isRequired,
+  onAdminAction: PropTypes.func.isRequired
 };

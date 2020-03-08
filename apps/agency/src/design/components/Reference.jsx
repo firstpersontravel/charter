@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { Registry, TextUtil } from 'fptcore';
 
-import ResourceBadge from '../partials/ResourceBadge';
+import ResourceBadge from '../../partials/ResourceBadge';
 import { labelForSpec } from '../utils/spec-utils';
 
 function renderSidebarActions(module, actionNames) {

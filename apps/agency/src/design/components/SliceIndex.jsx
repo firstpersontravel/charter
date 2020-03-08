@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 
 import { Registry, TextUtil } from 'fptcore';
 
-import ResourceBadge from '../partials/ResourceBadge';
+import ResourceBadge from '../../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
