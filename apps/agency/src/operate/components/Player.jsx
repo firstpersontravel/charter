@@ -40,22 +40,6 @@ export default function Player({ player, children }) {
           </IndexLink>
         </div>
         {messageTab}
-        <div className="nav-item">
-          <Link
-            className="nav-link"
-            activeClassName="active"
-            to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/pages`}>
-            Pages
-          </Link>
-        </div>
-        <div className="nav-item">
-          <Link
-            className="nav-link"
-            activeClassName="active"
-            to={`/${player.org.name}/${player.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}/interface`}>
-            Interface
-          </Link>
-        </div>
       </div>
       {children}
     </div>

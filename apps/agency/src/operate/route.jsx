@@ -17,13 +17,10 @@ import TripScheduleConnector from './connectors/TripSchedule';
 import TripValuesConnector from './connectors/TripValues';
 import RoleConnector from './connectors/Role';
 import RoleIndexConnector from './connectors/RoleIndex';
-import RoleInterfaceConnector from './connectors/RoleInterface';
 import RoleMessagesConnector from './connectors/RoleMessages';
 import PlayerConnector from './connectors/Player';
 import PlayerOverviewConnector from './connectors/PlayerOverview';
-import PlayerPagesConnector from './connectors/PlayerPages';
 import PlayerMessagesConnector from './connectors/PlayerMessages';
-import PlayerInterfaceConnector from './connectors/PlayerInterface';
 
 export default (
   <Route path="operate/:groupId" component={GroupConnector}>
@@ -33,7 +30,6 @@ export default (
       <Route path="role">
         <Route path=":roleName/:userId" component={RoleConnector}>
           <IndexRoute component={RoleIndexConnector} />
-          <Route path="interface" component={RoleInterfaceConnector} />
           <Route path="messages" component={RoleMessagesConnector} />
         </Route>
       </Route>
@@ -58,8 +54,6 @@ export default (
                   path=":withRoleName"
                   component={PlayerMessagesConnector} />
               </Route>
-              <Route path="pages" component={PlayerPagesConnector} />
-              <Route path="interface" component={PlayerInterfaceConnector} />
             </Route>
           </Route>
         </Route>
