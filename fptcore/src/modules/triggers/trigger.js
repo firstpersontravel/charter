@@ -15,6 +15,9 @@ module.exports = {
     }
   },
   getEventTitle: function(scriptContent, resource, registry) {
+    if (!resource.event) {
+      return 'no trigger';
+    }
     const eventClass = registry.events[resource.event.type];
     return eventClass.getTitle
       ? eventClass.getTitle(scriptContent, resource.event, registry)

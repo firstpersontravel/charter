@@ -20,18 +20,12 @@ export default class TripControls extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sendingCommand: '',
-      pendingCommand: '',
-      pendingCheckpointName: '__start',
-      pendingTriggerName: '',
-      pendingCueName: ''
+      pendingCheckpointName: '__start'
     };
     this.handleAdminAction = this.handleAdminAction.bind(this);
     this.handleNotifyAction = this.handleNotifyAction.bind(this);
     this.handleCheckpointApply = this.handleCheckpointApply.bind(this);
     this.handleCheckpointChange = this.handleCheckpointChange.bind(this);
-    this.handleCommandApply = this.handleCommandApply.bind(this);
-    this.handleCommandChange = this.handleCommandChange.bind(this);
   }
 
   handleAdminAction(name, params) {
@@ -54,49 +48,6 @@ export default class TripControls extends Component {
 
   handleCheckpointChange(event) {
     this.setState({ pendingCheckpointName: event.target.value });
-  }
-
-  handleCommandApply(event) {
-    event.preventDefault();
-    this.handleAdminAction('phrase',
-      { action_phrase: this.state.pendingCommand });
-    this.setState({
-      sendingCommand: this.state.pendingCommand,
-      pendingCommand: ''
-    });
-  }
-
-  handleCueApply(event) {
-    event.preventDefault();
-    this.handleAdminAction('phrase',
-      { action_phrase: `signal_cue ${this.state.pendingCueName}` });
-    this.setState({ pendingCueName: '' });
-  }
-
-  handleCommandChange(event) {
-    this.setState({ pendingCommand: event.target.value });
-  }
-
-  renderCommandError() {
-    if (this.props.systemActionRequestState === 'pending') {
-      return (
-        <div className="alert alert-info">
-          <strong>
-            <i className="fa fa-spin fa-refresh" /> Sending
-          </strong> {this.state.sendingCommand}
-        </div>
-      );
-    }
-    if (this.props.systemActionRequestState === 'rejected') {
-      const err = this.props.systemActionRequestError || {};
-      const text = err.message || 'Error';
-      return (
-        <div className="alert alert-warning">
-          <strong>Error</strong> {text}
-        </div>
-      );
-    }
-    return null;
   }
 
   renderRefresh() {
@@ -155,34 +106,6 @@ export default class TripControls extends Component {
     );
   }
 
-  renderCommand() {
-    const btnDangerClass = isProduction() ? 'btn-danger' : 'btn-primary';
-    const isCommandApplyDisabled = this.state.pendingCommand === '';
-    return (
-      <div className="mb-2">
-        <h5>Command</h5>
-        <form className="row" onSubmit={this.handleCommandApply}>
-          <div className="col-sm-8">
-            <input
-              type="text"
-              value={this.state.pendingCommand}
-              onChange={this.handleCommandChange}
-              className="form-control"
-              placeholder={`Command for ${this.props.trip.departureName} ${this.props.trip.title}`} />
-          </div>
-          <div className="col-sm-4">
-            <button
-              type="submit"
-              className={`btn btn-block ${btnDangerClass}`}
-              disabled={isCommandApplyDisabled}>
-              Apply command
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
-
   renderReset() {
     const defaultCheckpoint = { name: '__start', title: 'Start' };
     const checkpoints = [defaultCheckpoint]
@@ -227,8 +150,6 @@ export default class TripControls extends Component {
       <div>
         {renderAlert()}
         {this.renderRefresh()}
-        {this.renderCommandError()}
-        {this.renderCommand()}
         {this.renderReset()}
       </div>
     );
@@ -237,14 +158,10 @@ export default class TripControls extends Component {
 
 TripControls.propTypes = {
   nextAction: PropTypes.object,
-  systemActionRequestState: PropTypes.string,
-  systemActionRequestError: PropTypes.object,
   trip: PropTypes.object.isRequired,
   postAdminAction: PropTypes.func.isRequired
 };
 
 TripControls.defaultProps = {
-  nextAction: null,
-  systemActionRequestState: null,
-  systemActionRequestError: null
+  nextAction: null
 };

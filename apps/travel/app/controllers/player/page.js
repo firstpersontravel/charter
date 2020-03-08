@@ -45,8 +45,17 @@ export default Ember.Controller.extend({
     return scriptContent.layouts.findBy('name', pageLayoutName);
   }.property('pageLayoutName'),
 
-  pagePanels: function() {
+  filterPanels: function(panels) {
+    if (!panels) {
+      return [];
+    }
     var trip = this.get('trip.model');
+    return panels.filter(function(panel) {
+      return trip.evaluateIf(panel.visible_if);
+    });
+  },
+
+  pagePanels: function() {
     var page = this.get('pageModel');
     if (!page) {
       return {};
@@ -55,19 +64,12 @@ export default Ember.Controller.extend({
     var pagePanels = {};
     // Assemble list of partials with panels
     var partials = Ember.$.extend({
-      main: {panels: page.panels || []}
+      main: {panels: this.filterPanels(page.panels)}
     }, page.partials || {});
 
     // Go through each and resolve outlets
     Object.keys(partials).forEach(function(outletName) {
-      if (!pagePanels[outletName]) {
-        pagePanels[outletName] = [];
-      }
-      partials[outletName].panels.forEach(function(panel) {
-        if (trip.evaluateIf(panel.visible_if)) {
-          pagePanels[outletName].push(panel);
-        }
-      }, this);
+      pagePanels[outletName] = partials[outletName].panels;
     }, this);
 
     // return resolved

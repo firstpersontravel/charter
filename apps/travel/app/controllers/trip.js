@@ -186,7 +186,8 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   applyTrigger: function(triggerName, applyAt) {
     console.log('applying trigger', triggerName);
-    var trigger = this.get('model.script.content').findBy('name', triggerName);
+    var trigger = this.get('model.script.content.triggers')
+      .findBy('name', triggerName);
     var actionContext = this.prepareActionContext(applyAt);
     var result = fptCore.Kernel.resultForTrigger(trigger, null, actionContext,
       actionContext);

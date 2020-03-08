@@ -76,7 +76,7 @@ export default class DirectoryUser extends Component {
       this.props.createInstance('profiles', create);
     } else {
       // Replace to completely update values
-      this.props.updateInstance('profiles', editingProfileId, fields);
+      this.props.updateInstance('profiles', Number(editingProfileId), fields);
     }
     this.handleProfileModalClose();
   }

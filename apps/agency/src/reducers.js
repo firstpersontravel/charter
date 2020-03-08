@@ -35,6 +35,12 @@ function saveInstancesHandler(state, action) {
 function updateInstanceFieldsHandler(state, action) {
   const collection = state.datastore[action.collectionName];
   const index = _.findIndex(collection, { id: action.instanceId });
+  if (index === -1) {
+    console.warn(
+      `Tried to update nonexistent ${action.collectionName} ` +
+      `with id ${action.instanceId}`);
+    return state;
+  }
   const collectionUpdate = {
     [index]: _.mapValues(action.fields, field => ({
       $set: field

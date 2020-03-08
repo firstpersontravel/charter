@@ -63,6 +63,11 @@ export default Ember.Component.extend(WindowHeightMixin, {
         collectedPanels.push(panel);
       }
     }, this);
+
+    collectedPanels = collectedPanels.filter(panel => (
+      this.get('trip').evaluateIf(panel.visible_if)
+    ));
+
     return collectedPanels;    
   },
 

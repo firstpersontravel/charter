@@ -6,8 +6,6 @@ import { lookupTrip } from './utils';
 import TripControls from '../components/TripControls';
 
 const mapStateToProps = (state, ownProps) => ({
-  systemActionRequestState: state.requests['system.action'],
-  systemActionRequestError: state.requestErrors['system.action'],
   nextAction: _(state.datastore.actions)
     .filter({
       tripId: Number(ownProps.params.tripId),
