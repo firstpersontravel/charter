@@ -71,8 +71,8 @@ function renderTripsItem(group, currentTripId) {
   };
 }
 
-export default function GroupAll({ children, group,
-  numMessagesNeedingReply, nextUnappliedAction, params }) {
+export default function GroupAll({ children, group, nextUnappliedAction,
+  params }) {
   // Error or loading cases should be handled by `Group`
   if (group.trips.length === 0) {
     return <div>No trips</div>;
@@ -96,22 +96,6 @@ export default function GroupAll({ children, group,
   }
 
   const tripsItem = renderTripsItem(group, params.tripId);
-
-  const replyWarning = numMessagesNeedingReply > 0 ? (
-    <span style={{ position: 'relative', top: '-2px' }} className="badge badge-warning mr-1">
-      <i className="fa fa-comment" />
-      {numMessagesNeedingReply}
-    </span>
-  ) : null;
-
-  const nextActionWarning = nextUnappliedAction ? (
-    <span style={{ position: 'relative', top: '-2px' }} className="badge badge-info mr-1">
-      {moment
-        .utc(nextUnappliedAction.scheduledAt)
-        .tz(group.experience.timezone)
-        .format('h:mm:ssa')}
-    </span>
-  ) : null;
 
   const items = [{
     text: 'Group',
@@ -142,15 +126,25 @@ export default function GroupAll({ children, group,
       ))
       .flatten()
       .value()
-  }, tripsItem, {
-    label: <span>{replyWarning} Messages</span>,
-    text: 'Messages',
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/replies`
-  }, {
-    text: 'Upcoming',
-    label: <span>{nextActionWarning} Upcoming</span>,
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/upcoming`
-  }];
+  }, tripsItem];
+
+  if (nextUnappliedAction) {
+    items.push({
+      text: 'Upcoming',
+      label: (
+        <span>
+          <span style={{ position: 'relative', top: '-2px' }} className="badge badge-info mr-1">
+            {moment
+              .utc(nextUnappliedAction.scheduledAt)
+              .tz(group.experience.timezone)
+              .format('h:mm:ssa')}
+          </span>
+          Upcoming
+        </span>
+      ),
+      url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/upcoming`
+    });
+  }
 
   return (
     <div>
@@ -164,8 +158,7 @@ GroupAll.propTypes = {
   children: PropTypes.node.isRequired,
   params: PropTypes.object.isRequired,
   group: PropTypes.object.isRequired,
-  nextUnappliedAction: PropTypes.object,
-  numMessagesNeedingReply: PropTypes.number.isRequired
+  nextUnappliedAction: PropTypes.object
 };
 
 GroupAll.defaultProps = {
