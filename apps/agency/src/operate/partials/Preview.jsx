@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 
 import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
+import { urlForResource } from '../../design/utils/section-utils';
+
 const evaluator = new Evaluator(Registry);
 
 function renderQr(trip, player, page, panel) {
@@ -100,26 +102,32 @@ function getIframeUrl(trip, player) {
   return `/travel/u/${user.id}/p/${trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;
 }
 
-function renderHeader(trip, player, page) {
+export function renderHeader(trip, player, page) {
   const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
-      trip.experience.timezone) : '';
+      trip.experience.timezone) : page.title;
   return (
-    <div className="card-header">
+    <span>
       <strong>
-        {trip.departureName} {trip.title}{tripArchivedLabel} as {player.role.title}
+        {trip.departureName} {trip.title}{tripArchivedLabel}
+        &nbsp;as {player.role.title}
+        <a
+          target="_blank"
+          className="ml-1"
+          rel="noopener noreferrer"
+          href={getIframeUrl(trip, player)}>
+          <i className="fa fa-link" />
+        </a>
       </strong>
       &nbsp;
       {headerText}
-      &nbsp;
       <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href={getIframeUrl(trip, player)}>
-        <i className="fa fa-link" />
+        className="ml-1"
+        href={urlForResource(trip.script, 'pages', page.name)}>
+        <i className="fa fa-pencil" />
       </a>
-    </div>
+    </span>
   );
 }
 
@@ -127,7 +135,7 @@ function isPanelVisible(trip, player, panel) {
   return evaluator.if(trip.actionContext, panel.visible_if);
 }
 
-function renderPage(trip, player, page) {
+export function renderPage(trip, player, page) {
   const panels = page.panels || [];
   const visiblePanels = panels.filter(panel => (
     isPanelVisible(trip, player, panel)
@@ -150,7 +158,9 @@ export default function Preview({ trip, player, page }) {
   }
   return (
     <div className="card mb-2">
-      {renderHeader(trip, player, page)}
+      <div className="card-header">
+        {renderHeader(trip, player, page)}
+      </div>
       <div className="card-body">
         {renderPage(trip, player, page)}
       </div>

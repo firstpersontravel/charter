@@ -6,7 +6,7 @@ import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
-import Preview from '../operate/partials/Preview';
+import { renderHeader, renderPage } from '../operate/partials/Preview';
 import ResourceBadge from '../partials/ResourceBadge';
 import { sortForRole } from '../operate/utils';
 import { isProduction } from '../utils';
@@ -136,9 +136,11 @@ export default class SceneGrid extends Component {
           <UncontrolledPopover
             trigger="legacy"
             target={`popover-target-${page.name}`}>
-            <PopoverHeader>{pageTitle}</PopoverHeader>
+            <PopoverHeader>
+              {renderHeader(trip, player, page)}
+            </PopoverHeader>
             <PopoverBody>
-              <Preview trip={trip} player={player} page={page} />
+              {renderPage(trip, player, page)}
             </PopoverBody>
           </UncontrolledPopover>
         </td>

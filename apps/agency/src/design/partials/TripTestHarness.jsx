@@ -89,14 +89,15 @@ class TripKernel {
   initiateCall() {}
 
   log({ level, message }) {
-    this.updateState({
-      log: this.state.log.concat([{
-        id: this.state.log.length,
-        time: moment(),
-        level: level,
-        message: message
-      }]).slice(0, 100)
-    });
+    const maxNum = 50;
+    const newEntry = {
+      id: this.state.log.length,
+      time: moment(),
+      level: level,
+      message: message
+    };
+    const newLog = [newEntry].concat(this.state.log).slice(0, maxNum);
+    this.updateState({ log: newLog });
   }
 }
 
@@ -245,6 +246,9 @@ export default class TripTestHarness extends Component {
   }
 
   renderLogEntry(logEntry) {
+    const maxLength = 50;
+    const msgTruncated = logEntry.message.length > maxLength ?
+      logEntry.message.slice(0, maxLength) : logEntry.message;
     const badgeClasses = {
       info: 'badge-info',
       warning: 'badge-warning'
@@ -254,15 +258,18 @@ export default class TripTestHarness extends Component {
         <span className={`badge ${badgeClasses[logEntry.level]} mr-1`}>
           {logEntry.time.format('h:mma')}
         </span>
-        {logEntry.message}
+        {msgTruncated}
       </div>
     );
   }
 
   renderLog() {
-    return this.state.log.map(logEntry => (
-      this.renderLogEntry(logEntry)
-    ));
+    const numLogEntries = 25;
+    return this.state.log
+      .slice(0, numLogEntries)
+      .map(logEntry => (
+        this.renderLogEntry(logEntry)
+      ));
   }
 
   render() {
