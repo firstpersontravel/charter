@@ -59,10 +59,15 @@ const playerIncludes = {
   role: getPlayerRole
 };
 
+const scriptIncludes = {
+  org: instanceIncluder('orgs', 'id', 'orgId'),
+  experience: instanceIncluder('experiences', 'id', 'experienceId')
+};
+
 const tripIncludes = {
   org: instanceIncluder('orgs', 'id', 'orgId'),
   experience: instanceIncluder('experiences', 'id', 'experienceId'),
-  script: instanceIncluder('scripts', 'id', 'scriptId'),
+  script: instanceIncluder('scripts', 'id', 'scriptId', {}, scriptIncludes),
   players: instancesIncluder('players', 'tripId', 'id', {}, playerIncludes),
   evalContext: getTripEvalContext,
   actionContext: getTripActionContext
