@@ -1,4 +1,4 @@
-FROM node:10.15-alpine
+FROM node:12-alpine
  
 # Update OS
 RUN apk update
@@ -77,11 +77,6 @@ RUN rm -rf /var/app/apps/travel/node_modules/fptcore && \
 
 # don't symlink headquarters since it uses relative references
 # RUN ln -nsf /var/app/fptcore /var/npm/beta/node_modules
-
-# Run tests
-RUN cd /var/app/fptcore && yarn test
-RUN cd /var/app/apps/agency && yarn test
-RUN cd /var/app/headquarters && yarn test
 
 # Build applications
 RUN cd /var/app/apps/travel && ember build --env production

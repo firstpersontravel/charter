@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Evaluator, Registry, TemplateUtil } from 'fptcore';
 
-// import { urlForResource } from '../../design/utils/section-utils';
+import { urlForResource } from '../../design/utils/section-utils';
 
 const evaluator = new Evaluator(Registry);
 
@@ -107,6 +107,13 @@ export function renderHeader(trip, player, page) {
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone) : page.title;
+  const designLink = trip.script.org && trip.script.experience ? (
+    <a
+      className="ml-1"
+      href={urlForResource(trip.script, 'pages', page.name)}>
+      <i className="fa fa-pencil" />
+    </a>
+  ) : null;
   return (
     <span>
       <strong>
@@ -122,16 +129,10 @@ export function renderHeader(trip, player, page) {
       </strong>
       &nbsp;
       {headerText}
+      {designLink}
     </span>
   );
 }
-
-//      <a
-//        className="ml-1"
-//        href={urlForResource(trip.script, 'pages', page.name)}>
-//        <i className="fa fa-pencil" />
-//      </a>
-
 function isPanelVisible(trip, player, panel) {
   return evaluator.if(trip.actionContext, panel.visible_if);
 }
