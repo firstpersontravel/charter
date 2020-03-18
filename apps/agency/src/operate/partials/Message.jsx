@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 import { TextUtil } from 'fptcore';
 
-import { canRoleHaveUser, fullMediaUrl } from '../utils';
+import { fullMediaUrl } from '../utils';
 
 function renderMessageContent(message) {
   if (message.medium === 'image' && message.name) {
@@ -91,8 +91,7 @@ function renderActions(message, updateInstance) {
   );
 }
 
-export default function Message({ message, updateInstance, isInTripContext,
-  isInRoleContext }) {
+export default function Message({ message, updateInstance }) {
   if (!message.trip) {
     return null;
   }
@@ -107,49 +106,20 @@ export default function Message({ message, updateInstance, isInTripContext,
   const content = renderMessageContent(message);
   const icon = renderMessageIcon(message, sentBy, sentTo);
   const archivedClass = message.isArchived ? 'message-archived' : '';
-  const shouldShowRespond = !canRoleHaveUser(message.sentTo.role) &&
+  const shouldShowRespond = message.sentBy.role.type === 'traveler' &&
     !message.reponseReceivedAt;
   const respondBtn = shouldShowRespond ? (
     <Link
       className="btn btn-xs btn-outline-secondary"
-      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${actorPlayer.roleName}/messages/${userPlayer.roleName}`}>
+      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${actorPlayer.roleName}&with=${userPlayer.roleName}`}>
       Respond to {userPlayer.role.title}
     </Link>
   ) : null;
 
-  const tripPrefix = (
-    <Link
-      className="mr-1"
-      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
-      {trip.departureName ? trip.departureName : trip.title}
-    </Link>
-  );
-
-  const includeSentBy = true;
-  const sentByLabel = (
-    <span>
-      <Link to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${sentBy.roleName}/messages/${sentTo.roleName}`}>
-        {sentBy.role.title}
-      </Link>
-    </span>
-  );
-
-  const includeSentTo = !isInRoleContext;
-  const sentToLabel = (
-    <span>
-      &nbsp;to <Link
-        to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${sentTo.roleName}/messages/${sentBy.roleName}`}>
-        {sentTo.role.title}
-      </Link>
-    </span>
-  );
-
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      {isInTripContext ? null : tripPrefix}
-      {includeSentBy ? sentByLabel : null}
-      {includeSentTo ? sentToLabel : null}:&nbsp;
+      <strong className="mr-1">{sentBy.role.title}:</strong>
       {content}
       &nbsp;
       <span className="faint">{timeShort}</span>
@@ -163,13 +133,9 @@ export default function Message({ message, updateInstance, isInTripContext,
 
 Message.propTypes = {
   message: PropTypes.object.isRequired,
-  updateInstance: PropTypes.func,
-  isInTripContext: PropTypes.bool,
-  isInRoleContext: PropTypes.string
+  updateInstance: PropTypes.func
 };
 
 Message.defaultProps = {
-  updateInstance: null,
-  isInTripContext: false,
-  isInRoleContext: null
+  updateInstance: null
 };

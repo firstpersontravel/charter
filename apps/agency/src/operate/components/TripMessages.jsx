@@ -126,18 +126,11 @@ export default class TripMessages extends Component {
 
   renderForRoleOptions() {
     const script = this.props.trip.script;
-    return _(script.content.relays)
-      .map(relay => relay.for)
-      .uniq()
-      .map((roleName) => {
-        const role = _.find(script.content.roles, { name: roleName });
-        return (
-          <option key={roleName} value={roleName}>
-            For {role.title}
-          </option>
-        );
-      })
-      .value();
+    return script.content.roles.map(role => (
+      <option key={role.name} value={role.name}>
+        For {role.title}
+      </option>
+    ));
   }
 
   renderWithRoleOptions() {
@@ -146,26 +139,14 @@ export default class TripMessages extends Component {
     if (!selfRoleName) {
       return [];
     }
-    const relays = _.filter(script.content.relays, relay => (
-      relay.as === selfRoleName || relay.with === selfRoleName
-    ));
 
-    const withRoleNames = _(relays)
-      .map(r => [r.as, r.with])
-      .flatten()
-      .uniq()
-      .value();
-
-    return withRoleNames
-      .filter(withRoleName => withRoleName !== selfRoleName)
-      .map((withRoleName) => {
-        const withRole = _.find(script.content.roles, { name: withRoleName });
-        return (
-          <option key={withRoleName} value={withRoleName}>
-            With {withRole.title}
-          </option>
-        );
-      });
+    return script.content.roles
+      .filter(role => role.name !== selfRoleName)
+      .map(role => (
+        <option key={role.name} value={role.name}>
+          With {role.title}
+        </option>
+      ));
   }
 
   renderSend() {
@@ -229,8 +210,6 @@ export default class TripMessages extends Component {
     return this.props.messages.map(message => (
       <Message
         key={message.id}
-        isInTripContext
-        isInRoleContext={this.props.location.query.for || null}
         updateInstance={this.props.updateInstance}
         message={message} />
     ));

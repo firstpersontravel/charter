@@ -25,7 +25,7 @@ function getAllPlayers(trips) {
 
 const archivedIcon = <i className="fa fa-archive ml-1" />;
 
-function renderTripItem(group, trip) {
+function renderTripItem(group, trip, isToplevel) {
   return {
     key: trip.id,
     url: (
@@ -36,6 +36,7 @@ function renderTripItem(group, trip) {
     text: `${trip.departureName} ${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
     label: (
       <span>
+        {isToplevel ? 'Trip: ' : ''}
         {trip.departureName} {trip.title}
         {trip.isArchived ? archivedIcon : null}
       </span>
@@ -48,7 +49,7 @@ function renderTripsItem(group, currentTripId) {
     return null;
   }
   if (group.trips.length === 1) {
-    return renderTripItem(group, group.trips[0]);
+    return renderTripItem(group, group.trips[0], true);
   }
   let tripTitle = 'Trips';
   let tripLabel = 'Trips';
@@ -72,7 +73,7 @@ function renderTripsItem(group, currentTripId) {
 }
 
 export default function GroupAll({ children, group, nextUnappliedAction,
-  params }) {
+  numMessagesNeedingReply, params }) {
   // Error or loading cases should be handled by `Group`
   if (group.trips.length === 0) {
     return <div>No trips</div>;
@@ -82,7 +83,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     .sortBy([sortForRole, 'name'])
     .value();
   const allPlayers = getAllPlayers(group.trips);
-  const allUsers = _(allPlayers).map('user').value();
+  const allUsers = _(allPlayers).map('user').uniq().value();
 
   let roleTitle = 'Roles';
   if (params.roleName && params.userId) {
@@ -110,6 +111,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     subItems: _(roles)
       .map(role => (
         _(allPlayers)
+          .filter('currentPageName')
           .filter({ roleName: role.name })
           .map('user')
           .uniq()
@@ -127,6 +129,22 @@ export default function GroupAll({ children, group, nextUnappliedAction,
       .flatten()
       .value()
   }, tripsItem];
+
+  if (numMessagesNeedingReply) {
+    items.push({
+      label: (
+        <span>
+          <span style={{ position: 'relative', top: '-2px' }} className="badge badge-warning mr-1">
+            <i className="fa fa-comment" />
+            {numMessagesNeedingReply}
+          </span>
+          Messages
+        </span>
+      ),
+      text: 'Messages',
+      url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/messages`
+    });
+  }
 
   if (nextUnappliedAction) {
     items.push({
@@ -158,7 +176,8 @@ GroupAll.propTypes = {
   children: PropTypes.node.isRequired,
   params: PropTypes.object.isRequired,
   group: PropTypes.object.isRequired,
-  nextUnappliedAction: PropTypes.object
+  nextUnappliedAction: PropTypes.object,
+  numMessagesNeedingReply: PropTypes.number.isRequired
 };
 
 GroupAll.defaultProps = {

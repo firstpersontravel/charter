@@ -4,6 +4,7 @@ import { Route, IndexRoute } from 'react-router';
 import GroupConnector from './connectors/Group';
 import GroupAllConnector from './connectors/GroupAll';
 import GroupOverviewConnector from './connectors/GroupOverview';
+import GroupMessagesConnector from './connectors/GroupMessages';
 import GroupPlayersConnector from './connectors/GroupPlayers';
 import GroupUpcomingConnector from './connectors/GroupUpcoming';
 import TripConnector from './connectors/Trip';
@@ -17,7 +18,6 @@ import TripScheduleConnector from './connectors/TripSchedule';
 import TripValuesConnector from './connectors/TripValues';
 import RoleConnector from './connectors/Role';
 import RoleIndexConnector from './connectors/RoleIndex';
-import RoleMessagesConnector from './connectors/RoleMessages';
 
 export default (
   <Route path="operate/:groupId" component={GroupConnector}>
@@ -27,9 +27,9 @@ export default (
       <Route path="role">
         <Route path=":roleName/:userId" component={RoleConnector}>
           <IndexRoute component={RoleIndexConnector} />
-          <Route path="messages" component={RoleMessagesConnector} />
         </Route>
       </Route>
+      <Route path="messages" component={GroupMessagesConnector} />
       <Route path="upcoming" component={GroupUpcomingConnector} />
       <Route path="trip">
         <Route path=":tripId" component={TripConnector}>
