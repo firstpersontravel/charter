@@ -88,22 +88,7 @@ function renderPanel(trip, player, page, panel) {
   return renderer(trip, player, page, panel);
 }
 
-const archivedIcon = (
-  <i className="fa fa-archive ml-1" />
-);
-
-function getIframeUrl(trip, player) {
-  const user = player.user;
-  const role = _.find(trip.script.content.roles,
-    { name: player.roleName });
-  if (role.type === 'performer' || !user) {
-    return `/actor/player/${player.id}?nogps=1&noack=1`;
-  }
-  return `/travel/u/${user.id}/p/${trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;
-}
-
 export function renderHeader(trip, player, page) {
-  const tripArchivedLabel = trip.isArchived ? archivedIcon : null;
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone) : page.title;
@@ -116,17 +101,7 @@ export function renderHeader(trip, player, page) {
   ) : null;
   return (
     <span>
-      <strong>
-        {trip.departureName} {trip.title}{tripArchivedLabel}
-        &nbsp;as {player.role.title}
-        <a
-          target="_blank"
-          className="ml-1"
-          rel="noopener noreferrer"
-          href={getIframeUrl(trip, player)}>
-          <i className="fa fa-link" />
-        </a>
-      </strong>
+      <strong>{player.role.title}</strong>
       &nbsp;
       {headerText}
       {designLink}

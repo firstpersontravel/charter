@@ -28,7 +28,7 @@ describe('PhoneTreeExample', () => {
       smsUrl: `${config.env.TWILIO_HOST}/url`,
       phoneNumber: '+13334445555'
     }]);
-    script = await TestUtil.createScriptWithContent(example);
+    script = await TestUtil.createExample(example);
     trailhead = (
       await ExperienceController.ensureTrailheads(script.experienceId)
     )[0];

@@ -149,12 +149,16 @@ describe('API create', () => {
         });
     });
 
-    const examples = ['email', 'phonetree', 'roadtrip', 'textconvo'];
+    const examples = ['email', 'phonetree', 'roadtrip', 'textconvo',
+      'tacosyndicate'];
     
     for (const example of examples) {
-      const examplePath = `../../examples/${example}.yaml`;
-      const scriptPath = path.join(__dirname, examplePath);
-      const scriptContent = yaml.safeLoad(fs.readFileSync(scriptPath, 'utf8'));
+      const relativePath = `../../examples/${example}.yaml`;
+      const fullPath = path.join(__dirname, relativePath);
+      const fullContent = yaml.safeLoad(fs.readFileSync(fullPath, 'utf8'));
+      const scriptContent = Object.assign({
+        meta: { version: ScriptCore.CURRENT_VERSION }
+      }, fullContent.content);
 
       it(`creates ${example} example`, () => {
         return request(app)

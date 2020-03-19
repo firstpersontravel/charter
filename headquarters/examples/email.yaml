@@ -1,41 +1,39 @@
-meta:
-  version: 23
+content:
+  roles:
+    - name: player
+      title: Player
+      type: traveler
 
-roles:
-  - name: player
-    title: Player
-    type: traveler
+    - name: system
+      title: System
+      type: scripted
 
-  - name: system
-    title: System
-    type: scripted
+  inboxes:
+    - name: inbox
+      role: system
+      address: system@system.com
 
-inboxes:
-  - name: inbox
-    role: system
-    address: system@system.com
+  scenes:
+    - name: scene
+      title: First scene
 
-scenes:
-  - name: scene
-    title: First scene
+  cues:
+    - name: start
+      scene: scene
+      title: start
 
-cues:
-  - name: start
-    scene: scene
-    title: start
+  triggers:
+    - name: start
+      scene: scene
+      event: {type: cue_signaled, cue: start}
+      actions:
+        - name: send_email
+          from: inbox
+          to: player
+          subject: test
+          body: |
+            # Hello there!
 
-triggers:
-  - name: start
-    scene: scene
-    event: {type: cue_signaled, cue: start}
-    actions:
-      - name: send_email
-        from: inbox
-        to: player
-        subject: test
-        body: |
-          # Hello there!
+            Greetings from the System
 
-          Greetings from the System
-
-          Sincerely yours
+            Sincerely yours

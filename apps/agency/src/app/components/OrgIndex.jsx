@@ -34,7 +34,8 @@ export default class OrgIndex extends Component {
         return r
           .json()
           .then((data) => {
-            this.createExperienceFromExample(fields, data);
+            this.createExperienceFromExample(fields, data.content,
+              data.assets || []);
             browserHistory.push(`/${this.props.org.name}/${fields.name}`);
           })
           .catch((err) => {
@@ -52,12 +53,12 @@ export default class OrgIndex extends Component {
       });
   }
 
-  createExperienceFromExample(fields, scriptContent) {
+  createExperienceFromExample(fields, scriptContent, assetsContent) {
     const expFields = Object.assign({
       orgId: this.props.org.id
     }, fields);
     // Create example, then create script
-    return this.props.createInstances('experiences', expFields, [{
+    const scriptInsertion = {
       collection: 'scripts',
       fields: {
         orgId: this.props.org.id,
@@ -68,7 +69,21 @@ export default class OrgIndex extends Component {
       insertions: {
         experienceId: 'id'
       }
-    }]);
+    };
+    const assetInsertions = assetsContent.map((assetContent, i) => ({
+      collection: 'assets',
+      fields: {
+        orgId: this.props.org.id,
+        data: assetContent.data,
+        type: assetContent.type,
+        name: `asset-${i}`
+      },
+      insertions: {
+        experienceId: 'id'
+      }
+    }));
+    const insertions = [scriptInsertion].concat(assetInsertions);
+    this.props.createInstances('experiences', expFields, insertions);
   }
 
   renderExample(example) {

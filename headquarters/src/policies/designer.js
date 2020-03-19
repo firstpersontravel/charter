@@ -68,7 +68,7 @@ const designerCanOperateTrips = {
     }
     const allowedActions = ['update'];
     const allowedFieldNames = {
-      Action: ['isArchived'],
+      Action: ['isArchived', 'scheduledAt'],
       Message: ['readAt', 'replyReceivedAt', 'isInGallery', 'isArchived'],
       Relay: ['isActive']
     };

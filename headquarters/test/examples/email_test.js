@@ -18,7 +18,7 @@ describe('EmailExample', () => {
   let trip;
 
   beforeEach(async () => {
-    script = await TestUtil.createScriptWithContent(example);
+    script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
     const user = await models.User.create({
       orgId: script.orgId,

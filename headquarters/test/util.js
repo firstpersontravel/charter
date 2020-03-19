@@ -116,6 +116,25 @@ async function createDummyTripForScript(script, variantNames) {
   return trip;
 }
 
+async function createExample(example) {
+  const content = Object.assign({
+    meta: { version: ScriptCore.CURRENT_VERSION }
+  }, example.content);
+  const script = await createScriptWithContent(content);
+  for (const asset of example.assets || []) {
+    await models.Asset.create({
+      createdAt: moment.utc(),
+      updatedAt: moment.utc(),
+      type: asset.type,
+      data: asset.data,
+      name: 'example',
+      orgId: script.orgId,
+      experienceId: script.experienceId
+    });
+  }
+  return script;
+}
+
 const TestUtil = {
   createDummyExperience,
   createDummyGroup,
@@ -124,6 +143,7 @@ const TestUtil = {
   createDummyTrip,
   createDummyTripForScript,
   createDummyScript,
+  createExample,
   createScriptWithContent
 };
 

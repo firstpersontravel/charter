@@ -13,6 +13,16 @@ import { isProduction } from '../utils';
 
 const evaluator = new Evaluator(Registry);
 
+function getIframeUrl(trip, player) {
+  const user = player.user;
+  const role = _.find(trip.script.content.roles,
+    { name: player.roleName });
+  if (role.type === 'performer' || !user) {
+    return `/actor/player/${player.id}?nogps=1&noack=1`;
+  }
+  return `/travel/u/${user.id}/p/${trip.id}/role/${player.roleName}?debug=true&nogps=true&mute=true&noack=true`;
+}
+
 export default class SceneGrid extends Component {
   getPlayersForScene(scene) {
     const trip = this.props.trip;
@@ -125,10 +135,12 @@ export default class SceneGrid extends Component {
             resourceType="page"
             className="mr-1"
             showType={false} />
+          {pageTitle}
           <span
             style={{ cursor: 'pointer' }}
+            className="ml-1"
             id={`popover-target-${page.name}`}>
-            {pageTitle}
+            <i className="fa fa-search" />
           </span>
           {refreshButton}
           {isAckedIcon}
@@ -154,11 +166,21 @@ export default class SceneGrid extends Component {
       { role: player.roleName, scene: scene.name });
     const renderedPages = pages
       .map(page => this.renderPlayerPage(player, page));
+    const iframeLink = player.id ? (
+      <a
+        target="_blank"
+        className="ml-1"
+        rel="noopener noreferrer"
+        href={getIframeUrl(trip, player)}>
+        <i className="fa fa-link" />
+      </a>
+    ) : null;
     return (
       <div className={`col-sm-${colWidth}`} key={player.roleName}>
         <h5 className="constrain-text">
           <ResourceBadge resourceType="role" className="mr-1" showType={false} />
           {player.role.title}
+          {iframeLink}
         </h5>
         <table className="table table-sm table-striped" style={{ margin: 0 }}>
           <tbody>

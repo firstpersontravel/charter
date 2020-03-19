@@ -151,15 +151,16 @@ describe('SchedulerWorker', () => {
 
   describe('#_updateTripNextScheduleAt', () => {
     const now = moment.utc();
+    const future = moment.utc().add(1, 'hours');
     const scriptContent = {
       triggers: [{
-        event: { type: 'time_occurred', time: 'now', offset: '10m' },
+        event: { type: 'time_occurred', time: 't', offset: '10m' },
         name: 't1'
       }, {
         event: { type: 'scene_started' },
         name: 't2'
       }, {
-        event: { type: 'time_occurred', time: 'now', offset: '-10m' },
+        event: { type: 'time_occurred', time: 't', offset: '-10m' },
         name: 't3'
       }]
     };
@@ -171,7 +172,7 @@ describe('SchedulerWorker', () => {
       ));
     });
 
-    it('updates scheduleAt to next trigger time', async () => {
+    it('updates scheduleAt to next trigger time if future', async () => {
       const objs = {
         trip: {
           id: 1,
@@ -185,22 +186,22 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
-        evalContext: { schedule: { now: now.toISOString() } }
+        evalContext: { schedule: { t: future.toISOString() } }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
 
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
         scheduleUpdatedAt: now.toDate(),
-        scheduleAt: now.clone().subtract(10, 'minutes').toDate()
+        scheduleAt: future.clone().subtract(10, 'minutes').toDate()
       });
     });
 
-    it('updates scheduleAt to now if no current scene', async () => {
+    it('updates scheduleAt to now if next trigger is past', async () => {
       const objs = {
         trip: {
           id: 1,
-          currentSceneName: null,
+          currentSceneName: 'main',
           update: sinon.stub().resolves(),
           history: {},
           experience: {}
@@ -210,7 +211,7 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
-        evalContext: { schedule: { now: now.toISOString() } }
+        evalContext: { schedule: { t: now.toISOString() } }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
@@ -235,7 +236,7 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: objs.script.content,
-        evalContext: { schedule: { now: now.toISOString() } }
+        evalContext: { schedule: { t: now.toISOString() } }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
@@ -260,7 +261,7 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
-        evalContext: { schedule: { now: now.toISOString() } }
+        evalContext: { schedule: { t: now.toISOString() } }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);

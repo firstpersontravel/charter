@@ -1,75 +1,73 @@
-meta:
-  version: 23
+content:
+  roles:
+    - name: Player
+      title: Player
+      type: traveler
 
-roles:
-  - name: Player
-    title: Player
-    type: traveler
+    - name: PhoneTree
+      title: PhoneTree
+      type: scripted
 
-  - name: PhoneTree
-    title: PhoneTree
-    type: scripted
+  relays:
+    - name: relay-1
+      for: Player
+      as: Player
+      with: PhoneTree
+      trailhead: true
 
-relays:
-  - name: relay-1
-    for: Player
-    as: Player
-    with: PhoneTree
-    trailhead: true
+  scenes:
+    - name: SCENE-MAIN
+      title: Main
 
-scenes:
-  - name: SCENE-MAIN
-    title: Main
+  clips:
+    - name: CLIP-GREETING
+      title: Greetings
+      scene: SCENE-MAIN
+      transcript: Press 1 for a beverage, or 2 for a joke.
+      answer_expected: true
 
-clips:
-  - name: CLIP-GREETING
-    title: Greetings
-    scene: SCENE-MAIN
-    transcript: Press 1 for a beverage, or 2 for a joke.
-    answer_expected: true
+    - name: CLIP-DRINK
+      title: Greetings
+      scene: SCENE-MAIN
+      transcript: Would you like a refreshing beverage?
+      answer_expected: true
+      answer_hints: [yes, no]
 
-  - name: CLIP-DRINK
-    title: Greetings
-    scene: SCENE-MAIN
-    transcript: Would you like a refreshing beverage?
-    answer_expected: true
-    answer_hints: [yes, no]
+    - name: CLIP-DRINK-YES
+      title: "yes"
+      scene: SCENE-MAIN
+      transcript: Here you go!
 
-  - name: CLIP-DRINK-YES
-    title: "yes"
-    scene: SCENE-MAIN
-    transcript: Here you go!
+    - name: CLIP-DRINK-NO
+      title: "no"
+      scene: SCENE-MAIN
+      transcript: Next time!
 
-  - name: CLIP-DRINK-NO
-    title: "no"
-    scene: SCENE-MAIN
-    transcript: Next time!
+    - name: CLIP-JOKE
+      title: joke
+      scene: SCENE-MAIN
+      transcript: Why did the chicken cross the road?
 
-  - name: CLIP-JOKE
-    title: joke
-    scene: SCENE-MAIN
-    transcript: Why did the chicken cross the road?
+  triggers:
+    - name: t1
+      event: {type: call_received, from: Player, to: PhoneTree}
+      scene: SCENE-MAIN
+      actions: [{ name: 'play_clip', clip_name: 'CLIP-GREETING' }]
 
-triggers:
-  - name: t1
-    event: {type: call_received, from: Player, to: PhoneTree}
-    scene: SCENE-MAIN
-    actions: [{ name: 'play_clip', clip_name: 'CLIP-GREETING' }]
+    - name: trigger-greeting-answered
+      event: {type: clip_answered, clip: CLIP-GREETING}
+      scene: SCENE-MAIN
+      actions:
+        - name: conditional  
+          if: { op: clip_answer_is, response: "1" }
+          actions: [{ name: 'play_clip', clip_name: 'CLIP-DRINK' }]
+          else: [{ name: 'play_clip', clip_name: 'CLIP-JOKE' }]
 
-  - name: trigger-greeting-answered
-    event: {type: clip_answered, clip: CLIP-GREETING}
-    scene: SCENE-MAIN
-    actions:
-      - name: conditional  
-        if: { op: clip_answer_is, response: "1" }
-        actions: [{ name: 'play_clip', clip_name: 'CLIP-DRINK' }]
-        else: [{ name: 'play_clip', clip_name: 'CLIP-JOKE' }]
-
-  - name: trigger-drink-answered
-    event: {type: clip_answered, clip: CLIP-DRINK}
-    scene: SCENE-MAIN
-    actions:
-      - name: conditional  
-        if: { op: clip_answer_is, response: "yes" }
-        actions: [{ name: 'play_clip', clip_name: 'CLIP-DRINK-YES' }]
-        else: [{ name: 'play_clip', clip_name: 'CLIP-DRINK-NO' }]
+    - name: trigger-drink-answered
+      event: {type: clip_answered, clip: CLIP-DRINK}
+      scene: SCENE-MAIN
+      actions:
+        - name: conditional  
+          if: { op: clip_answer_is, response: "yes" }
+          actions: [{ name: 'play_clip', clip_name: 'CLIP-DRINK-YES' }]
+          else: [{ name: 'play_clip', clip_name: 'CLIP-DRINK-NO' }]

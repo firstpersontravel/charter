@@ -15,7 +15,7 @@ describe('RoadTripExample', () => {
   let script;
 
   beforeEach(async () => {
-    script = await TestUtil.createScriptWithContent(example);
+    script = await TestUtil.createExample(example);
   });
 
   it('runs through road trip', async () => {

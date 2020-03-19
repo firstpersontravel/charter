@@ -83,26 +83,27 @@ class SchedulerWorker {
     }
   }
 
-  static getNextScheduleAt(objs) {
+  static getNextTriggerAndTime(objs) {
     const now = moment.utc();
-
-    // If trip has no scene, schedule right away.
-    if (!objs.trip.currentSceneName) {
-      return now;
-    }
-
     const actionContext = KernelUtil.prepareActionContext(objs, now);
-    const nextTime = _(objs.script.content.triggers)
+    const nextTriggerWithTime = _(objs.script.content.triggers)
       .filter(trigger => (
         trigger.event && trigger.event.type === 'time_occurred'
       ))
       .filter(trigger => !objs.trip.history[trigger.name])
-      .map(trigger => this._getTriggerIntendedAt(trigger, actionContext))
-      .filter(Boolean)
-      .sortBy(time => time.unix())
+      .map(trigger => (
+        [trigger, this._getTriggerIntendedAt(trigger, actionContext)]
+      ))
+      .filter(triggerAndTime => !!triggerAndTime[1])
+      .sortBy(triggerAndTime => triggerAndTime[1].unix())
       .value()[0];
-
-    return nextTime;
+    if (!nextTriggerWithTime) {
+      return [null, null];
+    }
+    if (nextTriggerWithTime[1].isBefore(now)) {
+      return [nextTriggerWithTime[0], now];
+    }
+    return nextTriggerWithTime;
   }
 
   /**
@@ -111,17 +112,25 @@ class SchedulerWorker {
   static async _updateTripNextScheduleAt(tripId) {
     const now = moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
-    const nextTime = this.getNextScheduleAt(objs);
+    const [nextTrigger, nextTime] = this.getNextTriggerAndTime(objs);
 
     await objs.trip.update({
       scheduleUpdatedAt: now.toDate(),
       scheduleAt: nextTime ? nextTime.toDate() : null
     });
 
-    logger.info(
-      `Updating scheduleAt for ${objs.trip.experience.title} ` + 
-      `"${objs.trip.title}" to ${nextTime ? nextTime.toString() : 'none'}.`
-    );
+    if (nextTime) {
+      const nextTimeLocal = nextTime.clone()
+        .tz('US/Pacific')
+        .format('MMM DD, h:mm:ssa z');
+      logger.info(
+        `Updating scheduleAt for ${objs.trip.experience.title} ` + 
+        `"${objs.trip.title}" to ${nextTimeLocal}. (${JSON.stringify(nextTrigger)})`);
+    } else {
+      logger.info(
+        `No upcoming scheduled actions for ${objs.trip.experience.title} ` + 
+        `"${objs.trip.title}".`);
+    }
 
   }
 
@@ -129,6 +138,9 @@ class SchedulerWorker {
    * Schedule actions for all active trips.
    */
   static async scheduleActions(threshold) {
+    const thresholdLocal = threshold.clone()
+      .tz('US/Pacific')
+      .format('MMM DD, h:mm:ssa z');
     // Find all trips where the schedule needs updating -- which means if
     // the trip or script was updated more recently than scheduling happened.
     const trips = await models.Trip.findAll({
@@ -143,7 +155,9 @@ class SchedulerWorker {
       }]
     });
     for (const trip of trips) {
-      logger.info(`Checking ${trip.experience.title} "${trip.title}" up to ${threshold}`);
+      logger.info(
+        `Checking ${trip.experience.title} "${trip.title}" ` +
+        `up to ${thresholdLocal}`);
       await this._scheduleTripActions(trip.id, threshold);
       await this._updateTripNextScheduleAt(trip.id);
     }

@@ -1,143 +1,292 @@
-meta:
-  version: 23
+content:
+  layouts:
+    - name: tablet
+      title: Tablet
+      type: tabs
+      section: tabs
+      header_panels:
+        - type: text
+          style: quest
+          text: "{{Player.directive}}"
+          visible_if:
+            op: value_is_true
+            ref: Player.directive
+      
+  content_pages:
+    - name: nav
+      section: tabs
+      title: Navigation
+      panels:
+        - type: outlet
+          name: main
+    - name: messages
+      section: tabs
+      title: Messages
+      panels:
+        - type: messages_browse
+          title: Messages
 
-layouts:
-  - name: tablet
-    title: Tablet
-    type: tabs
-    section: tabs
-    header_panels:
-      - type: text
-        style: quest
-        text: "{{Player.directive}}"
-        visible_if:
-          op: value_is_true
-          ref: Player.directive
-    
-content_pages:
-  - name: nav
-    section: tabs
-    title: Navigation
-    panels:
-      - type: outlet
-        name: main
-  - name: messages
-    section: tabs
-    title: Messages
-    panels:
-      - type: messages_browse
-        title: Messages
+  roles:
+    - name: Player
+      title: Player
+      type: traveler
+      starting_page: PAGE-START
+      layout: tablet
 
-roles:
-  - name: Player
-    title: Player
-    type: traveler
-    starting_page: PAGE-START
-    layout: tablet
+    - name: Guide
+      title: Guide
+      type: scripted
 
-  - name: Guide
-    title: Guide
-    type: scripted
+  scenes:
+    - name: SCENE-MAIN
+      title: Main
 
-scenes:
-  - name: SCENE-MAIN
-    title: Main
-
-pages:
-  - name: PAGE-START
-    title: Start at house
-    role: Player
-    scene: SCENE-MAIN
-    directive: Walk to Atlas
-    panels:
-      - type: directions
-        geofence: GEOFENCE-ATLAS
-        waypoint: WAYPOINT-ATLAS
-        cue: CUE-ATLAS-ARRIVE
-
-  - name: PAGE-ATLAS
-    title: At Atlas Cafe
-    role: Player
-    scene: SCENE-MAIN
-    directive: Enjoy Atlas Cafe!
-    waypoint: WAYPOINT-ATLAS
-
-waypoints:
-  - name: WAYPOINT-COTTAGE
-    title: Cottage
-    options:
-      - name: cottage
-        title: Cottage
-        address: 828 Alabama St, SF CA
-        coords: [37.758273, -122.411681]
-  - name: WAYPOINT-ATLAS
-    title: Atlas Cafe
-    options:
-      - name: atlas
-        title: Atlas Cafe
-        address: Atlas Cafe, SF CA
-        coords: [37.759010, -122.411497]
-  - name: WAYPOINT-BON-NENE
-    title: Bon Nene
-    options:
-      - name: bonnene
-        title: Bon Nene
-        address: Bon Nene, SF CA
-        coords: [37.757528, -122.411499]
-
-geofences:
-  - name: GEOFENCE-ATLAS
-    center: WAYPOINT-ATLAS
-    distance: 50
-  - name: GEOFENCE-BON-NENE
-    center: WAYPOINT-BON-NENE
-    distance: 20
-
-cues:
-  - { name: CUE-ATLAS-ARRIVE, scene: SCENE-MAIN, title: Atlas Cafe Arrived }
-
-triggers:
-  - name: atlas
-    event: { type: cue_signaled, cue: CUE-ATLAS-ARRIVE }
-    scene: SCENE-MAIN
-    actions:
-      - name: send_text
-        content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
-        from_role_name: Guide
-        to_role_name: Player
-      - name: send_to_page
-        role_name: Player
-        page_name: PAGE-ATLAS
-
-  - name: msg
-    event:
-      type: image_received
-      from: Player
-      to: Guide
-      geofence: GEOFENCE-ATLAS
-    scene: SCENE-MAIN
-    actions:
-      - name: wait
-        duration: 10s
-      - name: send_text
-        from_role_name: Guide
-        to_role_name: Player
-        content: Try the trout sandwich.
-      - name: increment_value
-        value_ref: points
-        delta: 5
-
-  - name: geofence
-    event:
-      type: geofence_entered
+  pages:
+    - name: PAGE-START
+      title: Start at house
       role: Player
-      geofence: GEOFENCE-BON-NENE
-    scene: SCENE-MAIN
-    actions:
-      - name: send_text
-        from_role_name: Guide
-        to_role_name: Player
-        content: The mushroom spaghetti bowl is amazing.
-      - name: increment_value
-        value_ref: points
-        delta: 10
+      scene: SCENE-MAIN
+      directive: Walk to Atlas
+      panels:
+        - type: directions
+          geofence: GEOFENCE-ATLAS
+          waypoint: WAYPOINT-ATLAS
+          cue: CUE-ATLAS-ARRIVE
+
+    - name: PAGE-ATLAS
+      title: At Atlas Cafe
+      role: Player
+      scene: SCENE-MAIN
+      directive: Enjoy Atlas Cafe!
+      waypoint: WAYPOINT-ATLAS
+
+  waypoints:
+    - name: WAYPOINT-COTTAGE
+      title: Cottage
+      options:
+        - name: cottage
+          title: Cottage
+          address: 828 Alabama St, SF CA
+          coords: [37.758273, -122.411681]
+    - name: WAYPOINT-ATLAS
+      title: Atlas Cafe
+      options:
+        - name: atlas
+          title: Atlas Cafe
+          address: Atlas Cafe, SF CA
+          coords: [37.759010, -122.411497]
+    - name: WAYPOINT-BON-NENE
+      title: Bon Nene
+      options:
+        - name: bonnene
+          title: Bon Nene
+          address: Bon Nene, SF CA
+          coords: [37.757528, -122.411499]
+
+  geofences:
+    - name: GEOFENCE-ATLAS
+      center: WAYPOINT-ATLAS
+      distance: 50
+    - name: GEOFENCE-BON-NENE
+      center: WAYPOINT-BON-NENE
+      distance: 20
+
+  cues:
+    - { name: CUE-ATLAS-ARRIVE, scene: SCENE-MAIN, title: Atlas Cafe Arrived }
+
+  triggers:
+    - name: atlas
+      event: { type: cue_signaled, cue: CUE-ATLAS-ARRIVE }
+      scene: SCENE-MAIN
+      actions:
+        - name: send_text
+          content: Welcome to Atlas Cafe! Send me an picture and i'll give you a sandwich recommendation.
+          from_role_name: Guide
+          to_role_name: Player
+        - name: send_to_page
+          role_name: Player
+          page_name: PAGE-ATLAS
+
+    - name: msg
+      event:
+        type: image_received
+        from: Player
+        to: Guide
+        geofence: GEOFENCE-ATLAS
+      scene: SCENE-MAIN
+      actions:
+        - name: wait
+          duration: 10s
+        - name: send_text
+          from_role_name: Guide
+          to_role_name: Player
+          content: Try the trout sandwich.
+        - name: increment_value
+          value_ref: points
+          delta: 5
+
+    - name: geofence
+      event:
+        type: geofence_entered
+        role: Player
+        geofence: GEOFENCE-BON-NENE
+      scene: SCENE-MAIN
+      actions:
+        - name: send_text
+          from_role_name: Guide
+          to_role_name: Player
+          content: The mushroom spaghetti bowl is amazing.
+        - name: increment_value
+          value_ref: points
+          delta: 10
+assets:
+  - type: directions
+    data:
+      end:
+      - 37.7741351
+      - -122.422399
+      from_option: WAYPOINT-BIGROCK
+      polyline: axpeFdmejVTxDmANkAN
+      route: ROUTE-BIGROCK-TO-COFFEE
+      start:
+      - 37.7742547
+      - -122.4214664
+      steps:
+      - distance: 285 ft
+        instructions: Head <b>west</b> on <b>Page St</b> toward <b>Gough St</b>
+        start:
+        - 37.7742547
+        - -122.4214664
+      - distance: 302 ft
+        instructions: Turn <b>right</b> onto <b>Gough St</b><div style="font-size:0.9em">Destination
+          will be on the right</div>
+        start:
+        - 37.7741351
+        - -122.422399
+      to_option: WAYPOINT-CAFE
+  - type: directions
+    data:
+      end:
+      - 37.7749898
+      - -122.42257
+      from_option: WAYPOINT-CAFE
+      polyline: e|peF~sejVO@YcEMiB
+      route: ROUTE-COFFEE-TO-RT
+      start:
+      - 37.7749148
+      - -122.4225553
+      steps:
+      - distance: 39 ft
+        instructions: Head <b>north</b> on <b>Gough St</b> toward <b>Oak St</b>
+        start:
+        - 37.7749148
+        - -122.4225553
+      - distance: 453 ft
+        instructions: Turn <b>right</b> onto <b>Oak St</b><div style="font-size:0.9em">Destination
+          will be on the right</div>
+        start:
+        - 37.7749898
+        - -122.42257
+      to_option: WAYPOINT-RT-ROTISSERIE
+  - type: directions
+    data:
+      end:
+      - 37.7747304
+      - -122.4209242
+      from_option: WAYPOINT-CALA
+      polyline: "}aqeFdfejVPhCoAN@PnAO`@Gz@KhBULnB"
+      route: ROUTE-LINDENROOM-TO-BIGROCK
+      start:
+      - 37.7758313
+      - -122.420347
+      steps:
+      - distance: 217 ft
+        instructions: Head <b>west</b> on <b>Hickory St</b> toward <b>Franklin St</b>
+        start:
+        - 37.7758313
+        - -122.420347
+      - distance: 171 ft
+        instructions: Turn <b>right</b> onto <b>Franklin St</b>
+        start:
+        - 37.77574389999999
+        - -122.4210411
+      - distance: 0.1 mi
+        instructions: Make a <b>U-turn</b> at <b>Fell St</b>
+        start:
+        - 37.7761262
+        - -122.421208
+      - distance: 174 ft
+        instructions: Turn <b>right</b> onto <b>Lily St</b>
+        start:
+        - 37.7747304
+        - -122.4209242
+      to_option: WAYPOINT-BIGROCK-BACK
+  - type: directions
+    data:
+      end:
+      - 37.77574389999999
+      - -122.4210411
+      from_option: WAYPOINT-RT-ROTISSERIE
+      polyline: u}peFhjejVG@AQi@Fs@JM@QiC
+      route: ROUTE-RT-TO-LINDENROOM
+      start:
+      - 37.7751514
+      - -122.4210092
+      steps:
+      - distance: 203 ft
+        instructions: Head <b>north</b> on <b>Franklin St</b> toward <b>Oak St</b>
+        start:
+        - 37.7751514
+        - -122.4210092
+      - distance: 217 ft
+        instructions: Turn <b>right</b> onto <b>Hickory St</b><div style="font-size:0.9em">Destination
+          will be on the left</div>
+        start:
+        - 37.77574389999999
+        - -122.4210411
+      to_option: WAYPOINT-CALA
+  - type: media
+    data:
+      medium: image
+      path: deaddrop.jpeg
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/deaddrop.jpeg
+  - type: media
+    data:
+      medium: image
+      path: guidemarker.png
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/guidemarker.png
+  - type: media
+    data:
+      medium: audio
+      path: jessie-vm.mp3
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/jessie-vm.mp3
+  - type: media
+    data:
+      medium: image
+      path: key_pickup.jpeg
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/key_pickup.jpeg
+  - type: media
+    data:
+      medium: audio
+      path: message-2.mp3
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3
+  - type: media
+    data:
+      medium: audio
+      path: message-31.mp3
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-31.mp3
+  - type: media
+    data:
+      medium: audio
+      path: message-6.mp3
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-6.mp3
+  - type: media
+    data:
+      medium: audio
+      path: phil-vm.mp3
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/phil-vm.mp3
+  - type: media
+    data:
+      medium: audio
+      path: russell-vm.mp3
+      url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/russell-vm.mp3

@@ -1,75 +1,73 @@
-meta:
-  version: 23
+content:
+  roles:
+    - name: Knight
+      title: Knight
+      type: traveler
 
-roles:
-  - name: Knight
-    title: Knight
-    type: traveler
+    - name: Sage
+      title: Sage
+      type: scripted
 
-  - name: Sage
-    title: Sage
-    type: scripted
+  relays:
+    - name: main
+      for: Knight
+      as: Knight
+      with: Sage
+      trailhead: true
 
-relays:
-  - name: main
-    for: Knight
-    as: Knight
-    with: Sage
-    trailhead: true
+  scenes:
+    - name: SCENE-MAIN
+      title: Main
 
-scenes:
-  - name: SCENE-MAIN
-    title: Main
+  triggers:
+    - name: hello
+      event: {type: text_received, from: Knight, to: Sage}
+      scene: SCENE-MAIN
+      active_if:
+        op: not
+        item:
+          op: value_is_true
+          ref: game_started
+      actions:
+        - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
+        - name: conditional
+          if:
+            op: or
+            items:
+              - op: text_contains
+                part: 'hello'
+              - op: text_contains
+                part: 'hi'
+              - op: text_contains
+                part: 'hey'
+          actions:
+            - name: send_text
+              from_role_name: Sage
+              to_role_name: Knight
+              content: Why hello there, fine sir/lady/being! What is your name?
+          else:
+            - name: send_text
+              from_role_name: Sage
+              to_role_name: Knight
+              content: How rude, not even a greeting! What is your name?
 
-triggers:
-  - name: hello
-    event: {type: text_received, from: Knight, to: Sage}
-    scene: SCENE-MAIN
-    active_if:
-      op: not
-      item:
+    - name: getname
+      event: {type: text_received, from: Knight, to: Sage}
+      scene: SCENE-MAIN
+      active_if:
         op: value_is_true
         ref: game_started
-    actions:
-      - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
-      - name: conditional
-        if:
-          op: or
-          items:
-            - op: text_contains
-              part: 'hello'
-            - op: text_contains
-              part: 'hi'
-            - op: text_contains
-              part: 'hey'
-        actions:
-          - name: send_text
-            from_role_name: Sage
-            to_role_name: Knight
-            content: Why hello there, fine sir/lady/being! What is your name?
-        else:
-          - name: send_text
-            from_role_name: Sage
-            to_role_name: Knight
-            content: How rude, not even a greeting! What is your name?
-
-  - name: getname
-    event: {type: text_received, from: Knight, to: Sage}
-    scene: SCENE-MAIN
-    active_if:
-      op: value_is_true
-      ref: game_started
-    actions:
-      - name: set_value
-        value_ref: player_name
-        new_value_ref: event.message.content
-      - name: send_text
-        from_role_name: Sage
-        to_role_name: Knight
-        content: Greetings, {{player_name}}. You may now await your righteous quest.
-      - name: wait
-        duration: 10s
-      - name: send_text
-        from_role_name: Sage
-        to_role_name: Knight
-        content: Your quest is... the holy grail!
+      actions:
+        - name: set_value
+          value_ref: player_name
+          new_value_ref: event.message.content
+        - name: send_text
+          from_role_name: Sage
+          to_role_name: Knight
+          content: Greetings, {{player_name}}. You may now await your righteous quest.
+        - name: wait
+          duration: 10s
+        - name: send_text
+          from_role_name: Sage
+          to_role_name: Knight
+          content: Your quest is... the holy grail!

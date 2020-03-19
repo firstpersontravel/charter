@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const Sequelize = require('sequelize');
 
 const config = require('../config');
@@ -70,6 +70,10 @@ class RunnerWorker {
         where: { isArchived: false }
       }]
     });
+    // const thresholdLocal = threshold.clone()
+    //   .tz('US/Pacific')
+    //   .format('MMM DD, h:mm:ssa z');
+    // logger.info(`${actions.length} actions up to ${thresholdLocal}`);
     for (let action of actions) {
       await this._runScheduledAction(action, safe);
     }

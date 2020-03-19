@@ -1,0 +1,1326 @@
+content:
+  cues:
+  - name: CUE-0-START
+    scene: SCENE-0
+    title: Start
+  - name: CUE-0-SEND-REMINDER-EMAIL
+    scene: SCENE-0
+    title: Send Reminder Email
+  - name: CUE-0-SEND-REMINDER-TEXT
+    scene: SCENE-0
+    title: Send Reminder Text
+  - name: CUE-1-START
+    scene: SCENE-1
+    title: Start
+  - name: CUE-1-START-CALL
+    scene: SCENE-1
+    title: Start Call
+  - name: CUE-1-INITIATE-CALL
+    scene: SCENE-1
+    title: Initiate Call
+  - name: CUE-1-NEXT-SCENE
+    scene: SCENE-1
+    title: Next Scene
+  - name: CUE-2-JESSIE-REMINDER
+    scene: SCENE-2
+    title: Jessie Reminder
+  - name: CUE-7-INITIATE-CALL
+    scene: SCENE-7
+    title: Initiate Call
+  - name: CUE-7-START-CALL
+    scene: SCENE-7
+    title: Start Call
+  - name: CUE-7-NEXT-SCENE
+    scene: SCENE-7
+    title: Next Scene
+  - name: CUE-8-PHIL-FOLLOWUP
+    scene: SCENE-8
+    title: Phil Followup
+  departures:
+  - name: Main
+    title: Main
+  inboxes:
+  - address: dispatch@tacosyndicate.family
+    name: Jessie
+    role: Jessie
+  layouts:
+  - header_panels:
+    - style: quest
+      text: "{{Inductee.directive}}"
+      type: text
+      visible_if:
+        op: value_is_true
+        ref: Inductee.directive
+    name: phone
+    title: phone
+    type: simple
+  meta:
+    version: 23
+  pages:
+  - directive: Waiting for inductee
+    name: PAGE-0-JESSIE
+    panels:
+    - text: Closer to the scheduled start time at {{schedule.TIME-DEPARTURE}}, this
+        page will automatically transition to the starting call. Or you can press the
+        button below to start the call sooner.
+      type: text
+    - cue: CUE-0-START
+      text: Start
+      type: button
+    - cue: CUE-0-SEND-REMINDER-TEXT
+      text: Send reminder text to {{Inductee.phone_number}}
+      type: button
+      visible_if:
+        item:
+          op: value_is_true
+          ref: sent_reminder_text
+        op: not
+    - cue: CUE-0-SEND-REMINDER-EMAIL
+      text: Send reminder email to {{Inductee.email}}
+      type: button
+      visible_if:
+        item:
+          op: value_is_true
+          ref: sent_reminder_email
+        op: not
+    role: Jessie
+    scene: SCENE-0
+    title: Waiting for inductee
+  - directive: Head to the lounge and wait for Jessie's call.
+    name: PAGE-1-START
+    panels:
+    - text: Check out the phone in the lounge. Or text (707) 876-0019 to begin.
+      type: text
+    - cue: CUE-1-START
+      text: Trigger beginning
+      type: button
+    role: Inductee
+    scene: SCENE-1
+    title: Await call
+    waypoint: WAYPOINT-BIGROCK
+  - directive: Intro call with the inductee
+    name: PAGE-1-JESSIE
+    panels:
+    - text: Intro call with the inductee! Call the lounge phone at (415) 741-0305. Try
+        the inductees directly at {{Inductee.phone_number}} if that doesn't work.
+      type: text
+    - text: See script at https://docs.google.com/document/d/14I4uo3qbHekITn4RVjBFvguYGWK4FNdmGyqkPZ_ONTk/edit#heading=h.dsrb49xqc7nq
+      type: text
+    - cue: CUE-1-START-CALL
+      text: Starting call
+      type: button
+      visible_if:
+        item:
+          op: value_is_true
+          ref: started_call_1
+        op: not
+    - cue: CUE-1-NEXT-SCENE
+      text: Done with call
+      type: button
+      visible_if:
+        op: value_is_true
+        ref: started_call_1
+    role: Jessie
+    scene: SCENE-1
+    title: Intro call
+  - directive: Head to 20th Century Cafe at 198 Gough St, and send Jessie the 4-digit
+      code on the Taco Syndicate guide marker right nearby when you find it.
+    name: PAGE-2-TO-COFFEE
+    panels:
+    - route: ROUTE-BIGROCK-TO-COFFEE
+      type: directions
+    role: Inductee
+    route: ROUTE-BIGROCK-TO-COFFEE
+    scene: SCENE-2
+    title: Head to 20th C Cafe
+  - directive: Wait for player to show up at lounge
+    name: PAGE-2-JESSIE
+    panels:
+    - text: This page will update when the player is at the lounge.
+      type: text
+    role: Jessie
+    scene: SCENE-2
+    title: Wait for player
+  - directive: Head to RT Rotisserie at 101 Oak St (at Franklin) and find the Taco Syndicate
+      relay tag, send the number to Jessie.
+    name: PAGE-3-TO-RT
+    panels:
+    - route: ROUTE-COFFEE-TO-RT
+      type: directions
+    role: Inductee
+    route: ROUTE-COFFEE-TO-RT
+    scene: SCENE-3
+    title: Head to RT
+  - directive: "{{pickup_vendor_instructions}} Send a pic of what you get to Jessie,
+      or text if you need help."
+    name: PAGE-3-RT-KEY-VENDOR
+    panels:
+    - type: directions
+      waypoint: WAYPOINT-RT-ROTISSERIE
+    role: Inductee
+    scene: SCENE-3
+    title: Get drop from vendor
+    waypoint: WAYPOINT-RT-ROTISSERIE
+  - directive: Head across Franklin to a tree at the southeast corner of Franklin and
+      Oak. You'll find a lockbox inside the tree. The code is 1648. Send a picture of
+      what you get inside to Jessie, or text if you need help.
+    name: PAGE-3-RT-KEY-BACKUP
+    panels:
+    - type: directions
+      waypoint: WAYPOINT-RT-BACKUP
+    role: Inductee
+    scene: SCENE-3
+    title: Get drop from dropbox
+    waypoint: WAYPOINT-RT-BACKUP
+  - directive: Head to Tacos Cala on Hickory between Franklin and Van Ness, and send
+      Jessie the Taco Syndicate guide marker.
+    name: PAGE-4-TO-CALA
+    panels:
+    - route: ROUTE-RT-TO-LINDENROOM
+      type: directions
+    role: Inductee
+    route: ROUTE-RT-TO-LINDENROOM
+    scene: SCENE-4
+    title: Head to Linden Room
+  - directive: Drop off the envelope in the dropbox and text Jessie when it's done.
+    name: PAGE-4-CALA-DROP
+    panels:
+    - type: directions
+      waypoint: WAYPOINT-CALA
+    role: Inductee
+    scene: SCENE-4
+    title: Dropoff at Linden Room
+    waypoint: WAYPOINT-CALA
+  - directive: Head to the door around 37 Lily St, and text Jessie the Taco Syndicate
+      guide marker when you get there.
+    name: PAGE-6-HEAD-TO-LOUNGE
+    panels:
+    - route: ROUTE-LINDENROOM-TO-BIGROCK
+      type: directions
+    role: Inductee
+    route: ROUTE-LINDENROOM-TO-BIGROCK
+    scene: SCENE-6
+    title: Head back to Lounge
+  - directive: Make your way up to the lounge.
+    name: PAGE-7-CONCLUSION
+    panels:
+    - text: Make your way up to the lounge.
+      type: text
+    role: Inductee
+    scene: SCENE-7
+    title: Back at Lounge
+    waypoint: WAYPOINT-BIGROCK-BACK
+  - directive: Call inductee when they arrive in the lounge
+    name: PAGE-7-JESSIE-CONCLUSION
+    panels:
+    - text: Conclusion call with the inductee! Call the Lounge phone at (415) 741-0305.
+        Try the inductees directly at {{Inductee.phone_number}} if that doesn't work.
+      type: text
+    - text: See script at https://docs.google.com/document/d/14I4uo3qbHekITn4RVjBFvguYGWK4FNdmGyqkPZ_ONTk/edit#heading=h.dsrb49xqc7nq
+      type: text
+    - cue: CUE-7-START-CALL
+      text: Starting call
+      type: button
+      visible_if:
+        item:
+          op: value_is_true
+          ref: started_call_2
+        op: not
+    - cue: CUE-7-NEXT-SCENE
+      text: Done with call
+      type: button
+      visible_if:
+        op: value_is_true
+        ref: started_call_2
+    role: Jessie
+    scene: SCENE-7
+    title: Jessie conclusion call
+  - directive: Thanks for your help.
+    name: PAGE-8-FOLLOWUP
+    panels:
+    - text: Thanks for your help!
+      type: text
+    role: Inductee
+    scene: SCENE-8
+    title: Follow-up
+  relays:
+  - as: Inductee
+    for: Inductee
+    name: RELAY-INDUCTEE-WITH-JESSIE
+    with: Jessie
+  - as: Inductee
+    for: Inductee
+    name: RELAY-INDUCTEE-WITH-PHIL
+    with: Phil
+  - as: Inductee
+    for: Inductee
+    name: RELAY-INDUCTEE-WITH-RUSSELL
+    with: Russell
+  - as: Jessie
+    for: Jessie
+    name: RELAY-JESSIE-WITH-INDUCTEE
+    with: Inductee
+  - as: Jessie
+    for: StageManager
+    name: RELAY-STAGEMANAGER-WITH-INDUCTEE
+    with: Inductee
+  - as: Phil
+    for: StageManager
+    name: RELAY-STAGEMANAGER-WITH-INDUCTEE-2
+    with: Inductee
+  - as: StageManager
+    for: StageManager
+    name: RELAY-STAGEMANAGER-WITH-JESSIE
+    with: Jessie
+  - as: BigRockStaff1
+    for: BigRockStaff1
+    name: RELAY-BIGROCKSTAFF1-WITH-JESSIE
+    with: Jessie
+  roles:
+  - layout: phone
+    name: Inductee
+    starting_page: PAGE-1-START
+    title: Inductee
+    type: traveler
+  - name: Jessie
+    starting_page: PAGE-0-JESSIE
+    title: Taco Syndicate Dispatch
+    type: performer
+  - name: StageManager
+    title: StageManager
+    type: performer
+  - name: Phil
+    title: Phil
+    type: scripted
+  - name: Russell
+    title: Russell
+    type: scripted
+  - name: BigRockStaff1
+    title: BigRockStaff1
+    type: performer
+  routes:
+  - from: WAYPOINT-BIGROCK
+    mode: walking
+    name: ROUTE-BIGROCK-TO-COFFEE
+    title: Bigrock To Coffee
+    to: WAYPOINT-CAFE
+  - from: WAYPOINT-CAFE
+    mode: walking
+    name: ROUTE-COFFEE-TO-RT
+    title: Coffee To Rt
+    to: WAYPOINT-RT-ROTISSERIE
+  - from: WAYPOINT-RT-ROTISSERIE
+    mode: walking
+    name: ROUTE-RT-TO-LINDENROOM
+    title: Rt To Lindenroom
+    to: WAYPOINT-CALA
+  - from: WAYPOINT-CALA
+    mode: walking
+    name: ROUTE-LINDENROOM-TO-BIGROCK
+    title: Lindenroom To Bigrock
+    to: WAYPOINT-BIGROCK-BACK
+    via:
+    - - 37.77579
+      - -122.421101
+  scenes:
+  - global: true
+    name: Phil
+    title: Phil
+  - name: SCENE-0
+    title: 0. Reminder
+  - name: SCENE-1
+    title: 1. Lounge Intro
+  - name: SCENE-2
+    title: 2. Coffee at 20th Century
+  - name: SCENE-3
+    title: 3. Pickup at RT Rotisserie
+  - name: SCENE-4
+    title: 4. Drop at Cala
+  - name: SCENE-6
+    title: 6. Return to Lounge
+  - name: SCENE-7
+    title: 7. Back at Lounge
+  - name: SCENE-8
+    title: 8. Coda
+  times:
+  - name: TIME-REMINDER
+    title: Reminder
+  - name: TIME-DEPARTURE
+    title: Departure
+  triggers:
+  - actions:
+    - duration: 3s
+      name: wait
+    - content: Enjoy! Remember -- there are benefits for those who play ball with us.
+        And risks for those who don't.
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    active_if:
+      items:
+      - op: value_is_true
+        ref: flag_vendor_coffee
+      - item:
+          op: value_is_true
+          ref: sent_phil_offer
+        op: not
+      op: and
+    event:
+      from: Inductee
+      to: Phil
+      type: text_received
+    name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL
+    repeatable: false
+    scene: Phil
+  - actions:
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: accepted_phil_offer
+    - duration: 3s
+      name: wait
+    - content: 'You have received an encrypted voice message from PHIL via Taco Syndicate
+        Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-6.mp3'
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    - duration: 2m
+      name: wait
+    - content: Remember, look for any information you can find from the science division
+        of Terpeneutics. Send me a picture.
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    active_if:
+      items:
+      - op: value_is_true
+        ref: sent_phil_offer
+      - items:
+        - op: value_contains
+          part_ref: '"y"'
+          string_ref: event.message.content
+        - op: value_contains
+          part_ref: '"ok"'
+          string_ref: event.message.content
+        - op: value_contains
+          part_ref: '"sure"'
+          string_ref: event.message.content
+        op: or
+      op: and
+    event:
+      from: Inductee
+      to: Phil
+      type: text_received
+    name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL-2
+    repeatable: false
+    scene: Phil
+  - actions:
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: sent_phil_secret
+    - content: Hey thanks - this is gonna be huge for me. About that reward - hate to
+        break it to you, but there ain’t gonna be one. Tough break, kid, but that’s
+        business...
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    active_if:
+      items:
+      - op: value_is_true
+        ref: accepted_phil_offer
+      - item:
+          op: value_is_true
+          ref: sent_phil_secret
+        op: not
+      op: and
+    event:
+      from: Inductee
+      to: Phil
+      type: image_received
+    name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL-3
+    scene: Phil
+  - actions:
+    - content: Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
+        the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call at that time
+        -- you should be at the lounge. Let me know if you're still going to make it,
+        or if you need any help getting there.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: sent_reminder_text
+    active_if:
+      item:
+        op: value_is_true
+        ref: sent_reminder_text
+      op: not
+    event:
+      time: TIME-REMINDER
+      type: time_occurred
+    name: TRIGGER-SCENE-0-TIME-OCCURRED
+    scene: SCENE-0
+  - actions:
+    - body: |
+        Greetings, Jessie here from Taco Syndicate dispatch.
+
+        Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of the Taco Syndicate Lounge, at 34 Page Street, on {{date}}. Make sure to get there on time!
+
+        If you need to reschedule or cancel, please let me know with at least a day's notice if possible.
+      cc: dispatch@tacosyndicate.family
+      from: Jessie
+      name: send_email
+      subject: Your Taco Syndicate tour on {{date}}.
+      to: Inductee
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: sent_reminder_email
+    active_if:
+      item:
+        op: value_is_true
+        ref: sent_reminder_email
+      op: not
+    event:
+      cue: CUE-0-SEND-REMINDER-EMAIL
+      type: cue_signaled
+    name: TRIGGER-SCENE-0-CUE-0-SEND-REMINDER-EMAIL
+    scene: SCENE-0
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-1
+    event:
+      offset: "-15m"
+      time: TIME-DEPARTURE
+      type: time_occurred
+    name: TRIGGER-SCENE-0-TIME-OCCURRED-2
+    scene: SCENE-0
+  - actions:
+    - name: send_to_page
+      page_name: PAGE-1-JESSIE
+      role_name: Jessie
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-1-SCENE-STARTED
+    scene: SCENE-1
+  - actions:
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: started_call_1
+    event:
+      cue: CUE-1-START-CALL
+      type: cue_signaled
+    name: TRIGGER-SCENE-1-CUE-1-START-CALL
+    scene: SCENE-1
+  - actions:
+    - as_role_name: Inductee
+      name: initiate_call
+      to_role_name: Jessie
+    event:
+      cue: CUE-1-INITIATE-CALL
+      type: cue_signaled
+    name: TRIGGER-SCENE-1-CUE-1-INITIATE-CALL
+    scene: SCENE-1
+  - actions:
+    - name: add_to_call
+      role_name: Inductee
+    event:
+      from: Inductee
+      to: Jessie
+      type: call_answered
+    name: TRIGGER-SCENE-1-CALL-ANSWERED
+    scene: SCENE-1
+  - actions:
+    - name: add_to_call
+      role_name: Inductee
+    event:
+      from: Jessie
+      to: Inductee
+      type: call_received
+    name: TRIGGER-SCENE-1-CALL-RECEIVED
+    scene: SCENE-1
+  - actions:
+    - name: add_to_call
+      role_name: Jessie
+    event:
+      from: Inductee
+      to: Jessie
+      type: call_received
+    name: TRIGGER-SCENE-1-CALL-RECEIVED-2
+    scene: SCENE-1
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-2
+    event:
+      cue: CUE-1-NEXT-SCENE
+      type: cue_signaled
+    name: TRIGGER-SCENE-1-CUE-1-NEXT-SCENE
+    scene: SCENE-1
+  - actions:
+    - name: send_to_page
+      page_name: PAGE-2-JESSIE
+      role_name: Jessie
+    - duration: 3s
+      name: wait
+    - name: send_to_page
+      page_name: PAGE-2-TO-COFFEE
+      role_name: Inductee
+    - duration: 3s
+      name: wait
+    - content: 'OK you’re all set to head out - turn right leaving Big Rock from the
+        front, and right onto Gough, and head north 2 blocks to Oak St. Directions here:
+        {{Inductee.link}}. (Make sure to allow location access!)  When you find the
+        guide marker, there will be a 4-digit number on it. They tend to be near light
+        posts or bike racks. Send the code my way!'
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - duration: 3s
+      name: wait
+    - content: guidemarker.png
+      from_role_name: Jessie
+      name: send_image
+      to_role_name: Inductee
+    - duration: 12s
+      name: wait
+    - content: Like I said on the phone, Russell is moving up in our ranks today, and
+        I’m pretty sure that package is his ring -- don't forget to bring it! It’s a
+        long-standing tradition that newly promoted Syndicate capos are notified by
+        the arrival of a Syndicate ring. Sure, texting would be easier, but ritual is
+        important around here.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - duration: 183s
+      name: wait
+    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool. I’m
+        going to send you a secure audio message in a minute - can never be too careful
+        about eavesdroppers these days.
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    - duration: 190s
+      name: wait
+    - content: 'You have received an encrypted voice message from PHIL. Tap to listen:
+        https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3'
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    - actions:
+      - content: Get a coffee at 20th Century Cafe right by you -- 198 Gough -- you
+          can tell them to put it on my tab. I mean it -- my credit is good pretty much
+          anywhere in this city. Text me back when you’ve got it.
+        from_role_name: Phil
+        name: send_text
+        to_role_name: Inductee
+      if:
+        op: value_is_true
+        ref: flag_vendor_coffee
+      name: conditional
+    - duration: 300s
+      name: wait
+    - cue_name: CUE-2-JESSIE-REMINDER
+      name: signal_cue
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-2-SCENE-STARTED
+    scene: SCENE-2
+  - actions:
+    - content: Remember, send me the 4-digit code by a Syndicate logo near the intersection
+        of Gough and Oak St. Should be the southeast corner, and probably near a light
+        post or bike rack.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    event:
+      cue: CUE-2-JESSIE-REMINDER
+      type: cue_signaled
+    name: TRIGGER-SCENE-2-CUE-2-JESSIE-REMINDER
+    scene: SCENE-2
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-3
+    active_if:
+      op: text_contains
+      part: '3538'
+    event:
+      from: Inductee
+      to: Jessie
+      type: text_received
+    name: TRIGGER-SCENE-2-MESSAGE-INDUCTEE-TO-JESSIE
+    scene: SCENE-2
+  - actions:
+    - duration: 3s
+      name: wait
+    - name: send_to_page
+      page_name: PAGE-3-TO-RT
+      role_name: Inductee
+    - duration: 3s
+      name: wait
+    - content: 'I looked up that guide marker and it looks like you''re headed to RT
+        Rotisserie as your next stop; our friends own the place. Head east on Oak St
+        one block to the corner of Franklin. Directions here: {{Inductee.link}} Send
+        me the guide marker you find when you get there, right off 101 Oak.'
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - duration: 60s
+      name: wait
+    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool. I’m
+        going to send you a secure audio message in a minute - can never be too careful
+        about eavesdroppers these days.
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    - duration: 65s
+      name: wait
+    - content: 'You have received an encrypted voice message from PHIL. Tap to listen:
+        https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3'
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-3-SCENE-STARTED
+    scene: SCENE-3
+  - actions:
+    - actions:
+      - name: send_to_page
+        page_name: PAGE-3-RT-KEY-VENDOR
+        role_name: Inductee
+      - content: "{{pickup_vendor_instructions}} Send me a picture of what you get,
+          or text if you need help."
+        from_role_name: Jessie
+        name: send_text
+        to_role_name: Inductee
+      else:
+      - name: send_to_page
+        page_name: PAGE-3-RT-KEY-BACKUP
+        role_name: Inductee
+      - content: Head across Franklin to a tree at the southeast corner of Franklin
+          and Oak. You'll find a lockbox inside the tree. The code is 1648. Send me
+          a picture of what you get inside, or text if you need help.
+        from_role_name: Jessie
+        name: send_text
+        to_role_name: Inductee
+      - content: key_pickup.jpeg
+        from_role_name: Jessie
+        name: send_image
+        to_role_name: Inductee
+      if:
+        op: value_is_true
+        ref: flag_vendor_pickup
+      name: conditional
+    event:
+      contains: '1471'
+      from: Inductee
+      to: Jessie
+      type: text_received
+    name: TRIGGER-SCENE-3-MESSAGE-INDUCTEE-TO-JESSIE
+    repeatable: false
+    scene: SCENE-3
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-4
+    event:
+      from: Inductee
+      to: Jessie
+      type: image_received
+    name: TRIGGER-SCENE-3-MESSAGE-INDUCTEE-TO-JESSIE-2
+    scene: SCENE-3
+  - actions:
+    - duration: 3s
+      name: wait
+    - name: send_to_page
+      page_name: PAGE-4-TO-CALA
+      role_name: Inductee
+    - duration: 3s
+      name: wait
+    - content: 'Great! And you got the key? That guide marker indicates your next stop
+        is the drop-off point. It''s a taco stand on Hickory between Franklin and Van
+        Ness. North one block, then turn right onto Hickory. Directions: {{Inductee.link}}
+        You’ll find a guide marker around there, text it to me when you’ve got it.'
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-4-SCENE-STARTED
+    scene: SCENE-4
+  - actions:
+    - duration: 3s
+      name: wait
+    - name: send_to_page
+      page_name: PAGE-4-CALA-DROP
+      role_name: Inductee
+    - duration: 3s
+      name: wait
+    - content: Nice work. That code indicates the ring goes in a dead drop on a telephone
+        pole right outside the front entrance of Tacos Cala, on the same side of Hickory.
+        Use your Syndicate master to open the box, and send me a picture of ring inside
+        to confirm you've made the drop. Remember to lock it back afterwards! And text
+        me if you’ve run into any trouble.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - duration: 11s
+      name: wait
+    - content: deaddrop.jpeg
+      from_role_name: Jessie
+      name: send_image
+      to_role_name: Inductee
+    event:
+      contains: '8180'
+      from: Inductee
+      to: Jessie
+      type: text_received
+    name: TRIGGER-SCENE-4-MESSAGE-INDUCTEE-TO-JESSIE
+    repeatable: false
+    scene: SCENE-4
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-6
+    active_if:
+      op: value_equals
+      ref1: Inductee.currentPageName
+      ref2: '"PAGE-4-CALA-DROP"'
+    event:
+      from: Inductee
+      to: Jessie
+      type: image_received
+    name: TRIGGER-SCENE-4-MESSAGE-INDUCTEE-TO-JESSIE-2
+    scene: SCENE-4
+  - actions:
+    - duration: 3s
+      name: wait
+    - name: send_to_page
+      page_name: PAGE-6-HEAD-TO-LOUNGE
+      role_name: Inductee
+    - duration: 3s
+      name: wait
+    - content: Hold onto that key - it’s a Syndicate Master. Opens interesting doors
+        all over town... In fact, I’ll show you one particularly interesting one right
+        now. The Syndicate has a gift for you before you go.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - duration: 5s
+      name: wait
+    - content: 'This particular door is around 37 Lily St. Make a 180 back on Hickory
+        to Franklin, then turn left, then right on Lily. It''ll be on your left. Directions:
+        {{Inductee.link}} Text me the guide marker when you get there.'
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - duration: 30s
+      name: wait
+    - content: I've got a request for you. Want to hear it?
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    - duration: 30s
+      name: wait
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: sent_phil_offer
+    - duration: 120m
+      name: wait
+    - content: Hey this is Russell. Thanks. I'll remember you.
+      from_role_name: Russell
+      name: send_text
+      to_role_name: Inductee
+    - duration: 120m
+      name: wait
+    - content: 'You have received an encrypted voice message from RUSSELL via Taco Syndicate
+        Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-31.mp3'
+      from_role_name: Russell
+      name: send_text
+      to_role_name: Inductee
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-6-SCENE-STARTED
+    scene: SCENE-6
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-7
+    event:
+      contains: '6037'
+      from: Inductee
+      to: Jessie
+      type: text_received
+    name: TRIGGER-SCENE-6-MESSAGE-INDUCTEE-TO-JESSIE
+    repeatable: false
+    scene: SCENE-6
+  - actions:
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: back_at_lounge
+    - name: send_to_page
+      page_name: PAGE-7-CONCLUSION
+      role_name: Inductee
+    - name: send_to_page
+      page_name: PAGE-7-JESSIE-CONCLUSION
+      role_name: Jessie
+    - content: '"Please open the back door for a player!"'
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: BigRockStaff1
+    - content: '"Please open the back door for a player!"'
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: StageManager
+    - duration: 3s
+      name: wait
+    - content: Great that you made it. I’ll give you a call.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-7-SCENE-STARTED
+    scene: SCENE-7
+  - actions:
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: started_call_2
+    event:
+      cue: CUE-7-START-CALL
+      type: cue_signaled
+    name: TRIGGER-SCENE-7-CUE-7-START-CALL
+    scene: SCENE-7
+  - actions:
+    - as_role_name: Inductee
+      name: initiate_call
+      to_role_name: Jessie
+    event:
+      cue: CUE-7-INITIATE-CALL
+      type: cue_signaled
+    name: TRIGGER-SCENE-7-CUE-7-INITIATE-CALL
+    scene: SCENE-7
+  - actions:
+    - name: add_to_call
+      role_name: Jessie
+    event:
+      from: Jessie
+      to: Inductee
+      type: call_answered
+    name: TRIGGER-SCENE-7-CALL-ANSWERED
+    scene: SCENE-7
+  - actions:
+    - name: add_to_call
+      role_name: Inductee
+    event:
+      from: Jessie
+      to: Inductee
+      type: call_received
+    name: TRIGGER-SCENE-7-CALL-RECEIVED
+    scene: SCENE-7
+  - actions:
+    - name: add_to_call
+      role_name: Jessie
+    event:
+      from: Inductee
+      to: Jessie
+      type: call_received
+    name: TRIGGER-SCENE-7-CALL-RECEIVED-2
+    scene: SCENE-7
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-8
+    event:
+      cue: CUE-7-NEXT-SCENE
+      type: cue_signaled
+    name: TRIGGER-SCENE-7-CUE-7-NEXT-SCENE
+    scene: SCENE-7
+  - actions:
+    - name: send_to_page
+      page_name: PAGE-8-FOLLOWUP
+      role_name: Inductee
+    - content: Thanks again for the help. That code for the tequila cabinet is 1648;
+        use it whenever you like. And keep that Syndicate Master on you. You may need
+        it again.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - name: send_to_page
+      page_name: 'null'
+      role_name: Jessie
+    - duration: 60m
+      name: wait
+    - cue_name: CUE-8-PHIL-FOLLOWUP
+      name: signal_cue
+    - duration: 180m
+      name: wait
+    - body: |
+        Welcome to the family, soldado.
+
+        We will call upon you in the future. We may have an opportunity, or perhaps a request. The Syndicate has much to offer. However our next engagement goes, I'll just remind you this once: we expect your loyalty, reliability, and discretion.
+
+        Until next time,
+
+        Jessie, from Dispatch
+      cc: dispatch@tacosyndicate.family
+      from: Jessie
+      name: send_email
+      subject: Welcome to the family!
+      to: Inductee
+    event:
+      type: scene_started
+    name: TRIGGER-SCENE-8-SCENE-STARTED
+    scene: SCENE-8
+  - actions:
+    - content: Too bad you decided not to take me up on my offer - the PayPal Mafia
+        is a powerful friend, and can be a powerful enemy. If you change your mind,
+        let me know...
+      from_role_name: Phil
+      name: send_text
+      to_role_name: Inductee
+    active_if:
+      items:
+      - op: value_is_true
+        ref: accepted_phil_offer
+      - item:
+          op: value_is_true
+          ref: sent_phil_secret
+        op: not
+      op: and
+    event:
+      cue: CUE-8-PHIL-FOLLOWUP
+      type: cue_signaled
+    name: TRIGGER-SCENE-8-CUE-8-PHIL-FOLLOWUP
+    scene: SCENE-8
+  - actions:
+    - content: Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
+        the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call at that time
+        -- you should be at the lounge. Let me know if you're still going to make it,
+        or if you need any help getting there.
+      from_role_name: Jessie
+      name: send_text
+      to_role_name: Inductee
+    - name: set_value
+      new_value_ref: 'true'
+      value_ref: sent_reminder_text
+    active_if:
+      item:
+        op: value_is_true
+        ref: sent_reminder_text
+      op: not
+    event:
+      cue: CUE-0-SEND-REMINDER-TEXT
+      type: cue_signaled
+    name: deduped-1
+    scene: SCENE-0
+  - actions:
+    - name: start_scene
+      scene_name: SCENE-1
+    event:
+      cue: CUE-0-START
+      type: cue_signaled
+    name: TRIGGER-SCENE-0-STARTED
+    scene: SCENE-0
+  variants:
+  - customizations:
+      flag_vendor_pickup: true
+      guidemarker1: '3538'
+      guidemarker2: '1471'
+      guidemarker3: '8180'
+      guidemarker4: '6037'
+      pickup_vendor_instructions: Inside RT Rotisserie, ask for a to-go order for “E
+        and G”. Feel free to have a snack on the Syndicate for your trouble today.
+    default: true
+    name: default
+    title: Default
+  - name: time_11
+    schedule:
+      TIME-DEPARTURE: 11:00am
+      TIME-REMINDER: 10:00am
+    section: time
+    title: 11:00am
+  - name: time_1130
+    schedule:
+      TIME-DEPARTURE: 11:30am
+      TIME-REMINDER: 10:00am
+    section: time
+    title: 11:30am
+  - name: time_1200
+    schedule:
+      TIME-DEPARTURE: 12:00pm
+      TIME-REMINDER: 11:00am
+    section: time
+    title: 12:00pm
+  - name: time_1230
+    schedule:
+      TIME-DEPARTURE: 12:30pm
+      TIME-REMINDER: 11:00am
+    section: time
+    title: 12:30pm
+  - name: time_100
+    schedule:
+      TIME-DEPARTURE: 1:00pm
+      TIME-REMINDER: 12:00pm
+    section: time
+    title: 1:00pm
+  - name: time_130
+    schedule:
+      TIME-DEPARTURE: 1:30pm
+      TIME-REMINDER: 12:00pm
+    section: time
+    title: 1:30pm
+  - name: time_200
+    schedule:
+      TIME-DEPARTURE: 2:00pm
+      TIME-REMINDER: 12:00pm
+    section: time
+    title: 2:00pm
+  - name: time_230
+    schedule:
+      TIME-DEPARTURE: 2:30pm
+      TIME-REMINDER: 12:00pm
+    section: time
+    title: 2:30pm
+  - name: time_300
+    schedule:
+      TIME-DEPARTURE: 3:00pm
+      TIME-REMINDER: 1:00pm
+    section: time
+    title: 3:00pm
+  - name: time_330
+    schedule:
+      TIME-DEPARTURE: 3:30pm
+      TIME-REMINDER: 1:00pm
+    section: time
+    title: 3:30pm
+  - name: time_400
+    schedule:
+      TIME-DEPARTURE: 4:00pm
+      TIME-REMINDER: 1:00pm
+    section: time
+    title: 4:00pm
+  - name: time_430
+    schedule:
+      TIME-DEPARTURE: 4:30pm
+      TIME-REMINDER: 1:00pm
+    section: time
+    title: 4:30pm
+  - name: time_500
+    schedule:
+      TIME-DEPARTURE: 5:00pm
+      TIME-REMINDER: 4:00pm
+    section: time
+    title: 5:00pm
+  - name: time_600
+    schedule:
+      TIME-DEPARTURE: 6:00pm
+      TIME-REMINDER: 5:00pm
+    section: time
+    title: 6:00pm
+  - name: time_700
+    schedule:
+      TIME-DEPARTURE: 7:00pm
+      TIME-REMINDER: 6:00pm
+    section: time
+    title: 7:00pm
+  waypoints:
+  - name: WAYPOINT-BIGROCK
+    options:
+    - address: 37.774287, -122.421473
+      coords:
+      - 37.774287
+      - -122.421473
+      name: WAYPOINT-BIGROCK
+      title: Big Rock
+    title: Big Rock
+  - name: WAYPOINT-CAFE
+    options:
+    - address: Gough and Oak
+      coords:
+      - 37.774922
+      - -122.422497
+      name: WAYPOINT-CAFE
+      title: 20th Century Cafe
+    title: 20th Century Cafe
+  - name: WAYPOINT-RT-ROTISSERIE
+    options:
+    - address: 101 Oak St
+      coords:
+      - 37.775146
+      - -122.421052
+      name: WAYPOINT-RT-ROTISSERIE
+      title: RT Rotisserie
+    title: RT Rotisserie
+  - name: WAYPOINT-RT-BACKUP
+    options:
+    - address: 37.775166, -122.420827
+      coords:
+      - 37.775166
+      - -122.420827
+      name: WAYPOINT-RT-BACKUP
+      title: Tree at Southeast Corner of Franklin & Oak
+    title: Tree at Southeast Corner of Franklin & Oak
+  - name: WAYPOINT-CALA
+    options:
+    - address: 50 Hickory St
+      coords:
+      - 37.775836
+      - -122.420348
+      name: WAYPOINT-CALA
+      title: Tacos Cala
+    title: Tacos Cala
+  - name: WAYPOINT-BIGROCK-BACK
+    options:
+    - address: 37 Lily St
+      coords:
+      - 37.774685
+      - -122.42148
+      name: WAYPOINT-BIGROCK-BACK
+      title: Back Entrance
+    title: Back Entrance
+assets:
+- data:
+    end:
+    - 37.7741351
+    - -122.422399
+    from_option: WAYPOINT-BIGROCK
+    polyline: axpeFdmejVTxDmANkAN
+    route: ROUTE-BIGROCK-TO-COFFEE
+    start:
+    - 37.7742547
+    - -122.4214664
+    steps:
+    - distance: 285 ft
+      instructions: Head <b>west</b> on <b>Page St</b> toward <b>Gough St</b>
+      start:
+      - 37.7742547
+      - -122.4214664
+    - distance: 302 ft
+      instructions: Turn <b>right</b> onto <b>Gough St</b><div style="font-size:0.9em">Destination
+        will be on the right</div>
+      start:
+      - 37.7741351
+      - -122.422399
+    to_option: WAYPOINT-CAFE
+  type: directions
+- data:
+    end:
+    - 37.7749898
+    - -122.42257
+    from_option: WAYPOINT-CAFE
+    polyline: e|peF~sejVO@YcEMiB
+    route: ROUTE-COFFEE-TO-RT
+    start:
+    - 37.7749148
+    - -122.4225553
+    steps:
+    - distance: 39 ft
+      instructions: Head <b>north</b> on <b>Gough St</b> toward <b>Oak St</b>
+      start:
+      - 37.7749148
+      - -122.4225553
+    - distance: 453 ft
+      instructions: Turn <b>right</b> onto <b>Oak St</b><div style="font-size:0.9em">Destination
+        will be on the right</div>
+      start:
+      - 37.7749898
+      - -122.42257
+    to_option: WAYPOINT-RT-ROTISSERIE
+  type: directions
+- data:
+    end:
+    - 37.7747304
+    - -122.4209242
+    from_option: WAYPOINT-CALA
+    polyline: "}aqeFdfejVPhCoAN@PnAO`@Gz@KhBULnB"
+    route: ROUTE-LINDENROOM-TO-BIGROCK
+    start:
+    - 37.7758313
+    - -122.420347
+    steps:
+    - distance: 217 ft
+      instructions: Head <b>west</b> on <b>Hickory St</b> toward <b>Franklin St</b>
+      start:
+      - 37.7758313
+      - -122.420347
+    - distance: 171 ft
+      instructions: Turn <b>right</b> onto <b>Franklin St</b>
+      start:
+      - 37.77574389999999
+      - -122.4210411
+    - distance: 0.1 mi
+      instructions: Make a <b>U-turn</b> at <b>Fell St</b>
+      start:
+      - 37.7761262
+      - -122.421208
+    - distance: 174 ft
+      instructions: Turn <b>right</b> onto <b>Lily St</b>
+      start:
+      - 37.7747304
+      - -122.4209242
+    to_option: WAYPOINT-BIGROCK-BACK
+  type: directions
+- data:
+    end:
+    - 37.77574389999999
+    - -122.4210411
+    from_option: WAYPOINT-RT-ROTISSERIE
+    polyline: u}peFhjejVG@AQi@Fs@JM@QiC
+    route: ROUTE-RT-TO-LINDENROOM
+    start:
+    - 37.7751514
+    - -122.4210092
+    steps:
+    - distance: 203 ft
+      instructions: Head <b>north</b> on <b>Franklin St</b> toward <b>Oak St</b>
+      start:
+      - 37.7751514
+      - -122.4210092
+    - distance: 217 ft
+      instructions: Turn <b>right</b> onto <b>Hickory St</b><div style="font-size:0.9em">Destination
+        will be on the left</div>
+      start:
+      - 37.77574389999999
+      - -122.4210411
+    to_option: WAYPOINT-CALA
+  type: directions
+- data:
+    medium: image
+    path: deaddrop.jpeg
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/deaddrop.jpeg
+  type: media
+- data:
+    medium: image
+    path: guidemarker.png
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/guidemarker.png
+  type: media
+- data:
+    medium: audio
+    path: jessie-vm.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/jessie-vm.mp3
+  type: media
+- data:
+    medium: image
+    path: key_pickup.jpeg
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/key_pickup.jpeg
+  type: media
+- data:
+    medium: audio
+    path: message-2.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3
+  type: media
+- data:
+    medium: audio
+    path: message-31.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-31.mp3
+  type: media
+- data:
+    medium: audio
+    path: message-6.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-6.mp3
+  type: media
+- data:
+    medium: audio
+    path: phil-vm.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/phil-vm.mp3
+  type: media
+- data:
+    medium: audio
+    path: russell-vm.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/russell-vm.mp3
+  type: media

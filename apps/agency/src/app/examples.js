@@ -23,4 +23,9 @@ export default [{
   title: 'Walking tour',
   desc: 'A walking tour through two restaurants, with dish selections at each stop.',
   demo: 'Demonstrates messages, images, geofences, and directions.'
+}, {
+  name: 'tacosyndicate',
+  title: 'Taco Syndicate',
+  desc: 'A fully realized twenty-minute experience set in Hayes Valley, SF.',
+  demo: 'Includes messaging, images, actor phone calls, and vendor interactions.'
 }];

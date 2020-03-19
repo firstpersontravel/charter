@@ -1,16 +1,14 @@
-meta:
-  version: 23
+content:
+  roles:
+    - name: player
+      title: Player
+      type: traveler
 
-roles:
-  - name: player
-    title: Player
-    type: traveler
+  scenes:
+    - name: first
+      title: First scene
 
-scenes:
-  - name: first
-    title: First scene
-
-variants:
-  - name: default
-    title: All trips
-    default: true
+  variants:
+    - name: default
+      title: All trips
+      default: true

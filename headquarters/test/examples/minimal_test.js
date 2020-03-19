@@ -10,7 +10,7 @@ const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 describe('MinimalExample', () => {
 
   beforeEach(async () => {
-    await TestUtil.createScriptWithContent(example);
+    await TestUtil.createExample(example);
   });
 
   it('loads correctly', async () => {});

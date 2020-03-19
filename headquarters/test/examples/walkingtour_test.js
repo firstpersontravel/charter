@@ -17,7 +17,7 @@ describe('WalkingTourExample', () => {
   let trip;
 
   beforeEach(async () => {
-    script = await TestUtil.createScriptWithContent(example);
+    script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
   });
 
