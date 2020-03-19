@@ -15,8 +15,7 @@ const evaluator = new Evaluator(Registry);
 
 function getIframeUrl(trip, player) {
   const user = player.user;
-  const role = _.find(trip.script.content.roles,
-    { name: player.roleName });
+  const role = _.find(trip.script.content.roles, { name: player.roleName });
   if (role.type === 'performer' || !user) {
     return `/actor/player/${player.id}?nogps=1&noack=1`;
   }

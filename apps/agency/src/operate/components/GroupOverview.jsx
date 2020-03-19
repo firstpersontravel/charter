@@ -73,7 +73,7 @@ export default class GroupOverview extends Component {
     return (
       <div key={player.id} className="constrain-text">
         <IndexLink
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/players/${player.role.name}`}>
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.role.name}/${player.user ? player.user.id : 0}`}>
           <strong>{trip.departureName} {trip.title}</strong>
           {' '}
           {player.role.title}:
