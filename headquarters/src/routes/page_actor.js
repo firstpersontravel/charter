@@ -91,6 +91,13 @@ function getPage(objs, actionContext, player) {
  * List all actors.
  */
 const actorsListRoute = async (req, res) => {
+  const org = await models.Org.findOne({
+    where: { name: req.params.orgName }
+  });
+  if (!org) {
+    res.status(404).send('Not found');
+    return;
+  }
   const players = await models.Player.findAll({
     where: { userId: { [Sequelize.Op.not]: null } },
     include: [{
@@ -104,6 +111,10 @@ const actorsListRoute = async (req, res) => {
     }, {
       model: models.User,
       as: 'user'
+    }, {
+      model: models.Org,
+      as: 'org',
+      where: { id: org.id }
     }]
   });
   const actorPlayers = players.filter(((player) => {
@@ -114,6 +125,8 @@ const actorsListRoute = async (req, res) => {
   const users = _.uniqBy(_.map(actorPlayers, 'user'), 'id');
   res.render('actor/actors', {
     layout: 'actor',
+    orgName: org.name,
+    orgTitle: org.title,
     users: users
   });
 };
@@ -123,18 +136,29 @@ const actorsListRoute = async (req, res) => {
  */
 const playerShowRoute = async (req, res) => {
   const playerId = req.params.playerId;
-  const player = await models.Player.findByPk(playerId);
+  const player = await models.Player.findOne({
+    where: { id: playerId },
+    include: [{
+      model: models.Org,
+      as: 'org',
+      where: { name: req.params.orgName }
+    }]
+  });
   if (!player) {
-    res.redirect('/actor');
+    res.redirect(`/actor/${req.params.orgName}`);
     return;
   }
   const objs = await KernelUtil.getObjectsForTrip(player.tripId);
   const actionContext = KernelUtil.prepareActionContext(objs);
   const page = getPage(objs, actionContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
+  const role = (objs.script.content.roles || [])
+    .find(role => role.name === player.roleName);
   const params = {
     userId: '',
-    userName: player.roleName,
+    userName: role ? role.title : 'Unknown role',
+    orgName: req.params.orgName,
+    orgTitle: objs.trip.org.title,
     pages: pages,
     stage: config.env.STAGE,
     tripIds: player.tripId
@@ -150,9 +174,16 @@ const playerShowRoute = async (req, res) => {
  * Show a user, including all active players.
  */
 const userShowRoute = async (req, res) => {
-  const user = await models.User.findByPk(req.params.userId);
+  const user = await models.User.findOne({
+    where: { id: req.params.userId },
+    include: [{
+      model: models.Org,
+      as: 'org',
+      where: { name: req.params.orgName }
+    }]
+  });
   if (!user) {
-    res.redirect('/actor');
+    res.redirect(`/actor/${req.params.orgName}`);
     return;
   }
   const players = await models.Player.findAll({
@@ -184,6 +215,8 @@ const userShowRoute = async (req, res) => {
 
   const params = {
     userId: req.params.userId,
+    orgName: req.params.orgName,
+    orgTitle: user.org.title,
     userName: `${user.firstName} ${user.lastName}`,
     pages: pages,
     stage: config.env.STAGE,

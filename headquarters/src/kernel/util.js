@@ -83,6 +83,7 @@ class KernelUtil {
       where: { id: tripId },
       include: [
         { model: models.Script, as: 'script' },
+        { model: models.Org, as: 'org' },
         { model: models.Experience, as: 'experience' }
       ]
     });

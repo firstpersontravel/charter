@@ -55,7 +55,10 @@ export default class GroupOverview extends Component {
           {pageInfo.status}
         </IndexLink>
         {' '}
-        <a target="_blank" rel="noopener noreferrer" href={`/actor/${actor.userId}`}>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`/actor/${group.org.name}/${actor.userId}`}>
           <i className="fa fa-link" />
         </a>
         {this.renderAddUserIcon(actor)}

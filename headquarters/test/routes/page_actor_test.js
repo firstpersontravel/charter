@@ -13,6 +13,12 @@ describe('pageActorRoutes', () => {
       const req = httpMocks.createRequest();
       const res = httpMocks.createResponse();
 
+      sandbox.stub(models.Org, 'findOne').resolves({
+        id: 1,
+        name: 'org',
+        title: 'Org'
+      });
+
       // stub db response
       sandbox.stub(models.Player, 'findAll').resolves([{
         roleName: 'Gabe',
@@ -43,6 +49,10 @@ describe('pageActorRoutes', () => {
         }, {
           model: models.User,
           as: 'user'
+        }, {
+          model: models.Org,
+          as: 'org',
+          where: { id: 1 }
         }]
       }]);
 
@@ -51,6 +61,8 @@ describe('pageActorRoutes', () => {
       assert.strictEqual(res._getRenderView(), 'actor/actors');
       assert.deepStrictEqual(res._getRenderData(), {
         layout: 'actor',
+        orgName: 'org',
+        orgTitle: 'Org',
         users: [{ id: 10 }]
       });
     });
