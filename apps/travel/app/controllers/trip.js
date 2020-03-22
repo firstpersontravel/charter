@@ -82,7 +82,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
   getUiCallbacks: function() {
     var self = this;
     var selfPlayer = this.get('player.model');
-    var selfScript = selfPlayer.get('trip.script');
     var selfRoleName = selfPlayer.get('roleName');
     return {
       transition: function(roleName, newState) {
@@ -93,8 +92,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
         // Notify message if it's to me, not already read, and in past.
         // And if we're the gamble, which is SUUUUUPER HACKY.
         if ((selfRoleName === msg.get('sentTo.roleName')) &&
-            !msg.get('readAt') &&
-            selfScript.get('name') === 'theheadlandsgamble') {
+          !msg.get('readAt')) {
           self.get('messages').notifyMessage(msg);
         }
       },
