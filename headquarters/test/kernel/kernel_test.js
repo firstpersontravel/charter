@@ -2,7 +2,7 @@ const assert = require('assert');
 const moment = require('moment');
 const sinon = require('sinon');
 
-const Kernel = require('../../../fptcore/src/kernel/kernel');
+const Kernel = require('fptcore/src/kernel/kernel');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');

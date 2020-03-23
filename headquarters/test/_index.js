@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 /**
  * Named _init so mocha loads it first.
  */

@@ -3,22 +3,22 @@
   "version": "0.1.0",
   "license": "UNLICENSED",
   "scripts": {
-    "test": "yarn run test_core && yarn run test_agency && yarn run test_hq",
-    "test_hq": "cd headquarters; yarn test",
-    "test_core": "cd fptcore; yarn test",
-    "test_agency": "cd apps/agency; yarn test",
+    "test": "npm run test_core && npm run test_agency && npm run test_hq",
+    "test_hq": "cd headquarters; npm test",
+    "test_core": "cd fptcore; npm test",
+    "test_agency": "cd apps/agency; npm test",
     "build_travel": "cd apps/travel && ember build --env production && echo `TZ=US/Pacific date` > dist/build_timestamp.txt && rm -rf dist/dist.zip; zip -q -r dist/dist.zip dist",
     "build_agency": "cd apps/agency; export NODE_ENV=production; webpack --colors",
-    "build": "yarn run build_travel && yarn run build_agency",
+    "build": "npm run build_travel && npm run build_agency",
     "watch_travel": "cd apps/travel; ./node_modules/.bin/ember build --watch --env development",
     "watch_agency": "export $(cat ./secrets/env-local | xargs); cd apps/agency; ./node_modules/.bin/webpack --watch",
     "watch_agency_devserver": "export $(cat ./secrets/env-local | xargs); cd apps/agency; ./node_modules/.bin/webpack-dev-server",
-    "watch": "yarn run watch_travel & yarn run watch_agency & yarn run watch_agency_devserver",
-    "build_ios": "yarn run build_travel && mkdir -p native/ios/www && cp apps/travel/dist/dist.zip native/ios/www;",
+    "watch": "npm run watch_travel & npm run watch_agency & npm run watch_agency_devserver",
+    "build_ios": "npm run build_travel && mkdir -p native/ios/www && cp apps/travel/dist/dist.zip native/ios/www;",
     "upload_secrets": "aws s3 sync secrets s3://fpt-tech/secrets --exclude '*.DS_Store'",
     "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets",
     "migrate": "docker-compose exec server sequelize db:migrate",
     "migrate:undo": "docker-compose exec server sequelize db:migrate:undo",
-    "migrate:scripts": "docker-compose exec server yarn run scripts:migrate"
+    "migrate:scripts": "docker-compose exec server npm run scripts:migrate"
   }
 }

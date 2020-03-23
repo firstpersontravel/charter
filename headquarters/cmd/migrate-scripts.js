@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const program = require('commander');
 
-const ScriptCore = require('../../fptcore/src/cores/script');
-const Migrator = require('../../fptcore/src/migrator');
+const ScriptCore = require('fptcore/src/cores/script');
+const Migrator = require('fptcore/src/migrator');
 
 const config = require('../src/config');
 const models = require('../src/models');

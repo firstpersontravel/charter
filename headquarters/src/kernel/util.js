@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const ContextCore = require('../../../fptcore/src/cores/context');
+const ContextCore = require('fptcore/src/cores/context');
 
 const config = require('../config');
 const models = require('../models');

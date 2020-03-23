@@ -1,7 +1,7 @@
 const moment = require('moment');
 
-const TripCore = require('../../../fptcore/src/cores/trip');
-const PlayerCore = require('../../../fptcore/src/cores/player');
+const TripCore = require('fptcore/src/cores/trip');
+const PlayerCore = require('fptcore/src/cores/player');
 
 const models = require('../models');
 

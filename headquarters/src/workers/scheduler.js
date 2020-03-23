@@ -2,8 +2,8 @@ const _ = require('lodash');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-const Registry = require('../../../fptcore/src/registry/registry');
-const KernelTriggers = require('../../../fptcore/src/kernel/triggers');
+const Registry = require('fptcore/src/registry/registry');
+const KernelTriggers = require('fptcore/src/kernel/triggers');
 
 const config = require('../config');
 const models = require('../models');

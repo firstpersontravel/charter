@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const GeofenceCore = require('../../../fptcore/src/cores/geofence');
+const GeofenceCore = require('fptcore/src/cores/geofence');
 
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');

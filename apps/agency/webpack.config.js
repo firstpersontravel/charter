@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const _ = require('lodash');
 const path = require('path');
 const webpack = require('webpack');
@@ -28,7 +30,10 @@ module.exports = {
     './style/style.scss'
   ],
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: ['.js', '.jsx'],
+    alias: {
+      fptcore: path.resolve(__dirname, '../../fptcore/src/index.js')
+    }
   },
   output: {
     filename: 'bundle.js',

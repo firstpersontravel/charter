@@ -1,8 +1,8 @@
 const _ = require('lodash');
 
-const SceneCore = require('../../../fptcore/src/cores/scene');
-const TripCore = require('../../../fptcore/src/cores/trip');
-const PlayerCore = require('../../../fptcore/src/cores/player');
+const SceneCore = require('fptcore/src/cores/scene');
+const TripCore = require('fptcore/src/cores/trip');
+const PlayerCore = require('fptcore/src/cores/player');
 
 const NotifyController = require('../controllers/notify');
 const Kernel = require('../kernel/kernel');

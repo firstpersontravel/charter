@@ -123,5 +123,3 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 alias duf='du -sk * | sort -n | perl -ne '\''($s,$f)=split(m{\t});for (qw(K M G)) {if($s<1024) {printf("%.1f",$s);print "$_\t$f"; last};$s=$s/1024}'\'
-
-export PATH="$PATH:$(yarn global bin)"

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const Kernel = require('../../../fptcore/src/kernel/kernel');
+const Kernel = require('fptcore/src/kernel/kernel');
 
 const config = require('../config');
 const ActionController = require('../controllers/action');

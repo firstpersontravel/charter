@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
-const ScriptCore = require('../../../fptcore/src/cores/script');
+const ScriptCore = require('fptcore/src/cores/script');
 
 const app = require('../../src/app');
 const TestUtil = require('../util');

@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { ValidationError } = require('sequelize');
 
-const Errors = require('../../../fptcore/src/errors');
-const ScriptCore = require('../../../fptcore/src/cores/script');
+const Errors = require('fptcore/src/errors');
+const ScriptCore = require('fptcore/src/cores/script');
 
 const Experience = require('./experience');
 const Org = require('./org');

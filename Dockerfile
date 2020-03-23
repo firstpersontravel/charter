@@ -15,72 +15,44 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 COPY docker/web/nginx.conf /etc/nginx/nginx.conf
 ADD docker/web/conf /etc/nginx/conf.d
 
-# Install yarn
-RUN echo -e 'http://dl-cdn.alpinelinux.org/alpine/edge/main\nhttp://dl-cdn.alpinelinux.org/alpine/edge/community\nhttp://dl-cdn.alpinelinux.org/alpine/edge/testing' > /etc/apk/repositories
-
-RUN apk add --no-cache yarn
-
 # Install app build tools
-RUN yarn global add ember-cli bower webpack webpack-cli
+RUN npm install -q -g ember-cli@2.16.0 webpack webpack-cli bower
 
 # Install requirements for node-sass :{
 RUN apk add --update python make gcc g++
 
-# Install beta server node requirements
-RUN mkdir -p /var/npm/beta
-ADD headquarters/package.json /var/npm/beta/package.json
-ADD headquarters/yarn.lock /var/npm/beta/yarn.lock
-RUN cd /var/npm/beta && yarn install
+# Install server node requirements
+COPY headquarters/package.json headquarters/package-lock.json /var/app/headquarters/
+RUN cd /var/app/headquarters && npm -q install
 
 # Install core modules
-RUN mkdir -p /var/npm/fptcore
-ADD fptcore/package.json /var/npm/fptcore/package.json
-ADD fptcore/yarn.lock /var/npm/fptcore/yarn.lock
-RUN cd /var/npm/fptcore && yarn install
+COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
+RUN cd /var/app/fptcore && npm -q install
+
+# Install travel bower
+COPY apps/travel/bower.json /var/app/apps/travel/
+RUN cd /var/app/apps/travel && bower install --allow-root
 
 # Install travel modules
-RUN mkdir -p /var/npm/apps/travel
-ADD apps/travel/package.json /var/npm/apps/travel/package.json
-ADD apps/travel/yarn.lock /var/npm/apps/travel/yarn.lock
-RUN cd /var/npm/apps/travel && yarn install
+COPY apps/travel/package.json apps/travel/package-lock.json /var/app/apps/travel/
+RUN cd /var/app/apps/travel && npm -q install
 
 # Install agency modules
-RUN mkdir -p /var/npm/apps/agency
-ADD apps/agency/package.json /var/npm/apps/agency/package.json
-ADD apps/agency/yarn.lock /var/npm/apps/agency/yarn.lock
-RUN cd /var/npm/apps/agency && yarn add node-sass@latest
-RUN cd /var/npm/apps/agency && yarn install
-
-# Install travel bower components
-RUN mkdir -p /var/bower/travel
-ADD apps/travel/bower.json /var/bower/travel/bower.json
-RUN cd /var/bower/travel && bower --allow-root install
+COPY apps/agency/package.json apps/agency/package-lock.json /var/app/apps/agency/
+RUN cd /var/app/apps/agency && npm -q install
 
 # Install apps directory and static dir
-ADD static /var/app/static
-ADD fptcore /var/app/fptcore
-ADD apps /var/app/apps
-ADD headquarters /var/app/headquarters
-
-# Symlink cached requirements
-RUN ln -nsf /var/npm/fptcore/node_modules /var/app/fptcore
-RUN ln -nsf /var/npm/apps/agency/node_modules /var/app/apps/agency
-RUN ln -nsf /var/npm/apps/travel/node_modules /var/app/apps/travel
-RUN ln -nsf /var/bower/travel/bower_components /var/app/apps/travel
-RUN ln -nsf /var/npm/beta/node_modules /var/app/headquarters
+COPY static /var/app/static
+COPY fptcore /var/app/fptcore
+COPY apps /var/app/apps
+COPY headquarters /var/app/headquarters
 
 # Link core with symlink
-RUN rm -rf /var/app/apps/agency/node_modules/fptcore && \
-    ln -nsf /var/app/fptcore /var/app/apps/agency/node_modules/fptcore
-RUN rm -rf /var/app/apps/travel/node_modules/fptcore && \
-    ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore
-
-# don't symlink headquarters since it uses relative references
-# RUN ln -nsf /var/app/fptcore /var/npm/beta/node_modules
+RUN ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore
 
 # Build applications
 RUN cd /var/app/apps/travel && ember build --env production
-RUN cd /var/app/apps/agency && export NODE_ENV=production && webpack
+RUN cd /var/app/apps/agency && NODE_ENV=production webpack
 
 # Set the default directory for our environment
 WORKDIR /var/app

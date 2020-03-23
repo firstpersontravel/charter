@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const ScriptCore = require('../../../fptcore/src/cores/script');
+const ScriptCore = require('fptcore/src/cores/script');
 
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');

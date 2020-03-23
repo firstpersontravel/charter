@@ -3,10 +3,11 @@ const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 const twilio = require('twilio');
 
+const ScriptCore = require('fptcore/src/cores/script');
+
 const { sandbox } = require('../mocks');
 const twilioRoutes = require('../../src/routes/twilio');
 const models = require('../../src/models');
-const ScriptCore = require('../../../fptcore/src/cores/script');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 const TestUtil = require('../util');

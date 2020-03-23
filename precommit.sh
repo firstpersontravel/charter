@@ -1,1 +1,1 @@
-yarn run test
+npm run test

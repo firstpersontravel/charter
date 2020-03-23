@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const moment = require('moment');
 const Sentry = require('@sentry/node');
 const Sequelize = require('sequelize');

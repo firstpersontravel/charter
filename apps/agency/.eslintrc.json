@@ -11,7 +11,8 @@
     "describe": true,
     "it": true,
     "window": true,
-    "google": true
+    "google": true,
+    "fptcore": true
   },
   "rules": {
     "class-methods-use-this": 0,
@@ -27,5 +28,12 @@
     "jsx-a11y/no-static-element-interactions": 0,
     "react/jsx-closing-bracket-location": [2, "after-props"],
     "react/forbid-prop-types": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "webpack.config.js"
+      }
+    }
   }
 }

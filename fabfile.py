@@ -479,7 +479,7 @@ def install_packages():
     # node
     sudo('curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -')
     sudo('apt-get install -y nodejs yarn')
-    sudo('yarn global add pino pm2 bower ember-cli webpack weback-cli eslint')
+    sudo('npm install -g pino pm2 ember-cli@2.16.0 webpack weback-cli eslint')
 
     # pm2
     sudo('env PATH=$PATH:/usr/bin /usr/local/share/.config/yarn/global/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy')
@@ -556,7 +556,6 @@ def create_release():
     symlink_paths = [
         '/fptcore/node_modules',
         '/apps/travel/node_modules',
-        '/apps/travel/bower_components',
         '/apps/agency/node_modules',
         '/headquarters/node_modules',
         '/secrets'
@@ -594,26 +593,22 @@ def db_migrate():
 @roles('app')
 def script_migrate():
     with cd(env.hq_path):
-        run('export $(cat ../env | xargs) && yarn run scripts:migrate')
+        run('export $(cat ../env | xargs) && npm run scripts:migrate')
 
 def install_node_requirements():
     # with cd(env.repo_path):
     #     run('npm install')
     with cd('%s/headquarters' % env.repo_path):
-        run('yarn install')
+        run('npm install')
     with cd('%s/fptcore' % env.repo_path):
-        run('yarn install')
+        run('npm install')
     with cd('%s/apps/agency' % env.repo_path):
-        run('yarn install')
-        run('rm -rf %s/apps/agency/node_modules/fptcore' % env.repo_path)
-        run('ln -nsf %s/fptcore %s/apps/agency/node_modules'
-             % (env.repo_path, env.repo_path))
+        run('npm install')
     with cd('%s/apps/travel' % env.repo_path):
-        run('yarn install')
+        run('npm install')
         run('rm -rf %s/apps/travel/node_modules/fptcore' % env.repo_path)
         run('ln -nsf %s/fptcore %s/apps/travel/node_modules'
              % (env.repo_path, env.repo_path))
-        run('bower install')
     # with cd('%s/headquarters' % env.repo_path):
     #     run('ln -nsf %s/apps/fptcore %s/headquarters/node_modules'
     #          % (env.repo_path, env.repo_path))
@@ -731,7 +726,7 @@ def build_apps():
         run(
             'export GIT_HASH=`cat ./.githash` && '
             'export $(cat ./env | xargs) && '
-            'yarn run build')
+            'npm run build')
 
 
 #######################################################
@@ -786,5 +781,5 @@ def db_load_from_remote():
         local_path=local_path)
     local('mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < %s' % local_path)
     # migrate local
-    local('yarn run migrate')
-    local('yarn run migrate:scripts')
+    local('npm run migrate')
+    local('npm run migrate:scripts')
