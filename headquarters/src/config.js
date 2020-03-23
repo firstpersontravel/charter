@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const apn = require('apn');
 const fs = require('fs');
 const path = require('path');

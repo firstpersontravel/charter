@@ -1,5 +1,3 @@
-require('module-alias/register');
-
 const program = require('commander');
 
 const models = require('../src/models');

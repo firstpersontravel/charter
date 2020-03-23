@@ -479,7 +479,7 @@ def install_packages():
     # node
     sudo('curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -')
     sudo('apt-get install -y nodejs yarn')
-    sudo('npm install -q -g bower pino pm2 ember-cli@2.16.0 webpack weback-cli eslint')
+    sudo('npm install -q --no-progress -g bower pino pm2 ember-cli@2.16.0 webpack weback-cli eslint')
 
     # pm2
     sudo('env PATH=$PATH:/usr/bin /usr/local/share/.config/yarn/global/node_modules/pm2/bin/pm2 startup systemd -u deploy --hp /home/deploy')
@@ -597,14 +597,14 @@ def script_migrate():
 
 def install_node_requirements():
     with cd('%s/headquarters' % env.repo_path):
-        run('npm -q install')
+        run('npm -q --no-progress install')
     with cd('%s/fptcore' % env.repo_path):
-        run('npm -q install')
+        run('npm -q --no-progress install')
     with cd('%s/apps/agency' % env.repo_path):
-        run('npm -q install')
+        run('npm -q --no-progress install')
     with cd('%s/apps/travel' % env.repo_path):
-        run('npm -q install')
-        run('bower install')
+        run('npm -q --no-progress install')
+        run('bower -q install')
         run('ln -nsf %s/fptcore %s/apps/travel/node_modules'
              % (env.repo_path, env.repo_path))
     # with cd('%s/headquarters' % env.repo_path):

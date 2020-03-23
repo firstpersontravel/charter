@@ -31,7 +31,7 @@ RUN cd /var/app/fptcore && npm -q install
 
 # Install travel bower
 COPY apps/travel/bower.json /var/app/apps/travel/
-RUN cd /var/app/apps/travel && bower install --allow-root
+RUN cd /var/app/apps/travel && bower install -q --allow-root
 
 # Install travel modules
 COPY apps/travel/package.json apps/travel/package-lock.json /var/app/apps/travel/

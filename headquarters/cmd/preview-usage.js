@@ -1,9 +1,8 @@
-require('module-alias/register');
-
 const _ = require('lodash');
 const program = require('commander');
 
 const models = require('../src/models');
+
 const Registry = require('fptcore/src/registry/registry');
 const TextUtil = require('fptcore/src/utils/text');
 

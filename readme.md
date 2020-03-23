@@ -38,7 +38,7 @@
     # setup travel
     cd apps/travel
         npm install
-        bower install
+        bower -q install
         ln -s `pwd`/../../fptcore ./node_modules
 
     # setup agency

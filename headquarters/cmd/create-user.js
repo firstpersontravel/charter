@@ -1,5 +1,3 @@
-require('module-alias/register');
-
 const bcrypt = require('bcrypt');
 const program = require('commander');
 

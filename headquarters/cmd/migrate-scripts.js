@@ -1,13 +1,11 @@
-require('module-alias/register');
-
 const _ = require('lodash');
 const program = require('commander');
 
-const ScriptCore = require('fptcore/src/cores/script');
-const Migrator = require('fptcore/src/migrator');
-
 const config = require('../src/config');
 const models = require('../src/models');
+
+const ScriptCore = require('fptcore/src/cores/script');
+const Migrator = require('fptcore/src/migrator');
 
 const logger = config.logger.child({ name: 'bin.migrate' });
 
