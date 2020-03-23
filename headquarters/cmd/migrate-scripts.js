@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 const _ = require('lodash');
 const program = require('commander');
 

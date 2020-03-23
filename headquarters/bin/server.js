@@ -1,3 +1,5 @@
+require('module-alias/register');
+
 var http = require('http');
 
 var app = require('../src/app');
