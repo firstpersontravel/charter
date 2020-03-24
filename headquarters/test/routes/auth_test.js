@@ -25,7 +25,7 @@ describe('authRoutes', () => {
   });
 
   describe('#loginRoute', () => {
-    it('sets a cookie if login is correct', async () => {
+    it('returns a token if login is correct', async () => {
       sandbox.stub(models.User, 'findOne').resolves(mockUser);
       req.body = { email: 'gabe@test.com', password: 'i<3bunnies' };
       const now = moment.utc();
@@ -34,9 +34,10 @@ describe('authRoutes', () => {
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 200);
-      assert.ok(res.cookies.fptauth.value);
+      const data = JSON.parse(res._getData()).data;
+      assert.ok(data.jwt);
 
-      const tokenString = res.cookies.fptauth.value;
+      const tokenString = data.jwt;
       const decoded = jwt.verify(tokenString, 'test_secret');
 
       assert.strictEqual(decoded.iss, 'fpt');
@@ -87,44 +88,47 @@ describe('authRoutes', () => {
     });
   });
 
-  describe('#logoutRoute', () => {
-    it('clears cookie', async () => {
-      sandbox.stub(res, 'clearCookie');
-
-      await authRoutes.logoutRoute(req, res);
-
-      // Test redirect happens correctly
-      assert.strictEqual(res.statusCode, 200);
-      sinon.assert.calledOnce(res.clearCookie);
-      sinon.assert.calledWith(res.clearCookie, 'fptauth');
-    });
-  });
-
   describe('#infoRoute', () => {
     it('returns user and org info if logged in', async () => {
-      const mockToken = { sub: 2 };
+      const mockToken = jwt.sign({ sub: 2 }, 'test_secret',
+        { algorithm: 'HS256' });
       const mockUser = { email: 'test@test.com' };
       const mockRoles = [{
         isAdmin: true,
         org: { name: 'name', title: 'title' }
       }];
-      sandbox.stub(authMiddleware, 'tokenForReq').resolves(mockToken);
+      sandbox.stub(authMiddleware, 'tokenForReq').returns(mockToken);
       sandbox.stub(models.User, 'findByPk').resolves(mockUser);
       sandbox.stub(models.OrgRole, 'findAll').resolves(mockRoles);
+      sandbox.stub(jwt, 'sign').returns('mock_signed');
 
       await authRoutes.infoRoute(req, res);
 
       assert.strictEqual(res.statusCode, 200);
       assert.deepStrictEqual(JSON.parse(res._getData()), {
         data: {
+          jwt: 'mock_signed',
           user: { email: 'test@test.com' },
           orgs: [{ name: 'name', title: 'title' }]
         }
       });
     });
 
+    it('returns 401 on invalid token', async () => {
+      const mockToken = jwt.sign({ sub: 2 }, 'bad', { algorithm: 'HS256' });
+      sandbox.stub(authMiddleware, 'tokenForReq').returns(mockToken);
+
+      await authRoutes.infoRoute(req, res);
+
+      assert.strictEqual(res.statusCode, 401);
+      assert.deepStrictEqual(JSON.parse(res._getData()), {
+        data: null,
+        error: 'invalid signature'
+      });
+    });
+
     it('returns null info if not logged in', async () => {
-      sandbox.stub(authMiddleware, 'tokenForReq').resolves(null);
+      sandbox.stub(authMiddleware, 'tokenForReq').returns(null);
 
       await authRoutes.infoRoute(req, res);
 

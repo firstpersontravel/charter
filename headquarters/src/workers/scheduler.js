@@ -8,6 +8,7 @@ const KernelTriggers = require('fptcore/src/kernel/triggers');
 const config = require('../config');
 const models = require('../models');
 const KernelUtil = require('../kernel/util');
+const { fmtLocal } = require('./util');
 
 const logger = config.logger.child({ name: 'workers.scheduler' });
 
@@ -86,17 +87,21 @@ class SchedulerWorker {
   static getNextTriggerAndTime(objs) {
     const now = moment.utc();
     const actionContext = KernelUtil.prepareActionContext(objs, now);
-    const nextTriggerWithTime = _(objs.script.content.triggers)
-      .filter(trigger => (
-        trigger.event && trigger.event.type === 'time_occurred'
-      ))
-      .filter(trigger => !objs.trip.history[trigger.name])
+    // Create time occurred event for 10 years from now.
+    const timeOccurredEvent = {
+      type: 'time_occurred',
+      timestamp: now.clone().add(10, 'years').unix()
+    };
+    const triggers = KernelTriggers.triggersForEvent(timeOccurredEvent,
+      actionContext);
+
+    const nextTriggerWithTime = _(triggers)
       .map(trigger => (
         [trigger, this._getTriggerIntendedAt(trigger, actionContext)]
       ))
-      .filter(triggerAndTime => !!triggerAndTime[1])
       .sortBy(triggerAndTime => triggerAndTime[1].unix())
       .value()[0];
+
     if (!nextTriggerWithTime) {
       return [null, null];
     }
@@ -120,12 +125,9 @@ class SchedulerWorker {
     });
 
     if (nextTime) {
-      const nextTimeLocal = nextTime.clone()
-        .tz('US/Pacific')
-        .format('MMM DD, h:mm:ssa z');
       logger.info(
         `Updating scheduleAt for ${objs.trip.experience.title} ` + 
-        `"${objs.trip.title}" to ${nextTimeLocal}. (${JSON.stringify(nextTrigger)})`);
+        `"${objs.trip.title}" to ${fmtLocal(nextTime)}. (${JSON.stringify(nextTrigger)})`);
     } else {
       logger.info(
         `No upcoming scheduled actions for ${objs.trip.experience.title} ` + 
@@ -138,9 +140,6 @@ class SchedulerWorker {
    * Schedule actions for all active trips.
    */
   static async scheduleActions(threshold) {
-    const thresholdLocal = threshold.clone()
-      .tz('US/Pacific')
-      .format('MMM DD, h:mm:ssa z');
     // Find all trips where the schedule needs updating -- which means if
     // the trip or script was updated more recently than scheduling happened.
     const trips = await models.Trip.findAll({
@@ -154,10 +153,12 @@ class SchedulerWorker {
         where: { isArchived: false }
       }]
     });
+    logger.info(
+      `Scheduling ${trips.length} trips up to ${fmtLocal(threshold)}`);
     for (const trip of trips) {
       logger.info(
-        `Checking ${trip.experience.title} "${trip.title}" ` +
-        `up to ${thresholdLocal}`);
+        `Scheduling ${trip.experience.title} "${trip.title}" ` +
+        `up to ${fmtLocal(threshold)}`);
       await this._scheduleTripActions(trip.id, threshold);
       await this._updateTripNextScheduleAt(trip.id);
     }
@@ -175,6 +176,9 @@ class SchedulerWorker {
     // Get actions based on occurance of time.
     const actions = this._getTimeOccuranceActions(trip, actionContext,
       threshold);
+    logger.info(
+      `Found ${actions.length} actions for ${trip.experience.title} ` +
+      `"${trip.title}" up to ${fmtLocal(threshold)}`);
 
     for (let action of actions) {
       logger.info({ action: action },

@@ -2,6 +2,7 @@ require('module-alias/register');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
 const Sentry = require('@sentry/node');
@@ -28,6 +29,7 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 
 // CORS Headers
 app.use((req, res, next) => {

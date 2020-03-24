@@ -4,10 +4,15 @@ const config = require('../config');
 
 const logger = config.logger.child({ name: 'middleware.auth' });
 
-const AUTH_COOKIE_NAME = 'fptauth';
+const tokenForReq = req => {
+  if (req.get('Authorization')) {
+    return req.get('Authorization').split(' ')[1];
+  }
+  return null;
+};
 
-const tokenForReq = async (req) => {
-  const tokenString = req.cookies[AUTH_COOKIE_NAME];
+const tokenPayloadForReq = async (req) => {
+  const tokenString = tokenForReq(req);
   if (!tokenString) {
     return null;
   }
@@ -20,7 +25,7 @@ const tokenForReq = async (req) => {
 };
 
 const authMiddleware = async (req, res, next) => {
-  const token = await tokenForReq(req);
+  const token = await tokenPayloadForReq(req);
   if (token) {
     req.userId = token.sub;
   } else {
@@ -30,7 +35,7 @@ const authMiddleware = async (req, res, next) => {
 };
 
 module.exports = {
-  AUTH_COOKIE_NAME,
   authMiddleware,
-  tokenForReq
+  tokenForReq,
+  tokenPayloadForReq
 };

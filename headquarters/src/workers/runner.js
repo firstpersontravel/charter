@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 const config = require('../config');
 const models = require('../models');
 const KernelController = require('../kernel/kernel');
+const { fmtLocal } = require('./util');
 
 const logger = config.logger.child({ name: 'workers.runner' });
 
@@ -70,10 +71,7 @@ class RunnerWorker {
         where: { isArchived: false }
       }]
     });
-    // const thresholdLocal = threshold.clone()
-    //   .tz('US/Pacific')
-    //   .format('MMM DD, h:mm:ssa z');
-    // logger.info(`${actions.length} actions up to ${thresholdLocal}`);
+    logger.info(`${actions.length} actions up to ${fmtLocal(threshold)}`);
     for (let action of actions) {
       await this._runScheduledAction(action, safe);
     }

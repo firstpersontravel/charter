@@ -101,6 +101,9 @@ class KernelTriggers {
    */
   static triggersForEvent(event, actionContext) {
     return _.filter(actionContext.scriptContent.triggers, (trigger) => {
+      if (!trigger.event) {
+        return false;
+      }
       // Skip trigger if it's not active
       if (!this.isTriggerActive(trigger, actionContext)) {
         return false;

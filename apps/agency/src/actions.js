@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import * as Sentry from '@sentry/browser';
 
+import config from './config';
 import { getStage } from './utils';
 
 function saveRequest(operationName, status, error) {
@@ -79,8 +80,25 @@ function handleResponseError(url, params, response) {
     });
 }
 
+function getAuthToken() {
+  const authData = JSON.parse(localStorage.getItem('auth_latest') || 'null');
+  return authData ? authData.jwt : null;
+}
+
+function addAuthHeader(params) {
+  const token = getAuthToken();
+  if (!token) {
+    return params;
+  }
+  return Object.assign({}, params, {
+    headers: Object.assign({}, params.headers, {
+      Authorization: `Bearer ${token}`
+    })
+  });
+}
+
 function fetchJsonAssuringSuccess(url, params) {
-  return fetch(url, params)
+  return fetch(url, addAuthHeader(params))
     .then((response) => {
       if (response.status >= 400) {
         return handleResponseError(url, params, response);
@@ -131,7 +149,7 @@ function createQueryString(query) {
 export function listCollection(collectionName, query, opts) {
   return function (dispatch) {
     const queryString = createQueryString(query);
-    const url = `/api/${collectionName}${queryString}`;
+    const url = `${config.serverUrl}/api/${collectionName}${queryString}`;
     const params = { method: 'GET' };
     return request(collectionName, null, 'list', url, params, dispatch)
       .then((response) => {
@@ -144,14 +162,14 @@ export function listCollection(collectionName, query, opts) {
   };
 }
 
-function authenticate(dispatch, authData) {
-  dispatch(saveInstances('auth', [{ id: name, data: authData }]));
+function authenticate(dispatch, reqName, authData) {
+  localStorage.setItem('auth_latest', JSON.stringify(authData));
+  dispatch(saveInstances('auth', [{ id: reqName, data: authData }]));
   dispatch(saveInstances('auth', [{ id: 'latest', data: authData }]));
   if (!authData) {
     return;
   }
   dispatch(saveInstances('orgs', authData.orgs));
-  document.cookie = `auth_latest=${btoa(JSON.stringify(authData))};`;
   Sentry.configureScope((scope) => {
     scope.setUser({
       id: authData.user.id,
@@ -164,7 +182,7 @@ export function makeAuthRequest(url, params, name) {
   const reqName = `auth.${name}`;
   return function (dispatch) {
     dispatch(saveRequest(reqName, 'pending', null));
-    fetch(url, params)
+    fetch(url, addAuthHeader(params))
       .then((response) => {
         // Login failure
         if (response.status === 401) {
@@ -189,16 +207,21 @@ export function makeAuthRequest(url, params, name) {
         // Login success
         return response.json()
           .then((data) => {
+            authenticate(dispatch, name, data.data);
             dispatch(saveRequest(reqName, 'fulfilled', null));
-            authenticate(dispatch, data.data);
           });
       })
-      .catch(processError);
+      .catch((err) => {
+        console.error('Unknown error', err);
+        dispatch(saveRequest(reqName, 'rejected', 'Unknown error'));
+        processError(err);
+      });
   };
 }
 
 export function fetchAuthInfo() {
-  return makeAuthRequest('/auth/info', { method: 'GET' }, 'info');
+  return makeAuthRequest(`${config.serverUrl}/auth/info`,
+    { method: 'GET' }, 'info');
 }
 
 export function login(email, password) {
@@ -207,7 +230,7 @@ export function login(email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email, password: password })
   };
-  return makeAuthRequest('/auth/login', params, 'login');
+  return makeAuthRequest(`${config.serverUrl}/auth/login`, params, 'login');
 }
 
 export function signup(email, password, orgTitle) {
@@ -220,21 +243,14 @@ export function signup(email, password, orgTitle) {
       orgTitle: orgTitle
     })
   };
-  return makeAuthRequest('/auth/signup', params, 'signup');
+  return makeAuthRequest(`${config.serverUrl}/auth/signup`, params, 'signup');
 }
 
 export function logout() {
   return function (dispatch) {
-    document.cookie = 'auth_latest=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    fetch('/auth/logout', { method: 'POST' })
-      .then((response) => {
-        if (response.status !== 200) {
-          return;
-        }
-        dispatch(clearInstances('auth'));
-        // Reload
-        window.location.href = '/';
-      });
+    localStorage.removeItem('auth_latest');
+    dispatch(clearInstances('auth'));
+    window.location.href = '/';
   };
 }
 
@@ -244,7 +260,7 @@ export function retrieveInstance(collectionName, instanceId) {
   }
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
-    const url = `/api/${collectionName}/${instanceId}`;
+    const url = `${config.serverUrl}/api/${collectionName}/${instanceId}`;
     const params = { method: 'GET' };
     return request(collectionName, instanceId, 'get', url, params, dispatch)
       .then((response) => {
@@ -257,7 +273,7 @@ export function retrieveInstance(collectionName, instanceId) {
 export function createInstance(collectionName, fields) {
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
-    const url = `/api/${collectionName}`;
+    const url = `${config.serverUrl}/api/${collectionName}`;
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -281,7 +297,7 @@ export function updateInstance(collectionName, instanceId, fields) {
     // First update instance in-place for fast responsiveness.
     dispatch(updateInstanceFields(collectionName, instanceId, fields));
     // Then dispatch the update request.
-    const url = `/api/${collectionName}/${instanceId}`;
+    const url = `${config.serverUrl}/api/${collectionName}/${instanceId}`;
     const params = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -300,7 +316,7 @@ export function bulkUpdate(collectionName, query, fields) {
   return function (dispatch) {
     // Then dispatch the update request.
     const queryString = createQueryString(query);
-    const url = `/api/${collectionName}${queryString}`;
+    const url = `${config.serverUrl}/api/${collectionName}${queryString}`;
     const params = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -353,7 +369,7 @@ export function postAction(orgId, experienceId, tripId, actionName,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: actionName, params: actionParams })
     };
-    const url = `/api/trips/${tripId}/actions`;
+    const url = `${config.serverUrl}/api/trips/${tripId}/actions`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(refreshLiveData(orgId, experienceId, [tripId]));
@@ -370,7 +386,7 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(actionParams || {})
     };
-    const url = `/api/admin/trips/${tripId}/${actionName}`;
+    const url = `${config.serverUrl}/api/admin/trips/${tripId}/${actionName}`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         if (shouldRefresh === true) {
@@ -384,7 +400,7 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
 export function updateRelays(orgId, experienceId) {
   return function (dispatch) {
     const params = { method: 'POST' };
-    const url = `/api/admin/experiences/${experienceId}/update_relays`;
+    const url = `${config.serverUrl}/api/admin/experiences/${experienceId}/update_relays`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(listCollection('relays', {

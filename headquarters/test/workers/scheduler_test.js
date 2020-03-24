@@ -178,7 +178,6 @@ describe('SchedulerWorker', () => {
           id: 1,
           currentSceneName: 'main',
           update: sinon.stub().resolves(),
-          history: {},
           experience: {}
         },
         script: { content: scriptContent }
@@ -186,11 +185,15 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
-        evalContext: { schedule: { t: future.toISOString() } }
+        evalContext: {
+          history: {},
+          schedule: { t: future.toISOString() }
+        }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
 
+      sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
         scheduleUpdatedAt: now.toDate(),
         scheduleAt: future.clone().subtract(10, 'minutes').toDate()
@@ -203,7 +206,6 @@ describe('SchedulerWorker', () => {
           id: 1,
           currentSceneName: 'main',
           update: sinon.stub().resolves(),
-          history: {},
           experience: {}
         },
         script: { content: scriptContent }
@@ -211,11 +213,15 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
-        evalContext: { schedule: { t: now.toISOString() } }
+        evalContext: {
+          history: {},
+          schedule: { t: now.toISOString() }
+        }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
 
+      sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
         scheduleUpdatedAt: now.toDate(),
         scheduleAt: now.toDate()
@@ -228,7 +234,6 @@ describe('SchedulerWorker', () => {
           id: 1,
           currentSceneName: 'main',
           update: sinon.stub().resolves(),
-          history: {},
           experience: {}
         },
         script: { content: { triggers: [] } }
@@ -236,11 +241,15 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: objs.script.content,
-        evalContext: { schedule: { t: now.toISOString() } }
+        evalContext: {
+          history: {},
+          schedule: { t: now.toISOString() }
+        }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
 
+      sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
         scheduleUpdatedAt: now.toDate(),
         scheduleAt: null
@@ -253,7 +262,6 @@ describe('SchedulerWorker', () => {
           id: 1,
           currentSceneName: 'main',
           update: sinon.stub().resolves(),
-          history: { t3: true },
           experience: {}
         },
         script: { content: scriptContent }
@@ -261,11 +269,15 @@ describe('SchedulerWorker', () => {
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
       sandbox.stub(KernelUtil, 'prepareActionContext').returns({
         scriptContent: scriptContent,
-        evalContext: { schedule: { t: now.toISOString() } }
+        evalContext: {
+          history: { t3: true },
+          schedule: { t: now.toISOString() }
+        }
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
 
+      sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
         scheduleUpdatedAt: now.toDate(),
         scheduleAt: now.clone().add(10, 'minutes').toDate()

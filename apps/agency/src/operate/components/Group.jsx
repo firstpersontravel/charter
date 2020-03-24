@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
 
+import config from '../../config';
 import { getStage } from '../../utils';
 
 const REFRESH_FREQUENCY = 60000;
@@ -22,7 +23,7 @@ const FayeLogger = {
 export default class Group extends Component {
   constructor(props) {
     super(props);
-    this.fayeClient = new Faye.Client('/pubsub');
+    this.fayeClient = new Faye.Client(`${config.pubsubUrl}/pubsub`);
     this.fayeClient.addExtension(FayeLogger);
     this.fayeSubscriptions = {};
     this.refreshInterval = null;

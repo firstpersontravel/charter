@@ -51,20 +51,16 @@ const enhancer = enhancers(
   )
 );
 
-const authData = _(document.cookie.split(';'))
-  .map(c => c.split('='))
-  .filter(c => c[0] === 'auth_latest')
-  .map(c => ({ id: 'latest', data: JSON.parse(atob(c[1])) }))
-  .value();
-
-const authOrgs = _.get(authData[0], 'data.orgs') || [];
-
+const authData = JSON.parse(localStorage.getItem('auth_latest') || 'null');
+console.log('authData', authData);
+const authOrgs = _.get(authData, 'orgs') || [];
+const authInstances = authData ? [{ id: 'latest', data: authData }] : [];
 const initialState = {
   requests: {},
   requestErrors: {},
   revisionHistory: {},
   datastore: {
-    auth: authData,
+    auth: authInstances,
     orgs: authOrgs,
     assets: [],
     experiences: [],

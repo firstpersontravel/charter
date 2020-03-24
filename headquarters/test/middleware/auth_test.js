@@ -4,7 +4,7 @@ describe('authMiddleware', () => {
     it.skip('sets req.userId to null if not valid token', () => {});
   });
 
-  describe('#tokenForReq', () => {
+  describe('#tokenPayloadForReq', () => {
     it.skip('returns token if valid', () => {});
     it.skip('returns null if no cookie', () => {});
     it.skip('returns null if invalid token', () => {});

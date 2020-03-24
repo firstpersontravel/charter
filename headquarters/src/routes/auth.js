@@ -15,7 +15,7 @@ function slugify(text) {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
-function createJwt(user, durationSecs) {
+function createToken(user, durationSecs) {
   const payload = { iss: 'fpt', sub: user.id, aud: 'web' };
   const opts = { expiresIn: durationSecs, algorithm: 'HS256' };
   const token = jwt.sign(payload, config.env.JWT_SECRET, opts);
@@ -28,12 +28,13 @@ const DUMMY_HASH = '$2b$10$H2vj6CxZj7NgrAusLS2QdOi4VlyHfFA.oKzjEZlPE1m2CdF63WjcW
 /**
  * Get user auth info data from user and org roles.
  */
-async function getUserAuthInfo(user) {
+async function getUserAuthInfo(user, tokenString) {
   const orgRoles = await models.OrgRole.findAll({
     where: { userId: user.id },
     include: [{ model: models.Org, as: 'org' }]
   });
   return {
+    jwt: tokenString,
     user: {
       id: user.id,
       email: user.email
@@ -47,23 +48,16 @@ async function getUserAuthInfo(user) {
   };
 }
 
+// Login lasts for a week.
+const SESSION_DURATION_SECS = 86400 * 7;
+
 /**
  * Respond with the user info and orgs.
  */
-async function respondWithUserAuthInfo(res, user) {
-  const data = await getUserAuthInfo(user);
+async function respondWithUserAuthInfo(res, user, tokenString) {
+  const data = await getUserAuthInfo(user, tokenString);
   res.status(200);
   res.json({ data: data });
-}
-
-function setUserCookie(res, user) {
-  // Login lasts for a week.
-  const durationSecs = 86400 * 7;
-  const jwt = createJwt(user, durationSecs);
-  res.cookie(authMiddleware.AUTH_COOKIE_NAME, jwt, {
-    httpOnly: true,
-    maxAge: durationSecs * 1000
-  });
 }
 
 /**
@@ -84,8 +78,8 @@ const loginRoute = async (req, res) => {
     res.status(401).send('');
     return;
   }
-  setUserCookie(res, user);
-  await respondWithUserAuthInfo(res, user);
+  const tokenString = createToken(user, SESSION_DURATION_SECS);
+  await respondWithUserAuthInfo(res, user, tokenString);
 };
 
 const signupRoute = async (req, res) => {
@@ -130,35 +124,41 @@ const signupRoute = async (req, res) => {
     isAdmin: true
   });
 
-  setUserCookie(res, user);
-  await respondWithUserAuthInfo(res, user);
-};
-
-/**
- * Clear auth cookie.
- */
-const logoutRoute = async (req, res) => {
-  res.clearCookie(authMiddleware.AUTH_COOKIE_NAME);
-  res.status(200).send('');
+  const tokenString = createToken(user, SESSION_DURATION_SECS);
+  await respondWithUserAuthInfo(res, user, tokenString);
 };
 
 /**
  * Get information for logged-in user.
  */
 const infoRoute = async (req, res) => {
-  const token = await authMiddleware.tokenForReq(req);
-  const user = token ? await models.User.findByPk(token.sub) : null;
-  if (!user) {
+  const tokenString = authMiddleware.tokenForReq(req);
+  if (!tokenString) {
     res.status(200);
     res.json({ data: null });
     return;
   }
-  await respondWithUserAuthInfo(res, user);
+  let payload;
+  try {
+    payload = await jwt.verify(tokenString, config.env.JWT_SECRET);
+  } catch (err) {
+    res.status(401);
+    res.json({ data: null, error: err.message });
+    return;
+  }
+  const user = await models.User.findByPk(payload.sub);
+  if (!user) {
+    res.status(200);
+    res.json({ data: null, error: 'User not found' });
+    return;
+  }
+  // Refresh token string every time info is called.
+  const newTokenString = createToken(user, SESSION_DURATION_SECS);
+  await respondWithUserAuthInfo(res, user, newTokenString);
 };
 
 module.exports = {
   loginRoute,
-  logoutRoute,
   signupRoute,
   infoRoute
 };
