@@ -22,6 +22,9 @@
     "error_file": "/home/deploy/log/pubsub.err.log",
     "out_file": "/home/deploy/log/pubsub.out.log",
     "exec_mode": "cluster_mode",
-    "instances": 1
+    "instances": 1,
+    "env": {
+      "PUBSUB_PORT": "5002"
+    }
   }]
 }
