@@ -5,6 +5,7 @@ import { IndexLink, Link } from 'react-router';
 
 import GroupMap from '../partials/GroupMap';
 import { getPlayerPageInfo, sortPlayers, canRoleHaveUser } from '../utils';
+import { getPlayerIframeUrl } from '../../utils';
 
 export default class GroupOverview extends Component {
   renderAddUserIcon(player) {
@@ -58,7 +59,7 @@ export default class GroupOverview extends Component {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`/actor/${group.org.name}/${actor.userId}`}>
+          href={getPlayerIframeUrl(trip, actor)}>
           <i className="fa fa-link" />
         </a>
         {this.renderAddUserIcon(actor)}
@@ -84,7 +85,10 @@ export default class GroupOverview extends Component {
           {pageInfo.status}
         </IndexLink>
         {' '}
-        <a target="_blank" rel="noopener noreferrer" href={`/s/${player.id}`}>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={getPlayerIframeUrl(trip, player)}>
           <i className="fa fa-link" />
         </a>
         {this.renderAddUserIcon(player)}

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
+const path = require('path');
 const Sentry = require('@sentry/node');
 const s3Router = require('react-s3-uploader/s3router');
 
@@ -73,6 +74,20 @@ app.use('/s3', s3Router({
   ACL: 'public-read',
   uniquePrefix: false
 }));
+
+// Serve static content for built travel app and agency app
+const root = path.dirname(path.dirname(path.resolve(__dirname)));
+const serveFile = f => (req, res) => res.sendFile(path.resolve(root, f));
+app.use('/static', express.static(path.join(root, 'static')));
+app.use('/build', express.static(path.join(root, 'build')));
+app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
+app.use('/favicon.ico', serveFile('static/favicon.ico'));
+app.use('/apple-touch-icon-precomposed.png',
+  serveFile('static/images/apple-touch-icon-precomposed.png'));
+
+// Serve one-page apps
+app.use('/travel', serveFile('apps/travel/dist/index.html'));
+app.use('', serveFile('apps/agency/static/index.html'));
 
 // The error handler must be before any other error middleware
 app.use(Sentry.Handlers.errorHandler());
