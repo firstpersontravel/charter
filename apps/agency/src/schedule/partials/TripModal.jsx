@@ -18,8 +18,7 @@ function getVariantSections(script) {
     .value();
 }
 
-function getDefaultState(group, trip, departureName) {
-  const defaultDepartureName = departureName || '';
+function getDefaultState(group, trip) {
   const existingVariantNames = trip ?
     trip.variantNames.split(',').filter(Boolean) : [];
   const variantSections = getVariantSections(group && group.script);
@@ -30,7 +29,6 @@ function getDefaultState(group, trip, departureName) {
     })[0], 'name')
   ));
   return {
-    departureName: trip ? trip.departureName : defaultDepartureName,
     variantNames: variantNames,
     title: trip ? trip.title : ''
   };
@@ -39,10 +37,7 @@ function getDefaultState(group, trip, departureName) {
 export default class TripModal extends Component {
   constructor(props) {
     super(props);
-    this.state = getDefaultState(
-      props.group,
-      props.trip,
-      props.defaultDepartureName);
+    this.state = getDefaultState(props.group, props.trip);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeVariant = this.handleChangeVariant.bind(this);
@@ -51,10 +46,7 @@ export default class TripModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(getDefaultState(
-      nextProps.group,
-      nextProps.trip,
-      nextProps.defaultDepartureName));
+    this.setState(getDefaultState(nextProps.group, nextProps.trip));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -102,32 +94,6 @@ export default class TripModal extends Component {
     const confirmLabel = isNew ? 'Create' : 'Update with values';
     const confirmColor = isNew ? 'primary' : 'danger';
     const isValid = this.state.date !== '' && this.state.title !== '';
-
-    const departures = group.script.content.departures || [];
-    const departureOptions = departures.map(departure => (
-      <option
-        key={departure.name}
-        value={departure.name}>
-        {TextUtil.titleForKey(departure.name)}
-      </option>
-    ));
-    const departureField = departures.length > 0 ? (
-      <div className="form-group row">
-        <label className="col-sm-3 col-form-label" htmlFor="trip_sched">
-          Departure
-        </label>
-        <div className="col-sm-9">
-          <select
-            className="form-control"
-            id="trip_sched"
-            onChange={_.curry(this.handleChangeField)('departureName')}
-            value={this.state.departureName}>
-            {departureOptions}
-          </select>
-        </div>
-      </div>
-    ) : null;
-
     const variantSections = getVariantSections(group.script);
     const variantFields = variantSections.map((section, i) => {
       const options = _.filter(group.script.content.variants, {
@@ -175,7 +141,6 @@ export default class TripModal extends Component {
                   placeholder="Title" />
               </div>
             </div>
-            {departureField}
             {variantFields}
           </form>
         </ModalBody>
@@ -198,7 +163,6 @@ export default class TripModal extends Component {
 
 TripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  defaultDepartureName: PropTypes.string,
   group: PropTypes.object,
   trip: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
@@ -207,6 +171,5 @@ TripModal.propTypes = {
 
 TripModal.defaultProps = {
   trip: null,
-  group: null,
-  defaultDepartureName: null
+  group: null
 };

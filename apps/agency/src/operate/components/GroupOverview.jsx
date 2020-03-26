@@ -51,8 +51,6 @@ export default class GroupOverview extends Component {
             {roleAndActors.role.title}{userNameIfMultiple}:
           </strong>
           {' '}
-          {trip.departureName}
-          {' '}
           {pageInfo.status}
         </Link>
         {' '}
@@ -78,7 +76,7 @@ export default class GroupOverview extends Component {
       <div key={player.id} className="constrain-text">
         <Link
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.role.name}/${player.user ? player.user.id : 0}`}>
-          <strong>{trip.departureName} {trip.title}</strong>
+          <strong>{trip.title}</strong>
           {' '}
           {player.role.title}:
           {' '}
@@ -117,7 +115,7 @@ export default class GroupOverview extends Component {
       <div key={trip.id}>
         <Link
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}`}>
-          <strong>{trip.departureName} {trip.title}:</strong> {currentSceneTitle}
+          <strong>{trip.title}:</strong> {currentSceneTitle}
         </Link>
       </div>
     );

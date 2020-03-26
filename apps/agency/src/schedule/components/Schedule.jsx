@@ -152,8 +152,8 @@ class Schedule extends Component {
     const newGroupItem = isCurrentOrFuture ? [{
       key: 'new',
       isExact: true,
-      text: 'New group',
-      label: 'New group',
+      text: 'New block',
+      label: 'New block',
       url: `/${this.props.org.name}/${this.props.experience.name}/schedule/${this.props.match.params.year}/${this.props.match.params.month}?group=new`
     }] : [];
 

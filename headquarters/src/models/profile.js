@@ -18,7 +18,6 @@ const {
  */
 const Profile = database.define('Profile', snakeCaseColumns({
   roleName: mutableModifier(requiredStringField(32)),
-  departureName: mutableModifier(optionalStringField(32)),
   isActive: mutableModifier(booleanField(true)),
   photo: mutableModifier(optionalStringField(255)),
   email: mutableModifier(optionalStringField(255)),

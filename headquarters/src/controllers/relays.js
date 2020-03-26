@@ -78,14 +78,13 @@ class RelaysController {
   /**
    * Make sure a relay exists for a given spec
    */
-  static async ensureRelay(orgId, experienceId, departureName, relaySpec,
-    userNum) {
+  static async ensureRelay(orgId, experienceId, tripId, relaySpec, userNum) {
     // Get relay if it exists, either for everyone or for this user.
     const relayFields = {
       stage: config.env.STAGE,
       orgId: orgId,
       experienceId: experienceId,
-      departureName: departureName,
+      tripId: tripId,
       forRoleName: relaySpec.for,
       withRoleName: relaySpec.with,
       asRoleName: relaySpec.as || relaySpec.for,

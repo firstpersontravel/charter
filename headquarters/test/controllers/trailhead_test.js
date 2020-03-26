@@ -10,9 +10,7 @@ const TripsController = require('../../src/controllers/trips');
 const mockTrailhead = {
   orgId: 9,
   experienceId: 20,
-  forRoleName: 'Player',
-  experienceIe: 10,
-  departureName: 'Main'
+  forRoleName: 'Player'
 };
 const mockTrip = { id: 100 };
 const mockScript = {

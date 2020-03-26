@@ -108,9 +108,8 @@ async function createDummyGroupForScript(script) {
 
 async function createDummyTripForScript(script, variantNames) {
   const group = await createDummyGroupForScript(script);
-  const departureName = _.get(script, 'content.departures[0].name') || '';
-  const trip = await TripsController.createTrip(
-    group.id, 'test', departureName, variantNames || []);
+  const trip = await TripsController.createTrip(group.id, 'test',
+    variantNames || []);
   // Start to get to right scene.
   await TripResetHandler.resetToStart(trip.id);
   return trip;

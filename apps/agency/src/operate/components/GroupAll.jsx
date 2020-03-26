@@ -32,12 +32,11 @@ function renderTripItem(group, trip, isToplevel) {
       `/operate/${group.id}` +
       `/trip/${trip.id}`
     ),
-    text: `${trip.departureName} ${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
+    text: `${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
     label: (
       <span>
         {isToplevel ? 'Trip: ' : ''}
-        {trip.departureName} {trip.title}
-        {trip.isArchived ? archivedIcon : null}
+        {trip.title} {trip.isArchived ? archivedIcon : null}
       </span>
     )
   };
@@ -55,7 +54,7 @@ function renderTripsItem(group, currentTripId) {
   if (currentTripId) {
     const trip = _.find(group.trips, { id: Number(currentTripId) });
     if (trip) {
-      tripTitle = `Trip: ${trip.departureName} ${trip.title}`;
+      tripTitle = `Trip: ${trip.title}`;
       tripLabel = (
         <span>{tripTitle}{trip.isArchived ? archivedIcon : null}</span>
       );

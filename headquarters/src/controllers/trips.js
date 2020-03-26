@@ -23,7 +23,7 @@ class TripsController {
   /**
    * Create an initial trip including players with default values.
    */
-  static async createTrip(groupId, title, departureName, variantNames=[]) {
+  static async createTrip(groupId, title, variantNames=[]) {
     const group = await models.Group.findOne({
       where: { id: groupId },
       include: [
@@ -44,7 +44,6 @@ class TripsController {
       date: group.date,
       title: title,
       currentSceneName: '',
-      departureName: departureName,
       variantNames: variantNames.join(','),
       history: {}
     }, initialFields);

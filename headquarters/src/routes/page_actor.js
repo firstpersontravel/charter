@@ -194,11 +194,11 @@ const userShowRoute = async (req, res) => {
       where: { isArchived: false }
     }]
   });
-  const playersByDeparture = _(players)
-    .sortBy(player => player.trip.departureName)
+  const playersByTripTime = _(players)
+    .sortBy(player => player.trip.createdAt)
     .value();
 
-  const objsList = await Promise.all(playersByDeparture.map(player => (
+  const objsList = await Promise.all(playersByTripTime.map(player => (
     KernelUtil.getObjectsForTrip(player.tripId)
   )));
 

@@ -52,7 +52,7 @@ describe('TripRelaysController', () => {
   });
 
   describe('#ensureRelay', () => {
-    const trip = { orgId: 2, id: 1, departureName: 'dep1', experienceId: 10 };
+    const trip = { orgId: 2, id: 1, experienceId: 10 };
     const relaySpec = { for: 'Role' };
     const phoneNum = '1234567890';
     const stubRelay = {};
@@ -68,7 +68,7 @@ describe('TripRelaysController', () => {
       sinon.assert.calledWith(TripRelaysController.userNumberForRelay,
         trip, relaySpec);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        2, 10, 'dep1', relaySpec, phoneNum);
+        2, 10, 1, relaySpec, phoneNum);
     });
 
     it('fetches relay for trailhead', async () => {
@@ -82,7 +82,7 @@ describe('TripRelaysController', () => {
       assert.strictEqual(res, stubRelay);
       sinon.assert.notCalled(TripRelaysController.userNumberForRelay);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        2, 10, 'dep1', trailheadSpec, '');
+        2, 10, null, trailheadSpec, '');
     });
 
     it('returns null if no phone number found', async () => {
@@ -113,9 +113,7 @@ describe('TripRelaysController', () => {
       }
     });
 
-    const stubTrip = models.Trip.build({
-      departureName: 'T1',
-    });
+    const stubTrip = models.Trip.build({});
 
     const stubRelay = {
       forRoleName: 'for',

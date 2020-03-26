@@ -75,15 +75,14 @@ const entrywaySubmitRoute = async (req, res) => {
   });
 
   const script = await ExperienceController.findActiveScript(experience.id);
-  const departureName = '';
   const playerRole = _.find(script.content.roles, { type: 'traveler' });
   if (!playerRole) {
     res.status(500).send('No player role found.');
     return;
   }
 
-  const trip = await TrailheadController.createTrip(script,
-    departureName, playerRole.name, phoneNumber);
+  const trip = await TrailheadController.createTrip(script, playerRole.name, 
+    phoneNumber);
   const player = await models.Player.findOne({
     where: { tripId: trip.id, roleName: playerRole.name }
   });

@@ -2,8 +2,10 @@ const database = require('../config').database;
 
 const Experience = require('./experience');
 const Org = require('./org');
+const Trip = require('./trip');
 
 const {
+  allowNullModifier,
   belongsToField,
   booleanField,
   enumStringField,
@@ -20,7 +22,6 @@ const RELAY_STAGE_OPTIONS = ['test', 'development', 'staging', 'production'];
  */
 const Relay = database.define('Relay', snakeCaseColumns({
   stage: enumStringField(32, RELAY_STAGE_OPTIONS),
-  departureName: optionalStringField(32),
   forRoleName: requiredStringField(32),
   asRoleName: requiredStringField(32),
   withRoleName: requiredStringField(32),
@@ -31,5 +32,6 @@ const Relay = database.define('Relay', snakeCaseColumns({
 
 Relay.belongsTo(Org, belongsToField('org'));
 Relay.belongsTo(Experience, belongsToField('experience'));
+Relay.belongsTo(Trip, allowNullModifier(belongsToField('trip')));
 
 module.exports = Relay;

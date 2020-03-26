@@ -76,7 +76,7 @@ export default class GroupModal extends Component {
 
   render() {
     const group = this.props.group;
-    const title = group ? 'Edit group' : 'New group';
+    const title = group ? 'Edit block' : 'New block';
     const isNew = !group;
     const confirmLabel = isNew ? 'Create' : 'Update with values';
     const confirmColor = isNew ? 'primary' : 'danger';

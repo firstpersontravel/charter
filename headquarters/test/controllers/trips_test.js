@@ -51,7 +51,7 @@ describe('TripsController', () => {
       sandbox.stub(models.Trip, 'create').resolves({ id: 3, orgId: 200 });
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
-      await TripsController.createTrip(1, 'title', 'T1', ['basic']);
+      await TripsController.createTrip(1, 'title', ['basic']);
 
       sinon.assert.calledWith(models.Group.findOne, {
         where: { id: 1 },
@@ -72,7 +72,6 @@ describe('TripsController', () => {
           basicIntro: '2018-01-01T18:00:00.000Z',
           startAt: '2018-01-01T16:00:00.000Z'
         },
-        departureName: 'T1',
         scriptId: 2,
         experienceId: 3,
         variantNames: 'basic',

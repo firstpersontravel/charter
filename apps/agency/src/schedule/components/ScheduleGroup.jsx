@@ -21,8 +21,7 @@ class ScheduleGroup extends Component {
       isArchivingTrip: null,
       isArchiveTripModalOpen: false,
       isTripEditModalOpen: false,
-      isEditingTrip: null,
-      defaultTripDepartureName: null
+      isEditingTrip: null
     };
     this.handleArchiveGroup = this.handleArchiveGroup.bind(this);
     this.handleArchiveGroupToggle = this.handleArchiveGroupToggle.bind(this);
@@ -99,26 +98,24 @@ class ScheduleGroup extends Component {
     });
   }
 
-  handleNewTrip(defaultDepartureName) {
+  handleNewTrip() {
     this.setState({
       isTripEditModalOpen: true,
-      isEditingTrip: null,
-      defaultTripDepartureName: defaultDepartureName
+      isEditingTrip: null
     });
   }
 
   handleEditTrip(trip) {
     this.setState({
       isTripEditModalOpen: true,
-      isEditingTrip: trip,
-      defaultTripDepartureName: null
+      isEditingTrip: trip
     });
   }
 
-  initialFieldsForRole(experience, script, role, departureName, variantNames) {
+  initialFieldsForRole(experience, script, role, variantNames) {
     const profiles = ScheduleUtils.filterAssignableProfiles(
       this.props.profiles, this.props.users, experience.id,
-      role.name, departureName);
+      role.name);
     const users = profiles.map(profile => (
       _.find(this.props.users, { id: profile.userId })
     ));
@@ -141,7 +138,6 @@ class ScheduleGroup extends Component {
       date: group.date,
       title: fields.title,
       galleryName: _.kebabCase(fields.title),
-      departureName: fields.departureName,
       variantNames: fields.variantNames.join(','),
       currentSceneName: ''
     });
@@ -161,7 +157,7 @@ class ScheduleGroup extends Component {
     this.props.createTrip(tripFields, roles.map(role => ({
       collection: 'players',
       fields: this.initialFieldsForRole(group.experience, group.script,
-        role, tripFields.departureName, tripFields.variantNames.split(',')),
+        role, tripFields.variantNames.split(',')),
       insertions: { tripId: 'id' }
     })));
   }
@@ -185,12 +181,9 @@ class ScheduleGroup extends Component {
     const archivedStyle = { textDecoration: 'line-through' };
     return (
       <tr key={trip.id}>
-        <td>
-          <strong>{trip.departureName}</strong>
-        </td>
         <td style={trip.isArchived ? archivedStyle : null}>
           <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
-            {trip.title}
+            <strong>{trip.title}</strong>
           </Link>
           {trip.isArchived && <i className="fa fa-archive ml-1" />}
         </td>
@@ -203,16 +196,6 @@ class ScheduleGroup extends Component {
         </td>
       </tr>
     );
-  }
-
-  renderDepartureRow(group, departureName, trips) {
-    const tripRows = trips
-      .filter(trip => trip.departureName === departureName)
-      .map(trip => this.renderTripRow(group, trip));
-
-    return tripRows.length ?
-      tripRows :
-      this.renderNewTripRow(departureName);
   }
 
   renderHeader() {
@@ -237,23 +220,19 @@ class ScheduleGroup extends Component {
     );
   }
 
-  renderNewTripRow(departureName) {
+  renderNewTripRow() {
     if (this.props.group.isArchived) {
       return null;
     }
-    const departures = this.props.group.script.content.departures || [];
-    const departureNames = departures.length > 0 ?
-      _.map(departures, 'name') : [''];
-    const defaultDepartureName = departureName || departureNames[0];
     return (
-      <tr key={departureName}>
+      <tr key="new">
         <td>
-          <strong>{departureName}</strong>
+          <strong>New</strong>
         </td>
         <td>
           <button
             className="btn btn-sm btn-outline-secondary"
-            onClick={() => this.handleNewTrip(defaultDepartureName)}>
+            onClick={() => this.handleNewTrip()}>
             New trip
           </button>
         </td>
@@ -265,20 +244,14 @@ class ScheduleGroup extends Component {
 
   renderTrips() {
     const group = this.props.group;
-    const departures = group.script.content.departures || [];
-    const departureNames = departures.length > 0 ?
-      _.map(departures, 'name') : [''];
-    const departureRows = departureNames.map((departureName) => {
-      const depTrips = _.filter(group.trips, { departureName: departureName });
-      return this.renderDepartureRow(group, departureName, depTrips);
-    });
-    const isFull = group.trips.length >= departureNames.length;
-    const addTripRow = isFull ? this.renderNewTripRow('') : null;
+    const tripRows = this.props.group.trips.map(trip => (
+      this.renderTripRow(group, trip)
+    ));
     return (
       <table className="table table-striped">
         <tbody>
-          {departureRows}
-          {addTripRow}
+          {tripRows}
+          {this.renderNewTripRow()}
         </tbody>
       </table>
     );
@@ -322,7 +295,7 @@ class ScheduleGroup extends Component {
           isOpen={this.state.isArchiveTripModalOpen}
           onToggle={this.handleArchiveTripToggle}
           onConfirm={this.handleArchiveTripConfirm}
-          message={`Are you sure you want to ${_.get(this.state.isArchivingTrip, 'isArchived') ? 'unarchive' : 'archive'} ${_.get(this.state.isArchivingTrip, 'departureName')}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
+          message={`Are you sure you want to ${_.get(this.state.isArchivingTrip, 'isArchived') ? 'unarchive' : 'archive'}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
       </div>
     );
   }

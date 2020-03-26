@@ -51,14 +51,13 @@ class TrailheadController {
    */
   static async createTripFromRelay(trailheadRelay, fromNumber) {
     const script = await RelayController.scriptForRelay(trailheadRelay);
-    return this.createTrip(script, trailheadRelay.departureName,
-      trailheadRelay.forRoleName, fromNumber);
+    return this.createTrip(script, trailheadRelay.forRoleName, fromNumber);
   }
 
   /**
    * Create a new trip with properties.
    */
-  static async createTrip(script, departureName, userRoleName, userNumber) {
+  static async createTrip(script, userRoleName, userNumber) {
     const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {
@@ -70,8 +69,8 @@ class TrailheadController {
       }
     });
     const title = localTime.format('h:mm a z');
-    const trip = await TripsController.createTrip(
-      group.id, title, departureName, ['default']);
+    const trip = await TripsController.createTrip(group.id, title,
+      ['default']);
 
     // Look for a user, or create if doesn't exist.
     const [trailheadUser, ] = await models.User.findOrCreate({

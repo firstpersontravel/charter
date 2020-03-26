@@ -10,7 +10,6 @@ export default class ProfileModal extends Component {
   static getDefaultState(profile) {
     return {
       roleName: profile ? profile.roleName : '',
-      departureName: profile ? profile.departureName : '',
       email: profile ? profile.email : '',
       photo: profile ? profile.photo : '',
       phoneNumber: profile ? profile.phoneNumber : '',
@@ -99,14 +98,8 @@ export default class ProfileModal extends Component {
       return null;
     }
     const roles = experience.script.content.roles || [];
-    const departures = experience.script.content.departures || [];
     const roleOptions = roles.map(role => (
       <option key={role.name} value={role.name}>{role.title}</option>
-    ));
-    const departureOptions = departures.map(departure => (
-      <option key={departure.name} value={departure.name}>
-        {departure.title}
-      </option>
     ));
     const role = _.find(roles, { name: this.state.roleName });
     const requiredValues = (role && role.required_values) || [];
@@ -149,19 +142,6 @@ export default class ProfileModal extends Component {
                 </select>
               </div>
               <div className="form-group col-sm-6">
-                <label htmlFor="profile_departure_name">Departure</label>
-                <select
-                  className="form-control"
-                  id="profile_departure_name"
-                  onChange={_.curry(this.handleChangeField)('departureName')}
-                  value={this.state.departureName}>
-                  <option value="">--</option>
-                  {departureOptions}
-                </select>
-              </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-sm-6">
                 <label htmlFor="profile_photo">Photo</label>
                 <input
                   type="text"
@@ -172,6 +152,8 @@ export default class ProfileModal extends Component {
                   onChange={_.curry(this.handleChangeField)('photo')}
                   placeholder="Photo media path" />
               </div>
+            </div>
+            <div className="row">
               <div className="form-group col-sm-6">
                 <label htmlFor="profile_email">Email</label>
                 <input
@@ -182,9 +164,7 @@ export default class ProfileModal extends Component {
                   onChange={_.curry(this.handleChangeField)('email')}
                   placeholder="Email" />
               </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-sm-4">
+              <div className="form-group col-sm-6">
                 <label htmlFor="profile_phone_number">Phone number</label>
                 <input
                   type="text"
@@ -194,7 +174,9 @@ export default class ProfileModal extends Component {
                   onChange={_.curry(this.handleChangeField)('phoneNumber')}
                   placeholder="Phone number" />
               </div>
-              <div className="form-group col-sm-4">
+            </div>
+            <div className="row">
+              <div className="form-group col-sm-6">
                 <label htmlFor="profile_facetime_username">Facetime</label>
                 <input
                   type="text"
@@ -204,7 +186,7 @@ export default class ProfileModal extends Component {
                   onChange={_.curry(this.handleChangeField)('facetimeUsername')}
                   placeholder="Facetime username" />
               </div>
-              <div className="form-group col-sm-4">
+              <div className="form-group col-sm-6">
                 <label htmlFor="profile_skype_username">Skype</label>
                 <input
                   type="text"

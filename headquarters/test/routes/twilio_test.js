@@ -62,7 +62,6 @@ describe('twilioRoutes', () => {
     travelerRelay = await models.Relay.create({
       orgId: trip.orgId,
       experienceId: trip.experienceId,
-      departureName: 'T1',
       stage: 'test',
       isActive: true,
       forRoleName: 'Player',
@@ -75,7 +74,6 @@ describe('twilioRoutes', () => {
     await models.Relay.create({
       orgId: trip.orgId,
       experienceId: trip.experienceId,
-      departureName: 'T1',
       stage: 'test',
       isActive: true,
       forRoleName: 'Actor',

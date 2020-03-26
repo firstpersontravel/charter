@@ -17,7 +17,6 @@ function getScheduledTripTriggers(trip) {
     tripId: trip.id,
     scheduledAt: Registry.events.time_occurred.timeForSpec(
       trigger.event, trip.evalContext),
-    departureName: trip.departureName,
     name: trigger.name
   }));
 }
@@ -60,7 +59,7 @@ export default class GroupUpcoming extends Component {
     return (
       <tr key={trigger.id}>
         <td className={cellClass}>{timeShort}</td>
-        <td className={cellClass}>{trip.departureName}</td>
+        <td className={cellClass}>{trip.title}</td>
         <td className={cellClass}>{trigger.type}</td>
         <td className={cellClass}>{trigger.name}</td>
         <td className={cellClass} />
@@ -113,7 +112,7 @@ export default class GroupUpcoming extends Component {
     return (
       <tr key={action.id}>
         <td className={cellClass}>{timeShort}</td>
-        <td className={cellClass}>{trip.departureName}</td>
+        <td className={cellClass}>{trip.title}</td>
         <td className={cellClass}>{action.type}</td>
         <td className={cellClass}>{action.name}</td>
         <td className={cellClass}>{values}</td>

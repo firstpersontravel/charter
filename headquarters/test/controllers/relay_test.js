@@ -52,7 +52,7 @@ describe('RelayController', () => {
 
   describe('#findSiblings', () => {
     it('looks up sibling relays', async () => {
-      const relay = { experienceId: 10, departureName: 'dep' };
+      const relay = { experienceId: 10, tripId: 3 };
       const stubResult = { id: 2 };
       sandbox.stub(models.Relay, 'findAll').resolves(stubResult);
       
@@ -63,7 +63,7 @@ describe('RelayController', () => {
         where: {
           stage: 'test',
           experienceId: relay.experienceId,
-          departureName: relay.departureName,
+          tripId: relay.tripId,
           withRoleName: 'with',
           asRoleName: 'as',
           isActive: true
@@ -78,7 +78,6 @@ describe('RelayController', () => {
       const phoneNumber = '1234567890';
       const relay = {
         forRoleName: 'ForRole',
-        departureName: 'T1',
         experienceId: 10
       };
 
@@ -100,7 +99,6 @@ describe('RelayController', () => {
           as: 'trip',
           where: {
             experienceId: relay.experienceId,
-            departureName: relay.departureName,
             isArchived: false
           },
         }]

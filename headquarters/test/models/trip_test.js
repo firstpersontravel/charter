@@ -54,11 +54,6 @@ describe('Trip', () => {
     await assertValidation(trip, { title: 'must be present' });
   });
 
-  it('allows a departure', async () => {
-    trip.departureName = 'departureName';
-    await trip.validate();
-  });
-
   it('allows values', async () => {
     trip.values = { value: 2, another: 'abc' };
     await trip.validate();

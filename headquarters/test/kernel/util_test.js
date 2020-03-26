@@ -52,7 +52,6 @@ describe('KernelUtil', () => {
         currentSceneName: 'SCENE-1',
         customizations: {},
         date: '01-01-2015',
-        departureName: '',
         galleryName: '',
         history: {
           'CUE-1': 'time'

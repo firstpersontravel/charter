@@ -35,7 +35,7 @@ class TripRelaysController {
     // If it's a trailhead, look for a universal relay.
     if (relaySpec.trailhead) {
       return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
-        trip.departureName, relaySpec, '');
+        null, relaySpec, '');
     }
     // Otherwise, look up the user phone number for a relay.
     const userPhoneNumber = await this.userNumberForRelay(trip, relaySpec);
@@ -47,7 +47,7 @@ class TripRelaysController {
     // If we have a phone number, then we can ensure a relay exists for that
     // number.
     return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
-      trip.departureName, relaySpec, userPhoneNumber);
+      trip.id, relaySpec, userPhoneNumber);
   }
 
   /**
@@ -114,7 +114,7 @@ class TripRelaysController {
     const sentBy = await models.Player.findByPk(message.sentById);
     const sentTo = await models.Player.findByPk(message.sentToId);
     const contentPrefix = (
-      `[${stage}${trip.departureName}] ` +
+      `[${stage}${trip.title}] ` +
       `${sentBy.roleName} to ${sentTo.roleName}:`
     );
     return `${contentPrefix} ${message.content}`;

@@ -43,7 +43,7 @@ export default class GroupPlayers extends Component {
     return (
       <th key={trip.id}>
         <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
-          {trip.departureName ? `${trip.departureName}: ` : ''}{trip.title}
+          {trip.title}
         </Link>
       </th>
     );
@@ -59,8 +59,6 @@ export default class GroupPlayers extends Component {
       return null;
     }
     const role = _.find(script.content.roles, { name: roleName });
-    const departureNames = _.uniq(_.map(tripsWithRole, 'departureName'));
-    const departureName = departureNames.length === 1 ? departureNames[0] : null;
     const users = _.uniq(tripsWithRole
       .map(trip => _.find(trip.players, { roleName: roleName }))
       .map(player => player && player.user));
@@ -78,8 +76,7 @@ export default class GroupPlayers extends Component {
       userClass = '';
     }
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, experience.id, roleName,
-      departureName);
+      this.props.profiles, this.props.users, experience.id, roleName);
     const userChoices = profileChoices
       .map(profile => (
         _.find(this.props.users, { id: profile.userId })

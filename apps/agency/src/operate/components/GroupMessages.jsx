@@ -14,7 +14,6 @@ function renderRoleMessages(trip, player, messages, updateInstance) {
   return (
     <div key={`${trip.id}-${player.id}`}>
       <h4>
-        {trip.departureName}&nbsp;
         {trip.title}: {player.role.title}
       </h4>
       {renderedMessages}

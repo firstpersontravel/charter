@@ -191,13 +191,10 @@ export default class Group extends Component {
     if (group.isError) {
       return <div className="container-fluid">Error - please reload</div>;
     }
-    if (group.isLoading || (group.script && group.script.isLoading)) {
-      return <Loader />;
-    }
-    if (group.isNull) {
+    if (group.isNull && !group.isLoading) {
       return <div className="container-fluid">Group not found</div>;
     }
-    if (group.script.isNull) {
+    if (!group.script || group.script.isNull || group.script.isLoading) {
       return <Loader />;
     }
     if (group.trips.length === 0) {

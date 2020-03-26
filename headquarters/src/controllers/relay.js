@@ -53,7 +53,7 @@ class RelayController {
       where: {
         stage: config.env.STAGE,
         experienceId: relay.experienceId,
-        departureName: relay.departureName,
+        tripId: relay.tripId,
         withRoleName: withRoleName,
         asRoleName: asRoleName,
         isActive: true
@@ -80,7 +80,6 @@ class RelayController {
         as: 'trip',
         where: {
           experienceId: relay.experienceId,
-          departureName: relay.departureName,
           isArchived: false
         },
       }]

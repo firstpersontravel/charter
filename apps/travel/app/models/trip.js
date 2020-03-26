@@ -14,7 +14,6 @@ export default DS.Model.extend({
 
   date: DS.attr('string'),
   templateName: DS.attr('string'),
-  departureName: DS.attr('string'),
   currentSceneName: DS.attr('string'),
   title: DS.attr('string'),
   customizations: DS.attr('obj'),

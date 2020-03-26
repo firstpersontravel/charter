@@ -42,7 +42,6 @@ describe('API retrieve', () => {
                 schedule: {},
                 scheduleUpdatedAt: null,
                 scheduleAt: null,
-                departureName: '',
                 galleryName: '',
                 variantNames: '',
                 title: 'test',

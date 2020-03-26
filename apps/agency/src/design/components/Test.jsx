@@ -23,7 +23,6 @@ function variantOptionsForSection(script, section) {
 function initialStateForScript(script) {
   return {
     startedAt: new Date().getTime(),
-    departureName: _.get(script, 'content.departures[0].name') || '',
     variantSections: _(variantSectionsForScript(script))
       .map(section => (
         [section, _.get(variantOptionsForSection(script, section), '[0].name')]

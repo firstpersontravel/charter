@@ -146,7 +146,6 @@ export default class DirectoryUser extends Component {
             <Link to={`/${experience.org.name}/${experience.name}/directory?role=${role.name}`}>
               {role.title}
             </Link>
-            {profile.departureName ? ` ${profile.departureName}` : null }
           </span>
           &nbsp;
           <Link

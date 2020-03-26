@@ -7,6 +7,7 @@ import { NavLink, Link } from 'react-router-dom';
 
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
+import { getPlayerIframeUrl } from '../../utils';
 
 function getAppearanceStart(player) {
   const page = _.find(player.trip.script.content.pages,
@@ -87,10 +88,15 @@ function renderPlayerCell(player, isFirst) {
           <strong>Player:</strong>
           {' '}
           <NavLink to={tripRoleUrl} activeClassName="bold">
-            {trip.departureName} {pageTitle}
+            {trip.title} {pageTitle}
           </NavLink>
           <br />
           <strong>Page:</strong> {pageTitle}
+          <br />
+          <strong>URL:</strong>&nbsp;
+          <a href={getPlayerIframeUrl(trip, player)} target="_blank" rel="noopener noreferrer">
+            <i className="fa fa-link" />
+          </a>
         </p>
       </div>
     </div>
