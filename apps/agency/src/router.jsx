@@ -92,9 +92,9 @@ ExperienceIndexRedirect.propTypes = {
   match: PropTypes.object.isRequired
 };
 
-function ExperienceRoutes({ match }) {
+function ExperienceRoutes({ match, history }) {
   return (
-    <ExperienceConnector match={match}>
+    <ExperienceConnector match={match} history={history}>
       <Switch>
         <Route path={match.path} exact component={ExperienceIndexRedirect} />
         <Route path={`${match.path}/script`} component={DesignRoutes} />
@@ -108,7 +108,8 @@ function ExperienceRoutes({ match }) {
 }
 
 ExperienceRoutes.propTypes = {
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };
 
 function AuthedIndex({ firstOrgName }) {

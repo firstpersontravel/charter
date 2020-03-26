@@ -144,14 +144,15 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     'Ops';
   const opsDropdown = groupLinks.length > 0 ? (
     <li className="nav-item dropdown">
-      <Link
+      <NavLink
         style={{ cursor: 'pointer' }}
         id="opsDropdown"
         data-toggle="dropdown"
+        activeClassName="active"
         className={`dropdown-toggle nav-link constrain-text ${activeGroup ? 'active' : ''}`}
         to={`/${org.name}/${experience.name}/operate`}>
         {opsTitle}
-      </Link>
+      </NavLink>
       <div className="dropdown-menu" aria-labelledby="opsDropdown">
         {groupLinks}
       </div>

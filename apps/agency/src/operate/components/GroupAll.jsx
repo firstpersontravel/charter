@@ -85,17 +85,25 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const allUsers = _(allPlayers).map('user').uniq().value();
 
   let roleTitle = 'Roles';
-  if (match.params.roleName && match.params.userId) {
+
+  const path = history.location.pathname;
+  const pathRoleMatch = path.match(/\/role\/([\w_-]+)\/(\d+)/);
+  const pathRoleName = pathRoleMatch ? pathRoleMatch[1] : null;
+  const pathUserId = pathRoleMatch ? pathRoleMatch[2] : null;
+
+  if (pathRoleName && pathUserId) {
     const role = _.find(group.script.content.roles, {
-      name: match.params.roleName
+      name: pathRoleName
     });
-    const userTitle = match.params.userId !== '0' ?
-      _.get(_.find(allUsers, { id: Number(match.params.userId) }), 'firstName') :
+    const userTitle = pathUserId !== '0' ?
+      _.get(_.find(allUsers, { id: Number(pathUserId) }), 'firstName') :
       'No user';
     roleTitle = `Role: ${role.title} (${userTitle})`;
   }
 
-  const tripsItem = renderTripsItem(group, match.params.tripId);
+  const pathTripMatch = path.match(/\/trip\/(\d+)/);
+  const pathTripId = pathTripMatch ? pathTripMatch[1] : null;
+  const tripsItem = renderTripsItem(group, pathTripId);
 
   const items = [{
     text: 'Group',

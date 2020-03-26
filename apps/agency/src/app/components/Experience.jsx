@@ -7,6 +7,9 @@ import { withLoader } from '../../loader-utils';
 
 class Experience extends Component {
   renderNav() {
+    const path = this.props.history.location.pathname;
+    const match = path.match(/operate\/(\d+)/);
+    const groupId = match ? match[1] : null;
     return (
       <Nav
         authInfo={this.props.authInfo}
@@ -15,7 +18,7 @@ class Experience extends Component {
         experience={this.props.experience}
         experiences={this.props.experiences}
         groups={this.props.groups}
-        groupId={this.props.match.params.groupId} />
+        groupId={groupId} />
     );
   }
 
@@ -74,6 +77,7 @@ Experience.propTypes = {
   groups: PropTypes.array.isRequired,
   org: PropTypes.object,
   match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired
 };
 
