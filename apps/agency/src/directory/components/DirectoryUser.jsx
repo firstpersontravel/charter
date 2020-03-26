@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { TextUtil } from 'fptcore';
 
+import Loader from '../../partials/Loader';
 import UserModal from '../partials/UserModal';
 import ProfileModal from '../partials/ProfileModal';
 
@@ -192,7 +193,7 @@ export default class DirectoryUser extends Component {
 
   render() {
     if (!this.props.experience.script) {
-      return <div className="col-sm-9">Loading...</div>;
+      return <div className="col-sm-9"><Loader /></div>;
     }
     if (!this.props.user) {
       return <div className="col-sm-9">User not found.</div>;

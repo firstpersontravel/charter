@@ -3,9 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
 
+import Loader from '../../partials/Loader';
+
 export default function DesignIndex({ scripts }) {
   if (scripts.isLoading) {
-    return <div className="container-fluid">Loading</div>;
+    return <Loader />;
   }
   if (scripts.isError) {
     return <div className="container-fluid">Error</div>;

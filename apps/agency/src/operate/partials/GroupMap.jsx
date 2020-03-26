@@ -187,7 +187,7 @@ export default class GroupMap extends Component {
       .map((player) => {
         const trip = _.find(this.props.trips, { id: player.tripId });
         const playerLink = (
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/role/${player.roleName}/${player.userId || 0}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.roleName}/${player.userId || 0}`}>
             {trip.departureName}{' '}
             {player.roleName}
           </Link>
@@ -296,7 +296,7 @@ export default class GroupMap extends Component {
     return (
       <div key={player.id}>
         <div>
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/role/${player.roleName}/${player.userId || 0}`}>
             {trip.departureName}{' '}
             {player.roleName}{' '}
             ({player.user.firstName})

@@ -12,6 +12,7 @@ import ExperienceConnector from './app/connectors/Experience';
 import OrgConnector from './app/connectors/Org';
 import OrgIndexConnector from './app/connectors/OrgIndex';
 
+import Loader from './partials/Loader';
 import NotFound from './partials/NotFound';
 import DesignRoutes from './design/routes';
 import OperateRoutes from './operate/routes';
@@ -36,17 +37,13 @@ function getUserInfo(state) {
   return _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data');
 }
 
-function LoadingSpinner() {
-  return <div className="container-fluid">Loading...</div>;
-}
-
 const locationHelper = locationHelperBuilder({});
 
 const ensureLoggedIn = connectedRouterRedirect({
   redirectPath: '/login',
   authenticatingSelector: state => getIsAuthenticating(state),
   authenticatedSelector: state => !!getUserInfo(state),
-  AuthenticatingComponent: LoadingSpinner,
+  AuthenticatingComponent: Loader,
   wrapperDisplayName: 'EnsureLoggedIn'
 });
 
@@ -60,7 +57,7 @@ const ensureNotLoggedIn = connectedRouterRedirect({
   allowRedirectBack: false,
   authenticatingSelector: state => getIsAuthenticating(state),
   authenticatedSelector: state => !getUserInfo(state),
-  AuthenticatingComponent: LoadingSpinner,
+  AuthenticatingComponent: Loader,
   wrapperDisplayName: 'EnsureNotLoggedIn'
 });
 
@@ -149,7 +146,7 @@ const AuthEnsuredLoggedIn = withRouter(ensureLoggedIn(AuthedRoutes));
 
 function AppRoutes({ isAuthenticating, isAuthenticated }) {
   if (isAuthenticating) {
-    return <LoadingSpinner />;
+    return <Loader />;
   }
   if (isAuthenticated) {
     return <AuthEnsuredLoggedIn />;

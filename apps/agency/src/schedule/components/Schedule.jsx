@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { TextUtil } from 'fptcore';
 
+import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
 import GroupModal from '../partials/GroupModal';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
@@ -148,7 +149,7 @@ class Schedule extends Component {
 
     if (!groupItems.length) {
       if (this.props.groups.isLoading) {
-        return 'Loading...';
+        return <Loader />;
       }
       return (
         <div className="alert alert-warning">

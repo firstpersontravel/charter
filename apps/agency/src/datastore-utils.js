@@ -78,26 +78,26 @@ function getInstancesWithIncludes(state, spec) {
   });
 }
 
-const warnings = {};
+// const warnings = {};
 
-function warnNotFound(state, colName, relField, selfValue) {
-  const listState = state.requests[`${colName}.list`];
-  if (listState === 'pending') {
-    // No warning -- pending
-    // console.info(`Awaiting ${colName} where ${relField} = ${selfValue}.`);
-    return;
-  } else if (listState === 'rejected') {
-    // No warning -- error should be shown else where
-    // console.error(`Error loading ${colName} where ${relField} = ${selfValue}.`);
-    return;
-  }
-  const warningKey = `${colName}-${relField}-${selfValue}`;
-  if (warnings[warningKey]) {
-    return;
-  }
-  warnings[warningKey] = true;
-  console.warn(`Could not find ${colName} where ${relField} = ${selfValue}.`);
-}
+// function warnNotFound(state, colName, relField, selfValue) {
+//   const listState = state.requests[`${colName}.list`];
+//   if (listState === 'pending') {
+//     // No warning -- pending
+//     // console.info(`Awaiting ${colName} where ${relField} = ${selfValue}.`);
+//     return;
+//   } else if (listState === 'rejected') {
+//     // No warning -- error should be shown else where
+//     // console.error(`Error loading ${colName} where ${relField} = ${selfValue}.`);
+//     return;
+//   }
+//   const warningKey = `${colName}-${relField}-${selfValue}`;
+//   if (warnings[warningKey]) {
+//     return;
+//   }
+//   warnings[warningKey] = true;
+//   console.warn(`Could not find ${colName} where ${relField} = ${selfValue}.`);
+// }
 
 export function instanceIncluder(colName, relField, selfField, includes) {
   return (state, instance) => {
@@ -113,9 +113,9 @@ export function instanceIncluder(colName, relField, selfField, includes) {
       include: includes
     });
     const foundInstance = instanceFromInstances(foundInstances);
-    if (foundInstance.isNull) {
-      warnNotFound(state, colName, relField, selfValue);
-    }
+    // if (foundInstance.isNull) {
+    //   warnNotFound(state, colName, relField, selfValue);
+    // }
     return foundInstance;
   };
 }

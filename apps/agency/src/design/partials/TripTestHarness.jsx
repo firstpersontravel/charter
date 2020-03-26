@@ -231,8 +231,9 @@ export default class TripTestHarness extends Component {
   }
 
   startTrip() {
+    const actionContext = this.getActionContext();
     const firstSceneName = SceneCore.getStartingSceneName(
-      this.props.script.content, this.state.trip.actionContext);
+      this.props.script.content, actionContext);
     if (firstSceneName) {
       this.handleAction('start_scene', { scene_name: firstSceneName });
     }

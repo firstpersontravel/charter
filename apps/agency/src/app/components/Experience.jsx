@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Nav from '../../partials/Nav';
+import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
 
 class Experience extends Component {
@@ -18,22 +19,19 @@ class Experience extends Component {
     );
   }
 
-  renderErrorOrLoadingState() {
-    let msg;
+  renderMsg() {
     if (!this.props.experience && this.props.experienceRequest === 'pending') {
-      msg = (
-        <div className="alert alert-info">
-          Loading...
-        </div>
-      );
-    } else if (this.props.experienceRequest === 'rejected') {
-      msg = (
+      return <Loader />;
+    }
+    if (this.props.experienceRequest === 'rejected') {
+      return (
         <div className="alert alert-danger">
           Error loading experience.
         </div>
       );
-    } else if (!this.props.experience) {
-      msg = (
+    }
+    if (!this.props.experience) {
+      return (
         <div className="alert alert-warning">
           Experience not found.
           &nbsp;
@@ -41,20 +39,23 @@ class Experience extends Component {
         </div>
       );
     }
-    return (
-      <div>
-        {this.renderNav()}
-        <div className="container-fluid">
-          {msg}
-        </div>
-      </div>
-    );
+    return null;
   }
 
   render() {
-    if (!this.props.experience) {
-      return this.renderErrorOrLoadingState();
+    // Render error or loading state
+    const msg = this.renderMsg();
+    if (msg) {
+      return (
+        <div>
+          {this.renderNav()}
+          <div className="container-fluid">
+            {msg}
+          </div>
+        </div>
+      );
     }
+    // Render normal state
     return (
       <div>
         {this.renderNav()}

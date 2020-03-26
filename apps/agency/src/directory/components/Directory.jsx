@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 
+import Loader from '../../partials/Loader';
 import { canRoleHaveUser } from '../../operate/utils';
 
 export default class Directory extends Component {
@@ -72,9 +73,7 @@ export default class Directory extends Component {
   render() {
     if (this.props.profiles.isLoading ||
       !this.props.experience.script) {
-      return (
-        <div className="container-fluid">Loading</div>
-      );
+      return <Loader />;
     }
     return (
       <div className="container-fluid">

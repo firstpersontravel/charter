@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import moment from 'moment-timezone';
 import PropTypes from 'prop-types';
 
+import Loader from '../../partials/Loader';
 import config from '../../config';
 import { getStage } from '../../utils';
 
@@ -190,11 +191,14 @@ export default class Group extends Component {
     if (group.isError) {
       return <div className="container-fluid">Error - please reload</div>;
     }
+    if (group.isLoading || (group.script && group.script.isLoading)) {
+      return <Loader />;
+    }
     if (group.isNull) {
       return <div className="container-fluid">Group not found</div>;
     }
     if (group.script.isNull) {
-      return <div className="container-fluid">Loading</div>;
+      return <Loader />;
     }
     if (group.trips.length === 0) {
       return <div className="container-fluid">No trips</div>;

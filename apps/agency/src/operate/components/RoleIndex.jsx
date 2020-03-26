@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import L from 'leaflet';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
@@ -86,9 +86,9 @@ function renderPlayerCell(player, isFirst) {
         <p>
           <strong>Player:</strong>
           {' '}
-          <Link to={tripRoleUrl} activeClassName="bold">
+          <NavLink to={tripRoleUrl} activeClassName="bold">
             {trip.departureName} {pageTitle}
-          </Link>
+          </NavLink>
           <br />
           <strong>Page:</strong> {pageTitle}
         </p>

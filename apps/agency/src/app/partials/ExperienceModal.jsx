@@ -20,41 +20,41 @@ function titleForExample(example, existingExperiences) {
   return `${example.title} #${numExisting + 1}`;
 }
 
+function getDefaultState(experience, example, existingExperiences) {
+  if (experience) {
+    return {
+      name: experience.name,
+      title: experience.title,
+      domain: experience.domain,
+      timezone: experience.timezone
+    };
+  }
+  if (example) {
+    const title = titleForExample(example, existingExperiences);
+    return {
+      name: nameForTitle(title),
+      title: title,
+      domain: '',
+      timezone: 'US/Pacific'
+    };
+  }
+  return { name: '', title: '', domain: '', timezone: 'US/Pacific' };
+}
+
 export default class ExperienceModal extends Component {
-  static getDefaultState(experience, example, existingExperiences) {
-    if (experience) {
-      return {
-        name: experience.name,
-        title: experience.title,
-        domain: experience.domain,
-        timezone: experience.timezone
-      };
-    }
-    if (example) {
-      const title = titleForExample(example, existingExperiences);
-      return {
-        name: nameForTitle(title),
-        title: title,
-        domain: '',
-        timezone: 'US/Pacific'
-      };
-    }
-    return { name: '', title: '', domain: '', timezone: 'US/Pacific' };
+  static getDerivedStateFromProps(props, state) {
+    return getDefaultState(props.experience, props.example,
+      props.existingExperiences);
   }
 
   constructor(props) {
     super(props);
-    this.state = ExperienceModal.getDefaultState(props.experience,
-      props.example, props.existingExperiences);
+    this.state = getDefaultState(props.experience, props.example,
+      props.existingExperiences);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.firstInputRef = React.createRef();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState(ExperienceModal.getDefaultState(nextProps.experience,
-      nextProps.example, nextProps.existingExperiences));
   }
 
   componentDidUpdate(prevProps, prevState) {

@@ -5,6 +5,7 @@ import { NavLink, Link } from 'react-router-dom';
 
 import ExperienceModal from '../../app/partials/ExperienceModal';
 import AreYouSure from '../../partials/AreYouSure';
+import Loader from '../../partials/Loader';
 import { sections } from '../utils/section-utils';
 import { withLoader } from '../../loader-utils';
 
@@ -384,7 +385,7 @@ class Script extends Component {
 
   render() {
     if (this.props.script.isLoading) {
-      return <div className="container-fluid">Loading</div>;
+      return <Loader />;
     }
     if (this.props.script.isError) {
       return <div className="container-fluid">Error</div>;

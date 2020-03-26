@@ -47,6 +47,7 @@ export default class ResourceShow extends Component {
     this.handleDupeChildResource = this.handleDupeChildResource.bind(this);
     this.handleUpdateScript = this.handleUpdateScript.bind(this);
     this.state = {
+      lastScriptId: props.script.id,
       expandedChildStr: null,
       pendingChildCollectionName: null,
       pendingChildResource: null,
@@ -55,20 +56,21 @@ export default class ResourceShow extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.state.redirectToRevision) {
-      this.checkForNewRevision(nextProps);
-    }
-    if (nextProps.script.id !== this.props.script.id) {
-      this.setState({
+  static getDerivedStateFromProps(props, state) {
+    if (state.lastScriptId !== props.script.id) {
+      return {
+        lastScriptId: props.script.id,
         redirectToRevision: null,
-        redirectToResource: null
-      });
-    }
-    if (nextProps.match.params.resourceName !== this.props.match.params.resourceName) {
-      this.setState({
+        redirectToResource: null,
         expandedChildStr: null
-      });
+      };
+    }
+    return null;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.redirectToRevision) {
+      this.checkForNewRevision();
     }
   }
 
@@ -138,14 +140,15 @@ export default class ResourceShow extends Component {
     return [];
   }
 
-  checkForNewRevision(props) {
-    const script = props.script;
-    const existingRevisions = _.map(props.scripts, 'revision');
+  checkForNewRevision() {
+    const script = this.props.script;
+    const existingRevisions = _.map(this.props.scripts, 'revision');
     if (_.includes(existingRevisions, this.state.redirectToRevision)) {
       this.props.history.push(
         `/${script.org.name}/${script.experience.name}` +
         `/script/${this.state.redirectToRevision}` +
-        `/design/${props.match.params.sliceType}/${props.match.params.sliceName}` +
+        `/design/${this.props.match.params.sliceType}` +
+        `/${this.props.match.params.sliceName}` +
         `/${this.state.redirectToResource}`);
     }
   }

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
 
+import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
 import AreYouSure from '../../partials/AreYouSure';
 import TripModal from '../partials/TripModal';
@@ -287,7 +288,7 @@ class ScheduleGroup extends Component {
     if ((!this.props.group && this.props.group.isLoading) ||
         !this.props.group.script ||
         this.props.group.script.isNull) {
-      return <div className="container-fluid">Loading</div>;
+      return <Loader />;
     }
     if (this.props.group.isError) {
       return <div className="container-fluid">Error</div>;

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 
+import Loader from '../../partials/Loader';
 import UserModal from '../partials/UserModal';
 
 export default class DirectoryIndex extends Component {
@@ -163,7 +164,7 @@ export default class DirectoryIndex extends Component {
   render() {
     if (this.props.users.isLoading ||
         this.props.profiles.isLoading) {
-      return 'Loading';
+      return <Loader />;
     }
     const query = new URLSearchParams(this.props.location.search);
     const editing = query.get('editing');

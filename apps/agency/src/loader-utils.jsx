@@ -20,12 +20,12 @@ function didAnyPropChange(oldProps, newProps, propsToWatch) {
 
 export function withLoader(WrappedComponent, propsToWatch, loaderFunc) {
   return class extends Component {
-    componentWillMount() {
+    componentDidMount() {
       this.handlePropsReceived(null, this.props);
     }
 
-    componentWillReceiveProps(nextProps) {
-      this.handlePropsReceived(this.props, nextProps);
+    componentDidUpdate(prevProps) {
+      this.handlePropsReceived(prevProps, this.props);
     }
 
     // eslint-disable-next-line class-methods-use-this
