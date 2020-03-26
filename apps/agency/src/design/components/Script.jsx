@@ -354,12 +354,6 @@ class Script extends Component {
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/test`}>
                 Test
               </NavLink>
-              &nbsp;|&nbsp;
-              <NavLink
-                activeClassName="bold"
-                to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/reference`}>
-                Reference
-              </NavLink>
             </div>
             <div className="col-sm-6 align-right-sm">
               <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

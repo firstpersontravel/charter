@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import NotFound from '../partials/NotFound';
 import DesignIndexConnector from './connectors/DesignIndex';
 import ScriptConnector from './connectors/Script';
-import ReferenceConnector from './connectors/Reference';
 import SliceConnector from './connectors/Slice';
 import SliceIndexConnector from './connectors/SliceIndex';
 import TestConnector from './connectors/Test';
@@ -52,9 +51,6 @@ function ScriptRoutes({ match, location, history }) {
       <Switch>
         <Redirect from={match.path} exact to={`${match.path}/design`} />
         <Route path={`${match.path}/test`} exact component={TestConnector} />
-        <Route
-          path={`${match.path}/reference`} exact
-          component={ReferenceConnector} />
         <Route path={`${match.path}/design`} component={ScriptDesignRoutes} />
         <Route component={NotFound} />
       </Switch>

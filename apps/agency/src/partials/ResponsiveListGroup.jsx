@@ -50,6 +50,7 @@ export default class ResponsiveListGroup extends Component {
       <NavLink
         className={`${this.props.itemClassName} ${item.disabled ? 'disabled faint' : ''}`}
         activeClassName={item.disabled ? '' : this.props.itemActiveClassName}
+        exact={item.isExact}
         key={item.key}
         to={item.url}>
         {item.label}
@@ -79,6 +80,7 @@ ResponsiveListGroup.propTypes = {
   itemActiveClassName: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.shape({
     disabled: PropTypes.bool,
+    isExact: PropTypes.bool,
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     label: PropTypes.node.isRequired,
     text: PropTypes.string.isRequired,
