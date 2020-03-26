@@ -44,7 +44,7 @@ class Schedule extends Component {
       return (
         <div>
           { /* eslint-disable-next-line max-len */ }
-          <i className="fa fa-phone" /> This experience cannot be entered by text message. To enable, create an &apos;entryway&apos; relay.
+          <i className="fa fa-phone" /> Experience cannot be entered by text message. To enable, create an &apos;entryway&apos; relay.
         </div>
       );
     }
@@ -63,8 +63,8 @@ class Schedule extends Component {
         { name: trailhead.for });
       return (
         <span key={trailhead.name}>
-          {forRole.title}: {relay ?
-            TextUtil.formatPhone(relay.relayPhoneNumber) :
+          {forRole.title} {relay ?
+            `at ${TextUtil.formatPhone(relay.relayPhoneNumber)}` :
             '(not yet allocated)'}
         </span>
       );
@@ -82,7 +82,7 @@ class Schedule extends Component {
 
     return (
       <div>
-        <i className="fa fa-phone" /> Trips can be started through calls or texts to: {renderedTrailheads}
+        <i className="fa fa-phone" /> Experience can be entered through calls or texts: {renderedTrailheads}
         {allocateRelaysBtn}
       </div>
     );
@@ -92,7 +92,7 @@ class Schedule extends Component {
     return (
       <div>
         { /* eslint-disable-next-line max-len */ }
-        <i className="fa fa-file" /> Trips can be entered at: <a href={`${window.location.origin}/entry/${this.props.org.name}/${this.props.experience.name}`} target="_blank" rel="noopener noreferrer">{window.location.origin}/entry/{this.props.org.name}/{this.props.experience.name}</a>
+        <i className="fa fa-file" /> Experience can be entered at: <a href={`${window.location.origin}/entry/${this.props.org.name}/${this.props.experience.name}`} target="_blank" rel="noopener noreferrer">{window.location.origin}/entry/{this.props.org.name}/{this.props.experience.name}</a>
       </div>
     );
   }
