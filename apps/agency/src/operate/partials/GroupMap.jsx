@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Circle, Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
@@ -10,7 +10,7 @@ import PolylineEncoded from 'polyline-encoded';
 import { TextUtil, WaypointCore } from 'fptcore';
 
 import Constants from '../../constants';
-import withContext from './with-context';
+import RouterForwarder from './RouterForwarder';
 
 const GROUPING_THRESHOLD = 20;
 
@@ -177,7 +177,6 @@ export default class GroupMap extends Component {
   getActiveRoutePolylines() {
     const group = this.props.group;
     const script = this.props.trips[0].script;
-    const LinkWithContext = withContext(Link, this.context);
     const activePlayers = _(this.props.trips)
       .map('players')
       .flatten()
@@ -188,10 +187,10 @@ export default class GroupMap extends Component {
       .map((player) => {
         const trip = _.find(this.props.trips, { id: player.tripId });
         const playerLink = (
-          <LinkWithContext to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/players/${player.roleName}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}/role/${player.roleName}/${player.userId || 0}`}>
             {trip.departureName}{' '}
             {player.roleName}
-          </LinkWithContext>
+          </Link>
         );
         const pageName = player.currentPageName;
         const page = _.find(script.content.pages, { name: pageName });
@@ -208,9 +207,13 @@ export default class GroupMap extends Component {
               position={waypointOption.coords}
               icon={activeWaypointIcon}>
               <Popup>
-                <div>
-                  {playerLink} at {page.title}
-                </div>
+                <RouterForwarder context={this.context}>
+                  <div>
+                    {playerLink}
+                    &nbsp;at&nbsp;
+                    {page.title}
+                  </div>
+                </RouterForwarder>
               </Popup>
             </Marker>
           ];
@@ -255,9 +258,11 @@ export default class GroupMap extends Component {
             position={destination}
             icon={activeWaypointIcon}>
             <Popup>
-              <div>
-                {playerLink} destination of {page.title}
-              </div>
+              <RouterForwarder context={this.context}>
+                <div>
+                  {playerLink} destination of {page.title}
+                </div>
+              </RouterForwarder>
             </Popup>
           </Marker>
         ];
@@ -288,15 +293,14 @@ export default class GroupMap extends Component {
     const group = this.props.group;
     const trip = _.find(this.props.trips, { id: player.tripId });
     const timezone = this.props.trips[0].experience.timezone;
-    const LinkWithContext = withContext(Link, this.context);
     return (
       <div key={player.id}>
         <div>
-          <LinkWithContext to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`}>
             {trip.departureName}{' '}
             {player.roleName}{' '}
             ({player.user.firstName})
-          </LinkWithContext>
+          </Link>
         </div>
         <div className="mb-1">
           <i className="fa fa-location-arrow" />
@@ -329,9 +333,11 @@ export default class GroupMap extends Component {
     return (
       <Marker key={user.id} position={position} icon={icon}>
         <Popup>
-          <div>
-            {playerSections}
-          </div>
+          <RouterForwarder context={this.context}>
+            <div>
+              {playerSections}
+            </div>
+          </RouterForwarder>
         </Popup>
       </Marker>
     );
@@ -396,10 +402,6 @@ export default class GroupMap extends Component {
 }
 
 L.Icon.Default.imagePath = '/static/images/';
-
-GroupMap.contextTypes = {
-  router: PropTypes.object.isRequired
-};
 
 GroupMap.propTypes = {
   center: PropTypes.instanceOf(L.LatLng),

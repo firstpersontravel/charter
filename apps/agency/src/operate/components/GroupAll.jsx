@@ -2,7 +2,6 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { IndexLink } from 'react-router';
 
 import { Evaluator, Registry } from 'fptcore';
 
@@ -73,7 +72,7 @@ function renderTripsItem(group, currentTripId) {
 }
 
 export default function GroupAll({ children, group, nextUnappliedAction,
-  numMessagesNeedingReply, params }) {
+  numMessagesNeedingReply, match, history }) {
   // Error or loading cases should be handled by `Group`
   if (group.trips.length === 0) {
     return <div>No trips</div>;
@@ -86,21 +85,21 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const allUsers = _(allPlayers).map('user').uniq().value();
 
   let roleTitle = 'Roles';
-  if (params.roleName && params.userId) {
+  if (match.params.roleName && match.params.userId) {
     const role = _.find(group.script.content.roles, {
-      name: params.roleName
+      name: match.params.roleName
     });
-    const userTitle = params.userId !== '0' ?
-      _.get(_.find(allUsers, { id: Number(params.userId) }), 'firstName') :
+    const userTitle = match.params.userId !== '0' ?
+      _.get(_.find(allUsers, { id: Number(match.params.userId) }), 'firstName') :
       'No user';
     roleTitle = `Role: ${role.title} (${userTitle})`;
   }
 
-  const tripsItem = renderTripsItem(group, params.tripId);
+  const tripsItem = renderTripsItem(group, match.params.tripId);
 
   const items = [{
     text: 'Group',
-    linkClass: IndexLink,
+    isExact: true,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}`
   }, {
     text: 'Users',
@@ -166,7 +165,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
   return (
     <div>
-      <ResponsiveTabs items={items} />
+      <ResponsiveTabs items={items} history={history} />
       {children}
     </div>
   );
@@ -174,7 +173,8 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
 GroupAll.propTypes = {
   children: PropTypes.node.isRequired,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   group: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
   numMessagesNeedingReply: PropTypes.number.isRequired

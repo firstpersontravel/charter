@@ -1,16 +1,19 @@
 import { connect } from 'react-redux';
 
 import App from '../components/App';
-import { fetchAuthInfo } from '../../actions';
+import { crash, fetchAuthInfo } from '../../actions';
 
 const mapStateToProps = state => ({
-  hasError: Object
-    .keys(state.requestErrors)
-    .filter(key => !key.startsWith('auth.'))
-    .length > 0
+  hasError: (
+    state.globalError !== null ||
+    Object
+      .keys(state.requestErrors)
+      .filter(key => !key.startsWith('auth.'))
+      .length > 0)
 });
 
 const mapDispatchToProps = dispatch => ({
+  crash: (...args) => dispatch(crash(...args)),
   fetchAuthInfo: (...args) => dispatch(fetchAuthInfo(...args))
 });
 

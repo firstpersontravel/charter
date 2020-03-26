@@ -77,7 +77,7 @@ export default class ContentTree extends Component {
       .flat();
 
     return (
-      <ResponsiveListGroup items={allItems} />
+      <ResponsiveListGroup items={allItems} history={this.props.history} />
     );
   }
 }
@@ -86,5 +86,6 @@ ContentTree.propTypes = {
   sliceType: PropTypes.string.isRequired,
   sliceName: PropTypes.string.isRequired,
   contentList: PropTypes.object.isRequired,
-  script: PropTypes.object.isRequired
+  script: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };

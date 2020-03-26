@@ -49,6 +49,13 @@ function updateRevisionHistory(recordName, oldContent, newContent) {
   };
 }
 
+function setGlobalError(err) {
+  return {
+    type: 'setGlobalError',
+    err: err
+  };
+}
+
 function modelNameForCollectionName(collectionName) {
   return collectionName.substring(0, collectionName.length - 1);
 }
@@ -448,4 +455,14 @@ export function createTrip(fields, nextItems) {
 
 export function saveRevision(recordName, oldContent, newContent) {
   return updateRevisionHistory(recordName, oldContent, newContent);
+}
+
+export function crash(err, errInfo) {
+  Sentry.withScope((scope) => {
+    Object.keys(errInfo).forEach((key) => {
+      scope.setExtra(key, errInfo[key]);
+    });
+    Sentry.captureException(err);
+  });
+  return setGlobalError(err);
 }

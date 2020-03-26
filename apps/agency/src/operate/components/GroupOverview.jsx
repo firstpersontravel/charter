@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { IndexLink, Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import GroupMap from '../partials/GroupMap';
 import { getPlayerPageInfo, sortPlayers, canRoleHaveUser } from '../utils';
@@ -44,7 +44,7 @@ export default class GroupOverview extends Component {
       ` (${actor.user ? actor.user.firstName : 'No user'})` : '';
     return (
       <div key={`${roleAndActors.role.name}-${roleAndActors.userId}`} className="constrain-text">
-        <IndexLink
+        <Link
           className={pageInfo.statusClass}
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${roleAndActors.role.name}/${actor.userId || 0}`}>
           <strong>
@@ -54,7 +54,7 @@ export default class GroupOverview extends Component {
           {trip.departureName}
           {' '}
           {pageInfo.status}
-        </IndexLink>
+        </Link>
         {' '}
         <a
           target="_blank"
@@ -76,14 +76,14 @@ export default class GroupOverview extends Component {
     }
     return (
       <div key={player.id} className="constrain-text">
-        <IndexLink
+        <Link
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.role.name}/${player.user ? player.user.id : 0}`}>
           <strong>{trip.departureName} {trip.title}</strong>
           {' '}
           {player.role.title}:
           {' '}
           {pageInfo.status}
-        </IndexLink>
+        </Link>
         {' '}
         <a
           target="_blank"

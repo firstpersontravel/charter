@@ -11,8 +11,8 @@ export function lookupScripts(state, ownProps) {
     col: 'scripts',
     filter: {
       isArchived: false,
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName }
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),
@@ -23,14 +23,14 @@ export function lookupScripts(state, ownProps) {
 
 export function lookupGroups(state, ownProps) {
   const thisMonth = moment(
-    `${ownProps.params.year}-${ownProps.params.month}-01`,
+    `${ownProps.match.params.year}-${ownProps.match.params.month}-01`,
     'YYYY-MM-DD');
   const nextMonth = thisMonth.clone().add(1, 'months');
   return instancesFromDatastore(state, {
     col: 'groups',
     filter: {
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName },
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName },
       self: group => (
         moment(group.date).isSameOrAfter(thisMonth) &&
         moment(group.date).isBefore(nextMonth)
@@ -46,7 +46,7 @@ export function lookupGroups(state, ownProps) {
 export function lookupGroup(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'groups',
-    filter: { id: Number(ownProps.params.groupId) },
+    filter: { id: Number(ownProps.match.params.groupId) },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),
       experience: instanceIncluder('experiences', 'id', 'experienceId'),

@@ -1,66 +1,66 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { NavLink } from 'react-router-dom';
 
-export default function Trip({ trip, params, children }) {
+export default function Trip({ trip, children }) {
   return (
     <div style={{ overflow: 'hidden' }}>
       <ul className="nav nav-tabs">
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/values`}>
             Prep
-          </Link>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/schedule`}>
             Timing
-          </Link>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/scenes`}>
             Scenes
-          </Link>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages`}>
             Messages
-          </Link>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/achievements`}>
             Achievements
-          </Link>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/controls`}>
             Controls
-          </Link>
+          </NavLink>
         </li>
         <li className="nav-item">
-          <Link
+          <NavLink
             className="nav-link"
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/gallery`}>
             Gallery
-          </Link>
+          </NavLink>
         </li>
       </ul>
       {children}
@@ -70,6 +70,5 @@ export default function Trip({ trip, params, children }) {
 
 Trip.propTypes = {
   trip: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired
 };

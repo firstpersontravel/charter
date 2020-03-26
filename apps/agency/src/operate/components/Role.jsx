@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function Role({ params, user, children }) {
+export default function Role({ user, children }) {
   return (
     <div>
       {children}
@@ -11,8 +11,7 @@ export default function Role({ params, user, children }) {
 
 Role.propTypes = {
   children: PropTypes.node.isRequired,
-  user: PropTypes.object,
-  params: PropTypes.object.isRequired
+  user: PropTypes.object
 };
 
 Role.defaultProps = {

@@ -8,7 +8,7 @@ import TripControls from '../components/TripControls';
 const mapStateToProps = (state, ownProps) => ({
   nextAction: _(state.datastore.actions)
     .filter({
-      tripId: Number(ownProps.params.tripId),
+      tripId: Number(ownProps.match.params.tripId),
       appliedAt: null,
       failedAt: null
     })

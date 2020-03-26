@@ -124,7 +124,7 @@ export default class Group extends Component {
       // be able to view it though, so do an initial load. This triggers a prop
       // refresh, and now that all the trip ids are present, a normal
       // refreshLiveData will do the trick.`
-      const groupId = this.props.params.groupId;
+      const groupId = this.props.match.params.groupId;
       this.props.retrieveInstance('groups', groupId);
       this.props.listCollection('trips', {
         orgId: org.id,
@@ -221,7 +221,7 @@ export default class Group extends Component {
 Group.propTypes = {
   areRequestsPending: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
   group: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,

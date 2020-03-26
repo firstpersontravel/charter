@@ -78,12 +78,19 @@ function updateRevisionHistoryHandler(state, action) {
   });
 }
 
+function setGlobalErrorHandler(state, action) {
+  return update(state, {
+    globalError: action.err
+  });
+}
+
 const handlers = {
   saveInstances: saveInstancesHandler,
   clearInstances: clearInstancesHandler,
   updateInstanceFields: updateInstanceFieldsHandler,
   saveRequest: saveRequestHandler,
-  updateRevisionHistory: updateRevisionHistoryHandler
+  updateRevisionHistory: updateRevisionHistoryHandler,
+  setGlobalError: setGlobalErrorHandler
 };
 
 export default function reducer(state, action) {

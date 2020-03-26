@@ -7,7 +7,10 @@ import {
 export function lookupExperiences(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'experiences',
-    filter: { isArchived: false, org: { name: ownProps.params.orgName } },
+    filter: {
+      isArchived: false,
+      org: { name: ownProps.match.params.orgName }
+    },
     include: { org: instanceIncluder('orgs', 'id', 'orgId') }
   });
 }
@@ -17,9 +20,12 @@ export function lookupScript(state, ownProps) {
     col: 'scripts',
     filter: {
       isArchived: false,
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName, isArchived: false },
-      revision: Number(ownProps.params.revision)
+      org: { name: ownProps.match.params.orgName },
+      experience: {
+        name: ownProps.match.params.experienceName,
+        isArchived: false
+      },
+      revision: Number(ownProps.match.params.revision)
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),
@@ -33,8 +39,11 @@ export function lookupScripts(state, ownProps) {
     col: 'scripts',
     filter: {
       isArchived: false,
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName, isArchived: false }
+      org: { name: ownProps.match.params.orgName },
+      experience: {
+        name: ownProps.match.params.experienceName,
+        isArchived: false
+      }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),
@@ -48,8 +57,8 @@ export function lookupAssets(state, ownProps) {
     col: 'assets',
     filter: {
       isArchived: false,
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName }
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),

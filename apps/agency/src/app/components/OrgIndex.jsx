@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import * as Sentry from '@sentry/browser';
 
 import { ScriptCore } from 'fptcore';
@@ -18,13 +18,14 @@ export default class OrgIndex extends Component {
   }
 
   getCreatingExample() {
-    const creatingExampleName = this.props.location.query.creating;
+    const query = new URLSearchParams(this.props.location.search);
+    const creatingExampleName = query.get('creating');
     const creatingExample = _.find(Examples, { name: creatingExampleName });
     return creatingExample;
   }
 
   handleExperienceModalClose() {
-    browserHistory.push(`/${this.props.org.name}`);
+    this.props.history.push(`/${this.props.org.name}`);
   }
 
   handleCreateExperience(example, fields) {
@@ -38,7 +39,7 @@ export default class OrgIndex extends Component {
           .then((data) => {
             this.createExperienceFromExample(fields, data.content,
               data.assets || []);
-            browserHistory.push(`/${this.props.org.name}/${fields.name}`);
+            this.props.history.push(`/${this.props.org.name}/${fields.name}`);
           })
           .catch((err) => {
             // Errors outside synchronous function aren't captured by
@@ -183,6 +184,7 @@ export default class OrgIndex extends Component {
 
 OrgIndex.propTypes = {
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   experiences: PropTypes.array.isRequired,
   createInstances: PropTypes.func.isRequired

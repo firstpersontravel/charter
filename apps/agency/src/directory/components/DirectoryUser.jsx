@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { TextUtil } from 'fptcore';
 
@@ -22,12 +22,12 @@ export default class DirectoryUser extends Component {
   }
 
   componentWillMount() {
-    this.loadData(this.props.params.userId);
+    this.loadData(this.props.match.params.userId);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.params.userId !== this.props.params.userId) {
-      this.loadData(nextProps.params.userId);
+    if (nextProps.match.params.userId !== this.props.match.params.userId) {
+      this.loadData(nextProps.match.params.userId);
     }
   }
 
@@ -43,7 +43,9 @@ export default class DirectoryUser extends Component {
 
   handleUserModalClose() {
     const experience = this.props.experience;
-    browserHistory.push(`${experience.org.name}/${experience.name}/directory/user/${this.props.user.id}`);
+    this.props.history.push(
+      `/${experience.org.name}/${experience.name}/directory` +
+      `/user/${this.props.user.id}`);
   }
 
   handleUpdateUser(fields) {
@@ -58,15 +60,16 @@ export default class DirectoryUser extends Component {
 
   handleProfileModalClose() {
     const experience = this.props.experience;
-    const query = this.props.location.query;
-    browserHistory.push(
-      `/${experience.org.name}/${experience.name}/directory/user/${this.props.user.id}` +
-      `${query.archived_profiles ? '?archived_profiles=true' : ''}`
-    );
+    const query = new URLSearchParams(this.props.location.search);
+    this.props.history.push(
+      `/${experience.org.name}/${experience.name}/directory` +
+      `/user/${this.props.user.id}` +
+      `${query.get('archived_profiles') ? '?archived_profiles=true' : ''}`);
   }
 
   handleUpdateProfile(fields) {
-    const editingProfileId = this.props.location.query.editing_profile;
+    const query = new URLSearchParams(this.props.location.search);
+    const editingProfileId = query.get('editing_profile');
     if (editingProfileId === 'new') {
       const create = Object.assign({}, fields, {
         orgId: this.props.experience.orgId,
@@ -108,6 +111,8 @@ export default class DirectoryUser extends Component {
   }
 
   renderProfile(profile) {
+    const query = new URLSearchParams(this.props.location.search);
+    const archivedProfiles = query.get('archived_profiles');
     const experience = this.props.experience;
     const script = experience.script;
     const photo = profile.photo ? (<div>Photo: {profile.photo}</div>) : null;
@@ -147,10 +152,7 @@ export default class DirectoryUser extends Component {
             className="btn btn-sm btn-outline-secondary"
             to={{
               pathname: `/${experience.org.name}/${experience.name}/directory/user/${this.props.user.id}`,
-              query: {
-                editing_profile: profile.id,
-                archived_profiles: this.props.location.query.archived_profiles
-              }
+              search: `?editing_profile=${profile.id}&archived_profiles=${archivedProfiles}`
             }}>
             Edit
           </Link>
@@ -178,7 +180,9 @@ export default class DirectoryUser extends Component {
   }
 
   renderProfilesList() {
-    const isShowingArchived = !!this.props.location.query.archived_profiles;
+    const query = new URLSearchParams(this.props.location.search);
+    const archivedProfiles = query.get('archived_profiles');
+    const isShowingArchived = !!archivedProfiles;
     return _(this.props.profiles)
       .filter(profile => isShowingArchived || !profile.isArchived)
       .sort(profile => !profile.isActive)
@@ -193,8 +197,11 @@ export default class DirectoryUser extends Component {
     if (!this.props.user) {
       return <div className="col-sm-9">User not found.</div>;
     }
+    const query = new URLSearchParams(this.props.location.search);
+    const archivedProfiles = query.get('archived_profiles');
+    const editingProfileId = query.get('editing_profile');
+    const isEditingUser = query.get('editing');
     const experience = this.props.experience;
-    const editingProfileId = this.props.location.query.editing_profile;
     const editingProfile = editingProfileId ?
       _.find(this.props.profiles, { id: Number(editingProfileId) }) :
       null;
@@ -202,7 +209,7 @@ export default class DirectoryUser extends Component {
     const userFields = this.renderUserFields();
     const profilesList = this.renderProfilesList();
     const hasAnyArchived = _.find(this.props.profiles, { isArchived: true });
-    const isShowingArchived = !!this.props.location.query.archived_profiles;
+    const isShowingArchived = !!archivedProfiles;
     const showArchivedButton = (hasAnyArchived && !isShowingArchived) ? (
       <span>
         &nbsp;
@@ -239,17 +246,14 @@ export default class DirectoryUser extends Component {
             className="btn btn-sm btn-outline-secondary"
             to={{
               pathname: `/${experience.org.name}/${experience.name}/directory/user/${user.id}`,
-              query: {
-                editing_profile: 'new',
-                archived_profiles: this.props.location.query.archived_profiles
-              }
+              search: `?editing_profile=new&archived_profiles=${archivedProfiles}`
             }}>
             Create profile
           </Link>
           {showArchivedButton}
         </div>
         <UserModal
-          isOpen={!!this.props.location.query.editing}
+          isOpen={!!isEditingUser}
           user={user}
           onClose={this.handleUserModalClose}
           onConfirm={this.handleUpdateUser} />
@@ -269,7 +273,8 @@ DirectoryUser.propTypes = {
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
   user: PropTypes.object,
   experience: PropTypes.object.isRequired,
   profiles: PropTypes.array.isRequired

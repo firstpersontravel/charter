@@ -8,7 +8,10 @@ export function lookupExperiences(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'experiences',
     sort: exp => exp.title.toLowerCase(),
-    filter: { org: { name: ownProps.params.orgName }, isArchived: false },
+    filter: {
+      org: { name: ownProps.match.params.orgName },
+      isArchived: false
+    },
     include: { org: instanceIncluder('orgs', 'id', 'orgId') }
   });
 }
@@ -18,7 +21,7 @@ export function lookupGroups(state, ownProps) {
     col: 'groups',
     sort: 'date',
     filter: {
-      experience: { name: ownProps.params.experienceName },
+      experience: { name: ownProps.match.params.experienceName },
       isArchived: false
     },
     include: {

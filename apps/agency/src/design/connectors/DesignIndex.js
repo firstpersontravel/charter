@@ -11,8 +11,8 @@ const mapStateToProps = (state, ownProps) => ({
     col: 'scripts',
     filter: {
       isArchived: false,
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName }
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),

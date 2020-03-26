@@ -9,13 +9,13 @@ import { createInstance, retrieveInstance, updateInstance } from '../../actions'
 const mapStateToProps = (state, ownProps) => ({
   experience: lookupExperience(state, ownProps),
   user: _.find(state.datastore.users, {
-    id: Number(ownProps.params.userId)
+    id: Number(ownProps.match.params.userId)
   }),
   profiles: instancesFromDatastore(state, {
     col: 'profiles',
     filter: {
-      userId: Number(ownProps.params.userId),
-      experience: { name: ownProps.params.experienceName }
+      userId: Number(ownProps.match.params.userId),
+      experience: { name: ownProps.match.params.experienceName }
     },
     include: {
       experience: instanceIncluder('experiences', 'id', 'experienceId')

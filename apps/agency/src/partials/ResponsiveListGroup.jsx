@@ -2,16 +2,21 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Link, browserHistory } from 'react-router';
-
-function selectItem(e) {
-  if (!e.target.value) {
-    return;
-  }
-  browserHistory.push(e.target.value);
-}
+import { NavLink } from 'react-router-dom';
 
 export default class ResponsiveListGroup extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSelectItem = this.handleSelectItem.bind(this);
+  }
+
+  handleSelectItem(e) {
+    if (!e.target.value) {
+      return;
+    }
+    this.props.history.push(e.target.value);
+  }
+
   renderSelect() {
     const enabledItems = this.props.items.filter(item => !item.disabled);
     const selectedItem = _.find(enabledItems, item => (
@@ -32,7 +37,7 @@ export default class ResponsiveListGroup extends Component {
         <select
           className="form-control"
           value={selectedUrl}
-          onChange={selectItem}>
+          onChange={this.handleSelectItem}>
           {emptyOption}
           {renderedOptions}
         </select>
@@ -42,13 +47,13 @@ export default class ResponsiveListGroup extends Component {
 
   renderGroup() {
     const renderedItems = this.props.items.map(item => (
-      <Link
+      <NavLink
         className={`${this.props.itemClassName} ${item.disabled ? 'disabled faint' : ''}`}
-        activeClassName={this.props.itemActiveClassName}
+        activeClassName={item.disabled ? '' : this.props.itemActiveClassName}
         key={item.key}
         to={item.url}>
         {item.label}
-      </Link>
+      </NavLink>
     ));
     return (
       <div className={`${this.props.listClassName} d-none d-sm-block`}>
@@ -68,6 +73,7 @@ export default class ResponsiveListGroup extends Component {
 }
 
 ResponsiveListGroup.propTypes = {
+  history: PropTypes.object.isRequired,
   listClassName: PropTypes.string,
   itemClassName: PropTypes.string,
   itemActiveClassName: PropTypes.string,

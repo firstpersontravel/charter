@@ -6,7 +6,7 @@ import * as Sentry from '@sentry/browser';
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { error: null };
+    this.state = { hasError: false };
   }
 
   componentDidMount() {
@@ -14,19 +14,17 @@ export default class App extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    this.setState({ error: error });
-    Sentry.withScope((scope) => {
-      Object.keys(errorInfo).forEach((key) => {
-        scope.setExtra(key, errorInfo[key]);
-      });
-      Sentry.captureException(error);
-    });
+    this.props.crash(error, errorInfo);
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
   }
 
   renderError() {
     return (
       <Modal
-        isOpen={this.state.error || this.props.hasError}
+        isOpen
         centered
         zIndex={3000}>
         <ModalHeader>
@@ -55,18 +53,17 @@ export default class App extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderError()}
-        {this.props.children}
-      </div>
-    );
+    if (this.state.hasError || this.props.hasError) {
+      return this.renderError();
+    }
+    return this.props.children;
   }
 }
 
 App.propTypes = {
   children: PropTypes.node.isRequired,
   hasError: PropTypes.bool,
+  crash: PropTypes.func.isRequired,
   fetchAuthInfo: PropTypes.func.isRequired
 };
 

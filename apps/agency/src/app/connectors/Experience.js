@@ -6,11 +6,11 @@ import { lookupExperiences, lookupGroups } from './utils';
 import { logout, listCollection } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
-  const orgName = ownProps.params.orgName;
+  const orgName = ownProps.match.params.orgName;
   const authInfo = _.get(_.find(state.datastore.auth, { id: 'latest' }),
     'data');
   const experienceRequest = state.requests['experiences.list'];
-  const experienceName = ownProps.params.experienceName;
+  const experienceName = ownProps.match.params.experienceName;
   return {
     authInfo: authInfo,
     experienceName: experienceName,

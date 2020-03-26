@@ -55,6 +55,7 @@ const authData = JSON.parse(localStorage.getItem('auth_latest') || 'null');
 const authOrgs = _.get(authData, 'orgs') || [];
 const authInstances = authData ? [{ id: 'latest', data: authData }] : [];
 const initialState = {
+  globalError: null,
   requests: {},
   requestErrors: {},
   revisionHistory: {},

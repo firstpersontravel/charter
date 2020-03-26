@@ -1,44 +1,36 @@
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { browserHistory } from 'react-router';
+import { Redirect } from 'react-router';
 
-function redirectIfReady(scripts) {
+export default function DesignIndex({ scripts }) {
+  if (scripts.isLoading) {
+    return <div className="container-fluid">Loading</div>;
+  }
+  if (scripts.isError) {
+    return <div className="container-fluid">Error</div>;
+  }
+  if (scripts.length === 0) {
+    return <div className="container-fluid">No script found</div>;
+  }
   const script = _(scripts)
     .filter({ isArchived: false })
     .sortBy('revision')
     .reverse()
     .head();
   if (script) {
-    browserHistory.push(`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`);
-  }
-}
-
-export default class DesignIndex extends Component {
-  componentWillMount() {
-    redirectIfReady(this.props.scripts);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    redirectIfReady(nextProps.scripts);
-  }
-
-  render() {
-    if (this.props.scripts.isLoading) {
-      return <div className="container-fluid">Loading</div>;
-    }
-    if (this.props.scripts.isError) {
-      return <div className="container-fluid">Error</div>;
-    }
-    if (this.props.scripts.length === 0) {
-      return <div className="container-fluid">No script found</div>;
-    }
     return (
-      <div className="container-fluid">
-        Redirecting
-      </div>
+      <Redirect
+        to={
+          `/${script.org.name}/${script.experience.name}/script/` +
+          `${script.revision}/design`} />
     );
   }
+  return (
+    <div className="container-fluid">
+      Redirecting
+    </div>
+  );
 }
 
 DesignIndex.propTypes = {

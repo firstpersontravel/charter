@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, browserHistory } from 'react-router';
+import { NavLink, Link } from 'react-router-dom';
 
 import ExperienceModal from '../../app/partials/ExperienceModal';
 import AreYouSure from '../../partials/AreYouSure';
@@ -91,7 +91,10 @@ class Script extends Component {
       revision: nextRevision,
       isActive: false
     });
-    browserHistory.push(`/${script.org.name}/${script.experience.name}/script/${nextRevision}/design/${this.props.params.sliceType}/${this.props.params.sliceName}`);
+    this.props.history.push(
+      `/${script.org.name}/${script.experience.name}/script` +
+      `/${nextRevision}/design/${this.props.match.params.sliceType}` +
+      `/${this.props.match.params.sliceName}`);
   }
 
   handleLockScript() {
@@ -108,11 +111,11 @@ class Script extends Component {
     this.props.updateInstance('scripts', this.props.script.id, {
       isArchived: true
     });
-    browserHistory.push(
+    this.props.history.push(
       `/${activeScript.org.name}/${activeScript.experience.name}` +
       `/script/${activeScript.revision}` +
-      `/design/${this.props.params.sliceType}/${this.props.params.sliceName}`
-    );
+      `/design/${this.props.match.params.sliceType}` +
+      `/${this.props.match.params.sliceName}`);
   }
 
   handleArchiveExperienceToggle() {
@@ -133,16 +136,15 @@ class Script extends Component {
     this.props.bulkUpdate('groups', expFilters, { isArchived: true });
     this.props.bulkUpdate('trips', expFilters, { isArchived: true });
     this.props.bulkUpdate('relays', expFilters, { isActive: false });
-    browserHistory.push(`/${this.props.params.orgName}`);
+    this.props.history.push(`/${this.props.match.params.orgName}`);
   }
 
   handleUpdateExperience(example, fields) {
     const experience = this.props.script.experience;
     this.props.updateInstance('experiences', experience.id, fields);
-    browserHistory.push(
-      `${this.props.params.orgName}/${fields.name}` +
-      `/script/${this.props.script.revision}`
-    );
+    this.props.history.push(
+      `${this.props.match.params.orgName}/${fields.name}` +
+      `/script/${this.props.script.revision}`);
   }
 
   handleUndo() {
@@ -183,18 +185,18 @@ class Script extends Component {
 
     const sectionLinks = sections.map(section => (
       <li key={section[0]} className="nav-item">
-        <Link
+        <NavLink
           className="nav-link"
           activeClassName="active"
           to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/section/${section[0]}`}>
           {section[1]}
-        </Link>
+        </NavLink>
       </li>
     ));
 
     let sceneTitle = 'Scenes';
-    if (this.props.params.sliceType === 'scene') {
-      const sceneName = this.props.params.sliceName;
+    if (this.props.match.params.sliceType === 'scene') {
+      const sceneName = this.props.match.params.sliceName;
       const scene = _.find(script.content.scenes, { name: sceneName });
       if (scene) {
         sceneTitle = `Scene: ${scene.title}`;
@@ -205,13 +207,13 @@ class Script extends Component {
       <ul className="nav nav-tabs">
         {sectionLinks}
         <li className="nav-item dropdown">
-          <Link
+          <NavLink
             className="nav-link dropdown-toggle"
             activeClassName="active"
             data-toggle="dropdown"
             to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene`}>
             {sceneTitle}
-          </Link>
+          </NavLink>
           <div className="dropdown-menu">
             {sceneLinks}
           </div>
@@ -340,23 +342,23 @@ class Script extends Component {
         <div className="container-fluid m-0 px-3 py-2">
           <div className="row">
             <div className="col-sm-6">
-              <Link
+              <NavLink
                 activeClassName="bold"
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`}>
                 Design
-              </Link>
+              </NavLink>
               &nbsp;|&nbsp;
-              <Link
+              <NavLink
                 activeClassName="bold"
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/test`}>
                 Test
-              </Link>
+              </NavLink>
               &nbsp;|&nbsp;
-              <Link
+              <NavLink
                 activeClassName="bold"
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/reference`}>
                 Reference
-              </Link>
+              </NavLink>
             </div>
             <div className="col-sm-6 align-right-sm">
               <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -391,7 +393,8 @@ class Script extends Component {
       return <div className="container-fluid">Script not found.</div>;
     }
 
-    const isEditingExperience = !!this.props.location.query.editing;
+    const query = new URLSearchParams(this.props.location.search);
+    const isEditingExperience = !!query.get('editing');
 
     return (
       <div>
@@ -404,7 +407,7 @@ class Script extends Component {
           isOpen={isEditingExperience}
           experience={this.props.script.experience}
           existingExperiences={this.props.experiences}
-          onClose={() => browserHistory.push(window.location.pathname)}
+          onClose={() => this.props.history.push(window.location.pathname)}
           onConfirm={this.handleUpdateExperience} />
 
         <AreYouSure
@@ -424,8 +427,9 @@ Script.propTypes = {
   revisionHistory: PropTypes.array.isRequired,
   revisionHistoryUpdated: PropTypes.number,
   experiences: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   bulkUpdate: PropTypes.func.isRequired

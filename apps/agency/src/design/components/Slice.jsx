@@ -62,13 +62,13 @@ export default class Slice extends Component {
       .concat(sceneLinks);
 
     return (
-      <ResponsiveListGroup items={items} />
+      <ResponsiveListGroup items={items} history={this.props.history} />
     );
   }
 
   render() {
-    const sliceType = this.props.params.sliceType;
-    const sliceName = this.props.params.sliceName;
+    const sliceType = this.props.match.params.sliceType;
+    const sliceName = this.props.match.params.sliceName;
     const scriptContent = this.props.script.content;
     const contentList = getContentList(scriptContent, sliceType, sliceName);
     return (
@@ -81,10 +81,11 @@ export default class Slice extends Component {
         <div className="script-editor-col col-sm-3">
           <div className="script-editor-tree">
             <ContentTree
-              sliceType={this.props.params.sliceType}
-              sliceName={this.props.params.sliceName}
+              sliceType={this.props.match.params.sliceType}
+              sliceName={this.props.match.params.sliceName}
               contentList={contentList}
-              script={this.props.script} />
+              script={this.props.script}
+              history={this.props.history} />
           </div>
         </div>
         <div className="script-editor-resource col-sm-7">
@@ -97,6 +98,7 @@ export default class Slice extends Component {
 
 Slice.propTypes = {
   children: PropTypes.node.isRequired,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   script: PropTypes.object.isRequired
 };

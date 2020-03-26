@@ -2,14 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Link, IndexLink, browserHistory } from 'react-router';
-
-function selectItem(e) {
-  if (!e.target.value) {
-    return;
-  }
-  browserHistory.push(e.target.value);
-}
+import { NavLink, Link } from 'react-router-dom';
 
 function renderSelectOptgroup(item) {
   const subItems = item.subItems.map(subitem => (
@@ -36,6 +29,11 @@ function renderSelectItem(item) {
 }
 
 export default class ResponsiveTabs extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSelectItem = this.handleSelectItem.bind(this);
+  }
+
   getAllUrls() {
     return _(this.props.items)
       .map((item) => {
@@ -46,6 +44,13 @@ export default class ResponsiveTabs extends Component {
       })
       .flatten()
       .value();
+  }
+
+  handleSelectItem(e) {
+    if (!e.target.value) {
+      return;
+    }
+    this.props.history.push(e.target.value);
   }
 
   renderSelect() {
@@ -64,7 +69,7 @@ export default class ResponsiveTabs extends Component {
         <select
           className="form-control"
           value={selectedUrl || ''}
-          onChange={selectItem}>
+          onChange={this.handleSelectItem}>
           {emptyOption}
           {renderedOptions}
         </select>
@@ -85,13 +90,13 @@ export default class ResponsiveTabs extends Component {
       <div
         key={item.key || item.text}
         className={`${this.props.itemClassName} dropdown`}>
-        <Link
+        <NavLink
           className={`${this.props.linkClassName} dropdown-toggle`}
           activeClassName="active"
           data-toggle="dropdown"
           to={item.url}>
           {item.label || item.text}
-        </Link>
+        </NavLink>
         <div className="dropdown-menu">
           {subitemLinks}
         </div>
@@ -103,17 +108,17 @@ export default class ResponsiveTabs extends Component {
     if (item.subItems) {
       return this.renderTabDropdown(item);
     }
-    const LinkClass = item.linkClass || Link;
     return (
       <div
         className={this.props.itemClassName}
         key={item.key || item.text}>
-        <LinkClass
+        <NavLink
+          exact={item.isExact}
           className={this.props.linkClassName}
           activeClassName={this.props.linkActiveClassName}
           to={item.url}>
           {item.label || item.text}
-        </LinkClass>
+        </NavLink>
       </div>
     );
   }
@@ -146,8 +151,8 @@ ResponsiveTabs.propTypes = {
   linkActiveClassName: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    linkClass: PropTypes.oneOf([Link, IndexLink]),
     label: PropTypes.node,
+    isExact: PropTypes.boolean,
     text: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     subItems: PropTypes.arrayOf(PropTypes.shape({
@@ -156,7 +161,8 @@ ResponsiveTabs.propTypes = {
       text: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired
     }))
-  })).isRequired
+  })).isRequired,
+  history: PropTypes.object.isRequired
 };
 
 ResponsiveTabs.defaultProps = {

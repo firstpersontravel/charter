@@ -7,7 +7,7 @@ import Group from '../components/Group';
 
 const mapStateToProps = (state, ownProps) => {
   const authData = _.find(state.datastore.auth, { id: 'latest' }).data;
-  const org = _.find(authData.orgs, { name: ownProps.params.orgName });
+  const org = _.find(authData.orgs, { name: ownProps.match.params.orgName });
   const group = lookupGroup(state, ownProps);
   const tripIds = _.map(group.trips, 'id');
   const nextUnappliedAction = _(state.datastore.actions)

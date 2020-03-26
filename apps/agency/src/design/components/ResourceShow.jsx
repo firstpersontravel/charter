@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { browserHistory } from 'react-router';
 
 import { TextUtil, Registry } from 'fptcore';
 
@@ -66,7 +65,7 @@ export default class ResourceShow extends Component {
         redirectToResource: null
       });
     }
-    if (nextProps.params.resourceName !== this.props.params.resourceName) {
+    if (nextProps.match.params.resourceName !== this.props.match.params.resourceName) {
       this.setState({
         expandedChildStr: null
       });
@@ -95,18 +94,18 @@ export default class ResourceShow extends Component {
 
   getNewMainResourceFields() {
     const defaults = Object.assign({}, this.props.location.query);
-    if (this.props.params.sliceType === 'scene') {
-      defaults.scene = this.props.params.sliceName;
+    if (this.props.match.params.sliceType === 'scene') {
+      defaults.scene = this.props.match.params.sliceName;
     }
 
-    const collectionName = this.props.params.collectionName;
+    const collectionName = this.props.match.params.collectionName;
     return this.getNewResourceFields(collectionName, defaults);
   }
 
   getMainResource() {
-    const collectionName = this.props.params.collectionName;
+    const collectionName = this.props.match.params.collectionName;
     const collection = this.props.script.content[collectionName];
-    const resourceName = this.props.params.resourceName;
+    const resourceName = this.props.match.params.resourceName;
     if (this.isNewMainResource()) {
       return this.getNewMainResourceFields();
     }
@@ -121,9 +120,9 @@ export default class ResourceShow extends Component {
   }
 
   getChildCollectionNames() {
-    const collectionName = this.props.params.collectionName;
-    const sliceContent = getSliceContent(this.props.params.sliceType,
-      this.props.params.sliceName);
+    const collectionName = this.props.match.params.collectionName;
+    const sliceContent = getSliceContent(this.props.match.params.sliceType,
+      this.props.match.params.sliceName);
     const thisContentMapItem = _.find(sliceContent,
       { collection: collectionName });
     if (!thisContentMapItem) {
@@ -133,7 +132,7 @@ export default class ResourceShow extends Component {
   }
 
   getParentFields() {
-    if (this.props.params.sliceType === 'scene') {
+    if (this.props.match.params.sliceType === 'scene') {
       return ['scene'];
     }
     return [];
@@ -143,17 +142,16 @@ export default class ResourceShow extends Component {
     const script = props.script;
     const existingRevisions = _.map(props.scripts, 'revision');
     if (_.includes(existingRevisions, this.state.redirectToRevision)) {
-      browserHistory.push(
+      this.props.history.push(
         `/${script.org.name}/${script.experience.name}` +
         `/script/${this.state.redirectToRevision}` +
-        `/design/${props.params.sliceType}/${props.params.sliceName}` +
-        `/${this.state.redirectToResource}`
-      );
+        `/design/${props.match.params.sliceType}/${props.match.params.sliceName}` +
+        `/${this.state.redirectToResource}`);
     }
   }
 
   isNewMainResource() {
-    return this.props.params.resourceName === 'new';
+    return this.props.match.params.resourceName === 'new';
   }
 
   handleCreateChildResource(collectionName, defaults) {
@@ -166,20 +164,20 @@ export default class ResourceShow extends Component {
   }
 
   handleUpdateMainResource(updatedResource) {
-    const collectionName = this.props.params.collectionName;
-    const resourceName = this.props.params.resourceName;
+    const collectionName = this.props.match.params.collectionName;
+    const resourceName = this.props.match.params.resourceName;
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, resourceName, updatedResource);
     // Save, and always redirect if this is a new resource. Otherwise only
     // redirect if this is saving a new resource and therefore will have a
     // new name besides 'new'.
     this.handleUpdateScript(newScriptContent,
-      `${this.props.params.collectionName}/${updatedResource.name}`,
+      `${this.props.match.params.collectionName}/${updatedResource.name}`,
       this.isNewMainResource());
   }
 
   handleDupeMainResource() {
-    const collectionName = this.props.params.collectionName;
+    const collectionName = this.props.match.params.collectionName;
     const resourceType = TextUtil.singularize(collectionName);
     const existingResource = this.getMainResource();
     const newName = newResourceNameForType(resourceType);
@@ -187,23 +185,23 @@ export default class ResourceShow extends Component {
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, newResource.name, newResource);
     this.handleUpdateScript(newScriptContent,
-      `${this.props.params.collectionName}/${newName}`, true);
+      `${this.props.match.params.collectionName}/${newName}`, true);
   }
 
   handleDeleteMainResource() {
     // If we're deleting a new resource, just redirect to the main slice page.
     if (this.isNewMainResource()) {
       const script = this.props.script;
-      browserHistory.push(
+      this.props.history.push(
         `/${script.org.name}/${script.experience.name}` +
         `/script/${script.revision}` +
-        `/design/${this.props.params.sliceType}/${this.props.params.sliceName}`
-      );
+        `/design/${this.props.match.params.sliceType}` +
+        `/${this.props.match.params.sliceName}`);
       return;
     }
     // Otherwise update the script.
-    const collectionName = this.props.params.collectionName;
-    const resourceName = this.props.params.resourceName;
+    const collectionName = this.props.match.params.collectionName;
+    const resourceName = this.props.match.params.resourceName;
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, resourceName, null);
     // Save and redirect to slice root
@@ -222,7 +220,7 @@ export default class ResourceShow extends Component {
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, updatedResource.name, updatedResource);
     this.handleUpdateScript(newScriptContent,
-      `${this.props.params.collectionName}/${this.props.params.resourceName}`,
+      `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
   }
 
@@ -239,7 +237,7 @@ export default class ResourceShow extends Component {
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, resourceName, null);
     this.handleUpdateScript(newScriptContent,
-      `${this.props.params.collectionName}/${this.props.params.resourceName}`,
+      `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
   }
 
@@ -252,7 +250,7 @@ export default class ResourceShow extends Component {
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, newResource.name, newResource);
     this.handleUpdateScript(newScriptContent,
-      `${this.props.params.collectionName}/${this.props.params.resourceName}`,
+      `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
     this.setState({ expandedChildStr: `${collectionName}.${newName}` });
   }
@@ -286,13 +284,12 @@ export default class ResourceShow extends Component {
 
     // Redirect always if we've made a new resource or deleted one.
     if (forceRedirect) {
-      browserHistory.push(
+      this.props.history.push(
         `/${script.org.name}/${script.experience.name}` +
         `/script/${script.revision}` +
-        `/design/${this.props.params.sliceType}` +
-        `/${this.props.params.sliceName}` +
-        `/${redirectToResource}`
-      );
+        `/design/${this.props.match.params.sliceType}` +
+        `/${this.props.match.params.sliceName}` +
+        `/${redirectToResource}`);
     }
   }
 
@@ -300,7 +297,7 @@ export default class ResourceShow extends Component {
     return (
       <ResourceContainer
         script={this.props.script}
-        collectionName={this.props.params.collectionName}
+        collectionName={this.props.match.params.collectionName}
         isNew={this.isNewMainResource()}
         resource={this.getMainResource()}
         assets={this.props.assets}
@@ -315,8 +312,8 @@ export default class ResourceShow extends Component {
   }
 
   renderChildResource(collectionName, childResource, isNew, canDelete) {
-    const mainCollectionName = this.props.params.collectionName;
-    const mainResourceName = this.props.params.resourceName;
+    const mainCollectionName = this.props.match.params.collectionName;
+    const mainResourceName = this.props.match.params.resourceName;
     const childResourceType = TextUtil.singularize(collectionName);
     const childResourceClass = Registry.resources[childResourceType];
     const excludeFields = _(childResourceClass.properties)
@@ -404,7 +401,7 @@ export default class ResourceShow extends Component {
   }
 
   renderCreateChildResourceBtn(childCollectionName) {
-    const collectionName = this.props.params.collectionName;
+    const collectionName = this.props.match.params.collectionName;
     const childResourceType = TextUtil.singularize(childCollectionName);
     const resourceClass = Registry.resources[childResourceType];
     const childParentField = _(resourceClass.properties)
@@ -415,7 +412,7 @@ export default class ResourceShow extends Component {
         resourceClass.properties[key].parent
       ));
     const childDefaults = {
-      [childParentField]: this.props.params.resourceName
+      [childParentField]: this.props.match.params.resourceName
     };
     return (
       <button
@@ -476,7 +473,7 @@ export default class ResourceShow extends Component {
 
   render() {
     const script = this.props.script;
-    const collectionName = this.props.params.collectionName;
+    const collectionName = this.props.match.params.collectionName;
     const resourceType = TextUtil.singularize(collectionName);
     if (!Registry.resources[resourceType]) {
       return (
@@ -508,10 +505,11 @@ export default class ResourceShow extends Component {
 ResourceShow.propTypes = {
   assets: PropTypes.array.isRequired,
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   script: PropTypes.object.isRequired,
   // eslint-disable-next-line react/no-unused-prop-types
   scripts: PropTypes.array.isRequired,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
   saveRevision: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired

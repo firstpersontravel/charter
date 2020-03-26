@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { TextUtil } from 'fptcore';
 
@@ -19,7 +19,9 @@ class Schedule extends Component {
   }
 
   handleCreateGroupToggle() {
-    browserHistory.push(`/${this.props.org.name}/${this.props.experience.name}/schedule`);
+    this.props.history.push(
+      `/${this.props.org.name}/${this.props.experience.name}/schedule` +
+      `/${this.props.match.params.year}/${this.props.match.params.month}`);
   }
 
   handleCreateGroup(fields) {
@@ -83,7 +85,7 @@ class Schedule extends Component {
   renderMonth() {
     const now = moment.utc();
     const cur = moment(
-      `${this.props.params.year}-${this.props.params.month}-01`,
+      `${this.props.match.params.year}-${this.props.match.params.month}-01`,
       'YYYY-MM-DD');
     const oneMonthAgo = cur.clone().subtract(1, 'months');
     const inOneMonth = cur.clone().add(1, 'months');
@@ -130,13 +132,13 @@ class Schedule extends Component {
 
   renderGroups() {
     const now = moment.utc().format('YYYY-MM');
-    const cur = `${this.props.params.year}-${this.props.params.month}`;
+    const cur = `${this.props.match.params.year}-${this.props.match.params.month}`;
     const isCurrentOrFuture = cur >= now;
     const newGroupItem = isCurrentOrFuture ? [{
       key: 'new',
       text: 'New group',
       label: 'New group',
-      url: `/${this.props.org.name}/${this.props.experience.name}/schedule?group=new`
+      url: `/${this.props.org.name}/${this.props.experience.name}/schedule/${this.props.match.params.year}/${this.props.match.params.month}?group=new`
     }] : [];
 
     const groupItems = this.props.groups
@@ -156,12 +158,13 @@ class Schedule extends Component {
     }
 
     return (
-      <ResponsiveListGroup items={groupItems} />
+      <ResponsiveListGroup items={groupItems} history={this.props.history} />
     );
   }
 
   render() {
-    const isCreateGroupModalOpen = this.props.location.query.group === 'new';
+    const query = new URLSearchParams(this.props.location.search);
+    const isCreateGroupModalOpen = query.get('group') === 'new';
     if (this.props.groups.isError) {
       return <div className="container-fluid">Error</div>;
     }
@@ -188,10 +191,11 @@ class Schedule extends Component {
 }
 
 Schedule.propTypes = {
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   experience: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   groups: PropTypes.array.isRequired,
   scripts: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,
@@ -216,11 +220,11 @@ const withExp = withLoader(Schedule, ['experience.id'], (props) => {
 });
 
 export default withLoader(withExp, [
-  'params.month',
-  'params.year'
+  'match.params.month',
+  'match.params.year'
 ], (props) => {
   const thisMonth = moment(
-    `${props.params.year}-${props.params.month}-01`,
+    `${props.match.params.year}-${props.match.params.month}-01`,
     'YYYY-MM-DD');
   const nextMonth = thisMonth.clone().add(1, 'months');
   props.listCollection('trips', {

@@ -9,7 +9,7 @@ const mapStateToProps = (state, ownProps) => ({
   trip: lookupTrip(state, ownProps),
   messages: _(state.datastore.messages)
     .filter({
-      tripId: Number(ownProps.params.tripId),
+      tripId: Number(ownProps.match.params.tripId),
       name: '',
       medium: 'image'
     })

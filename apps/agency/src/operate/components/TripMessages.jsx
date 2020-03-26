@@ -1,16 +1,13 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { browserHistory } from 'react-router';
 
 import Message from '../partials/Message';
 
 export default class TripMessages extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pendingMessage: ''
-    };
+    this.state = { pendingMessage: '' };
     this.handleRoleChange = this.handleRoleChange.bind(this);
     this.handleCounterpartChange = this.handleCounterpartChange.bind(this);
     this.handlePendingMessageChange = this.handlePendingMessageChange
@@ -19,20 +16,20 @@ export default class TripMessages extends Component {
   }
 
   componentDidMount() {
-    this.loadData(this.props.trip, this.props.location.query.for,
-      this.props.location.query.with);
+    const query = new URLSearchParams(this.props.location.query);
+    this.loadData(this.props.trip, query.get('for'), query.get('with'));
   }
 
   componentWillReceiveProps(nextProps) {
     // If we've already loaded these props and players have already
     // been loaded, no need to redo
-    if (_.isEqual(nextProps.location.query, this.props.location.query) &&
+    if (_.isEqual(nextProps.location.search, this.props.location.search) &&
         this.props.trip.players.length > 0) {
       return;
     }
     this.setState({ pendingMessage: '' });
-    this.loadData(nextProps.trip, nextProps.location.query.for,
-      nextProps.location.query.with);
+    const query = new URLSearchParams(nextProps.location.query);
+    this.loadData(nextProps.trip, query.get('for'), query.get('with'));
   }
 
   loadData(trip, forRoleName, withRoleName) {
@@ -84,12 +81,18 @@ export default class TripMessages extends Component {
 
   handleRoleChange(event) {
     const trip = this.props.trip;
-    browserHistory.push(`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${event.target.value}`);
+    this.props.history.push(
+      `/${trip.org.name}/${trip.experience.name}/operate/` +
+      `${trip.groupId}/trip/${trip.id}/messages?for=${event.target.value}`);
   }
 
   handleCounterpartChange(event) {
+    const query = new URLSearchParams(this.props.location.search);
     const trip = this.props.trip;
-    browserHistory.push(`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${this.props.location.query.for}&with=${event.target.value}`);
+    this.props.history.push(
+      `/${trip.org.name}/${trip.experience.name}/operate/` +
+      `${trip.groupId}/trip/${trip.id}/messages` +
+      `?for=${query.get('for')}&with=${event.target.value}`);
   }
 
   handlePendingMessageChange(event) {
@@ -102,24 +105,26 @@ export default class TripMessages extends Component {
     const orgId = this.props.trip.orgId;
     const expId = this.props.trip.experienceId;
     const tripId = this.props.trip.id;
+    const query = new URLSearchParams(this.props.location.search);
     this.props.postAction(orgId, expId, tripId, 'send_text', {
-      from_role_name: this.props.location.query.for,
-      to_role_name: this.props.location.query.with,
+      from_role_name: query.get('for'),
+      to_role_name: query.get('with'),
       content: this.state.pendingMessage
     });
   }
 
   renderSendPlaceholder() {
-    if (!this.props.location.query.for) {
+    const query = new URLSearchParams(this.props.location.search);
+    if (!query.get('for')) {
       return 'Send message';
     }
     const script = this.props.trip.script;
-    const selfRoleName = this.props.location.query.for;
+    const selfRoleName = query.get('for');
     const selfRole = _.find(script.content.roles, { name: selfRoleName });
-    if (!this.props.location.query.with) {
+    if (!query.get('with')) {
       return `Send message from ${selfRole.title}`;
     }
-    const withRoleName = this.props.location.query.with;
+    const withRoleName = query.get('with');
     const withRole = _.find(script.content.roles, { name: withRoleName });
     return `Send message from ${selfRole.title} to ${withRole.title}`;
   }
@@ -134,8 +139,9 @@ export default class TripMessages extends Component {
   }
 
   renderWithRoleOptions() {
+    const query = new URLSearchParams(this.props.location.search);
     const script = this.props.trip.script;
-    const selfRoleName = this.props.location.query.for;
+    const selfRoleName = query.get('for');
     if (!selfRoleName) {
       return [];
     }
@@ -151,9 +157,10 @@ export default class TripMessages extends Component {
 
   renderSend() {
     const script = this.props.trip.script;
-    const hasRole = !!this.props.location.query.for;
-    const hasWithRole = !!this.props.location.query.with;
-    const withRoleName = this.props.location.query.with;
+    const query = new URLSearchParams(this.props.location.search);
+    const hasRole = !!query.get('for');
+    const hasWithRole = !!query.get('with');
+    const withRoleName = query.get('with');
     const withRole = _.find(script.content.roles, { name: withRoleName });
     const sendPlaceholder = this.renderSendPlaceholder();
     const sendLabel = hasWithRole ? `Send to ${withRole.title}` : 'Send';
@@ -166,7 +173,7 @@ export default class TripMessages extends Component {
         <div className="col-sm-2">
           <select
             className="form-control"
-            value={this.props.location.query.for}
+            value={query.get('for') || ''}
             onChange={this.handleRoleChange}>
             <option value="">For all</option>
             {forRoleOptions}
@@ -175,7 +182,7 @@ export default class TripMessages extends Component {
         <div className="col-sm-2">
           <select
             className="form-control"
-            value={this.props.location.query.with}
+            value={query.get('with') || ''}
             onChange={this.handleCounterpartChange}>
             <option value="">With all</option>
             {withRoleOptions}
@@ -233,5 +240,6 @@ TripMessages.propTypes = {
   updateInstance: PropTypes.func.isRequired,
   messages: PropTypes.array.isRequired,
   trip: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired
+  location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };

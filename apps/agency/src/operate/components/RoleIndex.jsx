@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import L from 'leaflet';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';

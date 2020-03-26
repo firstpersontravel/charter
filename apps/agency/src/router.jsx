@@ -1,28 +1,24 @@
 import _ from 'lodash';
 import React from 'react';
-import { IndexRoute, IndexRedirect, Router, Route, browserHistory } from 'react-router';
-import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect';
-import locationHelperBuilder from 'redux-auth-wrapper/history3/locationHelper';
+import PropTypes from 'prop-types';
+import { Switch, Redirect, Route, withRouter } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect';
+import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper';
 
 import AppConnector from './app/connectors/App';
 import ExperienceConnector from './app/connectors/Experience';
 import OrgConnector from './app/connectors/Org';
 import OrgIndexConnector from './app/connectors/OrgIndex';
 
-import DesignRoute from './design/route';
-import OperateRoute from './operate/route';
+import NotFound from './partials/NotFound';
+import DesignRoutes from './design/routes';
+import OperateRoutes from './operate/routes';
 import PublicConnector from './public/connectors/Public';
-import PublicRoute from './public/route';
-import ScheduleRoute from './schedule/route';
-import DirectoryRoute from './directory/route';
-
-function NotFound() {
-  return (
-    <div className="container-fluid">
-      Page not found
-    </div>
-  );
-}
+import PublicRoutes from './public/routes';
+import ScheduleRoutes from './schedule/routes';
+import DirectoryRoutes from './directory/routes';
 
 function NoOrgs() {
   return (
@@ -32,8 +28,9 @@ function NoOrgs() {
   );
 }
 
-// Blank route for containing
-function emptyRoute({ children }) { return children; }
+function getIsAuthenticating(state) {
+  return state.requests['auth.info'] !== 'fulfilled';
+}
 
 function getUserInfo(state) {
   return _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data');
@@ -45,51 +42,137 @@ function LoadingSpinner() {
 
 const locationHelper = locationHelperBuilder({});
 
-const ensureUserIsLoggedIn = connectedRouterRedirect({
+const ensureLoggedIn = connectedRouterRedirect({
   redirectPath: '/login',
-  authenticatingSelector: state => state.requests['auth.info'] !== 'fulfilled',
+  authenticatingSelector: state => getIsAuthenticating(state),
   authenticatedSelector: state => !!getUserInfo(state),
   AuthenticatingComponent: LoadingSpinner,
-  wrapperDisplayName: 'UserIsAuthenticated'
+  wrapperDisplayName: 'EnsureLoggedIn'
 });
 
-const ensureUserIsNotLoggedIn = connectedRouterRedirect({
+const ensureNotLoggedIn = connectedRouterRedirect({
   redirectPath: (state, ownProps) => {
     const authInfo = getUserInfo(state);
     const firstOrg = _.get(authInfo, 'orgs[0]');
-    const defaultPath = firstOrg ?
-      `/${firstOrg.name}` : '/no-orgs';
+    const defaultPath = firstOrg ? `/${firstOrg.name}` : '/no-orgs';
     return locationHelper.getRedirectQueryParam(ownProps) || defaultPath;
   },
   allowRedirectBack: false,
-  authenticatingSelector: state => state.requests['auth.info'] !== 'fulfilled',
+  authenticatingSelector: state => getIsAuthenticating(state),
   authenticatedSelector: state => !getUserInfo(state),
   AuthenticatingComponent: LoadingSpinner,
-  wrapperDisplayName: 'UserIsNotAuthenticated'
+  wrapperDisplayName: 'EnsureNotLoggedIn'
 });
 
+function NoOrgsConnector() {
+  return (
+    <PublicConnector>
+      <NoOrgs />
+    </PublicConnector>
+  );
+}
+
+function OrgRoutes({ match }) {
+  return (
+    <OrgConnector match={match}>
+      <Route path={match.path} exact component={OrgIndexConnector} />
+    </OrgConnector>
+  );
+}
+
+OrgRoutes.propTypes = {
+  match: PropTypes.object.isRequired
+};
+
+function ExperienceIndexRedirect({ match }) {
+  return (
+    <Redirect
+      to={`/${match.params.orgName}/${match.params.experienceName}/script`} />
+  );
+}
+
+ExperienceIndexRedirect.propTypes = {
+  match: PropTypes.object.isRequired
+};
+
+function ExperienceRoutes({ match }) {
+  return (
+    <ExperienceConnector match={match}>
+      <Switch>
+        <Route path={match.path} exact component={ExperienceIndexRedirect} />
+        <Route path={`${match.path}/script`} component={DesignRoutes} />
+        <Route path={`${match.path}/schedule`} component={ScheduleRoutes} />
+        <Route path={`${match.path}/operate`} component={OperateRoutes} />
+        <Route path={`${match.path}/directory`} component={DirectoryRoutes} />
+        <Route component={NotFound} />
+      </Switch>
+    </ExperienceConnector>
+  );
+}
+
+ExperienceRoutes.propTypes = {
+  match: PropTypes.object.isRequired
+};
+
+function AuthedIndex({ firstOrgName }) {
+  return <Redirect to={`/${firstOrgName}`} />;
+}
+
+AuthedIndex.propTypes = {
+  firstOrgName: PropTypes.string
+};
+
+AuthedIndex.defaultProps = {
+  firstOrgName: null
+};
+
+const authedIndexMapper = (state, ownProps) => ({
+  firstOrgName: _.get(getUserInfo(state), 'orgs[0].name') || '/no-orgs'
+});
+
+const AuthedIndexConnector = connect(authedIndexMapper)(AuthedIndex);
+
+function AuthedRoutes() {
+  return (
+    <Switch>
+      <Route path="/" exact component={AuthedIndexConnector} />
+      <Route path="/no-orgs" exact component={NoOrgsConnector} />
+      <Route path="/:orgName/:experienceName" component={ExperienceRoutes} />
+      <Route path="/:orgName" component={OrgRoutes} />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+const PublicEnsuredNotLoggedIn = withRouter(ensureNotLoggedIn(PublicRoutes));
+const AuthEnsuredLoggedIn = withRouter(ensureLoggedIn(AuthedRoutes));
+
+function AppRoutes({ isAuthenticating, isAuthenticated }) {
+  if (isAuthenticating) {
+    return <LoadingSpinner />;
+  }
+  if (isAuthenticated) {
+    return <AuthEnsuredLoggedIn />;
+  }
+  return <PublicEnsuredNotLoggedIn />;
+}
+
+AppRoutes.propTypes = {
+  isAuthenticating: PropTypes.bool.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired
+};
+
+const appRoutesMapper = (state, ownProps) => ({
+  isAuthenticating: getIsAuthenticating(state),
+  isAuthenticated: !!getUserInfo(state)
+});
+
+const AppRoutesConnector = connect(appRoutesMapper)(AppRoutes);
+
 export default (
-  <Router history={browserHistory}>
-    <Route component={AppConnector}>
-      <Route component={ensureUserIsNotLoggedIn(emptyRoute)}>
-        {PublicRoute}
-      </Route>
-      <Route component={ensureUserIsLoggedIn(emptyRoute)}>
-        <Route path="no-orgs" component={PublicConnector}>
-          <IndexRoute component={NoOrgs} />
-        </Route>
-        <Route path=":orgName" component={OrgConnector}>
-          <IndexRoute component={OrgIndexConnector} />
-        </Route>
-        <Route path=":orgName/:experienceName" component={ExperienceConnector}>
-          <IndexRedirect to="/:orgName/:experienceName/script" />
-          {DesignRoute}
-          {ScheduleRoute}
-          {OperateRoute}
-          {DirectoryRoute}
-        </Route>
-      </Route>
-      <Route path="*" component={NotFound} />
-    </Route>
-  </Router>
+  <BrowserRouter>
+    <AppConnector>
+      <AppRoutesConnector />
+    </AppConnector>
+  </BrowserRouter>
 );

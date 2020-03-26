@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { Registry, TextUtil } from 'fptcore';
 
@@ -28,15 +28,16 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
   );
 }
 
-export default function SliceIndex({ script, params }) {
-  const sliceContent = getSliceContent(params.sliceType, params.sliceName);
+export default function SliceIndex({ script, match }) {
+  const sliceContent = getSliceContent(match.params.sliceType,
+    match.params.sliceName);
   if (!sliceContent) {
     return 'Invalid section.';
   }
   const collectionNames = sliceContent.map(i => i.collection);
   const renderedCreateItems = collectionNames.map(collectionName => (
-    renderCreateResource(script, params.sliceType, params.sliceName,
-      collectionName)
+    renderCreateResource(script, match.params.sliceType,
+      match.params.sliceName, collectionName)
   ));
   return (
     <div>
@@ -47,5 +48,5 @@ export default function SliceIndex({ script, params }) {
 
 SliceIndex.propTypes = {
   script: PropTypes.object.isRequired,
-  params: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired
 };

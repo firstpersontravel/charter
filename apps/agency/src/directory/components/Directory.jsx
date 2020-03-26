@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { NavLink, Link } from 'react-router-dom';
 
 import { canRoleHaveUser } from '../../operate/utils';
 
@@ -17,14 +17,14 @@ export default class Directory extends Component {
     const experience = this.props.experience;
     return (
       <div key={roleName} className="constrain-text">
-        &rsaquo; <Link
+        &rsaquo; <NavLink
           activeClassName="bold"
           to={{
             pathname: `/${experience.org.name}/${experience.name}/directory`,
             query: { role: roleName }
           }}>
           {role.title}
-        </Link>
+        </NavLink>
          &nbsp;({roleProfiles.length})
       </div>
     );
@@ -45,7 +45,8 @@ export default class Directory extends Component {
 
   renderRolesSidebar() {
     const experience = this.props.experience;
-    const roleQuery = this.props.location.query.role;
+    const query = new URLSearchParams(this.props.location.search);
+    const roleQuery = query.get('role');
     return (
       <div className="col-sm-3 d-none d-sm-block">
         <h3>Roles</h3>
@@ -58,11 +59,11 @@ export default class Directory extends Component {
         </div>
         {this.renderRoles()}
         <div className="mt-2">
-          <Link
+          <NavLink
             activeClassName="bold"
             to={`/${experience.org.name}/${experience.name}/directory?role=Archived`}>
             Archived
-          </Link>
+          </NavLink>
         </div>
       </div>
     );

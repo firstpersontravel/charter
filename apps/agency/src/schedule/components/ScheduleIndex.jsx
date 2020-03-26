@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
-export default function ScheduleIndex({ params }) {
+export default function ScheduleIndex({ match }) {
   return (
     <div>
       <Link
         className="btn btn-block btn-primary"
-        to={`/${params.orgName}/${params.experienceName}/schedule?group=new`}>
+        to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${match.params.year}/${match.params.month}?group=new`}>
         Create a group
       </Link>
     </div>
@@ -15,5 +15,5 @@ export default function ScheduleIndex({ params }) {
 }
 
 ScheduleIndex.propTypes = {
-  params: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired
 };

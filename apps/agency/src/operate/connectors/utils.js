@@ -97,9 +97,9 @@ export function lookupTrip(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'trips',
     filter: {
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName },
-      id: Number(ownProps.params.tripId)
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName },
+      id: Number(ownProps.match.params.tripId)
     },
     include: tripIncludesWithGroup
   });
@@ -109,22 +109,22 @@ export function lookupPlayer(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'players',
     filter: {
-      roleName: ownProps.params.roleName,
-      tripId: Number(ownProps.params.tripId)
+      roleName: ownProps.match.params.roleName,
+      tripId: Number(ownProps.match.params.tripId)
     },
     include: playerIncludesWithTrip
   });
 }
 
 export function lookupPlayersByRole(state, ownProps) {
-  const userId = ownProps.params.userId !== '0' ?
-    Number(ownProps.params.userId) : null;
+  const userId = ownProps.match.params.userId !== '0' ?
+    Number(ownProps.match.params.userId) : null;
   return instancesFromDatastore(state, {
     col: 'players',
     filter: {
-      roleName: ownProps.params.roleName,
+      roleName: ownProps.match.params.roleName,
       userId: userId,
-      trip: { groupId: Number(ownProps.params.groupId) }
+      trip: { groupId: Number(ownProps.match.params.groupId) }
     },
     include: playerIncludesWithTrip
   });
@@ -134,30 +134,30 @@ export function lookupGroup(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'groups',
     filter: {
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName },
-      id: Number(ownProps.params.groupId)
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName },
+      id: Number(ownProps.match.params.groupId)
     },
     include: groupIncludesWithTrips
   });
 }
 
-function msgFilterForParams(params) {
+function msgFilterForParams(match) {
   // If we're specifying two roles, find all messages between those roles.
-  if (params.roleName &&
-      params.withRoleName &&
-      params.withRoleName !== 'All') {
-    const betweenRoleNames = [params.roleName, params.withRoleName];
+  if (match.params.roleName &&
+      match.params.withRoleName &&
+      match.params.withRoleName !== 'All') {
+    const betweenRoleNames = [match.params.roleName, match.params.withRoleName];
     return msg => (
       _.includes(betweenRoleNames, msg.sentBy.roleName) &&
       _.includes(betweenRoleNames, msg.sentTo.roleName)
     );
   }
   // If we're specifying one role, find all messages to and from that role
-  if (params.roleName) {
+  if (match.params.roleName) {
     return msg => (
-      msg.sentBy.roleName === params.roleName ||
-      msg.sentTo.roleName === params.roleName
+      msg.sentBy.roleName === match.params.roleName ||
+      msg.sentTo.roleName === match.params.roleName
     );
   }
   // If no roles are specified, return all.
@@ -165,10 +165,10 @@ function msgFilterForParams(params) {
 }
 
 export function lookupMessages(state, ownProps, limit = null, filters = null) {
-  const selfFilter = msgFilterForParams(ownProps.params);
-  const tripFilter = ownProps.params.tripId ?
-    { id: Number(ownProps.params.tripId), isArchived: false } :
-    { groupId: Number(ownProps.params.groupId), isArchived: false };
+  const selfFilter = msgFilterForParams(ownProps.match);
+  const tripFilter = ownProps.match.params.tripId ?
+    { id: Number(ownProps.match.params.tripId), isArchived: false } :
+    { groupId: Number(ownProps.match.params.groupId), isArchived: false };
   const msgFilters = { trip: tripFilter, self: selfFilter };
   const allFilters = Object.assign(msgFilters, filters);
   return instancesFromDatastore(state, {
@@ -192,8 +192,8 @@ export function lookupDirections(state, ownProps) {
     col: 'assets',
     filter: {
       type: 'directions',
-      org: { name: ownProps.params.orgName },
-      experience: { name: ownProps.params.experienceName }
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName }
     },
     include: {
       org: instanceIncluder('orgs', 'id', 'orgId'),

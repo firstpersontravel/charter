@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { IndexLink } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
 
@@ -188,9 +188,9 @@ class ScheduleGroup extends Component {
           <strong>{trip.departureName}</strong>
         </td>
         <td style={trip.isArchived ? archivedStyle : null}>
-          <IndexLink to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
             {trip.title}
-          </IndexLink>
+          </Link>
           {trip.isArchived && <i className="fa fa-archive ml-1" />}
         </td>
         <td>
@@ -219,14 +219,14 @@ class ScheduleGroup extends Component {
     const dateShort = moment(group.date).format('MMM D, YYYY');
     const hasTrips = group.trips.length > 0;
     const opsBtn = hasTrips ? (
-      <IndexLink
+      <Link
         className={`btn ${group.isArchived ? 'btn-secondary' : 'btn-primary'} float-right`}
         to={
           `/${group.org.name}/${group.experience.name}` +
           `/operate/${group.id}`
         }>
         {dateShort} operations
-      </IndexLink>
+      </Link>
     ) : null;
     return (
       <div className="mb-3">
@@ -336,14 +336,14 @@ ScheduleGroup.propTypes = {
   bulkUpdate: PropTypes.func.isRequired
 };
 
-export default withLoader(ScheduleGroup, ['params.groupId'], (props) => {
+export default withLoader(ScheduleGroup, ['match.params.groupId'], (props) => {
   props.listCollection('trips', {
-    groupId: props.params.groupId,
+    groupId: props.match.params.groupId,
     experienceId: props.experience.id,
     orgId: props.experience.orgId
   });
   props.listCollection('groups', {
-    id: props.params.groupId,
+    id: props.match.params.groupId,
     experienceId: props.experience.id,
     orgId: props.experience.orgId
   });

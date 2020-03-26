@@ -13,10 +13,10 @@ import Schedule from '../components/Schedule';
 
 const mapStateToProps = (state, ownProps) => ({
   systemActionRequestState: state.requests['system.action'],
-  org: _.find(state.datastore.orgs, { name: ownProps.params.orgName }),
+  org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName }),
   experience: instanceFromDatastore(state, {
     col: 'experiences',
-    filter: { name: ownProps.params.experienceName },
+    filter: { name: ownProps.match.params.experienceName },
     include: { relays: instancesIncluder('relays', 'experienceId', 'id') }
   }),
   scripts: lookupScripts(state, ownProps),

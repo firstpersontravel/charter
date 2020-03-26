@@ -14,7 +14,7 @@ class Experience extends Component {
         experience={this.props.experience}
         experiences={this.props.experiences}
         groups={this.props.groups}
-        groupId={this.props.params.groupId} />
+        groupId={this.props.match.params.groupId} />
     );
   }
 
@@ -37,7 +37,7 @@ class Experience extends Component {
         <div className="alert alert-warning">
           Experience not found.
           &nbsp;
-          <a href={`/${this.props.params.orgName}`}>Go back</a>
+          <a href={`/${this.props.match.params.orgName}`}>Go back</a>
         </div>
       );
     }
@@ -72,7 +72,7 @@ Experience.propTypes = {
   experiences: PropTypes.array.isRequired,
   groups: PropTypes.array.isRequired,
   org: PropTypes.object,
-  params: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired
 };
 

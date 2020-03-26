@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import Role from '../components/Role';
 
 const mapStateToProps = (state, ownProps) => ({
-  user: ownProps.params.userId !== '0' ?
-    _.find(state.datastore.users, { id: Number(ownProps.params.userId) }) :
-    null
+  user: ownProps.match.params.userId !== '0' ?
+    _.find(state.datastore.users,
+      { id: Number(ownProps.match.params.userId) }) : null
 });
 
 const mapDispatchToProps = dispatch => ({});

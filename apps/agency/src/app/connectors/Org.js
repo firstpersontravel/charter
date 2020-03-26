@@ -9,7 +9,7 @@ import { lookupExperiences } from './utils';
 const mapStateToProps = (state, ownProps) => ({
   authInfo: _.get(_.find(state.datastore.auth, { id: 'latest' }),
     'data'),
-  org: _.find(state.datastore.orgs, { name: ownProps.params.orgName }),
+  org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName }),
   experiences: lookupExperiences(state, ownProps)
 });
 

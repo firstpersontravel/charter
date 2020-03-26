@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link, browserHistory } from 'react-router';
+import { NavLink, Link } from 'react-router-dom';
 
 import UserModal from '../partials/UserModal';
 
@@ -13,7 +13,8 @@ export default class DirectoryIndex extends Component {
   }
 
   getUsers() {
-    const roleName = this.props.location.query.role;
+    const query = new URLSearchParams(this.props.location.search);
+    const roleName = query.get('role');
     return this.props.users.filter((user) => {
       if (roleName === 'Archived') {
         return user.isArchived === true;
@@ -35,7 +36,8 @@ export default class DirectoryIndex extends Component {
   }
 
   handleCreateUser(fields) {
-    const roleName = this.props.location.query.role;
+    const query = new URLSearchParams(this.props.location.search);
+    const roleName = query.get('role');
     const userFields = {
       orgId: this.props.experience.orgId,
       experienceId: this.props.experience.id,
@@ -60,12 +62,12 @@ export default class DirectoryIndex extends Component {
   }
 
   handleUserModalClose() {
-    const role = this.props.location.query.role;
+    const query = new URLSearchParams(this.props.location.search);
+    const roleName = query.get('role');
     const experience = this.props.experience;
-    browserHistory.push(
+    this.props.history.push(
       `/${experience.org.name}/${experience.name}/directory` +
-      `${role ? `?role=${role}` : ''}`
-    );
+      `${roleName ? `?role=${roleName}` : ''}`);
   }
 
   renderUser(user) {
@@ -85,7 +87,7 @@ export default class DirectoryIndex extends Component {
       .value();
     const roleLinks = _.map(userProfiles, profile => (
       <span key={profile.id}>
-        <Link
+        <NavLink
           style={{
             textDecoration: profile.isActive ? '' : 'line-through'
           }}
@@ -94,7 +96,7 @@ export default class DirectoryIndex extends Component {
             query: { role: profile.roleName }
           }}>
           {_.get(profile, 'role.title')}
-        </Link>
+        </NavLink>
         &nbsp;
       </span>
     ));
@@ -113,7 +115,8 @@ export default class DirectoryIndex extends Component {
   }
 
   renderHeader() {
-    const roleName = this.props.location.query.role;
+    const query = new URLSearchParams(this.props.location.search);
+    const roleName = query.get('role');
     const experience = this.props.experience;
     if (roleName && experience.script) {
       const role = _.find(experience.script.content.roles, { name: roleName });
@@ -134,7 +137,8 @@ export default class DirectoryIndex extends Component {
 
   renderNewUserButton() {
     const experience = this.props.experience;
-    const roleName = this.props.location.query.role;
+    const query = new URLSearchParams(this.props.location.search);
+    const roleName = query.get('role');
     if (roleName === 'Archived') {
       return null;
     }
@@ -147,10 +151,7 @@ export default class DirectoryIndex extends Component {
         <Link
           to={{
             pathname: `/${experience.org.name}/${experience.name}/directory`,
-            query: {
-              role: roleName || undefined,
-              editing: true
-            }
+            search: `?role=${roleName || ''}&editing=true`
           }}
           className="btn btn-sm btn-outline-secondary">
           {btnTitle}
@@ -164,6 +165,9 @@ export default class DirectoryIndex extends Component {
         this.props.profiles.isLoading) {
       return 'Loading';
     }
+    const query = new URLSearchParams(this.props.location.search);
+    const editing = query.get('editing');
+
     const users = this.getUsers();
     const userRows = users.map(user => this.renderUser(user));
     const header = this.renderHeader();
@@ -184,7 +188,7 @@ export default class DirectoryIndex extends Component {
         </table>
         {this.renderNewUserButton()}
         <UserModal
-          isOpen={!!this.props.location.query.editing}
+          isOpen={!!editing}
           user={null}
           onClose={this.handleUserModalClose}
           onConfirm={this.handleCreateUser} />
@@ -196,6 +200,7 @@ export default class DirectoryIndex extends Component {
 DirectoryIndex.propTypes = {
   createInstances: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   experience: PropTypes.object.isRequired,
   profiles: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
-import { Link } from 'react-router';
+import { NavLink, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { getStage } from '../utils';
@@ -17,7 +17,7 @@ function renderRight(authInfo, logout) {
     return (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-          <Link activeClassName="" className="btn btn-primary" to="/login">
+          <Link className="btn btn-primary" to="/login">
             Login
           </Link>
         </li>
@@ -70,25 +70,25 @@ function renderBrand(org, experience) {
   );
   if (!org) {
     return (
-      <Link
+      <NavLink
         key="main"
         activeClassName="active"
         className="navbar-brand mr-1"
         to="/">
         {inkwell}
         {globalTitle.toUpperCase()}
-      </Link>
+      </NavLink>
     );
   }
   return (
-    <Link
+    <NavLink
       key="org"
       activeClassName="active"
       className="navbar-brand mr-1"
       to={`/${org.name}`}>
       {inkwell}
       {titleForOrg(org).toUpperCase()}
-    </Link>
+    </NavLink>
   );
 }
 
@@ -162,27 +162,27 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     <ul className="navbar-nav mr-auto">
       {experienceDropdown}
       <li className="nav-item">
-        <Link
+        <NavLink
           activeClassName="active"
           className="nav-link"
           to={`/${org.name}/${experience.name}/script`}>
           Script
-        </Link>
+        </NavLink>
       </li>
-      <Link
+      <NavLink
         activeClassName="active"
         className="nav-link"
         to={`/${org.name}/${experience.name}/schedule`}>
         Schedule
-      </Link>
+      </NavLink>
       {opsDropdown}
       <li className="nav-item">
-        <Link
+        <NavLink
           activeClassName="active"
           className="nav-link"
           to={`/${org.name}/${experience.name}/directory`}>
           Users
-        </Link>
+        </NavLink>
       </li>
     </ul>
   );
