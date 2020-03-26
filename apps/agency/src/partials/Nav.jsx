@@ -174,7 +174,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
         activeClassName="active"
         className="nav-link"
         to={`/${org.name}/${experience.name}/schedule`}>
-        Schedule
+        Entry
       </NavLink>
       {opsDropdown}
       <li className="nav-item">

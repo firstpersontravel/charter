@@ -35,13 +35,18 @@ class Schedule extends Component {
     this.handleCreateGroupToggle();
   }
 
-  renderTrailhead() {
+  renderEntrywayRelay() {
     const activeScript = _.find(this.props.scripts, { isActive: true });
     const trailheadSpecs = _.filter(_.get(activeScript, 'content.relays'), {
       trailhead: true
     });
     if (!trailheadSpecs.length) {
-      return null;
+      return (
+        <div>
+          { /* eslint-disable-next-line max-len */ }
+          <i className="fa fa-phone" /> This experience cannot be entered by text message. To enable, create an &apos;entryway&apos; relay.
+        </div>
+      );
     }
     let hasUnallocated = false;
     const renderedTrailheads = trailheadSpecs.map((trailhead) => {
@@ -68,7 +73,7 @@ class Schedule extends Component {
     const allocateRelaysBtn = hasUnallocated ? (
       <button
         disabled={this.props.systemActionRequestState === 'pending'}
-        className="btn btn-primary ml-3"
+        className="btn btn-sm btn-primary ml-3"
         onClick={() => this.props.updateRelays(
           this.props.org.id, this.props.experience.id)}>
         Allocate phone numbers
@@ -76,9 +81,18 @@ class Schedule extends Component {
     ) : null;
 
     return (
-      <div className="alert alert-info">
-        Trips can be started through calls or texts to trailhead numbers. {renderedTrailheads}
+      <div>
+        <i className="fa fa-phone" /> Trips can be started through calls or texts to: {renderedTrailheads}
         {allocateRelaysBtn}
+      </div>
+    );
+  }
+
+  renderEntrywayWebpage() {
+    return (
+      <div>
+        { /* eslint-disable-next-line max-len */ }
+        <i className="fa fa-file" /> Trips can be entered at: <a href={`${window.location.origin}/entry/${this.props.org.name}/${this.props.experience.name}`} target="_blank" rel="noopener noreferrer">{window.location.origin}/entry/{this.props.org.name}/{this.props.experience.name}</a>
       </div>
     );
   }
@@ -172,7 +186,10 @@ class Schedule extends Component {
     }
     return (
       <div className="container-fluid">
-        {this.renderTrailhead()}
+        <div className="alert alert-info">
+          {this.renderEntrywayRelay()}
+          {this.renderEntrywayWebpage()}
+        </div>
         <div className="row">
           <div className="col-sm-4">
             {this.renderMonth()}

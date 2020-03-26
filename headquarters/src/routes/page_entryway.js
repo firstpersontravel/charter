@@ -15,9 +15,7 @@ const entrywayRoute = async (req, res) => {
     include: [{
       model: models.Org,
       as: 'org',
-      where: {
-        name: orgName
-      }
+      where: { name: orgName }
     }]
   });
   if (!experience) {
@@ -47,7 +45,7 @@ const entrywayRoute = async (req, res) => {
   const script = await ExperienceController.findActiveScript(experience.id);
   res.render('entryway/entryway', {
     layout: 'entryway',
-    experience: experience,
+    experienceTitle: experience.title,
     script: script
   });
 };
