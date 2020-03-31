@@ -1,14 +1,14 @@
 const config = require('../config');
 const RelayController = require('../controllers/relay');
-const TrailheadController = require('../controllers/trailhead');
+const EntrywayController = require('../controllers/entryway');
 const TripResetHandler = require('./trip_reset');
 
 var logger = config.logger.child({ name: 'handlers.twilio_util' });
 
 class TwilioUtil {
   /**
-   * Get an existing trip id for a relay and a user number. If the relay is a
-   * trailhead, create a new trip if one isn't found. Otherwise, return null.
+   * Get an existing trip id for a relay and a user number. If the relay is an
+   * entryway, create a new trip if one isn't found. Otherwise, return null.
    */
   static async lookupOrCreateTripId(relay, userPhoneNumber) {
     // Get player or create trip.
@@ -17,11 +17,11 @@ class TwilioUtil {
       return player.tripId;
     }
     if (relay.userPhoneNumber !== '') {
-      logger.warn(`Relay ${relay.id} is not a trailhead; can't create a new trip.`);
+      logger.warn(`Relay ${relay.id} is not an entryway; can't create a new trip.`);
       return null;
     }
-    // If no player, and it's a trailhead, then we need to create a new trip.
-    const trip = await TrailheadController.createTripFromRelay(relay, 
+    // If no player, and it's an entryway, then we need to create a new trip.
+    const trip = await EntrywayController.createTripFromRelay(relay, 
       userPhoneNumber);
 
     // If we created a trip, reset it to the start to initiate starting 

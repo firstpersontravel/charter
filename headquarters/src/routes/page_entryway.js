@@ -2,7 +2,7 @@ const _ = require('lodash');
 const models = require('../models');
 
 const ExperienceController = require('../controllers/experience');
-const TrailheadController = require('../controllers/trailhead');
+const EntrywayController = require('../controllers/entryway');
 
 const entrywayRoute = async (req, res) => {
   const orgName = req.params.orgName;
@@ -81,7 +81,7 @@ const entrywaySubmitRoute = async (req, res) => {
     return;
   }
 
-  const trip = await TrailheadController.createTrip(script, playerRole.name, 
+  const trip = await EntrywayController.createTrip(script, playerRole.name, 
     phoneNumber);
   const player = await models.Player.findOne({
     where: { tripId: trip.id, roleName: playerRole.name }

@@ -170,8 +170,8 @@ describe('API create', () => {
             content: scriptContent
           })
           .set('Accept', 'application/json')
-          .expect(201)
           .then((res) => {
+            assert.deepStrictEqual(res.status, 201);
             assert.deepStrictEqual(res.body.data.script.content,
               scriptContent);
           });
@@ -212,7 +212,7 @@ describe('API create', () => {
           revision: 0,
           content: {
             meta: { version: ScriptCore.CURRENT_VERSION },
-            departures: [{ title: 'x', scene: 'TEST' }]
+            times: [{ title: 'x', scene: 'TEST' }]
           }
         })
         .set('Accept', 'application/json')
@@ -223,11 +223,11 @@ describe('API create', () => {
             fields: [{
               field: 'content',
               message: 'Required param "name" not present.',
-              path: 'departures[name=<unknown>]'
+              path: 'times[name=<unknown>]'
             }, {
               field: 'content',
               message: 'Unexpected param "scene" (expected one of: name, title).',
-              path: 'departures[name=<unknown>]'
+              path: 'times[name=<unknown>]'
             }],
             message: 'Invalid fields: content.',
             type: 'ValidationError'

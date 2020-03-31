@@ -16,7 +16,7 @@ const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 describe('TextConvoExample', () => {
 
   let script;
-  let trailhead;
+  let entryway;
 
   beforeEach(async () => {
     config.getTwilioClient().incomingPhoneNumbers.list.resolves([{
@@ -24,15 +24,15 @@ describe('TextConvoExample', () => {
       phoneNumber: '+13334445555'
     }]);
     script = await TestUtil.createExample(example);
-    trailhead = (
-      await ExperienceController.ensureTrailheads(script.experienceId)
+    entryway = (
+      await ExperienceController.ensureEntrywayRelays(script.experienceId)
     )[0];
   });
 
   it('runs through polite conversation', async () => {
-    // Test start on text to trailhead
+    // Test start on text to entryway
     const msgResult = await TwilioMessageHandler.handleIncomingMessage(
-      '5556667777', trailhead.relayPhoneNumber, 'hi', []);
+      '5556667777', entryway.relayPhoneNumber, 'hi', []);
 
     // Test message handled ok
     assert.strictEqual(msgResult, true);
@@ -64,7 +64,7 @@ describe('TextConvoExample', () => {
 
     // Response
     await TwilioMessageHandler.handleIncomingMessage(
-      '5556667777', trailhead.relayPhoneNumber, 'Sam', []);
+      '5556667777', entryway.relayPhoneNumber, 'Sam', []);
 
     // Test interpreted
     await trip.reload();
@@ -80,9 +80,9 @@ describe('TextConvoExample', () => {
   });
 
   it('runs through rude conversation', async () => {
-    // Test start on text to trailhead
+    // Test start on text to entryway
     await TwilioMessageHandler.handleIncomingMessage(
-      '5556667777', trailhead.relayPhoneNumber, 'yo', []);
+      '5556667777', entryway.relayPhoneNumber, 'yo', []);
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });

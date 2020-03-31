@@ -182,7 +182,8 @@ class SchedulerWorker {
 
     for (let action of actions) {
       logger.info({ action: action },
-        `Scheduling ${action.type} ${action.name}.`);
+        `Scheduling ${action.type} ${action.name} at ` +
+        `${fmtLocal(action.scheduledAt)}.`);
       await models.Action.create(action);
     }
   }

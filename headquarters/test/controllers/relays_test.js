@@ -15,7 +15,7 @@ describe('RelaysController', () => {
     it.skip('assigns number if available', async () => {});
     it.skip('purchases number if not available', async () => {});
     it.skip('does not overlap other self-assigned relays', async () => {});
-    it.skip('does not overlap any other relays if trailhead', async () => {});
+    it.skip('does not overlap any other relays if entryway', async () => {});
   });
 
   describe('#ensureRelay', () => {

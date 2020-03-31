@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
 
+import Alert from '../../partials/Alert';
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
-import AreYouSure from '../../partials/AreYouSure';
 import TripModal from '../partials/TripModal';
 import ScheduleUtils from '../utils';
 
@@ -16,79 +16,34 @@ class ScheduleGroup extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isArchivingGroup: null,
-      isArchiveGroupModalOpen: false,
-      isArchivingTrip: null,
-      isArchiveTripModalOpen: false,
       isTripEditModalOpen: false,
       isEditingTrip: null
     };
     this.handleArchiveGroup = this.handleArchiveGroup.bind(this);
-    this.handleArchiveGroupToggle = this.handleArchiveGroupToggle.bind(this);
-    this.handleArchiveGroupConfirm = this.handleArchiveGroupConfirm.bind(this);
     this.handleArchiveTrip = this.handleArchiveTrip.bind(this);
-    this.handleArchiveTripToggle = this.handleArchiveTripToggle.bind(this);
-    this.handleArchiveTripConfirm = this.handleArchiveTripConfirm.bind(this);
     this.handleEditTripToggle = this.handleEditTripToggle.bind(this);
     this.handleNewTrip = this.handleNewTrip.bind(this);
     this.handleEditTripConfirm = this.handleEditTripConfirm.bind(this);
   }
 
   handleArchiveGroup() {
-    this.setState({
-      isArchiveGroupModalOpen: true,
-      isArchivingGroup: true
-    });
-  }
-
-  handleArchiveGroupToggle() {
-    this.setState({
-      isArchiveGroupModalOpen: !this.state.isArchiveGroupModalOpen
-    });
-  }
-
-  handleArchiveGroupConfirm() {
     const group = this.props.group;
     const newArchiveValue = !group.isArchived;
     this.props.updateInstance('groups', group.id, {
       isArchived: newArchiveValue
     });
-    if (newArchiveValue === true) {
-      this.props.bulkUpdate('trips', {
-        orgId: group.orgId,
-        experienceId: group.experienceId,
-        groupId: group.id
-      }, {
-        isArchived: true
-      });
-    }
-    this.setState({
-      isArchiveGroupModalOpen: false,
-      isArchivingGroup: null
+    this.props.bulkUpdate('trips', {
+      orgId: group.orgId,
+      experienceId: group.experienceId,
+      groupId: group.id
+    }, {
+      isArchived: newArchiveValue
     });
   }
 
   handleArchiveTrip(trip) {
-    this.setState({
-      isArchiveTripModalOpen: true,
-      isArchivingTrip: trip
-    });
-  }
-
-  handleArchiveTripToggle() {
-    this.setState({
-      isArchiveTripModalOpen: !this.state.isArchiveTripModalOpen
-    });
-  }
-
-  handleArchiveTripConfirm() {
-    const trip = this.state.isArchivingTrip;
     this.props.updateInstance('trips', trip.id, {
       isArchived: !trip.isArchived
-    });
-    this.setState({
-      isArchiveTripModalOpen: false,
-      isArchivingTrip: null
     });
   }
 
@@ -190,7 +145,7 @@ class ScheduleGroup extends Component {
         <td>
           {trip.variantNames.split(',').filter(Boolean).map(TextUtil.titleForKey).join(', ')}
         </td>
-        <td>
+        <td className="text-right">
           {editTripBtn}
           {archiveTripBtn}
         </td>
@@ -200,49 +155,52 @@ class ScheduleGroup extends Component {
 
   renderHeader() {
     const group = this.props.group;
-    const dateShort = moment(group.date).format('MMM D, YYYY');
+    const dateShort = moment(group.date).format('MMM D');
     const hasTrips = group.trips.length > 0;
     const opsBtn = hasTrips ? (
       <Link
-        className={`btn ${group.isArchived ? 'btn-secondary' : 'btn-primary'} float-right`}
+        className={`btn ${group.isArchived ? 'btn-secondary' : 'btn-primary'}`}
         to={
           `/${group.org.name}/${group.experience.name}` +
           `/operate/${group.id}`
         }>
-        {dateShort} operations
+        Ops
       </Link>
     ) : null;
     return (
       <div className="mb-3">
-        {opsBtn}
-        <h4>{dateShort}, script rev. {group.script.revision}</h4>
+        <div className="float-right text-right">
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => this.handleNewTrip()}>
+            Add trip
+          </button>
+          &nbsp;
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => this.handleArchiveGroup()}>
+            {this.props.group.isArchived ? 'Unarchive' : 'Archive'}
+          </button>
+          &nbsp;
+          {opsBtn}
+        </div>
+        <h4>{dateShort} ∙ Script Rev. {group.script.revision}</h4>
       </div>
     );
   }
 
-  renderNewTripRow() {
-    if (this.props.group.isArchived) {
-      return null;
-    }
-    return (
-      <tr key="new">
-        <td>
-          <strong>New</strong>
-        </td>
-        <td>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={() => this.handleNewTrip()}>
-            New trip
-          </button>
-        </td>
-        <td />
-        <td />
-      </tr>
-    );
-  }
-
   renderTrips() {
+    if (!this.props.group.trips.length) {
+      return (
+        <div style={{ padding: '100px' }}>
+          <button
+            className={`btn btn-block btn-primary ${this.props.group.isArchived ? 'disabled' : ''}`}
+            onClick={() => this.handleNewTrip()}>
+            Add a trip to this block
+          </button>
+        </div>
+      );
+    }
     const group = this.props.group;
     const tripRows = this.props.group.trips.map(trip => (
       this.renderTripRow(group, trip)
@@ -251,51 +209,30 @@ class ScheduleGroup extends Component {
       <table className="table table-striped">
         <tbody>
           {tripRows}
-          {this.renderNewTripRow()}
         </tbody>
       </table>
     );
   }
 
   render() {
+    if (!this.props.group.isLoading && (this.props.group.isError || this.props.group.isNull)) {
+      return <Alert color="danger" content="Error loading group." />;
+    }
     if ((!this.props.group && this.props.group.isLoading) ||
         !this.props.group.script ||
         this.props.group.script.isNull) {
       return <Loader />;
     }
-    if (this.props.group.isError) {
-      return <div className="container-fluid">Error</div>;
-    }
     return (
       <div>
         {this.renderHeader()}
         {this.renderTrips()}
-
-        <div>
-          <button
-            className="btn btn-sm btn-outline-secondary"
-            onClick={() => this.handleArchiveGroup()}>
-            {this.props.group.isArchived ? 'Unarchive' : 'Archive'} group
-          </button>
-        </div>
-
         <TripModal
           isOpen={this.state.isTripEditModalOpen}
           group={this.props.group}
           trip={this.state.isEditingTrip}
-          defaultDepartureName={this.state.defaultTripDepartureName}
           onClose={this.handleEditTripToggle}
           onConfirm={this.handleEditTripConfirm} />
-        <AreYouSure
-          isOpen={this.state.isArchiveGroupModalOpen}
-          onToggle={this.handleArchiveGroupToggle}
-          onConfirm={this.handleArchiveGroupConfirm}
-          message={`Are you sure you want to ${this.props.group.isArchived ? 'unarchive' : 'archive'} ${this.props.group.date} and all trips?`} />
-        <AreYouSure
-          isOpen={this.state.isArchiveTripModalOpen}
-          onToggle={this.handleArchiveTripToggle}
-          onConfirm={this.handleArchiveTripConfirm}
-          message={`Are you sure you want to ${_.get(this.state.isArchivingTrip, 'isArchived') ? 'unarchive' : 'archive'}: ${_.get(this.state.isArchivingTrip, 'title')}?`} />
       </div>
     );
   }

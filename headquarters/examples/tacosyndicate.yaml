@@ -36,9 +36,6 @@ content:
   - name: CUE-8-PHIL-FOLLOWUP
     scene: SCENE-8
     title: Phil Followup
-  departures:
-  - name: Main
-    title: Main
   inboxes:
   - address: dispatch@tacosyndicate.family
     name: Jessie
@@ -54,8 +51,6 @@ content:
     name: phone
     title: phone
     type: simple
-  meta:
-    version: 23
   pages:
   - directive: Waiting for inductee
     name: PAGE-0-JESSIE

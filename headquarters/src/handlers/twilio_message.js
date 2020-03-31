@@ -62,11 +62,11 @@ async function handleIncomingMessage(fromNumber, toNumber, body, media) {
   // Get player or create trip.
   const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
   if (!tripId) {
-    // If we couldn't create one, probably cos it's not a trailhead.
+    // If we couldn't create one, probably cos it's not an entryway.
     return false;
   }
 
-  // Whether it's a trailhead or not, 
+  // Whether it's an entryway or not, 
   const actions = getMessageActions(relay, body, media);
   for (let action of actions) {
     await KernelController.applyAction(tripId, action);

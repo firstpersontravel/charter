@@ -8,7 +8,7 @@ const NotifyController = require('../controllers/notify');
 const TripResetHandler = require('../handlers/trip_reset');
 
 async function updateRelaysRoute(req, res) {
-  await ExperienceController.ensureTrailheads(req.params.experienceId);
+  await ExperienceController.ensureEntrywayRelays(req.params.experienceId);
   res.json({ data: { ok: true } });
 }
 

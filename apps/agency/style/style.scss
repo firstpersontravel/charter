@@ -165,16 +165,12 @@ body {
 }
 
 @media(min-width: 576px) {
-
   .script-editor-full-height {
-    max-height: calc(100% - 100px);
+    max-height: calc(100% - 105px);
     overflow-y: scroll; 
   }
-
   .script-editor-container {
-
-    height: calc(100% - 100px);
-
+    height: calc(100% - 105px);
     .script-editor-nav {
       max-height: 100%;
       overflow-y: scroll; 

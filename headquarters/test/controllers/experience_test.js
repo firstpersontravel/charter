@@ -1,5 +1,5 @@
 describe('ExperienceController', () => {
-  describe('#ensureTrailheads', () => {
-    it.skip('ensure all trailhead relays are created', async () => {});
+  describe('#ensureEntrywayRelays', () => {
+    it.skip('ensure all entryway relays are created', async () => {});
   });
 });

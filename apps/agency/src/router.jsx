@@ -12,6 +12,7 @@ import ExperienceConnector from './app/connectors/Experience';
 import OrgConnector from './app/connectors/Org';
 import OrgIndexConnector from './app/connectors/OrgIndex';
 
+import Nav from './partials/Nav';
 import Loader from './partials/Loader';
 import NotFound from './partials/NotFound';
 import DesignRoutes from './design/routes';
@@ -20,6 +21,15 @@ import PublicConnector from './public/connectors/Public';
 import PublicRoutes from './public/routes';
 import ScheduleRoutes from './schedule/routes';
 import DirectoryRoutes from './directory/routes';
+
+function LoaderWithNav() {
+  return (
+    <div>
+      <Nav authInfo={null} logout={() => {}} />
+      <Loader />
+    </div>
+  );
+}
 
 function NoOrgs() {
   return (
@@ -43,7 +53,7 @@ const ensureLoggedIn = connectedRouterRedirect({
   redirectPath: '/login',
   authenticatingSelector: state => getIsAuthenticating(state),
   authenticatedSelector: state => !!getUserInfo(state),
-  AuthenticatingComponent: Loader,
+  AuthenticatingComponent: LoaderWithNav,
   wrapperDisplayName: 'EnsureLoggedIn'
 });
 
@@ -57,7 +67,7 @@ const ensureNotLoggedIn = connectedRouterRedirect({
   allowRedirectBack: false,
   authenticatingSelector: state => getIsAuthenticating(state),
   authenticatedSelector: state => !getUserInfo(state),
-  AuthenticatingComponent: Loader,
+  AuthenticatingComponent: LoaderWithNav,
   wrapperDisplayName: 'EnsureNotLoggedIn'
 });
 

@@ -26,8 +26,6 @@ const sectionContent = {
   variants: [{
     collection: 'variants'
   }, {
-    collection: 'departures'
-  }, {
     collection: 'times'
   }],
   interface: [{
@@ -70,6 +68,9 @@ export function getSliceContent(sliceType, sliceName) {
 
 export function getContentList(scriptContent, sliceType, sliceName) {
   const contentMap = getSliceContent(sliceType, sliceName);
+  if (!contentMap) {
+    return {};
+  }
   return Object.fromEntries(contentMap.map((contentMapItem) => {
     const collectionName = contentMapItem.collection;
     const items = contentMapItem.filter

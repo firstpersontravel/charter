@@ -6,7 +6,7 @@ const Registry = require('../registry/registry');
 const Validator = require('../utils/validator');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 23;
+const CURRENT_VERSION = 24;
 
 const metaSchema = {
   type: 'object',

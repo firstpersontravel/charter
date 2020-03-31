@@ -40,7 +40,15 @@ app.use((req, res, next) => {
 });
 
 // Log requests
+const staticPrefixes = ['/static', '/build', '/travel/dist'];
 app.use((req, res, next) => {
+  // Don't log static file requests.
+  for (const staticPrefix of staticPrefixes) {
+    if (req.originalUrl.startsWith(staticPrefix)) {
+      next();
+      return;
+    }
+  }
   config.logger.info({ name: 'request' },
     `${req.method} ${req.originalUrl} ...`);
   res.on('finish', () => {

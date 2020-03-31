@@ -12,7 +12,7 @@ const ALLOWED_MEDIA_EXTENSIONS = ['jpg', 'jpeg', 'png', 'mp3', 'mp4'];
 class TripRelaysController {
   /**
    * Get the user phone number for a relay spec -- either blank if its a
-   * trailhead, null if the user wasn't found, or a phone number.
+   * entryway, null if the user wasn't found, or a phone number.
    */
   static async userNumberForRelay(trip, relaySpec) {
     // Find the player and user for this trip and relay spec.
@@ -32,8 +32,8 @@ class TripRelaysController {
    * Ensure a relay exists for a given spec and script.
    */
   static async ensureRelay(trip, relaySpec) {
-    // If it's a trailhead, look for a universal relay.
-    if (relaySpec.trailhead) {
+    // If it's a entryway, look for a universal relay.
+    if (relaySpec.entryway) {
       return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
         null, relaySpec, '');
     }

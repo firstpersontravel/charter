@@ -2,18 +2,34 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
+import { Link } from 'react-router-dom';
 
+import Alert from '../../partials/Alert';
 import Loader from '../../partials/Loader';
 
-export default function DesignIndex({ scripts }) {
+export default function DesignIndex({ match, scripts }) {
   if (scripts.isLoading) {
     return <Loader />;
   }
   if (scripts.isError) {
-    return <div className="container-fluid">Error</div>;
+    return (
+      <Alert
+        color="danger"
+        content="Error loading script."
+        action={
+          <Link to={`/${match.params.orgName}`}>Go back?</Link>
+        } />
+    );
   }
   if (scripts.length === 0) {
-    return <div className="container-fluid">No script found</div>;
+    return (
+      <Alert
+        color="warning"
+        content="No script found for this experience."
+        action={
+          <Link to={`/${match.params.orgName}`}>Go back?</Link>
+        } />
+    );
   }
   const script = _(scripts)
     .filter({ isArchived: false })
@@ -36,5 +52,6 @@ export default function DesignIndex({ scripts }) {
 }
 
 DesignIndex.propTypes = {
-  scripts: PropTypes.array.isRequired
+  scripts: PropTypes.array.isRequired,
+  match: PropTypes.object.isRequired
 };

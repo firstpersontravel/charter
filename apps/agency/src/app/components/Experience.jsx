@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
+import Alert from '../../partials/Alert';
 import Nav from '../../partials/Nav';
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
@@ -27,19 +29,16 @@ class Experience extends Component {
       return <Loader />;
     }
     if (this.props.experienceRequest === 'rejected') {
-      return (
-        <div className="alert alert-danger">
-          Error loading experience.
-        </div>
-      );
+      return <Alert color="danger" content="Error loading experience." />;
     }
     if (!this.props.experience) {
       return (
-        <div className="alert alert-warning">
-          Experience not found.
-          &nbsp;
-          <a href={`/${this.props.match.params.orgName}`}>Go back</a>
-        </div>
+        <Alert
+          color="warning"
+          content="Experience not found."
+          action={
+            <Link to={`/${this.props.match.params.orgName}`}>Go back?</Link>
+          } />
       );
     }
     return null;

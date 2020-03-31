@@ -71,18 +71,18 @@ describe('TripRelaysController', () => {
         2, 10, 1, relaySpec, phoneNum);
     });
 
-    it('fetches relay for trailhead', async () => {
-      const trailheadSpec = { for: 'Role', trailhead: true, experienceId: 10 };
+    it('fetches relay for entryway', async () => {
+      const entrywaySpec = { for: 'Role', entryway: true, experienceId: 10 };
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
       sandbox.stub(TripRelaysController, 'userNumberForRelay');
 
       const res = await TripRelaysController.ensureRelay(
-        trip, trailheadSpec);
+        trip, entrywaySpec);
 
       assert.strictEqual(res, stubRelay);
       sinon.assert.notCalled(TripRelaysController.userNumberForRelay);
       sinon.assert.calledWith(RelaysController.ensureRelay,
-        2, 10, null, trailheadSpec, '');
+        2, 10, null, entrywaySpec, '');
     });
 
     it('returns null if no phone number found', async () => {

@@ -5,10 +5,10 @@ const models = require('../models');
 const RelayController = require('./relay');
 const TripsController = require('./trips');
 
-class TrailheadController {
+class EntrywayController {
   /**
    * Update the player to assign a user when starting a new trip
-   * for a trailhead.
+   * for a entryway.
    */
   static async assignActor(experience, trip, role) {
     // If we pass through here, try finding a user for this role.
@@ -41,17 +41,17 @@ class TrailheadController {
       if (role.type !== 'performer') {
         continue;
       }
-      await TrailheadController.assignActor(script.experience, trip,
+      await EntrywayController.assignActor(script.experience, trip,
         role);
     }
   }
 
   /**
-   * Create a new trip from an incoming trailhead message or call.
+   * Create a new trip from an incoming entryway message or call.
    */
-  static async createTripFromRelay(trailheadRelay, fromNumber) {
-    const script = await RelayController.scriptForRelay(trailheadRelay);
-    return this.createTrip(script, trailheadRelay.forRoleName, fromNumber);
+  static async createTripFromRelay(entrywayRelay, fromNumber) {
+    const script = await RelayController.scriptForRelay(entrywayRelay);
+    return this.createTrip(script, entrywayRelay.forRoleName, fromNumber);
   }
 
   /**
@@ -73,7 +73,7 @@ class TrailheadController {
       ['default']);
 
     // Look for a user, or create if doesn't exist.
-    const [trailheadUser, ] = await models.User.findOrCreate({
+    const [entrywayUser, ] = await models.User.findOrCreate({
       where: {
         orgId: script.orgId,
         experienceId: script.experienceId,
@@ -84,9 +84,9 @@ class TrailheadController {
     });
 
     // Create profile if not already exists
-    const [trailheadProfile, ] = await models.Profile.findOrCreate({
+    const [entrywayProfile, ] = await models.Profile.findOrCreate({
       where: {
-        userId: trailheadUser.id,
+        userId: entrywayUser.id,
         orgId: script.orgId,
         experienceId: script.experienceId,
         roleName: userRoleName,
@@ -99,21 +99,21 @@ class TrailheadController {
       }
     });
 
-    if (!trailheadProfile.isActive) {
-      await trailheadProfile.update({ isActive: true });
+    if (!entrywayProfile.isActive) {
+      await entrywayProfile.update({ isActive: true });
     }
 
-    // Update the trailhead player to be assigned to trailhead user.
-    await models.Player.update({ userId: trailheadUser.id }, {
+    // Update the entryway player to be assigned to entryway user.
+    await models.Player.update({ userId: entrywayUser.id }, {
       where: { tripId: trip.id, roleName: userRoleName }
     });
 
     // Update all other users
-    await TrailheadController.assignActors(script, trip);
+    await EntrywayController.assignActors(script, trip);
 
     // And return!
     return trip;
   }
 }
 
-module.exports = TrailheadController;
+module.exports = EntrywayController;

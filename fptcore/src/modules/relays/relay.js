@@ -24,7 +24,7 @@ module.exports = {
       required: true,
       help: 'The role that is being messaged with.'
     },
-    trailhead: {
+    entryway: {
       type: 'boolean',
       default: false,
       help: 'If this value is true, the relay will be assigned a universal number. New players can text this number to start a new trip.'

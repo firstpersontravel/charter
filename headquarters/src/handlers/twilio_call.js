@@ -85,7 +85,7 @@ class TwilioCallHandler {
     // Lookup the trip id or create one.
     const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
     if (!tripId) {
-      // If we couldn't create one, probably cos its not a trailhead.
+      // If we couldn't create one, probably cos its not an entryway.
       return TwilioCallUtil.hangup();
     }
 

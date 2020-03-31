@@ -14,14 +14,13 @@ const TestUtil = require('../util');
 
 const scriptContent = {
   meta: { version: ScriptCore.CURRENT_VERSION },
-  departures: [{ name: 'T1', title: 'T1' }],
   roles: [
     { name: 'Actor', title: 'Actor', type: 'performer' },
     { name: 'Player', title: 'Player', type: 'traveler' }
   ],
   relays: [
     { name: 'r1', for: 'Actor', as: 'Actor', with: 'Player' },
-    { name: 'r2', for: 'Player', as: 'Player', with: 'Actor', trailhead: true }
+    { name: 'r2', for: 'Player', as: 'Player', with: 'Actor', entryway: true }
   ]
 };
 

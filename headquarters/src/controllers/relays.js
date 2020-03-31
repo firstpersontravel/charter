@@ -51,7 +51,7 @@ class RelaysController {
       .value();
     let overlaps;
     if (userPhoneNumber === '') {
-      // If we're trying to create a new trailhead, don't overlap with
+      // If we're trying to create a new entryway, don't overlap with
       // anything at all.
       overlaps = {};
     } else {

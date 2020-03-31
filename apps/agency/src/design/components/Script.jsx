@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 
 import ExperienceModal from '../../app/partials/ExperienceModal';
+import Alert from '../../partials/Alert';
 import AreYouSure from '../../partials/AreYouSure';
 import Loader from '../../partials/Loader';
 import { sections } from '../utils/section-utils';
@@ -342,7 +343,7 @@ class Script extends Component {
       <div style={{ backgroundColor: '#eee' }}>
         <div className="container-fluid m-0 px-3 py-2">
           <div className="row">
-            <div className="col-sm-6">
+            <div className="col-sm-3">
               <NavLink
                 activeClassName="bold"
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`}>
@@ -355,7 +356,7 @@ class Script extends Component {
                 Test
               </NavLink>
             </div>
-            <div className="col-sm-6 align-right-sm">
+            <div className="col-sm-9 align-right-sm">
               <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Rev. {this.props.script.revision}
               </button>
@@ -382,10 +383,24 @@ class Script extends Component {
       return <Loader />;
     }
     if (this.props.script.isError) {
-      return <div className="container-fluid">Error</div>;
+      return (
+        <Alert
+          color="danger"
+          content="Error loading script."
+          action={
+            <Link to={`/${this.props.match.params.orgName}`}>Go back?</Link>
+          } />
+      );
     }
     if (this.props.script.isNull) {
-      return <div className="container-fluid">Script not found.</div>;
+      return (
+        <Alert
+          color="warning"
+          content="Script not found."
+          action={
+            <Link to={`/${this.props.match.params.orgName}`}>Go back?</Link>
+          } />
+      );
     }
 
     const query = new URLSearchParams(this.props.location.search);

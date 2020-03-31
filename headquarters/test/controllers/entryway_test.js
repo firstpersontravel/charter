@@ -4,10 +4,10 @@ const sinon = require('sinon');
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
-const TrailheadController = require('../../src/controllers/trailhead');
+const EntrywayController = require('../../src/controllers/entryway');
 const TripsController = require('../../src/controllers/trips');
 
-const mockTrailhead = {
+const mockEntryway = {
   orgId: 9,
   experienceId: 20,
   forRoleName: 'Player'
@@ -37,16 +37,16 @@ const mockScript = {
   }
 };
 
-describe('TrailheadController', () => {
+describe('EntrywayController', () => {
   describe('#assignActors', () => {
     it('assigns users for actor roles only', async () => {
-      sandbox.stub(TrailheadController, 'assignActor').resolves();
+      sandbox.stub(EntrywayController, 'assignActor').resolves();
 
-      await TrailheadController.assignActors(mockScript, mockTrip);
+      await EntrywayController.assignActors(mockScript, mockTrip);
 
       // Test called only once with the actor
-      sinon.assert.calledOnce(TrailheadController.assignActor);
-      sinon.assert.calledWith(TrailheadController.assignActor,
+      sinon.assert.calledOnce(EntrywayController.assignActor);
+      sinon.assert.calledWith(EntrywayController.assignActor,
         mockScript.experience, mockTrip, mockScript.content.roles[0]);
     });
   });
@@ -60,7 +60,7 @@ describe('TrailheadController', () => {
       sandbox.stub(models.Profile, 'findAll').resolves(users);
       sandbox.stub(models.Player, 'update').resolves();
 
-      await TrailheadController.assignActor(
+      await EntrywayController.assignActor(
         mockScript.experience, mockTrip, { name: 'role' });
 
       // Test assertions
@@ -82,7 +82,7 @@ describe('TrailheadController', () => {
       sandbox.stub(models.Profile, 'findAll').resolves([]);
       sandbox.stub(models.Player, 'update').resolves();
 
-      await TrailheadController.assignActor(
+      await EntrywayController.assignActor(
         mockScript.experience, mockTrip, { name: 'role' });
 
       // Test assertions
@@ -110,10 +110,10 @@ describe('TrailheadController', () => {
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
       sandbox.stub(TripsController, 'createTrip').resolves(mockTrip);
       sandbox.stub(models.Player, 'update').resolves();
-      sandbox.stub(TrailheadController, 'assignActors').resolves();
+      sandbox.stub(EntrywayController, 'assignActors').resolves();
 
-      // Create from trailhead
-      await TrailheadController.createTripFromRelay(mockTrailhead, '123');
+      // Create from entryway
+      await EntrywayController.createTripFromRelay(mockEntryway, '123');
 
       // Test calls
       sinon.assert.calledWith(models.Group.findOrCreate, {
@@ -150,7 +150,7 @@ describe('TrailheadController', () => {
           isArchived: false
         }
       });
-      sinon.assert.calledWith(TrailheadController.assignActors,
+      sinon.assert.calledWith(EntrywayController.assignActors,
         mockScript, mockTrip);
     });
   });

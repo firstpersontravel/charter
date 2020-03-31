@@ -67,7 +67,7 @@ class RelayController {
    */
   static async lookupPlayer(relay, userNumber) {
     // If we found an existing matching player with this number,
-    // then we're good -- return it -- even if this is a trailhead because
+    // then we're good -- return it -- even if this is an entryway because
     // that means a specific user has already been assigned.
     return await models.Player.findOne({
       where: { roleName: relay.forRoleName },

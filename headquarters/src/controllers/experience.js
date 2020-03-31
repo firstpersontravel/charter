@@ -22,24 +22,24 @@ class ExperienceController {
   }
 
   /**
-   * Create trailhead relays.
+   * Create entryway relays.
    */
-  static async ensureTrailheads(experienceId) {
+  static async ensureEntrywayRelays(experienceId) {
     // Get active script by name
     const experience = await models.Experience.findByPk(experienceId);
     const script = await this.findActiveScript(experience.id);
 
-    // Create only trailhead relays
-    const trailheadRelaySpecs = _.filter(script.content.relays, {
-      trailhead: true
+    // Create only entryway relays
+    const entrywayRelaySpecs = _.filter(script.content.relays, {
+      entryway: true
     });
-    const trailheadRelays = [];
-    for (const relaySpec of trailheadRelaySpecs) {
+    const entrywayRelays = [];
+    for (const relaySpec of entrywayRelaySpecs) {
       const relay = await RelaysController.ensureRelay(experience.orgId,
         experienceId, null, relaySpec, '');
-      trailheadRelays.push(relay);
+      entrywayRelays.push(relay);
     }
-    return trailheadRelays.filter(Boolean);
+    return entrywayRelays.filter(Boolean);
   }
 }
 

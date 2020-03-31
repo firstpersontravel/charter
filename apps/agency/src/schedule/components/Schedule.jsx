@@ -17,6 +17,18 @@ class Schedule extends Component {
     super(props);
     this.handleCreateGroupToggle = this.handleCreateGroupToggle.bind(this);
     this.handleCreateGroup = this.handleCreateGroup.bind(this);
+    this.state = { redirectToNext: null };
+  }
+
+  componentDidUpdate(prevProps) {
+    const oldMax = Math.max(...prevProps.groups.map(g => g.id));
+    const newMax = Math.max(...this.props.groups.map(g => g.id));
+    if (this.state.redirectToNext === oldMax && newMax > oldMax) {
+      this.props.history.push(
+        `/${this.props.org.name}/${this.props.experience.name}/schedule` +
+        `/${this.props.match.params.year}/${this.props.match.params.month}` +
+        `/${newMax}`);
+    }
   }
 
   handleCreateGroupToggle() {
@@ -33,14 +45,16 @@ class Schedule extends Component {
       scriptId: fields.scriptId
     });
     this.handleCreateGroupToggle();
+    const oldMax = Math.max(...this.props.groups.map(g => g.id));
+    this.setState({ redirectToNext: oldMax });
   }
 
   renderEntrywayRelay() {
     const activeScript = _.find(this.props.scripts, { isActive: true });
-    const trailheadSpecs = _.filter(_.get(activeScript, 'content.relays'), {
-      trailhead: true
+    const entrywaySpecs = _.filter(_.get(activeScript, 'content.relays'), {
+      entryway: true
     });
-    if (!trailheadSpecs.length) {
+    if (!entrywaySpecs.length) {
       return (
         <div>
           { /* eslint-disable-next-line max-len */ }
@@ -49,20 +63,20 @@ class Schedule extends Component {
       );
     }
     let hasUnallocated = false;
-    const renderedTrailheads = trailheadSpecs.map((trailhead) => {
+    const renderedEntryways = entrywaySpecs.map((entryway) => {
       const relay = _.find(this.props.experience.relays, {
-        forRoleName: trailhead.for,
-        asRoleName: trailhead.as,
-        withRoleName: trailhead.with,
+        forRoleName: entryway.for,
+        asRoleName: entryway.as,
+        withRoleName: entryway.with,
         userPhoneNumber: ''
       });
       if (!relay) {
         hasUnallocated = true;
       }
       const forRole = _.find(activeScript.content.roles,
-        { name: trailhead.for });
+        { name: entryway.for });
       return (
-        <span key={trailhead.name}>
+        <span key={entryway.name}>
           {forRole.title} {relay ?
             `at ${TextUtil.formatPhone(relay.relayPhoneNumber)}` :
             '(not yet allocated)'}
@@ -82,7 +96,7 @@ class Schedule extends Component {
 
     return (
       <div>
-        <i className="fa fa-phone" /> Experience can be entered through calls or texts: {renderedTrailheads}
+        <i className="fa fa-phone" /> Experience can be entered through calls or texts: {renderedEntryways}
         {allocateRelaysBtn}
       </div>
     );
@@ -128,19 +142,24 @@ class Schedule extends Component {
   renderGroupItem(group) {
     const archivedStyle = { textDecoration: 'line-through' };
     const archivedIcon = <i className="fa fa-archive ml-1" />;
-    const groupDate = moment.utc(group.date).format('MMM D, YYYY');
-    const groupTitle = groupDate + (group.isArchived ? ' (archived)' : '');
+    const groupDate = moment.utc(group.date).format('MMM D');
+    const tripTitles = group.trips.length ?
+      ` ∙ ${group.trips.map(trip => trip.title).join(', ')}` :
+      '';
+    const groupTitle = `${groupDate}${tripTitles}`;
+    const groupText = groupTitle + (group.isArchived ? ' (archived)' : '');
     return {
       key: group.id,
-      text: groupTitle,
+      text: groupText,
       label: (
         <span style={group.isArchived ? archivedStyle : null}>
-          {groupDate}{group.isArchived ? archivedIcon : null}
+          {groupTitle}{group.isArchived ? archivedIcon : null}
         </span>
       ),
       url: (
         `/${this.props.org.name}/${this.props.experience.name}` +
-        `/schedule/${moment(group.date).format('YYYY/MM')}/${group.id}`
+        `/schedule/${moment(group.date).format('YYYY/MM')}` +
+        `/${group.id}${this.props.location.search}`
       )
     };
   }
@@ -179,11 +198,15 @@ class Schedule extends Component {
   }
 
   render() {
-    const query = new URLSearchParams(this.props.location.search);
-    const isCreateGroupModalOpen = query.get('group') === 'new';
     if (this.props.groups.isError) {
       return <div className="container-fluid">Error</div>;
     }
+    const query = new URLSearchParams(this.props.location.search);
+    const isCreateGroupModalOpen = query.get('group') === 'new';
+    const isShowingArchived = query.get('archived') === 'true';
+    const toggleArchivedLink = isShowingArchived ?
+      <Link to={{ search: '' }}>Hide archived</Link> :
+      <Link to={{ search: '?archived=true' }}>Show archived</Link>;
     return (
       <div className="container-fluid">
         <div className="alert alert-info">
@@ -194,6 +217,9 @@ class Schedule extends Component {
           <div className="col-sm-4">
             {this.renderMonth()}
             {this.renderGroups()}
+            <div className="m-1 d-none d-sm-block">
+              {toggleArchivedLink}
+            </div>
           </div>
           <div className="col-sm-8">
             {this.props.children}
