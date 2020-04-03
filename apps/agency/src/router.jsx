@@ -167,6 +167,7 @@ function AuthedRoutes() {
     <Switch>
       <Route path="/" exact component={AuthedIndexConnector} />
       <Route path="/login" exact component={AuthedIndexConnector} />
+      <Route path="/signup" exact component={AuthedIndexConnector} />
       <Route path="/logout" exact component={LogoutConnector} />
       <Route path="/no-orgs" exact component={NoOrgsConnector} />
       <Route path="/:orgName/:experienceName" component={ExperienceRoutes} />

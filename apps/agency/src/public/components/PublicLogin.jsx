@@ -54,7 +54,7 @@ export default class PublicLogin extends Component {
     return (
       <div className="container-fluid">
         <div className="col-md-6 offset-md-3">
-          <h1>Welcome to First Person Travel!</h1>
+          <h1>Welcome to Charter!</h1>
           <p>
             If you have an account, please sign in here. Otherwise you can <Link to="/signup">create an account.</Link>
           </p>
