@@ -5,6 +5,7 @@
   "scripts": {
     "pretest": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
+    "migrate": "npm run db:migrate; npm run scripts:migrate",
     "db:migrate": "sequelize db:migrate",
     "scripts:migrate": "node cmd/migrate-scripts.js | pino -c",
     "scripts:dryrun": "node cmd/migrate-scripts.js --dry-run | pino -c"

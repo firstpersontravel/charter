@@ -15,7 +15,7 @@ export const newItemsForSpecType = {
   timeOffset: '',
   name: '',
   media: '',
-  coords: null,
+  coords: [0, 0],
   timeShorthand: '',
   simpleAttribute: '',
   lookupable: '',

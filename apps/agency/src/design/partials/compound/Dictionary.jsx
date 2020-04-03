@@ -12,7 +12,7 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
     // eslint-disable-next-line react/no-array-index-key
     <div key={key}>
       <button
-        onClick={() => onPropUpdate(`${path}[${key}]`, null)}
+        onClick={() => onPropUpdate(`${path}[${key}]`, '___DELETE')}
         className="btn btn-xs btn-outline-secondary">
         <i className="fa fa-minus" />
       </button>
