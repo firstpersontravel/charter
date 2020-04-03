@@ -89,6 +89,9 @@ function renderPanel(trip, player, page, panel) {
 }
 
 export function renderHeader(trip, player, page) {
+  if (!page) {
+    return 'No page';
+  }
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone) : page.title;

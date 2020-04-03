@@ -252,7 +252,8 @@ export default class TripTestHarness extends Component {
       logEntry.message.slice(0, maxLength) : logEntry.message;
     const badgeClasses = {
       info: 'badge-info',
-      warning: 'badge-warning'
+      warn: 'badge-warning',
+      error: 'badge-danger'
     };
     return (
       <div key={logEntry.id} style={{ wordBreak: 'break-word', overflow: 'hidden' }}>

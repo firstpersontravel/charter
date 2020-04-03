@@ -15,7 +15,7 @@ module.exports = {
     if (!untilTimestamp) {
       return [{
         operation: 'log',
-        level: 'warning',
+        level: 'warn',
         message: `Could not find time matching "${params.until}".`
       }];
     }

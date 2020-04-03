@@ -5,7 +5,7 @@ const models = require('../models');
 const LEVELS = {
   debug: 0,
   info: 10,
-  warning: 20,
+  warn: 20,
   error: 30,
   fatal: 40
 };
@@ -20,7 +20,7 @@ class KernelLogger {
   }
 
   static async warn(trip, message) {
-    await this.log(trip, 'warning', message);
+    await this.log(trip, 'warn', message);
   }
 
   static async error(trip, message) {

@@ -22,6 +22,10 @@ class KernelTriggers {
    * Test if a trigger is set off by an event.
    */
   static doesEventFireTrigger(trigger, event, actionContext) {
+    // Triggers with no events can't fire.
+    if (!trigger.event) {
+      return false;
+    }
     // If no matcher for this event type, exit
     if (!Registry.events[event.type]) {
       return false;

@@ -55,7 +55,7 @@ describe('#send_email', () => {
 
     assert.deepStrictEqual(res, [{
       operation: 'log',
-      level: 'warning',
+      level: 'warn',
       message: 'Tried to send email but player "Player" had no email address.'
     }]);
   });

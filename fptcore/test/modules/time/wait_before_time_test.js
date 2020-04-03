@@ -44,7 +44,7 @@ describe('#wait_before_time', () => {
 
     assert.deepStrictEqual(res, [{
       operation: 'log',
-      level: 'warning',
+      level: 'warn',
       message: 'Could not find time matching "t".'
     }]);
   });

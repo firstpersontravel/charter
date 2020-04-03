@@ -13,7 +13,7 @@ module.exports = {
     if (actionContext.evalContext.audio_is_playing) {
       return [{
         operation: 'log',
-        level: 'warning',
+        level: 'warn',
         message: 'Tried to resume audio when audio was already playing.'
       }];
     }

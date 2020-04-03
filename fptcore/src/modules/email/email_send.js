@@ -83,7 +83,7 @@ module.exports = {
     if (!toPlayerContext.email) {
       return [{
         operation: 'log',
-        level: 'warning',
+        level: 'warn',
         message: 'Tried to send email but player "' + toRole.title +
           '" had no email address.'
       }];

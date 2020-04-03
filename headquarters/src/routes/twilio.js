@@ -27,6 +27,11 @@ async function incomingCallRoute(req, res) {
 async function incomingCallStatusRoute(req, res) {
   const fromNumber = req.body.From.replace('+1', '');
   const toNumber = req.body.To.replace('+1', '');
+  if (fromNumber.length > 10 || toNumber.length > 10) {
+    logger.warn('Status received with international numbers.');
+    res.status(200).send('International numbers not supported.');
+    return;
+  }
 
   const relay = await RelaysController.findByNumber(toNumber, fromNumber);
   if (!relay) {

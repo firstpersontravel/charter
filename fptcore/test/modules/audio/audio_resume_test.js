@@ -38,7 +38,7 @@ describe('#resume_audio', () => {
     const res = resume_audio.getOps(params, actionContext);
     assert.deepStrictEqual(res, [{
       operation: 'log',
-      level: 'warning',
+      level: 'warn',
       message: 'Tried to resume audio when audio was already playing.'
     }]);
   });
