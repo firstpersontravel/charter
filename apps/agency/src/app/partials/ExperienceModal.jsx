@@ -43,8 +43,13 @@ function getDefaultState(experience, example, existingExperiences) {
 
 export default class ExperienceModal extends Component {
   static getDerivedStateFromProps(props, state) {
-    return getDefaultState(props.experience, props.example,
-      props.existingExperiences);
+    if (props.experience && props.experience.id !== state.prevExpId) {
+      return Object.assign(
+        { prevExpId: props.experience.id },
+        getDefaultState(props.experience, props.example,
+          props.existingExperiences));
+    }
+    return null;
   }
 
   constructor(props) {
@@ -157,7 +162,7 @@ export default class ExperienceModal extends Component {
             id="exp_host"
             className="form-control"
             value={this.state.domain}
-            onChange={_.curry(this.handleChangeField)('domain')}
+            onChange={e => this.handleChangeField('domain', e)}
             placeholder={placeholderDomain} />
         </div>
       </div>
@@ -166,7 +171,7 @@ export default class ExperienceModal extends Component {
     const overlapWarning = this.hasOverlappingName() ? (
       <div className="alert alert-warning">
         An existing experience has a title too close to
-        &nbsp;&quot;{this.state.title}&quot;; please choose a distinct title.
+        &quot;{this.state.title}&quot;; please choose a distinct title.
       </div>
     ) : null;
 
@@ -188,7 +193,7 @@ export default class ExperienceModal extends Component {
                   className="form-control"
                   value={this.state.title}
                   ref={this.firstInputRef}
-                  onChange={_.curry(this.handleChangeField)('title')}
+                  onChange={e => this.handleChangeField('title', e)}
                   placeholder="Title" />
               </div>
             </div>
@@ -198,7 +203,7 @@ export default class ExperienceModal extends Component {
                 <select
                   className="form-control"
                   id="exp_timezone"
-                  onChange={_.curry(this.handleChangeField)('timezone')}
+                  onChange={e => this.handleChangeField('timezone', e)}
                   value={this.state.timezone}>
                   {timezoneOptions}
                 </select>

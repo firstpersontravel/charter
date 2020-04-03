@@ -54,6 +54,12 @@ class Validations {
     }
   }
 
+  static integer(script, name, spec, param) {
+    if (!Number.isInteger(Number(param))) {
+      return ['Integer param "' + name + '" should be a integer.'];
+    }
+  }
+
   static number(script, name, spec, param) {
     if (isNaN(Number(param))) {
       return ['Number param "' + name + '" should be a number.'];

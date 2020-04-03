@@ -62,23 +62,25 @@ export default class PublicLogin extends Component {
           {this.renderLoginFailedAlert()}
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
-              <label htmlFor="exampleInputEmail1">Email address</label>
+              <label htmlFor="email">Email address</label>
               <input
                 type="email"
                 name="email"
                 className="form-control"
-                id="exampleInputEmail1"
+                autoComplete="username"
+                id="email"
                 value={this.state.email}
                 onChange={e => this.setState({ email: e.target.value })}
                 placeholder="Enter email" />
             </div>
             <div className="form-group">
-              <label htmlFor="exampleInputPassword1">Password</label>
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 name="password"
                 className="form-control"
-                id="exampleInputPassword1"
+                autoComplete="current-password"
+                id="password"
                 value={this.state.password}
                 onChange={e => this.setState({ password: e.target.value })}
                 placeholder="Password" />

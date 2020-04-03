@@ -15,7 +15,6 @@ class Experience extends Component {
     return (
       <Nav
         authInfo={this.props.authInfo}
-        logout={this.props.logout}
         org={this.props.org}
         experience={this.props.experience}
         experiences={this.props.experiences}
@@ -76,8 +75,7 @@ Experience.propTypes = {
   groups: PropTypes.array.isRequired,
   org: PropTypes.object,
   match: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
-  logout: PropTypes.func.isRequired
+  history: PropTypes.object.isRequired
 };
 
 Experience.defaultProps = {

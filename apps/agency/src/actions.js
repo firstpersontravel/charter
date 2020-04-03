@@ -257,7 +257,6 @@ export function logout() {
   return function (dispatch) {
     localStorage.removeItem('auth_latest');
     dispatch(clearInstances('auth'));
-    window.location.href = '/';
   };
 }
 

@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Nav from '../../partials/Nav';
 
-export default function Public({ authInfo, children, logout }) {
+export default function Public({ authInfo, children }) {
   return (
     <div>
-      <Nav authInfo={authInfo} logout={logout} />
+      <Nav authInfo={authInfo} />
       {children}
     </div>
   );
@@ -14,8 +14,7 @@ export default function Public({ authInfo, children, logout }) {
 
 Public.propTypes = {
   authInfo: PropTypes.object,
-  children: PropTypes.node.isRequired,
-  logout: PropTypes.func.isRequired
+  children: PropTypes.node.isRequired
 };
 
 Public.defaultProps = {

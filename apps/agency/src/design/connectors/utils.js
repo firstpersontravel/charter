@@ -4,6 +4,18 @@ import {
   instancesFromDatastore
 } from '../../datastore-utils';
 
+export function lookupExperience(state, ownProps) {
+  return instanceFromDatastore(state, {
+    col: 'experiences',
+    filter: {
+      isArchived: false,
+      name: ownProps.match.params.experienceName,
+      org: { name: ownProps.match.params.orgName }
+    },
+    include: { org: instanceIncluder('orgs', 'id', 'orgId') }
+  });
+}
+
 export function lookupExperiences(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'experiences',

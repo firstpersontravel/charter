@@ -15,7 +15,7 @@ function renderAction(action) {
   return (
     <div>
       <hr />
-      <p className="mb-0">{action}</p>
+      {action}
     </div>
   );
 }
@@ -27,7 +27,7 @@ export default function Alert({ color, header, content, action }) {
         <div className="w-25 mx-auto">
           <div className={`alert alert-${color}`} role="alert">
             {renderHeader(header)}
-            <p>{content}</p>
+            <div>{content}</div>
             {renderAction(action)}
           </div>
         </div>

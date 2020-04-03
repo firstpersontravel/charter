@@ -74,6 +74,7 @@ export default class PublicSignup extends Component {
                 type="email"
                 name="email"
                 className="form-control"
+                autoComplete="username"
                 id="emailInput"
                 value={this.state.email}
                 onChange={e => this.setState({ email: e.target.value })}
@@ -85,6 +86,7 @@ export default class PublicSignup extends Component {
                 type="password"
                 name="password"
                 className="form-control"
+                autoComplete="new-password"
                 id="pwInput"
                 value={this.state.password}
                 onChange={e => this.setState({ password: e.target.value })}

@@ -39,8 +39,8 @@ class KernelOpController {
   }
 
   static async updatePlayerFields(objs, op) {
-    const player = _.find(objs.players, { roleName: op.roleName });
-    return await player.update(op.fields);
+    const players = _.filter(objs.players, { roleName: op.roleName });
+    return Promise.all(players.map(player => player.update(op.fields)));
   }
 
   static async createMessage(objs, op) {

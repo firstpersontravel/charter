@@ -1,12 +1,15 @@
 import { connect } from 'react-redux';
 
 import DesignIndex from '../components/DesignIndex';
+import { updateInstance } from '../../actions';
+import { lookupExperience } from './utils';
 import {
   instanceIncluder,
   instancesFromDatastore
 } from '../../datastore-utils';
 
 const mapStateToProps = (state, ownProps) => ({
+  experience: lookupExperience(state, ownProps),
   scripts: instancesFromDatastore(state, {
     col: 'scripts',
     filter: {
@@ -21,6 +24,8 @@ const mapStateToProps = (state, ownProps) => ({
   })
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  updateInstance: (...args) => dispatch(updateInstance(...args))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(DesignIndex);

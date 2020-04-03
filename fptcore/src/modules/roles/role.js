@@ -12,6 +12,7 @@ module.exports = {
       required: true,
       help: 'Type of role. "Traveler" refers to the audience, "performer" can be used for actors or internal staff, and "scripted" is for automated roles that are not assigned users.'
     },
+    max_players: { type: 'integer', default: 1 },
     active_if: { type: 'component', component: 'conditions' },
     starting_page: { type: 'reference', collection: 'pages' },
     required_values: {

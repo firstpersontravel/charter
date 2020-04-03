@@ -7,11 +7,12 @@ import { Link } from 'react-router-dom';
 import Alert from '../../partials/Alert';
 import Loader from '../../partials/Loader';
 
-export default function DesignIndex({ match, scripts }) {
-  if (scripts.isLoading) {
+export default function DesignIndex({ match, experience, scripts, history,
+  updateInstance }) {
+  if (scripts.isLoading || experience.isLoading) {
     return <Loader />;
   }
-  if (scripts.isError) {
+  if (scripts.isError || experience.isError) {
     return (
       <Alert
         color="danger"
@@ -27,7 +28,21 @@ export default function DesignIndex({ match, scripts }) {
         color="warning"
         content="No script found for this experience."
         action={
-          <Link to={`/${match.params.orgName}`}>Go back?</Link>
+          <span>
+            <button
+              className="btn btn-link"
+              onClick={() => {
+                updateInstance('experiences', experience.id, {
+                  isArchived: true
+                });
+                history.push(`/${experience.org.name}`);
+              }}>
+              Archive experience
+            </button>
+            <Link className="btn btn-link" to={`/${match.params.orgName}`}>
+              Back
+            </Link>
+          </span>
         } />
     );
   }
@@ -53,5 +68,8 @@ export default function DesignIndex({ match, scripts }) {
 
 DesignIndex.propTypes = {
   scripts: PropTypes.array.isRequired,
-  match: PropTypes.object.isRequired
+  experience: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  updateInstance: PropTypes.func.isRequired
 };

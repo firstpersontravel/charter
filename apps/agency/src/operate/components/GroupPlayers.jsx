@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { Evaluator, Registry } from 'fptcore';
+import { Evaluator, PlayerCore, Registry } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../../schedule/utils';
@@ -22,20 +22,23 @@ export default class GroupPlayers extends Component {
     this.handleAssignUser = this.handleAssignUser.bind(this);
   }
 
-  handleAssignUser(roleName, trips, userId) {
+  handleAssignUser(roleName, trip, player, userId) {
     const user = _.find(this.props.users, { id: Number(userId) });
-    _.each(trips, (trip) => {
-      // Find player for each trip.
-      const player = _.find(trip.players, { roleName: roleName });
-      if (!player) {
-        console.warn('Player not found.');
-        return;
-      }
-      // If it exists, update the player.
-      const updateFields = { userId: user ? user.id : null };
-      this.props.updateInstance('players', player.id,
-        updateFields);
-    });
+    if (!player) {
+      const initialFields = PlayerCore.getInitialFields(trip.script.content,
+        roleName, trip.variantNames.split(','));
+      const fields = Object.assign({
+        orgId: trip.orgId,
+        tripId: trip.id,
+        userId: userId
+      }, initialFields);
+      this.props.createInstance('players', fields);
+      return;
+    }
+    // If it exists, update the player.
+    const updateFields = { userId: user ? user.id : null };
+    this.props.updateInstance('players', player.id,
+      updateFields);
   }
 
   renderScheduleHeader(trip) {
@@ -49,28 +52,24 @@ export default class GroupPlayers extends Component {
     );
   }
 
-  renderRoleCell(roleName, trips) {
+  renderPlayerCell(roleName, trip, player, index) {
     const group = this.props.group;
     const experience = this.props.group.experience;
     const script = this.props.group.script;
-    const tripsWithRole = trips
-      .filter(trip => doesTripHaveRole(trip, roleName));
-    if (!experience || !script || tripsWithRole.length === 0) {
-      return null;
-    }
+
     const role = _.find(script.content.roles, { name: roleName });
-    const users = _.uniq(tripsWithRole
-      .map(trip => _.find(trip.players, { roleName: roleName }))
-      .map(player => player && player.user));
+    const userIdsAlreadyChosen = _.filter(trip.players, { roleName: roleName })
+      .filter(p => p !== player)
+      .map(p => p.user)
+      .filter(Boolean)
+      .map(user => user.id);
+    const user = player && player.user;
 
     let userLabel = 'Unassigned';
     let userClass = 'faint';
     let userId = '';
 
-    if (users.length > 1) {
-      userLabel = 'Mixed';
-    } else if (users.length === 1 && users[0]) {
-      const user = users[0];
+    if (user) {
       userLabel = `${user.firstName} ${user.lastName && `${user.lastName[0]}.`}`;
       userId = user.id;
       userClass = '';
@@ -82,34 +81,30 @@ export default class GroupPlayers extends Component {
         _.find(this.props.users, { id: profile.userId })
       ))
       .filter(Boolean)
-      .map(user => ({
-        value: user.id,
-        label: `${user.firstName} ${user.lastName}`
+      .filter(profileUser => !userIdsAlreadyChosen.includes(profileUser.id))
+      .map(profileUser => ({
+        value: profileUser.id,
+        label: `${profileUser.firstName} ${profileUser.lastName}`
       }));
     if (userChoices.length === 0) {
-      if (trips.length === 1) {
-        return (
-          <Link
-            to={{
-              pathname: `/${group.org.name}/${group.experience.name}/directory`,
-              query: {
-                editing: true,
-                role: roleName,
-                experienceId: experience.id
-              }
-            }}>
-            Add user
-          </Link>
-        );
-      }
-      return null;
+      return (
+        <Link
+          to={{
+            pathname:
+              `/${group.org.name}/${group.experience.name}/directory`,
+            search:
+              `?editing=true&role=${roleName}&experienceId=${experience.id}`
+          }}>
+          Create user
+        </Link>
+      );
     }
     const userChoicesWithNone = [{ value: '', label: 'Unassigned' }]
       .concat(userChoices);
-    const goToUser = (users.length === 1 && users[0]) ? (
+    const goToUser = user ? (
       <Link
         className="faint"
-        to={`/${group.org.name}/${group.experience.name}/directory/user/${users[0].id}`}>
+        to={`/${group.org.name}/${group.experience.name}/directory/user/${user.id}`}>
         <i className="fa fa-user" />
       </Link>
     ) : null;
@@ -118,7 +113,7 @@ export default class GroupPlayers extends Component {
         <PopoverControl
           title={role.title}
           choices={userChoicesWithNone}
-          onConfirm={_.curry(this.handleAssignUser)(roleName, tripsWithRole)}
+          onConfirm={_.curry(this.handleAssignUser)(roleName, trip, player)}
           value={userId}
           label={userLabel}
           labelClassName={userClass} />
@@ -127,19 +122,45 @@ export default class GroupPlayers extends Component {
     );
   }
 
+  renderRoleCell(roleName, trip) {
+    const experience = this.props.group.experience;
+    const script = this.props.group.script;
+    const tripHasRole = doesTripHaveRole(trip, roleName);
+    if (!experience || !script || !tripHasRole) {
+      return null;
+    }
+    const role = _.find(script.content.roles, { name: roleName });
+    const players = _.filter(trip.players, { roleName: roleName });
+    const playerCells = players.map(player => (
+      <div key={player.id}>
+        {this.renderPlayerCell(roleName, trip, player, 0)}
+      </div>
+    ));
+    const maxPlayers = role.max_players || 1;
+    const newCells = _.range(maxPlayers - players.length)
+      .map(i => (
+        <div key={i}>
+          {this.renderPlayerCell(roleName, trip, null, i)}
+        </div>
+      ));
+    return (
+      <div>
+        {playerCells}
+        {newCells}
+      </div>
+    );
+  }
+
   renderRoleRow(trips, role) {
     const tripRoleCells = trips.map(trip => (
       <td key={`${role.name}-${trip.id}`}>
-        {this.renderRoleCell(role.name, [trip])}
+        {this.renderRoleCell(role.name, trip)}
       </td>
     ));
     return (
       <tr key={role.name}>
         <td>{role.title}</td>
         {tripRoleCells}
-        <td key={`${role.name}-all`}>
-          {this.renderRoleCell(role.name, trips)}
-        </td>
       </tr>
     );
   }
@@ -167,7 +188,6 @@ export default class GroupPlayers extends Component {
               <tr>
                 <th>Role</th>
                 {headerCells}
-                <th>All</th>
               </tr>
             </thead>
             <tbody>
@@ -184,5 +204,6 @@ GroupPlayers.propTypes = {
   group: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
+  createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

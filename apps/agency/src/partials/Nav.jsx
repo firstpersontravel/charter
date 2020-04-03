@@ -6,13 +6,13 @@ import PropTypes from 'prop-types';
 
 import { getStage } from '../utils';
 
-const globalTitle = 'FPT Charter';
+const globalTitle = 'Charter';
 
 function titleForOrg(org) {
   return org.isPersonal ? 'Home' : org.title;
 }
 
-function renderRight(authInfo, logout) {
+function renderRight(authInfo) {
   if (!authInfo || !authInfo.user) {
     return (
       <ul className="navbar-nav ml-auto">
@@ -43,11 +43,9 @@ function renderRight(authInfo, logout) {
           </button>
           <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
             {orgLinks}
-            <button
-              className="btn btn-link dropdown-item"
-              onClick={() => logout()}>
-              Logout
-            </button>
+            <Link className="btn btn-link dropdown-item" to="/logout">
+              Log out
+            </Link>
           </div>
         </div>
       </li>
@@ -189,9 +187,8 @@ function renderMenu(org, experience, experiences, groups, groupId) {
   );
 }
 
-export default function Nav({
-  authInfo, logout, org, experience, experiences, groups, groupId
-}) {
+export default function Nav({ authInfo, org, experience, experiences, groups,
+  groupId }) {
   const orgTitle = org ? org.title : globalTitle;
   document.title = `${orgTitle}`;
   const stage = getStage();
@@ -208,7 +205,7 @@ export default function Nav({
         {renderMenu(org, experience, experiences, groups, groupId)}
       </div>
       <div className="navbar-collapse collapse w-100 order-3">
-        {renderRight(authInfo, logout)}
+        {renderRight(authInfo)}
       </div>
     </nav>
   );
@@ -216,7 +213,6 @@ export default function Nav({
 
 Nav.propTypes = {
   authInfo: PropTypes.object,
-  logout: PropTypes.func.isRequired,
   org: PropTypes.object,
   experience: PropTypes.object,
   experiences: PropTypes.array,

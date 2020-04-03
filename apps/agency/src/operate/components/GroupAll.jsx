@@ -104,6 +104,29 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const pathTripId = pathTripMatch ? pathTripMatch[1] : null;
   const tripsItem = renderTripsItem(group, pathTripId);
 
+  function playerItemsForRole(role) {
+    return _(allPlayers)
+      .filter('currentPageName')
+      .filter({ roleName: role.name })
+      .map('user')
+      .uniq()
+      .map(user => ({
+        url: (
+          `/${group.org.name}/${group.experience.name}` +
+          `/operate/${group.id}` +
+          `/role/${role.name}/${user ? user.id : 0}`
+        ),
+        text: `${role.title} (${user ? user.firstName : 'No user'})`
+      }))
+      .flatten()
+      .value();
+  }
+
+  const roleItems = _(roles)
+    .map(role => playerItemsForRole(role))
+    .flatten()
+    .value();
+
   const items = [{
     text: 'Group',
     isExact: true,
@@ -114,26 +137,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   }, {
     text: roleTitle,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/role`,
-    subItems: _(roles)
-      .map(role => (
-        _(allPlayers)
-          .filter('currentPageName')
-          .filter({ roleName: role.name })
-          .map('user')
-          .uniq()
-          .map(user => ({
-            url: (
-              `/${group.org.name}/${group.experience.name}` +
-              `/operate/${group.id}` +
-              `/role/${role.name}/${user ? user.id : 0}`
-            ),
-            text: `${role.title} (${user ? user.firstName : 'No user'})`
-          }))
-          .flatten()
-          .value()
-      ))
-      .flatten()
-      .value()
+    subItems: roleItems
   }, tripsItem];
 
   if (numMessagesNeedingReply) {

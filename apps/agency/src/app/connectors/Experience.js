@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Experience from '../components/Experience';
 import { lookupExperiences, lookupGroups } from './utils';
-import { logout, listCollection } from '../../actions';
+import { listCollection } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
   const orgName = ownProps.match.params.orgName;
@@ -23,8 +23,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  listCollection: (...args) => dispatch(listCollection(...args)),
-  logout: (...args) => dispatch(logout(...args))
+  listCollection: (...args) => dispatch(listCollection(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Experience);

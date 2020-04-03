@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect';
 import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper';
 
+import { logout as logoutAction } from './actions';
+
 import AppConnector from './app/connectors/App';
 import ExperienceConnector from './app/connectors/Experience';
 import OrgConnector from './app/connectors/Org';
@@ -25,7 +27,7 @@ import DirectoryRoutes from './directory/routes';
 function LoaderWithNav() {
   return (
     <div>
-      <Nav authInfo={null} logout={() => {}} />
+      <Nav />
       <Loader />
     </div>
   );
@@ -122,6 +124,26 @@ ExperienceRoutes.propTypes = {
   history: PropTypes.object.isRequired
 };
 
+class Logout extends React.Component {
+  componentDidMount() {
+    this.props.logout();
+  }
+
+  render() {
+    return <Redirect to="/logged-out" />;
+  }
+}
+
+Logout.propTypes = {
+  logout: PropTypes.func.isRequired
+};
+
+const logoutMapper = dispatch => ({
+  logout: () => dispatch(logoutAction())
+});
+
+const LogoutConnector = connect(null, logoutMapper)(Logout);
+
 function AuthedIndex({ firstOrgName }) {
   return <Redirect to={`/${firstOrgName}`} />;
 }
@@ -144,6 +166,8 @@ function AuthedRoutes() {
   return (
     <Switch>
       <Route path="/" exact component={AuthedIndexConnector} />
+      <Route path="/login" exact component={AuthedIndexConnector} />
+      <Route path="/logout" exact component={LogoutConnector} />
       <Route path="/no-orgs" exact component={NoOrgsConnector} />
       <Route path="/:orgName/:experienceName" component={ExperienceRoutes} />
       <Route path="/:orgName" component={OrgRoutes} />

@@ -9,7 +9,6 @@ class Organization extends Component {
     return (
       <Nav
         authInfo={this.props.authInfo}
-        logout={this.props.logout}
         org={this.props.org}
         experiences={this.props.experiences} />
     );
@@ -43,8 +42,7 @@ Organization.propTypes = {
   authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
   experiences: PropTypes.array.isRequired,
-  org: PropTypes.object,
-  logout: PropTypes.func.isRequired
+  org: PropTypes.object
 };
 
 Organization.defaultProps = {

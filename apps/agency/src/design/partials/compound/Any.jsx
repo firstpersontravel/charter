@@ -8,6 +8,7 @@ import CoordsField from '../fields/Coords';
 import DictionaryField from './Dictionary';
 import EnumField from '../fields/Enum';
 import EmailField from '../fields/Email';
+import IntegerField from '../fields/Integer';
 import ListField from './List';
 import LookupableField from '../fields/Lookupable';
 import MarkdownField from '../fields/Markdown';
@@ -30,6 +31,7 @@ const fieldComponents = {
   dictionary: DictionaryField,
   email: EmailField,
   enum: EnumField,
+  integer: IntegerField,
   list: ListField,
   lookupable: LookupableField,
   markdown: MarkdownField,
