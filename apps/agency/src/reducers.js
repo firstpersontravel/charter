@@ -1,6 +1,37 @@
 import _ from 'lodash';
 import update from 'immutability-helper';
 
+export const initialState = {
+  globalError: null,
+  requests: {},
+  requestErrors: {},
+  revisionHistory: {},
+  datastore: {
+    auth: [],
+    orgs: [],
+    assets: [],
+    experiences: [],
+    scripts: [],
+    groups: [],
+    profiles: [],
+    trips: [],
+    users: [],
+    players: [],
+    messages: [],
+    relays: [],
+    actions: []
+  }
+};
+
+function resetHandler(state, action) {
+  return Object.assign({}, initialState, {
+    // preserve requests
+    requests: Object.assign({}, state.requests, {
+      'auth.login': null
+    })
+  });
+}
+
 function saveRequestHandler(state, action) {
   const updates = {
     requests: { [action.operationName]: { $set: action.status } }
@@ -85,6 +116,7 @@ function setGlobalErrorHandler(state, action) {
 }
 
 const handlers = {
+  reset: resetHandler,
   saveInstances: saveInstancesHandler,
   clearInstances: clearInstancesHandler,
   updateInstanceFields: updateInstanceFieldsHandler,

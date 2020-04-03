@@ -4,6 +4,10 @@ import * as Sentry from '@sentry/browser';
 import config from './config';
 import { getStage } from './utils';
 
+function reset() {
+  return { type: 'reset' };
+}
+
 function saveRequest(operationName, status, error) {
   return {
     type: 'saveRequest',
@@ -256,7 +260,7 @@ export function signup(email, password, orgTitle) {
 export function logout() {
   return function (dispatch) {
     localStorage.removeItem('auth_latest');
-    dispatch(clearInstances('auth'));
+    dispatch(reset());
   };
 }
 

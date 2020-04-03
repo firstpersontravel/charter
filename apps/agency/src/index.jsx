@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/browser';
 // import createLogger from 'redux-logger';
 
 import Router from './router';
-import reducers from './reducers';
+import reducers, { initialState } from './reducers';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -54,29 +54,11 @@ const enhancer = enhancers(
 const authData = JSON.parse(localStorage.getItem('auth_latest') || 'null');
 const authOrgs = _.get(authData, 'orgs') || [];
 const authInstances = authData ? [{ id: 'latest', data: authData }] : [];
-const initialState = {
-  globalError: null,
-  requests: {},
-  requestErrors: {},
-  revisionHistory: {},
-  datastore: {
-    auth: authInstances,
-    orgs: authOrgs,
-    assets: [],
-    experiences: [],
-    scripts: [],
-    groups: [],
-    profiles: [],
-    trips: [],
-    users: [],
-    players: [],
-    messages: [],
-    relays: [],
-    actions: []
-  }
-};
+const initialStateCopy = _.cloneDeep(initialState);
+initialStateCopy.datastore.auth = authInstances;
+initialStateCopy.datastore.orgs = authOrgs;
 
-const store = createStore(reducers, initialState, enhancer);
+const store = createStore(reducers, initialStateCopy, enhancer);
 
 const app = (
   <Provider store={store}>
