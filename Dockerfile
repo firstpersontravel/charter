@@ -7,14 +7,6 @@ RUN apk upgrade
 # Install essential tools
 RUN apk add bash mysql mysql-client git curl wget
 
-# Install and setup nginx
-RUN apk update
-RUN apk add nginx
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
-COPY docker/web/nginx.conf /etc/nginx/nginx.conf
-ADD docker/web/conf /etc/nginx/conf.d
-
 # Install app build tools
 RUN npm install -q -g ember-cli@2.16.0 webpack webpack-cli bower
 
