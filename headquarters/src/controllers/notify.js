@@ -13,6 +13,7 @@ class NotifyController {
     return await config.getFayeClient()
       .publish(channel, message)
       .then(() => {
+        logger.info(`Completed publish to ${channel}.`);
       })
       .catch((err) => {
         logger.error(`Failed to send ${message.type} notification to faye.`);

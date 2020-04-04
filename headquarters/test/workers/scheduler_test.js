@@ -176,7 +176,7 @@ describe('SchedulerWorker', () => {
       const objs = {
         trip: {
           id: 1,
-          currentSceneName: 'main',
+          tripState: { currentSceneName: 'main' },
           update: sinon.stub().resolves(),
           experience: {}
         },
@@ -204,7 +204,7 @@ describe('SchedulerWorker', () => {
       const objs = {
         trip: {
           id: 1,
-          currentSceneName: 'main',
+          tripState: { currentSceneName: 'main' },
           update: sinon.stub().resolves(),
           experience: {}
         },
@@ -232,7 +232,7 @@ describe('SchedulerWorker', () => {
       const objs = {
         trip: {
           id: 1,
-          currentSceneName: 'main',
+          tripState: { currentSceneName: 'main' },
           update: sinon.stub().resolves(),
           experience: {}
         },
@@ -260,7 +260,7 @@ describe('SchedulerWorker', () => {
       const objs = {
         trip: {
           id: 1,
-          currentSceneName: 'main',
+          tripState: { currentSceneName: 'main' },
           update: sinon.stub().resolves(),
           experience: {}
         },

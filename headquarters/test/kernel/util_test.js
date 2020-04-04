@@ -31,7 +31,7 @@ describe('KernelUtil', () => {
         }),
         trip: models.Trip.build({
           date: '01-01-2015',
-          currentSceneName: 'SCENE-1',
+          tripState: { currentSceneName: 'SCENE-1' },
           schedule: { 'TIME-1': 'time' },
           history: { 'CUE-1': 'time' },
           waypointOptions: { 'WAYPOINT-1': 'OPTION-2' }
@@ -49,7 +49,7 @@ describe('KernelUtil', () => {
 
       const expectedEnv = { host: 'https://test.x.com' };
       const expectedTrip = {
-        currentSceneName: 'SCENE-1',
+        tripState: { currentSceneName: 'SCENE-1' },
         customizations: {},
         date: '01-01-2015',
         galleryName: '',

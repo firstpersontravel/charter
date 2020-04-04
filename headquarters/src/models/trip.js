@@ -26,7 +26,7 @@ const Trip = database.define('Trip', snakeCaseColumns({
   title: mutableModifier(requiredStringField(255)),
   date: dateField('date'),
   variantNames: mutableModifier(optionalStringField(255)),
-  currentSceneName: mutableModifier(optionalStringField(64)),
+  tripState: mutableModifier(jsonField(database, 'Trip', 'tripState')),
   customizations: mutableModifier(
     jsonField(database, 'Trip', 'customizations')),
   values: mutableModifier(jsonField(database, 'Trip', 'values')),

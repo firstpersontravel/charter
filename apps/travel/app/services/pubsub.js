@@ -6,7 +6,7 @@ export default Ember.Service.extend({
 
   init: function() {
     this._super();
-    var host = this.get('environment.apiHost');
+    var host = this.get('environment.pubsubHost');
     this._client = new Faye.Client(`${host}/pubsub`);
     this._subscriptions = {};
   },

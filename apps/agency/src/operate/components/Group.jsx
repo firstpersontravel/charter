@@ -160,8 +160,8 @@ export default class Group extends Component {
         return;
       }
       // Otherwise, subscribe
-      console.log(`Subscribing to ${tripId}`);
       const channel = `/${getStage()}_trip_${tripId}`;
+      console.log(`Subscribing to ${channel}`);
       const subscription = this.fayeClient.subscribe(channel, (message) => {
         this.handleFayeMessage(tripId, message);
       });

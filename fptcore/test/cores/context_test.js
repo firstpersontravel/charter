@@ -94,7 +94,7 @@ describe('ContextCore', () => {
             ]
           }
         },
-        currentSceneName: 'SCENE-01',
+        tripState: { currentSceneName: 'SCENE-01' },
         schedule: { 'TIME-123': '2017-02-16T21:44:02Z' },
         history: { 'CUE-123': '2017-02-16T21:44:02Z' },
         waypointOptions: { 'WAYPOINT-1': 'OPTION-1' },
@@ -117,7 +117,7 @@ describe('ContextCore', () => {
 
       const expected = {
         date: 'Saturday, February 1',
-        currentSceneName: 'SCENE-01',
+        tripState: { currentSceneName: 'SCENE-01' },
         schedule: trip.schedule,
         history: trip.history,
         waypointOptions: trip.waypointOptions,
@@ -149,7 +149,7 @@ describe('ContextCore', () => {
             }]
           }
         },
-        currentSceneName: 'SCENE-01',
+        tripState: { currentSceneName: 'SCENE-01' },
         waypointOptions: { waypoint1: 'option1' },
         players: []
       };

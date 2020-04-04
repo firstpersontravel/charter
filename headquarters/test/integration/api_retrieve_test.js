@@ -35,7 +35,7 @@ describe('API retrieve', () => {
                 scriptId: trip.scriptId,
                 groupId: group.id,
                 orgId: trip.orgId,
-                currentSceneName: 'SCENE-MAIN',
+                tripState: { currentSceneName: 'SCENE-MAIN' },
                 date: today,
                 history: {},
                 isArchived: false,

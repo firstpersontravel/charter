@@ -67,7 +67,9 @@ class KernelTriggers {
     }
 
     // If it's not a global scene, then check if it's current.
-    if (actionContext.evalContext.currentSceneName === sceneName) {
+    const currentSceneName = actionContext.evalContext.tripState
+      .currentSceneName;
+    if (currentSceneName === sceneName) {
       return true;
     }
 

@@ -28,7 +28,10 @@ describe('API replace bulk', () => {
           experienceId: script1.experienceId,
           scriptId: script1.id
         })
-        .send({ isArchived: true, currentSceneName: 'updated' })
+        .send({ 
+          isArchived: true,
+          tripState: { currentSceneName: 'updated' }
+        })
         .set('Accept', 'application/json')
         .expect(200)
         .then(async (res) => {
@@ -42,9 +45,9 @@ describe('API replace bulk', () => {
           assert.strictEqual(trip3.isArchived, false);
 
           // Only updated trips with script
-          assert.strictEqual(trip1.currentSceneName, 'updated');
-          assert.strictEqual(trip2.currentSceneName, 'updated');
-          assert(trip3.currentSceneName !== 'updated');
+          assert.strictEqual(trip1.tripState.currentSceneName, 'updated');
+          assert.strictEqual(trip2.tripState.currentSceneName, 'updated');
+          assert(trip3.tripState.currentSceneName !== 'updated');
 
           // Test updated in response
           assert.strictEqual(res.body.data.trips.length, 2);
@@ -55,7 +58,10 @@ describe('API replace bulk', () => {
       return request(app)
         .put('/api/trips')
         .query({ orgId: script1.orgId })
-        .send({ isArchived: true, currentSceneName: 'updated' })
+        .send({
+          isArchived: true,
+          tripState: { currentSceneName: 'updated' }
+        })
         .set('Accept', 'application/json')
         .expect(400)
         .then(async (res) => {

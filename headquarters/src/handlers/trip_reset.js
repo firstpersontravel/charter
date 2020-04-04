@@ -27,7 +27,7 @@ class TripResetHandler {
 
     // Update trip vars
     await trip.update({
-      currentSceneName: '',
+      tripState: { currentSceneName: '' },
       schedule: resetFields.schedule,
       values: resetFields.values,
       history: {}

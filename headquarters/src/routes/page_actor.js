@@ -48,7 +48,7 @@ function getPanel(trip, evalContext, timezone, pageInfo, panel) {
     pageInfo: pageInfo,
     panel: panel,
     trip: trip,
-    isPageActive: pageInfo.page.scene === trip.currentSceneName
+    isPageActive: pageInfo.page.scene === trip.tripState.currentSceneName
   });
 }
 

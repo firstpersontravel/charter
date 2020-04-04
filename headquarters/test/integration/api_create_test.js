@@ -279,7 +279,7 @@ describe('API create', () => {
           title: 'test',
           date: '2018-04-02',
           schedule: {},
-          currentSceneName: 'test',
+          tripState: { currentSceneName: 'test' },
           values: {},
           variantNames: '',
           isArchived: false
@@ -303,7 +303,7 @@ describe('API create', () => {
           title: 'test',
           date: '2018-04-02',
           schedule: {},
-          currentSceneName: 'test',
+          tripState: { currentSceneName: 'test' },
           values: {},
           variantNames: '',
           isArchived: false

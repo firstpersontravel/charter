@@ -46,7 +46,7 @@ Sentry.init({
 });
 
 const serverPort = process.env.SERVER_PORT || 8000;
-const pubsubHost = process.env.PUBSUB_HOST_INTERNAL || 'http://localhost';
+const pubsubHost = process.env.SERVER_PUBSUB_URL || 'http://localhost';
 const logger = pino({ safe: true, base: {} });
 
 // Configure database

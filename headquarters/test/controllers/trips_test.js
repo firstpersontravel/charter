@@ -66,7 +66,7 @@ describe('TripsController', () => {
         updatedAt: now,
         orgId: 200,
         date: '2018-01-01',
-        currentSceneName: '',
+        tripState: { currentSceneName: '' },
         groupId: 1,
         schedule: {
           basicIntro: '2018-01-01T18:00:00.000Z',

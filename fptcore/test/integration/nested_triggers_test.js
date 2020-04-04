@@ -383,7 +383,7 @@ describe('Integration - Nested Triggers', () => {
           }]
         }]
       },
-      evalContext: { currentSceneName: 'SCENE-1' },
+      evalContext: { tripState: { currentSceneName: 'SCENE-1' } },
       evaluateAt: now
     };
     const event = { type: 'cue_signaled', cue: 'end-of-1' };
@@ -391,7 +391,7 @@ describe('Integration - Nested Triggers', () => {
     const result = Kernel.resultForEvent(event, sceneActionContext);
 
     assert.deepStrictEqual(result.nextContext.evalContext, {
-      currentSceneName: 'SCENE-2',
+      tripState: { currentSceneName: 'SCENE-2' },
       history: { trigger1: now.toISOString(), trigger2: now.toISOString() },
       val: true
     });

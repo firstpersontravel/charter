@@ -27,7 +27,8 @@ function renderCompletedAchievementStatus(trip, achievement) {
 
 function renderAchievement(trip, achievement) {
   const sceneNames = _.map(trip.script.content.scenes, 'name');
-  const indexOfCurrentScene = sceneNames.indexOf(trip.currentSceneName);
+  const indexOfCurrentScene = sceneNames.indexOf(
+    trip.tripState.currentSceneName);
   const indexOfAchievementScene = sceneNames.indexOf(achievement.scene);
   const achievementScene = _.find(trip.script.content.scenes, {
     name: achievement.scene

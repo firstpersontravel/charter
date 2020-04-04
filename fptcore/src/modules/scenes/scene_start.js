@@ -22,9 +22,11 @@ module.exports = {
       }];
     }
     // Create updates object
+    const newState = Object.assign({}, actionContext.evalContext.tripState,
+      { currentSceneName: newSceneName });
     return [{
       operation: 'updateTripFields',
-      fields: { currentSceneName: newSceneName }
+      fields: { tripState: newState }
     }, {
       operation: 'event',
       event: {

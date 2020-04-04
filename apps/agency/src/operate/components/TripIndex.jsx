@@ -5,8 +5,8 @@ import { Redirect } from 'react-router';
 function getRedirect(trip) {
   const firstSceneName = trip.script.content.scenes[0].name;
   const onFirstScene = (
-    trip.currentSceneName === firstSceneName ||
-    trip.currentSceneName === ''
+    trip.tripState.currentSceneName === firstSceneName ||
+    trip.tripState.currentSceneName === ''
   );
   if (onFirstScene) {
     return (

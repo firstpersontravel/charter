@@ -14,7 +14,7 @@ export default DS.Model.extend({
 
   date: DS.attr('string'),
   templateName: DS.attr('string'),
-  currentSceneName: DS.attr('string'),
+  tripState: DS.attr('obj'),
   title: DS.attr('string'),
   customizations: DS.attr('obj'),
   values: DS.attr('obj'),
@@ -24,6 +24,10 @@ export default DS.Model.extend({
 
   players: DS.hasMany('player', {async: false}),
   messages: DS.hasMany('message', {async: false}),
+
+  currentSceneName: function() {
+    return this.get('tripState').currentSceneName;
+  }.property('tripState'),
 
   createLocalAction: function(name, params, scheduledAt, triggerName) {
     var newAction = this.store.createRecord('action', {

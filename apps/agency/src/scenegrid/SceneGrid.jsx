@@ -35,7 +35,8 @@ export default class SceneGrid extends Component {
   }
 
   renderCueButton(page, panel) {
-    const isCurrentScene = page.scene === this.props.trip.currentSceneName;
+    const currentSceneName = this.props.trip.tripState.currentSceneName;
+    const isCurrentScene = page.scene === currentSceneName;
     const trip = this.props.trip;
     const pageScene = _.find(trip.script.content.scenes, { name: page.scene });
     const pageSceneTitle = pageScene.title;
@@ -184,7 +185,8 @@ export default class SceneGrid extends Component {
   renderTriggerBtn(scene, trigger) {
     const trip = this.props.trip;
     const triggerResourceClass = Registry.resources.trigger;
-    const isCurrentScene = scene.name === this.props.trip.currentSceneName;
+    const currentSceneName = this.props.trip.tripState.currentSceneName;
+    const isCurrentScene = scene.name === currentSceneName;
     const isActiveGlobalScene = scene.global && (
       evaluator.if(trip.actionContext, scene.active_if)
     );
@@ -211,7 +213,8 @@ export default class SceneGrid extends Component {
 
   renderSceneRow(scene, colWidth) {
     const players = this.getPlayersForScene(scene);
-    const isCurrentScene = scene.name === this.props.trip.currentSceneName;
+    const currentSceneName = this.props.trip.tripState.currentSceneName;
+    const isCurrentScene = scene.name === currentSceneName;
     const titleClass = isCurrentScene ? 'text-primary' : '';
     const sceneClass = isCurrentScene ? 'row-current-scene' : '';
     const columns = players.map(player => (

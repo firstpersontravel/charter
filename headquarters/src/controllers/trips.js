@@ -43,7 +43,7 @@ class TripsController {
       scriptId: group.script.id,
       date: group.date,
       title: title,
-      currentSceneName: '',
+      tripState: { currentSceneName: '' },
       variantNames: variantNames.join(','),
       history: {}
     }, initialFields);

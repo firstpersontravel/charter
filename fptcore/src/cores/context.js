@@ -39,7 +39,7 @@ class ContextCore {
     // Gather core values
     const context = _.assign({}, trip.customizations, trip.values, {
       date: moment.utc(trip.date, 'YYYY-MM-DD').format('dddd, MMMM D'),
-      currentSceneName: trip.currentSceneName,
+      tripState: trip.tripState,
       waypointOptions: trip.waypointOptions,
       schedule: trip.schedule,
       history: trip.history

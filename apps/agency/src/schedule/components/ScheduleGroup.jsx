@@ -94,7 +94,7 @@ class ScheduleGroup extends Component {
       title: fields.title,
       galleryName: _.kebabCase(fields.title),
       variantNames: fields.variantNames.join(','),
-      currentSceneName: ''
+      tripState: { currentSceneName: '' }
     });
     if (this.state.isEditingTrip) {
       // update existing trip

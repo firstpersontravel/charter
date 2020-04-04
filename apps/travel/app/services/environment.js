@@ -6,6 +6,12 @@ const WEB_HOSTS = {
   production: 'https://app.firstperson.travel'
 };
 
+const PUBSUB_HOSTS = {
+  development: 'http://localhost:5002',
+  staging: 'https://staging.firstperson.travel:5002',
+  production: 'https://app.firstperson.travel:5002'
+};
+
 const NATIVE_HOSTS = {
   development: 'https://firstpersontravel.ngrok.io',
   staging: 'https://staging.firstperson.travel',
@@ -59,6 +65,10 @@ export default Ember.Service.extend({
 
   apiHost: function() {
     return IS_NATIVE ? HOSTS[this.get('environmentName')] : '';
+  }.property('environmentName'),
+
+  pubsubHost: function() {
+    return PUBSUB_HOSTS[this.get('environmentName')];
   }.property('environmentName'),
 
   host: function() {

@@ -58,7 +58,7 @@ function renderText(trip, player, page, panel) {
 }
 
 function renderButton(trip, player, page, panel) {
-  const isSceneActive = page.scene === trip.currentSceneName;
+  const isSceneActive = page.scene === trip.tripState.currentSceneName;
   const panelText = TemplateUtil.templateText(trip.evalContext,
     panel.text || panel.placeholder, trip.experience.timezone);
   return (

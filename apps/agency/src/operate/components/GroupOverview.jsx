@@ -107,7 +107,7 @@ export default class GroupOverview extends Component {
   renderTrip(trip) {
     const group = this.props.group;
     const currentScene = _.find(trip.script.content.scenes, {
-      name: trip.currentSceneName
+      name: trip.tripState.currentSceneName
     });
     const currentSceneTitle = currentScene ? currentScene.title :
       'Not started';
