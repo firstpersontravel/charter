@@ -60,11 +60,12 @@ function getPage(objs, actionContext, player) {
   const trip = objs.trip;
   const evalContext = actionContext.evalContext;
   const timezone = objs.experience.timezone;
-  const pageInfo = PlayerCore.getPageInfo(script, evalContext, player);
+  const pageInfo = PlayerCore.getPageInfo(script, evalContext, trip, player);
   if (!pageInfo) {
     return null;
   }
-  const appearanceSort = PlayerCore.getSceneSort(script, evalContext, player);
+  const appearanceSort = PlayerCore.getSceneSort(script, evalContext, trip,
+    player);
   const appearance = pageInfo.appearance;
   const page = pageInfo.page;
   const directiveText = TemplateUtil.templateText(evalContext,

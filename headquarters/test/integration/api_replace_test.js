@@ -71,7 +71,6 @@ describe('API replace', () => {
                 id: player.id,
                 orgId: trip.orgId,
                 tripId: trip.id,
-                currentPageName: '',
                 acknowledgedPageAt: '2018-01-01T00:00:00.000Z',
                 acknowledgedPageName: 'newPage',
                 roleName: 'Dummy',

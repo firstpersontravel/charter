@@ -91,7 +91,13 @@ const actionContext = {
     ],
     geofences: [{ name: 'GEOFENCE-FARM' }]
   },
-  evalContext: { Farmer: { page: 'TRACTOR' }, apples: 2 },
+  evalContext: {
+    tripState: {
+      currentSceneName: '',
+      currentPageNamesByRole: { Farmer: 'TRACTOR' }
+    },
+    apples: 2
+  },
   evaluateAt: now
 };
 
@@ -120,12 +126,17 @@ describe('Integration - Nested Triggers', () => {
     };
     const result = Kernel.resultForImmediateAction(unpackedAction, actionContext);
 
-    assert.strictEqual(result.nextContext.evalContext.Farmer.currentPageName,
-      'BACK-HOME');
+    assert.deepStrictEqual(
+      result.nextContext.evalContext.tripState.currentPageNamesByRole,
+      { Farmer: 'BACK-HOME' });
     assert.deepStrictEqual(result.resultOps, [{
-      operation: 'updatePlayerFields',
-      roleName: 'Farmer',
-      fields: { currentPageName: 'BACK-HOME' }
+      operation: 'updateTripFields',
+      fields: {
+        tripState: {
+          currentSceneName: '',
+          currentPageNamesByRole: { Farmer: 'BACK-HOME' }
+        }
+      }
     }]);
   });
 

@@ -26,11 +26,6 @@ module.exports = {
       type: 'dictionary',
       keys: { type: 'reference', collection: 'times' },
       values: { type: 'timeShorthand' }
-    },
-    starting_pages: {
-      type: 'dictionary',
-      keys: { type: 'reference', collection: 'roles' },
-      values: { type: 'reference', collection: 'pages' }
     }
   },
   validateResource: function(script, resource) {

@@ -3,28 +3,16 @@ var moment = require('moment-timezone');
 
 class PlayerCore {
   static getInitialFields(scriptContent, roleName, variantNames) {
-    var role = _.find(scriptContent.roles, { name: roleName });
-    var firstPageName = role.starting_page || '';
-    var variants = scriptContent.variants || [];
-    variantNames.forEach(function(variantName) {
-      var variant = _.find(variants, { name: variantName });
-      if (!variant) {
-        return;
-      }
-      if (variant.starting_pages && variant.starting_pages[roleName]) {
-        firstPageName = variant.starting_pages[roleName];
-      }
-    });
     return {
       roleName: roleName,
-      currentPageName: firstPageName,
       acknowledgedPageName: '',
       acknowledgedPageAt: null
     };
   }
 
-  static getPageInfo(script, evalContext, player) {
-    var page = _.find(script.content.pages, { name: player.currentPageName });
+  static getPageInfo(script, evalContext, trip, player) {
+    var pageName = trip.tripState.currentPageNamesByRole[player.roleName];
+    var page = _.find(script.content.pages, { name: pageName });
     if (!page) {
       return null;
     }
@@ -33,7 +21,7 @@ class PlayerCore {
     var appearance = _.find(script.content.appearances, { name: page.appearance }) ||
       { name: 'No appearance', title: 'No appearance' };
 
-    var pageTitle = page ? page.title : player.currentPageName;
+    var pageTitle = page ? page.title : pageName;
     var appearanceStart = appearance.start ?
       moment.utc(evalContext.schedule[appearance.start]) :
       null;
@@ -47,9 +35,9 @@ class PlayerCore {
     };
   }
 
-  static getSceneSort(script, context, player) {
-    var page = _.find(script.content.pages,
-      { name: player.currentPageName });
+  static getSceneSort(script, evalContext, trip, player) {
+    var pageName = trip.tripState.currentPageNamesByRole[player.roleName];
+    var page = _.find(script.content.pages, { name: pageName });
     if (!page) {
       return 0;
     }
@@ -59,7 +47,7 @@ class PlayerCore {
     if (!appearance || !appearance.start) {
       return 0;
     }
-    return moment.utc(context.schedule[appearance.start]).unix();
+    return moment.utc(evalContext.schedule[appearance.start]).unix();
   }
 }
 

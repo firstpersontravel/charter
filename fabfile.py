@@ -779,5 +779,4 @@ def db_load_from_remote():
         local_path=local_path)
     local('mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < %s' % local_path)
     # migrate local
-    local('npm run migrate')
-    local('npm run migrate:scripts')
+    local('docker-compose exec server npm run migrate')

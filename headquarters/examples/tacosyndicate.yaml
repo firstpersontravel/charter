@@ -796,7 +796,7 @@ content:
       scene_name: SCENE-6
     active_if:
       op: value_equals
-      ref1: Inductee.currentPageName
+      ref1: tripState.currentPageNamesByRole.Inductee
       ref2: '"PAGE-4-CALA-DROP"'
     event:
       from: Inductee

@@ -72,15 +72,6 @@ class TripKernel {
     });
   }
 
-  updatePlayerFields({ roleName, fields }) {
-    const players = this.state.players;
-    const index = _.findIndex(players, { roleName: roleName });
-    const player = players[index];
-    this.updateState({
-      players: _.set(players.slice(), index, Object.assign({}, player, fields))
-    });
-  }
-
   createMessage({ fields }) {
     this.log({ level: 'info', message: `"${fields.content}"` });
   }

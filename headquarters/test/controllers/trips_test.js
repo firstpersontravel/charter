@@ -1,3 +1,4 @@
+const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
@@ -17,7 +18,10 @@ describe('TripsController', () => {
       const stubScript = {
         id: 2,
         content: {
-          roles: [{ name: 'fake' }],
+          roles: [{
+            name: 'fake',
+            starting_page: 'page-one'
+          }],
           scenes: [{
             name: 'SCENE-MAIN'
           }],
@@ -61,12 +65,16 @@ describe('TripsController', () => {
         ]
       });
       // Create trip
-      sinon.assert.calledWith(models.Trip.create.getCall(0), {
+      sinon.assert.calledOnce(models.Trip.create);
+      assert.deepStrictEqual(models.Trip.create.getCall(0).args[0], {
         createdAt: now,
         updatedAt: now,
         orgId: 200,
         date: '2018-01-01',
-        tripState: { currentSceneName: '' },
+        tripState: {
+          currentSceneName: '',
+          currentPageNamesByRole: { fake: 'page-one' }
+        },
         groupId: 1,
         schedule: {
           basicIntro: '2018-01-01T18:00:00.000Z',
@@ -84,7 +92,6 @@ describe('TripsController', () => {
       // Create player
       sinon.assert.calledWith(models.Player.create.getCall(0), {
         orgId: 200,
-        currentPageName: '',
         tripId: 3,
         roleName: 'fake',
         userId: null,
