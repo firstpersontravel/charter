@@ -15,10 +15,14 @@ describe('ContextCore', () => {
 
   describe('#gatherPlayerEvalContext', () => {
     it('gathers values from player', () => {
+      const trip = {
+        id: 1,
+        script: { name: 'test' },
+        tripState: {}
+      };
       const player = {
         id: 10,
         roleName: 'Vance',
-        currentPageName: 'PAGE-NAME',
         user: {
           firstName: 'Vance',
           lastName: 'Farraday',
@@ -26,7 +30,6 @@ describe('ContextCore', () => {
         }
       };
       const expected = {
-        currentPageName: 'PAGE-NAME',
         link: 'https://test.test/s/10',
         contact_name: 'Vance Farraday',
         photo: null,
@@ -37,7 +40,7 @@ describe('ContextCore', () => {
         skype: null
       };
       const result = ContextCore.gatherPlayerEvalContext(
-        env, { id: 1, script: { name: 'test' } }, player);
+        env, trip, player);
       assert.deepEqual(result, expected);
     });
 
@@ -53,11 +56,14 @@ describe('ContextCore', () => {
               directive: 'Go to the Tavern'
             }]
           }
+        },
+        tripState: {
+          currentPageNamesByRole: {
+            Tester: 'PAGE-NAME'
+          }
         }
       };
-      const player = {
-        currentPageName: 'PAGE-NAME'
-      };
+      const player = { roleName: 'Tester' };
       const result = ContextCore.gatherPlayerEvalContext(env, trip, player);
       assert.equal(result.directive, 'Go to the Tavern');
     });
@@ -73,8 +79,11 @@ describe('ContextCore', () => {
           }
         }
       };
-      const context = { script: { name: 'theheadlandsgamble' } };
-      const result = ContextCore.gatherPlayerEvalContext(env, context,
+      const trip = {
+        script: { name: 'theheadlandsgamble' },
+        tripState: {}
+      };
+      const result = ContextCore.gatherPlayerEvalContext(env, trip,
         player);
       assert.equal(result.phone_number, '1234567890');
       assert.equal(result.photo, 'dustin.jpg');
@@ -94,7 +103,10 @@ describe('ContextCore', () => {
             ]
           }
         },
-        tripState: { currentSceneName: 'SCENE-01' },
+        tripState: {
+          currentSceneName: 'SCENE-01',
+          currentPageNamesByRole: {}
+        },
         schedule: { 'TIME-123': '2017-02-16T21:44:02Z' },
         history: { 'CUE-123': '2017-02-16T21:44:02Z' },
         waypointOptions: { 'WAYPOINT-1': 'OPTION-1' },
@@ -117,7 +129,7 @@ describe('ContextCore', () => {
 
       const expected = {
         date: 'Saturday, February 1',
-        tripState: { currentSceneName: 'SCENE-01' },
+        tripState: trip.tripState,
         schedule: trip.schedule,
         history: trip.history,
         waypointOptions: trip.waypointOptions,
@@ -149,7 +161,10 @@ describe('ContextCore', () => {
             }]
           }
         },
-        tripState: { currentSceneName: 'SCENE-01' },
+        tripState: {
+          currentSceneName: 'SCENE-01',
+          currentPageNamesByRole: {}
+        },
         waypointOptions: { waypoint1: 'option1' },
         players: []
       };

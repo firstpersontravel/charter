@@ -106,7 +106,14 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
   function playerItemsForRole(role) {
     return _(allPlayers)
-      .filter('currentPageName')
+      .filter((player) => {
+        const trip = group.trips.find(t => t.id === player.tripId);
+        if (!trip || !!trip.tripState ||
+            !trip.tripState.currentPageNamesByRole) {
+          return false;
+        }
+        return !!trip.tripState.currentPageNamesByRole[player.roleName];
+      })
       .filter({ roleName: role.name })
       .map('user')
       .uniq()

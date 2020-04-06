@@ -31,10 +31,17 @@ module.exports = {
         }];
       }
     }
+    const newPageNames = Object.assign({},
+      actionContext.evalContext.tripState.currentPageNamesByRole, {
+        [params.role_name]: newPageName
+      });
+    const newTripState = Object.assign({},
+      actionContext.evalContext.tripState, {
+        currentPageNamesByRole: newPageNames
+      });
     return [{
-      operation: 'updatePlayerFields',
-      roleName: params.role_name,
-      fields: { currentPageName: newPageName }
+      operation: 'updateTripFields',
+      fields: { tripState: newTripState }
     }];
   }
 };

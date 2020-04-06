@@ -15,8 +15,8 @@ then
   echo "DROP USER 'galaxy_test'@'%';" | $MYSQL_CMD
 fi
 
-echo "CREATE USER 'galaxy'@'%' identified by 'galaxypassword';" | $MYSQL_CMD
-echo "CREATE USER 'galaxy_test'@'%' identified by 'galaxy_test_pw';" | $MYSQL_CMD
+echo "CREATE USER 'galaxy'@'%' identified with mysql_native_password by 'galaxypassword';" | $MYSQL_CMD
+echo "CREATE USER 'galaxy_test'@'%' identified with mysql_native_password by 'galaxy_test_pw';" | $MYSQL_CMD
 echo "GRANT ALL ON galaxy.* to 'galaxy'@'%';" | $MYSQL_CMD
 echo "GRANT ALL ON galaxy_test.* to 'galaxy_test'@'%';" | $MYSQL_CMD
 echo "FLUSH PRIVILEGES" | $MYSQL_CMD
@@ -25,4 +25,4 @@ echo "CREATE DATABASE galaxy;" | $MYSQL_CMD
 echo "CREATE DATABASE galaxy_test;" | $MYSQL_CMD
 
 # Restore backup
-$MYSQL_CMD galaxy < /docker-entrypoint-initdb.d/backup-2020-02-05.bak
+$MYSQL_CMD galaxy < /docker-entrypoint-initdb.d/backup-2020-04-06.bak

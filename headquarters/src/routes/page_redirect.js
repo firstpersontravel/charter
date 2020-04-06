@@ -15,23 +15,27 @@ const redirectRoute = async (req, res) => {
   }
 
   const loggedInPlayerId = req.cookies[`exp-${experienceId}`];
-  console.log('loggedInPlayerId', loggedInPlayerId);
   if (!loggedInPlayerId) {
-    res.status(401).send('Text "PENELOPE" to the Detective...');
+    res.status(401).send('Player not logged in.');
     return;
   }
 
   const loggedInPlayer = await models.Player.findByPk(loggedInPlayerId);
   console.log('loggedInPlayer', loggedInPlayer.roleName, roleName);
   if (!loggedInPlayer || loggedInPlayer.roleName !== roleName) {
-    res.status(401).send('Text "PENELOPE" to the Detective...');
+    res.status(401).send('Player not logged in.');
     return;
   }
 
   const loggedInTrip = await loggedInPlayer.getTrip();
 
   if (pageName) {
-    await loggedInPlayer.update({ currentPageName: pageName });
+    const newTripState = Object.assign({}, loggedInTrip.tripState, {
+      currentPageNamesByRole: Object.assign({},
+        loggedInTrip.tripState.currentPageNamesByRole,
+        { [roleName]: pageName })
+    });
+    await loggedInTrip.update({ tripState: newTripState });
   }
 
   if (cueName) {

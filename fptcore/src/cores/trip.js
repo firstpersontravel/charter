@@ -28,6 +28,12 @@ class TripCore {
    */
   static getInitialFields(scriptContent, date, timezone, variantNames) {
     var fields = {
+      tripState: {
+        currentSceneName: '',
+        currentPageNamesByRole: Object.fromEntries((scriptContent.roles || [])
+          .filter(role => role.starting_page)
+          .map(role => [role.name, role.starting_page]))
+      },
       customizations: {},
       values: {},
       waypointOptions: {},

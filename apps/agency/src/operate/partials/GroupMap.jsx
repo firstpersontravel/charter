@@ -180,7 +180,10 @@ export default class GroupMap extends Component {
     const activePlayers = _(this.props.trips)
       .map('players')
       .flatten()
-      .filter('currentPageName')
+      .filter((player) => {
+        const trip = _.find(this.props.trips, { id: player.tripId });
+        return !!trip.tripState.currentPageNamesByRole[player.roleName];
+      })
       .value();
 
     return _(activePlayers)
@@ -192,7 +195,8 @@ export default class GroupMap extends Component {
             {player.roleName}
           </Link>
         );
-        const pageName = player.currentPageName;
+        const pageName = trip.tripState
+          .currentPageNamesByRole[player.roleName];
         const page = _.find(script.content.pages, { name: pageName });
         if (!page) {
           return null;

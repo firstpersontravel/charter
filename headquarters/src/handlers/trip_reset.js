@@ -25,9 +25,20 @@ class TripResetHandler {
     // Update values with checkpoint
     _.merge(resetFields.values, checkpoint.values);
 
+    const startingPages = Object.fromEntries(script.content.roles
+      .filter(role => role.starting_page)
+      .map(role => [role.name, role.starting_page]));
+
+    for (const roleName of Object.keys(checkpoint.pages || {})) {
+      startingPages[roleName] = checkpoint.pages.roleName;
+    }
+
     // Update trip vars
     await trip.update({
-      tripState: { currentSceneName: '' },
+      tripState: {
+        currentSceneName: '',
+        currentPageNamesByRole: startingPages
+      },
       schedule: resetFields.schedule,
       values: resetFields.values,
       history: {}
@@ -48,15 +59,11 @@ class TripResetHandler {
   /**
    * Reset a player.
    */
-  static async _resetPlayer(script, trip, player, checkpoint) {
+  static async _resetPlayer(script, trip, player) {
     // Get values
     const variants = trip.variantNames.split(',');
     const fields = PlayerCore.getInitialFields(script.content, player.roleName,
       variants);
-    // Check starting page
-    if (_.get(checkpoint, 'pages.' + player.roleName)) {
-      fields.currentPageName = checkpoint.pages[player.roleName];
-    }
 
     // Reset user location
     await player.update(fields);
@@ -97,7 +104,7 @@ class TripResetHandler {
     await this._resetTrip(trip.script, trip, trip.experience.timezone,
       checkpoint);
     for (let player of players) {
-      await this._resetPlayer(trip.script, trip, player, checkpoint);
+      await this._resetPlayer(trip.script, trip, player);
     }
     // Clear actions and messages
     await models.Action.destroy({ where: { tripId: tripId }});

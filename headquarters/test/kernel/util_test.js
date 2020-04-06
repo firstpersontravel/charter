@@ -31,15 +31,17 @@ describe('KernelUtil', () => {
         }),
         trip: models.Trip.build({
           date: '01-01-2015',
-          tripState: { currentSceneName: 'SCENE-1' },
+          tripState: {
+            currentSceneName: 'SCENE-1',
+            currentPageNamesByRole: { Role: 'PAGE-1' }
+          },
           schedule: { 'TIME-1': 'time' },
           history: { 'CUE-1': 'time' },
           waypointOptions: { 'WAYPOINT-1': 'OPTION-2' }
         }),
         players: [models.Player.build({
           roleName: 'Role',
-          id: 123,
-          currentPageName: 'PAGE-1'
+          id: 123
         })]
       };
 
@@ -49,43 +51,25 @@ describe('KernelUtil', () => {
 
       const expectedEnv = { host: 'https://test.x.com' };
       const expectedTrip = {
-        tripState: { currentSceneName: 'SCENE-1' },
+        tripState: objs.trip.tripState,
         customizations: {},
         date: '01-01-2015',
         galleryName: '',
-        history: {
-          'CUE-1': 'time'
-        },
+        history: objs.trip.history,
         id: null,
         isArchived: false,
         players: [{
           acknowledgedPageName: '',
-          currentPageName: 'PAGE-1',
           id: 123,
           roleName: 'Role',
           user: null
         }],
-        schedule: {
-          'TIME-1': 'time'
-        },
-        script: {
-          content: {
-            pages: [{
-              directive: 'Go to the mall.',
-              name: 'PAGE-1'
-            }]
-          },
-          id: null,
-          isActive: false,
-          isArchived: false,
-          isLocked: false
-        },
+        schedule: objs.trip.schedule,
+        script: objs.script.get({ plain: true }),
         title: '',
         values: {},
         variantNames: '',
-        waypointOptions: {
-          'WAYPOINT-1': 'OPTION-2'
-        }
+        waypointOptions: objs.trip.waypointOptions
       };
       assert.deepStrictEqual(ContextCore.gatherEvalContext.firstCall.args, [
         expectedEnv, expectedTrip]);
