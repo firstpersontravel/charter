@@ -49,8 +49,8 @@ app.use((req, res, next) => {
       return;
     }
   }
-  config.logger.info({ name: 'request' },
-    `${req.method} ${req.originalUrl} ...`);
+  // config.logger.info({ name: 'request' },
+  //   `${req.method} ${req.originalUrl} ...`);
   res.on('finish', () => {
     config.logger.info(
       { name: 'request' },

@@ -1,4 +1,17 @@
 content:
+  content_pages:
+  - name: content_page-ntsoxi
+    panels:
+    - name: main
+      type: outlet
+    section: tab
+    title: Task
+  - name: content_page-ilctwq
+    panels:
+    - title: Messages
+      type: messages_browse
+    section: tab
+    title: Messages
   cues:
   - name: CUE-0-START
     scene: SCENE-0
@@ -49,15 +62,18 @@ content:
         op: value_is_true
         ref: Inductee.directive
     name: phone
+    section: tab
     title: phone
-    type: simple
+    type: tabs
+  meta:
+    version: 24
   pages:
   - directive: Waiting for inductee
     name: PAGE-0-JESSIE
     panels:
-    - text: Closer to the scheduled start time at {{schedule.TIME-DEPARTURE}}, this
-        page will automatically transition to the starting call. Or you can press the
-        button below to start the call sooner.
+    - text: Closer to the scheduled start time at {{schedule.TIME-DEPARTURE}},
+        this page will automatically transition to the starting call. Or you can
+        press the button below to start the call sooner.
       type: text
     - cue: CUE-0-START
       text: Start
@@ -96,8 +112,9 @@ content:
   - directive: Intro call with the inductee
     name: PAGE-1-JESSIE
     panels:
-    - text: Intro call with the inductee! Call the lounge phone at (415) 741-0305. Try
-        the inductees directly at {{Inductee.phone_number}} if that doesn't work.
+    - text: Intro call with the inductee! Call the lounge phone at (415) 741-0305.
+        Try the inductees directly at {{Inductee.phone_number}} if that doesn't
+        work.
       type: text
     - text: See script at https://docs.google.com/document/d/14I4uo3qbHekITn4RVjBFvguYGWK4FNdmGyqkPZ_ONTk/edit#heading=h.dsrb49xqc7nq
       type: text
@@ -118,8 +135,9 @@ content:
     role: Jessie
     scene: SCENE-1
     title: Intro call
-  - directive: Head to 20th Century Cafe at 198 Gough St, and send Jessie the 4-digit
-      code on the Taco Syndicate guide marker right nearby when you find it.
+  - directive: Head to 20th Century Cafe at 198 Gough St, and send Jessie the
+      4-digit code on the Taco Syndicate guide marker right nearby when you find
+      it.
     name: PAGE-2-TO-COFFEE
     panels:
     - route: ROUTE-BIGROCK-TO-COFFEE
@@ -136,8 +154,8 @@ content:
     role: Jessie
     scene: SCENE-2
     title: Wait for player
-  - directive: Head to RT Rotisserie at 101 Oak St (at Franklin) and find the Taco Syndicate
-      relay tag, send the number to Jessie.
+  - directive: Head to RT Rotisserie at 101 Oak St (at Franklin) and find the
+      Taco Syndicate relay tag, send the number to Jessie.
     name: PAGE-3-TO-RT
     panels:
     - route: ROUTE-COFFEE-TO-RT
@@ -156,9 +174,9 @@ content:
     scene: SCENE-3
     title: Get drop from vendor
     waypoint: WAYPOINT-RT-ROTISSERIE
-  - directive: Head across Franklin to a tree at the southeast corner of Franklin and
-      Oak. You'll find a lockbox inside the tree. The code is 1648. Send a picture of
-      what you get inside to Jessie, or text if you need help.
+  - directive: Head across Franklin to a tree at the southeast corner of Franklin
+      and Oak. You'll find a lockbox inside the tree. The code is 1648. Send a
+      picture of what you get inside to Jessie, or text if you need help.
     name: PAGE-3-RT-KEY-BACKUP
     panels:
     - type: directions
@@ -167,8 +185,8 @@ content:
     scene: SCENE-3
     title: Get drop from dropbox
     waypoint: WAYPOINT-RT-BACKUP
-  - directive: Head to Tacos Cala on Hickory between Franklin and Van Ness, and send
-      Jessie the Taco Syndicate guide marker.
+  - directive: Head to Tacos Cala on Hickory between Franklin and Van Ness, and
+      send Jessie the Taco Syndicate guide marker.
     name: PAGE-4-TO-CALA
     panels:
     - route: ROUTE-RT-TO-LINDENROOM
@@ -177,7 +195,8 @@ content:
     route: ROUTE-RT-TO-LINDENROOM
     scene: SCENE-4
     title: Head to Linden Room
-  - directive: Drop off the envelope in the dropbox and text Jessie when it's done.
+  - directive: Drop off the envelope in the dropbox and text Jessie when it's
+      done.
     name: PAGE-4-CALA-DROP
     panels:
     - type: directions
@@ -208,8 +227,9 @@ content:
   - directive: Call inductee when they arrive in the lounge
     name: PAGE-7-JESSIE-CONCLUSION
     panels:
-    - text: Conclusion call with the inductee! Call the Lounge phone at (415) 741-0305.
-        Try the inductees directly at {{Inductee.phone_number}} if that doesn't work.
+    - text: Conclusion call with the inductee! Call the Lounge phone at (415)
+        741-0305. Try the inductees directly at {{Inductee.phone_number}} if that
+        doesn't work.
       type: text
     - text: See script at https://docs.google.com/document/d/14I4uo3qbHekITn4RVjBFvguYGWK4FNdmGyqkPZ_ONTk/edit#heading=h.dsrb49xqc7nq
       type: text
@@ -279,7 +299,7 @@ content:
     type: traveler
   - name: Jessie
     starting_page: PAGE-0-JESSIE
-    title: Taco Syndicate Dispatch
+    title: Dispatch
     type: performer
   - name: StageManager
     title: StageManager
@@ -291,7 +311,7 @@ content:
     title: Russell
     type: scripted
   - name: BigRockStaff1
-    title: BigRockStaff1
+    title: OfficeStaff
     type: performer
   routes:
   - from: WAYPOINT-BIGROCK
@@ -346,8 +366,8 @@ content:
   - actions:
     - duration: 3s
       name: wait
-    - content: Enjoy! Remember -- there are benefits for those who play ball with us.
-        And risks for those who don't.
+    - content: Enjoy! Remember -- there are benefits for those who play ball with
+        us. And risks for those who don't.
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
@@ -373,15 +393,15 @@ content:
       value_ref: accepted_phil_offer
     - duration: 3s
       name: wait
-    - content: 'You have received an encrypted voice message from PHIL via Taco Syndicate
-        Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-6.mp3'
+    - content: 'You have received an encrypted voice message from PHIL via Taco
+        Syndicate Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3'
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
     - duration: 2m
       name: wait
-    - content: Remember, look for any information you can find from the science division
-        of Terpeneutics. Send me a picture.
+    - content: Remember, look for any information you can find from the science
+        division of Terpeneutics. Send me a picture.
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
@@ -412,9 +432,9 @@ content:
     - name: set_value
       new_value_ref: 'true'
       value_ref: sent_phil_secret
-    - content: Hey thanks - this is gonna be huge for me. About that reward - hate to
-        break it to you, but there ain’t gonna be one. Tough break, kid, but that’s
-        business...
+    - content: Hey thanks - this is gonna be huge for me. About that reward -
+        hate to break it to you, but there ain’t gonna be one. Tough break, kid,
+        but that’s business...
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
@@ -434,10 +454,10 @@ content:
     name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL-3
     scene: Phil
   - actions:
-    - content: Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
-        the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call at that time
-        -- you should be at the lounge. Let me know if you're still going to make it,
-        or if you need any help getting there.
+    - content: Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour
+        of the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call
+        at that time -- you should be at the lounge. Let me know if you're still
+        going to make it, or if you need any help getting there.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -560,49 +580,49 @@ content:
       role_name: Inductee
     - duration: 3s
       name: wait
-    - content: 'OK you’re all set to head out - turn right leaving Big Rock from the
-        front, and right onto Gough, and head north 2 blocks to Oak St. Directions here:
-        {{Inductee.link}}. (Make sure to allow location access!)  When you find the
-        guide marker, there will be a 4-digit number on it. They tend to be near light
-        posts or bike racks. Send the code my way!'
+    - content: 'OK you’re all set to head out - turn right leaving Big Rock from
+        the front, and right onto Gough, and head north 2 blocks to Oak St. Directions
+        here: {{Inductee.link}}. (Make sure to allow location access!)  When you
+        find the guide marker, there will be a 4-digit number on it. They tend
+        to be near light posts or bike racks. Send the code my way!'
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
     - duration: 3s
       name: wait
-    - content: guidemarker.png
+    - content: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/guidemarker.png
       from_role_name: Jessie
       name: send_image
       to_role_name: Inductee
     - duration: 12s
       name: wait
-    - content: Like I said on the phone, Russell is moving up in our ranks today, and
-        I’m pretty sure that package is his ring -- don't forget to bring it! It’s a
-        long-standing tradition that newly promoted Syndicate capos are notified by
-        the arrival of a Syndicate ring. Sure, texting would be easier, but ritual is
-        important around here.
+    - content: Like I said on the phone, Russell is moving up in our ranks today,
+        and I’m pretty sure that package is his ring -- don't forget to bring
+        it! It’s a long-standing tradition that newly promoted Syndicate capos
+        are notified by the arrival of a Syndicate ring. Sure, texting would be
+        easier, but ritual is important around here.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
     - duration: 183s
       name: wait
-    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool. I’m
-        going to send you a secure audio message in a minute - can never be too careful
-        about eavesdroppers these days.
+    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool.
+        I’m going to send you a secure audio message in a minute - can never be
+        too careful about eavesdroppers these days.
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
     - duration: 190s
       name: wait
-    - content: 'You have received an encrypted voice message from PHIL. Tap to listen:
-        https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3'
+    - content: 'You have received an encrypted voice message from PHIL. Tap to
+        listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3'
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
     - actions:
-      - content: Get a coffee at 20th Century Cafe right by you -- 198 Gough -- you
-          can tell them to put it on my tab. I mean it -- my credit is good pretty much
-          anywhere in this city. Text me back when you’ve got it.
+      - content: Get a coffee at 20th Century Cafe right by you -- 198 Gough --
+          you can tell them to put it on my tab. I mean it -- my credit is good
+          pretty much anywhere in this city. Text me back when you’ve got it.
         from_role_name: Phil
         name: send_text
         to_role_name: Inductee
@@ -619,9 +639,9 @@ content:
     name: TRIGGER-SCENE-2-SCENE-STARTED
     scene: SCENE-2
   - actions:
-    - content: Remember, send me the 4-digit code by a Syndicate logo near the intersection
-        of Gough and Oak St. Should be the southeast corner, and probably near a light
-        post or bike rack.
+    - content: Remember, send me the 4-digit code by a Syndicate logo near the
+        intersection of Gough and Oak St. Should be the southeast corner, and
+        probably near a light post or bike rack.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -650,25 +670,25 @@ content:
       role_name: Inductee
     - duration: 3s
       name: wait
-    - content: 'I looked up that guide marker and it looks like you''re headed to RT
-        Rotisserie as your next stop; our friends own the place. Head east on Oak St
-        one block to the corner of Franklin. Directions here: {{Inductee.link}} Send
-        me the guide marker you find when you get there, right off 101 Oak.'
+    - content: 'I looked up that guide marker and it looks like you''re headed
+        to RT Rotisserie as your next stop; our friends own the place. Head east
+        on Oak St one block to the corner of Franklin. Directions here: {{Inductee.link}}
+        Send me the guide marker you find when you get there, right off 101 Oak.'
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
     - duration: 60s
       name: wait
-    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool. I’m
-        going to send you a secure audio message in a minute - can never be too careful
-        about eavesdroppers these days.
+    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool.
+        I’m going to send you a secure audio message in a minute - can never be
+        too careful about eavesdroppers these days.
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
     - duration: 65s
       name: wait
-    - content: 'You have received an encrypted voice message from PHIL. Tap to listen:
-        https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3'
+    - content: 'You have received an encrypted voice message from PHIL. Tap to
+        listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3'
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
@@ -681,8 +701,8 @@ content:
       - name: send_to_page
         page_name: PAGE-3-RT-KEY-VENDOR
         role_name: Inductee
-      - content: "{{pickup_vendor_instructions}} Send me a picture of what you get,
-          or text if you need help."
+      - content: "{{pickup_vendor_instructions}} Send me a picture of what you
+          get, or text if you need help."
         from_role_name: Jessie
         name: send_text
         to_role_name: Inductee
@@ -691,8 +711,8 @@ content:
         page_name: PAGE-3-RT-KEY-BACKUP
         role_name: Inductee
       - content: Head across Franklin to a tree at the southeast corner of Franklin
-          and Oak. You'll find a lockbox inside the tree. The code is 1648. Send me
-          a picture of what you get inside, or text if you need help.
+          and Oak. You'll find a lockbox inside the tree. The code is 1648. Send
+          me a picture of what you get inside, or text if you need help.
         from_role_name: Jessie
         name: send_text
         to_role_name: Inductee
@@ -729,10 +749,11 @@ content:
       role_name: Inductee
     - duration: 3s
       name: wait
-    - content: 'Great! And you got the key? That guide marker indicates your next stop
-        is the drop-off point. It''s a taco stand on Hickory between Franklin and Van
-        Ness. North one block, then turn right onto Hickory. Directions: {{Inductee.link}}
-        You’ll find a guide marker around there, text it to me when you’ve got it.'
+    - content: 'Great! And you got the key? That guide marker indicates your next
+        stop is the drop-off point. It''s a taco stand on Hickory between Franklin
+        and Van Ness. North one block, then turn right onto Hickory. Directions:
+        {{Inductee.link}} You’ll find a guide marker around there, text it to
+        me when you’ve got it.'
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -748,17 +769,17 @@ content:
       role_name: Inductee
     - duration: 3s
       name: wait
-    - content: Nice work. That code indicates the ring goes in a dead drop on a telephone
-        pole right outside the front entrance of Tacos Cala, on the same side of Hickory.
-        Use your Syndicate master to open the box, and send me a picture of ring inside
-        to confirm you've made the drop. Remember to lock it back afterwards! And text
-        me if you’ve run into any trouble.
+    - content: Nice work. That code indicates the ring goes in a dead drop on
+        a telephone pole right outside the front entrance of Tacos Cala, on the
+        same side of Hickory. Use your Syndicate master to open the box, and send
+        me a picture of ring inside to confirm you've made the drop. Remember
+        to lock it back afterwards! And text me if you’ve run into any trouble.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
     - duration: 11s
       name: wait
-    - content: deaddrop.jpeg
+    - content: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
       from_role_name: Jessie
       name: send_image
       to_role_name: Inductee
@@ -791,17 +812,18 @@ content:
       role_name: Inductee
     - duration: 3s
       name: wait
-    - content: Hold onto that key - it’s a Syndicate Master. Opens interesting doors
-        all over town... In fact, I’ll show you one particularly interesting one right
-        now. The Syndicate has a gift for you before you go.
+    - content: Hold onto that key - it’s a Syndicate Master. Opens interesting
+        doors all over town... In fact, I’ll show you one particularly interesting
+        one right now. The Syndicate has a gift for you before you go.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
     - duration: 5s
       name: wait
-    - content: 'This particular door is around 37 Lily St. Make a 180 back on Hickory
-        to Franklin, then turn left, then right on Lily. It''ll be on your left. Directions:
-        {{Inductee.link}} Text me the guide marker when you get there.'
+    - content: 'This particular door is around 37 Lily St. Make a 180 back on
+        Hickory to Franklin, then turn left, then right on Lily. It''ll be on
+        your left. Directions: {{Inductee.link}} Text me the guide marker when
+        you get there.'
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -824,8 +846,8 @@ content:
       to_role_name: Inductee
     - duration: 120m
       name: wait
-    - content: 'You have received an encrypted voice message from RUSSELL via Taco Syndicate
-        Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-31.mp3'
+    - content: 'You have received an encrypted voice message from RUSSELL via
+        Taco Syndicate Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-31.mp3'
       from_role_name: Russell
       name: send_text
       to_role_name: Inductee
@@ -929,9 +951,9 @@ content:
     - name: send_to_page
       page_name: PAGE-8-FOLLOWUP
       role_name: Inductee
-    - content: Thanks again for the help. That code for the tequila cabinet is 1648;
-        use it whenever you like. And keep that Syndicate Master on you. You may need
-        it again.
+    - content: Thanks again for the help. That code for the tequila cabinet is
+        1648; use it whenever you like. And keep that Syndicate Master on you.
+        You may need it again.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -962,9 +984,9 @@ content:
     name: TRIGGER-SCENE-8-SCENE-STARTED
     scene: SCENE-8
   - actions:
-    - content: Too bad you decided not to take me up on my offer - the PayPal Mafia
-        is a powerful friend, and can be a powerful enemy. If you change your mind,
-        let me know...
+    - content: Too bad you decided not to take me up on my offer - the PayPal
+        Mafia is a powerful friend, and can be a powerful enemy. If you change
+        your mind, let me know...
       from_role_name: Phil
       name: send_text
       to_role_name: Inductee
@@ -983,10 +1005,10 @@ content:
     name: TRIGGER-SCENE-8-CUE-8-PHIL-FOLLOWUP
     scene: SCENE-8
   - actions:
-    - content: Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
-        the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call at that time
-        -- you should be at the lounge. Let me know if you're still going to make it,
-        or if you need any help getting there.
+    - content: Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour
+        of the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call
+        at that time -- you should be at the lounge. Let me know if you're still
+        going to make it, or if you need any help getting there.
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -1018,8 +1040,9 @@ content:
       guidemarker2: '1471'
       guidemarker3: '8180'
       guidemarker4: '6037'
-      pickup_vendor_instructions: Inside RT Rotisserie, ask for a to-go order for “E
-        and G”. Feel free to have a snack on the Syndicate for your trouble today.
+      pickup_vendor_instructions: Inside RT Rotisserie, ask for a to-go order
+        for “E and G”. Feel free to have a snack on the Syndicate for your trouble
+        today.
     default: true
     name: default
     title: Default
@@ -1168,6 +1191,15 @@ content:
       name: WAYPOINT-BIGROCK-BACK
       title: Back Entrance
     title: Back Entrance
+createdAt: '2020-04-06T16:08:06.000Z'
+experienceId: 116
+id: 121
+isActive: true
+isArchived: false
+isLocked: false
+orgId: 1
+revision: 1
+updatedAt: '2020-04-06T16:09:32.000Z'
 assets:
 - data:
     end:
@@ -1277,45 +1309,45 @@ assets:
 - data:
     medium: image
     path: deaddrop.jpeg
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/deaddrop.jpeg
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
   type: media
 - data:
     medium: image
     path: guidemarker.png
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/guidemarker.png
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/guidemarker.png
   type: media
 - data:
     medium: audio
     path: jessie-vm.mp3
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/jessie-vm.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/jessie-vm.mp3
   type: media
 - data:
     medium: image
     path: key_pickup.jpeg
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/key_pickup.jpeg
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/key_pickup.jpeg
   type: media
 - data:
     medium: audio
     path: message-2.mp3
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-2.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3
   type: media
 - data:
     medium: audio
     path: message-31.mp3
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-31.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-31.mp3
   type: media
 - data:
     medium: audio
     path: message-6.mp3
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/message-6.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3
   type: media
 - data:
     medium: audio
     path: phil-vm.mp3
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/phil-vm.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/phil-vm.mp3
   type: media
 - data:
     medium: audio
     path: russell-vm.mp3
-    url: https://fpt-agency-content.s3.amazonaws.com/tacosyndicate/russell-vm.mp3
+    url: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/russell-vm.mp3
   type: media

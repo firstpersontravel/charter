@@ -8,15 +8,18 @@ const mapStateToProps = (state, ownProps) => ({
   trip: lookupTrip(state, ownProps),
   messages: lookupMessages(state, ownProps)
     .filter((message) => {
-      if (ownProps.location.query.for) {
-        if (ownProps.location.query.for !== message.sentBy.roleName &&
-            ownProps.location.query.for !== message.sentTo.roleName) {
+      const query = new URLSearchParams(ownProps.location.search);
+      const forRoleName = query.get('for');
+      const withRoleName = query.get('with');
+      if (forRoleName) {
+        if (forRoleName !== message.sentBy.roleName &&
+            forRoleName !== message.sentTo.roleName) {
           return false;
         }
       }
-      if (ownProps.location.query.with) {
-        if (ownProps.location.query.with !== message.sentBy.roleName &&
-            ownProps.location.query.with !== message.sentTo.roleName) {
+      if (withRoleName) {
+        if (withRoleName !== message.sentBy.roleName &&
+            withRoleName !== message.sentTo.roleName) {
           return false;
         }
       }

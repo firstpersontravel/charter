@@ -153,8 +153,8 @@ class SchedulerWorker {
         where: { isArchived: false }
       }]
     });
-    logger.info(
-      `Scheduling ${trips.length} trips up to ${fmtLocal(threshold)}`);
+    // logger.info(
+    //   `Scheduling ${trips.length} trips up to ${fmtLocal(threshold)}`);
     for (const trip of trips) {
       logger.info(
         `Scheduling ${trip.experience.title} "${trip.title}" ` +
@@ -176,9 +176,9 @@ class SchedulerWorker {
     // Get actions based on occurance of time.
     const actions = this._getTimeOccuranceActions(trip, actionContext,
       threshold);
-    logger.info(
-      `Found ${actions.length} actions for ${trip.experience.title} ` +
-      `"${trip.title}" up to ${fmtLocal(threshold)}`);
+    // logger.info(
+    //   `Found ${actions.length} actions for ${trip.experience.title} ` +
+    //   `"${trip.title}" up to ${fmtLocal(threshold)}`);
 
     for (let action of actions) {
       logger.info({ action: action },

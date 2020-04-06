@@ -35,7 +35,7 @@ export default Ember.Component.extend({
     var withPlayer = this.get('trip.players')
       .findBy('roleName', roleName);
     if (!withPlayer) {
-      throw new Error("Need a with player for role " + roleName);
+      return null;
     }
     return withPlayer;
   }.property('params', 'trip.players.length'),
@@ -51,6 +51,9 @@ export default Ember.Component.extend({
   messages: function() {
     var asPlayer = this.get('asPlayer');
     var withPlayer = this.get('withPlayer');
+    if (!asPlayer || !withPlayer) {
+      return [];
+    }
     var allMessages = this.get('trip.messages');
     var isIncomingOnly = false;
     return allMessages

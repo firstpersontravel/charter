@@ -5,7 +5,7 @@ const Sequelize = require('sequelize');
 const config = require('../config');
 const models = require('../models');
 const KernelController = require('../kernel/kernel');
-const { fmtLocal } = require('./util');
+const NotifyController = require('../controllers/notify');
 
 const logger = config.logger.child({ name: 'workers.runner' });
 
@@ -20,14 +20,15 @@ class RunnerWorker {
     const tripId = action.tripId;
     if (action.type === 'action') {
       const scheduledAction = _.pick(action, ['name', 'params', 'event']);
-      await KernelController.applyAction(tripId, scheduledAction,
-        applyAt);
+      await KernelController.applyAction(tripId, scheduledAction, applyAt);
+      await NotifyController.notifyAction(tripId, action, null);
     } else if (action.type === 'trigger') {
-      await KernelController.applyTrigger(tripId, action.name,
-        applyAt);
+      await KernelController.applyTrigger(tripId, action.name, applyAt);
+      await NotifyController.notifyTrigger(tripId, action.name, null);
     } else if (action.type === 'event') {
       const event = Object.assign({ type: action.name }, action.params);
       await KernelController.applyEvent(tripId, event, applyAt);
+      await NotifyController.notifyEvent(tripId, event, null);
     }
   }
 
@@ -71,7 +72,7 @@ class RunnerWorker {
         where: { isArchived: false }
       }]
     });
-    logger.info(`${actions.length} actions up to ${fmtLocal(threshold)}`);
+    // logger.info(`${actions.length} actions up to ${fmtLocal(threshold)}`);
     for (let action of actions) {
       await this._runScheduledAction(action, safe);
     }

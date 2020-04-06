@@ -10,7 +10,7 @@ export default function ScheduleIndex({ match }) {
       <Link
         className="btn btn-block btn-primary"
         to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${match.params.year}/${match.params.month}?group=new`}>
-        Create a {d.format('MMMM')} block
+        Create {d.format('MMMM')} block
       </Link>
     </div>
   );

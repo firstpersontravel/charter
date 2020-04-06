@@ -47,8 +47,8 @@ export default Ember.Route.extend({
       .getData(refreshUrl)
       .then(function(data) {
         // unload all data that could be duplicated
-        self.store.unloadAll('action');
-        self.store.unloadAll('message');
+        // self.store.unloadAll('action');
+        // self.store.unloadAll('message');
         // reload all data
         var serializer = Ember.getOwner(self).lookup('serializer:api');
         serializer.set('store', self.store);
@@ -64,6 +64,7 @@ export default Ember.Route.extend({
     },
 
     refresh: function() {
+      console.log('refreshing');
       this.refresh();
     },
 

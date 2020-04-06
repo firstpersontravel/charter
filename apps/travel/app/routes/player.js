@@ -114,9 +114,10 @@ export default Ember.Route.extend({
     var trip = this.context.get('trip');
 
     // Make local action
-    trip.createLocalAction(name, params, null);
-    Ember.run.next(this.controllerFor('trip'),
-      'applyReadyLocalActions');
+    // console.log('local action', name, params);
+    // trip.createLocalAction(name, params, null);
+    // Ember.run.next(this.controllerFor('trip'),
+    //   'applyReadyLocalActions');
     
     var api = this.get('api');
     this.get('sync').add(function() {

@@ -3,6 +3,8 @@ import RealtimeMixin from '../mixins/controllers/realtime';
 
 import fptCore from 'fptcore';
 
+const notifiedMsgs = new Set();
+
 export default Ember.Controller.extend(RealtimeMixin, {
   channelFormat: '/@env_trip_@id',
 
@@ -108,37 +110,39 @@ export default Ember.Controller.extend(RealtimeMixin, {
     if (actionsToApply.get('length') === 0) {
       return;
     }
-    actionsToApply.forEach(function(action, i) {
-      console.log('==> applying ready local action: ' + action.get('name'));
-      this.applyAction(
-        action.get('name'),
-        action.get('params'),
-        action.get('scheduledAt'));
-      action.set('appliedAt', moment.utc());
-    }, this);
+    // this.send('refresh');
+    // actionsToApply.forEach(function(action, i) {
+    //   console.log('==> applying ready local action: ' + action.get('name'));
+    //   this.applyAction(
+    //     action.get('name'),
+    //     action.get('params'),
+    //     action.get('scheduledAt'));
+    //   action.set('appliedAt', moment.utc());
+    // }, this);
 
-    // If we're online, and have no pending actions to sync to the server,
-    // then refresh data from the server, to keep tablet more in-sync.
-    this.set('awaitingRefreshAt', moment.utc().add(2, 'seconds'));
-
-    // try not doing this
-    // call again to handle any new actions created.
-    Ember.run.next(this, 'applyReadyLocalActions');
+    // // If we're online, and have no pending actions to sync to the server,
+    // // then refresh data from the server, to keep tablet more in-sync.
+    // this.set('awaitingRefreshAt', moment.utc().add(2, 'seconds'));
+    
+    this.send('refresh');
+    // // try not doing this
+    // // call again to handle any new actions created.
+    // Ember.run.next(this, 'applyReadyLocalActions');
   },
 
-  timeDidChange: function() {
-    this.get('time');
-    this.applyReadyLocalActions();
-    if (this.get('awaitingRefreshAt') &&
-        moment.utc().isAfter(this.get('awaitingRefreshAt')) &&
-        this.get('api.apiRequestsInProgress') === 0 &&
-        this.get('sync.online') &&
-        !this.get('sync.inprogress') &&
-        !this.get('sync.hasPending')) {
-      this.set('awaitingRefreshAt', null);
-      this.send('refresh');
-    }
-  }.observes('time.currentTime'),
+  // timeDidChange: function() {
+  //   this.get('time');
+  //   this.applyReadyLocalActions();
+  //   if (this.get('awaitingRefreshAt') &&
+  //       moment.utc().isAfter(this.get('awaitingRefreshAt')) &&
+  //       this.get('api.apiRequestsInProgress') === 0 &&
+  //       this.get('sync.online') &&
+  //       !this.get('sync.inprogress') &&
+  //       !this.get('sync.hasPending')) {
+  //     this.set('awaitingRefreshAt', null);
+  //     this.send('refresh');
+  //   }
+  // }.observes('time.currentTime'),
 
   /**
    * If we come from offline to online, auto-refresh to server
@@ -257,7 +261,10 @@ export default Ember.Controller.extend(RealtimeMixin, {
         delete op.fields.sentByRoleName;
         delete op.fields.sentToRoleName;
         var msg = this.store.createRecord('message', op.fields);
-        uiCallbacks.notifyMessage(msg);
+        if (!notifiedMsgs.has(msg.id)) {
+          uiCallbacks.notifyMessage(msg);
+          notifiedMsgs.add(msg.id);
+        }
         console.log('-> msg', op.fields.name ||
           op.fields.content);
         break;
@@ -267,49 +274,52 @@ export default Ember.Controller.extend(RealtimeMixin, {
   realtimeEvents: {
     action: function(content) {
       console.log('action', content);
-      if (content.client_id === this.get('api').get('clientId')) {
-        console.log('self-originated remote action ignored:',
-          content.action.attributes.name);
-        return;
-      }
-      var triggerName = content.action.attributes['trigger-name'];
-      if (triggerName) {
-        var script = this.get('script');
-        var trigger = script.findResourceByName('trigger', triggerName);
-        if (trigger && !trigger.repeatable) {
-          if (this.get('history')[triggerName]) {
-            console.log('remote action skipped, trigger ' + triggerName + ' already executed');
-            return;
-          }
-        }
-      }
-      console.log('remote action triggered:',
-        content.action.attributes.name, content.action.attributes.params);
+      this.send('refresh');
+      // if (content.client_id === this.get('api').get('clientId')) {
+      //   console.log('self-originated remote action ignored:',
+      //     content.action.attributes.name);
+      //   return;
+      // }
+      // var triggerName = content.action.attributes['trigger-name'];
+      // if (triggerName) {
+      //   var script = this.get('script');
+      //   var trigger = script.findResourceByName('trigger', triggerName);
+      //   if (trigger && !trigger.repeatable) {
+      //     if (this.get('history')[triggerName]) {
+      //       console.log('remote action skipped, trigger ' + triggerName + ' already executed');
+      //       return;
+      //     }
+      //   }
+      // }
+      // console.log('remote action triggered:',
+      //   content.action.attributes.name, content.action.attributes.params);
 
-      // Create action object locally
-      var serializer = Ember.getOwner(this).lookup('serializer:api');
-      serializer.set('store', this.store);
-      serializer.pushPayload(this.store, {data: content.action});
+      // // Create action object locally
+      // var serializer = Ember.getOwner(this).lookup('serializer:api');
+      // serializer.set('store', this.store);
+      // serializer.pushPayload(this.store, {data: content.action});
 
-      // Apply it if it has already been applied on the server.
-      this.applyReadyLocalActions();
+      // // Apply it if it has already been applied on the server.
+      // this.applyReadyLocalActions();
     },
 
     event: function(content) {
-      if (content.client_id === this.get('api').get('clientId')) {
-        console.log('self-originated remote event ignored:',
-          content.event.type);
-        return;
-      }
-      var event = content.event;
-      console.log('received event', event);
-      this.applyEvent(event, moment.utc(content.sent_at));
+      // if (content.client_id === this.get('api').get('clientId')) {
+      //   console.log('self-originated remote event ignored:',
+      //     content.event.type);
+      //   return;
+      // }
+      // var event = content.event;
+      // console.log('received event', event);
+      // this.applyEvent(event, moment.utc(content.sent_at));
+      this.send('refresh');
     },
 
     trigger: function(content) {
-      var triggerName = content.trigger_name;
-      console.log('received trigger', triggerName);
-      this.applyTrigger(triggerName, moment.utc(content.sent_at));
+      // var triggerName = content.trigger_name;
+      // console.log('received trigger', triggerName);
+      // this.applyTrigger(triggerName, moment.utc(content.sent_at));
+      this.send('refresh');
     },
 
     requestAck: function(content) {
