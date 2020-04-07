@@ -112,6 +112,7 @@
 
 ### Todo later:
     
+    - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams
     - https://github.com/parcel-bundler/parcel
     - https://thecode.pub/easy-deploy-your-docker-applications-to-aws-using-ecs-and-fargate-a988a1cc842f
