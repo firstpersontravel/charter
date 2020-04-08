@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import { Evaluator, PlayerCore, Registry } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
-import ScheduleUtils from '../../schedule/utils';
-import { canRoleHaveUser } from '../utils';
+import ScheduleUtils from '../utils';
+import { canRoleHaveUser } from '../../operate/utils';
 
 const evaluator = new Evaluator(Registry);
 
@@ -42,12 +42,9 @@ export default class GroupPlayers extends Component {
   }
 
   renderScheduleHeader(trip) {
-    const group = this.props.group;
     return (
       <th key={trip.id}>
-        <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
-          {trip.title}
-        </Link>
+        {trip.title}
       </th>
     );
   }
@@ -74,6 +71,7 @@ export default class GroupPlayers extends Component {
       userId = user.id;
       userClass = '';
     }
+
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
       this.props.profiles, this.props.users, experience.id, roleName);
     const userChoices = profileChoices
@@ -108,15 +106,21 @@ export default class GroupPlayers extends Component {
         <i className="fa fa-user" />
       </Link>
     ) : null;
+
+    const canEdit = !group.isArchived && !trip.isArchived;
+    const userControl = canEdit ? (
+      <PopoverControl
+        title={role.title}
+        choices={userChoicesWithNone}
+        onConfirm={_.curry(this.handleAssignUser)(roleName, trip, player)}
+        value={userId}
+        label={userLabel}
+        labelClassName={userClass} />
+    ) : userLabel;
+
     return (
       <div>
-        <PopoverControl
-          title={role.title}
-          choices={userChoicesWithNone}
-          onConfirm={_.curry(this.handleAssignUser)(roleName, trip, player)}
-          value={userId}
-          label={userLabel}
-          labelClassName={userClass} />
+        {userControl}
         {' '}{goToUser}
       </div>
     );
@@ -176,8 +180,7 @@ export default class GroupPlayers extends Component {
   }
 
   render() {
-    const trips = this.props.group.trips
-      .filter(trip => !trip.isArchived);
+    const trips = this.props.group.trips;
     const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
     const roleRows = this.renderRoleRows(trips);
     return (

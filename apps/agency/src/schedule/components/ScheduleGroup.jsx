@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import { TextUtil, TripCore, PlayerCore } from 'fptcore';
 
@@ -214,6 +214,22 @@ class ScheduleGroup extends Component {
     );
   }
 
+  renderTabs() {
+    const group = this.props.group;
+    return (
+      <ul className="nav nav-tabs">
+        <li className="nav-item">
+          <NavLink
+            className="nav-link"
+            activeClassName="active"
+            to={`/${group.org.name}/${group.experience.name}/schedule/${this.props.match.params.year}/${this.props.match.params.month}/${group.id}`}>
+            Users
+          </NavLink>
+        </li>
+      </ul>
+    );
+  }
+
   render() {
     if (!this.props.group.isLoading && (this.props.group.isError || this.props.group.isNull)) {
       return <Alert color="danger" content="Error loading group." />;
@@ -227,6 +243,8 @@ class ScheduleGroup extends Component {
       <div>
         {this.renderHeader()}
         {this.renderTrips()}
+        {this.renderTabs()}
+        {this.props.children}
         <TripModal
           isOpen={this.state.isTripEditModalOpen}
           group={this.props.group}
@@ -244,10 +262,19 @@ ScheduleGroup.propTypes = {
   profiles: PropTypes.array.isRequired,
   createTrip: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
-  bulkUpdate: PropTypes.func.isRequired
+  bulkUpdate: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  match: PropTypes.object.isRequired
 };
 
-export default withLoader(ScheduleGroup, ['match.params.groupId'], (props) => {
+const loadProps = ['match.params.groupId', 'group.trips.length'];
+export default withLoader(ScheduleGroup, loadProps, (props) => {
+  if (props.group.id && props.group.trips.length) {
+    props.listCollection('players', {
+      tripId: props.group.trips.map(trip => trip.id).join(','),
+      orgId: props.experience.orgId
+    });
+  }
   props.listCollection('trips', {
     groupId: props.match.params.groupId,
     experienceId: props.experience.id,

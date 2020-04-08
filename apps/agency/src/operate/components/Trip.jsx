@@ -10,8 +10,16 @@ export default function Trip({ trip, children }) {
           <NavLink
             className="nav-link"
             activeClassName="active"
+            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/scenes`}>
+            Scenes
+          </NavLink>
+        </li>
+        <li className="nav-item">
+          <NavLink
+            className="nav-link"
+            activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/values`}>
-            Prep
+            Values
           </NavLink>
         </li>
         <li className="nav-item">
@@ -20,14 +28,6 @@ export default function Trip({ trip, children }) {
             activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/schedule`}>
             Timing
-          </NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink
-            className="nav-link"
-            activeClassName="active"
-            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/scenes`}>
-            Scenes
           </NavLink>
         </li>
         <li className="nav-item">

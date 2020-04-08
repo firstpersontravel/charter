@@ -157,6 +157,10 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     </li>
   ) : null;
 
+  const entryUrl = activeGroup ?
+    `/${org.name}/${experience.name}/schedule/${moment.utc(activeGroup.date).format('YYYY/MM')}/${activeGroup.id}` :
+    `/${org.name}/${experience.name}/schedule`;
+
   return (
     <ul className="navbar-nav mr-auto">
       {experienceDropdown}
@@ -171,7 +175,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
       <NavLink
         activeClassName="active"
         className="nav-link"
-        to={`/${org.name}/${experience.name}/schedule`}>
+        to={entryUrl}>
         Entry
       </NavLink>
       {opsDropdown}

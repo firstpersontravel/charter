@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router';
+import { Redirect, Route, Switch } from 'react-router';
 import PropTypes from 'prop-types';
 
 import NotFound from '../partials/NotFound';
@@ -7,10 +7,8 @@ import GroupConnector from './connectors/Group';
 import GroupAllConnector from './connectors/GroupAll';
 import GroupOverviewConnector from './connectors/GroupOverview';
 import GroupMessagesConnector from './connectors/GroupMessages';
-import GroupPlayersConnector from './connectors/GroupPlayers';
 import GroupUpcomingConnector from './connectors/GroupUpcoming';
 import TripConnector from './connectors/Trip';
-import TripIndexConnector from './connectors/TripIndex';
 import TripAchievementsConnector from './connectors/TripAchievements';
 import TripScenesConnector from './connectors/TripScenes';
 import TripControlsConnector from './connectors/TripControls';
@@ -52,9 +50,7 @@ function TripRoutes({ match }) {
   return (
     <TripConnector match={match}>
       <Switch>
-        <Route
-          path={match.path} exact
-          component={TripIndexConnector} />
+        <Redirect from={match.path} exact to={`${match.path}/scenes`} />
         <Route
           path={`${match.path}/values`}
           component={TripValuesConnector} />
@@ -104,9 +100,6 @@ function GroupRoutes({ match, history }) {
           <Route
             path={match.path} exact
             component={GroupOverviewConnector} />
-          <Route
-            path={`${match.path}/casting`}
-            component={GroupPlayersConnector} />
           <Route
             path={`${match.path}/role`}
             component={RolesRoutes} />

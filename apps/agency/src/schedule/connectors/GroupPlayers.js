@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { lookupGroup } from './utils';
+import { lookupGroup } from '../../operate/connectors/utils';
 import { createInstance, updateInstance } from '../../actions';
 import GroupPlayers from '../components/GroupPlayers';
 

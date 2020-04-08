@@ -7,8 +7,24 @@ import NotFound from '../partials/NotFound';
 import ScheduleConnector from './connectors/Schedule';
 import ScheduleIndexConnector from './connectors/ScheduleIndex';
 import ScheduleGroupConnector from './connectors/ScheduleGroup';
+import GroupPlayersConnector from './connectors/GroupPlayers';
 
 const curDate = moment.utc().format('YYYY/MM');
+
+function ScheduleGroupRoutes({ match }) {
+  return (
+    <ScheduleGroupConnector match={match}>
+      <Switch>
+        <Route path={match.path} component={GroupPlayersConnector} />
+        <Route component={NotFound} />
+      </Switch>
+    </ScheduleGroupConnector>
+  );
+}
+
+ScheduleGroupRoutes.propTypes = {
+  match: PropTypes.object.isRequired
+};
 
 function MonthRoutes({ match, location, history }) {
   return (
@@ -17,7 +33,7 @@ function MonthRoutes({ match, location, history }) {
         <Route path={match.path} exact component={ScheduleIndexConnector} />
         <Route
           path={`${match.path}/:groupId`}
-          component={ScheduleGroupConnector} />
+          component={ScheduleGroupRoutes} />
         <Route component={NotFound} />
       </Switch>
     </ScheduleConnector>

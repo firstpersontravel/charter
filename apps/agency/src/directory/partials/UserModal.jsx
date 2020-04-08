@@ -80,9 +80,9 @@ export default class UserModal extends Component {
         isOpen={this.props.isOpen}
         toggle={this.handleToggle}
         zIndex={3000}>
-        <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
-        <ModalBody>
-          <form onSubmit={this.handleConfirm}>
+        <form onSubmit={this.handleConfirm}>
+          <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
+          <ModalBody>
             <div className="row">
               <div className="form-group col-sm-6">
                 <label htmlFor="user_first_name">First name</label>
@@ -128,21 +128,20 @@ export default class UserModal extends Component {
                   placeholder="Phone number" />
               </div>
             </div>
-          </form>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color="primary"
-            type="submit"
-            onClick={this.handleConfirm}
-            disabled={!isValid}>
-            {confirmLabel}
-          </Button>
-          &nbsp;
-          <Button color="secondary" onClick={this.handleToggle}>
-            Cancel
-          </Button>
-        </ModalFooter>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              type="submit"
+              disabled={!isValid}>
+              {confirmLabel}
+            </Button>
+            &nbsp;
+            <Button color="secondary" onClick={this.handleToggle}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </form>
       </Modal>
     );
   }

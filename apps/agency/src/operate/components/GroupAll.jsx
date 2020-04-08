@@ -132,9 +132,6 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     isExact: true,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}`
   }, {
-    text: 'Users',
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/casting`
-  }, {
     text: roleTitle,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/role`,
     subItems: roleItems
