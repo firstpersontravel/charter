@@ -14,17 +14,25 @@ describe('PlayerCore', () => {
         starting_page: 'PAGE-1'
       }],
       variants: [
-        { name: 'default' }
+        { name: 'default' },
+        { name: 'override', starting_pages: { Sam: 'PAGE-2' } }
       ]
     };
 
     it('creates values from role', () => {
       const res = PlayerCore.getInitialFields(scriptContent, 'Sam', []);
-      assert.deepStrictEqual(res, {
+      assert.deepEqual(res, {
+        currentPageName: 'PAGE-1',
         roleName: 'Sam',
         acknowledgedPageName: '',
         acknowledgedPageAt: null
       });
+    });
+
+    it('creates values with overrides from template', () => {
+      const res = PlayerCore.getInitialFields(
+        scriptContent, 'Sam', ['override']);
+      assert.strictEqual(res.currentPageName, 'PAGE-2');
     });
   });
 });

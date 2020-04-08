@@ -1,21 +1,21 @@
 var _ = require('lodash');
 
 module.exports = {
-  help: 'Set a player to a page.',
+  help: 'Set a player to a page by role.',
   params: {
     role_name: {
       required: true,
       type: 'reference',
       collection: 'roles',
       display: { label: false },
-      help: 'The player to send to a page.'
+      help: 'The role to send to a page.'
     },
     page_name: {
       required: true,
       type: 'reference',
       collection: 'pages',
       allowNull: true,
-      help: 'The page to send the player to.'
+      help: 'The page to send the matching players to.'
     }
   },
   getOps(params, actionContext) {
@@ -31,17 +31,10 @@ module.exports = {
         }];
       }
     }
-    const newPageNames = Object.assign({},
-      actionContext.evalContext.tripState.currentPageNamesByRole, {
-        [params.role_name]: newPageName
-      });
-    const newTripState = Object.assign({},
-      actionContext.evalContext.tripState, {
-        currentPageNamesByRole: newPageNames
-      });
     return [{
-      operation: 'updateTripFields',
-      fields: { tripState: newTripState }
+      operation: 'updatePlayerFields',
+      roleName: params.role_name,
+      fields: { currentPageName: newPageName }
     }];
   }
 };

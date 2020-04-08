@@ -6,6 +6,7 @@ export default DS.Model.extend({
   trip: DS.belongsTo('trip', {async: false}),
   user: DS.belongsTo('user', {async: false}),
   roleName: DS.attr('string'),
+  currentPageName: DS.attr('string'),
   acknowledgedPageName: DS.attr('string'),
   acknowledgedPageAt: DS.attr('moment'),
   values: DS.attr('obj'),
@@ -13,11 +14,6 @@ export default DS.Model.extend({
   role: function() {
     return this.get('trip.script').getRole(this.get('roleName'));
   }.property('trip'),
-
-  currentPageName: function() {
-    return this.get('trip.tripState.currentPageNamesByRole')[
-      this.get('roleName')];
-  }.property('trip.tripState'),
 
   userProfile: function() {
     if (!this.get('user.profiles')) {

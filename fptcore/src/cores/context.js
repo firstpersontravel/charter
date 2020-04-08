@@ -12,16 +12,15 @@ class ContextCore {
     const profile = user.profile || {};
     const role = _.find(_.get(trip, 'script.content.roles') || [],
       { name: player.roleName }) || {};
-    const pageNamesByRole = trip.tripState.currentPageNamesByRole || {};
-    const pageName = pageNamesByRole[player.roleName];
     const page = _.find(_.get(trip, 'script.content.pages') || [],
-      { name: pageName }) || {};
+      { name: player.currentPageName }) || {};
     const link = (env.host || '') + '/s/' + player.id;
     const fullName = user.lastName ?
       (user.firstName + ' ' + user.lastName) :
       user.firstName;
     const contactName = role.title || fullName || null;
     return _.assign({}, profile.values, {
+      currentPageName: player.currentPageName || null,
       link: link,
       email: profile.email || user.email || null,
       contact_name: contactName,

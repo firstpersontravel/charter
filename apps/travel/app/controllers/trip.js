@@ -230,7 +230,16 @@ export default Ember.Controller.extend(RealtimeMixin, {
       case 'updateUi':
         uiCallbacks.transition(op.roleName, op.updates.newState);
         break;
-      
+
+      // Update player
+      case 'updatePlayerFields':
+        var player = players.findBy('roleName', op.roleName);
+        Object.keys(op.fields).forEach(key => {
+          player.set(key, op.fields[key]);
+        });
+        console.log('-> ' + op.roleName, JSON.stringify(op.fields));
+        break;
+
       // Update trip
       case 'updateTripFields':
         Object.keys(op.fields).forEach(key => {

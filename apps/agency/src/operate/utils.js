@@ -29,7 +29,7 @@ export function canRoleHaveUser(role) {
 }
 
 export function getPlayerPageInfo(trip, player) {
-  return PlayerCore.getPageInfo(trip.script, trip.evalContext, trip,
+  return PlayerCore.getPageInfo(trip.script, trip.evalContext,
     player);
 }
 
@@ -37,18 +37,18 @@ function getGroupPlayersForRole(group, roleName) {
   const role = _.find(group.script.content.roles, { name: roleName });
   return group.trips
     .filter(trip => evaluator.if(trip.actionContext, role.active_if))
-    .filter(trip => trip.tripState.currentPageNamesByRole[roleName])
     .map(trip => _.find(trip.players, { roleName: role.name }))
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter(player => player.currentPageName);
 }
 
 function getTripPlayersForRoles(trip, roleFilters) {
   const roles = _.filter(trip.script.content.roles, roleFilters);
   return roles
     .filter(role => evaluator.if(trip.actionContext, role.active_if))
-    .filter(role => trip.tripState.currentPageNamesByRole[role.name])
     .map(role => _.find(trip.players, { roleName: role.name }))
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter(player => player.currentPageName);
 }
 
 function getTripPlayers(trip) {
@@ -56,7 +56,7 @@ function getTripPlayers(trip) {
 }
 
 function getPlayerSceneSort(trip, player) {
-  return PlayerCore.getSceneSort(trip.script, trip.evalContext, trip,
+  return PlayerCore.getSceneSort(trip.script, trip.evalContext,
     player);
 }
 

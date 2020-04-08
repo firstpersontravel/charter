@@ -8,12 +8,7 @@ describe('#send_to_page', () => {
       roles: [{ name: 'Tablet', actor: false }],
       pages: [{ name: 'PAGE-ONE' }, { name: 'PAGE-ZERO' }]
     },
-    evalContext: {
-      tripState: {
-        currentSceneName: 'SCENE',
-        currentPageNamesByRole: { Tablet: 'PAGE-ZERO' }
-      }
-    }
+    evalContext: { Tablet: { page: 'PAGE-ZERO' } }
   };
 
   it('sends to page', () => {
@@ -22,13 +17,9 @@ describe('#send_to_page', () => {
     const res = send_to_page.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
-      operation: 'updateTripFields',
-      fields: {
-        tripState: {
-          currentSceneName: 'SCENE',
-          currentPageNamesByRole: { Tablet: 'PAGE-ONE' }
-        }
-      }
+      operation: 'updatePlayerFields',
+      roleName: 'Tablet',
+      fields: { currentPageName: 'PAGE-ONE' }
     }]);
   });
 
@@ -38,13 +29,9 @@ describe('#send_to_page', () => {
     const res = send_to_page.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
-      operation: 'updateTripFields',
-      fields: {
-        tripState: {
-          currentSceneName: 'SCENE',
-          currentPageNamesByRole: { Tablet: '' }
-        }
-      }
+      operation: 'updatePlayerFields',
+      roleName: 'Tablet',
+      fields: { currentPageName: '' }
     }]);
   });
 });

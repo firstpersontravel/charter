@@ -10,9 +10,8 @@ import GroupMap from '../partials/GroupMap';
 import { getPlayerIframeUrl } from '../../utils';
 
 function getAppearanceStart(player) {
-  const pageName = player.trip.tripState
-    .currentPageNamesByRole[player.roleName];
-  const page = _.find(player.trip.script.content.pages, { name: pageName });
+  const page = _.find(player.trip.script.content.pages,
+    { name: player.currentPageName });
   if (!page) {
     return null;
   }
@@ -57,8 +56,8 @@ function renderUser(player, user) {
 
 function renderPlayerCell(player, isFirst) {
   const trip = player.trip;
-  const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
-  const page = _.find(player.trip.script.content.pages, { name: pageName });
+  const page = _.find(player.trip.script.content.pages,
+    { name: player.currentPageName });
   if (!page) {
     return (
       <div key={player.id} className="alert alert-warning">
@@ -66,7 +65,7 @@ function renderPlayerCell(player, isFirst) {
       </div>
     );
   }
-  const pageTitle = page ? page.title : pageName;
+  const pageTitle = page ? page.title : player.currentPageName;
   const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
@@ -107,8 +106,7 @@ function renderPlayerCell(player, isFirst) {
 export default function RoleIndex({ user, players }) {
   const playersSorted = _(players)
     .filter('trip.script')
-    .filter(player => player.trip.tripState
-      .currentPageNamesByRole[player.roleName])
+    .filter('currentPageName')
     .sortBy((player) => {
       const appearanceStart = getAppearanceStart(player);
       return appearanceStart ? appearanceStart.unix() : 0;

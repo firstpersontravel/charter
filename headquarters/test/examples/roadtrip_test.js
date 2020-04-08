@@ -3,6 +3,7 @@ const path = require('path');
 const assert = require('assert');
 const yaml = require('js-yaml');
 
+const models = require('../../src/models');
 const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');
 
@@ -19,9 +20,10 @@ describe('RoadTripExample', () => {
 
   it('runs through road trip', async () => {
     const trip = await TestUtil.createDummyTripForScript(script);
+    const driver = await models.Player.findOne({ where: { tripId: trip.id } });
 
     // Starts on starting page
-    assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Start');
+    assert.strictEqual(driver.currentPageName, 'Start');
 
     // Start first drive
     await KernelController.applyAction(trip.id, {
@@ -30,8 +32,8 @@ describe('RoadTripExample', () => {
     });
 
     // Get to next page
-    await trip.reload();
-    assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Drive1');
+    await driver.reload();
+    assert.strictEqual(driver.currentPageName, 'Drive1');
 
     // Finish first drive
     await KernelController.applyAction(trip.id, {
@@ -40,8 +42,8 @@ describe('RoadTripExample', () => {
     });
 
     // Get to next page
-    await trip.reload();
-    assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Break');
+    await driver.reload();
+    assert.strictEqual(driver.currentPageName, 'Break');
 
     // Start second drive
     await KernelController.applyAction(trip.id, {
@@ -50,8 +52,8 @@ describe('RoadTripExample', () => {
     });
 
     // Get to next page
-    await trip.reload();
-    assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Drive2');
+    await driver.reload();
+    assert.strictEqual(driver.currentPageName, 'Drive2');
 
     // Finish second drive
     await KernelController.applyAction(trip.id, {
@@ -60,7 +62,7 @@ describe('RoadTripExample', () => {
     });
 
     // Get to next page
-    await trip.reload();
-    assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'End');
+    await driver.reload();
+    assert.strictEqual(driver.currentPageName, 'End');
   });
 });

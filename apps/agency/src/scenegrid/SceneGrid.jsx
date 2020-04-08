@@ -70,8 +70,7 @@ export default class SceneGrid extends Component {
 
   renderPlayerPage(player, page) {
     const trip = this.props.trip;
-    const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
-    const isCurrentPage = page.name === curPageName;
+    const isCurrentPage = page.name === player.currentPageName;
     const isAckedPage = player.acknowledgedPageName === page.name;
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
