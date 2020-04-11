@@ -33,11 +33,6 @@ describe('Player', () => {
     await assertValidation(player, { roleName: 'must be present' });
   });
 
-  it('allows current page', async () => {
-    player.currentPageName = 'PAGE-1';
-    await player.validate();
-  });
-
   it('allows acknowledged page', async () => {
     player.acknowledgedPageName = 'PAGE-1';
     player.acknowledgedPageAt = moment.utc();

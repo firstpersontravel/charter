@@ -43,67 +43,7 @@ export default Ember.Controller.extend({
     }, true);
   },
 
-  // Messy solution until store.filter is ready.
-  allActions: function() {
-    return this.store.peekAll('action');
-  }.property(),
-
-  // Messy solution until store.filter is ready.
-  tripActions: function() {
-    var trip = this.get('trip.model');
-    return this.get('allActions').filterBy('trip', trip);
-  }.property('trip.model', 'allActions.@each.trip'),
-
-  // Messy solution until store.filter is ready.
-  unappliedActions: function() {
-    return this.get('tripActions')
-      .filterBy('appliedAt', null)
-      .filterBy('failedAt', null)
-      .sort(function(a, b) {
-        return Ember.compare(
-          a.get('scheduledAt').valueOf(),
-          b.get('scheduledAt').valueOf());
-      });
-  }.property('tripActions.@each.appliedAt'),
-
-  numLocalUnappliedActions: function() {
-    return this.get('unappliedActions').length;
-  }.property('time.currentTime', 'unappliedActions.length'),
-
-  nextLocalUnappliedAction: function() {
-    var actions = this.get('unappliedActions');
-    if (!actions.length) { return null; }
-    return actions[0];
-  }.property('time.currentTime', 'unappliedActions.length'),
-
-  nextActionScheduledAtLocal: function() {
-    var action = this.get('nextLocalUnappliedAction');
-    if (!action) { return null; }
-    return action.get('scheduledAt').clone().local().format('h:mm:ssa');
-  }.property('nextLocalUnappliedAction.scheduledAt'),
-
   actions: {
-    toNextAction: function() {
-      var nextAction = this.get('nextLocalUnappliedAction');
-      if (!nextAction) { return; }
-      if (!this.get('time.isPaused')) { this.get('time').pause(); }
-      var scheduledAt = nextAction.get('scheduledAt');
-      var nextTime = scheduledAt.clone().add(1, 'seconds');
-      this.set('time.currentTime', nextTime);
-    },
-    adjustTime: function(amount) {
-      if (!this.get('time.isPaused')) {
-        this.get('time').pause();
-      }
-      var currentTime = this.get('time.currentTime');
-      var newTime = currentTime.clone().add(amount, 'seconds');
-      this.set('time.currentTime', newTime);
-    },
-    resetTime: function() {
-      if (this.get('time.isPaused')) {
-        this.get('time').start();
-      }
-    },
     goToWaypoint: function(waypointOptionName) {
       var waypointOptions = this.get('waypointOptions');
       var waypointOption = waypointOptions.findBy('name', waypointOptionName);

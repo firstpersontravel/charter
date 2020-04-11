@@ -45,79 +45,10 @@ export default Ember.Route.extend({
       locationAccuracy: accuracy,
       locationTimestamp: moment.utc(timestamp)
     });
-
-    // Location update path
-    // Native update from tablet
-    //   - iOS -> server update_device_state
-    //            -> creates enterGeofence events on server
-    //               -> calls realtimeEvents.event with enterGeofence on
-    //                  other clients [NEEDED]
-    //            -> sends 'device_state' realtime event to other clients
-    //               -> calls realtimeEvents.deviceState on other clients
-    //                  -> sets user.location props locally (no new event)
-    //                  -> does not enterGeofence events locally
-    //   - iOS -> local nativeLocationUpdate
-    //            -> sets user.location props locally (no new event)
-    //            -> creates enterGeofence events locally
-    // Web update from tablet location or debug bar
-    //   - web > `location.handleFix` > `lastFixDidChange` >
-    //     `player.updateLocation`
-    //     -> server update_device_state
-    //          -> creates enterGeofence events on server
-    //             -> calls realtimeEvents.event with enterGeofence on
-    //                other clients [NEEDED]
-    //          -> sends 'device_state' realtime event to other clients
-    //             -> calls realtimeEvents.deviceState on other clients
-    //                -> sets user.location props locally (no new event)
-    //                -> does not enterGeofence events locally
-    //     -> create enterGeofence events locally
-
-    // Locally enter geofences
-    // Don't send geofence_entered events to the server because they are
-    // created by the native location update endpoint and DeviceStateHandler
-    // on the server, and notified out with a client id (so therefore ignored)
-    // by this one.
-    this.enterGeofences(
-      oldLatitude, oldLongitude, oldAccuracy,
-      latitude, longitude, accuracy);
-  },
-
-  /**
-   * Figure out which geofences we just entered and create events
-   */
-  enterGeofences: function(
-      oldLatitude, oldLongitude, oldAccuracy,
-      newLatitude, newLongitude, newAccuracy) {
-    var trip = this.modelFor('trip');
-    var script = trip.get('script');
-    var oldGeofences = fptCore.GeofenceCore.geofencesInArea(
-      script.get('content'), oldLatitude, oldLongitude, oldAccuracy,
-      trip.get('waypointOptions'));
-    var oldGeofenceNames = oldGeofences.map(g => g.name);
-    var newGeofences = fptCore.GeofenceCore.geofencesInArea(
-      script.get('content'), newLatitude, newLongitude, newAccuracy,
-      trip.get('waypointOptions'));
-    var newGeofenceNames = newGeofences.map(g => g.name);
-    newGeofenceNames.forEach(function(geofenceName) {
-      if (oldGeofenceNames.indexOf(geofenceName) > -1) {
-        return;
-      }
-      this.controllerFor('trip').applyEvent({
-        type: 'geofence_entered',
-        role: this.context.get('roleName'),
-        geofence: geofenceName
-      }, moment.utc());
-    }, this);
   },
 
   makeAction: function(name, params) {
     var trip = this.context.get('trip');
-
-    // Make local action
-    // console.log('local action', name, params);
-    // trip.createLocalAction(name, params, null);
-    // Ember.run.next(this.controllerFor('trip'),
-    //   'applyReadyLocalActions');
     
     var api = this.get('api');
     this.get('sync').add(function() {
@@ -166,9 +97,6 @@ export default Ember.Route.extend({
         locationAccuracy: fix.coords.accuracy,
         locationTimestamp: moment.utc(fix.timestamp)
       });
-      this.enterGeofences(
-        oldLatitude, oldLongitude, oldAccuracy,
-        fix.coords.latitude, fix.coords.longitude, fix.coords.accuracy);
       this.get('api')
         .updateLocation(user.id,
           fix.coords.latitude, fix.coords.longitude,

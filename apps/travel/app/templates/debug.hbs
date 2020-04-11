@@ -1,23 +1,5 @@
 <div class='application-debug-console pure-g'>
   <div class='pure-u-4-5'>
-    <span class='current-time text-padded'>
-      {{localTime}}
-    </span>
-
-    <button class="pure-button {{if time.isPaused "" "pure-button-disabled"}}" {{action "resetTime"}}>reset</button>
-
-    {{#if nextLocalUnappliedAction}}
-      <button class='pure-button' {{action "toNextAction"}}>
-        &raquo;
-        {{nextActionScheduledAtLocal}}
-        {{nextLocalUnappliedAction.name}}
-      </button>
-    {{/if}}
-
-    <span class='text-padded'>
-      ({{numLocalUnappliedActions}})
-    </span>
-
     <span class='text-padded sync-status-{{ if sync.online "online" "offline"}}'>
       {{if sync.inprogress "syncing" "idle"}},
       queue: {{sync.queue.length}},

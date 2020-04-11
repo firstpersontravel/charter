@@ -91,9 +91,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const pathUserId = pathRoleMatch ? pathRoleMatch[2] : null;
 
   if (pathRoleName && pathUserId) {
-    const role = _.find(group.script.content.roles, {
-      name: pathRoleName
-    });
+    const role = _.find(group.script.content.roles, { name: pathRoleName });
     const userTitle = pathUserId !== '0' ?
       _.get(_.find(allUsers, { id: Number(pathUserId) }), 'firstName') :
       'No user';
@@ -104,15 +102,11 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const pathTripId = pathTripMatch ? pathTripMatch[1] : null;
   const tripsItem = renderTripsItem(group, pathTripId);
 
-  function playerItemsForRole(role) {
+  function itemsForRole(role) {
     return _(allPlayers)
       .filter((player) => {
         const trip = group.trips.find(t => t.id === player.tripId);
-        if (!trip || !!trip.tripState ||
-            !trip.tripState.currentPageNamesByRole) {
-          return false;
-        }
-        return !!trip.tripState.currentPageNamesByRole[player.roleName];
+        return trip && trip.tripState.currentPageNamesByRole[player.roleName];
       })
       .filter({ roleName: role.name })
       .map('user')
@@ -130,7 +124,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   }
 
   const roleItems = _(roles)
-    .map(role => playerItemsForRole(role))
+    .map(role => itemsForRole(role))
     .flatten()
     .value();
 

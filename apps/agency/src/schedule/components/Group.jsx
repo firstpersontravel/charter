@@ -12,7 +12,7 @@ import { withLoader } from '../../loader-utils';
 import TripModal from '../partials/TripModal';
 import ScheduleUtils from '../utils';
 
-class ScheduleGroup extends Component {
+class Group extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -256,7 +256,7 @@ class ScheduleGroup extends Component {
   }
 }
 
-ScheduleGroup.propTypes = {
+Group.propTypes = {
   group: PropTypes.object.isRequired,
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
@@ -268,7 +268,7 @@ ScheduleGroup.propTypes = {
 };
 
 const loadProps = ['match.params.groupId', 'group.trips.length'];
-export default withLoader(ScheduleGroup, loadProps, (props) => {
+export default withLoader(Group, loadProps, (props) => {
   if (props.group.id && props.group.trips.length) {
     props.listCollection('players', {
       tripId: props.group.trips.map(trip => trip.id).join(','),

@@ -5,6 +5,7 @@ const apiActionsRoutes = require('../routes/api_actions');
 const apiAdminRoutes = require('../routes/api_admin');
 const apiLegacyRoutes = require('../routes/api_legacy');
 const apiRestRoutes = require('../routes/api_rest');
+const apiViewRoutes = require('../routes/api_view');
 const Authorizor = require('../authorization/authorizer');
 const Policy = require('../authorization/policy');
 const designerPolicies = require('../policies/designer');
@@ -97,6 +98,10 @@ apiRouter.post('/admin/trips/:tripId/reset',
   asyncRoute(apiAdminRoutes.resetRoute));
 apiRouter.post('/admin/trips/:tripId/trigger',
   asyncRoute(apiAdminRoutes.triggerRoute));
+
+// New traveler view data
+apiRouter.get('/view/player/:playerId',
+  asyncRoute(apiViewRoutes.getPlayerViewRoute));
 
 // Legacy
 apiRouter.get('/legacy/user/:id',

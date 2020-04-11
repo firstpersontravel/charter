@@ -21,20 +21,24 @@ export function lookupScripts(state, ownProps) {
   });
 }
 
-export function lookupGroups(state, ownProps) {
-  const thisMonth = moment(
-    `${ownProps.match.params.year}-${ownProps.match.params.month}-01`,
-    'YYYY-MM-DD');
+export function isGroupInMonth(group, year, month) {
+  const thisMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
   const nextMonth = thisMonth.clone().add(1, 'months');
+  return (
+    moment(group.date).isSameOrAfter(thisMonth) &&
+    moment(group.date).isBefore(nextMonth)
+  );
+}
+
+export function lookupGroups(state, ownProps) {
+  const year = ownProps.match.params.year;
+  const month = ownProps.match.params.month;
   const query = new URLSearchParams(ownProps.location.search);
   const showArchived = query.get('archived') === 'true';
   const filter = {
     org: { name: ownProps.match.params.orgName },
     experience: { name: ownProps.match.params.experienceName },
-    self: group => (
-      moment(group.date).isSameOrAfter(thisMonth) &&
-      moment(group.date).isBefore(nextMonth)
-    )
+    self: group => isGroupInMonth(group, year, month)
   };
   if (!showArchived) {
     filter.isArchived = false;

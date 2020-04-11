@@ -1,21 +1,26 @@
-import moment from 'moment-timezone';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+const PropTypes = require('prop-types');
+const React = require('react');
+const { Redirect } = require('react-router-dom');
 
-export default function ScheduleIndex({ match }) {
-  const d = moment(`${match.params.year}-${match.params.month}-01`, 'YYYY-MM-DD');
+const { isGroupInMonth } = require('../connectors/utils');
+
+const curYear = new Date().getFullYear().toString();
+const curMonth = (new Date().getMonth() + 1).toString().padStart(2, '0');
+
+export default function ScheduleIndex({ match, groups }) {
+  const groupsInMonth = groups
+    .filter(group => isGroupInMonth(group, curYear, curMonth));
+  if (groupsInMonth.length > 0) {
+    return (
+      <Redirect to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${curYear}/${curMonth}/${groupsInMonth[0].id}`} />
+    );
+  }
   return (
-    <div>
-      <Link
-        className="btn btn-block btn-primary"
-        to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${match.params.year}/${match.params.month}?group=new`}>
-        Create {d.format('MMMM')} block
-      </Link>
-    </div>
+    <Redirect to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${curYear}/${curMonth}`} />
   );
 }
 
 ScheduleIndex.propTypes = {
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  groups: PropTypes.array.isRequired
 };

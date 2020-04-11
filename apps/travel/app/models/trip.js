@@ -29,21 +29,6 @@ export default DS.Model.extend({
     return this.get('tripState').currentSceneName;
   }.property('tripState'),
 
-  createLocalAction: function(name, params, scheduledAt, triggerName) {
-    var newAction = this.store.createRecord('action', {
-      trip: this,
-      name: name,
-      params: params,
-      triggerName: triggerName || '',
-      createdAt: moment.utc(),
-      scheduledAt: scheduledAt || moment.utc(),
-      appliedAt: null,
-      failedAt: null
-    });
-    // newAction.save();
-    return newAction;
-  },
-
   evaluateIf: function(ifClause) {
     const evaluator = new fptCore.Evaluator(fptCore.Registry);
     return evaluator.if(this.get('actionContext'), ifClause);

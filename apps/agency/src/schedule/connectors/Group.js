@@ -10,7 +10,7 @@ import {
   listCollection
 } from '../../actions';
 import { lookupGroup } from './utils';
-import ScheduleGroup from '../components/ScheduleGroup';
+import Group from '../components/Group';
 
 const mapStateToProps = (state, ownProps) => ({
   org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName }),
@@ -31,4 +31,4 @@ const mapDispatchToProps = dispatch => ({
   listCollection: (...args) => dispatch(listCollection(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ScheduleGroup);
+export default connect(mapStateToProps, mapDispatchToProps)(Group);
