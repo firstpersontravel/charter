@@ -22,7 +22,7 @@ describe('pageActorRoutes', () => {
       // stub db response
       sandbox.stub(models.Player, 'findAll').resolves([{
         roleName: 'Gabe',
-        user: { id: 10 },
+        user: { id: 10, firstName: 'g', lastName: 's' },
         trip: {
           script: {
             content: {
@@ -63,7 +63,11 @@ describe('pageActorRoutes', () => {
         layout: 'actor',
         orgName: 'org',
         orgTitle: 'Org',
-        users: [{ id: 10 }]
+        users: [{
+          id: 10,
+          firstName: 'g',
+          lastName: 's'
+        }]
       });
     });
   });
