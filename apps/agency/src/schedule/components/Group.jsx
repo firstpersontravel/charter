@@ -15,15 +15,10 @@ import ScheduleUtils from '../utils';
 class Group extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isTripEditModalOpen: false,
-      isEditingTrip: null
-    };
     this.handleArchiveGroup = this.handleArchiveGroup.bind(this);
     this.handleArchiveTrip = this.handleArchiveTrip.bind(this);
-    this.handleEditTripToggle = this.handleEditTripToggle.bind(this);
-    this.handleNewTrip = this.handleNewTrip.bind(this);
-    this.handleEditTripConfirm = this.handleEditTripConfirm.bind(this);
+    this.handleEditTripClose = this.handleEditTripClose.bind(this);
+    this.handleEditTrip = this.handleEditTrip.bind(this);
   }
 
   handleArchiveGroup() {
@@ -47,24 +42,8 @@ class Group extends Component {
     });
   }
 
-  handleEditTripToggle() {
-    this.setState({
-      isTripEditModalOpen: !this.state.isTripEditModalOpen
-    });
-  }
-
-  handleNewTrip() {
-    this.setState({
-      isTripEditModalOpen: true,
-      isEditingTrip: null
-    });
-  }
-
-  handleEditTrip(trip) {
-    this.setState({
-      isTripEditModalOpen: true,
-      isEditingTrip: trip
-    });
+  handleEditTripClose() {
+    this.props.history.push({ search: '' });
   }
 
   initialFieldsForRole(experience, script, role, variantNames) {
@@ -81,7 +60,7 @@ class Group extends Component {
     return fields;
   }
 
-  handleEditTripConfirm(group, fields) {
+  handleEditTrip(group, fields) {
     const initialFields = TripCore.getInitialFields(
       group.script.content, group.date,
       group.experience.timezone, fields.variantNames);
@@ -96,15 +75,17 @@ class Group extends Component {
       variantNames: fields.variantNames.join(','),
       tripState: { currentSceneName: '' }
     });
-    if (this.state.isEditingTrip) {
+
+    const query = new URLSearchParams(this.props.location.search);
+    const editingTripId = query.get('trip');
+    if (editingTripId !== 'new') {
       // update existing trip
-      this.props.updateInstance('trips', this.state.isEditingTrip.id,
-        tripFields);
+      this.props.updateInstance('trips', editingTripId, tripFields);
     } else {
       // create new trip
       this.initializeTrip(group, tripFields);
     }
-    this.handleEditTripToggle();
+    this.handleEditTripClose();
   }
 
   initializeTrip(group, tripFields) {
@@ -119,11 +100,11 @@ class Group extends Component {
 
   renderTripRow(group, trip) {
     const editTripBtn = !group.isArchived ? (
-      <button
+      <Link
         className="btn btn-sm btn-outline-secondary"
-        onClick={() => this.handleEditTrip(trip)}>
+        to={{ search: `?trip=${trip.id}` }}>
         Edit
-      </button>
+      </Link>
     ) : null;
     const archiveTripBtn = !group.isArchived ? (
       <button
@@ -170,11 +151,11 @@ class Group extends Component {
     return (
       <div className="mb-3">
         <div className="float-right text-right">
-          <button
+          <Link
             className="btn btn-outline-secondary"
-            onClick={() => this.handleNewTrip()}>
+            to={{ search: '?trip=new' }}>
             Add trip
-          </button>
+          </Link>
           &nbsp;
           <button
             className="btn btn-outline-secondary"
@@ -193,11 +174,11 @@ class Group extends Component {
     if (!this.props.group.trips.length) {
       return (
         <div style={{ padding: '100px' }}>
-          <button
+          <Link
             className={`btn btn-block btn-primary ${this.props.group.isArchived ? 'disabled' : ''}`}
-            onClick={() => this.handleNewTrip()}>
+            to={{ search: '?trip=new' }}>
             Add a trip to this block
-          </button>
+          </Link>
         </div>
       );
     }
@@ -239,6 +220,14 @@ class Group extends Component {
         this.props.group.script.isNull) {
       return <Loader />;
     }
+
+    const query = new URLSearchParams(this.props.location.search);
+    const editingTripId = query.get('trip');
+    const isEditingTrip = !!editingTripId;
+    const editingTrip = (isEditingTrip && editingTripId !== 'new') ?
+      this.props.group.trips.find(t => t.id === Number(editingTripId)) :
+      null;
+
     return (
       <div>
         {this.renderHeader()}
@@ -246,11 +235,11 @@ class Group extends Component {
         {this.renderTabs()}
         {this.props.children}
         <TripModal
-          isOpen={this.state.isTripEditModalOpen}
+          isOpen={isEditingTrip}
           group={this.props.group}
-          trip={this.state.isEditingTrip}
-          onClose={this.handleEditTripToggle}
-          onConfirm={this.handleEditTripConfirm} />
+          trip={editingTrip}
+          onClose={this.handleEditTripClose}
+          onConfirm={this.handleEditTrip} />
       </div>
     );
   }
@@ -264,7 +253,9 @@ Group.propTypes = {
   updateInstance: PropTypes.func.isRequired,
   bulkUpdate: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 const loadProps = ['match.params.groupId', 'group.trips.length'];

@@ -87,7 +87,7 @@
 
     # build for production
     npm run build
-    open "http://localhost:5000/travel"
+    open "http://localhost:5001/travel"
 
 ### Set up native app
 

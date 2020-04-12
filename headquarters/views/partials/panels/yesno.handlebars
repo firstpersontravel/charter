@@ -1,9 +1,9 @@
 <p class="card-text">
-  {{panel.text}}
-  <a href="#" data-action='set_value' data-params='{"value_ref": "{{panel.value_ref}}", "new_value_ref": "true"}' data-trip-id='{{trip.id}}' class="btn {{#if isYes}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+  {{text}}
+  <a href="#" data-action='set_value' data-params='{"value_ref": "{{value_ref}}", "new_value_ref": "true"}' data-trip-id='{{tripId}}' class="btn {{#if isYes}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
       Yes
   </a>
-  <a href="#" data-action='set_value' data-params='{"value_ref": "{{panel.value_ref}}", "new_value_ref": "false"}' data-trip-id='{{trip.id}}' class="btn {{#if isNo}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
+  <a href="#" data-action='set_value' data-params='{"value_ref": "{{value_ref}}", "new_value_ref": "false"}' data-trip-id='{{tripId}}' class="btn {{#if isNo}}btn-secondary{{else}}btn-outline-secondary{{/if}}">
       No
   </a>
 </p>

@@ -8,6 +8,7 @@ import { Evaluator, PlayerCore, Registry } from 'fptcore';
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
 import { canRoleHaveUser } from '../../operate/utils';
+import UserModal from '../../directory/partials/UserModal';
 
 const evaluator = new Evaluator(Registry);
 
@@ -20,6 +21,8 @@ export default class GroupPlayers extends Component {
   constructor(props) {
     super(props);
     this.handleAssignUser = this.handleAssignUser.bind(this);
+    this.handleUserModalClose = this.handleUserModalClose.bind(this);
+    this.handleCreateUser = this.handleCreateUser.bind(this);
   }
 
   handleAssignUser(roleName, trip, player, userId) {
@@ -39,6 +42,36 @@ export default class GroupPlayers extends Component {
     const updateFields = { userId: user ? user.id : null };
     this.props.updateInstance('players', player.id,
       updateFields);
+  }
+
+  handleUserModalClose() {
+    this.props.history.push({ search: '' });
+  }
+
+  handleCreateUser(fields) {
+    const query = new URLSearchParams(this.props.location.search);
+    const roleName = query.get('role');
+    const userFields = {
+      orgId: this.props.group.orgId,
+      experienceId: this.props.group.experienceId,
+      firstName: fields.firstName,
+      lastName: fields.lastName,
+      phoneNumber: fields.phoneNumber,
+      email: fields.email
+    };
+    const profilesToCreate = roleName ? [{
+      collection: 'profiles',
+      fields: {
+        orgId: this.props.group.orgId,
+        experienceId: this.props.group.experienceId,
+        roleName: roleName
+      },
+      insertions: {
+        userId: 'id'
+      }
+    }] : null;
+    this.props.createInstances('users', userFields, profilesToCreate);
+    this.handleUserModalClose();
   }
 
   renderScheduleHeader(trip) {
@@ -85,23 +118,12 @@ export default class GroupPlayers extends Component {
         label: `${profileUser.firstName} ${profileUser.lastName}`
       }));
     if (userChoices.length === 0) {
-      return (
-        <Link
-          to={{
-            pathname:
-              `/${group.org.name}/${group.experience.name}/directory`,
-            search:
-              `?editing=true&role=${roleName}&experienceId=${experience.id}`
-          }}>
-          Create user
-        </Link>
-      );
+      return index === 0 ? <em>No users</em> : null;
     }
     const userChoicesWithNone = [{ value: '', label: 'Unassigned' }]
       .concat(userChoices);
     const goToUser = user ? (
       <Link
-        className="faint"
         to={`/${group.org.name}/${group.experience.name}/directory/user/${user.id}`}>
         <i className="fa fa-user" />
       </Link>
@@ -141,7 +163,7 @@ export default class GroupPlayers extends Component {
       </div>
     ));
     const maxPlayers = role.max_players || 1;
-    const newCells = _.range(maxPlayers - players.length)
+    const newCells = _.range(players.length, maxPlayers)
       .map(i => (
         <div key={i}>
           {this.renderPlayerCell(roleName, trip, null, i)}
@@ -165,6 +187,11 @@ export default class GroupPlayers extends Component {
       <tr key={role.name}>
         <td>{role.title}</td>
         {tripRoleCells}
+        <td>
+          <Link className="ml-1" to={{ search: `?role=${role.name}` }}>
+            <i className="fa fa-user-plus" />
+          </Link>
+        </td>
       </tr>
     );
   }
@@ -180,6 +207,9 @@ export default class GroupPlayers extends Component {
   }
 
   render() {
+    const query = new URLSearchParams(this.props.location.search);
+    const isCreatingUser = !!query.get('role');
+
     const trips = this.props.group.trips;
     const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
     const roleRows = this.renderRoleRows(trips);
@@ -191,12 +221,18 @@ export default class GroupPlayers extends Component {
               <tr>
                 <th>Role</th>
                 {headerCells}
+                <th />
               </tr>
             </thead>
             <tbody>
               {roleRows}
             </tbody>
           </table>
+          <UserModal
+            isOpen={isCreatingUser}
+            user={null}
+            onClose={this.handleUserModalClose}
+            onConfirm={this.handleCreateUser} />
         </div>
       </div>
     );
@@ -208,5 +244,8 @@ GroupPlayers.propTypes = {
   users: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,
-  updateInstance: PropTypes.func.isRequired
+  createInstances: PropTypes.func.isRequired,
+  updateInstance: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };

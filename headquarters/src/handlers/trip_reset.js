@@ -30,7 +30,7 @@ class TripResetHandler {
       .map(role => [role.name, role.starting_page]));
 
     for (const roleName of Object.keys(checkpoint.pages || {})) {
-      startingPages[roleName] = checkpoint.pages.roleName;
+      startingPages[roleName] = checkpoint.pages[roleName];
     }
 
     // Update trip vars

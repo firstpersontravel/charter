@@ -1,10 +1,6 @@
 import Ember from 'ember';
 import RealtimeMixin from '../mixins/controllers/realtime';
 
-import fptCore from 'fptcore';
-
-const notifiedMsgs = new Set();
-
 export default Ember.Controller.extend(RealtimeMixin, {
   channelFormat: '/@env_trip_@id',
 
@@ -31,13 +27,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
   scriptClassName: function() {
     return 'script-' + this.get('script.model.name');
   }.property('script.model.name'),
-
-  headerTitle: function() {
-    return {
-      staging: 'Staging',
-      development: 'Development'
-    }[this.get('environment.environmentName')] || '';
-  }.property('environment.environmentName'),
 
   timeDidChange: function() {
     this.get('time');
@@ -70,7 +59,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
   realtimeEvents: {
     action: function(content) {
-      console.log('action', content);
       this.send('refresh');
     },
 

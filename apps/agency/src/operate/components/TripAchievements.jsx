@@ -8,7 +8,6 @@ import { Evaluator, TemplateUtil, Registry } from 'fptcore';
 const evaluator = new Evaluator(Registry);
 
 function renderCompletedAchievementStatus(trip, achievement) {
-  console.log('achievement', achievement, trip.evalContext);
   if (achievement.style === 'choice') {
     const value = TemplateUtil.lookupRef(trip.evalContext, achievement.test);
     const statusTitle = achievement.titles[value];

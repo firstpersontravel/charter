@@ -43,11 +43,10 @@ function getPanel(trip, evalContext, timezone, pageInfo, panel) {
   const panelType = supportedPartials[panel.type] ? panel.type : 'default';
   const customParams = supportedPartials[panelType](evalContext, panel,
     timezone);
-  return Object.assign(customParams, {
+  return Object.assign(panel, customParams, {
     type: 'panels/' + panelType,
-    pageInfo: pageInfo,
-    panel: panel,
-    trip: trip,
+    sceneTitle: pageInfo.scene.title,
+    tripId: trip.id,
     isPageActive: pageInfo.page.scene === trip.tripState.currentSceneName
   });
 }
@@ -74,12 +73,14 @@ function getPage(objs, actionContext, player) {
     .filter(panel => evaluator.if(actionContext, panel.visible_if))
     .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
     .value();
+  const role = _.find(script.content.roles, { name: player.roleName });
   return {
     experienceTitle: objs.experience.title,
-    trip: trip,
+    tripId: trip.id,
+    tripTitle: trip.title,
     player: player,
-    role: _.find(script.content.roles, { name: player.roleName }),
-    page: page,
+    roleTitle: role.title,
+    pageName: page.name,
     panels: panels,
     pageInfo: pageInfo,
     appearance: appearance,
@@ -156,6 +157,7 @@ const playerShowRoute = async (req, res) => {
   const role = (objs.script.content.roles || [])
     .find(role => role.name === player.roleName);
   const params = {
+    pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
     userId: '',
     userName: role ? role.title : 'Unknown role',
     orgName: req.params.orgName,
@@ -215,6 +217,7 @@ const userShowRoute = async (req, res) => {
     .value();
 
   const params = {
+    pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
     userId: req.params.userId,
     orgName: req.params.orgName,
     orgTitle: user.org.title,

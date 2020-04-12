@@ -1,7 +1,11 @@
 import { connect } from 'react-redux';
 
 import { lookupGroup } from '../../operate/connectors/utils';
-import { createInstance, updateInstance } from '../../actions';
+import {
+  createInstance,
+  createInstances,
+  updateInstance
+} from '../../actions';
 import GroupPlayers from '../components/GroupPlayers';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -12,6 +16,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = dispatch => ({
   createInstance: (...args) => dispatch(createInstance(...args)),
+  createInstances: (...args) => dispatch(createInstances(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 

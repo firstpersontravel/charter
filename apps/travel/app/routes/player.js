@@ -1,9 +1,6 @@
 import Ember from 'ember';
 
-import fptCore from 'fptcore';
-
 export default Ember.Route.extend({
-
   api: Ember.inject.service(),
   sync: Ember.inject.service(),
   time: Ember.inject.service(),

@@ -393,10 +393,9 @@ content:
       value_ref: accepted_phil_offer
     - duration: 3s
       name: wait
-    - content: 'You have received an encrypted voice message from PHIL via Taco
-        Syndicate Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3'
+    - content: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3
       from_role_name: Phil
-      name: send_text
+      name: send_audio
       to_role_name: Inductee
     - duration: 2m
       name: wait
@@ -614,10 +613,9 @@ content:
       to_role_name: Inductee
     - duration: 190s
       name: wait
-    - content: 'You have received an encrypted voice message from PHIL. Tap to
-        listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3'
+    - content: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3
       from_role_name: Phil
-      name: send_text
+      name: send_audio
       to_role_name: Inductee
     - actions:
       - content: Get a coffee at 20th Century Cafe right by you -- 198 Gough --
@@ -672,24 +670,9 @@ content:
       name: wait
     - content: 'I looked up that guide marker and it looks like you''re headed
         to RT Rotisserie as your next stop; our friends own the place. Head east
-        on Oak St one block to the corner of Franklin. Directions here: {{Inductee.link}}
+        on Oak St one block to the corner of Franklin.
         Send me the guide marker you find when you get there, right off 101 Oak.'
       from_role_name: Jessie
-      name: send_text
-      to_role_name: Inductee
-    - duration: 60s
-      name: wait
-    - content: This is Phil. We’re watching you, but don’t be alarmed. Stay cool.
-        I’m going to send you a secure audio message in a minute - can never be
-        too careful about eavesdroppers these days.
-      from_role_name: Phil
-      name: send_text
-      to_role_name: Inductee
-    - duration: 65s
-      name: wait
-    - content: 'You have received an encrypted voice message from PHIL. Tap to
-        listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3'
-      from_role_name: Phil
       name: send_text
       to_role_name: Inductee
     event:
@@ -751,8 +734,7 @@ content:
       name: wait
     - content: 'Great! And you got the key? That guide marker indicates your next
         stop is the drop-off point. It''s a taco stand on Hickory between Franklin
-        and Van Ness. North one block, then turn right onto Hickory. Directions:
-        {{Inductee.link}} You’ll find a guide marker around there, text it to
+        and Van Ness. North one block, then turn right onto Hickory. You’ll find a guide marker around there, text it to
         me when you’ve got it.'
       from_role_name: Jessie
       name: send_text
@@ -822,8 +804,7 @@ content:
       name: wait
     - content: 'This particular door is around 37 Lily St. Make a 180 back on
         Hickory to Franklin, then turn left, then right on Lily. It''ll be on
-        your left. Directions: {{Inductee.link}} Text me the guide marker when
-        you get there.'
+        your left. Text me the guide marker when you get there.'
       from_role_name: Jessie
       name: send_text
       to_role_name: Inductee
@@ -846,10 +827,9 @@ content:
       to_role_name: Inductee
     - duration: 120m
       name: wait
-    - content: 'You have received an encrypted voice message from RUSSELL via
-        Taco Syndicate Dispatch. Tap to listen: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-31.mp3'
+    - content: https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-31.mp3
       from_role_name: Russell
-      name: send_text
+      name: send_audio
       to_role_name: Inductee
     event:
       type: scene_started

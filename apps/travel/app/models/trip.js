@@ -41,6 +41,7 @@ export default DS.Model.extend({
     var trip = this.toJSON();
     trip.script = script;
     trip.schedule = JSON.parse(trip.schedule);
+    trip.tripState = JSON.parse(trip.tripState);
     trip.history = JSON.parse(trip.history);
     trip.waypointOptions = JSON.parse(trip.waypointOptions);
     trip.customizations = JSON.parse(trip.customizations);

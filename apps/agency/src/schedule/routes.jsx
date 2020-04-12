@@ -9,9 +9,9 @@ import MonthIndexConnector from './connectors/MonthIndex';
 import GroupConnector from './connectors/Group';
 import GroupPlayersConnector from './connectors/GroupPlayers';
 
-function GroupRoutes({ match }) {
+function GroupRoutes({ history, match, location }) {
   return (
-    <GroupConnector match={match}>
+    <GroupConnector history={history} match={match} location={location}>
       <Switch>
         <Route path={match.path} component={GroupPlayersConnector} />
         <Route component={NotFound} />
@@ -21,7 +21,9 @@ function GroupRoutes({ match }) {
 }
 
 GroupRoutes.propTypes = {
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 function MonthRoutes({ match, location, history }) {

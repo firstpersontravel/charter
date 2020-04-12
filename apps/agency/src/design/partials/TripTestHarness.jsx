@@ -70,6 +70,10 @@ class TripKernel {
         values: Object.assign({}, this.state.trip.values, values)
       })
     });
+    this.log({
+      level: 'info',
+      message: `Updated values: ${JSON.stringify(values)}`
+    });
   }
 
   createMessage({ fields }) {
@@ -180,6 +184,10 @@ export default class TripTestHarness extends Component {
     kernel[resultOp.operation].call(kernel, resultOp);
   }
 
+  log(level, message) {
+    this.processResultOp({ level: level, message: message });
+  }
+
   processScheduledAction(scheduledAction) {
     this.handleAction(scheduledAction.name, scheduledAction.params);
   }
@@ -194,7 +202,7 @@ export default class TripTestHarness extends Component {
   }
 
   handleAction(name, params) {
-    console.log('Action', name);
+    this.log('info', `Action: ${name}, params: ${JSON.stringify(params)}`);
     const action = { name: name, params: params };
     const actionContext = this.getActionContext();
     const result = Kernel.resultForImmediateAction(action, actionContext);
@@ -202,18 +210,18 @@ export default class TripTestHarness extends Component {
   }
 
   handleAdminAction(name, params) {
-    console.log('Admin action', name, params);
+    this.log('info', `Admin action: ${name} (ignored)`);
   }
 
   handleEvent(event) {
-    console.log('Event', event);
+    this.log('info', `Event: ${event.type}, ${JSON.stringify(event)}`);
     const actionContext = this.getActionContext();
     const result = Kernel.resultForEvent(event, actionContext);
     this.processResult(result);
   }
 
   handleTrigger(name) {
-    console.log('Trigger', name);
+    this.log('info', `Trigger: ${name}`);
     const trigger = _.find(this.props.script.content.triggers, { name: name });
     const actionContext = this.getActionContext();
     const result = Kernel.resultForTrigger(trigger, null, actionContext,

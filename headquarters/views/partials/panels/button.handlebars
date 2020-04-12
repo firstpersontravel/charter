@@ -1,10 +1,10 @@
 <p class="card-text">
   {{#if isPageActive}}
-    <a href="#" data-action='signal_cue' data-params='{"cue_name": "{{panel.cue}}"}' data-trip-id='{{trip.id}}' class="btn btn-primary btn-block">{{text}}</a>
+    <a href="#" data-action='signal_cue' data-params='{"cue_name": "{{cue}}"}' data-trip-id='{{tripId}}' class="btn btn-primary btn-block">{{text}}</a>
   {{else}}
     <button class="btn btn-primary btn-block" disabled>
       <span style="text-decoration: line-through">{{text}}</span>
-      (Waiting for scene "{{pageInfo.scene.title}}")
+      (Waiting for scene "{{sceneTitle}}")
     </button>
   {{/if}}
 </p>

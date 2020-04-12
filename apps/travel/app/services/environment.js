@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 const WEB_HOSTS = {
-  development: 'http://localhost:5000',
+  development: 'http://localhost:5001',
   staging: 'https://staging.firstperson.travel',
   production: 'https://app.firstperson.travel'
 };
