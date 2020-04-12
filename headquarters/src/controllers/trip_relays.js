@@ -101,9 +101,8 @@ class TripRelaysController {
 
   /**
    * Format a text message.
-   * TODO: THIS CAN NOT BE ASYNC ONCE MESSAGE HAS ROLE_NAME
    */
-  static async _formatMessageBody(trip, message, includeMeta) {
+  static _formatMessageBody(script, trip, message, includeMeta) {
     if (!includeMeta) {
       return message.content;
     }
@@ -111,11 +110,13 @@ class TripRelaysController {
     // an actor role.
     const stage = config.env.STAGE === 'production' ?
       '' : `${config.env.STAGE[0].toUpperCase()}${config.env.STAGE.substr(1)} `;
-    const sentBy = await models.Player.findByPk(message.sentById);
-    const sentTo = await models.Player.findByPk(message.sentToId);
+    const fromRole = script.content.roles
+      .find(r => r.name === message.fromRoleName) || { title: '?' };
+    const toRole = script.content.roles
+      .find(r => r.name === message.toRoleName) || { title: '?' };
     const contentPrefix = (
       `[${stage}${trip.title}] ` +
-      `${sentBy.roleName} to ${sentTo.roleName}:`
+      `${fromRole.title} to ${toRole.title}:`
     );
     return `${contentPrefix} ${message.content}`;
   }
@@ -123,13 +124,13 @@ class TripRelaysController {
   /**
    * Format a media url.
    */
-  static async _getMediaUrl(experience, url) {
+  static async _getMediaUrl(trip, url) {
     if (_.startsWith(url, 'http')) {
       return url;
     }
     const asset = await models.Asset.findOne({
       where: {
-        experienceId: experience.id,
+        experienceId: trip.experienceId,
         type: 'media',
         name: url
       }
@@ -142,18 +143,14 @@ class TripRelaysController {
 
   /**
    * Split a message into body and media for a given relay.
-   * TODO: THIS CAN NOT BE ASYNC ONCE MESSAGE HAS ROLE_NAME
    */
-  static async _partsForRelayMessage(trip, relay, message) {
-    const script = await trip.getScript();
-    const experience = await trip.getExperience();
-
+  static async _partsForRelayMessage(script, trip, relay, message) {
     if (message.medium === 'text') {
       // Otherwise send the raw content as-is.
       // Include SMS metadata if this relay is for an actor.
       const forRole = _.find(script.content.roles, { name: relay.forRoleName });
       const includeMeta = !!forRole.actor;
-      const body = await this._formatMessageBody(trip, message, includeMeta);
+      const body = this._formatMessageBody(script, trip, message, includeMeta);
       return [body, null];
     }
 
@@ -164,7 +161,7 @@ class TripRelaysController {
       const ext = message.content.split('.').reverse()[0].toLowerCase();
       const isAllowedMediaExtension = _.includes(ALLOWED_MEDIA_EXTENSIONS, ext);
       if (isAllowedMediaExtension) {
-        const mediaUrl = await this._getMediaUrl(experience, message.content);
+        const mediaUrl = await this._getMediaUrl(trip, message.content);
         return [null, mediaUrl];
       }
     }
@@ -177,11 +174,9 @@ class TripRelaysController {
    */
   static async relayMessage(trip, message, suppressRelayId) {
     const script = await trip.getScript();
-    const sentBy = await models.Player.findByPk(message.sentById);
-    const sentTo = await models.Player.findByPk(message.sentToId);
 
     // Send to forward relays -- relays as the role receiving the message.
-    const fwdFilters = { as: sentTo.roleName, with: sentBy.roleName };
+    const fwdFilters = { as: message.toRoleName, with: message.fromRoleName };
     const fwdRelays = await this.ensureRelays(trip, fwdFilters);
 
     for (let relay of fwdRelays) {
@@ -189,7 +184,7 @@ class TripRelaysController {
         continue;
       }
       const [body, mediaUrl] = await (
-        this._partsForRelayMessage(trip, relay, message)
+        this._partsForRelayMessage(script, trip, relay, message)
       );
       await RelayController.sendMessage(relay, trip, body, mediaUrl);
     }
@@ -197,7 +192,7 @@ class TripRelaysController {
     // Send to inverse relays -- relays as the role sending the message. These
     // should only send if the relay is for an actor, otherwise the player
     // may get texts if they use an in-game interface to send a message.
-    const invFilters = { as: sentBy.roleName, with: sentTo.roleName };
+    const invFilters = { as: message.fromRoleName, with: message.toRoleName };
     const invRelays = await this.ensureRelays(trip, invFilters);
 
     for (let relay of invRelays) {
@@ -211,8 +206,8 @@ class TripRelaysController {
       if (role.type !== 'performer') {
         continue;
       }
-      const [body, mediaUrl] = await this._partsForRelayMessage(trip, relay, 
-        message);
+      const [body, mediaUrl] = await this._partsForRelayMessage(script, trip, 
+        relay, message);
       await RelayController.sendMessage(relay, trip, body, mediaUrl);
     }
   }

@@ -92,8 +92,8 @@ describe('KernelOpController', () => {
       const op = {
         operation: 'createMessage',
         fields: {
-          sentByRoleName: 'BadGuy',
-          sentToRoleName: 'GoodGuy',
+          fromRoleName: 'BadGuy',
+          toRoleName: 'GoodGuy',
           medium: 'text',
           content: 'die!',
           createdAt: now,
@@ -119,8 +119,8 @@ describe('KernelOpController', () => {
         isReplyNeeded: undefined,
         tripId: 123,
         readAt: null,
-        sentById: 10,
-        sentToId: 20,
+        fromRoleName: 'BadGuy',
+        toRoleName: 'GoodGuy',
         sentFromAccuracy: undefined,
         sentFromLatitude: undefined,
         sentFromLongitude: undefined

@@ -23,8 +23,8 @@ describe('#send_text', () => {
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentByRoleName: 'Ally',
-        sentToRoleName: 'Babbit',
+        fromRoleName: 'Ally',
+        toRoleName: 'Babbit',
         createdAt: now,
         medium: 'text',
         content: 'hi',

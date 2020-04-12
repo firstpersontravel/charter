@@ -55,14 +55,11 @@ describe('API update', () => {
     let message;
 
     beforeEach(async () => {
-      const player = await models.Player.findOne({ 
-        where: { tripId: trip.id }
-      });
       message = await models.Message.create({
         orgId: trip.orgId,
         tripId: trip.id,
-        sentById: player.id,
-        sentToId: player.id,
+        fromRoleName: 'from',
+        toRoleName: 'to',
         createdAt: moment.utc(),
         name: 'hi',
         medium: 'text',
@@ -94,6 +91,8 @@ describe('API update', () => {
 
     it('forbids changes to any other field', () => {
       const forbiddenFields = [
+        'fromRoleName',
+        'toRoleName',
         'name',
         'medium',
         'content',

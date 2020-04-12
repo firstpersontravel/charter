@@ -28,7 +28,7 @@ function renderMessageContent(message) {
   return message.content;
 }
 
-function renderMessageIcon(message, sentBy, sentTo) {
+function renderMessageIcon(message, fromPlayer, toPlayer) {
   // Give a check to messages replied to within the last hour.
   const oneHourAgo = moment.utc().subtract(1, 'hour');
   let textClass = '';
@@ -42,7 +42,7 @@ function renderMessageIcon(message, sentBy, sentTo) {
     icon = 'fa-exclamation-circle';
   } else if (message.name) {
     icon = 'fa-clock-o';
-  } else if (sentBy.role.type === 'performer') {
+  } else if (fromPlayer.role.type === 'performer') {
     icon = 'fa-user-o';
   } else {
     icon = 'fa-user';
@@ -96,17 +96,20 @@ export default function Message({ message, updateInstance }) {
     return null;
   }
   const trip = message.trip;
-  const sentTo = message.sentTo;
-  const sentBy = message.sentBy;
-  const userPlayer = sentBy.role.type === 'performer' ? sentTo : sentBy;
-  const actorPlayer = userPlayer === sentBy ? sentTo : sentBy;
+  const toPlayer = trip.players
+    .find(p => p.roleName === message.toRoleName);
+  const fromPlayer = trip.players
+    .find(p => p.roleName === message.fromRoleName);
+  const userPlayer = fromPlayer.role.type === 'performer' ? toPlayer :
+    fromPlayer;
+  const actorPlayer = userPlayer === fromPlayer ? toPlayer : fromPlayer;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
   const timeShort = createdAt.tz(trip.experience.timezone).format(timeFormat);
   const content = renderMessageContent(message);
-  const icon = renderMessageIcon(message, sentBy, sentTo);
+  const icon = renderMessageIcon(message, fromPlayer, toPlayer);
   const archivedClass = message.isArchived ? 'message-archived' : '';
-  const shouldShowRespond = message.sentBy.role.type === 'traveler' &&
+  const shouldShowRespond = fromPlayer.role.type === 'traveler' &&
     !message.reponseReceivedAt;
   const respondBtn = shouldShowRespond ? (
     <Link
@@ -119,7 +122,7 @@ export default function Message({ message, updateInstance }) {
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <strong className="mr-1">{sentBy.role.title}:</strong>
+      <strong className="mr-1">{fromPlayer.role.title}:</strong>
       {content}
       &nbsp;
       <span className="faint">{timeShort}</span>

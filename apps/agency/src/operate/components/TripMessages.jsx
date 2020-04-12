@@ -33,10 +33,6 @@ export default class TripMessages extends Component {
   }
 
   loadData(trip, forRoleName, withRoleName) {
-    if (trip.players.length === 0) {
-      return;
-    }
-
     if (!forRoleName) {
       // Otherwise, find all messages
       this.props.listCollection('messages', {
@@ -46,36 +42,27 @@ export default class TripMessages extends Component {
       return;
     }
 
-    const forPlayer = _.find(trip.players, {
-      tripId: parseInt(trip.id, 10),
-      roleName: forRoleName
-    });
-
+    // If only one role, find all messages to or from that role
     if (!withRoleName) {
       this.props.listCollection('messages', {
-        orgId: forPlayer.orgId,
+        orgId: trip.orgId,
         tripId: trip.id,
-        sentById: [forPlayer.id]
+        fromRoleName: forRoleName
       });
       this.props.listCollection('messages', {
-        orgId: forPlayer.orgId,
+        orgId: trip.orgId,
         tripId: trip.id,
-        sentToId: [forPlayer.id]
+        toRoleName: forRoleName
       });
       return;
     }
 
     // If both role names was provided, find messages sent by either
     // of the two.
-    const withPlayer = _.find(trip.players, {
-      tripId: parseInt(trip.id, 10),
-      roleName: withRoleName
-    });
-
     this.props.listCollection('messages', {
-      orgId: forPlayer.orgId,
+      orgId: trip.orgId,
       tripId: trip.id,
-      sentById: [forPlayer.id, withPlayer.id]
+      fromRoleName: [forRoleName, withRoleName]
     });
   }
 

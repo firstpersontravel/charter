@@ -1,7 +1,6 @@
 const database = require('../config').database;
 const Trip = require('./trip');
 const Org = require('./org');
-const Player = require('./player');
 
 const {
   allowNullModifier,
@@ -13,6 +12,7 @@ const {
   floatField,
   mutableModifier,
   optionalStringField,
+  requiredStringField,
   snakeCaseColumns,
   textField
 } = require('../sequelize/fields');
@@ -24,6 +24,8 @@ const MESSAGE_MEDIUM_OPTIONS = ['text', 'image', 'audio', 'video'];
  */
 const Message = database.define('Message', snakeCaseColumns({
   createdAt: datetimeField(),
+  fromRoleName: requiredStringField(32),
+  toRoleName: requiredStringField(32),
   sentFromLatitude: allowNullModifier(doubleField()),
   sentFromLongitude: allowNullModifier(doubleField()),
   sentFromAccuracy: allowNullModifier(floatField()),
@@ -39,7 +41,5 @@ const Message = database.define('Message', snakeCaseColumns({
 
 Message.belongsTo(Org, belongsToField('org'));
 Message.belongsTo(Trip, belongsToField('trip'));
-Message.belongsTo(Player, belongsToField('sentBy'));
-Message.belongsTo(Player, belongsToField('sentTo'));
 
 module.exports = Message;

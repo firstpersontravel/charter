@@ -23,16 +23,24 @@ class MessageController {
     if (!_.includes(['text', 'image'], message.medium)) {
       return;
     }
-    const sentBy = await message.getSentBy();
-    const sentTo = await message.getSentTo();
-    const sentToUser = await sentTo.getUser();
-    if (!sentToUser || !sentToUser.devicePushToken) {
+    const fromRoleName = message.fromRoleName;
+    const trip = await message.getTrip();
+    const script = await trip.getScript();
+    const fromRole = script.content.roles.find(r => r.name === fromRoleName);
+    const toPlayer = await models.Player.findOne({
+      where: { roleName: message.toRoleName, tripId: message.tripId },
+      include: [{
+        model: models.User,
+        as: 'user'
+      }]
+    });
+    if (!toPlayer.user || !toPlayer.user.devicePushToken) {
       return;
     }
     const pushBody = message.medium === 'text' ?
       message.content : 'New photo';
-    const pushMsg = `${sentBy.roleName}: ${pushBody}`;
-    await this._sendPushNotification(pushMsg, sentToUser.devicePushToken);
+    const pushMsg = `${fromRole.title}: ${pushBody}`;
+    await this._sendPushNotification(pushMsg, toPlayer.user.devicePushToken);
   }
 
   /**
@@ -76,8 +84,8 @@ class MessageController {
     return await models.Message.update(updates, {
       where: {
         tripId: message.tripId,
-        sentById: message.sentToId,
-        sentToId: message.sentById,
+        fromRoleName: message.toRoleName,
+        toRoleName: message.fromRoleName,
         isReplyNeeded: true,
         replyReceivedAt: null
       }

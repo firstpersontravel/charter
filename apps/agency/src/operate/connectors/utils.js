@@ -149,15 +149,15 @@ function msgFilterForParams(match) {
       match.params.withRoleName !== 'All') {
     const betweenRoleNames = [match.params.roleName, match.params.withRoleName];
     return msg => (
-      _.includes(betweenRoleNames, msg.sentBy.roleName) &&
-      _.includes(betweenRoleNames, msg.sentTo.roleName)
+      _.includes(betweenRoleNames, msg.fromRoleName) &&
+      _.includes(betweenRoleNames, msg.toRoleName)
     );
   }
   // If we're specifying one role, find all messages to and from that role
   if (match.params.roleName) {
     return msg => (
-      msg.sentBy.roleName === match.params.roleName ||
-      msg.sentTo.roleName === match.params.roleName
+      msg.fromRoleName === match.params.roleName ||
+      msg.toRoleName === match.params.roleName
     );
   }
   // If no roles are specified, return all.
@@ -179,10 +179,11 @@ export function lookupMessages(state, ownProps, limit = null, filters = null) {
     include: {
       trip: instanceIncluder('trips', 'id', 'tripId', {
         org: instanceIncluder('orgs', 'id', 'orgId'),
-        experience: instanceIncluder('experiences', 'id', 'experienceId')
-      }),
-      sentBy: instanceIncluder('players', 'id', 'sentById', playerIncludes),
-      sentTo: instanceIncluder('players', 'id', 'sentToId', playerIncludes)
+        script: instanceIncluder('scripts', 'id', 'scriptId'),
+        experience: instanceIncluder('experiences', 'id', 'experienceId'),
+        players: instancesIncluder('players', 'tripId', 'id', {},
+          playerIncludes)
+      })
     }
   });
 }

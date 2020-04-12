@@ -8,8 +8,8 @@ describe('Message', () => {
     message = models.Message.build({
       orgId: 100,
       tripId: 1,
-      sentById: 2,
-      sentToId: 3,
+      fromRoleName: 'Gabe',
+      toRoleName: 'Cat',
       createdAt: '2018-10-04T03:03:03Z',
       name: '',
       medium: 'text',
@@ -32,13 +32,13 @@ describe('Message', () => {
   });
 
   it('requires a sender', async () => {
-    message.sentById = null;
-    await assertValidation(message, { sentById: 'must be present' });
+    message.fromRoleName = null;
+    await assertValidation(message, { fromRoleName: 'must be present' });
   });
 
   it('requires a recipient', async () => {
-    message.sentToId = null;
-    await assertValidation(message, { sentToId: 'must be present' });
+    message.toRoleName = null;
+    await assertValidation(message, { toRoleName: 'must be present' });
   });
 
   it('requires a created date', async () => {

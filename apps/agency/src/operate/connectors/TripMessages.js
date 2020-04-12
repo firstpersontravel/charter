@@ -12,14 +12,14 @@ const mapStateToProps = (state, ownProps) => ({
       const forRoleName = query.get('for');
       const withRoleName = query.get('with');
       if (forRoleName) {
-        if (forRoleName !== message.sentBy.roleName &&
-            forRoleName !== message.sentTo.roleName) {
+        if (forRoleName !== message.fromRoleName &&
+            forRoleName !== message.toRoleName) {
           return false;
         }
       }
       if (withRoleName) {
-        if (withRoleName !== message.sentBy.roleName &&
-            withRoleName !== message.sentTo.roleName) {
+        if (withRoleName !== message.fromRoleName &&
+            withRoleName !== message.toRoleName) {
           return false;
         }
       }

@@ -33,14 +33,14 @@ module.exports = {
     const roles = actionContext.scriptContent.roles || [];
     const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content);
-    const sentByRole = _.find(roles, { name: params.from_role_name });
-    const isReplyNeeded = sentByRole.type === 'traveler';
+    const fromRole = _.find(roles, { name: params.from_role_name });
+    const isReplyNeeded = fromRole.type === 'traveler';
     return [{
       operation: 'createMessage',
       suppressRelayId: params.from_relay_id || null,
       fields: {
-        sentByRoleName: params.from_role_name,
-        sentToRoleName: params.to_role_name,
+        fromRoleName: params.from_role_name,
+        toRoleName: params.to_role_name,
         createdAt: actionContext.evaluateAt,
         medium: 'audio',
         content: content,

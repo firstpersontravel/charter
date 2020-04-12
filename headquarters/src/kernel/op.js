@@ -10,7 +10,6 @@ const models = require('../models');
 const logger = config.logger.child({ name: 'kernel.op' });
 
 class KernelOpController {
-
   static async twiml() { /* ignore */ }
   static async updateAudio() { /* ignore */ }
   static async updateUi() { /* ignore */ }
@@ -44,30 +43,12 @@ class KernelOpController {
   }
 
   static async createMessage(objs, op) {
-    const sentBy = _.find(objs.players, {
-      roleName: op.fields.sentByRoleName
-    });
-    if (!sentBy) {
-      logger.error(
-        'Could not create message, ' +
-        `sentBy ${op.fields.sentByRoleName} not found.`);
-      return;
-    }
-    const sentTo = _.find(objs.players, {
-      roleName: op.fields.sentToRoleName
-    });
-    if (!sentTo) {
-      logger.error(
-        'Could not create message, ' +
-        `sentTo ${op.fields.sentToRoleName} not found.`);
-      return;
-    }
     const fields = {
       orgId: objs.trip.orgId,
       experienceId: objs.trip.experienceId,
       tripId: objs.trip.id,
-      sentById: sentBy.id,
-      sentToId: sentTo.id,
+      fromRoleName: op.fields.fromRoleName,
+      toRoleName: op.fields.toRoleName,
       createdAt: op.fields.createdAt.toDate(),
       name: op.fields.name,
       medium: op.fields.medium,

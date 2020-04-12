@@ -26,8 +26,8 @@ describe('#send_image', () => {
     assert.deepEqual(res, [{
       operation: 'createMessage',
       fields: {
-        sentByRoleName: 'Ally',
-        sentToRoleName: 'Babbit',
+        fromRoleName: 'Ally',
+        toRoleName: 'Babbit',
         createdAt: now,
         medium: 'image',
         content: 'url',

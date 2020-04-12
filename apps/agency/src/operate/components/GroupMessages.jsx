@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 
 import Message from '../partials/Message';
 
-function renderRoleMessages(trip, player, messages, updateInstance) {
+function renderRoleMessages(trip, toRoleName, messages, updateInstance) {
+  const player = trip.players.find(p => p.roleName === toRoleName);
   const renderedMessages = messages.map(message => (
     <Message
       key={message.id}
@@ -23,9 +24,9 @@ function renderRoleMessages(trip, player, messages, updateInstance) {
 
 function renderTripMessages(trip, messages, updateInstance) {
   return _(messages)
-    .groupBy('sentToId')
-    .map((roleMessages, sentToId) => (
-      renderRoleMessages(trip, roleMessages[0].sentTo,
+    .groupBy('toRoleName')
+    .map((roleMessages, toRoleName) => (
+      renderRoleMessages(trip, roleMessages[0].toRoleName,
         roleMessages, updateInstance)
     ))
     .value();
