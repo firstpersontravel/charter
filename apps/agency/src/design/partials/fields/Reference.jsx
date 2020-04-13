@@ -32,6 +32,13 @@ function labelForValue(script, spec, value) {
   );
 }
 
+function specialValOpt(val) {
+  if (typeof val === 'string') {
+    return { value: val, label: val };
+  }
+  return val;
+}
+
 function choicesForSpec(script, resource, spec) {
   const collection = script.content[spec.collection];
   const filtered = _.filter(collection, (rel) => {
@@ -47,11 +54,11 @@ function choicesForSpec(script, resource, spec) {
     }
     return true;
   });
-  const nullChoices = [{ value: '', label: '---' }];
-  if (spec.allowNull) {
-    nullChoices.push({ value: 'null', label: 'None' });
+  const specialChoices = [{ value: '', label: '---' }];
+  if (spec.specialValues) {
+    specialChoices.push(...spec.specialValues.map(specialValOpt));
   }
-  const choices = nullChoices.concat(filtered.map(rel => ({
+  const choices = specialChoices.concat(filtered.map(rel => ({
     value: rel.name,
     label: titleForResource(script.content, spec.collection, rel)
   })));

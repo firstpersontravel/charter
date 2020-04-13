@@ -362,7 +362,7 @@ describe('Validations', () => {
       const specWithNull = {
         type: 'reference',
         collection: 'geofences',
-        allowNull: true
+        specialValues: [{ value: 'null', label: 'None' }]
       };
       ok(Validations.reference(script, 's', specWithNull, 'null'));
       err(Validations.reference(script, 's', spec, 'null'),

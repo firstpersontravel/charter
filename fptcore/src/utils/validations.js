@@ -160,8 +160,15 @@ class Validations {
   }
 
   static reference(script, name, spec, param) {
-    if (param === 'null' && spec.allowNull) {
-      return [];
+    if (spec.specialValues) {
+      for (const val of spec.specialValues) {
+        if (typeof val === 'string' && val === param) {
+          return [];
+        }
+        if (typeof val === 'object' && val.value === param) {
+          return [];
+        }
+      }
     }
     if (!_.isString(param)) {
       return ['Reference param "' + name + '" ("' + param + '") should be a string.'];

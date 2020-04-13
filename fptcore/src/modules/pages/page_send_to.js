@@ -14,7 +14,7 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'pages',
-      allowNull: true,
+      specialValues: [{ value: 'null', label: 'None' }],
       help: 'The page to send the matching players to.'
     }
   },

@@ -8,7 +8,11 @@ module.exports = {
     pages: {
       type: 'dictionary',
       keys: { type: 'reference', collection: 'roles' },
-      values: { type: 'reference', collection: 'pages', allowNull: true },
+      values: {
+        type: 'reference',
+        collection: 'pages',
+        specialValues: [{ value: 'null', label: 'None' }]
+      },
       help: 'Pages to start each role at.'
     },
     values: {
