@@ -43,13 +43,11 @@ function choicesForSpec(script, resource, spec) {
   const collection = script.content[spec.collection];
   const filtered = _.filter(collection, (rel) => {
     // Hacky filtering by scene.
-    if (rel.scene && resource.scene &&
-      rel.scene !== resource.scene) {
+    if (rel.scene && resource.scene && rel.scene !== resource.scene) {
       return false;
     }
     // Hacky filtering by role for pages / appearances.
-    if (rel.role && resource.role &&
-      rel.role !== resource.role) {
+    if (rel.role && resource.role && rel.role !== resource.role) {
       return false;
     }
     return true;

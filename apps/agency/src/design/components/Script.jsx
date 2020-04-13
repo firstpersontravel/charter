@@ -93,10 +93,11 @@ class Script extends Component {
       revision: nextRevision,
       isActive: false
     });
+    const path = this.props.location.pathname;
+    const [sliceType, sliceName] = path.split('/').slice(-2);
     this.props.history.push(
       `/${script.org.name}/${script.experience.name}/script` +
-      `/${nextRevision}/design/${this.props.match.params.sliceType}` +
-      `/${this.props.match.params.sliceName}`);
+      `/${nextRevision}/design/${sliceType}/${sliceName}`);
   }
 
   handleLockScript() {
@@ -113,11 +114,12 @@ class Script extends Component {
     this.props.updateInstance('scripts', this.props.script.id, {
       isArchived: true
     });
+    const path = this.props.location.pathname;
+    const [sliceType, sliceName] = path.split('/').slice(-2);
     this.props.history.push(
       `/${activeScript.org.name}/${activeScript.experience.name}` +
       `/script/${activeScript.revision}` +
-      `/design/${this.props.match.params.sliceType}` +
-      `/${this.props.match.params.sliceName}`);
+      `/design/${sliceType}/${sliceName}`);
   }
 
   handleArchiveExperienceToggle() {
@@ -197,9 +199,10 @@ class Script extends Component {
     ));
 
     let sceneTitle = 'Scenes';
-    if (this.props.match.params.sliceType === 'scene') {
-      const sceneName = this.props.match.params.sliceName;
-      const scene = _.find(script.content.scenes, { name: sceneName });
+    const path = this.props.location.pathname;
+    const [sliceType, sliceName] = path.split('/').slice(-2);
+    if (sliceType === 'scene') {
+      const scene = _.find(script.content.scenes, { name: sliceName });
       if (scene) {
         sceneTitle = `Scene: ${scene.title}`;
       }
@@ -379,7 +382,7 @@ class Script extends Component {
   }
 
   render() {
-    if (this.props.script.isLoading) {
+    if (this.props.script.isLoading || this.props.isCreatingScript) {
       return <Loader />;
     }
     if (this.props.script.isError) {
@@ -432,6 +435,7 @@ class Script extends Component {
 
 Script.propTypes = {
   children: PropTypes.node.isRequired,
+  isCreatingScript: PropTypes.bool.isRequired,
   script: PropTypes.object.isRequired,
   scripts: PropTypes.array.isRequired,
   revisionHistory: PropTypes.array.isRequired,

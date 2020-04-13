@@ -12,6 +12,7 @@ import { lookupExperiences, lookupScript, lookupScripts } from './utils';
 const mapStateToProps = (state, ownProps) => {
   const script = lookupScript(state, ownProps);
   return {
+    isCreatingScript: state.requests['scripts.create'] === 'pending',
     script: script,
     scripts: lookupScripts(state, ownProps),
     experiences: lookupExperiences(state, ownProps),
