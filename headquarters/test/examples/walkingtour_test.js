@@ -12,7 +12,6 @@ const examplePath = path.join(__dirname, '../../examples/walkingtour.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 
 describe('WalkingTourExample', () => {
-
   let script;
   let trip;
 

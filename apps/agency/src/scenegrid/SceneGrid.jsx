@@ -22,7 +22,7 @@ export default class SceneGrid extends Component {
       ))
       .filter(player => (
         _.find(trip.script.content.pages, {
-          role: player.roleName,
+          interface: player.role.interface,
           scene: scene.name
         })
       ))
@@ -154,8 +154,10 @@ export default class SceneGrid extends Component {
 
   renderScenePlayerColumn(scene, player, colWidth) {
     const trip = this.props.trip;
-    const pages = _.filter(trip.script.content.pages,
-      { role: player.roleName, scene: scene.name });
+    const pages = _.filter(trip.script.content.pages, {
+      interface: player.role.interface,
+      scene: scene.name
+    });
     const renderedPages = pages
       .map(page => this.renderPlayerPage(player, page));
     const iframeLink = player.id ? (

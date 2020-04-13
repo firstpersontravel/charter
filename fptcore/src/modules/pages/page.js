@@ -9,17 +9,12 @@ module.exports = {
       required: true,
       parent: true
     },
-    role: {
+    interface: {
       type: 'reference',
-      collection: 'roles',
+      collection: 'interfaces',
       required: true,
       parent: true,
-      help: 'The role that can view this page.'
-    },
-    appearance: {
-      type: 'reference',
-      collection: 'appearances',
-      help: 'An optional appearance. Appearances can help keep actor roles organized when they are in multiple trips at the same time.'
+      help: 'The interface that this page is a part of.'
     },
     title: {
       type: 'string',
@@ -28,12 +23,6 @@ module.exports = {
     directive: {
       type: 'string',
       help: 'A high-level directive for the player, that will be displayed in large font at the top of the interface.'
-    },
-    layout: {
-      type: 'reference',
-      collection: 'layouts',
-      allowNull: true,
-      display: { hidden: true }
     },
     waypoint: {
       type: 'reference',

@@ -63,9 +63,7 @@ function getPage(objs, actionContext, player) {
   if (!pageInfo) {
     return null;
   }
-  const appearanceSort = PlayerCore.getSceneSort(script, evalContext, trip,
-    player);
-  const appearance = pageInfo.appearance;
+  const sort = PlayerCore.getSceneSort(script, evalContext, trip, player);
   const page = pageInfo.page;
   const directiveText = TemplateUtil.templateText(evalContext,
     page.directive, timezone);
@@ -83,8 +81,7 @@ function getPage(objs, actionContext, player) {
     pageName: page.name,
     panels: panels,
     pageInfo: pageInfo,
-    appearance: appearance,
-    sort: appearanceSort,
+    sort: sort,
     directiveText: directiveText
   };
 }

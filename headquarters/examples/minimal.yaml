@@ -12,3 +12,8 @@ content:
     - name: default
       title: All trips
       default: true
+
+  interfaces:
+    - name: player
+      title: Player
+      type: simple

@@ -1,12 +1,14 @@
 content:
   content_pages:
   - name: content_page-ntsoxi
+    interface: Inductee
     panels:
     - name: main
       type: outlet
     section: tab
     title: Task
   - name: content_page-ilctwq
+    interface: Inductee
     panels:
     - title: Messages
       type: messages_browse
@@ -53,7 +55,7 @@ content:
   - address: dispatch@tacosyndicate.family
     name: Jessie
     role: Jessie
-  layouts:
+  interfaces:
   - header_panels:
     - style: quest
       text: "{{Inductee.directive}}"
@@ -61,12 +63,13 @@ content:
       visible_if:
         op: value_is_true
         ref: Inductee.directive
-    name: phone
+    name: Inductee
     section: tab
-    title: phone
+    title: Inductee
     type: tabs
-  meta:
-    version: 24
+  - name: Jessie
+    type: simple
+    title: Jessie
   pages:
   - directive: Waiting for inductee
     name: PAGE-0-JESSIE
@@ -94,7 +97,7 @@ content:
           op: value_is_true
           ref: sent_reminder_email
         op: not
-    role: Jessie
+    interface: Jessie
     scene: SCENE-0
     title: Waiting for inductee
   - directive: Head to the lounge and wait for Jessie's call.
@@ -105,7 +108,7 @@ content:
     - cue: CUE-1-START
       text: Trigger beginning
       type: button
-    role: Inductee
+    interface: Inductee
     scene: SCENE-1
     title: Await call
     waypoint: WAYPOINT-BIGROCK
@@ -132,7 +135,7 @@ content:
       visible_if:
         op: value_is_true
         ref: started_call_1
-    role: Jessie
+    interface: Jessie
     scene: SCENE-1
     title: Intro call
   - directive: Head to 20th Century Cafe at 198 Gough St, and send Jessie the
@@ -142,7 +145,7 @@ content:
     panels:
     - route: ROUTE-BIGROCK-TO-COFFEE
       type: directions
-    role: Inductee
+    interface: Inductee
     route: ROUTE-BIGROCK-TO-COFFEE
     scene: SCENE-2
     title: Head to 20th C Cafe
@@ -151,7 +154,7 @@ content:
     panels:
     - text: This page will update when the player is at the lounge.
       type: text
-    role: Jessie
+    interface: Jessie
     scene: SCENE-2
     title: Wait for player
   - directive: Head to RT Rotisserie at 101 Oak St (at Franklin) and find the
@@ -160,7 +163,7 @@ content:
     panels:
     - route: ROUTE-COFFEE-TO-RT
       type: directions
-    role: Inductee
+    interface: Inductee
     route: ROUTE-COFFEE-TO-RT
     scene: SCENE-3
     title: Head to RT
@@ -170,7 +173,7 @@ content:
     panels:
     - type: directions
       waypoint: WAYPOINT-RT-ROTISSERIE
-    role: Inductee
+    interface: Inductee
     scene: SCENE-3
     title: Get drop from vendor
     waypoint: WAYPOINT-RT-ROTISSERIE
@@ -181,7 +184,7 @@ content:
     panels:
     - type: directions
       waypoint: WAYPOINT-RT-BACKUP
-    role: Inductee
+    interface: Inductee
     scene: SCENE-3
     title: Get drop from dropbox
     waypoint: WAYPOINT-RT-BACKUP
@@ -191,7 +194,7 @@ content:
     panels:
     - route: ROUTE-RT-TO-LINDENROOM
       type: directions
-    role: Inductee
+    interface: Inductee
     route: ROUTE-RT-TO-LINDENROOM
     scene: SCENE-4
     title: Head to Linden Room
@@ -201,7 +204,7 @@ content:
     panels:
     - type: directions
       waypoint: WAYPOINT-CALA
-    role: Inductee
+    interface: Inductee
     scene: SCENE-4
     title: Dropoff at Linden Room
     waypoint: WAYPOINT-CALA
@@ -211,7 +214,7 @@ content:
     panels:
     - route: ROUTE-LINDENROOM-TO-BIGROCK
       type: directions
-    role: Inductee
+    interface: Inductee
     route: ROUTE-LINDENROOM-TO-BIGROCK
     scene: SCENE-6
     title: Head back to Lounge
@@ -220,7 +223,7 @@ content:
     panels:
     - text: Make your way up to the lounge.
       type: text
-    role: Inductee
+    interface: Inductee
     scene: SCENE-7
     title: Back at Lounge
     waypoint: WAYPOINT-BIGROCK-BACK
@@ -247,7 +250,7 @@ content:
       visible_if:
         op: value_is_true
         ref: started_call_2
-    role: Jessie
+    interface: Jessie
     scene: SCENE-7
     title: Jessie conclusion call
   - directive: Thanks for your help.
@@ -255,7 +258,7 @@ content:
     panels:
     - text: Thanks for your help!
       type: text
-    role: Inductee
+    interface: Inductee
     scene: SCENE-8
     title: Follow-up
   relays:
@@ -292,12 +295,13 @@ content:
     name: RELAY-BIGROCKSTAFF1-WITH-JESSIE
     with: Jessie
   roles:
-  - layout: phone
+  - interface: Inductee
     name: Inductee
     starting_page: PAGE-1-START
     title: Inductee
     type: traveler
   - name: Jessie
+    interface: Jessie
     starting_page: PAGE-0-JESSIE
     title: Dispatch
     type: performer

@@ -13,7 +13,6 @@ const examplePath = path.join(__dirname, '../../examples/email.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 
 describe('EmailExample', () => {
-
   let script;
   let trip;
 

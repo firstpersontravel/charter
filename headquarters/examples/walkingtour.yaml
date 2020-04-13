@@ -1,5 +1,5 @@
 content:
-  layouts:
+  interfaces:
     - name: tablet
       title: Tablet
       type: tabs
@@ -14,12 +14,14 @@ content:
       
   content_pages:
     - name: nav
+      interface: tablet
       section: tabs
       title: Navigation
       panels:
         - type: outlet
           name: main
     - name: messages
+      interface: tablet
       section: tabs
       title: Messages
       panels:
@@ -31,7 +33,7 @@ content:
       title: Player
       type: traveler
       starting_page: PAGE-START
-      layout: tablet
+      interface: tablet
 
     - name: Guide
       title: Guide
@@ -44,7 +46,7 @@ content:
   pages:
     - name: PAGE-START
       title: Start at house
-      role: Player
+      interface: tablet
       scene: SCENE-MAIN
       directive: Walk to Atlas
       panels:
@@ -55,7 +57,7 @@ content:
 
     - name: PAGE-ATLAS
       title: At Atlas Cafe
-      role: Player
+      interface: tablet
       scene: SCENE-MAIN
       directive: Enjoy Atlas Cafe!
       waypoint: WAYPOINT-ATLAS

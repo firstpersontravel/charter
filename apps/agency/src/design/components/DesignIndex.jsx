@@ -8,8 +8,11 @@ import Alert from '../../partials/Alert';
 import Loader from '../../partials/Loader';
 
 export default function DesignIndex({ match, experience, scripts, history,
-  updateInstance }) {
-  if (scripts.isLoading || experience.isLoading) {
+  updateInstance, isCreatingScript, isCreatingExperience }) {
+  if (scripts.isLoading ||
+      experience.isLoading ||
+      isCreatingScript ||
+      isCreatingExperience) {
     return <Loader />;
   }
   if (scripts.isError || experience.isError) {
@@ -67,6 +70,8 @@ export default function DesignIndex({ match, experience, scripts, history,
 }
 
 DesignIndex.propTypes = {
+  isCreatingScript: PropTypes.bool.isRequired,
+  isCreatingExperience: PropTypes.bool.isRequired,
   scripts: PropTypes.array.isRequired,
   experience: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,

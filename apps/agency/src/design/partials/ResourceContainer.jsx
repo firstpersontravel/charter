@@ -22,6 +22,7 @@ export default class ResourceContainer extends Component {
         excludeFields={this.props.excludeFields}
         isNew={this.props.isNew}
         resource={this.props.resource}
+        extraButtons={this.props.extraButtons}
         canDelete={canDelete}
         onDelete={this.props.onDelete}
         onUpdate={this.props.onUpdate}
@@ -82,6 +83,7 @@ ResourceContainer.propTypes = {
   isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,
   canDelete: PropTypes.bool.isRequired,
+  extraButtons: PropTypes.node,
   onUpdate: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onDuplicate: PropTypes.func.isRequired,
@@ -90,5 +92,6 @@ ResourceContainer.propTypes = {
 };
 
 ResourceContainer.defaultProps = {
-  excludeFields: []
+  excludeFields: [],
+  extraButtons: null
 };

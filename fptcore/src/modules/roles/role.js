@@ -19,6 +19,6 @@ module.exports = {
       type: 'list',
       items: { type: 'simpleAttribute', required: true }
     },
-    layout: { type: 'reference', collection: 'layouts' }
+    interface: { type: 'reference', collection: 'interfaces' }
   }
 };

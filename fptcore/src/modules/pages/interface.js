@@ -1,4 +1,4 @@
-const LAYOUT_TYPE_OPTIONS = ['simple', 'tabs'];
+const INTERFACE_TYPE_OPTIONS = ['simple', 'tabs'];
 
 module.exports = {
   icon: 'mobile-phone',
@@ -8,14 +8,14 @@ module.exports = {
     title: { type: 'string', required: true },
     type: {
       type: 'enum',
-      options: LAYOUT_TYPE_OPTIONS,
+      options: INTERFACE_TYPE_OPTIONS,
       default: 'simple',
       required: true,
-      help: 'What type of layout to use. Currently just simple or tabs.'
+      help: 'What type of interface to show. Currently just simple or tabs.'
     },
     section: {
       type: 'string',
-      help: 'Section of content pages to search for tabs (if relevant).'
+      help: 'Section of content pages to use as subpages.'
     },
     header_panels: {
       type: 'list',
@@ -25,7 +25,7 @@ module.exports = {
   },
   validateResource: function(script, resource) {
     if (!resource.type === 'tabs' && !resource.section) {
-      return ['Tabs layout resource requires a section.'];
+      return ['Tabbed interfaces require a section.'];
     }
   }
 };

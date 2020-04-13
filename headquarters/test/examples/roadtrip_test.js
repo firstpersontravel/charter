@@ -10,7 +10,6 @@ const examplePath = path.join(__dirname, '../../examples/roadtrip.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 
 describe('RoadTripExample', () => {
-
   let script;
 
   beforeEach(async () => {

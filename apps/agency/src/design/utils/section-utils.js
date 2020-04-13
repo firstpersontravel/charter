@@ -12,7 +12,7 @@ export const sections = [
 const sectionContent = {
   roles: [{
     collection: 'roles',
-    children: ['appearances', 'relays', 'inboxes']
+    children: ['relays', 'inboxes']
   }],
   scenes: [{
     collection: 'scenes'
@@ -29,9 +29,8 @@ const sectionContent = {
     collection: 'times'
   }],
   interface: [{
-    collection: 'layouts'
-  }, {
-    collection: 'content_pages'
+    collection: 'interfaces',
+    children: ['content_pages']
   }, {
     collection: 'qr_codes'
   }],

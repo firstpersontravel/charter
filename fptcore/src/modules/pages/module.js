@@ -6,8 +6,8 @@ module.exports = {
     content_page: {
       resource: require('./content_page')
     },
-    layout: {
-      resource: require('./layout')
+    interface: {
+      resource: require('./interface')
     },
     page: {
       resource: require('./page'),

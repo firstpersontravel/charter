@@ -32,22 +32,16 @@ module.exports = {
   },
   getTitle: function(scriptContent, resource) {
     var parts = [];
-    if (resource.for) {
-      var forRole = _.find(scriptContent.roles, { name: resource.for });
-      if (forRole) {
-        parts.push('for ' + forRole.title);
-      }
-    }
-    if (resource.as) {
-      var asRole = _.find(scriptContent.roles, { name: resource.as });
-      if (asRole) {
-        parts.push(' as ' + asRole.title);
-      }
-    }
     if (resource.with) {
       var withRole = _.find(scriptContent.roles, { name: resource.with });
       if (withRole) {
-        parts.push(' with ' + withRole.title);
+        parts.push('with ' + withRole.title);
+      }
+    }
+    if (resource.as && resource.as !== resource.for) {
+      var asRole = _.find(scriptContent.roles, { name: resource.as });
+      if (asRole) {
+        parts.push('as ' + asRole.title);
       }
     }
     if (!parts.length) {

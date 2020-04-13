@@ -150,6 +150,7 @@ export default class ResourceView extends Component {
     return (
       <h5 className="card-header">
         <div style={{ float: 'right' }}>
+          {this.props.extraButtons}
           {isNew ? cancelBtn : null}
           {!hasUnsavableChanges && !isNew ? duplicateBtn : null}
           {(hasUnsavableChanges && !isNew) ? revertBtn : null}
@@ -265,6 +266,7 @@ ResourceView.propTypes = {
   script: PropTypes.object.isRequired,
   collectionName: PropTypes.string.isRequired,
   excludeFields: PropTypes.array,
+  extraButtons: PropTypes.node,
   isNew: PropTypes.bool.isRequired,
   resource: PropTypes.object.isRequired,
   canDelete: PropTypes.bool.isRequired,
@@ -274,5 +276,6 @@ ResourceView.propTypes = {
 };
 
 ResourceView.defaultProps = {
-  excludeFields: []
+  excludeFields: [],
+  extraButtons: null
 };

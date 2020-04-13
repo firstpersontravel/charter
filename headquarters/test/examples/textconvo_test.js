@@ -14,7 +14,6 @@ const examplePath = path.join(__dirname, '../../examples/textconvo.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 
 describe('TextConvoExample', () => {
-
   let script;
   let entryway;
 

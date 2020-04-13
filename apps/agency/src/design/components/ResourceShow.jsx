@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 import { TextUtil, Registry } from 'fptcore';
 
@@ -36,6 +37,26 @@ function updateScriptContent(scriptContent, collectionName, resourceName,
   return updatedScriptContent;
 }
 
+function getNewResourceFields(collectionName, defaults) {
+  const resourceType = TextUtil.singularize(collectionName);
+  const resourceClass = Registry.resources[resourceType];
+  const newName = newResourceNameForType(resourceType);
+  const defaultFields = defaultFieldsForClass(resourceClass);
+  const fields = Object.assign({ name: newName }, defaultFields);
+
+  if (resourceClass.properties.title) {
+    fields.title = `New ${resourceType}`;
+  }
+
+  _.each(defaults, (val, key) => {
+    if (resourceClass.properties[key]) {
+      fields[key] = val;
+    }
+  });
+
+  return fields;
+}
+
 export default class ResourceShow extends Component {
   constructor(props) {
     super(props);
@@ -48,8 +69,7 @@ export default class ResourceShow extends Component {
     this.handleUpdateScript = this.handleUpdateScript.bind(this);
     this.state = {
       lastScriptId: props.script.id,
-      expandedChildStr: null,
-      pendingChildCollectionName: null,
+      lastChildStr: null,
       pendingChildResource: null,
       redirectToRevision: null,
       redirectToResource: null
@@ -57,41 +77,50 @@ export default class ResourceShow extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
+    const updates = {};
     if (state.lastScriptId !== props.script.id) {
-      return {
+      Object.assign(updates, {
         lastScriptId: props.script.id,
         redirectToRevision: null,
         redirectToResource: null,
-        expandedChildStr: null
-      };
+        lastChildStr: null
+      });
     }
-    return null;
+    const query = new URLSearchParams(props.location.search);
+    const curChildStr = query.get('child');
+    if (state.lastChildStr !== curChildStr) {
+      // Most times clear pending
+      let newPendingChildResource = null;
+      // Except if we're making a new obj
+      if (curChildStr && curChildStr.split('.')[1] === 'new') {
+        const childCollectionName = curChildStr.split('.')[0];
+        const collectionName = props.match.params.collectionName;
+        const childResourceType = TextUtil.singularize(childCollectionName);
+        const resourceClass = Registry.resources[childResourceType];
+        const childParentField = _(resourceClass.properties)
+          .keys()
+          .find(key => (
+            resourceClass.properties[key].type === 'reference' &&
+            resourceClass.properties[key].collection === collectionName &&
+            resourceClass.properties[key].parent
+          ));
+        newPendingChildResource = getNewResourceFields(childCollectionName, {
+          [childParentField]: props.match.params.resourceName
+        });
+      }
+      Object.assign(updates, {
+        lastChildStr: curChildStr,
+        pendingChildResource: newPendingChildResource
+      });
+    }
+
+    return updates;
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.redirectToRevision) {
       this.checkForNewRevision();
     }
-  }
-
-  getNewResourceFields(collectionName, defaults) {
-    const resourceType = TextUtil.singularize(collectionName);
-    const resourceClass = Registry.resources[resourceType];
-    const newName = newResourceNameForType(resourceType);
-    const defaultFields = defaultFieldsForClass(resourceClass);
-    const fields = Object.assign({ name: newName }, defaultFields);
-
-    if (resourceClass.properties.title) {
-      fields.title = `New ${resourceType}`;
-    }
-
-    _.each(defaults, (val, key) => {
-      if (resourceClass.properties[key]) {
-        fields[key] = val;
-      }
-    });
-
-    return fields;
   }
 
   getNewMainResourceFields() {
@@ -101,7 +130,7 @@ export default class ResourceShow extends Component {
     }
 
     const collectionName = this.props.match.params.collectionName;
-    return this.getNewResourceFields(collectionName, defaults);
+    return getNewResourceFields(collectionName, defaults);
   }
 
   getMainResource() {
@@ -140,6 +169,12 @@ export default class ResourceShow extends Component {
     return [];
   }
 
+  getNewChildResourceCollection() {
+    const query = new URLSearchParams(this.props.location.search);
+    const childStr = query.get('child');
+    return !!childStr && childStr.split('.')[0];
+  }
+
   checkForNewRevision() {
     const script = this.props.script;
     const existingRevisions = _.map(this.props.scripts, 'revision');
@@ -157,13 +192,10 @@ export default class ResourceShow extends Component {
     return this.props.match.params.resourceName === 'new';
   }
 
-  handleCreateChildResource(collectionName, defaults) {
-    const newChildResource = this.getNewResourceFields(collectionName,
-      defaults);
-    this.setState({
-      pendingChildCollectionName: collectionName,
-      pendingChildResource: newChildResource
-    });
+  hasNewChildResource() {
+    const query = new URLSearchParams(this.props.location.search);
+    const childStr = query.get('child');
+    return !!childStr && childStr.split('.')[1] === 'new';
   }
 
   handleUpdateMainResource(updatedResource) {
@@ -212,29 +244,25 @@ export default class ResourceShow extends Component {
   }
 
   handleUpdateChildResource(collectionName, updatedResource) {
-    if (this.state.pendingChildResource &&
-        updatedResource.name === this.state.pendingChildResource.name) {
-      this.setState({
-        pendingChildCollectionName: null,
-        pendingChildResource: null,
-        expandedChildStr: `${collectionName}.${updatedResource.name}`
-      });
-    }
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, updatedResource.name, updatedResource);
     this.handleUpdateScript(newScriptContent,
       `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
+    // If we're editing a new child resource, redirect to it once created
+    if (this.state.pendingChildResource &&
+        updatedResource.name === this.state.pendingChildResource.name) {
+      this.props.history.push({
+        search: `?child=${collectionName}.${updatedResource.name}`
+      });
+    }
   }
 
   handleDeleteChildResource(collectionName, resourceName) {
+    // If we're deleting a pending child resource, just go back to empty query
     if (this.state.pendingChildResource &&
         resourceName === this.state.pendingChildResource.name) {
-      this.setState({
-        pendingChildCollectionName: null,
-        pendingChildResource: null,
-        expandedChildStr: null
-      });
+      this.props.history.push({ search: '' });
       return;
     }
     const newScriptContent = this.getScriptContentWithUpdatedResource(
@@ -255,7 +283,9 @@ export default class ResourceShow extends Component {
     this.handleUpdateScript(newScriptContent,
       `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
-    this.setState({ expandedChildStr: `${collectionName}.${newName}` });
+    this.props.history.push({
+      search: `?child=${collectionName}.${newName}`
+    });
   }
 
   handleUpdateScript(newScriptContent, redirectToResource, forceRedirect) {
@@ -330,6 +360,16 @@ export default class ResourceShow extends Component {
       .value()
       .concat(this.getParentFields());
 
+    // Show close if not new.
+    const extraButtons = isNew ? null : (
+      <Link
+        to={{ search: '' }}
+        className="btn btn-sm btn-outline-secondary mr-1">
+        <i className="fa fa-close mr-1" />
+        Close
+      </Link>
+    );
+
     return (
       <ResourceContainer
         key={`${collectionName}:${childResource.name}`}
@@ -339,6 +379,7 @@ export default class ResourceShow extends Component {
         isNew={isNew}
         resource={childResource}
         assets={this.props.assets}
+        extraButtons={extraButtons}
         canDelete={canDelete}
         createInstance={this.props.createInstance}
         updateInstance={this.props.updateInstance}
@@ -357,27 +398,14 @@ export default class ResourceShow extends Component {
       this.props.script.content, collectionName, childResource);
     return (
       <div
-        className="card mb-3"
+        className="mb-2"
         key={`${collectionName}:${childResource.name}`}>
-        <div className="card-body py-2 px-3">
-          <div className="float-right">
-            <button
-              className="btn btn-sm btn-outline-secondary mr-1"
-              onClick={() => {
-                this.setState({
-                  expandedChildStr: `${collectionName}.${childResource.name}`,
-                  pendingChildCollectionName: null,
-                  pendingChildResource: null
-                });
-              }}>
-              Expand
-            </button>
-          </div>
-          <h5 className="m-0">
-            <ResourceBadge resourceType={resourceType} />
-            &nbsp;
+        <div className="constrain-text">
+          <ResourceBadge resourceType={resourceType} className="mr-1" />
+          <Link
+            to={{ search: `?child=${collectionName}.${childResource.name}` }}>
             {title}
-          </h5>
+          </Link>
         </div>
       </div>
     );
@@ -385,7 +413,9 @@ export default class ResourceShow extends Component {
 
   renderChild(reverseRefGraph, collectionName, resource) {
     const childStr = `${collectionName}.${resource.name}`;
-    if (this.state.expandedChildStr !== childStr) {
+    const query = new URLSearchParams(this.props.location.search);
+    const curChildStr = query.get('child');
+    if (curChildStr !== childStr) {
       return this.renderChildStub(collectionName, resource);
     }
     const reverseRefs = reverseRefGraph[childStr];
@@ -395,37 +425,23 @@ export default class ResourceShow extends Component {
   }
 
   renderPendingChild() {
-    if (!this.state.pendingChildCollectionName) {
+    if (!this.hasNewChildResource()) {
       return null;
     }
     return this.renderChildResource(
-      this.state.pendingChildCollectionName,
+      this.getNewChildResourceCollection(),
       this.state.pendingChildResource, true, true);
   }
 
   renderCreateChildResourceBtn(childCollectionName) {
-    const collectionName = this.props.match.params.collectionName;
     const childResourceType = TextUtil.singularize(childCollectionName);
-    const resourceClass = Registry.resources[childResourceType];
-    const childParentField = _(resourceClass.properties)
-      .keys()
-      .find(key => (
-        resourceClass.properties[key].type === 'reference' &&
-        resourceClass.properties[key].collection === collectionName &&
-        resourceClass.properties[key].parent
-      ));
-    const childDefaults = {
-      [childParentField]: this.props.match.params.resourceName
-    };
     return (
-      <button
+      <Link
         key={childResourceType}
         className="btn btn-sm btn-outline-secondary mr-2"
-        onClick={() => {
-          this.handleCreateChildResource(childCollectionName, childDefaults);
-        }}>
+        to={{ search: `?child=${childCollectionName}.new` }}>
         Add {childResourceType}
-      </button>
+      </Link>
     );
   }
 

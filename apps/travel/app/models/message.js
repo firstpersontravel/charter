@@ -4,8 +4,6 @@ export default DS.Model.extend({
   trip: DS.belongsTo('trip', {async: false}),
   fromRoleName: DS.attr('string'),
   toRoleName: DS.attr('string'),
-  sentBy: DS.belongsTo('player', {async: false}),
-  sentTo: DS.belongsTo('player', {async: false}),
   sentFromLatitude: DS.attr('number'),
   sentFromLongitude: DS.attr('number'),
   sentFromAccuracy: DS.attr('number'),

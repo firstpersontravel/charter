@@ -9,6 +9,8 @@ import {
 } from '../../datastore-utils';
 
 const mapStateToProps = (state, ownProps) => ({
+  isCreatingExperience: state.requests['experiences.create'] === 'pending',
+  isCreatingScript: state.requests['scripts.create'] === 'pending',
   experience: lookupExperience(state, ownProps),
   scripts: instancesFromDatastore(state, {
     col: 'scripts',

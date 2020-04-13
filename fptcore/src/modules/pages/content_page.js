@@ -3,6 +3,12 @@ module.exports = {
   help: 'A section of static text or media that can be displayed in a user interface.',
   properties: {
     name: { type: 'name', required: true },
+    interface: {
+      type: 'reference',
+      collection: 'interfaces',
+      required: true,
+      parent: true
+    },
     section: { type: 'string', required: true },
     title: { type: 'string', required: true },
     active_if: {

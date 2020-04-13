@@ -60,9 +60,14 @@ content:
       mode: driving
       title: Second drive
 
+  interfaces:
+    - name: Driver
+      type: simple
+      title: Driver
+
   pages:
     - scene: main
-      role: Driver
+      interface: Driver
       name: Start
       title: Start in San Francisco
       waypoint: start
@@ -72,7 +77,7 @@ content:
           cue: CUE-EMBARKED-1
 
     - scene: main
-      role: Driver
+      interface: Driver
       name: Drive1
       title: First drive
       route: Drive1
@@ -83,7 +88,7 @@ content:
           cue: CUE-ARRIVED-1
 
     - scene: main
-      role: Driver
+      interface: Driver
       name: Break
       title: Lunch break
       waypoint: midpoint
@@ -95,7 +100,7 @@ content:
           cue: CUE-EMBARKED-2
 
     - scene: main
-      role: Driver
+      interface: Driver
       name: Drive2
       route: Drive2
       title: Second drive
@@ -106,7 +111,7 @@ content:
           cue: CUE-ARRIVED-2
 
     - scene: main
-      role: Driver
+      interface: Driver
       name: End
       title: End
       waypoint: end

@@ -6,7 +6,7 @@ const KernelUtil = require('../kernel/util');
 
 const evaluator = new Evaluator(Registry);
 
-const defaultLayout = {
+const defaultInterface = {
   type: 'simple',
   section: null
 };
@@ -38,12 +38,12 @@ function prepContentPage(scriptContent, trip, player, contentPage,
   };
 }
 
-function prepLayout(scriptContent, trip, player, actionContext) {
+function prepInterface(scriptContent, trip, player, actionContext) {
   const role = scriptContent.roles.find(r => r.name === player.roleName);
-  const layout = role.layout ?
-    scriptContent.layouts.find(l => l.name === role.layout) :
-    defaultLayout;
-  const sectionName = layout.section;
+  const interface = role.interface ?
+    scriptContent.interfaces.find(l => l.name === role.interface) :
+    defaultInterface;
+  const sectionName = interface.section;
   const contentPagesInSection = (scriptContent.content_pages || [])
     .filter(p => p.section === sectionName);
   const contentPages = contentPagesInSection.length > 0 ?
@@ -52,7 +52,7 @@ function prepLayout(scriptContent, trip, player, actionContext) {
   const preparedContentPages = contentPages
     .map(p => prepContentPage(scriptContent, trip, player, p, actionContext));
   return {
-    type: layout.type,
+    type: interface.type,
     contentPages: preparedContentPages
   };
 }
@@ -63,10 +63,11 @@ async function getPlayerViewRoute(req, res) {
   const objs = await KernelUtil.getObjectsForTrip(player.tripId);
   const actionContext = KernelUtil.prepareActionContext(objs);
   const scriptContent = objs.script.content;
-  const layout = prepLayout(scriptContent, objs.trip, player, actionContext);
+  const interface = prepInterface(scriptContent, objs.trip, player,
+    actionContext);
   res.json({
     data: {
-      layout: layout
+      interface: interface
     }
   });
 }

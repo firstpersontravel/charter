@@ -12,7 +12,7 @@ const assetComponentsByResourceType = {
   route: RouteAssets,
   relay: MediaAssets,
   trigger: MediaAssets,
-  layout: MediaAssets
+  interface: MediaAssets
 };
 
 export default class ResourceExtras extends Component {

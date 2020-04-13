@@ -1,31 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import L from 'leaflet';
 import { NavLink, Link } from 'react-router-dom';
 
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 import { getPlayerIframeUrl } from '../../utils';
-
-function getAppearanceStart(player) {
-  const pageName = player.trip.tripState
-    .currentPageNamesByRole[player.roleName];
-  const page = _.find(player.trip.script.content.pages, { name: pageName });
-  if (!page) {
-    return null;
-  }
-  const appearance = _.find(player.trip.script.content.appearances,
-    { name: page.appearance });
-  if (!appearance || !appearance.start) {
-    return null;
-  }
-  if (!player.trip.schedule[appearance.start]) {
-    return null;
-  }
-  return moment.utc(player.trip.schedule[appearance.start]);
-}
 
 function renderMap(trip, user) {
   if (!user || !user.locationLatitude) {
@@ -109,10 +90,6 @@ export default function RoleIndex({ user, players }) {
     .filter('trip.script')
     .filter(player => player.trip.tripState
       .currentPageNamesByRole[player.roleName])
-    .sortBy((player) => {
-      const appearanceStart = getAppearanceStart(player);
-      return appearanceStart ? appearanceStart.unix() : 0;
-    })
     .value();
   if (!playersSorted.length) {
     return <div>No players with active interfaces.</div>;

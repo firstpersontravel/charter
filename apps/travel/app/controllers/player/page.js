@@ -13,8 +13,7 @@ export default Ember.Controller.extend({
   pageLayoutName: function() {
     var page = this.get('pageModel');
     var player = this.get('player.model');
-    var pageLayoutName = player.get('role').layout || null;
-    if (page && page.layout) { pageLayoutName = page.layout; }
+    var pageLayoutName = player.get('role').interface || null;
     return pageLayoutName;
   }.property('pageModel'),
 
@@ -42,7 +41,7 @@ export default Ember.Controller.extend({
     if (!pageLayoutName) {
       return null;
     }
-    return scriptContent.layouts.findBy('name', pageLayoutName);
+    return scriptContent.interfaces.findBy('name', pageLayoutName);
   }.property('pageLayoutName'),
 
   filterPanels: function(panels) {
