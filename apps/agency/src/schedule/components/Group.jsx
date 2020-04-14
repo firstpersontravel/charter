@@ -265,6 +265,11 @@ export default withLoader(Group, loadProps, (props) => {
       tripId: props.group.trips.map(trip => trip.id).join(','),
       orgId: props.experience.orgId
     });
+    props.listCollection('scripts', {
+      id: props.group.scriptId,
+      experienceId: props.experience.id,
+      orgId: props.experience.orgId
+    });
   }
   props.listCollection('trips', {
     groupId: props.match.params.groupId,
