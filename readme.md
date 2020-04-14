@@ -97,7 +97,7 @@
 ### Build native app
     
     # run local tunnel
-    ngrok http -subdomain=firstpersontravel 5000
+    ngrok http -subdomain=firstpersontravel 5001
 
     # build travel app in xcode
 
