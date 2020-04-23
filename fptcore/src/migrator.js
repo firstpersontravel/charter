@@ -2,8 +2,10 @@ const _ = require('lodash');
 const fs = require('fs');
 
 const Registry = require('./registry/registry');
-const ScriptCore = require('./cores/script');
 const TextUtil = require('./utils/text');
+const Walker = require('./utils/walker');
+
+const walker = new Walker(Registry);
 
 const Migrator = {};
 
@@ -38,7 +40,7 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
   }
   if (Registry.components[collectionName]) {
     const componentType = collectionName;
-    ScriptCore.walkParams(scriptContent, componentType, (value, spec) => (
+    walker.walkAllFields(scriptContent, componentType, (value, spec) => (
       migration(value, scriptContent)
     ));
     return;

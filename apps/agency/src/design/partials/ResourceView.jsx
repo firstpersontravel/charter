@@ -21,7 +21,7 @@ export default class ResourceView extends Component {
     this.state = {
       hasUnsavableChanges: false,
       pendingResource: pendingResource,
-      errors: validator.validateResource(props.script,
+      errors: validator.validateResource(props.script.content,
         Registry.resources[TextUtil.singularize(props.collectionName)],
         pendingResource, '')
     };
@@ -37,7 +37,7 @@ export default class ResourceView extends Component {
       this.setState({
         hasUnsavableChanges: false,
         pendingResource: pendingResource,
-        errors: validator.validateResource(nextProps.script,
+        errors: validator.validateResource(nextProps.script.content,
           Registry.resources[TextUtil.singularize(nextProps.collectionName)],
           pendingResource, '')
       });
@@ -74,7 +74,7 @@ export default class ResourceView extends Component {
   }
 
   handleResourceUpdate(newResource) {
-    const errors = validator.validateResource(this.props.script,
+    const errors = validator.validateResource(this.props.script.content,
       Registry.resources[TextUtil.singularize(this.props.collectionName)],
       newResource, '');
     // If there are errors, set the pending state so we can correct them.

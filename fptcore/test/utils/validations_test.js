@@ -315,23 +315,23 @@ describe('Validations', () => {
   });
 
   describe('#reference', () => {
-    const script = { content: { geofences: [{ name: 'GEOFENCE-2' }] } };
+    const scriptContent = { geofences: [{ name: 'GEOFENCE-2' }] };
     const spec = { type: 'reference', collection: 'geofences' };
 
     it('permits found references', () => {
-      ok(Validations.reference(script, 's', spec, 'GEOFENCE-2'));
+      ok(Validations.reference(scriptContent, 's', spec, 'GEOFENCE-2'));
     });
 
     it('warns if reference is not found', () => {
       err(
-        Validations.reference(script, 's', spec, 'GEOFENCE-3'),
+        Validations.reference(scriptContent, 's', spec, 'GEOFENCE-3'),
         'Reference param "s" ("GEOFENCE-3") is not in collection "geofences".');
     });
 
     it('warns if collection is empty', () => {
       const spec = { type: 'reference', collection: 'messages' };
       err(
-        Validations.reference(script, 's', spec, 'GEOFENCE-3'),
+        Validations.reference(scriptContent, 's', spec, 'GEOFENCE-3'),
         'Reference param "s" ("GEOFENCE-3") is not in collection "messages".');
     });
 
@@ -364,8 +364,8 @@ describe('Validations', () => {
         collection: 'geofences',
         specialValues: [{ value: 'null', label: 'None' }]
       };
-      ok(Validations.reference(script, 's', specWithNull, 'null'));
-      err(Validations.reference(script, 's', spec, 'null'),
+      ok(Validations.reference(scriptContent, 's', specWithNull, 'null'));
+      err(Validations.reference(scriptContent, 's', spec, 'null'),
         'Reference param "s" ("null") is not in collection "geofences".');
     });
   });

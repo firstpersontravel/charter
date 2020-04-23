@@ -40,7 +40,7 @@ const Script = database.define('Script', snakeCaseColumns({
         // case where you get a string.
         if (_.isObject(value)) {
           try {
-            ScriptCore.validateScriptContent({ content: value });
+            ScriptCore.validateScriptContent(value);
           } catch (err) {
             if (err instanceof Errors.ScriptValidationError) {
               throw new ValidationError(err.message, err.fieldErrors);

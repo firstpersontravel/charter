@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactS3Uploader from 'react-s3-uploader';
 
-import { ScriptCore } from 'fptcore';
+import { Registry, Walker } from 'fptcore';
 
 const MEDIA_MIME_TYPES = {
   image: 'image/*',
@@ -11,9 +11,11 @@ const MEDIA_MIME_TYPES = {
   audio: 'audio/*'
 };
 
+const walker = new Walker(Registry);
+
 function extraMediaReferences(resourceType, resource) {
   const paths = [];
-  ScriptCore.walkResourceParams(resourceType, resource, 'media',
+  walker.walkResource(resourceType, resource, 'media',
     (path, spec, parent, key) => {
       const label = parent.type || parent.name || key;
       paths.push({ path: path, label: label, medium: spec.medium });

@@ -3,7 +3,7 @@ const _ = require('lodash');
 const TimeUtil = require('./time');
 
 class Validations {
-  static address(script, name, spec, param) {
+  static address(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Address param "' + name + '" should be a string.'];
     }
@@ -12,7 +12,7 @@ class Validations {
     }
   }
 
-  static string(script, name, spec, param) {
+  static string(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['String param "' + name + '" should be a string.'];
     }
@@ -21,7 +21,7 @@ class Validations {
     }
   }
 
-  static email(script, name, spec, param) {
+  static email(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Email param "' + name + '" should be a string.'];
     }
@@ -34,7 +34,7 @@ class Validations {
     }
   }
 
-  static markdown(script, name, spec, param) {
+  static markdown(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Markdown param "' + name + '" should be a string.'];
     }
@@ -43,7 +43,7 @@ class Validations {
     }
   }
 
-  static simpleValue(script, name, spec, param) {
+  static simpleValue(scriptContent, name, spec, param) {
     if (!_.isString(param) && !_.isNumber(param) && !_.isBoolean(param)) {
       return [
         'Simple param "' + name + '" should be a string, number or boolean.'
@@ -54,25 +54,25 @@ class Validations {
     }
   }
 
-  static integer(script, name, spec, param) {
+  static integer(scriptContent, name, spec, param) {
     if (!Number.isInteger(Number(param))) {
       return ['Integer param "' + name + '" should be a integer.'];
     }
   }
 
-  static number(script, name, spec, param) {
+  static number(scriptContent, name, spec, param) {
     if (isNaN(Number(param))) {
       return ['Number param "' + name + '" should be a number.'];
     }
   }
 
-  static boolean(script, name, spec, param) {
+  static boolean(scriptContent, name, spec, param) {
     if (param !== true && param !== false) {
       return ['Boolean param "' + name + '" ("' + param + '") should be true or false.'];
     }
   }
 
-  static enum(script, name, spec, param) {
+  static enum(scriptContent, name, spec, param) {
     if (!spec.options) {
       throw new Error('Invalid enum spec: missing options.');
     }
@@ -84,13 +84,13 @@ class Validations {
     }
   }
 
-  static timeOffset(script, name, spec, param) {
+  static timeOffset(scriptContent, name, spec, param) {
     if (!TimeUtil.timeOffsetRegex.test(param)) {
       return ['Time offset param "' + name + '" ("' + param + '") should be a number suffixed by "h/m/s".'];
     }
   }
 
-  static name(script, name, spec, param) {
+  static name(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Name param "' + name + '" ("' + param + '") should be a string.'];
     }
@@ -102,7 +102,7 @@ class Validations {
     }
   }
 
-  static media(script, name, spec, param) {
+  static media(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Media param "' + name + '" should be a string.'];
     }
@@ -111,7 +111,7 @@ class Validations {
     }
   }
 
-  static coords(script, name, spec, param) {
+  static coords(scriptContent, name, spec, param) {
     if (!_.isArray(param) || param.length !== 2 ||
         isNaN(Number(param[0])) || isNaN(Number(param[1]))) {
       return ['Coords param "' + name + '" should be an array of two numbers.'];
@@ -124,7 +124,7 @@ class Validations {
     }
   }
 
-  static timeShorthand(script, name, spec, param) {
+  static timeShorthand(scriptContent, name, spec, param) {
     if (!TimeUtil.timeShorthandRegex.test(param)) {
       return [
         'Time shorthand param "' + name + '" ("' + param + '") must be valid.'
@@ -132,7 +132,7 @@ class Validations {
     }
   }
 
-  static simpleAttribute(script, name, spec, param) {
+  static simpleAttribute(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Simple attribute param "' + name + '" should be a string.'];
     }
@@ -147,7 +147,7 @@ class Validations {
     }
   }
 
-  static lookupable(script, name, spec, param) {
+  static lookupable(scriptContent, name, spec, param) {
     if (!_.isString(param)) {
       return ['Lookupable param "' + name + '" ("' + param + '") should be a string.'];
     }
@@ -159,7 +159,7 @@ class Validations {
     }
   }
 
-  static reference(script, name, spec, param) {
+  static reference(scriptContent, name, spec, param) {
     if (spec.specialValues) {
       for (const val of spec.specialValues) {
         if (typeof val === 'string' && val === param) {
@@ -183,7 +183,7 @@ class Validations {
       return ['Reference param "' + name + '" ("' + param + '") should be alphanumeric with dashes or underscores.'];
     }
     const collectionName = spec.collection;
-    const resourceNames = _.map(script.content[collectionName] || [], 'name');
+    const resourceNames = _.map(scriptContent[collectionName] || [], 'name');
     if (!_.includes(resourceNames, param)) {
       return ['Reference param "' + name + '" ("' + param + '") ' +
         'is not in collection "' + collectionName + '".'];

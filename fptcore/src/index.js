@@ -15,5 +15,6 @@ module.exports = {
   TripCore: require('./cores/trip'),
   Validations: require('./utils/validations'),
   Validator: require('./utils/validator'),
+  Walker: require('./utils/walker'),
   WaypointCore: require('./cores/waypoint')
 };

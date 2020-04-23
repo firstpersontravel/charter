@@ -33,7 +33,7 @@ function invalidWarningForSpec(script, keySpec, value, itemValue) {
   }
 
   // If item is not null, call the validator functions.
-  const validatorErrors = validator.validateParam(script,
+  const validatorErrors = validator.validateParam(script.content,
     name, keySpec, itemValue);
   if (validatorErrors && validatorErrors.length > 0) {
     return (

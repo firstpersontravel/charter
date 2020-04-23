@@ -7,7 +7,7 @@ class Validator {
     this.registry = registry;
   }
 
-  dictionary(script, name, spec, param) {
+  dictionary(scriptContent, name, spec, param) {
     if (!spec.keys) {
       throw new Error('Invalid dictionary spec: requires keys.');
     }
@@ -22,18 +22,18 @@ class Validator {
       // Add warnings for key
       const keyName = name + '[' + key + ']';
       itemWarnings.push.apply(itemWarnings,
-        this.validateParam(script, keyName, spec.keys, key)
+        this.validateParam(scriptContent, keyName, spec.keys, key)
       );
       // Add warnings for value
       const nestedAttribute = name + '[' + key + ']';
       itemWarnings.push.apply(itemWarnings,
-        this.validateParam(script, nestedAttribute, spec.values, value)
+        this.validateParam(scriptContent, nestedAttribute, spec.values, value)
       );
     });
     return itemWarnings;
   }
 
-  list(script, name, spec, param) {
+  list(scriptContent, name, spec, param) {
     if (!spec.items) {
       throw new Error('Invalid list spec: requires items.');
     }
@@ -42,18 +42,18 @@ class Validator {
     }
     return _(param)
       .map((item, i) => (
-        this.validateParam(script, `${name}[${i}]`, spec.items, item)
+        this.validateParam(scriptContent, `${name}[${i}]`, spec.items, item)
       ))
       .flatten()
       .value();
   }
 
-  object(script, name, spec, param) {
+  object(scriptContent, name, spec, param) {
     if (!spec.properties) {
       throw new Error('Invalid object spec: requires properties.');
     }
     const prefix = name + '.';
-    return this.validateParams(script, spec.properties, param, prefix);
+    return this.validateParams(scriptContent, spec.properties, param, prefix);
   }
 
   getComponentVariety(spec, value) {
@@ -100,13 +100,14 @@ class Validator {
     const varietyClass = Object.assign({
       properties: componentsRegistry[variety][componentDef.propertiesKey]
     }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
-    return _.merge({}, typeClass, commonClass, varietyClass);
+    const componentClass = _.merge({}, typeClass, commonClass, varietyClass);
+    return componentClass;
   }
 
   /**
    * Embed a component validator which hinges on a key param.
    */
-  component(script, name, spec, param) {
+  component(scriptContent, name, spec, param) {
     const componentType = spec.component;
     const componentDef = this.registry.components[componentType];
     if (!componentDef) {
@@ -122,13 +123,13 @@ class Validator {
     }
     const componentClass = this.getComponentClass(spec, variety);
     const prefix = name + '.';
-    return this.validateResource(script, componentClass, param, prefix);
+    return this.validateResource(scriptContent, componentClass, param, prefix);
   }
 
   /**
    * Get param type from the spec and validate a param against it.
    */
-  validateParam(script, name, spec, param) {
+  validateParam(scriptContent, name, spec, param) {
     if (!spec.type) {
       throw new Error('Missing param type in spec "' + name + '".');
     }
@@ -136,13 +137,13 @@ class Validator {
     if (!paramValidator) {
       throw new Error('Invalid param type "' + spec.type + '".');
     }
-    return paramValidator.call(this, script, name, spec, param) || [];
+    return paramValidator.call(this, scriptContent, name, spec, param) || [];
   }
 
   /**
    * Validate an entry in a params object.
    */
-  validateParamEntry(script, paramSpec, param, paramNameWithPrefix) {
+  validateParamEntry(scriptContent, paramSpec, param, paramNameWithPrefix) {
     if (!paramSpec) {
       throw new Error(`Empty param spec for param "${paramNameWithPrefix}".`);
     }
@@ -156,13 +157,14 @@ class Validator {
       return [];
     }
 
-    return this.validateParam(script, paramNameWithPrefix, paramSpec, param);
+    return this.validateParam(scriptContent, paramNameWithPrefix, paramSpec, 
+      param);
   }
 
   /**
    * Validate a list of params against a spec.
    */
-  validateParams(script, paramsSpec, params, prefix) {
+  validateParams(scriptContent, paramsSpec, params, prefix) {
     const warnings = [];
 
     // If you only have a 'self' parameter, then apply the parameter checking
@@ -177,8 +179,8 @@ class Validator {
       const paramSpec = paramsSpec[paramName];
       const param = params[paramName];
       const paramNameWithPrefix = prefix + paramName;
-      warnings.push(...this.validateParamEntry(script, paramSpec, param, 
-        paramNameWithPrefix));
+      warnings.push(...this.validateParamEntry(scriptContent, paramSpec,
+        param, paramNameWithPrefix));
     }
 
     // Check for unexpected params -- events sometimes have string paramss,
@@ -200,14 +202,18 @@ class Validator {
   /**
    * Validate a whole resource definition.
    */
-  validateResource(script, resourceClass, resource, prefix) {
+  validateResource(scriptContent, resourceClass, resource, prefix) {
     if (!resourceClass.properties) {
       throw new Error('Invalid resource: expected properties.');
     }
-    const warnings = this.validateParams(script, resourceClass.properties,
-      resource, prefix || '');
+    const warnings = this.validateParams(scriptContent,
+      resourceClass.properties, resource, prefix || '');
     if (resourceClass.validateResource) {
-      warnings.push(...resourceClass.validateResource(script, resource) || []);
+      const resourceWarnings = resourceClass.validateResource(scriptContent, 
+        resource);
+      if (resourceWarnings) {
+        warnings.push(...resourceWarnings);
+      }
     }
     return warnings;
   }

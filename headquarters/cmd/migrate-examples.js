@@ -36,7 +36,7 @@ async function migrateScript(exampleName, isDryRun) {
   const migratedContent = Migrator.migrateScriptContent(exampleData.content);
 
   try {
-    ScriptCore.validateScriptContent({ content: migratedContent });
+    ScriptCore.validateScriptContent(migratedContent);
     logger.info(`Example ${exampleName} passed validation!`);
   } catch (err) {
     logger.error(`Example ${exampleName} failed validation: ${err.message}.`);

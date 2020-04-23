@@ -4,6 +4,7 @@ const jsonschema = require('jsonschema');
 const TextUtil = require('../utils/text');
 const Registry = require('../registry/registry');
 const Validator = require('../utils/validator');
+const Walker = require('../utils/walker');
 const Errors = require('../errors');
 
 const CURRENT_VERSION = 26;
@@ -18,94 +19,10 @@ const metaSchema = {
 };
 
 const validator = new Validator(Registry);
-
-function walkObjectParam(parent, key, obj, paramSpec, paramType, iteree) {
-  if (!paramSpec.type) {
-    throw new Error('Param spec with no type.');
-  }
-  if (paramSpec.type === 'component') {
-    // If we're looking for this kind of component, call the iteree, but don't
-    // return, in case this component can be recursively nested inside itself.
-    if (paramType === paramSpec.component) {
-      iteree(obj, paramSpec, parent, key);
-    }
-    // Create the compoment class and iterate over all of its params.
-    const variety = validator.getComponentVariety(paramSpec, obj);
-    const varietyClass = validator.getComponentClass(paramSpec, variety);
-    walkObjectParams(parent, key, obj, varietyClass.properties, paramType,
-      iteree);
-    return;
-  }
-  if (paramSpec.type === 'object') {
-    walkObjectParams(parent, key, obj, paramSpec.properties, paramType,
-      iteree);
-    return;
-  }
-  if (paramSpec.type === 'list') {
-    if (!obj) {
-      return;
-    }
-    obj.forEach(function(item, i) {
-      walkObjectParam(obj, i, item, paramSpec.items, paramType, iteree);
-    });
-    return;
-  }
-  if (paramSpec.type === 'dictionary') {
-    if (!obj) {
-      return;
-    }
-    Object.keys(obj).forEach(function(key) {
-      walkObjectParam(obj, 'keys', key, paramSpec.keys, paramType, iteree);
-      walkObjectParam(obj, key, obj[key], paramSpec.values, paramType, iteree);
-    });
-    return;
-  }
-  // If we've made it to here, we're a simple type.
-  if (paramSpec.type === paramType) {
-    iteree(obj, paramSpec, parent, key);
-  }
-}
-
-function walkObjectParams(parent, key, obj, spec, paramType, iteree) {
-  if (!obj) {
-    return;
-  }
-  for (const paramName of Object.keys(spec)) {
-    walkObjectParam(obj, paramName, obj[paramName], spec[paramName], paramType,
-      iteree);
-  }
-}
+const walker = new Walker(Registry);
 
 class ScriptCore {
-  /**
-   * Walk over all params in a resource.
-   */
-  static walkResourceParams(resourceType, resource, paramType, iteree) {
-    const resourceClass = Registry.resources[resourceType];
-    if (!resourceClass) {
-      return;
-    }
-    walkObjectParams(null, null, resource, resourceClass.properties, 
-      paramType, iteree);
-  }
-
-  /**
-   * Walk all resources in the script to iterate over all params
-   */
-  static walkParams(scriptContent, paramType, iteree) {
-    for (const collectionName of Object.keys(scriptContent)) {
-      if (collectionName === 'meta') {
-        continue;
-      }
-      const collection = scriptContent[collectionName];
-      const resourceType = TextUtil.singularize(collectionName);
-      for (const resource of collection) {
-        this.walkResourceParams(resourceType, resource, paramType, iteree);
-      }
-    }
-  }
-
-  static getResourceErrors(script, collectionName, resource) {
+  static getResourceErrors(scriptContent, collectionName, resource) {
     const resourceType = TextUtil.singularize(collectionName);
     const resourceName = resource.name || '<unknown>';
     const resourceClass = Registry.resources[resourceType];
@@ -116,7 +33,7 @@ class ScriptCore {
         message: 'Invalid collection: ' + collectionName
       }];
     }
-    const errors = validator.validateResource(script, resourceClass, 
+    const errors = validator.validateResource(scriptContent, resourceClass, 
       resource);
 
     return errors.map(err => ({
@@ -126,8 +43,8 @@ class ScriptCore {
     }));
   }
 
-  static validateCollection(script, collectionName) {
-    const collection = script.content[collectionName];
+  static validateCollection(scriptContent, collectionName) {
+    const collection = scriptContent[collectionName];
     const errors = [];
     const names = new Set();
 
@@ -153,7 +70,7 @@ class ScriptCore {
       }
 
       // Get errors
-      const resourceErrors = ScriptCore.getResourceErrors(script, collectionName, resource);
+      const resourceErrors = ScriptCore.getResourceErrors(scriptContent, collectionName, resource);
       errors.push(...resourceErrors);
       names.add(resource.name);
     }
@@ -161,7 +78,7 @@ class ScriptCore {
     return errors;
   }
 
-  static validateComponents(script, componentType) {
+  static validateComponents(scriptContent, componentType) {
     const validateUniqueNames = {
       actions: 'id',
       panels: 'id'
@@ -172,7 +89,7 @@ class ScriptCore {
     }
     const errors = [];
     const names = new Set();
-    this.walkParams(script.content, componentType,
+    walker.walkAllFields(scriptContent, componentType,
       (obj, spec, parent, key) => {
         // Check no overlapping names for any components with a name type
         if (!obj[validateUniqueParam]) {
@@ -191,11 +108,11 @@ class ScriptCore {
     return errors;
   }
 
-  static validateScriptContent(script) {
+  static validateScriptContent(scriptContent) {
     // Check meta block
     const metaValidator = new jsonschema.Validator();
     const metaOptions = { propertyName: 'meta' };
-    const metaResult = metaValidator.validate(script.content.meta || null,
+    const metaResult = metaValidator.validate(scriptContent.meta || null,
       metaSchema, metaOptions);
     if (!metaResult.valid) {
       const metaErrors = metaResult.errors.map(function(e) {
@@ -211,16 +128,16 @@ class ScriptCore {
 
     // Check resources
     const errors = [];
-    for (const collectionName of Object.keys(script.content)) {
+    for (const collectionName of Object.keys(scriptContent)) {
       if (collectionName === 'meta') {
         continue;
       }
-      errors.push(...this.validateCollection(script, collectionName));
+      errors.push(...this.validateCollection(scriptContent, collectionName));
     }
 
     // Check components
     for (const componentType of Object.keys(Registry.components)) {
-      errors.push(...this.validateComponents(script, componentType));
+      errors.push(...this.validateComponents(scriptContent, componentType));
     }
 
     if (errors.length > 0) {
