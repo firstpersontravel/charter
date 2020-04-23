@@ -3,17 +3,16 @@ content:
     - name: player
       title: Player
       type: traveler
-
   scenes:
     - name: first
       title: First scene
-
   variants:
     - name: default
       title: All trips
       default: true
-
   interfaces:
     - name: player
       title: Player
       type: simple
+  meta:
+    version: 26

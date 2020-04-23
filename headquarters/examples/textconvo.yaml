@@ -3,25 +3,24 @@ content:
     - name: Knight
       title: Knight
       type: traveler
-
     - name: Sage
       title: Sage
       type: scripted
-
   relays:
     - name: main
       for: Knight
       as: Knight
       with: Sage
       entryway: true
-
   scenes:
     - name: SCENE-MAIN
       title: Main
-
   triggers:
     - name: hello
-      event: {type: text_received, from: Knight, to: Sage}
+      event:
+        type: text_received
+        from: Knight
+        to: Sage
       scene: SCENE-MAIN
       active_if:
         op: not
@@ -29,30 +28,38 @@ content:
           op: value_is_true
           ref: game_started
       actions:
-        - { name: set_value, value_ref: game_started, new_value_ref: 'true' }
+        - name: set_value
+          value_ref: game_started
+          new_value_ref: 'true'
+          id: 147
         - name: conditional
           if:
             op: or
             items:
               - op: text_contains
-                part: 'hello'
+                part: hello
               - op: text_contains
-                part: 'hi'
+                part: hi
               - op: text_contains
-                part: 'hey'
+                part: hey
           actions:
             - name: send_text
               from_role_name: Sage
               to_role_name: Knight
-              content: Why hello there, fine sir/lady/being! What is your name?
+              content: 'Why hello there, fine sir/lady/being! What is your name?'
+              id: 149
           else:
             - name: send_text
               from_role_name: Sage
               to_role_name: Knight
-              content: How rude, not even a greeting! What is your name?
-
+              content: 'How rude, not even a greeting! What is your name?'
+              id: 150
+          id: 148
     - name: getname
-      event: {type: text_received, from: Knight, to: Sage}
+      event:
+        type: text_received
+        from: Knight
+        to: Sage
       scene: SCENE-MAIN
       active_if:
         op: value_is_true
@@ -61,13 +68,19 @@ content:
         - name: set_value
           value_ref: player_name
           new_value_ref: event.message.content
+          id: 151
         - name: send_text
           from_role_name: Sage
           to_role_name: Knight
-          content: Greetings, {{player_name}}. You may now await your righteous quest.
+          content: 'Greetings, {{player_name}}. You may now await your righteous quest.'
+          id: 152
         - name: wait
           duration: 10s
+          id: 153
         - name: send_text
           from_role_name: Sage
           to_role_name: Knight
           content: Your quest is... the holy grail!
+          id: 154
+  meta:
+    version: 26

@@ -6,7 +6,7 @@ const Registry = require('../registry/registry');
 const Validator = require('../utils/validator');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 25;
+const CURRENT_VERSION = 26;
 
 const metaSchema = {
   type: 'object',
@@ -161,6 +161,36 @@ class ScriptCore {
     return errors;
   }
 
+  static validateComponents(script, componentType) {
+    const validateUniqueNames = {
+      actions: 'id',
+      panels: 'id'
+    };
+    const validateUniqueParam = validateUniqueNames[componentType];
+    if (!validateUniqueParam) {
+      return [];
+    }
+    const errors = [];
+    const names = new Set();
+    this.walkParams(script.content, componentType,
+      (obj, spec, parent, key) => {
+        // Check no overlapping names for any components with a name type
+        if (!obj[validateUniqueParam]) {
+          return;
+        }
+        if (names.has(obj[validateUniqueParam])) {
+          errors.push({
+            path: '?',
+            collection: componentType,
+            message:
+              `Duplicate id in ${componentType}: ${obj[validateUniqueParam]}`
+          });
+        }
+        names.add(obj[validateUniqueParam]);
+      });
+    return errors;
+  }
+
   static validateScriptContent(script) {
     // Check meta block
     const metaValidator = new jsonschema.Validator();
@@ -186,6 +216,11 @@ class ScriptCore {
         continue;
       }
       errors.push(...this.validateCollection(script, collectionName));
+    }
+
+    // Check components
+    for (const componentType of Object.keys(Registry.components)) {
+      errors.push(...this.validateComponents(script, componentType));
     }
 
     if (errors.length > 0) {

@@ -4,11 +4,9 @@ content:
       title: Driver
       starting_page: Start
       type: traveler
-
   scenes:
     - name: main
       title: Main
-
   waypoints:
     - name: start
       title: Starting point
@@ -16,55 +14,55 @@ content:
         - name: sf
           title: San Francisco
           address: San Francisco
-          coords: [37.776040, -122.427428]
-
+          coords:
+            - 37.77604
+            - -122.427428
     - name: midpoint
       title: Midpoint
       options:
         - name: petaluma
           title: Petaluma
           address: Petaluma
-          coords: [38.239191, -122.634324]
-
+          coords:
+            - 38.239191
+            - -122.634324
     - name: end
       title: End
       options:
         - name: sr
           title: Santa Rosa
           address: Santa Rosa
-          coords: [38.439097, -122.715336]
+          coords:
+            - 38.439097
+            - -122.715336
         - name: bodegabay
           title: Bodega bay
           address: Bodega bay
-          coords: [38.334410, -123.044989]
-
+          coords:
+            - 38.33441
+            - -123.044989
   geofences:
     - name: GEOFENCE-MIDPOINT
       center: midpoint
       distance: 100
-
     - name: GEOFENCE-END
       center: end
       distance: 100
-
   routes:
     - name: Drive1
       from: start
       to: midpoint
       mode: driving
       title: First drive
-
     - name: Drive2
       from: midpoint
       to: end
       mode: driving
       title: Second drive
-
   interfaces:
     - name: Driver
       type: simple
       title: Driver
-
   pages:
     - scene: main
       interface: Driver
@@ -75,7 +73,7 @@ content:
         - type: button
           text: Start yer engines!
           cue: CUE-EMBARKED-1
-
+          id: 9
     - scene: main
       interface: Driver
       name: Drive1
@@ -86,7 +84,7 @@ content:
           route: Drive1
           geofence: GEOFENCE-MIDPOINT
           cue: CUE-ARRIVED-1
-
+          id: 10
     - scene: main
       interface: Driver
       name: Break
@@ -95,10 +93,11 @@ content:
       panels:
         - type: text
           text: Lunch break time.
+          id: 11
         - type: button
           text: Ready to head out!
           cue: CUE-EMBARKED-2
-
+          id: 12
     - scene: main
       interface: Driver
       name: Drive2
@@ -109,7 +108,7 @@ content:
           route: Drive2
           geofence: GEOFENCE-END
           cue: CUE-ARRIVED-2
-
+          id: 13
     - scene: main
       interface: Driver
       name: End
@@ -118,202 +117,230 @@ content:
       panels:
         - type: text
           text: You completed your road trip!
-
+          id: 14
   cues:
     - name: CUE-EMBARKED-1
       title: Embarked
       scene: main
-
     - name: CUE-ARRIVED-1
       title: Arrived at midpoint
       scene: main
-
     - name: CUE-EMBARKED-2
       title: Embarked for end
       scene: main
-
     - name: CUE-ARRIVED-2
       title: Arrived at end
       scene: main
-
   triggers:
     - name: embarked1
-      event: { type: cue_signaled, cue: CUE-EMBARKED-1 }
+      event:
+        type: cue_signaled
+        cue: CUE-EMBARKED-1
       scene: main
-      actions: [{ name: send_to_page, role_name: Driver, page_name: Drive1 }]
-
+      actions:
+        - name: send_to_page
+          role_name: Driver
+          page_name: Drive1
+          id: 15
     - name: arrived1
-      event: { type: cue_signaled, cue: CUE-ARRIVED-1 }
+      event:
+        type: cue_signaled
+        cue: CUE-ARRIVED-1
       scene: main
-      actions: [{ name: send_to_page, role_name: Driver, page_name: Break }]
-
+      actions:
+        - name: send_to_page
+          role_name: Driver
+          page_name: Break
+          id: 16
     - name: embarked2
-      event: { type: cue_signaled, cue: CUE-EMBARKED-2 }
+      event:
+        type: cue_signaled
+        cue: CUE-EMBARKED-2
       scene: main
-      actions: [{ name: send_to_page, role_name: Driver, page_name: Drive2 }]
-
+      actions:
+        - name: send_to_page
+          role_name: Driver
+          page_name: Drive2
+          id: 17
     - name: arrived2
-      event: { type: cue_signaled, cue: CUE-ARRIVED-2 }
+      event:
+        type: cue_signaled
+        cue: CUE-ARRIVED-2
       scene: main
-      actions: [{ name: send_to_page, role_name: Driver, page_name: End }]
+      actions:
+        - name: send_to_page
+          role_name: Driver
+          page_name: End
+          id: 18
+  meta:
+    version: 26
 assets:
-- data:
-    end:
-    - 38.2394656
-    - -122.63481539999998
-    from_option: sf
-    polyline: cbqeFdrfjVJxA|AQf@fIlBrYhDth@pCta@`D|h@ZbELlBc@F{ATmBRkEf@mANe@DBTd@pHj@zI@fBNlCnBlZl@rHf@lWL`HFtE@PuJXuJZaITmPf@qUr@kFFoBO}Dy@oE}BmLwHiEoA_MSum@[cHEwBh@{@z@_AdCcAnGmBdEsAtBcJjJoBvC}AjBaBhAwCbA_Jf@wO~@kTlAgp@xDi`@`CgCb@yAl@iAz@sBzB{D`J{BvCcCdB_GvCeLxG{Ap@mBXuBEcBa@oFaDeBi@{AM{BPcQtC{B`AiCrCoD|FaCtB_FlAgB^uAp@oCjCyBtDuBvCeAx@oDvA}CfA}BlAuBdCgAjCqBxMiAlDoArBkF`FcChC}AzBmA|BcChHwAfDsB~CoBlBaC`B{B`A}EbAoc@VaF`@{FnBgFdEuLrPcDvFsAzCgCjFi@p@aC`CoAv@cCjAqEj@iJF}_@?mQe@uk@oBqWy@yLm@oH}A{IsC_MaEaR}EgN}CoFo@eECyFb@eHhB{T~JqJvDeIrBoFp@kXtCmOhBkFBqDWeReDaZoFoKcF_O_IkE_E}EcGuBuBeB_AoBi@wBOqJr@mIfA{VlCeDvAuAlAeDvF}LxWkPf\}@nAcBtAgDjAiBLeBC}OqC}Eu@aJo@uDBmE`@oHdBmGfCgMvFmEjC{N~MsOhOwKzJy^lVcSnMe\dTgHhE_HnBmHf@_U?oE_@mc@gMqIwBuTwCcO_Bm_@kBuE]sEs@}HgAkC?uD\kHbAaEMmCo@iFqCgLeHaPaJwCqA{FmBkEaAeMyAeJm@mGKsGd@mFhA{F`CyChBkJ~HeVtSsFbD}LtCqHlCiZvM_E~BsB~AaKjKwh@nk@wg@`j@qGrFuDtB_EzAyEdAqEd@_HBaPk@_HLoC\iFfAkPlEmLrBeD`@i^zCiMpAkNbAmGr@wFf@iGNcDM_Fy@aSuGgEw@aFk@cGOmL\qk@hBoK`@{Et@oy@xRgM`DeEhBuE|CeB~AkDdEiIdMwIpMyO|SoNrWsJxPgWt_@k]pg@uDtDuEzCkFvBsDv@aF`@aUp@_GJqF_@aI{A}_@qH{KqAgKi@wOg@aBJuIhCqBr@uTxHqP|FgUfIsGvDaCrByCpDkTx]eCdEaDdE}EbEiGbDy\~M}^tOsb@nQiEdC}AlAmExEsC`EcBhCq@Vc@GiBuAmAGw@l@c@r@KX^Rp@`@h@ZfClBzDxD`FlGfFfErAz@v@p@`@p@fIlHbBpAdEjD`A|@
-    route: Drive1
-    start:
-    - 37.7758599
-    - -122.42739059999997
-    steps:
-    - distance: 131 ft
-      instructions: Head <b>west</b> on <b>Linden St</b> toward <b>Buchanan St</b>
+  - data:
+      end:
+        - 38.2394656
+        - -122.63481539999998
+      from_option: sf
+      polyline: >-
+        cbqeFdrfjVJxA|AQf@fIlBrYhDth@pCta@`D|h@ZbELlBc@F{ATmBRkEf@mANe@DBTd@pHj@zI@fBNlCnBlZl@rHf@lWL`HFtE@PuJXuJZaITmPf@qUr@kFFoBO}Dy@oE}BmLwHiEoA_MSum@[cHEwBh@{@z@_AdCcAnGmBdEsAtBcJjJoBvC}AjBaBhAwCbA_Jf@wO~@kTlAgp@xDi`@`CgCb@yAl@iAz@sBzB{D`J{BvCcCdB_GvCeLxG{Ap@mBXuBEcBa@oFaDeBi@{AM{BPcQtC{B`AiCrCoD|FaCtB_FlAgB^uAp@oCjCyBtDuBvCeAx@oDvA}CfA}BlAuBdCgAjCqBxMiAlDoArBkF`FcChC}AzBmA|BcChHwAfDsB~CoBlBaC`B{B`A}EbAoc@VaF`@{FnBgFdEuLrPcDvFsAzCgCjFi@p@aC`CoAv@cCjAqEj@iJF}_@?mQe@uk@oBqWy@yLm@oH}A{IsC_MaEaR}EgN}CoFo@eECyFb@eHhB{T~JqJvDeIrBoFp@kXtCmOhBkFBqDWeReDaZoFoKcF_O_IkE_E}EcGuBuBeB_AoBi@wBOqJr@mIfA{VlCeDvAuAlAeDvF}LxWkPf\}@nAcBtAgDjAiBLeBC}OqC}Eu@aJo@uDBmE`@oHdBmGfCgMvFmEjC{N~MsOhOwKzJy^lVcSnMe\dTgHhE_HnBmHf@_U?oE_@mc@gMqIwBuTwCcO_Bm_@kBuE]sEs@}HgAkC?uD\kHbAaEMmCo@iFqCgLeHaPaJwCqA{FmBkEaAeMyAeJm@mGKsGd@mFhA{F`CyChBkJ~HeVtSsFbD}LtCqHlCiZvM_E~BsB~AaKjKwh@nk@wg@`j@qGrFuDtB_EzAyEdAqEd@_HBaPk@_HLoC\iFfAkPlEmLrBeD`@i^zCiMpAkNbAmGr@wFf@iGNcDM_Fy@aSuGgEw@aFk@cGOmL\qk@hBoK`@{Et@oy@xRgM`DeEhBuE|CeB~AkDdEiIdMwIpMyO|SoNrWsJxPgWt_@k]pg@uDtDuEzCkFvBsDv@aF`@aUp@_GJqF_@aI{A}_@qH{KqAgKi@wOg@aBJuIhCqBr@uTxHqP|FgUfIsGvDaCrByCpDkTx]eCdEaDdE}EbEiGbDy\~M}^tOsb@nQiEdC}AlAmExEsC`EcBhCq@Vc@GiBuAmAGw@l@c@r@KX^Rp@`@h@ZfClBzDxD`FlGfFfErAz@v@p@`@p@fIlHbBpAdEjD`A|@
+      route: Drive1
       start:
-      - 37.7758599
-      - -122.42739059999997
-    - distance: 174 ft
-      instructions: Turn <b>left</b> at the 1st cross street onto <b>Buchanan St</b>
+        - 37.7758599
+        - -122.42739059999997
+      steps:
+        - distance: 131 ft
+          instructions: Head <b>west</b> on <b>Linden St</b> toward <b>Buchanan St</b>
+          start:
+            - 37.7758599
+            - -122.42739059999997
+        - distance: 174 ft
+          instructions: Turn <b>left</b> at the 1st cross street onto <b>Buchanan St</b>
+          start:
+            - 37.775801
+            - -122.4278443
+        - distance: 1.4 mi
+          instructions: Turn <b>right</b> at the 1st cross street onto <b>Fell St</b>
+          start:
+            - 37.7753348
+            - -122.42774910000003
+        - distance: 482 ft
+          instructions: Slight <b>right</b> to stay on <b>Fell St</b>
+          start:
+            - 37.7721633
+            - -122.45245970000002
+        - distance: 0.2 mi
+          instructions: Turn <b>right</b> onto <b>Stanyan St</b>
+          start:
+            - 37.7719809
+            - -122.4541097
+        - distance: 0.9 mi
+          instructions: Turn <b>left</b> onto <b>Fulton St</b>
+          start:
+            - 37.7747664
+            - -122.45467059999999
+        - distance: 0.9 mi
+          instructions: Turn <b>right</b> onto <b>Park Presidio Blvd</b>
+          start:
+            - 37.7731427
+            - -122.4717311
+        - distance: 1.0 mi
+          instructions: Continue onto <b>Veterans Blvd</b>
+          start:
+            - 37.786327
+            - -122.47258999999997
+        - distance: 34.5 mi
+          instructions: Keep <b>left</b> at the fork and merge onto <b>US-101 N</b>
+          start:
+            - 37.8007508
+            - -122.46941149999998
+        - distance: 0.2 mi
+          instructions: >-
+            Take exit <b>474</b> for <b>E Washington St</b> toward <b>Central
+            Petaluma</b>
+          start:
+            - 38.2458763
+            - -122.6257119
+        - distance: 0.8 mi
+          instructions: >-
+            Turn <b>left</b> onto <b>E Washington St</b><div
+            style="font-size:0.9em">Destination will be on the left</div>
+          start:
+            - 38.2482657
+            - -122.62656390000001
+      to_option: petaluma
+    type: directions
+  - data:
+      end:
+        - 38.4391417
+        - -122.71524099999999
+      from_option: petaluma
+      polyline: >-
+        uskhFrbokV_FeEw@s@CSUUeCwBiC{BaC}BQEUSaBwAGUkAcAcA}@kBcByAcBkBcC_BeBeAcAgByAqA{@Wu@C]He@LOf@K^H`@Rl@f@ZVLRH^?f@K`@Un@?@?VYp@uAfD_BtD_IlRgBhE_CrFqGpOiIzRmIxRsOt\gQl_@wO`]wEbKwBjEoAtBoAfB_E|EiGbHkD|DwAfBmBfCsYna@{H|KoOpT{i@vv@oPvUuE|G_BhCoKzQsKdRyBrDoAhBmB~B_B|AqAhA{GbFwHvFyL~IgKdI_WdSoGbFsDtCwClBuBfAgAd@m@ReBf@iB`@uBZeDT{BBw@CgCMaCYeFw@aFy@}OeCyIwAgDa@_DU}BKwGOqN?sw@VwQF_ZLyHJaMHkHDgBD{FA_[EoFD{DAaEAg@AoCMaAK{AQeE]YBaE]aFa@oBOwCSeC?eEX_BTgBb@}Ad@oChAoC`BkBjAkFjDgAn@eAf@kAd@sBp@gDp@_EZyl@GiSAaMC_i@EwRCmjAOcUCiOCgB?yBGqBMcAKqJcA_J_AmCU{BIqD@{JDqHDgGDaBNs@JkB^_Cn@kDbAQGQ?kCd@WD}GrB{Cx@MDO?O@gB`@g@Ji@RqAv@OH_@Ra@kAgA}Cu@wBq@mBc@kAOJc@Z
+      route: Drive2
       start:
-      - 37.775801
-      - -122.4278443
-    - distance: 1.4 mi
-      instructions: Turn <b>right</b> at the 1st cross street onto <b>Fell St</b>
+        - 38.2394656
+        - -122.63481539999998
+      steps:
+        - distance: 0.7 mi
+          instructions: >-
+            Head <b>northeast</b> on <b>E Washington St</b> toward <b>Edith
+            St</b>
+          start:
+            - 38.2394656
+            - -122.63481539999998
+        - distance: 15.2 mi
+          instructions: Take the ramp onto <b>US-101 N</b>
+          start:
+            - 38.2477483
+            - -122.62691770000004
+        - distance: 0.2 mi
+          instructions: Take exit <b>489</b> toward <b>Downtown Santa Rosa</b>
+          start:
+            - 38.4326348
+            - -122.7158857
+        - distance: 0.1 mi
+          instructions: Keep <b>right</b> to stay on <b>Exit 489</b>
+          start:
+            - 38.4359061
+            - -122.71697269999999
+        - distance: 0.2 mi
+          instructions: Turn <b>right</b> onto <b>3rd St</b>
+          start:
+            - 38.4376477
+            - -122.7177395
+        - distance: 112 ft
+          instructions: >-
+            Turn <b>left</b> onto <b>B St</b><div
+            style="font-size:0.9em">Destination will be on the left</div>
+          start:
+            - 38.4388805
+            - -122.71504019999998
+      to_option: sr
+    type: directions
+  - data:
+      end:
+        - 38.334179
+        - -123.045274
+      from_option: petaluma
+      polyline: >-
+        uskhFrbokVvJhItAlARXn@`Cr@fDhA|Ex@`EtAjHnAtFzBtJXjBNnCO~P]nZa@fe@[p]m@~N[fFOdAw@tCaAjBqBvCyIrLwLtP{BxD{AzCmDbJ}ExMkD~IkApDeHtR}Orc@}BzF{DhIaOn[kCtFwB~DwCtFwDnHwFhKwHnNuD`Hs@~AqLv[gEhL_@`BW~B]|Mu@bXSlEw@nDwAvFUhBItAOzHGnCMpEOjBaA`MCzA`AhQz@dNTvAn@nCvBxH|@hCbIbRxElKn@bBb@xAr@nDjGz_@j@lErB|Ux@|JHjCQtWMhNJtLFdXEzEObD]rBa@rAw@fB_A~AsEzF}Sf^kM`TaJxOyFlJaAfAsAhAwBxAeEdCcA^eDp@uYdF}F~@aHl@wMbA}MbAaBDkFIsEAqAVuAn@uJ|GuKrHyBpBaBlBuD`FqA~B_AzBiGzQaCrHw@|D{Gz`@aE`VuDxTqB|KcAlDgClHmJtXuFbPeD`JmEdMkCxH_KvX}GlRg@lD]tKm@nVWxLMdCs@~Fe@fCy@vCkGlSkAbEWdBKhB?xL@bLFta@D~y@AzCMjCQjBa@fCgAtE{CdLyFfSmCjH_DjIgQtq@wAtFe@hEo@~JK|CAzDLzF|@rL\~Aj@nAp@x@fB~AjCfC`AxA~GhM\`AHb@?|@OfAm@|B_BfG]nBK~@]~Ai@nAe@l@gAz@wE`DgAh@o@Ns@BcDGyDKsBAi@F}@R}@n@s@|@u@fBSrAQjEqAv`@oAl]SlHJ`BT`BRxCGhDkAfLiDf\{@|Hu@`DkBfFuB`HgHtWcNng@aAvDq@jDeDxQ]rAs@fBm@`As@x@q@j@wBnAoA`A}AzBo@`Be@tB[|De@zJOdEA~BV~Hr@tUN`EZrCb@nBz@vB|ArDp@xBrBbLZlA`@~@|@vAzArAz@b@hBn@zHpCdBt@bAx@j@n@bF|IlAjBdCdCl@x@f@bA^fA`AhEzAdH^bDFvAAzCSjFMrEJzAV`AlAjCvB`EpDbHfBlChFlGv@z@~@j@`AVfAHrCOlAJdA\t@l@nA|AbB~B~@pBv@nCVzATrCBjCUbEm@hG}@xJKlEPxDb@vClBrI~AlGf@vBLhBAvBQlBe@hBoBjE_CtEcBxCaAvA}DzDmL|KgOlNoCrCw@rAcBvE]p@w@|@sAtAcAp@oAfA{@zAcBfDaA`Ck@dBYr@w@|@wCzBSJk@BcA@_@P_B~AoA|@a@PkAb@Uc@_A{AqBuDqAyBAk@nAu@^i@
+      route: Drive2
       start:
-      - 37.7753348
-      - -122.42774910000003
-    - distance: 482 ft
-      instructions: Slight <b>right</b> to stay on <b>Fell St</b>
-      start:
-      - 37.7721633
-      - -122.45245970000002
-    - distance: 0.2 mi
-      instructions: Turn <b>right</b> onto <b>Stanyan St</b>
-      start:
-      - 37.7719809
-      - -122.4541097
-    - distance: 0.9 mi
-      instructions: Turn <b>left</b> onto <b>Fulton St</b>
-      start:
-      - 37.7747664
-      - -122.45467059999999
-    - distance: 0.9 mi
-      instructions: Turn <b>right</b> onto <b>Park Presidio Blvd</b>
-      start:
-      - 37.7731427
-      - -122.4717311
-    - distance: 1.0 mi
-      instructions: Continue onto <b>Veterans Blvd</b>
-      start:
-      - 37.786327
-      - -122.47258999999997
-    - distance: 34.5 mi
-      instructions: Keep <b>left</b> at the fork and merge onto <b>US-101 N</b>
-      start:
-      - 37.8007508
-      - -122.46941149999998
-    - distance: 0.2 mi
-      instructions: Take exit <b>474</b> for <b>E Washington St</b> toward <b>Central
-        Petaluma</b>
-      start:
-      - 38.2458763
-      - -122.6257119
-    - distance: 0.8 mi
-      instructions: Turn <b>left</b> onto <b>E Washington St</b><div style="font-size:0.9em">Destination
-        will be on the left</div>
-      start:
-      - 38.2482657
-      - -122.62656390000001
-    to_option: petaluma
-  type: directions
-- data:
-    end:
-    - 38.4391417
-    - -122.71524099999999
-    from_option: petaluma
-    polyline: uskhFrbokV_FeEw@s@CSUUeCwBiC{BaC}BQEUSaBwAGUkAcAcA}@kBcByAcBkBcC_BeBeAcAgByAqA{@Wu@C]He@LOf@K^H`@Rl@f@ZVLRH^?f@K`@Un@?@?VYp@uAfD_BtD_IlRgBhE_CrFqGpOiIzRmIxRsOt\gQl_@wO`]wEbKwBjEoAtBoAfB_E|EiGbHkD|DwAfBmBfCsYna@{H|KoOpT{i@vv@oPvUuE|G_BhCoKzQsKdRyBrDoAhBmB~B_B|AqAhA{GbFwHvFyL~IgKdI_WdSoGbFsDtCwClBuBfAgAd@m@ReBf@iB`@uBZeDT{BBw@CgCMaCYeFw@aFy@}OeCyIwAgDa@_DU}BKwGOqN?sw@VwQF_ZLyHJaMHkHDgBD{FA_[EoFD{DAaEAg@AoCMaAK{AQeE]YBaE]aFa@oBOwCSeC?eEX_BTgBb@}Ad@oChAoC`BkBjAkFjDgAn@eAf@kAd@sBp@gDp@_EZyl@GiSAaMC_i@EwRCmjAOcUCiOCgB?yBGqBMcAKqJcA_J_AmCU{BIqD@{JDqHDgGDaBNs@JkB^_Cn@kDbAQGQ?kCd@WD}GrB{Cx@MDO?O@gB`@g@Ji@RqAv@OH_@Ra@kAgA}Cu@wBq@mBc@kAOJc@Z
-    route: Drive2
-    start:
-    - 38.2394656
-    - -122.63481539999998
-    steps:
-    - distance: 0.7 mi
-      instructions: Head <b>northeast</b> on <b>E Washington St</b> toward <b>Edith
-        St</b>
-      start:
-      - 38.2394656
-      - -122.63481539999998
-    - distance: 15.2 mi
-      instructions: Take the ramp onto <b>US-101 N</b>
-      start:
-      - 38.2477483
-      - -122.62691770000004
-    - distance: 0.2 mi
-      instructions: Take exit <b>489</b> toward <b>Downtown Santa Rosa</b>
-      start:
-      - 38.4326348
-      - -122.7158857
-    - distance: 0.1 mi
-      instructions: Keep <b>right</b> to stay on <b>Exit 489</b>
-      start:
-      - 38.4359061
-      - -122.71697269999999
-    - distance: 0.2 mi
-      instructions: Turn <b>right</b> onto <b>3rd St</b>
-      start:
-      - 38.4376477
-      - -122.7177395
-    - distance: 112 ft
-      instructions: Turn <b>left</b> onto <b>B St</b><div style="font-size:0.9em">Destination
-        will be on the left</div>
-      start:
-      - 38.4388805
-      - -122.71504019999998
-    to_option: sr
-  type: directions
-- data:
-    end:
-    - 38.334179
-    - -123.045274
-    from_option: petaluma
-    polyline: uskhFrbokVvJhItAlARXn@`Cr@fDhA|Ex@`EtAjHnAtFzBtJXjBNnCO~P]nZa@fe@[p]m@~N[fFOdAw@tCaAjBqBvCyIrLwLtP{BxD{AzCmDbJ}ExMkD~IkApDeHtR}Orc@}BzF{DhIaOn[kCtFwB~DwCtFwDnHwFhKwHnNuD`Hs@~AqLv[gEhL_@`BW~B]|Mu@bXSlEw@nDwAvFUhBItAOzHGnCMpEOjBaA`MCzA`AhQz@dNTvAn@nCvBxH|@hCbIbRxElKn@bBb@xAr@nDjGz_@j@lErB|Ux@|JHjCQtWMhNJtLFdXEzEObD]rBa@rAw@fB_A~AsEzF}Sf^kM`TaJxOyFlJaAfAsAhAwBxAeEdCcA^eDp@uYdF}F~@aHl@wMbA}MbAaBDkFIsEAqAVuAn@uJ|GuKrHyBpBaBlBuD`FqA~B_AzBiGzQaCrHw@|D{Gz`@aE`VuDxTqB|KcAlDgClHmJtXuFbPeD`JmEdMkCxH_KvX}GlRg@lD]tKm@nVWxLMdCs@~Fe@fCy@vCkGlSkAbEWdBKhB?xL@bLFta@D~y@AzCMjCQjBa@fCgAtE{CdLyFfSmCjH_DjIgQtq@wAtFe@hEo@~JK|CAzDLzF|@rL\~Aj@nAp@x@fB~AjCfC`AxA~GhM\`AHb@?|@OfAm@|B_BfG]nBK~@]~Ai@nAe@l@gAz@wE`DgAh@o@Ns@BcDGyDKsBAi@F}@R}@n@s@|@u@fBSrAQjEqAv`@oAl]SlHJ`BT`BRxCGhDkAfLiDf\{@|Hu@`DkBfFuB`HgHtWcNng@aAvDq@jDeDxQ]rAs@fBm@`As@x@q@j@wBnAoA`A}AzBo@`Be@tB[|De@zJOdEA~BV~Hr@tUN`EZrCb@nBz@vB|ArDp@xBrBbLZlA`@~@|@vAzArAz@b@hBn@zHpCdBt@bAx@j@n@bF|IlAjBdCdCl@x@f@bA^fA`AhEzAdH^bDFvAAzCSjFMrEJzAV`AlAjCvB`EpDbHfBlChFlGv@z@~@j@`AVfAHrCOlAJdA\t@l@nA|AbB~B~@pBv@nCVzATrCBjCUbEm@hG}@xJKlEPxDb@vClBrI~AlGf@vBLhBAvBQlBe@hBoBjE_CtEcBxCaAvA}DzDmL|KgOlNoCrCw@rAcBvE]p@w@|@sAtAcAp@oAfA{@zAcBfDaA`Ck@dBYr@w@|@wCzBSJk@BcA@_@P_B~AoA|@a@PkAb@Uc@_A{AqBuDqAyBAk@nAu@^i@
-    route: Drive2
-    start:
-    - 38.2394656
-    - -122.63481539999998
-    steps:
-    - distance: 0.7 mi
-      instructions: Head <b>southwest</b> on <b>E Washington St</b> toward <b>Wilson
-        St</b>
-      start:
-      - 38.2394656
-      - -122.63481539999998
-    - distance: 8.1 mi
-      instructions: Continue onto <b>Bodega Ave</b>
-      start:
-      - 38.2342702
-      - -122.6459686
-    - distance: 10.4 mi
-      instructions: Continue onto <b>Valley Ford Rd</b>
-      start:
-      - 38.258193
-      - -122.781068
-    - distance: 7.9 mi
-      instructions: "<b>Valley Ford Rd</b> turns slightly <b>left</b> and becomes
-        <b>CA-1 N</b>"
-      start:
-      - 38.3239636
-      - -122.92795839999997
-    - distance: 0.1 mi
-      instructions: Turn <b>right</b> onto <b>Taylor St</b>
-      start:
-      - 38.333316
-      - -123.0481294
-    - distance: 0.1 mi
-      instructions: Continue onto <b>Canon St</b>
-      start:
-      - 38.3343899
-      - -123.04646909999997
-    to_option: bodegabay
-  type: directions
+        - 38.2394656
+        - -122.63481539999998
+      steps:
+        - distance: 0.7 mi
+          instructions: >-
+            Head <b>southwest</b> on <b>E Washington St</b> toward <b>Wilson
+            St</b>
+          start:
+            - 38.2394656
+            - -122.63481539999998
+        - distance: 8.1 mi
+          instructions: Continue onto <b>Bodega Ave</b>
+          start:
+            - 38.2342702
+            - -122.6459686
+        - distance: 10.4 mi
+          instructions: Continue onto <b>Valley Ford Rd</b>
+          start:
+            - 38.258193
+            - -122.781068
+        - distance: 7.9 mi
+          instructions: >-
+            <b>Valley Ford Rd</b> turns slightly <b>left</b> and becomes <b>CA-1
+            N</b>
+          start:
+            - 38.3239636
+            - -122.92795839999997
+        - distance: 0.1 mi
+          instructions: Turn <b>right</b> onto <b>Taylor St</b>
+          start:
+            - 38.333316
+            - -123.0481294
+        - distance: 0.1 mi
+          instructions: Continue onto <b>Canon St</b>
+          start:
+            - 38.3343899
+            - -123.04646909999997
+      to_option: bodegabay
+    type: directions

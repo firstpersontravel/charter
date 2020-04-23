@@ -104,7 +104,7 @@ class Kernel {
     let waitingUntil = actionContext.evaluateAt;
     for (const action of nextActions) {
       const name = action.name;
-      const params = _.omit(action, 'name');
+      const params = _.omit(action, 'name', 'id');
       const unpackedAction = { name: name, params: params, event: event };
       // Get results immediately -- to test if this is a wait or not.
       const actionResult = this.resultForImmediateAction(unpackedAction,

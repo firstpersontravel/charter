@@ -3,29 +3,26 @@ content:
     - name: player
       title: Player
       type: traveler
-
     - name: system
       title: System
       type: scripted
-
   inboxes:
     - name: inbox
       role: system
       address: system@system.com
-
   scenes:
     - name: scene
       title: First scene
-
   cues:
     - name: start
       scene: scene
       title: start
-
   triggers:
     - name: start
       scene: scene
-      event: {type: cue_signaled, cue: start}
+      event:
+        type: cue_signaled
+        cue: start
       actions:
         - name: send_email
           from: inbox
@@ -37,3 +34,6 @@ content:
             Greetings from the System
 
             Sincerely yours
+          id: 1
+  meta:
+    version: 26
