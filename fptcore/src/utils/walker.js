@@ -1,10 +1,8 @@
 const TextUtil = require('./text');
-const Validator = require('./validator');
 
 class Walker {
   constructor(registry) {
     this.registry = registry;
-    this.validator = new Validator(registry);
   }
 
   walkParam(parent, key, obj, paramSpec, paramType, iteree) {
@@ -18,8 +16,8 @@ class Walker {
         iteree(obj, paramSpec, parent, key);
       }
       // Create the compoment class and iterate over all of its params.
-      const variety = this.validator.getComponentVariety(paramSpec, obj);
-      const varietyClass = this.validator.getComponentClass(paramSpec,
+      const variety = this.registry.getComponentVariety(paramSpec, obj);
+      const varietyClass = this.registry.getComponentClass(paramSpec,
         variety);
       this.walkParams(parent, key, obj, varietyClass.properties, paramType,
         iteree);

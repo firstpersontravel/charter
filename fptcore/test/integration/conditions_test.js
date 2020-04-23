@@ -1,9 +1,9 @@
 const assert = require('assert');
 
+const coreRegistry = require('../../src/core-registry');
 const Evaluator = require('../../src/utils/evaluator');
-const Registry = require('../../src/registry/registry');
 
-const evaluator = new Evaluator(Registry);
+const evaluator = new Evaluator(coreRegistry);
 
 function assertIfEq(ctx, stmt, val) {
   assert.strictEqual(evaluator.if({ evalContext: ctx }, stmt), val);

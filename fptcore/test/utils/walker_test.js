@@ -1,12 +1,12 @@
 const sinon = require('sinon');
 
-const Registry = require('../../src/registry/registry');
+const coreRegistry = require('../../src/core-registry');
 const Walker = require('../../src/utils/walker');
 
 describe('Walker', () => {
   describe('#walkAllFields', () => {
     it('walks string params', () => {
-      const walker = new Walker(Registry);
+      const walker = new Walker(coreRegistry);
       const iteree = sinon.stub();
       const scriptContent = {
         scenes: [{
@@ -24,16 +24,16 @@ describe('Walker', () => {
 
       sinon.assert.callCount(iteree, 4);
       sinon.assert.calledWith(iteree.getCall(0), 'def',
-        Registry.resources.scene.properties.title,
+        coreRegistry.resources.scene.properties.title,
         scriptContent.scenes[0], 'title');
       sinon.assert.calledWith(iteree.getCall(1), undefined,
-        Registry.resources.achievement.properties.title,
+        coreRegistry.resources.achievement.properties.title,
         scriptContent.achievements[0], 'title');
       sinon.assert.calledWith(iteree.getCall(2), 'yes',
-        Registry.resources.achievement.properties.titles.keys,
+        coreRegistry.resources.achievement.properties.titles.keys,
         scriptContent.achievements[0].titles, 'keys');
       sinon.assert.calledWith(iteree.getCall(3), '123',
-        Registry.resources.achievement.properties.titles.values,
+        coreRegistry.resources.achievement.properties.titles.values,
         scriptContent.achievements[0].titles, 'yes');
     });
   });  

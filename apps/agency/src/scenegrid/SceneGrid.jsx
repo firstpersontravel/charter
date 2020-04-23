@@ -4,21 +4,19 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
 
-import { Evaluator, Registry, TemplateUtil } from 'fptcore';
+import { coreEvaluator, coreRegistry, TemplateUtil } from 'fptcore';
 
 import { renderHeader, renderPage } from '../operate/partials/Preview';
 import ResourceBadge from '../partials/ResourceBadge';
 import { sortForRole } from '../operate/utils';
 import { isProduction, getPlayerIframeUrl } from '../utils';
 
-const evaluator = new Evaluator(Registry);
-
 export default class SceneGrid extends Component {
   getPlayersForScene(scene) {
     const trip = this.props.trip;
     return _(trip.players)
       .filter(player => (
-        evaluator.if(trip.actionContext, player.role.active_if)
+        coreEvaluator.if(trip.actionContext, player.role.active_if)
       ))
       .filter(player => (
         _.find(trip.script.content.pages, {
@@ -76,7 +74,7 @@ export default class SceneGrid extends Component {
     const pageClass = isCurrentPage ? 'cell-current-page' : '';
     const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
     const cueButtons = panelsWithCue
-      .filter(panel => evaluator.if(trip.actionContext, panel.visible_if))
+      .filter(panel => coreEvaluator.if(trip.actionContext, panel.visible_if))
       .map((panel, i) => this.renderCueButton(page, panel));
 
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
@@ -187,11 +185,11 @@ export default class SceneGrid extends Component {
 
   renderTriggerBtn(scene, trigger) {
     const trip = this.props.trip;
-    const triggerResourceClass = Registry.resources.trigger;
+    const triggerResourceClass = coreRegistry.resources.trigger;
     const currentSceneName = this.props.trip.tripState.currentSceneName;
     const isCurrentScene = scene.name === currentSceneName;
     const isActiveGlobalScene = scene.global && (
-      evaluator.if(trip.actionContext, scene.active_if)
+      coreEvaluator.if(trip.actionContext, scene.active_if)
     );
     const hasBeenTriggered = !!trip.history[trigger.name];
     const canTrigger = isCurrentScene || isActiveGlobalScene;
@@ -208,7 +206,7 @@ export default class SceneGrid extends Component {
           style={style}
           className="constrain-text btn btn-block btn-xs btn-outline-secondary">
           {triggerResourceClass.getEventTitle(trip.script.content, trigger,
-            Registry)}
+            coreRegistry)}
         </button>
       </span>
     );

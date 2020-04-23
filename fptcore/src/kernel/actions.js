@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
-const Registry = require('../registry/registry');
+const coreRegistry = require('../core-registry');
 const Evaluator = require('../utils/evaluator');
 
-const evaluator = new Evaluator(Registry);
+const evaluator = new Evaluator(coreRegistry);
 
 class KernelActions {
   /**

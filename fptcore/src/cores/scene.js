@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
 const Evaluator = require('../utils/evaluator');
-const Registry = require('../registry/registry');
+const coreRegistry = require('../core-registry');
 
-const evaluator = new Evaluator(Registry);
+const evaluator = new Evaluator(coreRegistry);
 
 class SceneCore {
   static getStartingSceneName(scriptContent, actionContext) {

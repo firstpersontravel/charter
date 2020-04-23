@@ -2,12 +2,10 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Registry, Validator, TextUtil } from 'fptcore';
+import { coreRegistry, TextUtil } from 'fptcore';
 
 import ObjectKey from './ObjectKey';
 import NewComponentBtn from './NewComponentBtn';
-
-const validator = new Validator(Registry);
 
 function ComponentField({ script, resource, spec, value, name, path, opts,
   onPropUpdate, renderAny }) {
@@ -21,11 +19,11 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
   }
 
   const componentType = spec.component;
-  const componentClass = Registry.components[componentType];
+  const componentClass = coreRegistry.components[componentType];
   const componentTypeKey = componentClass.typeKey;
 
-  const variety = validator.getComponentVariety(spec, value);
-  const varietyClass = validator.getComponentClass(spec, variety);
+  const variety = coreRegistry.getComponentVariety(spec, value);
+  const varietyClass = coreRegistry.getComponentClass(spec, variety);
 
   const objectFields = Object
     .keys(varietyClass.properties)

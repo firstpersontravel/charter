@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Registry, TextUtil, Validator } from 'fptcore';
+import { coreRegistry, TextUtil } from 'fptcore';
 
 const walkers = {
   reference: (spec, value, iteree) => {
@@ -39,16 +39,15 @@ const walkers = {
     });
   },
   component: (spec, value, iteree) => {
-    const validator = new Validator(Registry);
-    const variety = validator.getComponentVariety(spec, value);
-    const mergedClass = validator.getComponentClass(spec, variety);
+    const variety = coreRegistry.getComponentVariety(spec, value);
+    const mergedClass = coreRegistry.getComponentClass(spec, variety);
     walkers.object(mergedClass.properties, value, iteree);
   }
 };
 
 function walkReferences(collectionName, resource) {
   const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = Registry.resources[resourceType];
+  const resourceClass = coreRegistry.resources[resourceType];
   if (!resourceClass) {
     return [];
   }
@@ -85,18 +84,18 @@ export function assembleReverseReferences(scriptContent) {
 
 function getParentKey(resourceType) {
   return Object
-    .keys(Registry.resources[resourceType].properties)
+    .keys(coreRegistry.resources[resourceType].properties)
     .find((key) => {
-      const property = Registry.resources[resourceType].properties[key];
+      const property = coreRegistry.resources[resourceType].properties[key];
       return property.type === 'reference' && property.parent;
     });
 }
 
 export function getChildResourceTypes(collectionName) {
-  return _(Registry.resources)
+  return _(coreRegistry.resources)
     .keys()
     .filter(childResourceType => (
-      _.some(Registry.resources[childResourceType].properties, property => (
+      _.some(coreRegistry.resources[childResourceType].properties, property => (
         property.type === 'reference' &&
         property.collection === collectionName &&
         property.parent

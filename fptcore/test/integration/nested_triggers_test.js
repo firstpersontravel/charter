@@ -3,8 +3,8 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
+const coreRegistry = require('../../src/core-registry');
 const Kernel = require('../../src/kernel/kernel');
-const Registry = require('../../src/registry/registry');
 
 var sandbox = sinon.sandbox.create();
 
@@ -104,12 +104,12 @@ const actionContext = {
 describe('Integration - Nested Triggers', () => {
 
   beforeEach(() => {
-    const oldActions = Object.assign({}, Registry.actions);
+    const oldActions = Object.assign({}, coreRegistry.actions);
     const spyActions = ['send_text', 'signal_cue', 'send_to_page'];
     spyActions.forEach((spyAction) => {
       sandbox
-        .stub(Registry.actions, spyAction)
-        .value(Object.assign({}, Registry.actions[spyAction], {
+        .stub(coreRegistry.actions, spyAction)
+        .value(Object.assign({}, coreRegistry.actions[spyAction], {
           getOps: sinon.spy(oldActions[spyAction].getOps)
         }));
     });
@@ -237,13 +237,13 @@ describe('Integration - Nested Triggers', () => {
     // Test intermediate action calls
     // First cue should have been called with no event
     sinon.assert.calledWith(
-      Registry.actions.signal_cue.getOps.getCall(0),
+      coreRegistry.actions.signal_cue.getOps.getCall(0),
       { cue_name: 'CUE-GREET' },
       _.merge({}, actionContext, { evalContext: { event: null } }));
 
     // Second cue should have been called with the event 'cue CUE-GREET',
     sinon.assert.calledWith(
-      Registry.actions.signal_cue.getOps.getCall(1),
+      coreRegistry.actions.signal_cue.getOps.getCall(1),
       { cue_name: 'CUE-GREET-REPLY' },
       _.merge({}, actionContext, {
         evalContext: {
@@ -253,7 +253,7 @@ describe('Integration - Nested Triggers', () => {
       }));
 
     // Then send_text with event 'cue CUE-GREET-REPLY'
-    sinon.assert.calledWith(Registry.actions.send_text.getOps.getCall(0),
+    sinon.assert.calledWith(coreRegistry.actions.send_text.getOps.getCall(0),
       { from_role_name: 'Cowboy', to_role_name: 'Farmer', content: 'howdy' },
       _.merge({}, actionContext, {
         evalContext: {

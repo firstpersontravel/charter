@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const fs = require('fs');
 
-const Registry = require('./registry/registry');
+const coreRegistry = require('./core-registry');
 const TextUtil = require('./utils/text');
 const Walker = require('./utils/walker');
 
-const walker = new Walker(Registry);
+const walker = new Walker(coreRegistry);
 
 const Migrator = {};
 
@@ -38,7 +38,7 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
     migration(scriptContent);
     return;
   }
-  if (Registry.components[collectionName]) {
+  if (coreRegistry.components[collectionName]) {
     const componentType = collectionName;
     walker.walkAllFields(scriptContent, componentType, (value, spec) => (
       migration(value, scriptContent)
@@ -46,7 +46,7 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
     return;
   }
   const resourceType = TextUtil.singularize(collectionName);
-  if (!Registry.resources[resourceType]) {
+  if (!coreRegistry.resources[resourceType]) {
     // throw new Error('Illegal collection name ' + collectionName);
     return;
   }

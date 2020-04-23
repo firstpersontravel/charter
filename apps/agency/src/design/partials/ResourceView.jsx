@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Registry, TextUtil, Validator } from 'fptcore';
+import { TextUtil, coreRegistry, coreValidator } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import PopoverControl from '../../partials/PopoverControl';
@@ -12,8 +12,6 @@ import ResourceField from './compound/Resource';
 // Hide title, field, and name
 const HIDE_FIELD_NAMES = ['name', 'title'];
 
-const validator = new Validator(Registry);
-
 export default class ResourceView extends Component {
   constructor(props) {
     super(props);
@@ -21,8 +19,8 @@ export default class ResourceView extends Component {
     this.state = {
       hasUnsavableChanges: false,
       pendingResource: pendingResource,
-      errors: validator.validateResource(props.script.content,
-        Registry.resources[TextUtil.singularize(props.collectionName)],
+      errors: coreValidator.validateResource(props.script.content,
+        coreRegistry.resources[TextUtil.singularize(props.collectionName)],
         pendingResource, '')
     };
     this.handleDelete = this.handleDelete.bind(this);
@@ -34,18 +32,19 @@ export default class ResourceView extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.resource !== this.props.resource) {
       const pendingResource = _.cloneDeep(nextProps.resource);
+      const resourceType = TextUtil.singularize(nextProps.collectionName);
       this.setState({
         hasUnsavableChanges: false,
         pendingResource: pendingResource,
-        errors: validator.validateResource(nextProps.script.content,
-          Registry.resources[TextUtil.singularize(nextProps.collectionName)],
-          pendingResource, '')
+        errors: coreValidator.validateResource(nextProps.script.content,
+          coreRegistry.resources[resourceType], pendingResource, '')
       });
     }
   }
 
   getResourceClass() {
-    return Registry.resources[TextUtil.singularize(this.props.collectionName)];
+    const resourceType = TextUtil.singularize(this.props.collectionName);
+    return coreRegistry.resources[resourceType];
   }
 
   getFieldNames() {
@@ -74,9 +73,9 @@ export default class ResourceView extends Component {
   }
 
   handleResourceUpdate(newResource) {
-    const errors = validator.validateResource(this.props.script.content,
-      Registry.resources[TextUtil.singularize(this.props.collectionName)],
-      newResource, '');
+    const resourceType = TextUtil.singularize(this.props.collectionName);
+    const errors = coreValidator.validateResource(this.props.script.content,
+      coreRegistry.resources[resourceType], newResource, '');
     // If there are errors, set the pending state so we can correct them.
     const hasErrors = errors && errors.length > 0;
     if (hasErrors) {

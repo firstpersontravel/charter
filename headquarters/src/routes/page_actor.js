@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Sequelize = require('sequelize');
 
 const Evaluator = require('fptcore/src/utils/evaluator');
-const Registry = require('fptcore/src/registry/registry');
+const coreRegistry = require('fptcore/src/core-registry');
 const PlayerCore = require('fptcore/src/cores/player');
 const TemplateUtil = require('fptcore/src/utils/template');
 
@@ -10,7 +10,7 @@ const config = require('../config');
 const models = require('../models');
 const KernelUtil = require('../kernel/util');
 
-const evaluator = new Evaluator(Registry);
+const evaluator = new Evaluator(coreRegistry);
 
 const supportedPartials = {
   button: (evalContext, panel, timezone) => ({

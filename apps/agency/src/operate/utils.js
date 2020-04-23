@@ -1,8 +1,6 @@
 import _ from 'lodash';
 
-import { Evaluator, Registry, PlayerCore } from 'fptcore';
-
-const evaluator = new Evaluator(Registry);
+import { coreEvaluator, PlayerCore } from 'fptcore';
 
 export function fullMediaUrl(org, experience, url) {
   if (_.startsWith(url, 'http')) {
@@ -36,7 +34,7 @@ export function getPlayerPageInfo(trip, player) {
 function getGroupPlayersForRole(group, roleName) {
   const role = _.find(group.script.content.roles, { name: roleName });
   return group.trips
-    .filter(trip => evaluator.if(trip.actionContext, role.active_if))
+    .filter(trip => coreEvaluator.if(trip.actionContext, role.active_if))
     .filter(trip => trip.tripState.currentPageNamesByRole[roleName])
     .map(trip => _.find(trip.players, { roleName: role.name }))
     .filter(Boolean);
@@ -45,7 +43,7 @@ function getGroupPlayersForRole(group, roleName) {
 function getTripPlayersForRoles(trip, roleFilters) {
   const roles = _.filter(trip.script.content.roles, roleFilters);
   return roles
-    .filter(role => evaluator.if(trip.actionContext, role.active_if))
+    .filter(role => coreEvaluator.if(trip.actionContext, role.active_if))
     .filter(role => trip.tripState.currentPageNamesByRole[role.name])
     .map(role => _.find(trip.players, { roleName: role.name }))
     .filter(Boolean);

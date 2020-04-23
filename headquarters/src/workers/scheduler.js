@@ -2,7 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-const Registry = require('fptcore/src/registry/registry');
+const coreRegistry = require('fptcore/src/core-registry');
 const KernelTriggers = require('fptcore/src/kernel/triggers');
 
 const config = require('../config');
@@ -17,7 +17,7 @@ class SchedulerWorker {
    * Get time that a trigger is supposed to be triggered at.
    */
   static _getTriggerIntendedAt(trigger, actionContext) {
-    const intendedAt = Registry.events.time_occurred.timeForSpec(
+    const intendedAt = coreRegistry.events.time_occurred.timeForSpec(
       trigger.event, actionContext.evalContext);
     return intendedAt;    
   }

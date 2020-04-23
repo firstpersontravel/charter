@@ -3,9 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import yaml from 'js-yaml';
 
-import { Evaluator, TemplateUtil, Registry } from 'fptcore';
-
-const evaluator = new Evaluator(Registry);
+import { coreEvaluator, TemplateUtil } from 'fptcore';
 
 function renderCompletedAchievementStatus(trip, achievement) {
   if (achievement.style === 'choice') {
@@ -14,7 +12,7 @@ function renderCompletedAchievementStatus(trip, achievement) {
     return statusTitle || 'Unknown value';
   }
   if (achievement.style === 'completion') {
-    const isPassed = evaluator.if(trip.actionContext, achievement.test);
+    const isPassed = coreEvaluator.if(trip.actionContext, achievement.test);
     const statusClass = isPassed ? 'text-success' : 'text-danger';
     const statusTitle = (
       isPassed ? achievement.titles.true : achievement.titles.false

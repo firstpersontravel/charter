@@ -2,12 +2,10 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Registry, Validator } from 'fptcore';
+import { coreValidator } from 'fptcore';
 
 import BaseClear from '../fields/BaseClear';
 import Label from './Label';
-
-const validator = new Validator(Registry);
 
 const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
@@ -33,7 +31,7 @@ function invalidWarningForSpec(script, keySpec, value, itemValue) {
   }
 
   // If item is not null, call the validator functions.
-  const validatorErrors = validator.validateParam(script.content,
+  const validatorErrors = coreValidator.validateParam(script.content,
     name, keySpec, itemValue);
   if (validatorErrors && validatorErrors.length > 0) {
     return (

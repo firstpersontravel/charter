@@ -56,54 +56,6 @@ class Validator {
     return this.validateParams(scriptContent, spec.properties, param, prefix);
   }
 
-  getComponentVariety(spec, value) {
-    const componentType = spec.component;
-    const componentDef = this.registry.components[componentType];
-    if (!componentDef) {
-      throw new Error(`Invalid component type "${spec.component}".`);
-    }
-    return value ? value[componentDef.typeKey] : null;
-  }
-
-  /**
-   * Get resource class of a component property, merging common and variety.
-   */
-  getComponentClass(spec, variety) {
-    const componentType = spec.component;
-    const componentDef = this.registry.components[componentType];
-    if (!componentDef) {
-      throw new Error(`Invalid component type "${componentType}".`);
-    }
-    const componentsRegistry = this.registry[componentType];
-    const typeClass = {
-      properties: {
-        [componentDef.typeKey]: {
-          type: 'enum',
-          options: Object.keys(componentsRegistry),
-          required: true,
-          help: `Type of ${componentType}.`,
-          display: { label: false }
-        }
-      }
-    };
-    // Return type object if no existing component to allow you to choose one
-    // in the interface.
-    if (!variety) {
-      return Object.assign({ display: { form: 'inline' } }, typeClass);
-    }
-    if (!componentsRegistry[variety]) {
-      throw new Error(`"${variety}" is not one of the "${componentType}" components.`);
-    }
-    const commonClass = componentDef.common || {};
-    // For component class, rename `params` / `specParams` to `properties`.
-    // TODO: all components should just use `properties` as a name.
-    const varietyClass = Object.assign({
-      properties: componentsRegistry[variety][componentDef.propertiesKey]
-    }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
-    const componentClass = _.merge({}, typeClass, commonClass, varietyClass);
-    return componentClass;
-  }
-
   /**
    * Embed a component validator which hinges on a key param.
    */
@@ -113,7 +65,7 @@ class Validator {
     if (!componentDef) {
       throw new Error(`Invalid component "${componentType}".`);
     }
-    const variety = this.getComponentVariety(spec, param);
+    const variety = this.registry.getComponentVariety(spec, param);
     if (!variety) {
       return [`Required param "${name}[${componentDef.typeKey}]" not present.`];
     }
@@ -121,7 +73,7 @@ class Validator {
     if (!componentsRegistry[variety]) {
       return [`"${variety}" is not one of the "${componentType}" components.`];
     }
-    const componentClass = this.getComponentClass(spec, variety);
+    const componentClass = this.registry.getComponentClass(spec, variety);
     const prefix = name + '.';
     return this.validateResource(scriptContent, componentClass, param, prefix);
   }

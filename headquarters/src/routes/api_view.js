@@ -1,10 +1,10 @@
 const Evaluator = require('fptcore/src/utils/evaluator');
-const Registry = require('fptcore/src/registry/registry');
+const coreRegistry = require('fptcore/src/core-registry');
 
 const models = require('../models');
 const KernelUtil = require('../kernel/util');
 
-const evaluator = new Evaluator(Registry);
+const evaluator = new Evaluator(coreRegistry);
 
 const defaultInterface = {
   type: 'simple',

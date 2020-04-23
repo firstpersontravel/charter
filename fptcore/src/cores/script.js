@@ -2,7 +2,7 @@ const _ = require('lodash');
 const jsonschema = require('jsonschema');
 
 const TextUtil = require('../utils/text');
-const Registry = require('../registry/registry');
+const coreRegistry = require('../core-registry');
 const Validator = require('../utils/validator');
 const Walker = require('../utils/walker');
 const Errors = require('../errors');
@@ -18,14 +18,14 @@ const metaSchema = {
   additionalProperties: false
 };
 
-const validator = new Validator(Registry);
-const walker = new Walker(Registry);
+const validator = new Validator(coreRegistry);
+const walker = new Walker(coreRegistry);
 
 class ScriptCore {
   static getResourceErrors(scriptContent, collectionName, resource) {
     const resourceType = TextUtil.singularize(collectionName);
     const resourceName = resource.name || '<unknown>';
-    const resourceClass = Registry.resources[resourceType];
+    const resourceClass = coreRegistry.resources[resourceType];
     if (!resourceClass) {
       return [{
         path: collectionName,
@@ -136,7 +136,7 @@ class ScriptCore {
     }
 
     // Check components
-    for (const componentType of Object.keys(Registry.components)) {
+    for (const componentType of Object.keys(coreRegistry.components)) {
       errors.push(...this.validateComponents(scriptContent, componentType));
     }
 

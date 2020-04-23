@@ -1,14 +1,14 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-const Registry = require('../registry/registry');
+const coreRegistry = require('../core-registry');
 const KernelResult = require('./result');
 const KernelActions = require('./actions');
 const KernelTriggers = require('./triggers');
 
 class Kernel {
   static getActionClass(name) {
-    return Registry.actions[name];
+    return coreRegistry.actions[name];
   }
 
   /**

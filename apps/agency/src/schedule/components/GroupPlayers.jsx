@@ -3,18 +3,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { Evaluator, PlayerCore, Registry } from 'fptcore';
+import { coreEvaluator, PlayerCore } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
 import { canRoleHaveUser } from '../../operate/utils';
 import UserModal from '../../directory/partials/UserModal';
 
-const evaluator = new Evaluator(Registry);
-
 function doesTripHaveRole(trip, roleName) {
   const role = _.find(trip.script.content.roles, { name: roleName });
-  return evaluator.if(trip.actionContext, role.active_if);
+  return coreEvaluator.if(trip.actionContext, role.active_if);
 }
 
 export default class GroupPlayers extends Component {

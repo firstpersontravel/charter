@@ -1,9 +1,9 @@
 const _ = require('lodash');
 
+const coreRegistry = require('../core-registry');
 const Evaluator = require('../utils/evaluator');
-const Registry = require('../registry/registry');
 
-const evaluator = new Evaluator(Registry);
+const evaluator = new Evaluator(coreRegistry);
 
 class KernelTriggers {
   /**
@@ -15,7 +15,8 @@ class KernelTriggers {
       return false;
     }
     // Get matching function and calculate match.
-    return Registry.events[event.type].matchEvent(spec, event, actionContext);
+    return coreRegistry.events[event.type].matchEvent(spec, event, 
+      actionContext);
   }
 
   /**
@@ -27,7 +28,7 @@ class KernelTriggers {
       return false;
     }
     // If no matcher for this event type, exit
-    if (!Registry.events[event.type]) {
+    if (!coreRegistry.events[event.type]) {
       return false;
     }
 

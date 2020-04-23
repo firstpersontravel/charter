@@ -30,8 +30,7 @@ export default DS.Model.extend({
   }.property('tripState'),
 
   evaluateIf: function(ifClause) {
-    const evaluator = new fptCore.Evaluator(fptCore.Registry);
-    return evaluator.if(this.get('actionContext'), ifClause);
+    return fptCore.coreEvaluator.if(this.get('actionContext'), ifClause);
   },
 
   generateTrip: function() {

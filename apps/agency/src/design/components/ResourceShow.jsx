@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { TextUtil, Registry } from 'fptcore';
+import { TextUtil, coreRegistry } from 'fptcore';
 
 import ResourceContainer from '../partials/ResourceContainer';
 import ResourceBadge from '../../partials/ResourceBadge';
@@ -39,7 +39,7 @@ function updateScriptContent(scriptContent, collectionName, resourceName,
 
 function getNewResourceFields(collectionName, defaults) {
   const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = Registry.resources[resourceType];
+  const resourceClass = coreRegistry.resources[resourceType];
   const newName = newResourceNameForType(resourceType);
   const defaultFields = defaultFieldsForClass(resourceClass);
   const fields = Object.assign({ name: newName }, defaultFields);
@@ -96,7 +96,7 @@ export default class ResourceShow extends Component {
         const childCollectionName = curChildStr.split('.')[0];
         const collectionName = props.match.params.collectionName;
         const childResourceType = TextUtil.singularize(childCollectionName);
-        const resourceClass = Registry.resources[childResourceType];
+        const resourceClass = coreRegistry.resources[childResourceType];
         const childParentField = _(resourceClass.properties)
           .keys()
           .find(key => (
@@ -348,7 +348,7 @@ export default class ResourceShow extends Component {
     const mainCollectionName = this.props.match.params.collectionName;
     const mainResourceName = this.props.match.params.resourceName;
     const childResourceType = TextUtil.singularize(collectionName);
-    const childResourceClass = Registry.resources[childResourceType];
+    const childResourceClass = coreRegistry.resources[childResourceType];
     const excludeFields = _(childResourceClass.properties)
       .keys()
       .filter(key => (
@@ -494,7 +494,7 @@ export default class ResourceShow extends Component {
     const script = this.props.script;
     const collectionName = this.props.match.params.collectionName;
     const resourceType = TextUtil.singularize(collectionName);
-    if (!Registry.resources[resourceType]) {
+    if (!coreRegistry.resources[resourceType]) {
       return (
         <div className="alert alert-warning">
           Invalid collection.

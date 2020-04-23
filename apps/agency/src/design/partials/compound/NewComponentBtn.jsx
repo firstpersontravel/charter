@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Registry, TextUtil } from 'fptcore';
+import { coreRegistry, TextUtil } from 'fptcore';
 
 import PopoverControl from '../../../partials/PopoverControl';
 import { defaultFieldsForSpecs } from '../../utils/resource-utils';
 
 function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
   const componentType = componentSpec.component;
-  const componentClass = Registry.components[componentType];
+  const componentClass = coreRegistry.components[componentType];
   const componentTypeKey = componentClass.typeKey;
   const componentOptions = [{ value: '', label: '---' }].concat(Object
-    .keys(Registry[componentType])
+    .keys(coreRegistry[componentType])
     .map(key => ({ value: key, label: TextUtil.titleForKey(key) })));
 
   const newComponentBtn = (
@@ -29,7 +29,7 @@ function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
         if (!val) {
           return;
         }
-        const variantClass = Registry[componentType][val];
+        const variantClass = coreRegistry[componentType][val];
         const propertiesKey = componentClass.propertiesKey;
         const newComponentFields = Object.assign(
           defaultFieldsForSpecs(variantClass[propertiesKey]),

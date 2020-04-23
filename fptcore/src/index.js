@@ -1,12 +1,20 @@
+const coreEvaluator = require('./core-evaluator');
+const coreRegistry = require('./core-registry');
+const coreValidator = require('./core-validator');
+const coreWalker = require('./core-walker');
+
 module.exports = {
   Evaluator: require('./utils/evaluator'),
+  coreEvaluator: coreEvaluator,
+  coreRegistry: coreRegistry,
+  coreValidator: coreValidator,
+  coreWalker: coreWalker,
   ContextCore: require('./cores/context'),
   Errors: require('./errors'),
   GeofenceCore: require('./cores/geofence'),
   Kernel: require('./kernel/kernel'),
   KernelTriggers: require('./kernel/triggers'),
   PlayerCore: require('./cores/player'),
-  Registry: require('./registry/registry'),
   SceneCore: require('./cores/scene'),
   ScriptCore: require('./cores/script'),
   TemplateUtil: require('./utils/template'),

@@ -2,11 +2,9 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Evaluator, Registry, TemplateUtil } from 'fptcore';
+import { coreEvaluator, TemplateUtil } from 'fptcore';
 
 import { urlForResource } from '../../design/utils/section-utils';
-
-const evaluator = new Evaluator(Registry);
 
 function renderQr(trip, player, page, panel) {
   const qrCode = _.find(trip.script.content.qr_codes, { name: panel.qr_code });
@@ -112,7 +110,7 @@ export function renderHeader(trip, player, page) {
   );
 }
 function isPanelVisible(trip, player, panel) {
-  return evaluator.if(trip.actionContext, panel.visible_if);
+  return coreEvaluator.if(trip.actionContext, panel.visible_if);
 }
 
 export function renderPage(trip, player, page) {

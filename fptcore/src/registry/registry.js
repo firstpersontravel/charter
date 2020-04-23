@@ -1,46 +1,81 @@
-const modules = [
-  require('../modules/achievements/module'),
-  require('../modules/audio/module'),
-  require('../modules/calls/module'),
-  require('../modules/checkpoints/module'),
-  require('../modules/cues/module'),
-  require('../modules/email/module'),
-  require('../modules/locations/module'),
-  require('../modules/messages/module'),
-  require('../modules/pages/module'),
-  require('../modules/qr/module'),
-  require('../modules/relays/module'),
-  require('../modules/roles/module'),
-  require('../modules/scenes/module'),
-  require('../modules/time/module'),
-  require('../modules/triggers/module'),
-  require('../modules/values/module'),
-  require('../modules/variants/module'),
-];
+const _ = require('lodash');
 
-const components = require('./components');
+class Registry {
+  constructor(modules, components) {
+    this.modules = {};
+    this.resources = {};
+    this.components = components;
 
-const registry = { modules: {}, resources: {}, components: components };
-for (const componentType of Object.keys(components)) {
-  registry[componentType] = {};
-}
-
-// Load modules
-for (const mod of modules) {
-  for (const componentType of Object.keys(components)) {
-    mod[componentType] = {};
-  }
-  for (const resourceType of Object.keys(mod.resources)) {
-    const resourceDef = mod.resources[resourceType];
     for (const componentType of Object.keys(components)) {
-      Object.assign(mod[componentType], resourceDef[componentType]);
-      Object.assign(registry[componentType], resourceDef[componentType]);
+      this[componentType] = {};
     }
-    if (resourceDef.resource) {
-      registry.resources[resourceType] = resourceDef.resource;
+
+    // Load modules
+    for (const mod of modules) {
+      for (const componentType of Object.keys(components)) {
+        mod[componentType] = {};
+      }
+      for (const resourceType of Object.keys(mod.resources || {})) {
+        const resourceDef = mod.resources[resourceType];
+        for (const componentType of Object.keys(components)) {
+          Object.assign(mod[componentType], resourceDef[componentType]);
+          Object.assign(this[componentType], resourceDef[componentType]);
+        }
+        if (resourceDef.resource) {
+          this.resources[resourceType] = resourceDef.resource;
+        }
+      }
+      this.modules[mod.name] = mod;
     }
   }
-  registry.modules[mod.name] = mod;
+
+  getComponentVariety(spec, value) {
+    const componentType = spec.component;
+    const componentDef = this.components[componentType];
+    if (!componentDef) {
+      throw new Error(`Invalid component type "${spec.component}".`);
+    }
+    return value ? value[componentDef.typeKey] : null;
+  }
+
+  /**
+   * Get resource class of a component property, merging common and variety.
+   */
+  getComponentClass(spec, variety) {
+    const componentType = spec.component;
+    const componentDef = this.components[componentType];
+    if (!componentDef) {
+      throw new Error(`Invalid component type "${componentType}".`);
+    }
+    const componentsRegistry = this[componentType];
+    const typeClass = {
+      properties: {
+        [componentDef.typeKey]: {
+          type: 'enum',
+          options: Object.keys(componentsRegistry),
+          required: true,
+          help: `Type of ${componentType}.`,
+          display: { label: false }
+        }
+      }
+    };
+    // Return type object if no existing component to allow you to choose one
+    // in the interface.
+    if (!variety) {
+      return Object.assign({ display: { form: 'inline' } }, typeClass);
+    }
+    if (!componentsRegistry[variety]) {
+      throw new Error(`"${variety}" is not one of the "${componentType}" components.`);
+    }
+    const commonClass = componentDef.common || {};
+    // For component class, rename `params` / `specParams` to `properties`.
+    // TODO: all components should just use `properties` as a name.
+    const varietyClass = Object.assign({
+      properties: componentsRegistry[variety][componentDef.propertiesKey]
+    }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
+    const componentClass = _.merge({}, typeClass, commonClass, varietyClass);
+    return componentClass;
+  }
 }
 
-module.exports = registry;
+module.exports = Registry;

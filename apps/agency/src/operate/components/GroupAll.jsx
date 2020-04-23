@@ -3,19 +3,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { Evaluator, Registry } from 'fptcore';
+import { coreEvaluator } from 'fptcore';
 
 import ResponsiveTabs from '../../partials/ResponsiveTabs';
 import { sortForRole, canRoleHaveUser } from '../utils';
-
-const evaluator = new Evaluator(Registry);
 
 function getAllPlayers(trips) {
   const tripsById = _.fromPairs(_.map(trips, t => [t.id, t]));
   return _(trips)
     .map('players')
     .flatten()
-    .filter(player => evaluator.if(
+    .filter(player => coreEvaluator.if(
       tripsById[player.tripId].actionContext,
       player.role.active_if
     ))
