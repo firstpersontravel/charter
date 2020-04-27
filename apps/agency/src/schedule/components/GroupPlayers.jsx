@@ -208,7 +208,7 @@ export default class GroupPlayers extends Component {
     const query = new URLSearchParams(this.props.location.search);
     const isCreatingUser = !!query.get('role');
 
-    const trips = this.props.group.trips;
+    const trips = this.props.group.trips || [];
     const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
     const roleRows = this.renderRoleRows(trips);
     return (
