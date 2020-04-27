@@ -11,23 +11,12 @@ export default Ember.Component.extend({
 
   actions: {
     press: function() {
-      var correctRef = this.get('params').correct_ref;
-      var cue = this.get('params').cue;
       var entry = this.get('numberInput');
       if (!entry || entry === '') { return; }
-      var triggered = false;
-      var value = this.get('trip').lookupRef(correctRef);
-      if (!value || !cue) { return; }
-      if (value.toString() === entry.toString()) {
-        this.triggerAction({
-          action: 'signalCue',
-          actionContext: [cue]
-        });
-        triggered = true;          
-      }
-      if (!triggered) {
-        swal(this.get('params.unknown') || 'Number not recognized');
-      }
+      this.triggerAction({
+        action: 'numberpadSubmitted',
+        actionContext: [this.get('params.id'), entry]
+      });
       this.set('numberInput', '');
     }
   }

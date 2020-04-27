@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -8,10 +9,23 @@ import {
   ContextCore,
   PlayerCore,
   SceneCore,
-  TripCore
+  TripCore,
+  coreRegistry,
+  coreWalker
 } from 'fptcore';
 
 import SceneGrid from '../../scenegrid/SceneGrid';
+import { labelForSpec } from '../utils/spec-utils';
+import { titleForResource } from '../utils/text-utils';
+import { urlForResource } from '../utils/section-utils';
+import { fullMediaUrl } from '../../operate/utils';
+
+const maxParamLength = 30;
+const maxMessageLength = 100;
+
+function truncateMsg(msg, maxLength) {
+  return msg.length > maxLength ? `${msg.slice(0, maxLength)}...` : msg;
+}
 
 function getInitialTripFields(script, variantNames) {
   const date = moment.utc().format('YYYY-MM-DD');
@@ -34,18 +48,75 @@ function getInitialState(script, variantNames) {
     trip: getInitialTripFields(script, variantNames),
     players: _(script.content.roles)
       .map(role => getInitialPlayerFields(script, variantNames, role.name))
+      .map((vals, i) => Object.assign(vals, { id: i }))
       .value(),
-    log: [{
-      id: 0,
-      time: moment(),
-      level: 'info',
-      message: 'Trip started.'
-    }]
+    log: [],
+    scheduledActions: [],
+    nextTime: null
   };
 }
 
+function renderParam(script, key, spec, param) {
+  if (spec.type === 'reference') {
+    const collectionName = spec.collection;
+    const collection = script.content[collectionName] || [];
+    const resource = _.find(collection, { name: param });
+    if (resource) {
+      return (
+        <Link to={urlForResource(script, collectionName, resource.name)}>
+          {titleForResource(script.content, collectionName, resource)}
+        </Link>
+      );
+    }
+  }
+  if (spec.type === 'componentReference') {
+    const componentType = spec.componentType;
+    const variantClass = coreRegistry[componentType][spec.componentVariant];
+    const component = coreWalker.getComponentById(script.content,
+      spec.componentType, param);
+    if (variantClass.getTitle) {
+      return variantClass.getTitle(component, script.content);
+    }
+  }
+  if (typeof param === 'string') {
+    return truncateMsg(param, maxParamLength);
+  }
+  return param;
+}
+
+function renderParams(script, spec, params) {
+  return Object
+    .entries(params)
+    .filter(([key, val]) => spec[key])
+    .map(([key, val]) => (
+      <div key={key}>
+        <span className="mr-1" style={{ fontVariant: 'small-caps' }}>
+          {labelForSpec(spec[key], key)}:
+        </span>
+        {renderParam(script, key, spec[key], val)}
+      </div>
+    ));
+}
+
+function renderMessageContent(script, fields) {
+  const role = (script.content.roles || [])
+    .find(r => r.name === fields.fromRoleName);
+  const roleTitle = role ? role.title : fields.fromRoleName;
+  if (fields.medium === 'image') {
+    const url = fullMediaUrl(script.org, script.experience, fields.content);
+    return (
+      <span>
+        {roleTitle}:&nbsp;
+        <img alt="Message" src={url} className="img-fluid" />
+      </span>
+    );
+  }
+  return `${roleTitle}: "${truncateMsg(fields.content, maxMessageLength)}"`;
+}
+
 class TripKernel {
-  constructor(state, updateState, onEvent) {
+  constructor(script, state, updateState) {
+    this.script = script;
     this.state = state;
     this.updateState = updateState;
   }
@@ -72,23 +143,42 @@ class TripKernel {
     });
     this.log({
       level: 'info',
-      message: `Updated values: ${JSON.stringify(values)}`
+      type: 'Value update',
+      message: Object.entries(values)
+        .map(([key, val]) => `${key}: ${JSON.stringify(val)}`)
+        .join(', ')
     });
   }
 
   createMessage({ fields }) {
-    this.log({ level: 'info', message: `"${fields.content}"` });
+    this.log({
+      level: 'info',
+      type: 'Message',
+      message: renderMessageContent(this.script, fields)
+    });
   }
 
   event() {}
   initiateCall() {}
 
-  log({ level, message }) {
+  twiml(op) {
+    const clause = op.clause === 'gather' ? op.subclause : op;
+    this.log({
+      level: 'info',
+      type: 'Call',
+      message:
+        `${clause.clause}: ` +
+        `${truncateMsg(clause.message || 'audio clip', maxMessageLength)}`
+    });
+  }
+
+  log({ level, type, message }) {
     const maxNum = 50;
     const newEntry = {
       id: this.state.log.length,
       time: moment(),
       level: level,
+      type: type,
       message: message
     };
     const newLog = [newEntry].concat(this.state.log).slice(0, maxNum);
@@ -107,10 +197,13 @@ export default class TripTestHarness extends Component {
     this.handleTrigger = this.handleTrigger.bind(this);
     this.handleEvent = this.handleEvent.bind(this);
     this.processStateUpdate = this.processStateUpdate.bind(this);
+    this.handleTimer = this.handleTimer.bind(this);
+    this.timer = null;
   }
 
   componentDidMount() {
     this.startTrip();
+    this.timer = setInterval(this.handleTimer, 1000);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -124,6 +217,11 @@ export default class TripTestHarness extends Component {
 
   componentDidUpdate() {
     delete this.pendingState;
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    this.timer = null;
   }
 
   getBaseTripObject() {
@@ -173,6 +271,7 @@ export default class TripTestHarness extends Component {
 
   processResultOp(resultOp) {
     const kernel = new TripKernel(
+      this.props.script,
       this.pendingState || this.state,
       this.processStateUpdate
     );
@@ -184,49 +283,85 @@ export default class TripTestHarness extends Component {
     kernel[resultOp.operation].call(kernel, resultOp);
   }
 
-  log(level, message) {
-    this.processResultOp({ level: level, message: message });
-  }
-
-  processScheduledAction(scheduledAction) {
-    this.handleAction(scheduledAction.name, scheduledAction.params);
+  log(level, type, message) {
+    this.processResultOp({
+      operation: 'log',
+      level: level,
+      type: type,
+      message: message
+    });
   }
 
   processResult(result) {
     result.resultOps.forEach(resultOp => (
       this.processResultOp(resultOp)
     ));
-    result.scheduledActions.forEach(scheduledAction => (
-      this.processScheduledAction(scheduledAction)
-    ));
+    if (result.scheduledActions.length > 0) {
+      const newScheduledActions = this.state.scheduledActions
+        .concat(result.scheduledActions);
+      this.setState({ scheduledActions: newScheduledActions });
+    }
   }
 
   handleAction(name, params) {
-    this.log('info', `Action: ${name}, params: ${JSON.stringify(params)}`);
+    const script = this.props.script;
+    const actionResourceClass = coreRegistry.actions[name];
+    const actionInfo = renderParams(script, actionResourceClass.params,
+      params);
+    this.log('info', `Action: ${name}`, actionInfo);
     const action = { name: name, params: params };
     const actionContext = this.getActionContext();
     const result = Kernel.resultForImmediateAction(action, actionContext);
     this.processResult(result);
   }
 
-  handleAdminAction(name, params) {
-    this.log('info', `Admin action: ${name} (ignored)`);
-  }
+  handleAdminAction(name, params) {}
 
   handleEvent(event) {
-    this.log('info', `Event: ${event.type}, ${JSON.stringify(event)}`);
+    const script = this.props.script;
+    const eventResourceClass = coreRegistry.events[event.type];
+    if (eventResourceClass.eventParams) {
+      const eventInfo = renderParams(script, eventResourceClass.eventParams,
+        event);
+      this.log('info', `Event: ${event.type}`, eventInfo);
+    }
     const actionContext = this.getActionContext();
     const result = Kernel.resultForEvent(event, actionContext);
     this.processResult(result);
   }
 
-  handleTrigger(name) {
-    this.log('info', `Trigger: ${name}`);
+  handleTrigger(name, event) {
+    // this.log('info', `Trigger: ${name}`);
     const trigger = _.find(this.props.script.content.triggers, { name: name });
     const actionContext = this.getActionContext();
-    const result = Kernel.resultForTrigger(trigger, null, actionContext,
+    const result = Kernel.resultForTrigger(trigger, event, actionContext,
       actionContext);
     this.processResult(result);
+  }
+
+  handleTimer() {
+    if (this.state.scheduledActions.length === 0) {
+      return;
+    }
+    const now = moment.utc();
+    const actionsToRun = this.state.scheduledActions
+      .filter(action => moment(action.scheduleAt).isBefore(now));
+    if (actionsToRun.length === 0) {
+      // Don't set scheduled actions but update nextTime if an action is coming
+      // in less than 15 secs.
+      const nextEpochMsec = Math.min(...this.state.scheduledActions
+        .map(a => a.scheduleAt.valueOf()));
+      this.setState({ nextTime: nextEpochMsec });
+      return;
+    }
+    actionsToRun.forEach((action) => {
+      const actionContext = this.getActionContext();
+      const result = Kernel.resultForImmediateAction(action, actionContext);
+      this.processResult(result);
+    });
+    const actionsToKeep = this.state.scheduledActions
+      .filter(action => moment(action.scheduleAt).isSameOrAfter(now));
+    this.setState({ scheduledActions: actionsToKeep });
   }
 
   startTrip() {
@@ -246,20 +381,35 @@ export default class TripTestHarness extends Component {
   }
 
   renderLogEntry(logEntry) {
-    const maxLength = 50;
-    const msgTruncated = logEntry.message.length > maxLength ?
-      logEntry.message.slice(0, maxLength) : logEntry.message;
     const badgeClasses = {
       info: 'badge-info',
       warn: 'badge-warning',
       error: 'badge-danger'
     };
     return (
-      <div key={logEntry.id} style={{ wordBreak: 'break-word', overflow: 'hidden' }}>
+      <div
+        key={logEntry.id}
+        style={{ wordBreak: 'break-word', overflow: 'hidden' }}>
         <span className={`badge ${badgeClasses[logEntry.level]} mr-1`}>
-          {logEntry.time.format('h:mma')}
+          {logEntry.type}
         </span>
-        {msgTruncated}
+        {logEntry.message}
+      </div>
+    );
+  }
+
+  renderScheduled() {
+    if (!this.state.scheduledActions.length) {
+      return null;
+    }
+    const numPending = this.state.scheduledActions.length;
+    const nextEpochMsec = Math.min(...this.state.scheduledActions
+      .map(a => a.scheduleAt.valueOf()));
+    const nextTime = moment(nextEpochMsec).fromNow();
+    return (
+      <div className="alert alert-warning">
+        <i className="fa fa-clock-o mr-1" />
+        {numPending}; next {nextTime}
       </div>
     );
   }
@@ -276,15 +426,17 @@ export default class TripTestHarness extends Component {
   render() {
     const trip = this.getTripObject();
     return (
-      <div className="row">
-        <div className="col-sm-10 script-editor-full-height">
+      <div className="row row-eq-height script-tester-inner-container">
+        <div className="col-sm-9 script-tester-col">
           <SceneGrid
             trip={trip}
+            onEvent={this.handleEvent}
             onAction={this.handleAction}
             onAdminAction={this.handleAdminAction}
             onTrigger={this.handleTrigger} />
         </div>
-        <div className="col-sm-2 script-editor-full-height">
+        <div className="col-sm-3 script-tester-col">
+          {this.renderScheduled()}
           {this.renderLog()}
         </div>
       </div>

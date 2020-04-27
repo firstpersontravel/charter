@@ -14,19 +14,21 @@ module.exports = {
       items: { type: 'component', component: 'actions' }
     }
   },
-  getEventTitle: function(scriptContent, resource, registry) {
+  getEventTitle: function(scriptContent, resource, registry, walker) {
     if (!resource.event) {
       return 'no trigger';
     }
     const eventClass = registry.events[resource.event.type];
     return eventClass.getTitle
-      ? eventClass.getTitle(scriptContent, resource.event, registry)
+      ? eventClass.getTitle(scriptContent, resource.event, registry, walker)
       : TextUtil.titleForKey(resource.event.type).toLowerCase();
   },
-  getTitle: function(scriptContent, resource, registry) {
+  getTitle: function(scriptContent, resource, registry, walker) {
     if (!resource.event || !resource.event.type) {
       return 'Untriggerable';
     }
-    return `On ${this.getEventTitle(scriptContent, resource, registry)}`;
+    const eventTitle = this.getEventTitle(scriptContent, resource, registry, 
+      walker);
+    return `On ${eventTitle}`;
   }
 };

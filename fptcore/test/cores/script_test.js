@@ -51,10 +51,10 @@ describe('ScriptCore', () => {
       assert.throws(() => {
         ScriptCore.validateScriptContent(scriptContent);
       }, {
-        message: 'There was 1 error validating the following collections: panels.',
+        message: 'There was 1 error validating the following collections: interfaces.',
         fieldErrors: [{
-          path: '?',
-          collection: 'panels',
+          path: 'interfaces[name=i]',
+          collection: 'interfaces',
           message: 'Duplicate id in panels: 1'
         }]
       });
@@ -97,10 +97,10 @@ describe('ScriptCore', () => {
       assert.throws(() => {
         ScriptCore.validateScriptContent(scriptContent);
       }, {
-        message: 'There was 1 error validating the following collections: actions.',
+        message: 'There was 1 error validating the following collections: triggers.',
         fieldErrors: [{
-          path: '?',
-          collection: 'actions',
+          path: 'triggers[name=t2]',
+          collection: 'triggers',
           message: 'Duplicate id in actions: 5'
         }]
       });

@@ -29,12 +29,15 @@ function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
         if (!val) {
           return;
         }
-        const variantClass = coreRegistry[componentType][val];
-        const propertiesKey = componentClass.propertiesKey;
-        const newComponentFields = Object.assign(
-          defaultFieldsForSpecs(variantClass[propertiesKey]),
-          { [componentTypeKey]: val });
-        onPropUpdate(newPath, newComponentFields);
+        const variantClass = coreRegistry.getComponentClass(componentSpec,
+          val);
+        if (!variantClass) {
+          console.error(`No variant ${val}.`);
+          return;
+        }
+        const defaults = defaultFieldsForSpecs(variantClass.properties);
+        const fields = Object.assign(defaults, { [componentTypeKey]: val });
+        onPropUpdate(newPath, fields);
       }}
       label={newComponentBtn}
       value={''}

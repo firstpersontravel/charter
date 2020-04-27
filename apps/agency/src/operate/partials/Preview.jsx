@@ -5,6 +5,11 @@ import PropTypes from 'prop-types';
 import { coreEvaluator, TemplateUtil } from 'fptcore';
 
 import { urlForResource } from '../../design/utils/section-utils';
+import { fullMediaUrl } from '../../operate/utils';
+
+function truncateMsg(msg, maxLength) {
+  return msg.length > maxLength ? `${msg.slice(0, maxLength)}...` : msg;
+}
 
 function renderQr(trip, player, page, panel) {
   const qrCode = _.find(trip.script.content.qr_codes, { name: panel.qr_code });
@@ -55,15 +60,29 @@ function renderText(trip, player, page, panel) {
   ));
 }
 
-function renderButton(trip, player, page, panel) {
+function renderImage(trip, player, page, panel) {
+  const url = fullMediaUrl(trip.org, trip.experience, panel.path);
+  return (
+    <img
+      alt={page.title}
+      style={{ maxHeight: '100px', maxWidth: '100px' }}
+      className="img-fluid"
+      src={url} />
+  );
+}
+
+function renderButton(trip, player, page, panel, onEvent) {
   const isSceneActive = page.scene === trip.tripState.currentSceneName;
   const panelText = TemplateUtil.templateText(trip.evalContext,
     panel.text || panel.placeholder, trip.experience.timezone);
+  const isDisabled = !onEvent;
+  const btnEvent = { type: 'button_pressed', button_id: panel.id };
   return (
     <button
       style={isSceneActive ? null : { textDecoration: 'line-through' }}
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
-      disabled>
+      onClick={() => onEvent && onEvent(btnEvent)}
+      disabled={isDisabled}>
       {panelText}
     </button>
   );
@@ -71,19 +90,22 @@ function renderButton(trip, player, page, panel) {
 
 const panelRenderers = {
   qr_display: renderQr,
+  image: renderImage,
   text: renderText,
   yesno: renderText,
   button: renderButton
 };
 
-function renderPanel(trip, player, page, panel) {
+function renderPanel(trip, player, page, panel, onEvent) {
   const renderer = panelRenderers[panel.type];
   if (!renderer) {
     return (
-      <p className="card-text">[{panel.type}]</p>
+      <p className="card-text text-center">
+        <em>{panel.type}</em>
+      </p>
     );
   }
-  return renderer(trip, player, page, panel);
+  return renderer(trip, player, page, panel, onEvent);
 }
 
 export function renderHeader(trip, player, page) {
@@ -104,7 +126,7 @@ export function renderHeader(trip, player, page) {
     <span>
       <strong>{player.role.title}</strong>
       &nbsp;
-      {headerText}
+      {truncateMsg(headerText, 100)}
       {designLink}
     </span>
   );
@@ -113,7 +135,7 @@ function isPanelVisible(trip, player, panel) {
   return coreEvaluator.if(trip.actionContext, panel.visible_if);
 }
 
-export function renderPage(trip, player, page) {
+export function renderPage(trip, player, page, onEvent) {
   const panels = page.panels || [];
   const visiblePanels = panels.filter(panel => (
     isPanelVisible(trip, player, panel)
@@ -125,12 +147,12 @@ export function renderPage(trip, player, page) {
   }
   return visiblePanels.map(panel => (
     <div key={`${page.name}-${panel.type}-${panel.text || ''}`}>
-      {renderPanel(trip, player, page, panel)}
+      {renderPanel(trip, player, page, panel, onEvent)}
     </div>
   ));
 }
 
-export default function Preview({ trip, player, page }) {
+export default function Preview({ trip, player, page, onEvent }) {
   if (!page) {
     return null;
   }
@@ -140,7 +162,7 @@ export default function Preview({ trip, player, page }) {
         {renderHeader(trip, player, page)}
       </div>
       <div className="card-body">
-        {renderPage(trip, player, page)}
+        {renderPage(trip, player, page, onEvent)}
       </div>
     </div>
   );
@@ -149,9 +171,11 @@ export default function Preview({ trip, player, page }) {
 Preview.propTypes = {
   trip: PropTypes.object.isRequired,
   player: PropTypes.object.isRequired,
-  page: PropTypes.object
+  page: PropTypes.object,
+  onEvent: PropTypes.func
 };
 
 Preview.defaultProps = {
-  page: null
+  page: null,
+  onEvent: null
 };

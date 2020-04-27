@@ -33,16 +33,17 @@ Migrator.getMigrations = function(currentMigrationNum) {
   });
 };
 
-Migrator.runMigration = function(collectionName, migration, scriptContent) {
+Migrator.runMigration = function(collectionName, migrationFn, scriptContent) {
   if (collectionName === 'scriptContent') {
-    migration(scriptContent);
+    migrationFn(scriptContent);
     return;
   }
   if (coreRegistry.components[collectionName]) {
     const componentType = collectionName;
-    walker.walkAllFields(scriptContent, componentType, (value, spec) => (
-      migration(value, scriptContent)
-    ));
+    walker.walkAllFields(scriptContent, componentType,
+      (collectionName, resource, value, spec) => (
+        migrationFn(value, scriptContent, resource)
+      ));
     return;
   }
   const resourceType = TextUtil.singularize(collectionName);
@@ -54,14 +55,21 @@ Migrator.runMigration = function(collectionName, migration, scriptContent) {
     return;
   }
   for (const item of scriptContent[collectionName].slice()) {
-    migration(item, scriptContent);
+    migrationFn(item, scriptContent);
   }
 };
 
+Migrator.getMigrationFns = function(migrations) {
+  if (Array.isArray(migrations)) {
+    return migrations;
+  }
+  return Object.entries(migrations);
+};
+
 Migrator.runMigrations = function(migrations, scriptContent) {
-  for (const collectionName of Object.keys(migrations)) {
-    const migration = migrations[collectionName];
-    Migrator.runMigration(collectionName, migration, scriptContent);
+  const migrationFns = Migrator.getMigrationFns(migrations);
+  for (const [collectionName, migrationFn] of migrationFns) {
+    Migrator.runMigration(collectionName, migrationFn, scriptContent);
   }
 };
 

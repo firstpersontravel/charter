@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const Validations = require('./validations');
+const Walker = require('./walker');
 
 class Validator {
   constructor(registry) {
@@ -76,6 +77,53 @@ class Validator {
     const componentClass = this.registry.getComponentClass(spec, variety);
     const prefix = name + '.';
     return this.validateResource(scriptContent, componentClass, param, prefix);
+  }
+
+  componentReference(scriptContent, name, spec, param) {
+    if (!param || !Number.isInteger(param)) {
+      return [
+        'Component reference param "' + name + '" ("' + param + '") ' +
+        'should be an integer.'];
+    }
+    const walker = new Walker(this.registry);
+    const component = walker.getComponentById(scriptContent,
+      spec.componentType, param);
+    if (!component) {
+      return [
+        `Component reference param "${param}" should be a member of ` +
+        `${spec.componentType}.`];
+    }
+  }
+
+  reference(scriptContent, name, spec, param) {
+    if (spec.specialValues) {
+      for (const val of spec.specialValues) {
+        if (typeof val === 'string' && val === param) {
+          return [];
+        }
+        if (typeof val === 'object' && val.value === param) {
+          return [];
+        }
+      }
+    }
+    if (!_.isString(param)) {
+      return ['Reference param "' + name + '" ("' + param + '") should be a string.'];
+    }
+    if (!param) {
+      return ['Reference attribute param "' + name + '" should not be blank.'];
+    }
+    if (!/[a-zA-Z]/.test(param[0])) {
+      return ['Reference param "' + name + '" ("' + param + '") should start with a letter.'];
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(param)) {
+      return ['Reference param "' + name + '" ("' + param + '") should be alphanumeric with dashes or underscores.'];
+    }
+    const collectionName = spec.collection;
+    const resourceNames = _.map(scriptContent[collectionName] || [], 'name');
+    if (!_.includes(resourceNames, param)) {
+      return ['Reference param "' + name + '" ("' + param + '") ' +
+        'is not in collection "' + collectionName + '".'];
+    }
   }
 
   /**

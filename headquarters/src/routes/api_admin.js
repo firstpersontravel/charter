@@ -49,7 +49,8 @@ async function resetRoute(req, res) {
 async function triggerRoute(req, res) {
   const tripId = req.params.tripId;
   const triggerName = req.body.trigger_name;
-  await KernelController.applyTrigger(tripId, triggerName);
+  const event = req.body.event;
+  await KernelController.applyTrigger(tripId, triggerName, event);
   await NotifyController.notifyTrigger(tripId, triggerName);
   res.json({ data: { ok: true } });
 }

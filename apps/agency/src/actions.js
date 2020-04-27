@@ -407,6 +407,22 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
   };
 }
 
+export function postEvent(orgId, experienceId, tripId, event) {
+  return function (dispatch) {
+    const params = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(event)
+    };
+    const url = `${config.serverUrl}/api/trips/${tripId}/events`;
+    request('system', null, 'action', url, params, dispatch)
+      .then((response) => {
+        dispatch(refreshLiveData(orgId, experienceId, [tripId]));
+      })
+      .catch(processError);
+  };
+}
+
 export function updateRelays(orgId, experienceId) {
   return function (dispatch) {
     const params = { method: 'POST' };

@@ -8,10 +8,10 @@ module.exports = {
   getTitle: function(scriptContent, spec) {
     var parts = ['text'];
     if (spec.contains) {
-      parts.push('containing "' + spec.contains + '"');
+      parts.push('w/"' + spec.contains + '"');
     }
     if (spec.geofence) {
-      parts.push('within geofence');
+      parts.push('in geofence');
     }
     if (spec.from) {
       var fromRole = _.find(scriptContent.roles, { name: spec.from });

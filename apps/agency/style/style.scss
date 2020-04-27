@@ -130,10 +130,35 @@ body {
 }
 
 .row-scene {
-  &.row-current-scene {
-    background: #eee !important;
-  }
+  position: relative;
+  border-top: 5px solid gray;
+  margin-top: 2.2em;
+  padding-top: 0.5em;
   margin-bottom: 0.5em;
+
+  .player-column {
+    border-left: 3px solid transparentize(black, 0.9);
+  }
+
+  .scene-header {
+    position: absolute;
+    top: -2.2em;
+    left: 0;
+    background: gray;
+    color: white;
+    a { color: white; }
+    padding: 5px;
+  }
+
+  &.row-current-scene {
+    padding: 1em 0;
+    border-top: 5px solid $primary;
+    background: transparentize($primary, 0.9) !important;
+
+    .scene-header {
+      background: $primary;
+    }
+  }
 }
 
 .cell-page {
@@ -169,20 +194,15 @@ body {
     max-height: calc(100% - 105px);
     overflow-y: scroll; 
   }
-  .script-editor-container {
+  .script-editor-container, .script-tester-container {
     height: calc(100% - 105px);
-    .script-editor-nav {
-      max-height: 100%;
-      overflow-y: scroll; 
-    }
-    .script-editor-tree {
-      max-height: 100%;
-      overflow-y: scroll;
-    }
-    .script-editor-resource {
-      max-height: 100%;
-      overflow-y: scroll; 
-    }
+  }
+  .script-editor-container, .script-tester-inner-container {
+    height: 100%;
+  }
+  .script-editor-col, .script-tester-col {
+    max-height: 100%;
+    overflow-y: scroll; 
   }
 }
 

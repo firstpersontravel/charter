@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as Sentry from '@sentry/browser';
 
-import { ScriptCore } from 'fptcore';
-
 import Examples from '../examples';
 import ExperienceModal from '../partials/ExperienceModal';
 
@@ -66,9 +64,7 @@ export default class OrgIndex extends Component {
       fields: {
         orgId: this.props.org.id,
         revision: 1,
-        content: Object.assign({}, scriptContent, {
-          meta: { version: ScriptCore.CURRENT_VERSION }
-        }),
+        content: scriptContent,
         isActive: true
       },
       insertions: {

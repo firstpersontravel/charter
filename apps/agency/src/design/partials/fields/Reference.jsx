@@ -24,19 +24,17 @@ function labelForValue(script, spec, value) {
       </span>
     );
   }
-  if (value === 'null') {
-    return 'None';
+  if (spec.specialValues) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const specialValue of spec.specialValues) {
+      if (value === specialValue.value) {
+        return specialValue.label;
+      }
+    }
   }
   return (
     <BaseEmpty spec={spec} />
   );
-}
-
-function specialValOpt(val) {
-  if (typeof val === 'string') {
-    return { value: val, label: val };
-  }
-  return val;
 }
 
 function choicesForSpec(script, resource, spec) {
@@ -54,7 +52,7 @@ function choicesForSpec(script, resource, spec) {
   });
   const specialChoices = [{ value: '', label: '---' }];
   if (spec.specialValues) {
-    specialChoices.push(...spec.specialValues.map(specialValOpt));
+    specialChoices.push(...spec.specialValues);
   }
   const choices = specialChoices.concat(filtered.map(rel => ({
     value: rel.name,

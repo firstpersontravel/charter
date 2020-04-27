@@ -72,7 +72,6 @@ content:
       panels:
         - type: button
           text: Start yer engines!
-          cue: CUE-EMBARKED-1
           id: 9
     - scene: main
       interface: Driver
@@ -83,7 +82,6 @@ content:
         - type: directions
           route: Drive1
           geofence: GEOFENCE-MIDPOINT
-          cue: CUE-ARRIVED-1
           id: 10
     - scene: main
       interface: Driver
@@ -96,7 +94,6 @@ content:
           id: 11
         - type: button
           text: Ready to head out!
-          cue: CUE-EMBARKED-2
           id: 12
     - scene: main
       interface: Driver
@@ -107,7 +104,6 @@ content:
         - type: directions
           route: Drive2
           geofence: GEOFENCE-END
-          cue: CUE-ARRIVED-2
           id: 13
     - scene: main
       interface: Driver
@@ -118,24 +114,12 @@ content:
         - type: text
           text: You completed your road trip!
           id: 14
-  cues:
-    - name: CUE-EMBARKED-1
-      title: Embarked
-      scene: main
-    - name: CUE-ARRIVED-1
-      title: Arrived at midpoint
-      scene: main
-    - name: CUE-EMBARKED-2
-      title: Embarked for end
-      scene: main
-    - name: CUE-ARRIVED-2
-      title: Arrived at end
-      scene: main
+  cues: []
   triggers:
     - name: embarked1
       event:
-        type: cue_signaled
-        cue: CUE-EMBARKED-1
+        type: button_pressed
+        button: 9
       scene: main
       actions:
         - name: send_to_page
@@ -144,8 +128,8 @@ content:
           id: 15
     - name: arrived1
       event:
-        type: cue_signaled
-        cue: CUE-ARRIVED-1
+        type: directions_arrived
+        directions: 10
       scene: main
       actions:
         - name: send_to_page
@@ -154,8 +138,8 @@ content:
           id: 16
     - name: embarked2
       event:
-        type: cue_signaled
-        cue: CUE-EMBARKED-2
+        type: button_pressed
+        button: 12
       scene: main
       actions:
         - name: send_to_page
@@ -164,8 +148,8 @@ content:
           id: 17
     - name: arrived2
       event:
-        type: cue_signaled
-        cue: CUE-ARRIVED-2
+        type: directions_arrived
+        directions: 13
       scene: main
       actions:
         - name: send_to_page
@@ -173,7 +157,7 @@ content:
           page_name: End
           id: 18
   meta:
-    version: 26
+    version: 27
 assets:
   - data:
       end:

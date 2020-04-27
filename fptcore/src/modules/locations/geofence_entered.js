@@ -1,6 +1,5 @@
 module.exports = {
   help: 'Occurs when a player enters a geofenced region.',
-  parentParamNameOnEventSpec: 'geofence',
   specParams: {
     role: {
       required: true,

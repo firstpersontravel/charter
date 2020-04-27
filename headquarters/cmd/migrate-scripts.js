@@ -14,7 +14,6 @@ program
   .parse(process.argv);
 
 async function migrateScript(script, isDryRun) {
-
   // For some reason, getting script.content updates `dataValues` which
   // triggers a validation error on the json field. So we do the get *after*
   // validating.
@@ -22,37 +21,52 @@ async function migrateScript(script, isDryRun) {
   const latestVersion = ScriptCore.CURRENT_VERSION;
 
   if (oldVersion >= latestVersion) {
-    logger.info(`Script #${script.id} is up-to-date (version ${latestVersion}).`);
-    return;
+    return null;
   }
   const migrated = Migrator.migrateScriptContent(script.content);
   script.set({ content: migrated });
 
   try {
     await script.validate();
-    logger.info(`Script #${script.id} passed validation!`);
   } catch (err) {
     logger.error(`Script #${script.id} failed validation: ${err.message}.`);
     err.errors[0].__raw.errors.forEach((innerErr) => {
       logger.error(`- ${innerErr.path}: ${innerErr.message}`);
     });
+    return false;
   }
 
-  if (!isDryRun) {
-    try {
-      await script.save({ fields: ['content'] });
-      logger.info(`Script #${script.id} migrated from version ${oldVersion} to ${migrated.meta.version}.`);
-    } catch (err) {
-      logger.error(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
-    }
+  if (isDryRun) {
+    return null;
   }
+
+  try {
+    await script.save({ fields: ['content'] });
+  } catch (err) {
+    logger.error(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
+    return false;
+  }
+  // logger.info(`Script #${script.id} migrated from version ${oldVersion} to ${migrated.meta.version}.`);
+  return true;
 }
 
 async function migrateAll(isDryRun) {
+  let numFailed = 0;
+  let numSucceeded = 0;
+  let numNoop = 0;
   const scripts = await models.Script.findAll();
   for (const script of scripts) {
-    await migrateScript(script, isDryRun);
+    const res = await migrateScript(script, isDryRun);
+    if (res === true) {
+      numSucceeded++;
+    } else if (res === false) {
+      numFailed++;
+    } else {
+      numNoop++;
+    }
   }
+  logger.info(
+    `${numSucceeded} ok, ${numFailed} failed, ${numNoop} no change.`);
 }
 
 migrateAll(program.dryRun)

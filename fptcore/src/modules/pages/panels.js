@@ -17,23 +17,20 @@ module.exports = {
   },
   button: {
     icon: 'sticky-note',
-    help: 'Displays a button. When pressed, a cue will be signaled.',
+    help: 'Displays a button.',
     properties: {
       text: {
         type: 'string',
         required: true,
         help: 'Visible label on the button.'
       },
-      cue: {
-        type: 'reference',
-        collection: 'cues',
-        required: true,
-        help: 'Cue to signal on pressing the button.'
-      },
       style: {
         type: 'enum',
         options: PANEL_BUTTON_STYLE_OPTIONS
       }
+    },
+    getTitle(resource, scriptContent) {
+      return resource.text;
     }
   },
   choice: {
@@ -77,7 +74,6 @@ module.exports = {
       route: { type: 'reference', collection: 'routes' },
       waypoint: { type: 'reference', collection: 'waypoints' },
       geofence: { type: 'reference', collection: 'geofences' },
-      cue: { type: 'reference', collection: 'cues' },
       destination_name: { type: 'string' }
     },
     validateResource: function(script, resource) {
@@ -120,10 +116,7 @@ module.exports = {
     help: 'Displays a numberpad.',
     properties: {
       submit: { type: 'string' },
-      placeholder: { type: 'string' },
-      unknown: { type: 'string' },
-      correct_ref: { type: 'simpleAttribute', required: true },
-      cue: { type: 'reference', collection: 'cues', required: true }
+      placeholder: { type: 'string' }
     }
   },
   outlet: {

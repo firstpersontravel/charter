@@ -23,9 +23,14 @@ describe('RoadTripExample', () => {
     assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Start');
 
     // Start first drive
-    await KernelController.applyAction(trip.id, {
-      name: 'signal_cue',
-      params: { cue_name: 'CUE-EMBARKED-1' }
+    const startDriveButtonId = script.content.pages
+      .find(p => p.name === 'Start')
+      .panels
+      .find(p => p.type === 'button')
+      .id;
+    await KernelController.applyEvent(trip.id, {
+      type: 'button_pressed',
+      button_id: startDriveButtonId
     });
 
     // Get to next page
@@ -33,9 +38,14 @@ describe('RoadTripExample', () => {
     assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Drive1');
 
     // Finish first drive
-    await KernelController.applyAction(trip.id, {
-      name: 'signal_cue',
-      params: { cue_name: 'CUE-ARRIVED-1' }
+    const finishDriveDirectionsId = script.content.pages
+      .find(p => p.name === 'Drive1')
+      .panels
+      .find(p => p.type === 'directions')
+      .id;
+    await KernelController.applyEvent(trip.id, {
+      type: 'directions_arrived',
+      directions_id: finishDriveDirectionsId
     });
 
     // Get to next page
@@ -43,9 +53,14 @@ describe('RoadTripExample', () => {
     assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Break');
 
     // Start second drive
-    await KernelController.applyAction(trip.id, {
-      name: 'signal_cue',
-      params: { cue_name: 'CUE-EMBARKED-2' }
+    const nextDriveButtonId = script.content.pages
+      .find(p => p.name === 'Break')
+      .panels
+      .find(p => p.type === 'button')
+      .id;
+    await KernelController.applyEvent(trip.id, {
+      type: 'button_pressed',
+      button_id: nextDriveButtonId
     });
 
     // Get to next page
@@ -53,9 +68,14 @@ describe('RoadTripExample', () => {
     assert.strictEqual(trip.tripState.currentPageNamesByRole.Driver, 'Drive2');
 
     // Finish second drive
-    await KernelController.applyAction(trip.id, {
-      name: 'signal_cue',
-      params: { cue_name: 'CUE-ARRIVED-2' }
+    const finishNextDriveDirectionsId = script.content.pages
+      .find(p => p.name === 'Drive2')
+      .panels
+      .find(p => p.type === 'directions')
+      .id;
+    await KernelController.applyEvent(trip.id, {
+      type: 'directions_arrived',
+      directions_id: finishNextDriveDirectionsId
     });
 
     // Get to next page

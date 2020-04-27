@@ -114,12 +114,12 @@ export default class Test extends Component {
     const variantNames = Object.values(this.state.variantSections);
     return (
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-sm-1 script-editor-full-height">
+        <div className="row row-eq-height script-tester-container">
+          <div className="col-sm-1 script-tester-col">
             {this.renderParams()}
             {this.renderReset()}
           </div>
-          <div className="col-sm-11">
+          <div className="col-sm-11 script-tester-col">
             <TripTestHarness
               script={this.props.script}
               variantNames={variantNames}

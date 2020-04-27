@@ -51,7 +51,6 @@ content:
         - type: directions
           geofence: GEOFENCE-ATLAS
           waypoint: WAYPOINT-ATLAS
-          cue: CUE-ATLAS-ARRIVE
           id: 158
     - name: PAGE-ATLAS
       title: At Atlas Cafe
@@ -94,15 +93,12 @@ content:
     - name: GEOFENCE-BON-NENE
       center: WAYPOINT-BON-NENE
       distance: 20
-  cues:
-    - name: CUE-ATLAS-ARRIVE
-      scene: SCENE-MAIN
-      title: Atlas Cafe Arrived
+  cues: []
   triggers:
     - name: atlas
       event:
-        type: cue_signaled
-        cue: CUE-ATLAS-ARRIVE
+        type: directions_arrived
+        directions: 158
       scene: SCENE-MAIN
       actions:
         - name: send_text
@@ -153,7 +149,7 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 26
+    version: 27
 assets:
   - type: directions
     data:

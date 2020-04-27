@@ -44,6 +44,39 @@ export default Ember.Route.extend({
     });
   },
 
+  makeEvent: function(params) {
+    var trip = this.context.get('trip');
+    var playerId = this.context.id;
+    
+    var api = this.get('api');
+    this.get('sync').add(function() {
+      return api.postEvent(trip.id, playerId, params)
+        .catch(function(err) {
+          if (err.readyState !== 4) {
+            // network error -- re-raise exception because it might
+            // work the second time.
+            console.warn('Network error for event ' + params.type);
+            throw err;
+          } else if (err.status === 502) {
+            // gateway error -- nginx can't reach node. worth retrying
+            console.warn('Gateway error for event ' + params.type);
+            throw err;
+          } else {
+            // status code error -- like a bad response from the server
+            // etc. This will likely not be resolved by retrying, so there
+            // isn't much we can do. skip it.
+            console.error(`Server error for event ${params.type}: ${err.status}.`);
+            swal({
+              title: 'Error',
+              text: 'We\'re sorry, there was an error. Press OK to refresh.',
+            }, function() {
+              window.location.reload();
+            });
+          }
+        });
+    });
+  },
+
   makeAction: function(name, params) {
     var trip = this.context.get('trip');
     
@@ -118,8 +151,26 @@ export default Ember.Route.extend({
       });
     },
 
-    signalCue: function(cueName) {
-      this.makeAction('signal_cue', {cue_name: cueName});
+    directionsArrived: function(directionsId) {
+      this.makeEvent({
+        type: 'directions_arrived',
+        directions_id: directionsId
+      });
+    },
+
+    numberpadSubmitted: function(numberpadId, entry) {
+      this.makeEvent({
+        type: 'numberpad_submitted',
+        numberpad_id: numberpadId,
+        entry: entry
+      });
+    },
+
+    buttonPressed: function(buttonId) {
+      this.makeEvent({
+        type: 'button_pressed',
+        button_id: buttonId
+      });
     },
 
     setValue: function(valueRef, newValueRef) {

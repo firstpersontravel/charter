@@ -2,7 +2,7 @@ const sinon = require('sinon');
 const assert = require('assert');
 
 const Registry = require('../../src/registry/registry');
-const Validations = require('../../src/utils/validations');
+const refValidator = require('../../src/utils/validations');
 const Validator = require('../../src/utils/validator');
 
 const eq = assert.deepStrictEqual;
@@ -207,12 +207,12 @@ describe('Validator', () => {
 
   describe('#validateParam', () => {
     it('calls param by name', () => {
-      sandbox.stub(Validations, 'string').returns([]);
+      sandbox.stub(refValidator, 'string').returns([]);
       const spec = { type: 'string' };
 
       validator.validateParam({}, 'name', spec, null);
 
-      sinon.assert.calledWith(Validations.string, {}, 'name', spec, null);
+      sinon.assert.calledWith(refValidator.string, {}, 'name', spec, null);
     });
 
     it('warns on invalid param type', () => {
@@ -312,6 +312,63 @@ describe('Validator', () => {
       };
 
       ok(panelsValidator.validateResource({}, contentPage, value, ''));
+    });
+  });
+
+  describe('#reference', () => {
+    const scriptContent = { geofences: [{ name: 'GEOFENCE-2' }] };
+    const spec = { type: 'reference', collection: 'geofences' };
+    const refValidator = new Validator({});
+
+    it('permits found references', () => {
+      ok(refValidator.reference(scriptContent, 's', spec, 'GEOFENCE-2'));
+    });
+
+    it('warns if reference is not found', () => {
+      err(
+        refValidator.reference(scriptContent, 's', spec, 'GEOFENCE-3'),
+        'Reference param "s" ("GEOFENCE-3") is not in collection "geofences".');
+    });
+
+    it('warns if collection is empty', () => {
+      const spec = { type: 'reference', collection: 'messages' };
+      err(
+        refValidator.reference(scriptContent, 's', spec, 'GEOFENCE-3'),
+        'Reference param "s" ("GEOFENCE-3") is not in collection "messages".');
+    });
+
+    it('warns if not a string', () => {
+      const result = refValidator.reference({}, 's', spec, 1);
+      err(result, 'Reference param "s" ("1") should be a string.');
+    });
+
+    it('warns if does not start with a letter', () => {
+      err(
+        refValidator.reference({}, 's', spec, '1bc'),
+        'Reference param "s" ("1bc") should start with a letter.');
+      err(
+        refValidator.reference({}, 's', spec, '.bc'),
+        'Reference param "s" (".bc") should start with a letter.');
+    });
+
+    it('warns if contains invalid characters', () => {
+      err(refValidator.reference({}, 's', {}, 'a%b'),
+        'Reference param "s" ("a%b") should be alphanumeric with dashes or underscores.');
+      err(refValidator.reference({}, 's', {}, 'a"-b'),
+        'Reference param "s" ("a"-b") should be alphanumeric with dashes or underscores.');
+      err(refValidator.reference({}, 's', {}, 'b^$(D'),
+        'Reference param "s" ("b^$(D") should be alphanumeric with dashes or underscores.');
+    });
+
+    it('permits "null" only if explicitly allowed', () => {
+      const specWithNull = {
+        type: 'reference',
+        collection: 'geofences',
+        specialValues: [{ value: 'null', label: 'None' }]
+      };
+      ok(refValidator.reference(scriptContent, 's', specWithNull, 'null'));
+      err(refValidator.reference(scriptContent, 's', spec, 'null'),
+        'Reference param "s" ("null") is not in collection "geofences".');
     });
   });
 });

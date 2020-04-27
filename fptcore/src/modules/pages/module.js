@@ -15,6 +15,11 @@ module.exports = {
         adjust_page: require('./page_adjust'),
         send_to_page: require('./page_send_to')
       },
+      events: {
+        button_pressed: require('./button_pressed'),
+        numberpad_submitted: require('./numberpad_submitted'),
+        directions_arrived: require('./directions_arrived')
+      },
       panels: panels
     }
   },

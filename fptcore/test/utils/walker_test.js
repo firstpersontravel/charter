@@ -1,3 +1,4 @@
+const assert = require('assert');
 const sinon = require('sinon');
 
 const coreRegistry = require('../../src/core-registry');
@@ -23,18 +24,18 @@ describe('Walker', () => {
       walker.walkAllFields(scriptContent, 'string', iteree);
 
       sinon.assert.callCount(iteree, 4);
-      sinon.assert.calledWith(iteree.getCall(0), 'def',
-        coreRegistry.resources.scene.properties.title,
-        scriptContent.scenes[0], 'title');
-      sinon.assert.calledWith(iteree.getCall(1), undefined,
-        coreRegistry.resources.achievement.properties.title,
-        scriptContent.achievements[0], 'title');
-      sinon.assert.calledWith(iteree.getCall(2), 'yes',
-        coreRegistry.resources.achievement.properties.titles.keys,
-        scriptContent.achievements[0].titles, 'keys');
-      sinon.assert.calledWith(iteree.getCall(3), '123',
-        coreRegistry.resources.achievement.properties.titles.values,
-        scriptContent.achievements[0].titles, 'yes');
+      assert.deepStrictEqual(iteree.getCall(0).args, [
+        'scenes', scriptContent.scenes[0], 'def',
+        coreRegistry.resources.scene.properties.title]);
+      assert.deepStrictEqual(iteree.getCall(1).args, [
+        'achievements', scriptContent.achievements[0], undefined,
+        coreRegistry.resources.achievement.properties.title]);
+      assert.deepStrictEqual(iteree.getCall(2).args, [
+        'achievements', scriptContent.achievements[0], 'yes',
+        coreRegistry.resources.achievement.properties.titles.keys]);
+      assert.deepStrictEqual(iteree.getCall(3).args, [
+        'achievements', scriptContent.achievements[0], '123',
+        coreRegistry.resources.achievement.properties.titles.values]);
     });
   });  
 });

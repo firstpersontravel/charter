@@ -158,37 +158,6 @@ class Validations {
       return ['Lookupable param "' + name + '" ("' + param + '") should be alphanumeric with underscores, dashes and periods.'];
     }
   }
-
-  static reference(scriptContent, name, spec, param) {
-    if (spec.specialValues) {
-      for (const val of spec.specialValues) {
-        if (typeof val === 'string' && val === param) {
-          return [];
-        }
-        if (typeof val === 'object' && val.value === param) {
-          return [];
-        }
-      }
-    }
-    if (!_.isString(param)) {
-      return ['Reference param "' + name + '" ("' + param + '") should be a string.'];
-    }
-    if (!param) {
-      return ['Reference attribute param "' + name + '" should not be blank.'];
-    }
-    if (!/[a-zA-Z]/.test(param[0])) {
-      return ['Reference param "' + name + '" ("' + param + '") should start with a letter.'];
-    }
-    if (!/^[a-zA-Z0-9_-]+$/.test(param)) {
-      return ['Reference param "' + name + '" ("' + param + '") should be alphanumeric with dashes or underscores.'];
-    }
-    const collectionName = spec.collection;
-    const resourceNames = _.map(scriptContent[collectionName] || [], 'name');
-    if (!_.includes(resourceNames, param)) {
-      return ['Reference param "' + name + '" ("' + param + '") ' +
-        'is not in collection "' + collectionName + '".'];
-    }
-  }
 }
 
 module.exports = Validations;

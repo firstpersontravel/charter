@@ -17,8 +17,10 @@
     "build_ios": "npm run build_travel && mkdir -p native/ios/www && cp apps/travel/dist/dist.zip native/ios/www;",
     "upload_secrets": "aws s3 sync secrets s3://fpt-tech/secrets --exclude '*.DS_Store'",
     "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets",
-    "migrate": "docker-compose exec server sequelize db:migrate",
+    "migrate": "npm run migrate:db && npm run migrate:scripts",
+    "migrate:db": "docker-compose exec server sequelize db:migrate",
     "migrate:undo": "docker-compose exec server sequelize db:migrate:undo",
-    "migrate:scripts": "docker-compose exec server npm run scripts:migrate"
+    "migrate:scripts": "docker-compose exec server npm run migrate:scripts",
+    "migrate:examples": "docker-compose exec server npm run migrate:examples"
   }
 }

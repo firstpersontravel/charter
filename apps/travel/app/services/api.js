@@ -68,5 +68,15 @@ export default Ember.Service.extend({
       `/api/trips/${tripId}/actions`, 'post',
       { client_id: this._clientId, name: name, params: params }
     );
+  },
+
+  postEvent: function(tripId, playerId, params) {
+    return this.sendData(
+      `/api/trips/${tripId}/events`, 'post',
+      Object.assign({}, {
+        client_id: this._clientId,
+        player_id: playerId,
+      }, params)
+    );
   }
 });

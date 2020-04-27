@@ -170,12 +170,10 @@ export default Ember.Component.extend(WindowHeightMixin, {
       });      
     },
     arrive: function() {
-      if (this.get('params.cue')) {
-        this.triggerAction({
-          action: 'signalCue',
-          actionContext: [this.get('params.cue')]
-        });
-      }
+      this.triggerAction({
+        action: 'directionsArrived',
+        actionContext: [this.get('params.id')]
+      });
     }
   }
 });

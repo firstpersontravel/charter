@@ -593,7 +593,7 @@ def db_migrate():
 @roles('app')
 def script_migrate():
     with cd(env.hq_path):
-        run('export $(cat ../env | xargs) && npm run scripts:migrate')
+        run('export $(cat ../env | xargs) && npm run migrate:scripts')
 
 def install_node_requirements():
     with cd('%s/headquarters' % env.repo_path):

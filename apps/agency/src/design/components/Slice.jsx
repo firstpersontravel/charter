@@ -74,12 +74,12 @@ export default class Slice extends Component {
     return (
       <div className="row row-eq-height script-editor-container">
         <div className="script-editor-col col-sm-2">
-          <div className="script-editor-nav">
+          <div className="script-editor-nav script-editor-col">
             {this.renderSidenav()}
           </div>
         </div>
         <div className="script-editor-col col-sm-3">
-          <div className="script-editor-tree">
+          <div className="script-editor-tree script-editor-col">
             <ContentTree
               sliceType={this.props.match.params.sliceType}
               sliceName={this.props.match.params.sliceName}
@@ -88,7 +88,7 @@ export default class Slice extends Component {
               history={this.props.history} />
           </div>
         </div>
-        <div className="script-editor-resource col-sm-7">
+        <div className="script-editor-resource script-editor-col col-sm-7">
           {this.props.children}
         </div>
       </div>

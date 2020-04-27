@@ -23,7 +23,8 @@ class RunnerWorker {
       await KernelController.applyAction(tripId, scheduledAction, applyAt);
       await NotifyController.notifyAction(tripId, action, null);
     } else if (action.type === 'trigger') {
-      await KernelController.applyTrigger(tripId, action.name, applyAt);
+      await KernelController.applyTrigger(tripId, action.name, action.event,
+        applyAt);
       await NotifyController.notifyTrigger(tripId, action.name, null);
     } else if (action.type === 'event') {
       const event = Object.assign({ type: action.name }, action.params);

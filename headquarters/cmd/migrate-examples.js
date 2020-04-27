@@ -37,12 +37,12 @@ async function migrateScript(exampleName, isDryRun) {
 
   try {
     ScriptCore.validateScriptContent(migratedContent);
-    logger.info(`Example ${exampleName} passed validation!`);
   } catch (err) {
     logger.error(`Example ${exampleName} failed validation: ${err.message}.`);
     err.fieldErrors.forEach((innerErr) => {
       logger.error(`- ${innerErr.path}: ${innerErr.message}`);
     });
+    return;
   }
 
   if (!isDryRun) {

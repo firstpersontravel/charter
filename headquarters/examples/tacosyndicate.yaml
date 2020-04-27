@@ -17,39 +17,15 @@ content:
       section: tab
       title: Messages
   cues:
-    - name: CUE-0-START
-      scene: SCENE-0
-      title: Start
-    - name: CUE-0-SEND-REMINDER-EMAIL
-      scene: SCENE-0
-      title: Send Reminder Email
-    - name: CUE-0-SEND-REMINDER-TEXT
-      scene: SCENE-0
-      title: Send Reminder Text
-    - name: CUE-1-START
-      scene: SCENE-1
-      title: Start
-    - name: CUE-1-START-CALL
-      scene: SCENE-1
-      title: Start Call
     - name: CUE-1-INITIATE-CALL
       scene: SCENE-1
       title: Initiate Call
-    - name: CUE-1-NEXT-SCENE
-      scene: SCENE-1
-      title: Next Scene
     - name: CUE-2-JESSIE-REMINDER
       scene: SCENE-2
       title: Jessie Reminder
     - name: CUE-7-INITIATE-CALL
       scene: SCENE-7
       title: Initiate Call
-    - name: CUE-7-START-CALL
-      scene: SCENE-7
-      title: Start Call
-    - name: CUE-7-NEXT-SCENE
-      scene: SCENE-7
-      title: Next Scene
     - name: CUE-8-PHIL-FOLLOWUP
       scene: SCENE-8
       title: Phil Followup
@@ -83,12 +59,10 @@ content:
             can press the button below to start the call sooner.
           type: text
           id: 22
-        - cue: CUE-0-START
-          text: Start
+        - text: Start
           type: button
           id: 23
-        - cue: CUE-0-SEND-REMINDER-TEXT
-          text: 'Send reminder text to {{Inductee.phone_number}}'
+        - text: 'Send reminder text to {{Inductee.phone_number}}'
           type: button
           visible_if:
             item:
@@ -96,8 +70,7 @@ content:
               ref: sent_reminder_text
             op: not
           id: 24
-        - cue: CUE-0-SEND-REMINDER-EMAIL
-          text: 'Send reminder email to {{Inductee.email}}'
+        - text: 'Send reminder email to {{Inductee.email}}'
           type: button
           visible_if:
             item:
@@ -114,8 +87,7 @@ content:
         - text: Check out the phone in the lounge. Or text (707) 876-0019 to begin.
           type: text
           id: 26
-        - cue: CUE-1-START
-          text: Trigger beginning
+        - text: Trigger beginning
           type: button
           id: 27
       interface: Inductee
@@ -136,8 +108,7 @@ content:
             https://docs.google.com/document/d/14I4uo3qbHekITn4RVjBFvguYGWK4FNdmGyqkPZ_ONTk/edit#heading=h.dsrb49xqc7nq
           type: text
           id: 29
-        - cue: CUE-1-START-CALL
-          text: Starting call
+        - text: Starting call
           type: button
           visible_if:
             item:
@@ -145,8 +116,7 @@ content:
               ref: started_call_1
             op: not
           id: 30
-        - cue: CUE-1-NEXT-SCENE
-          text: Done with call
+        - text: Done with call
           type: button
           visible_if:
             op: value_is_true
@@ -271,8 +241,7 @@ content:
             https://docs.google.com/document/d/14I4uo3qbHekITn4RVjBFvguYGWK4FNdmGyqkPZ_ONTk/edit#heading=h.dsrb49xqc7nq
           type: text
           id: 42
-        - cue: CUE-7-START-CALL
-          text: Starting call
+        - text: Starting call
           type: button
           visible_if:
             item:
@@ -280,8 +249,7 @@ content:
               ref: started_call_2
             op: not
           id: 43
-        - cue: CUE-7-NEXT-SCENE
-          text: Done with call
+        - text: Done with call
           type: button
           visible_if:
             op: value_is_true
@@ -559,8 +527,8 @@ content:
           ref: sent_reminder_email
         op: not
       event:
-        cue: CUE-0-SEND-REMINDER-EMAIL
-        type: cue_signaled
+        type: button_pressed
+        button: 25
       name: TRIGGER-SCENE-0-CUE-0-SEND-REMINDER-EMAIL
       scene: SCENE-0
     - actions:
@@ -588,8 +556,8 @@ content:
           value_ref: started_call_1
           id: 61
       event:
-        cue: CUE-1-START-CALL
-        type: cue_signaled
+        type: button_pressed
+        button: 30
       name: TRIGGER-SCENE-1-CUE-1-START-CALL
       scene: SCENE-1
     - actions:
@@ -637,8 +605,8 @@ content:
           scene_name: SCENE-2
           id: 66
       event:
-        cue: CUE-1-NEXT-SCENE
-        type: cue_signaled
+        type: button_pressed
+        button: 31
       name: TRIGGER-SCENE-1-CUE-1-NEXT-SCENE
       scene: SCENE-1
     - actions:
@@ -1038,8 +1006,8 @@ content:
           value_ref: started_call_2
           id: 130
       event:
-        cue: CUE-7-START-CALL
-        type: cue_signaled
+        type: button_pressed
+        button: 43
       name: TRIGGER-SCENE-7-CUE-7-START-CALL
       scene: SCENE-7
     - actions:
@@ -1087,8 +1055,8 @@ content:
           scene_name: SCENE-8
           id: 135
       event:
-        cue: CUE-7-NEXT-SCENE
-        type: cue_signaled
+        type: button_pressed
+        button: 44
       name: TRIGGER-SCENE-7-CUE-7-NEXT-SCENE
       scene: SCENE-7
     - actions:
@@ -1184,8 +1152,8 @@ content:
           ref: sent_reminder_text
         op: not
       event:
-        cue: CUE-0-SEND-REMINDER-TEXT
-        type: cue_signaled
+        type: button_pressed
+        button: 24
       name: deduped-1
       scene: SCENE-0
     - actions:
@@ -1193,8 +1161,8 @@ content:
           scene_name: SCENE-1
           id: 146
       event:
-        cue: CUE-0-START
-        type: cue_signaled
+        type: button_pressed
+        button: 23
       name: TRIGGER-SCENE-0-STARTED
       scene: SCENE-0
   variants:
@@ -1356,7 +1324,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 26
+    version: 27
 assets:
   - data:
       end:

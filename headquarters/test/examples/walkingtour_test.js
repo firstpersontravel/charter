@@ -43,9 +43,14 @@ describe('WalkingTourExample', () => {
   });
 
   it('visits atlas via sending an image', async () => {
-    await KernelController.applyAction(trip.id, {
-      name: 'signal_cue',
-      params: { cue_name: 'CUE-ATLAS-ARRIVE' }
+    const arriveAtAtlasDirectionsId = script.content.pages
+      .find(p => p.name === 'PAGE-START')
+      .panels
+      .find(p => p.type === 'directions')
+      .id;
+    await KernelController.applyEvent(trip.id, {
+      type: 'directions_arrived',
+      directions_id: arriveAtAtlasDirectionsId
     });
 
     // Test message sent

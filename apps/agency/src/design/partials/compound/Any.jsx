@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import AddressField from '../fields/Address';
 import BooleanField from '../fields/Boolean';
 import ComponentField from './Component';
+import ComponentReferenceField from '../fields/ComponentReference';
 import CoordsField from '../fields/Coords';
 import DictionaryField from './Dictionary';
 import EnumField from '../fields/Enum';
@@ -27,6 +28,7 @@ const fieldComponents = {
   address: AddressField,
   boolean: BooleanField,
   component: ComponentField,
+  componentReference: ComponentReferenceField,
   coords: CoordsField,
   dictionary: DictionaryField,
   email: EmailField,

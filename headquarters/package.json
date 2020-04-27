@@ -5,10 +5,12 @@
   "scripts": {
     "pretest": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
-    "migrate": "npm run db:migrate; npm run scripts:migrate",
-    "db:migrate": "sequelize db:migrate",
-    "scripts:migrate": "node cmd/migrate-scripts.js | pino -c",
-    "scripts:dryrun": "node cmd/migrate-scripts.js --dry-run | pino -c"
+    "migrate": "npm run migrate:db; npm run migrate:scripts",
+    "migrate:db": "sequelize db:migrate",
+    "migrate:scripts": "node cmd/migrate-scripts.js | pino -c",
+    "dryrun:scripts:": "node cmd/migrate-scripts.js --dry-run | pino -c",
+    "migrate:examples": "node cmd/migrate-examples | pino -c",
+    "dryrun:examples": "node cmd/migrate-examples --dry-run | pino -c"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",

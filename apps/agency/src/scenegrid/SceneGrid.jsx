@@ -1,17 +1,45 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap';
+import {
+  Popover,
+  PopoverHeader,
+  PopoverBody,
+  Tooltip
+} from 'reactstrap';
 
-import { coreEvaluator, coreRegistry, TemplateUtil } from 'fptcore';
+import { coreEvaluator, coreRegistry, coreWalker, TemplateUtil } from 'fptcore';
 
-import { renderHeader, renderPage } from '../operate/partials/Preview';
+import Preview, {
+  renderHeader,
+  renderPage
+} from '../operate/partials/Preview';
 import ResourceBadge from '../partials/ResourceBadge';
 import { sortForRole } from '../operate/utils';
-import { isProduction, getPlayerIframeUrl } from '../utils';
+import { getPlayerIframeUrl } from '../utils';
+
+const promptsForTriggerEventTypes = {
+  text_received: {
+    prompt: 'What message?',
+    getEvent: result => ({ message: { content: result } })
+  },
+  clip_answered: {
+    prompt: 'What response?',
+    getEvent: result => ({ response: result })
+  }
+};
 
 export default class SceneGrid extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      openTriggerTooltipName: null,
+      openPopoverPageName: null
+    };
+  }
+
   getPlayersForScene(scene) {
     const trip = this.props.trip;
     return _(trip.players)
@@ -32,38 +60,16 @@ export default class SceneGrid extends Component {
     this.props.onAction(actionName, actionParams);
   }
 
-  renderCueButton(page, panel) {
-    const currentSceneName = this.props.trip.tripState.currentSceneName;
-    const isCurrentScene = page.scene === currentSceneName;
-    const trip = this.props.trip;
-    const pageScene = _.find(trip.script.content.scenes, { name: page.scene });
-    const pageSceneTitle = pageScene.title;
-    const activeBtnClass = isProduction() ? 'btn-danger' : 'btn-primary';
-    const btnClass = isCurrentScene ? activeBtnClass : 'btn-secondary';
-    const panelText = TemplateUtil.templateText(trip.evalContext,
-      panel.text || '', trip.experience.timezone);
-    const activeCueTitle = panel.type === 'button' ?
-      panelText : `Cue ${panel.cue}`;
-    const inactiveCueTitle = (
-      <span>
-        <span style={{ textDecoration: 'line-through' }}>{panelText}</span>
-        &nbsp;(waiting for scene &quot;{pageSceneTitle}&quot;)
-      </span>
-    );
-    const cueTitle = isCurrentScene ? activeCueTitle : inactiveCueTitle;
-    return (
-      <div key={panel.cue} className="mt-1">
-        <button
-          disabled={!isCurrentScene}
-          key={`${page.name}-${panel.cue}`}
-          onClick={() => (
-            this.handleAction('signal_cue', { cue_name: panel.cue })
-          )}
-          className={`wrap-text btn btn-block btn-sm mt-1 ${btnClass}`}>
-          {cueTitle}
-        </button>
-      </div>
-    );
+  handleTrigger(trigger) {
+    let event = null;
+    // Special cases for triggers to enter the value
+    if (trigger.event && promptsForTriggerEventTypes[trigger.event.type]) {
+      const promptDef = promptsForTriggerEventTypes[trigger.event.type];
+      // eslint-disable-next-line no-alert
+      const res = prompt(promptDef.prompt);
+      event = promptDef.getEvent(res);
+    }
+    this.props.onTrigger(trigger.name, event);
   }
 
   renderPlayerPage(player, page) {
@@ -71,12 +77,6 @@ export default class SceneGrid extends Component {
     const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
     const isCurrentPage = page.name === curPageName;
     const isAckedPage = player.acknowledgedPageName === page.name;
-    const pageClass = isCurrentPage ? 'cell-current-page' : '';
-    const panelsWithCue = isCurrentPage ? _.filter(page.panels, 'cue') : [];
-    const cueButtons = panelsWithCue
-      .filter(panel => coreEvaluator.if(trip.actionContext, panel.visible_if))
-      .map((panel, i) => this.renderCueButton(page, panel));
-
     const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
       trip.experience.timezone);
 
@@ -117,36 +117,52 @@ export default class SceneGrid extends Component {
       </span>
     ) : null;
 
+    if (isCurrentPage) {
+      return (
+        <Preview
+          key={page.name}
+          trip={trip}
+          player={player}
+          page={page}
+          onEvent={this.props.onEvent} />
+      );
+    }
+
+    const playerPageName = `${player.id}-${page.name}`;
+    const isPopoverOpen = this.state.openPopoverPageName === playerPageName;
     return (
-      <tr key={page.name} className={`cell-page ${pageClass}`}>
-        <td>
-          {goToPageButton}
-          <ResourceBadge
-            resourceType="page"
-            className="mr-1"
-            showType={false} />
-          {pageTitle}
-          <span
-            style={{ cursor: 'pointer' }}
-            className="ml-1"
-            id={`popover-target-${page.name}`}>
-            <i className="fa fa-search" />
-          </span>
-          {refreshButton}
-          {isAckedIcon}
-          {cueButtons}
-          <UncontrolledPopover
-            trigger="legacy"
-            target={`popover-target-${page.name}`}>
-            <PopoverHeader>
-              {renderHeader(trip, player, page)}
-            </PopoverHeader>
-            <PopoverBody>
-              {renderPage(trip, player, page)}
-            </PopoverBody>
-          </UncontrolledPopover>
-        </td>
-      </tr>
+      <div key={page.name}>
+        {goToPageButton}
+        <ResourceBadge
+          resourceType="page"
+          className="mr-1"
+          showType={false} />
+        {pageTitle}
+        <span
+          style={{ cursor: 'pointer' }}
+          className="ml-1"
+          id={`popover-page-${playerPageName}`}>
+          <i className="fa fa-search" />
+        </span>
+        {refreshButton}
+        {isAckedIcon}
+        <Popover
+          trigger="legacy"
+          isOpen={isPopoverOpen}
+          target={`popover-page-${playerPageName}`}
+          toggle={() => {
+            this.setState({
+              openPopoverPageName: isPopoverOpen ? null : playerPageName
+            });
+          }}>
+          <PopoverHeader>
+            {renderHeader(trip, player, page)}
+          </PopoverHeader>
+          <PopoverBody>
+            {renderPage(trip, player, page, this.props.onEvent)}
+          </PopoverBody>
+        </Popover>
+      </div>
     );
   }
 
@@ -158,7 +174,7 @@ export default class SceneGrid extends Component {
     });
     const renderedPages = pages
       .map(page => this.renderPlayerPage(player, page));
-    const iframeLink = player.id ? (
+    const iframeLink = trip.id ? (
       <a
         target="_blank"
         className="ml-1"
@@ -168,17 +184,13 @@ export default class SceneGrid extends Component {
       </a>
     ) : null;
     return (
-      <div className={`col-sm-${colWidth}`} key={player.roleName}>
+      <div className={`col-sm-${colWidth} player-column`} key={player.id}>
         <h5 className="constrain-text">
           <ResourceBadge resourceType="role" className="mr-1" showType={false} />
           {player.role.title}
           {iframeLink}
         </h5>
-        <table className="table table-sm table-striped" style={{ margin: 0 }}>
-          <tbody>
-            {renderedPages}
-          </tbody>
-        </table>
+        {renderedPages}
       </div>
     );
   }
@@ -198,16 +210,30 @@ export default class SceneGrid extends Component {
       marginBottom: '0.25em',
       textDecoration: hasBeenTriggered ? 'line-through' : ''
     };
+    const isTooltipOpen = this.state.openTriggerTooltipName === trigger.name;
+    const btnTitle = triggerResourceClass.getEventTitle(trip.script.content,
+      trigger, coreRegistry, coreWalker);
     return (
       <span key={trigger.name}>
         <button
+          id={`trigger-btn-${trigger.name}`}
           disabled={!canTrigger}
-          onClick={() => this.props.onTrigger(trigger.name)}
+          onClick={() => this.handleTrigger(trigger)}
           style={style}
           className="constrain-text btn btn-block btn-xs btn-outline-secondary">
-          {triggerResourceClass.getEventTitle(trip.script.content, trigger,
-            coreRegistry)}
+          {btnTitle}
         </button>
+        <Tooltip
+          placement="top"
+          isOpen={isTooltipOpen}
+          target={`trigger-btn-${trigger.name}`}
+          toggle={() => {
+            this.setState({
+              openTriggerTooltipName: isTooltipOpen ? null : trigger.name
+            });
+          }}>
+          Cue trigger associated with: {btnTitle}
+        </Tooltip>
       </span>
     );
   }
@@ -216,14 +242,13 @@ export default class SceneGrid extends Component {
     const players = this.getPlayersForScene(scene);
     const currentSceneName = this.props.trip.tripState.currentSceneName;
     const isCurrentScene = scene.name === currentSceneName;
-    const titleClass = isCurrentScene ? 'text-primary' : '';
     const sceneClass = isCurrentScene ? 'row-current-scene' : '';
     const columns = players.map(player => (
       this.renderScenePlayerColumn(scene, player, colWidth)
     ));
 
     const globalMarker = scene.global ? (
-      <div><span className="faint">Global</span></div>
+      <span className="faint ml-1">(global)</span>
     ) : null;
 
     const canStartScene = !scene.global && !isCurrentScene;
@@ -243,27 +268,10 @@ export default class SceneGrid extends Component {
       .filter({ scene: scene.name })
       .value();
 
-    // HACK -- filter all page buttons in this scene out of trigger list
-    // for this scene, since they're already available as part of that
-    // players page display.
-    const scenePageButtonCueNames = _(trip.script.content.pages)
-      .filter({ scene: scene.name })
-      .map(page => page.panels)
-      .flatten()
-      .filter(panel => panel && panel.type === 'button')
-      .map(panel => panel.cue)
-      .filter(Boolean)
-      .value();
-
     const triggerBtns = triggers
       .filter((trigger) => {
         if (!trigger.event) {
           return false;
-        }
-        if (trigger.event.type === 'cue_signaled') {
-          if (scenePageButtonCueNames.includes(trigger.event.cue)) {
-            return false;
-          }
         }
         return true;
       })
@@ -273,14 +281,17 @@ export default class SceneGrid extends Component {
 
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
-        <div className="col-sm-2">
-          <h5 className={titleClass}>
-            <ResourceBadge resourceType="scene" className="mr-1" showType={false} />
-            {scene.title} {startSceneButton}
-          </h5>
+        <div className="scene-header">
+          {scene.title}
+          <Link
+            to={`/${trip.org.name}/${trip.experience.name}/script/${trip.script.revision}/design/scene/${scene.name}`}
+            className="ml-1">
+            <i className="fa fa-pencil" />
+          </Link>
+          {startSceneButton}
           {globalMarker}
         </div>
-        <div className="col-sm-8">
+        <div className="col-sm-10">
           <div className="row">
             {columns}
           </div>
@@ -312,6 +323,7 @@ export default class SceneGrid extends Component {
 
 SceneGrid.propTypes = {
   trip: PropTypes.object.isRequired,
+  onEvent: PropTypes.func.isRequired,
   onAction: PropTypes.func.isRequired,
   onTrigger: PropTypes.func.isRequired,
   onAdminAction: PropTypes.func.isRequired

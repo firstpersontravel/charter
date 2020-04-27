@@ -18,14 +18,10 @@ export default Ember.Component.extend({
 
   actions: {
     press: function() {
-      if (this.get('params').cue) {
-        this.triggerAction({
-          action: 'signalCue',
-          actionContext: [this.get('params').cue]
-        });
-      } else {
-        console.error('no action for this button.');
-      }
+      this.triggerAction({
+        action: 'buttonPressed',
+        actionContext: [this.get('params').id]
+      });
     }
   }
 });

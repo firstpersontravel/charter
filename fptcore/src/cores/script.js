@@ -7,7 +7,7 @@ const Validator = require('../utils/validator');
 const Walker = require('../utils/walker');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 26;
+const CURRENT_VERSION = 27;
 
 const metaSchema = {
   type: 'object',
@@ -90,15 +90,15 @@ class ScriptCore {
     const errors = [];
     const names = new Set();
     walker.walkAllFields(scriptContent, componentType,
-      (obj, spec, parent, key) => {
+      (collectionName, resource, obj, spec) => {
         // Check no overlapping names for any components with a name type
         if (!obj[validateUniqueParam]) {
           return;
         }
         if (names.has(obj[validateUniqueParam])) {
           errors.push({
-            path: '?',
-            collection: componentType,
+            path: `${collectionName}[name=${resource.name}]`,
+            collection: collectionName,
             message:
               `Duplicate id in ${componentType}: ${obj[validateUniqueParam]}`
           });

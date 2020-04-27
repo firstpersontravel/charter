@@ -14,7 +14,6 @@ module.exports = {
       hint: 'Allow partial responses.'
     }
   },
-  parentParamNameOnEventSpec: 'clip',
   matchEvent: function(spec, event, actionContext) {
     if (event.partial && !spec.allow_partial) {
       return false;

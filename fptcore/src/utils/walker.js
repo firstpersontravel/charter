@@ -87,9 +87,41 @@ class Walker {
       const collection = scriptContent[collectionName];
       const resourceType = TextUtil.singularize(collectionName);
       for (const resource of collection) {
-        this.walkResource(resourceType, resource, paramType, iteree);
+        this.walkResource(resourceType, resource, paramType,
+          (obj, paramSpec) => iteree(collectionName, resource, obj,
+            paramSpec));
       }
     }
+  }
+
+  walkComponents(scriptContent, componentType, iteree) {
+    this.walkAllFields(scriptContent, componentType, iteree);
+  }
+
+  /**
+   * Walk all components to get one by id.
+   */
+  getComponentsByType(scriptContent, componentType) {
+    const components = [];
+    this.walkComponents(scriptContent, componentType,
+      (collectionName, resource, obj, paramSpec) => {
+        components.push(obj);
+      });
+    return components;
+  }
+
+  /**
+   * Walk all components to get one by id.
+   */
+  getComponentById(scriptContent, componentType, componentId) {
+    let component = null;
+    this.walkComponents(scriptContent, componentType,
+      (collectionName, resource, obj, paramSpec) => {
+        if (obj.id === componentId) {
+          component = obj;
+        }
+      });
+    return component;
   }
 }
 

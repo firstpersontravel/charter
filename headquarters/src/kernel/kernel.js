@@ -24,9 +24,9 @@ class KernelController {
     return Kernel.resultForEvent(event, actionContext);
   }
 
-  static _resultForTriggerAndObjs(objs, trigger, evaluateAt) {
+  static _resultForTriggerAndObjs(objs, trigger, event, evaluateAt) {
     const actionContext = KernelUtil.prepareActionContext(objs, evaluateAt);
-    return Kernel.resultForTrigger(trigger, null, actionContext,
+    return Kernel.resultForTrigger(trigger, event, actionContext,
       actionContext);
   }
 
@@ -75,7 +75,7 @@ class KernelController {
   /**
    * Apply an action and gather the results.
    */
-  static async applyTrigger(tripId, triggerName, applyAt) {
+  static async applyTrigger(tripId, triggerName, event, applyAt) {
     logger.info(`(Trip #${tripId}) Applying trigger: ${triggerName}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
@@ -84,7 +84,7 @@ class KernelController {
     if (!trigger) {
       return null;
     }
-    const result = this._resultForTriggerAndObjs(objs, trigger,
+    const result = this._resultForTriggerAndObjs(objs, trigger, event,
       evaluateAt);
     await this._applyResult(objs, result);
     return result;
