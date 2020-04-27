@@ -102,10 +102,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
   function itemsForRole(role) {
     return _(allPlayers)
-      .filter((player) => {
-        const trip = group.trips.find(t => t.id === player.tripId);
-        return trip && trip.tripState.currentPageNamesByRole[player.roleName];
-      })
+      .filter(player => !!player.role.interface)
       .filter({ roleName: role.name })
       .map('user')
       .uniq()

@@ -143,11 +143,11 @@ body {
   .scene-header {
     position: absolute;
     top: -2.2em;
-    left: 0;
+    left: 7.5px;
     background: gray;
     color: white;
     a { color: white; }
-    padding: 5px;
+    padding: 5px 10px;
   }
 
   &.row-current-scene {
