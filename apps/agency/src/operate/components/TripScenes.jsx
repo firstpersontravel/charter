@@ -39,12 +39,14 @@ export default class TripScenes extends Component {
   render() {
     const trip = this.props.trip;
     return (
-      <SceneGrid
-        trip={trip}
-        onEvent={this.handleEvent}
-        onAction={this.handleAction}
-        onTrigger={this.handleTrigger}
-        onAdminAction={this.handleAdminAction} />
+      <div className="container-fluid">
+        <SceneGrid
+          trip={trip}
+          onEvent={this.handleEvent}
+          onAction={this.handleAction}
+          onTrigger={this.handleTrigger}
+          onAdminAction={this.handleAdminAction} />
+      </div>
     );
   }
 }
