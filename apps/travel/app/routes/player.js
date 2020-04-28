@@ -162,7 +162,15 @@ export default Ember.Route.extend({
       this.makeEvent({
         type: 'numberpad_submitted',
         numberpad_id: numberpadId,
-        entry: entry
+        submission: entry
+      });
+    },
+
+    textEntrySubmitted: function(textentryId, entry) {
+      this.makeEvent({
+        type: 'text_entry_submitted',
+        text_entry_id: textentryId,
+        submission: entry
       });
     },
 

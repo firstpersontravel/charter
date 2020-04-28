@@ -18,9 +18,11 @@ module.exports = {
       events: {
         button_pressed: require('./button_pressed'),
         numberpad_submitted: require('./numberpad_submitted'),
-        directions_arrived: require('./directions_arrived')
+        directions_arrived: require('./directions_arrived'),
+        text_entry_submitted: require('./text_entry_submitted')
       },
-      panels: panels
+      panels: panels,
+      conditions: require('./panel_conditions')
     }
   },
 };

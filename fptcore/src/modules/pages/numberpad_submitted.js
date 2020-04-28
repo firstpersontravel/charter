@@ -1,6 +1,7 @@
 module.exports = {
   help: 'Occurs when a user confirms a number on a numberpad.',
-  parentComponentType: 'panels',
+  // temp: show in side bar while working on preview
+  // parentComponentType: 'panels',
   specParams: {
     numberpad: {
       required: true,
@@ -23,7 +24,7 @@ module.exports = {
     if (!numberpad) {
       return 'unknown numberpad';
     }
-    const numberpadDest = numberpad.destination_name || '<no text>';
-    return `arrived at "${numberpadDest}"`;
+    const numberpadTitle = numberpad.placeholder || '<numberpad>';
+    return `submitted to "${numberpadTitle}"`;
   }
 };

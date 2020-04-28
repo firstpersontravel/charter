@@ -21,6 +21,14 @@ import { sortForRole } from '../operate/utils';
 import { getPlayerIframeUrl } from '../utils';
 
 const promptsForTriggerEventTypes = {
+  text_entry_submitted: {
+    prompt: 'What text?',
+    getEvent: result => ({ submission: result })
+  },
+  numberpad_submitted: {
+    prompt: 'What number?',
+    getEvent: result => ({ submission: result })
+  },
   text_received: {
     prompt: 'What message?',
     getEvent: result => ({ message: { content: result } })

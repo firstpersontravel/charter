@@ -134,6 +134,14 @@ module.exports = {
       style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
     }
   },
+  text_entry: {
+    icon: 'sticky-note',
+    help: 'Displays a text entry field.',
+    properties: {
+      submit: { type: 'string' },
+      placeholder: { type: 'string' }
+    }
+  },
   video: {
     icon: 'sticky-note',
     help: 'Displays a video.',

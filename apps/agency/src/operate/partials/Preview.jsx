@@ -121,6 +121,16 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
   );
 }
 
+function renderTextEntry(trip, player, page, panel, onEvent) {
+  return (
+    <input
+      type="text"
+      className="form-control"
+      disabled
+      placeholder={panel.placeholder} />
+  );
+}
+
 const panelRenderers = {
   qr_display: renderQr,
   image: renderImage,
@@ -128,7 +138,8 @@ const panelRenderers = {
   yesno: renderText,
   button: renderButton,
   directions: renderDirections,
-  numberpad: renderNumberpad
+  numberpad: renderNumberpad,
+  text_entry: renderTextEntry
 };
 
 function renderPanel(trip, player, page, panel, onEvent) {
