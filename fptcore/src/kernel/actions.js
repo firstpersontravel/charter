@@ -82,6 +82,10 @@ class KernelActions {
     // Figure out which if clause is active
     const actions = this.actionsForConditional(clause, actionContext);
 
+    if (!actions) {
+      return [];
+    }
+
     // Ensure an array is returned
     if (!_.isArray(actions)) {
       throw new Error('Expected actions to be an array.');

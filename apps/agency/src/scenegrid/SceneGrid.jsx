@@ -38,6 +38,7 @@ export default class SceneGrid extends Component {
       openTriggerTooltipName: null,
       openPopoverPageName: null
     };
+    this.cachedTriggerNames = {};
   }
 
   getPlayersForScene(scene) {
@@ -54,6 +55,23 @@ export default class SceneGrid extends Component {
       ))
       .sortBy(player => sortForRole(player.role))
       .value();
+  }
+
+  /**
+   * Cache button titles since it's expensive to walk through all buttons
+   * and nested objects.
+   */
+  getTriggerTitle(trigger) {
+    const script = this.props.trip.script;
+    const key = `${script.id}-${trigger.name}`;
+    if (this.cachedTriggerNames[key]) {
+      return this.cachedTriggerNames[key];
+    }
+    const triggerResourceClass = coreRegistry.resources.trigger;
+    const triggerTitle = triggerResourceClass.getEventTitle(
+      script.content, trigger, coreRegistry, coreWalker);
+    this.cachedTriggerNames[key] = triggerTitle;
+    return triggerTitle;
   }
 
   handleAction(actionName, actionParams) {
@@ -83,26 +101,13 @@ export default class SceneGrid extends Component {
     const goToPageButton = (!isCurrentPage) ? (
       // eslint-disable-next-line jsx-a11y/no-static-element-interactions
       <a
-        style={{ cursor: 'pointer', float: 'right' }}
+        style={{ cursor: 'pointer' }}
         onClick={() => this.handleAction('send_to_page', {
           role_name: player.roleName,
           page_name: page.name
         })}
         className="ml-1">
         <i className="fa fa-arrow-circle-right" />
-      </a>
-    ) : null;
-
-    const refreshButton = (isCurrentPage && !isAckedPage) ? (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-      <a
-        className="ml-1"
-        style={{ cursor: 'pointer', float: 'right' }}
-        onClick={() => this.props.onAdminAction(
-          trip.orgId, trip.experienceId, trip.id,
-          'notify', { notify_type: 'refresh' }
-        )}>
-        <i className="fa fa-hand-right" />
       </a>
     ) : null;
 
@@ -131,8 +136,7 @@ export default class SceneGrid extends Component {
     const playerPageName = `${player.id}-${page.name}`;
     const isPopoverOpen = this.state.openPopoverPageName === playerPageName;
     return (
-      <div key={page.name}>
-        {goToPageButton}
+      <div key={page.name} className="mb-1">
         <ResourceBadge
           resourceType="page"
           className="mr-1"
@@ -144,8 +148,8 @@ export default class SceneGrid extends Component {
           id={`popover-page-${playerPageName}`}>
           <i className="fa fa-search" />
         </span>
-        {refreshButton}
         {isAckedIcon}
+        {goToPageButton}
         <Popover
           trigger="legacy"
           isOpen={isPopoverOpen}
@@ -197,7 +201,6 @@ export default class SceneGrid extends Component {
 
   renderTriggerBtn(scene, trigger) {
     const trip = this.props.trip;
-    const triggerResourceClass = coreRegistry.resources.trigger;
     const currentSceneName = this.props.trip.tripState.currentSceneName;
     const isCurrentScene = scene.name === currentSceneName;
     const isActiveGlobalScene = scene.global && (
@@ -211,8 +214,7 @@ export default class SceneGrid extends Component {
       textDecoration: hasBeenTriggered ? 'line-through' : ''
     };
     const isTooltipOpen = this.state.openTriggerTooltipName === trigger.name;
-    const btnTitle = triggerResourceClass.getEventTitle(trip.script.content,
-      trigger, coreRegistry, coreWalker);
+    const btnTitle = this.getTriggerTitle(trigger);
     return (
       <span key={trigger.name}>
         <button
@@ -273,6 +275,12 @@ export default class SceneGrid extends Component {
         if (!trigger.event) {
           return false;
         }
+        // Don't show trigger buttons for panel activated events since those
+        // can be activated directly on the panel preview.
+        const eventResourceClass = coreRegistry.events[trigger.event.type];
+        if (eventResourceClass.parentComponentType === 'panels') {
+          return false;
+        }
         return true;
       })
       .map(trigger => (
@@ -282,6 +290,10 @@ export default class SceneGrid extends Component {
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="scene-header">
+          <ResourceBadge
+            resourceType="scene"
+            className="mr-1"
+            showType={false} />
           {scene.title}
           <Link
             to={`/${trip.org.name}/${trip.experience.name}/script/${trip.script.revision}/design/scene/${scene.name}`}
@@ -325,6 +337,5 @@ SceneGrid.propTypes = {
   trip: PropTypes.object.isRequired,
   onEvent: PropTypes.func.isRequired,
   onAction: PropTypes.func.isRequired,
-  onTrigger: PropTypes.func.isRequired,
-  onAdminAction: PropTypes.func.isRequired
+  onTrigger: PropTypes.func.isRequired
 };

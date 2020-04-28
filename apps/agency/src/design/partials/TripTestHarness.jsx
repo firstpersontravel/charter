@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
@@ -10,17 +9,12 @@ import {
   PlayerCore,
   SceneCore,
   TripCore,
-  coreRegistry,
-  coreWalker
+  coreRegistry
 } from 'fptcore';
 
 import SceneGrid from '../../scenegrid/SceneGrid';
-import { labelForSpec } from '../utils/spec-utils';
-import { titleForResource } from '../utils/text-utils';
-import { urlForResource } from '../utils/section-utils';
-import { fullMediaUrl } from '../../operate/utils';
+import { renderParams, renderMessageContent } from '../../partials/params';
 
-const maxParamLength = 30;
 const maxMessageLength = 100;
 
 function truncateMsg(msg, maxLength) {
@@ -54,64 +48,6 @@ function getInitialState(script, variantNames) {
     scheduledActions: [],
     nextTime: null
   };
-}
-
-function renderParam(script, key, spec, param) {
-  if (spec.type === 'reference') {
-    const collectionName = spec.collection;
-    const collection = script.content[collectionName] || [];
-    const resource = _.find(collection, { name: param });
-    if (resource) {
-      return (
-        <Link to={urlForResource(script, collectionName, resource.name)}>
-          {titleForResource(script.content, collectionName, resource)}
-        </Link>
-      );
-    }
-  }
-  if (spec.type === 'componentReference') {
-    const componentType = spec.componentType;
-    const variantClass = coreRegistry[componentType][spec.componentVariant];
-    const component = coreWalker.getComponentById(script.content,
-      spec.componentType, param);
-    if (variantClass.getTitle) {
-      return variantClass.getTitle(component, script.content);
-    }
-  }
-  if (typeof param === 'string') {
-    return truncateMsg(param, maxParamLength);
-  }
-  return param;
-}
-
-function renderParams(script, spec, params) {
-  return Object
-    .entries(params)
-    .filter(([key, val]) => spec[key])
-    .map(([key, val]) => (
-      <div key={key}>
-        <span className="mr-1" style={{ fontVariant: 'small-caps' }}>
-          {labelForSpec(spec[key], key)}:
-        </span>
-        {renderParam(script, key, spec[key], val)}
-      </div>
-    ));
-}
-
-function renderMessageContent(script, fields) {
-  const role = (script.content.roles || [])
-    .find(r => r.name === fields.fromRoleName);
-  const roleTitle = role ? role.title : fields.fromRoleName;
-  if (fields.medium === 'image') {
-    const url = fullMediaUrl(script.org, script.experience, fields.content);
-    return (
-      <span>
-        {roleTitle}:&nbsp;
-        <img alt="Message" src={url} className="img-fluid" />
-      </span>
-    );
-  }
-  return `${roleTitle}: "${truncateMsg(fields.content, maxMessageLength)}"`;
 }
 
 class TripKernel {
@@ -193,7 +129,6 @@ export default class TripTestHarness extends Component {
     this.state = getInitialState(props.script, props.variantNames,
       props.startedAt);
     this.handleAction = this.handleAction.bind(this);
-    this.handleAdminAction = this.handleAdminAction.bind(this);
     this.handleTrigger = this.handleTrigger.bind(this);
     this.handleEvent = this.handleEvent.bind(this);
     this.processStateUpdate = this.processStateUpdate.bind(this);
@@ -315,8 +250,6 @@ export default class TripTestHarness extends Component {
     this.processResult(result);
   }
 
-  handleAdminAction(name, params) {}
-
   handleEvent(event) {
     const script = this.props.script;
     const eventResourceClass = coreRegistry.events[event.type];
@@ -432,7 +365,6 @@ export default class TripTestHarness extends Component {
             trip={trip}
             onEvent={this.handleEvent}
             onAction={this.handleAction}
-            onAdminAction={this.handleAdminAction}
             onTrigger={this.handleTrigger} />
         </div>
         <div className="col-sm-3 script-tester-col">

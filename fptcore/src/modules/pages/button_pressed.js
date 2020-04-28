@@ -1,5 +1,6 @@
 module.exports = {
   help: 'Occurs when a button has been pressed.',
+  parentComponentType: 'panels',
   specParams: {
     button: {
       required: true,
@@ -17,6 +18,7 @@ module.exports = {
       componentType: 'panels',
       componentVariant: 'button',
       display: { label: false },
+      title: 'Button',
       help: 'The button that was pressed.'
     }
   },

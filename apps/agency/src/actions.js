@@ -75,7 +75,9 @@ class RequestError extends Error {
     this.params = params;
     this.status = status;
     this.response = response;
-    Error.captureStackTrace(this, RequestError);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, RequestError);
+    }
   }
 }
 

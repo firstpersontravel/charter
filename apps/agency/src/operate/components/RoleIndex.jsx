@@ -75,9 +75,9 @@ function renderPlayerCell(player, isFirst) {
           <br />
           <strong>Page:</strong> {pageTitle}
           <br />
-          <strong>URL:</strong>&nbsp;
+          <strong>Interface:</strong>&nbsp;
           <a href={getPlayerIframeUrl(trip, player)} target="_blank" rel="noopener noreferrer">
-            <i className="fa fa-link" />
+            <i className="fa fa-external-link" />
           </a>
         </p>
       </div>

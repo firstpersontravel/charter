@@ -88,12 +88,47 @@ function renderButton(trip, player, page, panel, onEvent) {
   );
 }
 
+function renderDirections(trip, player, page, panel, onEvent) {
+  const isSceneActive = page.scene === trip.tripState.currentSceneName;
+  const destinationName = '<dest>';
+  const panelText = `Arrived at ${destinationName}`;
+  const isDisabled = !onEvent;
+  const btnEvent = { type: 'directions_arrived', directions_id: panel.id };
+  return (
+    <button
+      style={isSceneActive ? null : { textDecoration: 'line-through' }}
+      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      onClick={() => onEvent && onEvent(btnEvent)}
+      disabled={isDisabled}>
+      {panelText}
+    </button>
+  );
+}
+
+function renderNumberpad(trip, player, page, panel, onEvent) {
+  const isSceneActive = page.scene === trip.tripState.currentSceneName;
+  const panelText = 'Enter numberpad';
+  const isDisabled = !onEvent;
+  const btnEvent = { type: 'numberpad_submitted', numberpad_id: panel.id };
+  return (
+    <button
+      style={isSceneActive ? null : { textDecoration: 'line-through' }}
+      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      onClick={() => onEvent && onEvent(btnEvent)}
+      disabled={isDisabled}>
+      {panelText}
+    </button>
+  );
+}
+
 const panelRenderers = {
   qr_display: renderQr,
   image: renderImage,
   text: renderText,
   yesno: renderText,
-  button: renderButton
+  button: renderButton,
+  directions: renderDirections,
+  numberpad: renderNumberpad
 };
 
 function renderPanel(trip, player, page, panel, onEvent) {

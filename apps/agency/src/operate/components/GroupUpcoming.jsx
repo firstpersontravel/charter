@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 
 import { coreRegistry, KernelTriggers } from 'fptcore';
 
+import { renderParams } from '../../partials/params';
+
 function getScheduledTripTriggers(trip) {
   const now = moment.utc();
   const inOneHour = now.clone().add(1, 'hour');
@@ -26,15 +28,6 @@ function getScheduledGroupTriggers(group) {
     .map(trip => getScheduledTripTriggers(trip))
     .flatten()
     .value();
-}
-
-function renderActionParam(trip, action, paramName) {
-  return (
-    <div className="wrap-text" key={paramName}>
-      {paramName}:&nbsp;
-      {action.params[paramName]}
-    </div>
-  );
 }
 
 export default class GroupUpcoming extends Component {
@@ -73,9 +66,9 @@ export default class GroupUpcoming extends Component {
       .utc(action.scheduledAt)
       .tz(trip.experience.timezone)
       .format('ddd h:mm:ssa');
-    const values = _.keys(action.params).map(k => (
-      renderActionParam(trip, action, k)
-    ));
+    const actionResourceClass = coreRegistry.actions[action.name];
+    const values = renderParams(trip.script, actionResourceClass.params,
+      action.params);
     const cellClass = action.isArchived ?
       'upcoming-archived' : 'upcoming-unarchived';
 
@@ -155,10 +148,10 @@ export default class GroupUpcoming extends Component {
         <thead>
           <tr>
             <th>Time</th>
-            <th>Dep</th>
+            <th>Trip</th>
             <th>Type</th>
             <th>Action</th>
-            <th>Params</th>
+            <th>Parameters</th>
             <th />
           </tr>
         </thead>

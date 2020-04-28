@@ -1,5 +1,6 @@
 module.exports = {
   help: 'Occurs when a user confirms arrival at a destination.',
+  parentComponentType: 'panels',
   specParams: {
     directions: {
       required: true,

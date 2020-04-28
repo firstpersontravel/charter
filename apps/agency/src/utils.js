@@ -16,6 +16,10 @@ export function isProduction() {
   return getStage() === 'production';
 }
 
+export function getUserIframeUrl(group, user) {
+  return `/actor/${group.org.name}/user/${user.id}?nogps=1&noack=1`;
+}
+
 export function getPlayerIframeUrl(trip, player) {
   const user = player.user;
   const role = _.find(trip.script.content.roles, { name: player.roleName });

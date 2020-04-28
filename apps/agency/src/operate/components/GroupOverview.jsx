@@ -3,9 +3,33 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
+import { coreEvaluator } from 'fptcore';
+
 import GroupMap from '../partials/GroupMap';
-import { getPlayerPageInfo, sortPlayers, canRoleHaveUser } from '../utils';
-import { getPlayerIframeUrl } from '../../utils';
+import {
+  sortForRole,
+  canRoleHaveUser
+} from '../utils';
+import { getUserIframeUrl, getPlayerIframeUrl } from '../../utils';
+
+function getAllPlayers(trips) {
+  const tripsById = _.fromPairs(_.map(trips, t => [t.id, t]));
+  return _(trips)
+    .map('players')
+    .flatten()
+    .filter(player => coreEvaluator.if(
+      tripsById[player.tripId].actionContext,
+      player.role.active_if
+    ))
+    .value();
+}
+
+function getTripPlayer(trip, roleName, user) {
+  return trip.players.find(p => (
+    p.roleName === roleName &&
+    p.userId === (user ? user.id : null)
+  ));
+}
 
 export default class GroupOverview extends Component {
   renderAddUserIcon(player) {
@@ -32,76 +56,39 @@ export default class GroupOverview extends Component {
     );
   }
 
-  renderActor(roleAndActors) {
+  renderRoleUser(role, user) {
     const group = this.props.group;
-    const actor = roleAndActors.actors[0];
-    const trip = _.find(group.trips, { id: actor.tripId });
-    const pageInfo = getPlayerPageInfo(trip, actor);
-    if (!pageInfo) {
+    const userId = user ? user.id : 0;
+    const userName = user ? user.firstName : 'No user';
+    const trips = group.trips
+      .filter(trip => getTripPlayer(trip, role.name, user));
+    if (!trips.length) {
       return null;
     }
-    const userNameIfMultiple = roleAndActors.roleHasMultipleUsers ?
-      ` (${actor.user ? actor.user.firstName : 'No user'})` : '';
+    const tripTitles = trips.map(t => t.title).join(', ');
+    const externalUrl = trips.length > 1 ?
+      getUserIframeUrl(group, user) :
+      getPlayerIframeUrl(trips[0], getTripPlayer(trips[0], role.name, user));
+
     return (
-      <div key={`${roleAndActors.role.name}-${roleAndActors.userId}`} className="constrain-text">
+      <div key={`${role.name}-${userId}`} className="constrain-text">
         <Link
-          className={pageInfo.statusClass}
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${roleAndActors.role.name}/${actor.userId || 0}`}>
-          <strong>
-            {roleAndActors.role.title}{userNameIfMultiple}:
-          </strong>
-          {' '}
-          {pageInfo.status}
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${role.name}/${userId}`}>
+          <strong>{role.title}</strong> ({userName}, {tripTitles})
         </Link>
-        {' '}
         <a
+          className="ml-1"
           target="_blank"
           rel="noopener noreferrer"
-          href={getPlayerIframeUrl(trip, actor)}>
-          <i className="fa fa-link" />
+          href={externalUrl}>
+          <i className="fa fa-external-link" />
         </a>
-        {this.renderAddUserIcon(actor)}
       </div>
     );
   }
 
-  renderPlayer(player) {
-    const group = this.props.group;
-    const trip = _.find(group.trips, { id: player.tripId });
-    const pageInfo = getPlayerPageInfo(trip, player);
-    if (!pageInfo) {
-      return null;
-    }
-    return (
-      <div key={player.id} className="constrain-text">
-        <Link
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.role.name}/${player.user ? player.user.id : 0}`}>
-          <strong>{trip.title}</strong>
-          {' '}
-          {player.role.title}:
-          {' '}
-          {pageInfo.status}
-        </Link>
-        {' '}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={getPlayerIframeUrl(trip, player)}>
-          <i className="fa fa-link" />
-        </a>
-        {this.renderAddUserIcon(player)}
-      </div>
-    );
-  }
-
-  renderTripAndPlayers(tripAndPlayers) {
-    const renderedPlayers = tripAndPlayers.players
-      .map(player => this.renderPlayer(player));
-    return (
-      <div key={tripAndPlayers.trip.id}>
-        {renderedPlayers}
-      </div>
-    );
+  renderRole(role, users) {
+    return users.map(user => this.renderRoleUser(role, user));
   }
 
   renderTrip(trip) {
@@ -128,16 +115,27 @@ export default class GroupOverview extends Component {
       .map(trip => (
         this.renderTrip(trip)
       ));
-    const allPlayers = sortPlayers(group);
-    const players = allPlayers.playersByTrip.map(p => (
-      this.renderTripAndPlayers(p)
+
+    const roles = _(group.script.content.roles)
+      .filter(role => canRoleHaveUser(role))
+      .sortBy([sortForRole, 'name'])
+      .value();
+    const allPlayers = getAllPlayers(group.trips);
+
+    function usersForRole(role) {
+      return _(allPlayers)
+        .filter(player => !!player.role.interface)
+        .filter({ roleName: role.name })
+        .map('user')
+        .uniq()
+        .flatten()
+        .value();
+    }
+
+    const renderedPlayers = roles.map(role => (
+      this.renderRole(role, usersForRole(role))
     ));
-    const activeActors = allPlayers.activeActorsByRole.map(a => (
-      this.renderActor(a)
-    ));
-    const inactiveActors = allPlayers.inactiveActorsByRole.map(a => (
-      this.renderActor(a)
-    ));
+
     return (
       <div>
         <div className="mb-2">
@@ -145,14 +143,9 @@ export default class GroupOverview extends Component {
           {trips}
         </div>
         <div className="mb-2">
-          <h5>Travelers</h5>
-          {players}
+          <h5>Participants</h5>
+          {renderedPlayers}
         </div>
-        <div className="mb-2">
-          <h5>Actors</h5>
-          {activeActors}
-        </div>
-        {inactiveActors}
       </div>
     );
   }

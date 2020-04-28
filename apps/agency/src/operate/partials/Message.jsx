@@ -100,6 +100,9 @@ export default function Message({ message, updateInstance }) {
     .find(p => p.roleName === message.toRoleName);
   const fromPlayer = trip.players
     .find(p => p.roleName === message.fromRoleName);
+  if (!fromPlayer || !toPlayer) {
+    return null;
+  }
   const userPlayer = fromPlayer.role.type === 'performer' ? toPlayer :
     fromPlayer;
   const actorPlayer = userPlayer === fromPlayer ? toPlayer : fromPlayer;
