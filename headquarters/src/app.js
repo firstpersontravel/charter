@@ -41,7 +41,7 @@ const hostRedirects = {
 app.use((req, res, next) => {
   if (hostRedirects[req.hostname]) {
     const newHost = hostRedirects[req.hostname];
-    res.redirect(`${req.protocol}://${newHost}${req.path}`);
+    res.redirect(`${req.protocol}://${newHost}${req.originalUrl}`);
     return;
   }
   next();
