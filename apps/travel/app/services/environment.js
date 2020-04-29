@@ -76,7 +76,7 @@ export default Ember.Service.extend({
 
   pubsubHost: function() {
     if (!IS_NATIVE) {
-      return `${window.location.origin}:5002`;
+      return `${window.location.protocol}//${window.location.hostname}:5002`;
     }
     return NATIVE_PUBSUB_HOSTS[this.get('environmentName')];
   }.property('environmentName'),
