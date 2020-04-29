@@ -85,6 +85,9 @@ class Walker {
         continue;
       }
       const collection = scriptContent[collectionName];
+      if (!collection) {
+        continue;
+      }
       const resourceType = TextUtil.singularize(collectionName);
       for (const resource of collection) {
         this.walkResource(resourceType, resource, paramType,

@@ -2,11 +2,13 @@ import _ from 'lodash';
 
 import { coreEvaluator, PlayerCore } from 'fptcore';
 
+import config from '../config';
+
 export function fullMediaUrl(org, experience, url) {
   if (_.startsWith(url, 'http')) {
     return url;
   }
-  const host = 'https://fpt-agency-content.s3.amazonaws.com';
+  const host = `https://${config.s3ContentBucket}.s3.amazonaws.com`;
   return `${host}/${org.name}/${experience.name}/${url}`;
 }
 
