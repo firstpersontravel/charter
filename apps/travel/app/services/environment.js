@@ -6,7 +6,7 @@ const WEB_HOSTS = {
   production: 'https://charter.firstperson.travel'
 };
 
-const PUBSUB_HOSTS = {
+const NATIVE_PUBSUB_HOSTS = {
   development: 'http://localhost:5002',
   staging: 'https://beta.firstperson.travel:5002',
   production: 'https://charter.firstperson.travel:5002'
@@ -75,7 +75,10 @@ export default Ember.Service.extend({
   }.property('environmentName'),
 
   pubsubHost: function() {
-    return PUBSUB_HOSTS[this.get('environmentName')];
+    if (!IS_NATIVE) {
+      return `${window.location.origin}:5002`;
+    }
+    return NATIVE_PUBSUB_HOSTS[this.get('environmentName')];
   }.property('environmentName'),
 
   host: function() {
