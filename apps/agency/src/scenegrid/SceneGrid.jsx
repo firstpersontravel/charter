@@ -137,7 +137,8 @@ export default class SceneGrid extends Component {
           trip={trip}
           player={player}
           page={page}
-          onEvent={this.props.onEvent} />
+          onEvent={this.props.onEvent}
+          onAction={this.props.onAction} />
       );
     }
 
@@ -168,7 +169,7 @@ export default class SceneGrid extends Component {
             });
           }}>
           <PopoverHeader>
-            {renderHeader(trip, player, page)}
+            {renderHeader(trip, player, page, this.props.onAction)}
           </PopoverHeader>
           <PopoverBody>
             {renderPage(trip, player, page, this.props.onEvent)}

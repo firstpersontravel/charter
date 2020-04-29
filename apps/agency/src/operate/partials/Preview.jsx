@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { coreEvaluator, TemplateUtil } from 'fptcore';
@@ -154,26 +155,42 @@ function renderPanel(trip, player, page, panel, onEvent) {
   return renderer(trip, player, page, panel, onEvent);
 }
 
-export function renderHeader(trip, player, page) {
+export function renderHeader(trip, player, page, onAction) {
   if (!page) {
     return 'No page';
   }
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone) : page.title;
+
   const designLink = trip.script.org && trip.script.experience ? (
-    <a
+    <Link
       className="ml-1"
-      href={urlForResource(trip.script, 'pages', page.name)}>
+      to={urlForResource(trip.script, 'pages', page.name)}>
       <i className="fa fa-pencil" />
+    </Link>
+  ) : null;
+
+  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const isCurrentPage = page.name === curPageName;
+  const goToPageButton = (onAction && !isCurrentPage) ? (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+    <a
+      style={{ cursor: 'pointer' }}
+      onClick={() => onAction('send_to_page', {
+        role_name: player.roleName,
+        page_name: page.name
+      })}
+      className="ml-1">
+      <i className="fa fa-arrow-circle-right" />
     </a>
   ) : null;
+
   return (
     <span>
-      <strong>{player.role.title}</strong>
-      &nbsp;
       {truncateMsg(headerText, 100)}
       {designLink}
+      {goToPageButton}
     </span>
   );
 }
@@ -198,14 +215,14 @@ export function renderPage(trip, player, page, onEvent) {
   ));
 }
 
-export default function Preview({ trip, player, page, onEvent }) {
+export default function Preview({ trip, player, page, onEvent, onAction }) {
   if (!page) {
     return null;
   }
   return (
     <div className="card mb-2">
       <div className="card-header">
-        {renderHeader(trip, player, page)}
+        {renderHeader(trip, player, page, onAction)}
       </div>
       <div className="card-body">
         {renderPage(trip, player, page, onEvent)}
@@ -218,10 +235,12 @@ Preview.propTypes = {
   trip: PropTypes.object.isRequired,
   player: PropTypes.object.isRequired,
   page: PropTypes.object,
+  onAction: PropTypes.func,
   onEvent: PropTypes.func
 };
 
 Preview.defaultProps = {
   page: null,
-  onEvent: null
+  onEvent: null,
+  onAction: null
 };

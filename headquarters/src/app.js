@@ -32,6 +32,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 
+const hostRedirects = {
+  'app.firstperson.travel': 'charter.firstperson.travel',
+  'staging.firstperson.travel': 'beta.firstperson.travel',
+};
+
+// Host redirects
+app.use((req, res, next) => {
+  if (hostRedirects[req.hostname]) {
+    const newHost = hostRedirects[req.hostname];
+    res.redirect(`${req.protocol}://${newHost}${req.path}`);
+    return;
+  }
+  next();
+});
+
 // CORS Headers
 app.use((req, res, next) => {
   res.set('Access-Control-Allow-Origin', '*');
