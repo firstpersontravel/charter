@@ -1,7 +1,6 @@
 module.exports = {
   help: 'Occurs when a user confirms text on a text entry field.',
-  // temp: show in side bar while working on preview
-  // parentComponentType: 'panels',
+  parentComponentType: 'panels',
   specParams: {
     text_entry: {
       required: true,

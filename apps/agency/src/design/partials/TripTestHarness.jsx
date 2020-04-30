@@ -297,6 +297,15 @@ export default class TripTestHarness extends Component {
     this.setState({ scheduledActions: actionsToKeep });
   }
 
+  runAllScheduled() {
+    this.state.scheduledActions.forEach((action) => {
+      const actionContext = this.getActionContext();
+      const result = Kernel.resultForImmediateAction(action, actionContext);
+      this.processResult(result);
+    });
+    this.setState({ scheduledActions: [] });
+  }
+
   startTrip() {
     const actionContext = this.getActionContext();
     const firstSceneName = SceneCore.getStartingSceneName(
@@ -335,14 +344,22 @@ export default class TripTestHarness extends Component {
     if (!this.state.scheduledActions.length) {
       return null;
     }
-    const numPending = this.state.scheduledActions.length;
     const nextEpochMsec = Math.min(...this.state.scheduledActions
       .map(a => a.scheduleAt.valueOf()));
     const nextTime = moment(nextEpochMsec).fromNow();
     return (
       <div className="alert alert-warning">
-        <i className="fa fa-clock-o mr-1" />
-        {numPending}; next {nextTime}
+        <button
+          className="p-1 btn btn-link text-dark float-right"
+          onClick={() => {
+            this.runAllScheduled();
+          }}>
+          <i className="fa fa-forward mr-1" />
+        </button>
+        <div>
+          <i className="fa fa-clock-o mr-1" />
+          next {nextTime}
+        </div>
       </div>
     );
   }

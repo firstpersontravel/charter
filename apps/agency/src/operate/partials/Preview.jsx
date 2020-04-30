@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -10,6 +11,19 @@ import { fullMediaUrl } from '../../operate/utils';
 
 function truncateMsg(msg, maxLength) {
   return msg.length > maxLength ? `${msg.slice(0, maxLength)}...` : msg;
+}
+
+function isBtnDisabled(trip, player, page) {
+  // Btn only enabled if scene is active.
+  if (page.scene !== trip.tripState.currentSceneName) {
+    return true;
+  }
+  // Btn only enabled if page is current page.
+  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  if (page.name !== curPageName) {
+    return true;
+  }
+  return false;
 }
 
 function renderQr(trip, player, page, panel) {
@@ -73,62 +87,82 @@ function renderImage(trip, player, page, panel) {
 }
 
 function renderButton(trip, player, page, panel, onEvent) {
-  const isSceneActive = page.scene === trip.tripState.currentSceneName;
   const panelText = TemplateUtil.templateText(trip.evalContext,
     panel.text || panel.placeholder, trip.experience.timezone);
-  const isDisabled = !onEvent;
   const btnEvent = { type: 'button_pressed', button_id: panel.id };
   return (
     <button
-      style={isSceneActive ? null : { textDecoration: 'line-through' }}
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
       onClick={() => onEvent && onEvent(btnEvent)}
-      disabled={isDisabled}>
+      disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
     </button>
   );
 }
 
 function renderDirections(trip, player, page, panel, onEvent) {
-  const isSceneActive = page.scene === trip.tripState.currentSceneName;
-  const destinationName = '<dest>';
+  const destinationName = panel.destination_name || 'destination';
   const panelText = `Arrived at ${destinationName}`;
-  const isDisabled = !onEvent;
   const btnEvent = { type: 'directions_arrived', directions_id: panel.id };
   return (
     <button
-      style={isSceneActive ? null : { textDecoration: 'line-through' }}
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
       onClick={() => onEvent && onEvent(btnEvent)}
-      disabled={isDisabled}>
+      disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
     </button>
   );
 }
 
 function renderNumberpad(trip, player, page, panel, onEvent) {
-  const isSceneActive = page.scene === trip.tripState.currentSceneName;
-  const panelText = 'Enter numberpad';
-  const isDisabled = !onEvent;
-  const btnEvent = { type: 'numberpad_submitted', numberpad_id: panel.id };
   return (
     <button
-      style={isSceneActive ? null : { textDecoration: 'line-through' }}
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
-      onClick={() => onEvent && onEvent(btnEvent)}
-      disabled={isDisabled}>
-      {panelText}
+      onClick={() => {
+        if (!onEvent) {
+          return;
+        }
+        // eslint-disable-next-line no-alert
+        const submission = prompt(
+          `What entry for numberpad with placeholder "${panel.placeholder}"?`);
+        if (!submission) {
+          return;
+        }
+        onEvent({
+          type: 'numberpad_submitted',
+          numberpad_id: panel.id,
+          submission: submission
+        });
+      }}
+      disabled={isBtnDisabled(trip, player, page) || !onEvent}>
+      {panel.placeholder}
     </button>
   );
 }
 
 function renderTextEntry(trip, player, page, panel, onEvent) {
   return (
-    <input
-      type="text"
-      className="form-control"
-      disabled
-      placeholder={panel.placeholder} />
+    <button
+      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      onClick={() => {
+        if (!onEvent) {
+          return;
+        }
+        // eslint-disable-next-line no-alert
+        const submission = prompt(
+          `What entry for input with placeholder "${panel.placeholder}"?`);
+        if (!submission) {
+          return;
+        }
+        onEvent({
+          type: 'text_entry_submitted',
+          text_entry_id: panel.id,
+          submission: submission
+        });
+      }}
+      disabled={isBtnDisabled(trip, player, page) || !onEvent}>
+      {panel.placeholder}
+    </button>
   );
 }
 
@@ -155,24 +189,38 @@ function renderPanel(trip, player, page, panel, onEvent) {
   return renderer(trip, player, page, panel, onEvent);
 }
 
-export function renderHeader(trip, player, page, onAction) {
+function renderHeader(trip, player, page, onAction) {
   if (!page) {
     return 'No page';
   }
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
-      trip.experience.timezone) : page.title;
+      trip.experience.timezone) : '';
 
+  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const isCurrentPage = page.name === curPageName;
+  const isAckedPage = player.acknowledgedPageName === page.name;
+
+  const textClass = isCurrentPage ? 'text-white' : 'text-dark';
   const designLink = trip.script.org && trip.script.experience ? (
     <Link
-      className="ml-1"
+      className={`ml-1 ${textClass}`}
       to={urlForResource(trip.script, 'pages', page.name)}>
       <i className="fa fa-pencil" />
     </Link>
   ) : null;
 
-  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
-  const isCurrentPage = page.name === curPageName;
+
+  const isAckedIcon = isAckedPage ? (
+    <span className={`ml-1 ${textClass}`}>
+      <i className="fa fa-check" />
+      {moment
+        .utc(player.acknowledgedPageAt)
+        .tz(trip.experience.timezone)
+        .format('h:mma')}
+    </span>
+  ) : null;
+
   const goToPageButton = (onAction && !isCurrentPage) ? (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <a
@@ -188,8 +236,10 @@ export function renderHeader(trip, player, page, onAction) {
 
   return (
     <span>
+      <strong className="mr-1">{page.title}</strong>
       {truncateMsg(headerText, 100)}
       {designLink}
+      {isAckedIcon}
       {goToPageButton}
     </span>
   );
@@ -198,7 +248,7 @@ function isPanelVisible(trip, player, panel) {
   return coreEvaluator.if(trip.actionContext, panel.visible_if);
 }
 
-export function renderPage(trip, player, page, onEvent) {
+function renderPage(trip, player, page, onEvent) {
   const panels = page.panels || [];
   const visiblePanels = panels.filter(panel => (
     isPanelVisible(trip, player, panel)
@@ -219,9 +269,16 @@ export default function Preview({ trip, player, page, onEvent, onAction }) {
   if (!page) {
     return null;
   }
+  const isCurrentScene = page.scene === trip.tripState.currentSceneName;
+  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const isCurrentPage = page.name === curPageName;
+  const curCardClass = isCurrentScene ? 'border-primary' : 'border-secondary';
+  const curHeadClass = isCurrentScene ? 'bg-primary' : 'bg-secondary';
+  const cardClass = isCurrentPage ? curCardClass : '';
+  const headerClass = isCurrentPage ? `${curHeadClass} text-white` : '';
   return (
-    <div className="card mb-2">
-      <div className="card-header">
+    <div className={`card ${cardClass} mb-2`}>
+      <div className={`card-header ${headerClass}`}>
         {renderHeader(trip, player, page, onAction)}
       </div>
       <div className="card-body">

@@ -45,6 +45,7 @@ function getPanel(trip, evalContext, timezone, pageInfo, panel) {
     timezone);
   return Object.assign(panel, customParams, {
     type: 'panels/' + panelType,
+    panelId: panel.id,
     sceneTitle: pageInfo.scene.title,
     tripId: trip.id,
     isPageActive: pageInfo.page.scene === trip.tripState.currentSceneName

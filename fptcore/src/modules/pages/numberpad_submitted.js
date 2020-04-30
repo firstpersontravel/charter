@@ -1,7 +1,6 @@
 module.exports = {
   help: 'Occurs when a user confirms a number on a numberpad.',
-  // temp: show in side bar while working on preview
-  // parentComponentType: 'panels',
+  parentComponentType: 'panels',
   specParams: {
     numberpad: {
       required: true,

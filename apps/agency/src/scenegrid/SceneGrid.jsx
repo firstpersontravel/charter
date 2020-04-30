@@ -1,34 +1,17 @@
 import _ from 'lodash';
-import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {
-  Popover,
-  PopoverHeader,
-  PopoverBody,
-  Tooltip
-} from 'reactstrap';
+import { Tooltip } from 'reactstrap';
 
-import { coreEvaluator, coreRegistry, coreWalker, TemplateUtil } from 'fptcore';
+import { coreEvaluator, coreRegistry, coreWalker } from 'fptcore';
 
-import Preview, {
-  renderHeader,
-  renderPage
-} from '../operate/partials/Preview';
 import ResourceBadge from '../partials/ResourceBadge';
+import Preview from '../operate/partials/Preview';
 import { sortForRole } from '../operate/utils';
 import { getPlayerIframeUrl } from '../utils';
 
 const promptsForTriggerEventTypes = {
-  text_entry_submitted: {
-    prompt: 'What text?',
-    getEvent: result => ({ submission: result })
-  },
-  numberpad_submitted: {
-    prompt: 'What number?',
-    getEvent: result => ({ submission: result })
-  },
   text_received: {
     prompt: 'What message?',
     getEvent: result => ({ message: { content: result } })
@@ -100,82 +83,14 @@ export default class SceneGrid extends Component {
 
   renderPlayerPage(player, page) {
     const trip = this.props.trip;
-    const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
-    const isCurrentPage = page.name === curPageName;
-    const isAckedPage = player.acknowledgedPageName === page.name;
-    const pageTitle = TemplateUtil.templateText(trip.evalContext, page.title,
-      trip.experience.timezone);
-
-    const goToPageButton = (!isCurrentPage) ? (
-      // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-      <a
-        style={{ cursor: 'pointer' }}
-        onClick={() => this.handleAction('send_to_page', {
-          role_name: player.roleName,
-          page_name: page.name
-        })}
-        className="ml-1">
-        <i className="fa fa-arrow-circle-right" />
-      </a>
-    ) : null;
-
-    const isAckedIcon = isAckedPage ? (
-      <span>
-        &nbsp;
-        <i className="fa fa-check" />
-        {moment
-          .utc(player.acknowledgedPageAt)
-          .tz(trip.experience.timezone)
-          .format('h:mma')}
-      </span>
-    ) : null;
-
-    if (isCurrentPage) {
-      return (
-        <Preview
-          key={page.name}
-          trip={trip}
-          player={player}
-          page={page}
-          onEvent={this.props.onEvent}
-          onAction={this.props.onAction} />
-      );
-    }
-
-    const playerPageName = `${player.id}-${page.name}`;
-    const isPopoverOpen = this.state.openPopoverPageName === playerPageName;
     return (
-      <div key={page.name} className="mb-1">
-        <ResourceBadge
-          resourceType="page"
-          className="mr-1"
-          showType={false} />
-        {pageTitle}
-        <span
-          style={{ cursor: 'pointer' }}
-          className="ml-1"
-          id={`popover-page-${playerPageName}`}>
-          <i className="fa fa-search" />
-        </span>
-        {isAckedIcon}
-        {goToPageButton}
-        <Popover
-          trigger="legacy"
-          isOpen={isPopoverOpen}
-          target={`popover-page-${playerPageName}`}
-          toggle={() => {
-            this.setState({
-              openPopoverPageName: isPopoverOpen ? null : playerPageName
-            });
-          }}>
-          <PopoverHeader>
-            {renderHeader(trip, player, page, this.props.onAction)}
-          </PopoverHeader>
-          <PopoverBody>
-            {renderPage(trip, player, page, this.props.onEvent)}
-          </PopoverBody>
-        </Popover>
-      </div>
+      <Preview
+        key={page.name}
+        trip={trip}
+        player={player}
+        page={page}
+        onEvent={this.props.onEvent}
+        onAction={this.props.onAction} />
     );
   }
 
@@ -190,10 +105,10 @@ export default class SceneGrid extends Component {
     const iframeLink = trip.id ? (
       <a
         target="_blank"
-        className="ml-1"
+        className="ml-1 text-dark"
         rel="noopener noreferrer"
         href={getPlayerIframeUrl(trip, player)}>
-        <i className="fa fa-link" />
+        <i className="fa fa-external-link" />
       </a>
     ) : null;
     return (
