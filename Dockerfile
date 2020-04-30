@@ -43,6 +43,8 @@ COPY headquarters /var/app/headquarters
 RUN ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore
 
 # Build applications
+# NOTE: travel app is built for production environment; will need to make
+# app support multi envs with one build
 RUN cd /var/app/apps/travel && ember build --env production
 RUN cd /var/app/apps/agency && NODE_ENV=production webpack
 

@@ -724,8 +724,15 @@ def build_apps():
         run(
             'export GIT_HASH=`cat ./.githash` && '
             'export $(cat ./env | xargs) && '
-            'npm run build')
-
+            'cd apps/agency && '
+            'export NODE_ENV=production && '
+            'webpack --colors')
+    with cd(env.release_path):
+        run(
+            'export GIT_HASH=`cat ./.githash` && '
+            'export $(cat ./env | xargs) && '
+            'cd apps/travel && '
+            'ember build --env %(stage)s' % env)
 
 #######################################################
 ########## Web availability ###########################
