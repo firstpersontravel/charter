@@ -126,6 +126,24 @@ class Walker {
       });
     return component;
   }
+
+  /**
+   * Walk all resources to get any referencing a specific component.
+   */
+  getResourcesReferencingComponent(scriptContent, componentType, componentId) {
+    let refs = [];
+    this.walkAllFields(scriptContent, 'componentReference',
+      (collectionName, resource, obj, paramSpec) => {
+        if (paramSpec.componentType !== componentType) {
+          return;
+        }
+        if (obj !== componentId) {
+          return;
+        }
+        refs.push([collectionName, resource]);
+      });
+    return refs;
+  }
 }
 
 module.exports = Walker;

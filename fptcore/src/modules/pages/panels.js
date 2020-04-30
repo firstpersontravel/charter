@@ -115,8 +115,11 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays a numberpad.',
     properties: {
-      submit: { type: 'string' },
+      submit: { type: 'string', default: 'Submit' },
       placeholder: { type: 'string' }
+    },
+    getTitle(resource, scriptContent) {
+      return resource.placeholder || '<no placeholder>';
     }
   },
   outlet: {
@@ -138,8 +141,11 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays a text entry field.',
     properties: {
-      submit: { type: 'string' },
+      submit: { type: 'string', default: 'Submit' },
       placeholder: { type: 'string' }
+    },
+    getTitle(resource, scriptContent) {
+      return resource.placeholder || '<no placeholder>';
     }
   },
   video: {

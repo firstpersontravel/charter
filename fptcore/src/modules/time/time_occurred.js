@@ -22,7 +22,11 @@ module.exports = {
       collection: 'times',
       display: { label: false }
     },
-    offset: { required: false, type: 'timeOffset' }
+    offset: {
+      required: false,
+      help: 'A time offset, e.g. 1h, 30s, 4.2m, -10s, -1.5h',
+      type: 'timeOffset'
+    }
   },
   timeForSpec: timeForSpec,
   matchEvent: function(spec, event, actionContext) {

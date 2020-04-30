@@ -24,8 +24,14 @@ module.exports = {
     },
     schedule: {
       type: 'dictionary',
-      keys: { type: 'reference', collection: 'times' },
-      values: { type: 'timeShorthand' }
+      keys: {
+        type: 'reference',
+        collection: 'times'
+      },
+      values: {
+        type: 'timeShorthand',
+        help: 'A time, e.g. 3:00pm, 5:30am, +1d 4:15pm, +2d 12:00pm'
+      }
     }
   },
   validateResource: function(script, resource) {

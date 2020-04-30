@@ -135,7 +135,7 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
         });
       }}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
-      {panel.placeholder}
+      {panel.placeholder || 'Enter text'}
     </button>
   );
 }
@@ -161,8 +161,55 @@ function renderTextEntry(trip, player, page, panel, onEvent) {
         });
       }}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
-      {panel.placeholder}
+      {panel.placeholder || 'Enter number'}
     </button>
+  );
+}
+
+function renderChoice(trip, player, page, panel, onEvent, onAction) {
+  const choiceOptions = (panel.choices || []).map(choice => (
+    <option value={choice.value} key={choice.value}>{choice.text}</option>
+  ));
+  return (
+    <select
+      className="form-control mb-2"
+      value={_.get(trip.values, panel.value_ref) || ''}
+      onChange={(e) => {
+        if (!onEvent) {
+          return;
+        }
+        onAction('set_value', {
+          value_ref: panel.value_ref,
+          new_value_ref: `"${e.target.value}"`
+        });
+      }}
+      disabled={isBtnDisabled(trip, player, page) || !onEvent}>
+      <option value="">{panel.text}</option>
+      {choiceOptions}
+    </select>
+  );
+}
+
+function renderYesno(trip, player, page, panel, onEvent, onAction) {
+  const val = _.get(trip.values, panel.value_ref);
+  return (
+    <select
+      className="form-control mb-2"
+      value={val === undefined ? '' : val}
+      onChange={(e) => {
+        if (!onEvent) {
+          return;
+        }
+        onAction('set_value', {
+          value_ref: panel.value_ref,
+          new_value_ref: e.target.value
+        });
+      }}
+      disabled={isBtnDisabled(trip, player, page) || !onEvent}>
+      <option value="">{panel.text}</option>
+      <option value>Yes</option>
+      <option value={false}>No</option>
+    </select>
   );
 }
 
@@ -170,14 +217,15 @@ const panelRenderers = {
   qr_display: renderQr,
   image: renderImage,
   text: renderText,
-  yesno: renderText,
+  yesno: renderYesno,
+  choice: renderChoice,
   button: renderButton,
   directions: renderDirections,
   numberpad: renderNumberpad,
   text_entry: renderTextEntry
 };
 
-function renderPanel(trip, player, page, panel, onEvent) {
+function renderPanel(trip, player, page, panel, onEvent, onAction) {
   const renderer = panelRenderers[panel.type];
   if (!renderer) {
     return (
@@ -186,7 +234,7 @@ function renderPanel(trip, player, page, panel, onEvent) {
       </p>
     );
   }
-  return renderer(trip, player, page, panel, onEvent);
+  return renderer(trip, player, page, panel, onEvent, onAction);
 }
 
 function renderHeader(trip, player, page, onAction) {
@@ -248,7 +296,7 @@ function isPanelVisible(trip, player, panel) {
   return coreEvaluator.if(trip.actionContext, panel.visible_if);
 }
 
-function renderPage(trip, player, page, onEvent) {
+function renderPage(trip, player, page, onEvent, onAction) {
   const panels = page.panels || [];
   const visiblePanels = panels.filter(panel => (
     isPanelVisible(trip, player, panel)
@@ -260,7 +308,7 @@ function renderPage(trip, player, page, onEvent) {
   }
   return visiblePanels.map(panel => (
     <div key={`${page.name}-${panel.type}-${panel.text || ''}`}>
-      {renderPanel(trip, player, page, panel, onEvent)}
+      {renderPanel(trip, player, page, panel, onEvent, onAction)}
     </div>
   ));
 }
@@ -282,7 +330,7 @@ export default function Preview({ trip, player, page, onEvent, onAction }) {
         {renderHeader(trip, player, page, onAction)}
       </div>
       <div className="card-body">
-        {renderPage(trip, player, page, onEvent)}
+        {renderPage(trip, player, page, onEvent, onAction)}
       </div>
     </div>
   );

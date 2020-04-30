@@ -6,6 +6,7 @@ module.exports = {
     duration: {
       required: true,
       type: 'timeOffset',
+      help: 'A duration, i.e. 1h, 30s, 4.2m',
       display: { label: false }
     }
   },

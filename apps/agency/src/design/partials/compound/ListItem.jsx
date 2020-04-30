@@ -1,13 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { coreWalker } from 'fptcore';
+
 function ListItem({ script, resource, spec, value, name, path, opts,
   item, index, onPropUpdate, renderAny }) {
   const AnyField = renderAny;
   const itemPath = `${path}[${index}]`;
+  let isRemoveDisabled = false;
+  if (spec.items.type === 'component') {
+    const refs = coreWalker.getResourcesReferencingComponent(
+      script.content, spec.items.component, item.id);
+    if (refs.length > 0) {
+      isRemoveDisabled = true;
+    }
+  }
   const rmBtn = (
     <button
       className="btn btn-sm btn-outline-secondary"
+      title={isRemoveDisabled ? '' : 'Cannot remove: other resources are referencing this item.'}
+      disabled={isRemoveDisabled}
       onClick={() => {
         const updated = value.slice(0, index).concat(value.slice(index + 1));
         onPropUpdate(path, updated);

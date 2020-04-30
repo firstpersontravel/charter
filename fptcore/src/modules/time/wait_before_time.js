@@ -13,6 +13,7 @@ module.exports = {
     },
     before: {
       required: true,
+      help: 'A time offset, i.e. 1h, 30s, 4.2m',
       type: 'timeOffset',
       display: { label: false }
     }

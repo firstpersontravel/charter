@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames: ['page-panel-numberpad', 'page-panel-padded'],
+  classNames: ['page-panel-text-entry', 'page-panel-padded'],
 
   textInput: '',
 
