@@ -11,6 +11,20 @@ module.exports = {
       help: 'The numberpad that was submitted.'
     }
   },
+  eventParams: {
+    numberpad_id: {
+      required: true,
+      type: 'componentReference',
+      componentType: 'panels',
+      componentVariant: 'numberpad',
+      display: { label: false },
+      help: 'The numberpad that was submitted.'
+    },
+    submission: {
+      required: true,
+      type: 'string'
+    }
+  },
   matchEvent: function(spec, event, actionContext) {
     return spec.numberpad === event.numberpad_id;
   },
