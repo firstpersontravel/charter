@@ -2,7 +2,7 @@ import Ember from 'ember';
 import RealtimeMixin from '../mixins/controllers/realtime';
 
 export default Ember.Controller.extend(RealtimeMixin, {
-  channelFormat: '/@env_trip_@id',
+  channelFormat: '/trip_@id',
 
   debug: Ember.computed.oneWay('application.debug'),
 

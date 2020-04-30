@@ -22,7 +22,7 @@ class NotifyController {
   }
 
   static async notify(tripId, type, content=null) {
-    const channel = `${config.env.STAGE}_trip_${tripId}`;
+    const channel = `trip_${tripId}`;
     const message = { type: type, content: content };
     await this._notifyFaye(`/${channel}`, message);
   }

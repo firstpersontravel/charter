@@ -6,7 +6,6 @@ export default Ember.Mixin.create({
 
   mergedProperties: ['realtimeEvents'],
 
-  environment: Ember.inject.service(),
   pubsub: Ember.inject.service(),
 
   unsubscribe: function() {
@@ -57,9 +56,7 @@ export default Ember.Mixin.create({
     var oldChannelName = this.get('subscribedChannel');
     var newChannelName = null;
     if(objId) {
-      newChannelName = channelFormat
-        .replace('@env', this.get('environment.pubsubEnvironment'))
-        .replace('@id', objId);
+      newChannelName = channelFormat.replace('@id', objId);
     }
     if(newChannelName === oldChannelName) { return; }
     Ember.Logger.debug('channel switch', oldChannelName, '->', newChannelName);

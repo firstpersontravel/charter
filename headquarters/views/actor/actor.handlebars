@@ -60,7 +60,7 @@ function subscribeToFaye() {
   var client = new Faye.Client('{{pubsubUrl}}/pubsub');
   var tripIds = "{{tripIds}}".split(',');
   tripIds.forEach(function(tripId) {
-    var channel = '/{{stage}}_trip_' + tripId;
+    var channel = '/trip_' + tripId;
     var subscription = client.subscribe(channel, function(message) {
       console.log('msg for ' + tripId + ': ', message);
       if (!message) {

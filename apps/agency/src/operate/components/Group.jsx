@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 import Loader from '../../partials/Loader';
 import config from '../../config';
-import { getStage } from '../../utils';
 
 const REFRESH_FREQUENCY = 60000;
 
@@ -160,7 +159,7 @@ export default class Group extends Component {
         return;
       }
       // Otherwise, subscribe
-      const channel = `/${getStage()}_trip_${tripId}`;
+      const channel = `/trip_${tripId}`;
       console.log(`Subscribing to ${channel}`);
       const subscription = this.fayeClient.subscribe(channel, (message) => {
         this.handleFayeMessage(tripId, message);
