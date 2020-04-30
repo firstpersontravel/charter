@@ -104,6 +104,7 @@ const serveFile = f => (req, res) => res.sendFile(path.resolve(root, f));
 app.use('/static', express.static(path.join(root, 'static')));
 app.use('/build', express.static(path.join(root, 'build')));
 app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
+app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
 app.use('/favicon.ico', serveFile('static/favicon.ico'));
 app.use('/apple-touch-icon-precomposed.png',
   serveFile('static/images/apple-touch-icon-precomposed.png'));
