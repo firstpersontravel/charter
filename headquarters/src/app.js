@@ -32,21 +32,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
 
-const hostRedirects = {
-  'app.firstperson.travel': 'charter.firstperson.travel',
-  'staging.firstperson.travel': 'beta.firstperson.travel',
-};
-
-// Host redirects
-app.use((req, res, next) => {
-  if (hostRedirects[req.hostname]) {
-    const newHost = hostRedirects[req.hostname];
-    res.redirect(`${req.protocol}://${newHost}${req.originalUrl}`);
-    return;
-  }
-  next();
-});
-
 // CORS Headers
 app.use((req, res, next) => {
   res.set('Access-Control-Allow-Origin', '*');
@@ -97,6 +82,23 @@ app.use('/s3', s3Router({
   ACL: 'public-read',
   uniquePrefix: false
 }));
+
+const hostRedirects = {
+  'app.firstperson.travel': 'charter.firstperson.travel',
+  'staging.firstperson.travel': 'beta.firstperson.travel',
+};
+
+// Host redirects after API endpoints but before static content -- so that
+// twilio numbers connected to old hosts still work. If the old domain is
+// ever deprecated, twilio numbers will need to be ported over.
+app.use((req, res, next) => {
+  if (hostRedirects[req.hostname]) {
+    const newHost = hostRedirects[req.hostname];
+    res.redirect(`${req.protocol}://${newHost}${req.originalUrl}`);
+    return;
+  }
+  next();
+});
 
 // Serve static content for built travel app and agency app
 const root = path.dirname(path.dirname(path.resolve(__dirname)));

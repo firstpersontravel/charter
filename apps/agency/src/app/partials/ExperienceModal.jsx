@@ -1,7 +1,23 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from 'reactstrap';
+
+const LOCKED_NAMES = ['theheadlandsgamble', 'tacosyndicate'];
+
+const TIMEZONES = [
+  'US/Eastern',
+  'US/Mountain',
+  'US/Central',
+  'US/Pacific',
+  'Europe/London'
+];
 
 function nameForTitle(title) {
   return title
@@ -85,11 +101,15 @@ export default class ExperienceModal extends Component {
 
   handleConfirm(e) {
     e.preventDefault();
-    this.props.onConfirm(this.props.example, this.state);
+    this.props.onConfirm(this.props.example, {
+      name: this.state.name,
+      title: this.state.title,
+      domain: this.state.domain,
+      timezone: this.state.timezone
+    });
   }
 
   handleChangeField(fieldName, event) {
-    const LOCKED_NAMES = ['theheadlandsgamble', 'tacosyndicate'];
     this.setState({ [fieldName]: event.target.value });
     if (fieldName === 'title' && this.state.name !== LOCKED_NAMES) {
       const newName = nameForTitle(event.target.value);
@@ -137,13 +157,7 @@ export default class ExperienceModal extends Component {
     const isNew = !experience;
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
-
-    const timezones = [
-      'US/Eastern',
-      'US/Pacific',
-      'Europe/London'
-    ];
-    const timezoneOptions = timezones.map(timezone => (
+    const timezoneOptions = TIMEZONES.map(timezone => (
       <option key={timezone} value={timezone}>
         {timezone}
       </option>

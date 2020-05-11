@@ -19,6 +19,7 @@ import Loader from './partials/Loader';
 import NotFound from './partials/NotFound';
 import DesignRoutes from './design/routes';
 import OperateRoutes from './operate/routes';
+import HelpRoutes from './help/routes';
 import PublicConnector from './public/connectors/Public';
 import PublicRoutes from './public/routes';
 import ScheduleRoutes from './schedule/routes';
@@ -110,7 +111,7 @@ function ExperienceRoutes({ match, history }) {
       <Switch>
         <Route path={match.path} exact component={ExperienceIndexRedirect} />
         <Route path={`${match.path}/script`} component={DesignRoutes} />
-        <Route path={`${match.path}/schedule`} component={ScheduleRoutes} />
+        <Route path={`${match.pat}/schedule`} component={ScheduleRoutes} />
         <Route path={`${match.path}/operate`} component={OperateRoutes} />
         <Route path={`${match.path}/directory`} component={DirectoryRoutes} />
         <Route component={NotFound} />
@@ -170,6 +171,7 @@ function AuthedRoutes() {
       <Route path="/signup" exact component={AuthedIndexConnector} />
       <Route path="/logout" exact component={LogoutConnector} />
       <Route path="/no-orgs" exact component={NoOrgsConnector} />
+      <Route path="/help" component={HelpRoutes} />
       <Route path="/:orgName/:experienceName" component={ExperienceRoutes} />
       <Route path="/:orgName" component={OrgRoutes} />
       <Route component={NotFound} />
@@ -177,7 +179,22 @@ function AuthedRoutes() {
   );
 }
 
-const PublicEnsuredNotLoggedIn = withRouter(ensureNotLoggedIn(PublicRoutes));
+function AnonRoutes({ match }) {
+  return (
+    <PublicConnector match={match}>
+      <Switch>
+        <Route path="/help" component={HelpRoutes} />
+        <Route component={PublicRoutes} />
+      </Switch>
+    </PublicConnector>
+  );
+}
+
+AnonRoutes.propTypes = {
+  match: PropTypes.object.isRequired
+};
+
+const AnonEnsuredNotLoggedIn = withRouter(ensureNotLoggedIn(AnonRoutes));
 const AuthEnsuredLoggedIn = withRouter(ensureLoggedIn(AuthedRoutes));
 
 function AppRoutes({ isAuthenticating, isAuthenticated }) {
@@ -187,7 +204,7 @@ function AppRoutes({ isAuthenticating, isAuthenticated }) {
   if (isAuthenticated) {
     return <AuthEnsuredLoggedIn />;
   }
-  return <PublicEnsuredNotLoggedIn />;
+  return <AnonEnsuredNotLoggedIn />;
 }
 
 AppRoutes.propTypes = {

@@ -147,7 +147,7 @@ class Script extends Component {
     const experience = this.props.script.experience;
     this.props.updateInstance('experiences', experience.id, fields);
     this.props.history.push(
-      `${this.props.match.params.orgName}/${fields.name}` +
+      `/${this.props.match.params.orgName}/${fields.name}` +
       `/script/${this.props.script.revision}`);
   }
 

@@ -8,6 +8,21 @@ import { getStage } from '../utils';
 
 const globalTitle = 'Charter';
 
+const helpItem = (
+  <li className="nav-item mr-4">
+    <div className="dropdown">
+      <button className="btn btn-unstyled dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i className="fa fa-question-circle" />
+      </button>
+      <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+        <Link className="btn btn-link dropdown-item" to="/help/reference">
+          Reference
+        </Link>
+      </div>
+    </div>
+  </li>
+);
+
 function titleForOrg(org) {
   return org.isPersonal ? 'Home' : org.title;
 }
@@ -16,6 +31,7 @@ function renderRight(authInfo) {
   if (!authInfo || !authInfo.user) {
     return (
       <ul className="navbar-nav ml-auto">
+        {helpItem}
         <li className="nav-item">
           <Link className="btn btn-primary" to="/login">
             Login
@@ -36,6 +52,7 @@ function renderRight(authInfo) {
 
   return (
     <ul className="navbar-nav ml-auto">
+      {helpItem}
       <li className="nav-item">
         <div className="dropdown">
           <button className="btn btn-unstyled dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

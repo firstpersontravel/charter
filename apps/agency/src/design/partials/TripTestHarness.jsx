@@ -114,7 +114,7 @@ class TripKernel {
       id: this.state.log.length,
       time: moment(),
       level: level,
-      type: type,
+      type: type || 'Log',
       message: message
     };
     const newLog = [newEntry].concat(this.state.log).slice(0, maxNum);
