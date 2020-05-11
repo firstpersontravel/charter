@@ -14,5 +14,9 @@ export default function Help({ children, authInfo }) {
 
 Help.propTypes = {
   children: PropTypes.node.isRequired,
-  authInfo: PropTypes.object.isRequired
+  authInfo: PropTypes.object
+};
+
+Help.defaultProps = {
+  authInfo: null
 };

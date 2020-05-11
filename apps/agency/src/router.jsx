@@ -181,12 +181,10 @@ function AuthedRoutes() {
 
 function AnonRoutes({ match }) {
   return (
-    <PublicConnector match={match}>
-      <Switch>
-        <Route path="/help" component={HelpRoutes} />
-        <Route component={PublicRoutes} />
-      </Switch>
-    </PublicConnector>
+    <Switch>
+      <Route path="/help" component={HelpRoutes} />
+      <Route component={PublicRoutes} />
+    </Switch>
   );
 }
 
