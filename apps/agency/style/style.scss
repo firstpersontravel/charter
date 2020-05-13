@@ -75,10 +75,10 @@ body {
 }
 
 .popover {
-    max-width: 350px;
-    textarea {
-        height: 10em;
-    }
+  max-width: 400px;
+  textarea {
+    height: 10em;
+  }
 }
 
 .nav-tabs {
@@ -190,6 +190,13 @@ body {
 }
 
 @media(min-width: 576px) {
+  .generic-container {
+    height: calc(100% - 85px);
+  }
+  .generic-full-height {
+    max-height: 100%;
+    overflow-y: scroll; 
+  }
   .script-editor-full-height {
     max-height: calc(100% - 105px);
     overflow-y: scroll; 

@@ -1,12 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Validations } from 'fptcore';
+
 import BaseEmpty from './BaseEmpty';
 import PopoverControl from '../../../partials/PopoverControl';
+import { typeTitleForSpec } from '../../utils/spec-utils';
+
+function bottomHelpForSpec(spec) {
+  const validation = Validations[spec.type];
+  if (!validation || !validation.help) {
+    return null;
+  }
+  return `This is a ${typeTitleForSpec(spec)} field: ${validation.help}`;
+}
 
 function BaseString({ spec, value, name, path, opts, validate, clean, onPropUpdate }) {
-  const allowNewlines = spec.type === 'markdown';
-  const textLabel = allowNewlines ? (
+  const isMultiline = spec.display && spec.display.multiline;
+  const isTextarea = spec.type === 'markdown' || isMultiline;
+  const textLabel = isTextarea ? (
     <div style={{ whiteSpace: 'pre-wrap' }}>{value}</div>
   ) : value;
   const label = value ? textLabel : <BaseEmpty spec={spec} />;
@@ -23,11 +35,13 @@ function BaseString({ spec, value, name, path, opts, validate, clean, onPropUpda
   };
   return (
     <PopoverControl
-      title={name}
+      title={`${typeTitleForSpec(spec)}: ${name}`}
       validate={validateWithBlank}
       helpText={spec.help}
+      helpTextBottom={bottomHelpForSpec(spec)}
       onConfirm={onConfirm}
       label={label}
+      isTextarea={isTextarea}
       value={value} />
   );
 }

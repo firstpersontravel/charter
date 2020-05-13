@@ -7,9 +7,14 @@ module.exports = {
       type: 'reference',
       collection: 'interfaces',
       required: true,
-      parent: true
+      parent: true,
+      help: 'The parent interface in which this content page is displayed.'
     },
-    section: { type: 'string', required: true },
+    section: {
+      type: 'string',
+      required: true,
+      help: 'A string indicating which a grouping for this content page. The the `content_browse` panel will show all visible content pages grouped by section.'
+    },
     title: { type: 'string', required: true },
     active_if: {
       type: 'component',

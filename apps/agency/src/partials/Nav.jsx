@@ -11,13 +11,24 @@ const globalTitle = 'Charter';
 const helpItem = (
   <li className="nav-item">
     <div className="dropdown">
-      <button className="btn btn-link text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button className="btn btn-link p-2 mr-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i className="fa fa-question-circle" />
       </button>
       <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-        <Link className="btn btn-link dropdown-item" to="/help/reference">
+        <a
+          className="btn btn-link dropdown-item"
+          rel="noopener noreferrer"
+          target="_blank"
+          href="https://charter-docs.firstperson.travel/docs/tutorials">
+          Tutorials
+        </a>
+        <a
+          className="btn btn-link dropdown-item"
+          rel="noopener noreferrer"
+          target="_blank"
+          href="https://charter-docs.firstperson.travel/docs/reference/resources">
           Reference
-        </Link>
+        </a>
       </div>
     </div>
   </li>
@@ -55,7 +66,7 @@ function renderRight(authInfo) {
       {helpItem}
       <li className="nav-item">
         <div className="dropdown">
-          <button className="btn btn-link text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button className="btn btn-link p-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i className="fa fa-user" />
           </button>
           <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">

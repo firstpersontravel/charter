@@ -20,7 +20,8 @@ module.exports = {
     content: {
       required: true,
       type: 'string',
-      help: 'The content of the message to send.'
+      help: 'The content of the message to send.',
+      display: { multiline: true }
     },
     latitude: { required: false, type: 'number', display: { hidden: true } },
     longitude: { required: false, type: 'number', display: { hidden: true } },

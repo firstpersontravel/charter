@@ -4,7 +4,12 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    scene: { type: 'reference', collection: 'scenes', required: true },
+    scene: {
+      type: 'reference',
+      collection: 'scenes',
+      required: true,
+      help: 'The scene that this checkpoint will restore the trip to.'
+    },
     pages: {
       type: 'dictionary',
       keys: { type: 'reference', collection: 'roles' },

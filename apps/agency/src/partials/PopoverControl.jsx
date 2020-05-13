@@ -74,7 +74,7 @@ export default class PopoverControl extends Component {
       return (
         <select
           autoFocus
-          className="form-control"
+          className="form-control mr-1"
           value={this.state.value}
           onChange={this.handleChange}>
           {options}
@@ -82,11 +82,12 @@ export default class PopoverControl extends Component {
       );
     }
     // Text area
-    if (this.props.value.length > 30) {
+    if (this.props.isTextarea) {
       return (
         <textarea
           autoFocus
-          className="form-control"
+          style={{ width: '100%', display: 'block' }}
+          className="form-control mb-2"
           value={this.state.value}
           onChange={this.handleChange} />
       );
@@ -96,9 +97,32 @@ export default class PopoverControl extends Component {
       <input
         autoFocus
         type="text"
-        className="form-control"
+        className="form-control mr-1"
+        style={{ width: '100%', display: 'block' }}
         value={this.state.value}
         onChange={this.handleChange} />
+    );
+  }
+
+  renderHelp() {
+    if (!this.props.helpText) {
+      return null;
+    }
+    return (
+      <div className="mb-1" style={{ width: '100%' }}>
+        {this.props.helpText}
+      </div>
+    );
+  }
+
+  renderHelpBottom() {
+    if (!this.props.helpTextBottom) {
+      return null;
+    }
+    return (
+      <div className="mb-1" style={{ fontStyle: 'italic', width: '100%' }}>
+        {this.props.helpTextBottom}
+      </div>
     );
   }
 
@@ -109,12 +133,6 @@ export default class PopoverControl extends Component {
         '1px dashed rgba(0, 0, 0, 0.5)' :
         'none'
     };
-    const edit = this.renderEdit();
-    const helpText = this.props.helpText ? (
-      // Missing the constrain-text causes an infinite loop for help lines
-      // with more than one line... :(
-      <div className="mb-1 constrain-text">{this.props.helpText}</div>
-    ) : null;
     return (
       <span className="popover-control">
         <button
@@ -132,19 +150,20 @@ export default class PopoverControl extends Component {
           isOpen={this.state.isOpen}
           target={this.labelId}
           toggle={this.handleClose}>
-          <PopoverHeader>{this.props.title}</PopoverHeader>
+          <PopoverHeader>
+            {this.props.title}
+          </PopoverHeader>
           <PopoverBody>
-            {helpText}
+            {this.renderHelp()}
             <form className="form-inline">
-              {edit}
-              &nbsp;
+              {this.renderEdit()}
+              {this.renderHelpBottom()}
               <button
-                className="btn btn-primary"
+                className="btn btn-primary mr-1"
                 disabled={!this.isValid()}
                 onClick={this.handleConfirm}>
                 <i className="fa fa-check" />
               </button>
-              &nbsp;
               <button className="btn btn-secondary" onClick={this.handleClose}>
                 <i className="fa fa-close" />
               </button>
@@ -159,13 +178,15 @@ export default class PopoverControl extends Component {
 PopoverControl.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   helpText: PropTypes.string,
+  helpTextBottom: PropTypes.string,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.node]),
   labelClassName: PropTypes.string,
   title: PropTypes.string.isRequired,
   choices: PropTypes.array,
   validate: PropTypes.func,
   onConfirm: PropTypes.func.isRequired,
-  underlined: PropTypes.bool
+  underlined: PropTypes.bool,
+  isTextarea: PropTypes.bool
 };
 
 PopoverControl.defaultProps = {
@@ -174,5 +195,7 @@ PopoverControl.defaultProps = {
   choices: null,
   validate: null,
   helpText: null,
-  underlined: true
+  helpTextBottom: null,
+  underlined: true,
+  isTextarea: false
 };

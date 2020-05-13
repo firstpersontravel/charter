@@ -6,10 +6,16 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    scene: { type: 'reference', collection: 'scenes', required: true },
+    scene: {
+      type: 'reference',
+      collection: 'scenes',
+      required: true,
+      help: 'The scene at which this clip will be played.'
+    },
     transcript: {
       type: 'string',
-      help: 'The text transcript used to generate audio via speech-to-text. Only required if there is not a media path.'
+      help: 'The text transcript used to generate audio via speech-to-text. Only required if there is not a media path.',
+      display: { multiline: true }
     },
     voice: {
       type: 'enum',

@@ -6,7 +6,12 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    scene: { type: 'reference', collection: 'scenes', required: true },
+    scene: {
+      type: 'reference',
+      collection: 'scenes',
+      required: true,
+      help: 'The scene at which the outcome of this achievement is expected to be known. Before this scene, the achivement will be listed as \'pending\'.'
+    },
     style: {
       type: 'enum',
       options: ACHIEVEMENT_STYLE_OPTIONS,

@@ -21,7 +21,8 @@ module.exports = {
     subject: {
       type: 'string',
       required: true,
-      help: 'Subject line for the email.'
+      help: 'Subject line for the email.',
+      display: { multiline: true }
     },
     body: {
       type: 'markdown',

@@ -19,7 +19,6 @@ import Loader from './partials/Loader';
 import NotFound from './partials/NotFound';
 import DesignRoutes from './design/routes';
 import OperateRoutes from './operate/routes';
-import HelpRoutes from './help/routes';
 import PublicConnector from './public/connectors/Public';
 import PublicRoutes from './public/routes';
 import ScheduleRoutes from './schedule/routes';
@@ -171,7 +170,6 @@ function AuthedRoutes() {
       <Route path="/signup" exact component={AuthedIndexConnector} />
       <Route path="/logout" exact component={LogoutConnector} />
       <Route path="/no-orgs" exact component={NoOrgsConnector} />
-      <Route path="/help" component={HelpRoutes} />
       <Route path="/:orgName/:experienceName" component={ExperienceRoutes} />
       <Route path="/:orgName" component={OrgRoutes} />
       <Route component={NotFound} />
@@ -182,7 +180,7 @@ function AuthedRoutes() {
 function AnonRoutes({ match }) {
   return (
     <Switch>
-      <Route path="/help" component={HelpRoutes} />
+      {/* routes accessible both public and private go here */}
       <Route component={PublicRoutes} />
     </Switch>
   );

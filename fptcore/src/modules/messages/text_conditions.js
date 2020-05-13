@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 module.exports = {
   text_contains: {
+    help: 'Condition passes if the content to the text contains any part of the \'part\' parameter.',
     properties: {
       part: { type: 'string', required: true, display: { label: false } }
     },
@@ -14,6 +15,7 @@ module.exports = {
     }
   },
   text_is_affirmative: {
+    help: 'Condition passes if the content to the text seems affirmitive (contains \'yes\', \'ok\', \'sure\', etc.',
     properties: {},
     eval: (params, actionContext) => {
       const msg = _.get(actionContext.evalContext, 'event.message.content');

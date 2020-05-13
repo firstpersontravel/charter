@@ -207,12 +207,15 @@ describe('Validator', () => {
 
   describe('#validateParam', () => {
     it('calls param by name', () => {
-      sandbox.stub(refValidator, 'string').returns([]);
+      refValidator.string = {
+        validate: sandbox.stub().returns([])
+      };
       const spec = { type: 'string' };
 
       validator.validateParam({}, 'name', spec, null);
 
-      sinon.assert.calledWith(refValidator.string, {}, 'name', spec, null);
+      sinon.assert.calledWith(refValidator.string.validate, {}, 'name',
+        spec, null);
     });
 
     it('warns on invalid param type', () => {

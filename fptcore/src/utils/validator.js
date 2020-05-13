@@ -133,11 +133,15 @@ class Validator {
     if (!spec.type) {
       throw new Error('Missing param type in spec "' + name + '".');
     }
-    const paramValidator = Validations[spec.type] || this[spec.type];
-    if (!paramValidator) {
-      throw new Error('Invalid param type "' + spec.type + '".');
+    if (Validations[spec.type]) {
+      const validator = Validations[spec.type];
+      return validator.validate(scriptContent, name, spec, param) || [];
     }
-    return paramValidator.call(this, scriptContent, name, spec, param) || [];
+    if (this[spec.type]) {
+      const validator = this[spec.type];
+      return validator.call(this, scriptContent, name, spec, param) || [];
+    }
+    throw new Error('Invalid param type "' + spec.type + '".');
   }
 
   /**

@@ -7,7 +7,8 @@ module.exports = {
       type: 'reference',
       collection: 'scenes',
       required: true,
-      parent: true
+      parent: true,
+      help: 'The scene during which this page is active. If this scene is not the current scene, the page may still be displayed, but no user action may be taken.'
     },
     interface: {
       type: 'reference',
@@ -22,7 +23,8 @@ module.exports = {
     },
     directive: {
       type: 'string',
-      help: 'A high-level directive for the player, that will be displayed in large font at the top of the interface.'
+      help: 'A high-level directive for the player, that will be displayed in large font at the top of the interface.',
+      display: { multiline: true }
     },
     waypoint: {
       type: 'reference',
