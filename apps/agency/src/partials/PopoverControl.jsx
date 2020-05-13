@@ -74,7 +74,8 @@ export default class PopoverControl extends Component {
       return (
         <select
           autoFocus
-          className="form-control mr-1"
+          className="form-control mr-1 mb-1"
+          style={{ maxWidth: '100%' }}
           value={this.state.value}
           onChange={this.handleChange}>
           {options}

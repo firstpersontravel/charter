@@ -18,7 +18,7 @@ function TimeOffsetField({ script, spec, value, name, path, opts, onPropUpdate }
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.timeOffset(script, name, spec, val))
+        isEmpty(Validations.timeOffset.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );

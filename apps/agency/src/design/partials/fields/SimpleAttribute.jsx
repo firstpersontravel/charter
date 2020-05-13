@@ -18,7 +18,7 @@ function SimpleAttributeField({ script, spec, value, name, path, opts, onPropUpd
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.simpleAttribute(script, name, spec, val))
+        isEmpty(Validations.simpleAttribute.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );

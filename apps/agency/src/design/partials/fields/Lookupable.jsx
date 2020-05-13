@@ -18,7 +18,7 @@ function LookupableField({ script, spec, value, name, path, opts, onPropUpdate }
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.lookupable(script, name, spec, val))
+        isEmpty(Validations.lookupable.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );

@@ -14,6 +14,7 @@ import ExperienceConnector from './app/connectors/Experience';
 import OrgConnector from './app/connectors/Org';
 import OrgIndexConnector from './app/connectors/OrgIndex';
 
+import Alert from './partials/Alert';
 import Nav from './partials/Nav';
 import Loader from './partials/Loader';
 import NotFound from './partials/NotFound';
@@ -35,9 +36,13 @@ function LoaderWithNav() {
 
 function NoOrgs() {
   return (
-    <div className="container-fluid">
-      You are not a member of any organizations.
-    </div>
+    <Alert
+      color="warning"
+      header="No workspaces"
+      content={
+        <div>You are not a member of any workspaces. This shouldn&apos;t happen normally: please contact <a href="mailto:support@firstperson.travel">support@firstperson.travel</a> and we&apos;ll get one created for you right away.
+        </div>
+      } />
   );
 }
 
@@ -110,7 +115,7 @@ function ExperienceRoutes({ match, history }) {
       <Switch>
         <Route path={match.path} exact component={ExperienceIndexRedirect} />
         <Route path={`${match.path}/script`} component={DesignRoutes} />
-        <Route path={`${match.pat}/schedule`} component={ScheduleRoutes} />
+        <Route path={`${match.path}/schedule`} component={ScheduleRoutes} />
         <Route path={`${match.path}/operate`} component={OperateRoutes} />
         <Route path={`${match.path}/directory`} component={DirectoryRoutes} />
         <Route component={NotFound} />
@@ -157,7 +162,7 @@ AuthedIndex.defaultProps = {
 };
 
 const authedIndexMapper = (state, ownProps) => ({
-  firstOrgName: _.get(getUserInfo(state), 'orgs[0].name') || '/no-orgs'
+  firstOrgName: _.get(getUserInfo(state), 'orgs[0].name') || 'no-orgs'
 });
 
 const AuthedIndexConnector = connect(authedIndexMapper)(AuthedIndex);

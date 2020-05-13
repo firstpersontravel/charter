@@ -6,7 +6,11 @@ const Errors = {};
 function ScriptValidationError(message, fieldErrors) {
   this.message = message;
   this.fieldErrors = fieldErrors;
-  this.stack = Error().stack;
+  try {
+    this.stack = Error().stack;
+  } catch (err) {
+    this.stack = null;
+  }
 }
 
 ScriptValidationError.prototype = Object.create(Error.prototype);

@@ -31,6 +31,21 @@ function getTripPlayer(trip, roleName, user) {
   ));
 }
 
+function getExternalUrl(group, trips, role, user) {
+  if (!trips.length) {
+    return null;
+  }
+  if (trips.length > 1 && user) {
+    return getUserIframeUrl(group, user);
+  }
+  const trip = trips[0];
+  const player = getTripPlayer(trip, role.name, user);
+  if (player) {
+    return getPlayerIframeUrl(trip, player);
+  }
+  return null;
+}
+
 export default class GroupOverview extends Component {
   renderAddUserIcon(player) {
     if (!canRoleHaveUser(player.role)) {
@@ -66,9 +81,16 @@ export default class GroupOverview extends Component {
       return null;
     }
     const tripTitles = trips.map(t => t.title).join(', ');
-    const externalUrl = trips.length > 1 ?
-      getUserIframeUrl(group, user) :
-      getPlayerIframeUrl(trips[0], getTripPlayer(trips[0], role.name, user));
+    const externalUrl = getExternalUrl(group, trips, role, user);
+    const externalLink = externalUrl ? (
+      <a
+        className="ml-1"
+        target="_blank"
+        rel="noopener noreferrer"
+        href={externalUrl}>
+        <i className="fa fa-external-link" />
+      </a>
+    ) : null;
 
     return (
       <div key={`${role.name}-${userId}`} className="constrain-text">
@@ -76,13 +98,7 @@ export default class GroupOverview extends Component {
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${role.name}/${userId}`}>
           <strong>{role.title}</strong> ({userName}, {tripTitles})
         </Link>
-        <a
-          className="ml-1"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={externalUrl}>
-          <i className="fa fa-external-link" />
-        </a>
+        {externalLink}
       </div>
     );
   }

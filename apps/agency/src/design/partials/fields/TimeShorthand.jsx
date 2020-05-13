@@ -18,7 +18,7 @@ function TimeShorthandField({ script, spec, value, name, path, opts, onPropUpdat
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.timeShorthand(script, name, spec, val))
+        isEmpty(Validations.timeShorthand.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );

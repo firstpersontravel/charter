@@ -45,6 +45,6 @@ Alert.propTypes = {
 
 Alert.defaultProps = {
   action: null,
-  color: 'error',
+  color: 'danger',
   header: null
 };

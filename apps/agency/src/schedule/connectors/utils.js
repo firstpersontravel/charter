@@ -21,7 +21,7 @@ export function lookupScripts(state, ownProps) {
   });
 }
 
-export function isGroupInMonth(group, year, month) {
+function isGroupInMonth(group, year, month) {
   const thisMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
   const nextMonth = thisMonth.clone().add(1, 'months');
   return (
@@ -30,9 +30,7 @@ export function isGroupInMonth(group, year, month) {
   );
 }
 
-export function lookupGroups(state, ownProps) {
-  const year = ownProps.match.params.year;
-  const month = ownProps.match.params.month;
+export function lookupGroupsByDate(state, ownProps, year, month) {
   const query = new URLSearchParams(ownProps.location.search);
   const showArchived = query.get('archived') === 'true';
   const filter = {
@@ -52,6 +50,12 @@ export function lookupGroups(state, ownProps) {
       trips: instancesIncluder('trips', 'groupId', 'id')
     }
   });
+}
+
+export function lookupGroups(state, ownProps) {
+  const year = ownProps.match.params.year;
+  const month = ownProps.match.params.month;
+  return lookupGroupsByDate(state, ownProps, year, month);
 }
 
 export function lookupGroup(state, ownProps) {

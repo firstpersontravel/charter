@@ -18,7 +18,7 @@ function NameField({ script, spec, value, name, path, opts, onPropUpdate }) {
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.name(script, name, spec, val))
+        isEmpty(Validations.name.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );

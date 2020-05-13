@@ -18,7 +18,7 @@ function EmailField({ script, spec, value, name, path, opts, onPropUpdate }) {
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.email(script, name, spec, val))
+        isEmpty(Validations.email.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );
