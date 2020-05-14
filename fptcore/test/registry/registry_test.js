@@ -98,9 +98,20 @@ describe('Registry', () => {
       });
     });
 
-    it('throws error if invalid class', () => {
-      assert.throws(() => {
-        animalsRegistry.getComponentClass(spec, 'parrot');
+    it('returns only common if invalid class', () => {
+      const res = animalsRegistry.getComponentClass(spec, 'parrot');
+
+      assert.deepStrictEqual(res, {
+        properties: {
+          family: {
+            type: 'enum',
+            required: true,
+            options: ['snake', 'fish'],
+            help: 'Type of animals.',
+            display: { label: false }
+          }
+        },
+        display: { form: 'inline' }
       });
     });
   });

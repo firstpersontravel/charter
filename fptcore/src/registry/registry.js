@@ -61,12 +61,10 @@ class Registry {
     };
     // Return type object if no existing component to allow you to choose one
     // in the interface.
-    if (!variety) {
+    if (!variety || !componentsRegistry[variety]) {
       return Object.assign({ display: { form: 'inline' } }, typeClass);
     }
-    if (!componentsRegistry[variety]) {
-      throw new Error(`"${variety}" is not one of the "${componentType}" components.`);
-    }
+    
     const commonClass = componentDef.common || {};
     // For component class, rename `params` / `specParams` to `properties`.
     // TODO: all components should just use `properties` as a name.

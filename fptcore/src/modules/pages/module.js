@@ -7,12 +7,14 @@ module.exports = {
       resource: require('./content_page')
     },
     interface: {
-      resource: require('./interface')
+      resource: require('./interface'),
+      actions: {
+        update_interface: require('./interface_update'),
+      },
     },
     page: {
       resource: require('./page'),
       actions: {
-        adjust_page: require('./page_adjust'),
         send_to_page: require('./page_send_to')
       },
       events: {

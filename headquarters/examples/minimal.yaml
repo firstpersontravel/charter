@@ -19,7 +19,7 @@ content:
       header_panels:
         - id: 1
           type: text
-          text: "{{player.directive}}"
+          text: '{{player.directive}}'
           style: banner
   pages:
     - name: first_page
@@ -34,6 +34,7 @@ content:
   triggers:
     - name: first
       scene: first
-      event: { type: scene_started }
+      event:
+        type: scene_started
   meta:
-    version: 28
+    version: 29

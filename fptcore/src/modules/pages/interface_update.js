@@ -1,17 +1,17 @@
 module.exports = {
-  help: 'Send an ephemeral signal to a player. This is deprecated.',
+  help: 'Set the state of an interface. For tabbed interfaces, this sets the current tab.',
   params: {
     role_name: {
       required: true,
       type: 'reference',
       collection: 'roles',
       display: { label: false },
-      help: 'The role to send the adjustment to.'
+      help: 'The role to send the new interface state to.'
     },
     new_value: {
       required: true,
       type: 'string',
-      help: 'The adjustment value to send.'
+      help: 'The new interface state. For tabbed interfaces, the name of the tab.'
     }
   },
   getOps(params, actionContext) {

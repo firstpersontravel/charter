@@ -15,7 +15,7 @@ import {
 import SceneGrid from '../../scenegrid/SceneGrid';
 import { renderParams, renderMessageContent } from '../../partials/params';
 
-const maxMessageLength = 100;
+const maxMessageLength = 150;
 
 function truncateMsg(msg, maxLength) {
   return msg.length > maxLength ? `${msg.slice(0, maxLength)}...` : msg;

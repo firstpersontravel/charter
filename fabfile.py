@@ -586,14 +586,9 @@ def update_to_latest_release():
         run('ln -s %(release_path)s current' % env)
 
 @roles('app')
-def db_migrate():
+def migrate():
     with cd(env.hq_path):
-        run('export $(cat ../env | xargs) && ./node_modules/.bin/sequelize db:migrate')
-
-@roles('app')
-def script_migrate():
-    with cd(env.hq_path):
-        run('export $(cat ../env | xargs) && npm run migrate:scripts')
+        run('export $(cat ../env | xargs) && npm run migrate')
 
 def install_node_requirements():
     with cd('%s/headquarters' % env.repo_path):

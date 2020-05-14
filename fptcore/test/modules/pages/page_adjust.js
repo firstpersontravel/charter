@@ -1,13 +1,14 @@
 const assert = require('assert');
 
-const adjust_page = require('../../../src/modules/pages/page_adjust');
+const update_interface = require(
+  '../../../src/modules/pages/interface_update');
 
-describe('#adjust_page', () => {
+describe('#update_interface', () => {
   it('updates UI state', () => {
     const params = { role_name: 'Player', new_value: 'tab1' };
     const actionContext = {};
 
-    const res = adjust_page.getOps(params, actionContext);
+    const res = update_interface.getOps(params, actionContext);
 
     assert.deepEqual(res, [{
       operation: 'updateUi',
