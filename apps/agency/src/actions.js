@@ -65,7 +65,12 @@ function modelNameForCollectionName(collectionName) {
 }
 
 function processError(err) {
-  Sentry.captureException(err);
+  Sentry.withScope((scope) => {
+    if (typeof FS === 'object') {
+      scope.setExtra('FullStory URL', FS.getCurrentSessionURL(true));
+    }
+    Sentry.captureException(err);
+  });
 }
 
 class RequestError extends Error {
@@ -175,6 +180,27 @@ export function listCollection(collectionName, query, opts) {
   };
 }
 
+export function associateAuthData(authData) {
+  // Sentry
+  Sentry.configureScope((scope) => {
+    scope.setUser({
+      id: authData.user.id,
+      email: authData.user.email
+    });
+  });
+  // Autopilot
+  if (typeof Autopilot === 'object') {
+    Autopilot.run('associate', authData.user.email);
+  }
+  // FullStory
+  if (typeof FS === 'object') {
+    FS.identify(authData.user.id, {
+      displayName: authData.user.email,
+      email: authData.user.email
+    });
+  }
+}
+
 function authenticate(dispatch, reqName, authData) {
   localStorage.setItem('auth_latest', JSON.stringify(authData));
   dispatch(saveInstances('auth', [{ id: reqName, data: authData }]));
@@ -183,12 +209,7 @@ function authenticate(dispatch, reqName, authData) {
     return;
   }
   dispatch(saveInstances('orgs', authData.orgs));
-  Sentry.configureScope((scope) => {
-    scope.setUser({
-      id: authData.user.id,
-      email: authData.user.email
-    });
-  });
+  associateAuthData(authData);
 }
 
 export function makeAuthRequest(url, params, name) {
@@ -263,6 +284,9 @@ export function logout() {
   return function (dispatch) {
     localStorage.removeItem('auth_latest');
     dispatch(reset());
+    if (typeof FS === 'object') {
+      FS.anonymize();
+    }
   };
 }
 
@@ -483,7 +507,7 @@ export function crash(err, errInfo) {
     Object.keys(errInfo).forEach((key) => {
       scope.setExtra(key, errInfo[key]);
     });
-    Sentry.captureException(err);
+    processError(err);
   });
   return setGlobalError(err);
 }
