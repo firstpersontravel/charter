@@ -76,10 +76,6 @@ window.addEventListener('load', (event) => {
   }
   /* eslint-disable */
 
-  // Jquery is a requirement for Autopilot
-  const script = document.createElement('script');
-  script.src = 'https://code.jquery.com/jquery-3.5.1.slim.min.js';
-
   // Autopilot tracking code
   (function(o){var b="https://rapidpanda.io/anywhere/",t="f3dd85392b2d4c388bc796c117c4a299609b199be4ab4f3595b4b3089ce017ba",a=window.AutopilotAnywhere={_runQueue:[],run:function(){this._runQueue.push(arguments);}},c=encodeURIComponent,s="SCRIPT",d=document,l=d.getElementsByTagName(s)[0],p="t="+c(d.title||"")+"&u="+c(d.location.href||"")+"&r="+c(d.referrer||""),j="text/javascript",z,y;if(!window.Autopilot) window.Autopilot=a;if(o.app) p="devmode=true&"+p;z=function(src,asy){var e=d.createElement(s);e.src=src;e.type=j;e.async=asy;l.parentNode.insertBefore(e,l);};y=function(){z(b+t+'?'+p,true);};if(window.attachEvent){window.attachEvent("onload",y);}else{window.addEventListener("load",y,false);}})({"app":true});
 
