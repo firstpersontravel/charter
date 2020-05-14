@@ -43,7 +43,8 @@ class ContextCore {
       tripState: trip.tripState,
       waypointOptions: trip.waypointOptions,
       schedule: trip.schedule,
-      history: trip.history
+      history: trip.history,
+      roleStates: {}
     });
     // Add waypoint values if present
     const waypointNames = Object.keys(trip.waypointOptions || {});
@@ -62,6 +63,7 @@ class ContextCore {
         _.assign(context, option.values);
       }
     });
+
     // Add player values
     const roles = _.get(trip, 'script.content.roles') || [];
     _.each(trip.players, (player) => {
@@ -81,6 +83,9 @@ class ContextCore {
       if (player.roleName.indexOf('-') === -1) {
         context[player.roleName] = playerContext;
       }
+      // Fill in role states by name -- if multiple players, choose one
+      // arbitrarily.
+      context.roleStates[player.roleName] = playerContext;
     });
     return context;
   }

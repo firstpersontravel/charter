@@ -52,10 +52,20 @@ describe('TemplateUtil', () => {
       assert.strictEqual(TemplateUtil.lookupRef({ a: true }, 'a'), true);
       assert.strictEqual(TemplateUtil.lookupRef({ a: null }, 'a'), null);
       assert.strictEqual(TemplateUtil.lookupRef({ a: true }, 'c'), null);
-      assert.strictEqual(TemplateUtil.lookupRef({ a: { b: 'test.test' } }, 'a.b'),
-        'test.test');
-      assert.strictEqual(TemplateUtil.lookupRef({ a: { b: 'test.test' } }, 'a.c'),
-        null);
+      assert.strictEqual(TemplateUtil.lookupRef(
+        { a: { b: 'test.test' } }, 'a.b'), 'test.test');
+      assert.strictEqual(TemplateUtil.lookupRef(
+        { a: { b: 'test.test' } }, 'a.c'), null);
+    });
+
+    it('handles refs by role', () => {
+      const evalContext = { roleStates: { role2: { abc: 123 } } };
+      assert.strictEqual(TemplateUtil.lookupRef(
+        evalContext, 'player.abc', 'role2'), 123);
+      assert.strictEqual(TemplateUtil.lookupRef(
+        evalContext, 'player.abc', 'role1'), null);
+      assert.strictEqual(TemplateUtil.lookupRef(
+        evalContext, 'player.abc', null), null);
     });
   });
 
@@ -144,6 +154,19 @@ describe('TemplateUtil', () => {
       context.flag_horseride = false;
       assert.equal(TemplateUtil.templateText(context, msg, 'US/Pacific'),
         'Meet Dustin at Five Brooks at 3:45pm.');
+    });
+
+    it('templates with role', () => {
+      const evalContext = {
+        roleStates: { role1: { color: 'red' } }
+      };
+      const text = 'My fave color is {{player.color}}.';
+      assert.equal(
+        TemplateUtil.templateText(evalContext, text, 'US/Pacific', 'role1'),
+        'My fave color is red.');
+      assert.equal(
+        TemplateUtil.templateText(evalContext, text, 'US/Pacific', null),
+        'My fave color is .');
     });
   });
 });

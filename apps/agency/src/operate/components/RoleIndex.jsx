@@ -88,8 +88,7 @@ function renderPlayerCell(player, isFirst) {
 export default function RoleIndex({ user, players }) {
   const playersSorted = _(players)
     .filter('trip.script')
-    .filter(player => player.trip.tripState
-      .currentPageNamesByRole[player.roleName])
+    .filter(player => !!player.role.interface)
     .value();
   if (!playersSorted.length) {
     return <div>No players with active interfaces.</div>;

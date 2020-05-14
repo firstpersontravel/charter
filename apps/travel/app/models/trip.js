@@ -93,10 +93,5 @@ export default DS.Model.extend({
       RefUtils.updateValues(valuesCopy, arr[0], arr[1]);
     });
     this.set('values', valuesCopy);
-  },
-
-  humanizeText: function(text) {
-    return fptCore.TemplateUtil.templateText(this.get('evalContext'), text,
-      this.get('experience.timezone'));
   }
 });

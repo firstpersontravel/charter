@@ -13,39 +13,44 @@ const KernelUtil = require('../kernel/util');
 const evaluator = new Evaluator(coreRegistry);
 
 const supportedPartials = {
-  button: (evalContext, panel, timezone) => ({
-    text: TemplateUtil.templateText(evalContext, panel.text, timezone)
+  button: (evalContext, player, panel, timezone) => ({
+    text: TemplateUtil.templateText(evalContext, panel.text, timezone,
+      player.roleName)
   }),
-  text: (evalContext, panel, timezone) => ({
+  text: (evalContext, player, panel, timezone) => ({
     paragraphs: TemplateUtil
-      .templateText(evalContext, panel.text, timezone)
+      .templateText(evalContext, panel.text, timezone, player.roleName)
       .split('\n')
       .filter(Boolean)
   }),
-  choice: (evalContext, panel, timezone) => ({
+  choice: (evalContext, player, panel, timezone) => ({
     text: TemplateUtil.templateText(evalContext, panel.text, timezone),
     choices: _.map(panel.choices, choice => (
       Object.assign({}, choice, {
-        isChosen: TemplateUtil.lookupRef(evalContext, panel.value_ref) ===
-          choice.value
+        isChosen: TemplateUtil.lookupRef(evalContext, panel.value_ref,
+          player.roleName) === choice.value
       })
     ))
   }),
-  yesno: (evalContext, panel, timezone) => ({
-    text: TemplateUtil.templateText(evalContext, panel.text, timezone),
-    isYes: TemplateUtil.lookupRef(evalContext, panel.value_ref) === true,
-    isNo: TemplateUtil.lookupRef(evalContext, panel.value_ref) === false
+  yesno: (evalContext, player, panel, timezone) => ({
+    text: TemplateUtil.templateText(evalContext, panel.text, timezone,
+      player.roleName),
+    isYes: TemplateUtil.lookupRef(evalContext, panel.value_ref,
+      player.roleName) === true,
+    isNo: TemplateUtil.lookupRef(evalContext, panel.value_ref,
+      player.roleName) === false
   }),
   default: () => ({})
 };
 
-function getPanel(trip, evalContext, timezone, pageInfo, panel) {
+function getPanel(trip, player, evalContext, timezone, pageInfo, panel) {
   const panelType = supportedPartials[panel.type] ? panel.type : 'default';
-  const customParams = supportedPartials[panelType](evalContext, panel,
+  const customParams = supportedPartials[panelType](evalContext, player, panel,
     timezone);
   return Object.assign(panel, customParams, {
     type: 'panels/' + panelType,
     panelId: panel.id,
+    roleName: player.roleName,
     sceneTitle: pageInfo.scene.title,
     tripId: trip.id,
     isPageActive: pageInfo.page.scene === trip.tripState.currentSceneName
@@ -70,7 +75,8 @@ function getPage(objs, actionContext, player) {
     page.directive, timezone);
   const panels = _(page.panels || [])
     .filter(panel => evaluator.if(actionContext, panel.visible_if))
-    .map(panel => getPanel(trip, evalContext, timezone, pageInfo, panel))
+    .map(panel => getPanel(trip, player, evalContext, timezone, pageInfo,
+      panel))
     .value();
   const role = _.find(script.content.roles, { name: player.roleName });
   return {

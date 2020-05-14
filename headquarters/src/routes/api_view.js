@@ -12,10 +12,7 @@ const defaultInterface = {
 };
 
 const defaultContentPages = [{
-  panels: [{
-    type: 'outlet',
-    name: 'main'
-  }]
+  panels: [{ type: 'current_page' }]
 }];
 
 function prepPanel(panel) {
@@ -31,7 +28,7 @@ function prepContentPage(scriptContent, trip, player, contentPage,
   const panels = contentPage.panels
     .filter(panel => evaluator.if(actionContext, panel.visible_if))
     .flatMap(panel => (
-      panel.type === 'outlet' ? currentPage.panels : [panel]
+      panel.type === 'current_page' ? currentPage.panels : [panel]
     ));
   return {
     panels: panels.map(panel => prepPanel(panel))

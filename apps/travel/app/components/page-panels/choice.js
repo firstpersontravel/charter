@@ -6,7 +6,7 @@ export default Ember.Component.extend({
   choices: Ember.computed.oneWay('params.choices'),
 
   humanizedText: function() {
-    return this.get('trip').humanizeText(this.get('params.text'));
+    return this.get('player').humanizeText(this.get('params.text'));
   }.property('params.text', 'trip.evalContext'),
 
   items: function() {
@@ -33,7 +33,7 @@ export default Ember.Component.extend({
       }
       return {
         valueRef: valueRef,
-        text: this.get('trip').humanizeText(choice.text),
+        text: this.get('player').humanizeText(choice.text),
         isSelected: value === currentValue
       };
     }, this);

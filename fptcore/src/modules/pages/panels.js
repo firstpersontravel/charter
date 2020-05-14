@@ -1,6 +1,6 @@
 var PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
 var PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
-var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'quest'];
+var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'banner'];
 
 module.exports = {
   audio_foreground: {
@@ -67,6 +67,11 @@ module.exports = {
       section: { type: 'string', required: true }
     }
   },
+  current_page: {
+    icon: 'sticky-note',
+    help: 'Shows the current page for this player. Should only be used as part of an interface.',
+    properties: {}
+  },
   directions: {
     icon: 'sticky-note',
     help: 'Displays live directions for the given route.',
@@ -122,19 +127,16 @@ module.exports = {
       return resource.placeholder || '<no placeholder>';
     }
   },
-  outlet: {
-    icon: 'sticky-note',
-    help: 'For internal use.',
-    properties: {
-      name: { type: 'string', required: true }
-    }
-  },
   text: {
     icon: 'sticky-note',
     help: 'Displays simple text.',
     properties: {
       text: { type: 'markdown', required: true },
-      style: { type: 'enum', options: PANEL_TEXT_STYLE_OPTIONS }
+      style: {
+        type: 'enum',
+        options: PANEL_TEXT_STYLE_OPTIONS,
+        help: 'Choose centered to center your text, or banner to give it a highlighted background.'
+      }
     }
   },
   text_entry: {

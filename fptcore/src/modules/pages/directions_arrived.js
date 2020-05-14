@@ -11,6 +11,22 @@ module.exports = {
       help: 'The directions that were completed.'
     }
   },
+  eventParams: {
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles'
+    },
+    directions_id: {
+      required: true,
+      type: 'componentReference',
+      componentType: 'panels',
+      componentVariant: 'directions',
+      display: { label: false },
+      title: 'Directions',
+      help: 'The directions that were completed.'
+    }
+  },
   matchEvent: function(spec, event, actionContext) {
     return spec.directions === event.directions_id;
   },

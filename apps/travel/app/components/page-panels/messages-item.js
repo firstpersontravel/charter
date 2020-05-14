@@ -52,7 +52,7 @@ export default Ember.Component.extend({
     var type = this.get('message.medium');
     var content = this.get('message.content');
     if (type === 'text') {
-      return this.get('trip').humanizeText(content);
+      return this.get('player').humanizeText(content);
     }
     var url = this.get('trip.script').urlForContentPath(content);
     if (type === 'image') {

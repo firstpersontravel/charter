@@ -3,6 +3,8 @@ content:
     - name: player
       title: Player
       type: traveler
+      interface: player
+      starting_page: first_page
   scenes:
     - name: first
       title: First scene
@@ -14,5 +16,24 @@ content:
     - name: player
       title: Player
       type: simple
+      header_panels:
+        - id: 1
+          type: text
+          text: "{{player.directive}}"
+          style: banner
+  pages:
+    - name: first_page
+      title: First page
+      interface: player
+      directive: Hello from Charter!
+      scene: first
+      panels:
+        - id: 2
+          type: text
+          text: This is your first page
+  triggers:
+    - name: first
+      scene: first
+      event: { type: scene_started }
   meta:
-    version: 27
+    version: 28

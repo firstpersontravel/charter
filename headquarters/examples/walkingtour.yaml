@@ -6,7 +6,7 @@ content:
       section: tabs
       header_panels:
         - type: text
-          style: quest
+          style: banner
           text: '{{Player.directive}}'
           visible_if:
             op: value_is_true
@@ -18,8 +18,7 @@ content:
       section: tabs
       title: Navigation
       panels:
-        - type: outlet
-          name: main
+        - type: current_page
           id: 156
     - name: messages
       interface: tablet
@@ -149,7 +148,7 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 27
+    version: 28
 assets:
   - type: directions
     data:

@@ -8,6 +8,7 @@ module.exports = {
       type: 'reference',
       collection: 'roles',
       display: { label: false },
+      specialValues: [{ value: 'current', label: 'Current' }],
       help: 'The role to send to a page.'
     },
     page_name: {
@@ -19,6 +20,18 @@ module.exports = {
     }
   },
   getOps(params, actionContext) {
+    let roleName = params.role_name;
+    if (roleName === 'current') {
+      const curRoleName = _.get(actionContext.evalContext, 'event.role_name');
+      if (!curRoleName) {
+        return [{
+          operation: 'log',
+          level: 'error',
+          message: 'No current role in event when expected.'
+        }];
+      }
+      roleName = curRoleName;
+    }
     var newPageName = params.page_name !== 'null' ? params.page_name : '';
     if (newPageName !== '') {
       var page = _.find(actionContext.scriptContent.pages,
@@ -33,7 +46,7 @@ module.exports = {
     }
     const newPageNames = Object.assign({},
       actionContext.evalContext.tripState.currentPageNamesByRole, {
-        [params.role_name]: newPageName
+        [roleName]: newPageName
       });
     const newTripState = Object.assign({},
       actionContext.evalContext.tripState, {

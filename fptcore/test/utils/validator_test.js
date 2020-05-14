@@ -263,7 +263,7 @@ describe('Validator', () => {
             text: {
               properties: {
                 text: { type: 'string', required: true },
-                style: { type: 'enum', options: ['centered', 'quest'] }
+                style: { type: 'enum', options: ['centered', 'banner'] }
               }
             }
           }

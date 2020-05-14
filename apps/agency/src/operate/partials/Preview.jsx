@@ -63,7 +63,7 @@ function renderQr(trip, player, page, panel) {
 function renderText(trip, player, page, panel) {
   const maxLength = 100;
   let humanized = TemplateUtil.templateText(trip.evalContext,
-    panel.text, trip.experience.timezone);
+    panel.text, trip.experience.timezone, player.roleName);
   if (humanized.length > maxLength) {
     humanized = `${humanized.slice(0, maxLength)}...`;
   }
@@ -88,8 +88,13 @@ function renderImage(trip, player, page, panel) {
 
 function renderButton(trip, player, page, panel, onEvent) {
   const panelText = TemplateUtil.templateText(trip.evalContext,
-    panel.text || panel.placeholder, trip.experience.timezone);
-  const btnEvent = { type: 'button_pressed', button_id: panel.id };
+    panel.text || panel.placeholder, trip.experience.timezone,
+    player.roleName);
+  const btnEvent = {
+    type: 'button_pressed',
+    role_name: player.roleName,
+    button_id: panel.id
+  };
   return (
     <button
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
@@ -103,7 +108,11 @@ function renderButton(trip, player, page, panel, onEvent) {
 function renderDirections(trip, player, page, panel, onEvent) {
   const destinationName = panel.destination_name || 'destination';
   const panelText = `Arrived at ${destinationName}`;
-  const btnEvent = { type: 'directions_arrived', directions_id: panel.id };
+  const btnEvent = {
+    type: 'directions_arrived',
+    role_name: player.roleName,
+    directions_id: panel.id
+  };
   return (
     <button
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
@@ -130,6 +139,7 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
         }
         onEvent({
           type: 'numberpad_submitted',
+          role_name: player.roleName,
           numberpad_id: panel.id,
           submission: submission
         });
@@ -156,6 +166,7 @@ function renderTextEntry(trip, player, page, panel, onEvent) {
         }
         onEvent({
           type: 'text_entry_submitted',
+          role_name: player.roleName,
           text_entry_id: panel.id,
           submission: submission
         });
@@ -243,7 +254,7 @@ function renderHeader(trip, player, page, onAction) {
   }
   const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
-      trip.experience.timezone) : '';
+      trip.experience.timezone, player.roleName) : '';
 
   const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
   const isCurrentPage = page.name === curPageName;

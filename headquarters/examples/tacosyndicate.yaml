@@ -3,8 +3,7 @@ content:
     - name: content_page-ntsoxi
       interface: Inductee
       panels:
-        - name: main
-          type: outlet
+        - type: current_page
           id: 19
       section: tab
       title: Task
@@ -35,7 +34,7 @@ content:
       role: Jessie
   interfaces:
     - header_panels:
-        - style: quest
+        - style: banner
           text: '{{Inductee.directive}}'
           type: text
           visible_if:
@@ -1324,7 +1323,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 27
+    version: 28
 assets:
   - data:
       end:

@@ -2,6 +2,8 @@ import Ember from 'ember';
 import DS from 'ember-data';
 import RefUtils from '../utils/ref';
 
+import fptCore from 'fptcore';
+
 export default DS.Model.extend({
   trip: DS.belongsTo('trip', {async: false}),
   user: DS.belongsTo('user', {async: false}),
@@ -66,5 +68,10 @@ export default DS.Model.extend({
       RefUtils.updateValues(valuesCopy, arr[0], arr[1]);
     });
     this.set('values', valuesCopy);
+  },
+
+  humanizeText: function(text) {
+    return fptCore.TemplateUtil.templateText(this.get('trip.evalContext'),
+      text, this.get('trip.experience.timezone'), this.get('roleName'));
   }
 });

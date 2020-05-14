@@ -12,6 +12,11 @@ module.exports = {
     }
   },
   eventParams: {
+    role_name: {
+      required: true,
+      type: 'reference',
+      collection: 'roles'
+    },
     numberpad_id: {
       required: true,
       type: 'componentReference',

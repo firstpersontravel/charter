@@ -161,6 +161,7 @@ export default Ember.Route.extend({
     numberpadSubmitted: function(numberpadId, entry) {
       this.makeEvent({
         type: 'numberpad_submitted',
+        role_name: this.context.get('roleName'),
         numberpad_id: numberpadId,
         submission: entry
       });
@@ -169,6 +170,7 @@ export default Ember.Route.extend({
     textEntrySubmitted: function(textentryId, entry) {
       this.makeEvent({
         type: 'text_entry_submitted',
+        role_name: this.context.get('roleName'),
         text_entry_id: textentryId,
         submission: entry
       });
@@ -177,6 +179,7 @@ export default Ember.Route.extend({
     buttonPressed: function(buttonId) {
       this.makeEvent({
         type: 'button_pressed',
+        role_name: this.context.get('roleName'),
         button_id: buttonId
       });
     },

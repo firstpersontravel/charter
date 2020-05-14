@@ -56,22 +56,6 @@ export default Ember.Controller.extend({
 
   pagePanels: function() {
     var page = this.get('pageModel');
-    if (!page) {
-      return {};
-    }
-
-    var pagePanels = {};
-    // Assemble list of partials with panels
-    var partials = Ember.$.extend({
-      main: {panels: this.filterPanels(page.panels)}
-    }, page.partials || {});
-
-    // Go through each and resolve outlets
-    Object.keys(partials).forEach(function(outletName) {
-      pagePanels[outletName] = partials[outletName].panels;
-    }, this);
-
-    // return resolved
-    return pagePanels;
+    return page ? this.filterPanels(page.panels) : [];
   }.property('pageModel', 'trip.model.evalContext')
 });

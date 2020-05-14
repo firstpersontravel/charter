@@ -136,7 +136,11 @@ describe('ContextCore', () => {
         model: 'deluxe',
         abc: '123',
         sarai: saraiValues,
-        vance: vanceValues
+        vance: vanceValues,
+        roleStates: {
+          'role-123': saraiValues,
+          'role-456': vanceValues
+        }
       };
 
       const result = ContextCore.gatherEvalContext(env, trip);

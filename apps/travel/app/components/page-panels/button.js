@@ -13,7 +13,7 @@ export default Ember.Component.extend({
   }.property('params.style'),
 
   humanizedText: function() {
-    return this.get('trip').humanizeText(this.get('params.text'));
+    return this.get('player').humanizeText(this.get('params.text'));
   }.property('params.text', 'trip.evalContext'),
 
   actions: {

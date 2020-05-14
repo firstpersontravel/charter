@@ -12,8 +12,8 @@ export default Ember.Component.extend({
   collectPanelPartials: function(baseComponents) {
     var collectedPanels = [];
     baseComponents.forEach(function(panel) {
-      if (panel.type === 'outlet') {
-        var innerPanels = this.get('pagePanels')[panel.name];
+      if (panel.type === 'current_page') {
+        var innerPanels = this.get('pagePanels');
         if (!innerPanels || innerPanels.length === 0) {
           innerPanels = [];
           // innerPanels = panel.default_panels || [];

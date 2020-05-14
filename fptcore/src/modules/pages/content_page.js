@@ -23,7 +23,6 @@ module.exports = {
     },
     panels: {
       type: 'list',
-      required: true,
       help: 'List of user interface panels.',
       items: { type: 'component', component: 'panels' }
     }
