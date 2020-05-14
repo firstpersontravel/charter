@@ -84,15 +84,19 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
         `${relay.org.title.padEnd(25)} | ` +
         `${truncate(relay.experience.title, 20).padEnd(20)}`
       );
-      const lastTrip = await models.Trip.findOne({
-        where: { experienceId: relay.experienceId },
-        order: [['updatedAt', 'desc']]
-      });
-      if (lastTrip) {
-        const updatedAt = moment(lastTrip.updatedAt);
-        expText += ` | ${updatedAt.fromNow().padEnd(20)}`;
-        if (updatedAt.isAfter(cullThreshold)) {
-          shouldCull = false;
+      if (relay.experience.isArchived) {
+        expText += ` | ${'*Archived*'.padEnd(20)}`;
+      } else {
+        const lastTrip = await models.Trip.findOne({
+          where: { experienceId: relay.experienceId },
+          order: [['updatedAt', 'desc']]
+        });
+        if (lastTrip) {
+          const updatedAt = moment(lastTrip.updatedAt);
+          expText += ` | ${updatedAt.fromNow().padEnd(20)}`;
+          if (updatedAt.isAfter(cullThreshold)) {
+            shouldCull = false;
+          }
         }
       }
     }
