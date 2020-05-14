@@ -25,7 +25,7 @@ redirectRouter.get('/', asyncRoute(redirectRoutes.redirectRoute));
 // Actor routes
 const actorRouter = express.Router();
 actorRouter.get('/:orgName', asyncRoute(actorRoutes.actorsListRoute));
-actorRouter.get('/:orgName/:userId', asyncRoute(actorRoutes.userShowRoute));
+actorRouter.get('/:orgName/user/:userId', asyncRoute(actorRoutes.userShowRoute));
 actorRouter.get('/:orgName/player/:playerId', asyncRoute(actorRoutes.playerShowRoute));
 
 // Gallery routes
