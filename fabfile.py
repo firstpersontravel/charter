@@ -688,8 +688,7 @@ def _deploy():
     copy_environment()
     build_apps()
     update_to_latest_release()
-    db_migrate()
-    script_migrate()
+    migrate()
 
 
 def _get_releases():
