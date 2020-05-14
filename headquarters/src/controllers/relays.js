@@ -15,7 +15,7 @@ class RelaysController {
       .getTwilioClient()
       .availablePhoneNumbers('US')
       .local
-      .list({ areaCode: '707' });
+      .list();
     if (!availableNumbers.length) {
       throw new Error('No numbers available for purchase.');
     }

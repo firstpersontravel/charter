@@ -15,6 +15,7 @@ program
   .option('--delete-relays', 'Delete the relays to be culled.')
   .option('--delete-numbers', 'Delete the twilio numbers to be culled.')
   .option('--update-hosts', 'Update any numbers with outdated hosts.')
+  .option('--limit [limit]', 'Limit number of updates')
   .parse(process.argv);
 
 const stagesByHost = {
@@ -45,7 +46,8 @@ function formatNum(num) {
   return `(${num.substr(0, 3)}) ${num.substr(3, 3)}-${num.substr(6, 6)}`;
 }
 
-async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts }) {
+async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
+  limit }) {
   const cullThreshold = moment().subtract(cullThresholdSecs, 's');
   const allNumbers = await twilioClient.incomingPhoneNumbers.list();
   const allRelays = await models.Relay.findAll({
@@ -138,26 +140,28 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts }) {
   }
 
   if (deleteRelays || deleteNumbers || updateHosts) {
+    const opmax = Number(limit || 0);
     console.log('');
     console.log('Executed:');
 
     if (deleteRelays) {
-      for (const relayToCull of relaysToCull) {
+      for (const relayToCull of relaysToCull.slice(0, opmax)) {
         await relayToCull.destroy();
         console.log(`- Deleted relay #${relayToCull.id}`);
       }
     }
 
     if (deleteNumbers) {
-      for (const numberToCull of numbersToCull) {
+      for (const numberToCull of numbersToCull.slice(0, opmax)) {
         await numberToCull.remove();
         console.log(
           `- Deleted ${formatNum(numberToCull.phoneNumber.slice(2))}`);
       }
     }
     if (updateHosts) {
-      for (const [numberToUpdate, stage] of numbersToUpdate) {
-        const host = hostsByStage[stage];
+      for (const [numberToUpdate, stage] of numbersToUpdate.slice(0, opmax)) {
+        const proto = stage === 'development' ? 'http://' : 'https://';
+        const host = `${proto}${hostsByStage[stage]}`;
         await numberToUpdate.update({
           voiceUrl: `${host}/endpoints/twilio/calls/incoming`,
           statusCallback: `${host}/endpoints/twilio/calls/incoming_status`,
@@ -165,7 +169,7 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts }) {
         });
         console.log(
           `- Updated ${formatNum(numberToUpdate.phoneNumber.slice(2))} ` +
-          ` to ${host}.`);
+          `to ${host}.`);
       }
     }
   }
