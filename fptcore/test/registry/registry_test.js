@@ -58,18 +58,20 @@ describe('Registry', () => {
   describe('#getComponentClass', () => {
     const spec = { type: 'components', component: 'animals' };
 
+    const expectedFamilySpec = {
+      type: 'enum',
+      required: true,
+      options: ['snake', 'fish'],
+      help: 'Type of animals.',
+      display: { label: false }
+    };
+
     it('returns merged class by variety', () => {
       const res = animalsRegistry.getComponentClass(spec, 'snake');
 
       assert.deepStrictEqual(res, {
         properties: {
-          family: {
-            type: 'enum',
-            required: true,
-            options: ['snake', 'fish'],
-            help: 'Type of animals.',
-            display: { label: false }
-          },
+          family: expectedFamilySpec,
           name: {
             type: 'string'
           },
@@ -85,15 +87,7 @@ describe('Registry', () => {
       const res = animalsRegistry.getComponentClass(spec, null);
 
       assert.deepStrictEqual(res, {
-        properties: {
-          family: {
-            type: 'enum',
-            required: true,
-            options: ['snake', 'fish'],
-            help: 'Type of animals.',
-            display: { label: false }
-          }
-        },
+        properties: { family: expectedFamilySpec },
         display: { form: 'inline' }
       });
     });
@@ -102,15 +96,7 @@ describe('Registry', () => {
       const res = animalsRegistry.getComponentClass(spec, 'parrot');
 
       assert.deepStrictEqual(res, {
-        properties: {
-          family: {
-            type: 'enum',
-            required: true,
-            options: ['snake', 'fish'],
-            help: 'Type of animals.',
-            display: { label: false }
-          }
-        },
+        properties: { family: expectedFamilySpec },
         display: { form: 'inline' }
       });
     });
