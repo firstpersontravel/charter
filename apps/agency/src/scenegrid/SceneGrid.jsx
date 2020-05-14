@@ -199,12 +199,15 @@ export default class SceneGrid extends Component {
         if (!trigger.event) {
           return false;
         }
-        // Don't show trigger buttons for panel activated events since those
-        // can be activated directly on the panel preview.
-        const eventResourceClass = coreRegistry.events[trigger.event.type];
-        if (eventResourceClass.parentComponentType === 'panels') {
-          return false;
-        }
+        // For now show all triggers; even those that can be activated more
+        // easily by buttons on the preview. This is because buttons in
+        // interface content pages (like other tabs) aren't shown in the
+        // preview by default so those could be untriggerable in testing.
+
+        // const eventResourceClass = coreRegistry.events[trigger.event.type];
+        // if (eventResourceClass.parentComponentType === 'panels') {
+        //   return false;
+        // }
         return true;
       })
       .map(trigger => (
