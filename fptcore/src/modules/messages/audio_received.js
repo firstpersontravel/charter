@@ -4,7 +4,7 @@ var WaypointCore = require('../../cores/waypoint');
 var distance = require('../../utils/distance');
 
 module.exports = {
-  help: 'Occurs when am audio message has been received.',
+  help: 'Occurs when an audio message has been received.',
   getTitle: function(scriptContent, spec) {
     var parts = ['audio'];
     if (spec.geofence) {

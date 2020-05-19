@@ -100,15 +100,18 @@ class TripResetHandler {
     // Load checkpoint
     const checkpoints = [start].concat(trip.script.content.checkpoints || []);
     const checkpoint = _.find(checkpoints, { name: checkpointName });
+
+    // Clear actions and messages
+    await models.Action.destroy({ where: { tripId: tripId }});
+    await models.Message.destroy({ where: { tripId: tripId }});
+
     // Reset data
     await this._resetTrip(trip.script, trip, trip.experience.timezone,
       checkpoint);
     for (let player of players) {
       await this._resetPlayer(trip.script, trip, player);
     }
-    // Clear actions and messages
-    await models.Action.destroy({ where: { tripId: tripId }});
-    await models.Message.destroy({ where: { tripId: tripId }});
+
     // Notify
     await NotifyController.notify(tripId, 'reload');
   }

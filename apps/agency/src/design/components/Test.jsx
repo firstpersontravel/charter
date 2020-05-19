@@ -112,14 +112,19 @@ export default class Test extends Component {
 
   render() {
     const variantNames = Object.values(this.state.variantSections);
+    const hasSidePanel = !!variantSectionsForScript(this.props.script).length;
+    const sidePanel = hasSidePanel ? (
+      <div className="col-sm-1 script-tester-col">
+        {this.renderParams()}
+        {this.renderReset()}
+      </div>
+    ) : null;
+    const testHarnessClass = hasSidePanel ? 'col-sm-11' : 'col-sm-12';
     return (
       <div className="container-fluid">
         <div className="row row-eq-height script-tester-container">
-          <div className="col-sm-1 script-tester-col">
-            {this.renderParams()}
-            {this.renderReset()}
-          </div>
-          <div className="col-sm-11 script-tester-col">
+          {sidePanel}
+          <div className={`${testHarnessClass} script-tester-col`}>
             <TripTestHarness
               script={this.props.script}
               variantNames={variantNames}

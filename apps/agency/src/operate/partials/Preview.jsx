@@ -61,7 +61,7 @@ function renderQr(trip, player, page, panel) {
 }
 
 function renderText(trip, player, page, panel) {
-  const maxLength = 100;
+  const maxLength = 80;
   let humanized = TemplateUtil.templateText(trip.evalContext,
     panel.text, trip.experience.timezone, player.roleName);
   if (humanized.length > maxLength) {
@@ -337,10 +337,10 @@ export default function Preview({ trip, player, page, onEvent, onAction }) {
   const headerClass = isCurrentPage ? `${curHeadClass} text-white` : '';
   return (
     <div className={`card ${cardClass} mb-2`}>
-      <div className={`card-header ${headerClass}`}>
+      <div className={`card-header p-2 ${headerClass}`}>
         {renderHeader(trip, player, page, onAction)}
       </div>
-      <div className="card-body">
+      <div className="card-body p-2">
         {renderPage(trip, player, page, onEvent, onAction)}
       </div>
     </div>

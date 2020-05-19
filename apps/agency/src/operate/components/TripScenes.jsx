@@ -8,6 +8,7 @@ export default class TripScenes extends Component {
     super(props);
     this.handleTrigger = this.handleTrigger.bind(this);
     this.handleAction = this.handleAction.bind(this);
+    this.handleAdminAction = this.handleAdminAction.bind(this);
     this.handleEvent = this.handleEvent.bind(this);
   }
 
@@ -16,6 +17,13 @@ export default class TripScenes extends Component {
     this.props.postAdminAction(
       trip.orgId, trip.experienceId, trip.id,
       'trigger', { trigger_name: triggerName, event: event });
+  }
+
+  handleAdminAction(name, params) {
+    const trip = this.props.trip;
+    this.props.postAdminAction(
+      trip.orgId, trip.experienceId, trip.id,
+      name, params);
   }
 
   handleAction(actionName, actionParams) {
@@ -37,6 +45,7 @@ export default class TripScenes extends Component {
           trip={trip}
           onEvent={this.handleEvent}
           onAction={this.handleAction}
+          onAdminAction={this.handleAdminAction}
           onTrigger={this.handleTrigger} />
       </div>
     );

@@ -129,6 +129,7 @@ export default class TripTestHarness extends Component {
     this.state = getInitialState(props.script, props.variantNames,
       props.startedAt);
     this.handleAction = this.handleAction.bind(this);
+    this.handleAdminAction = this.handleAdminAction.bind(this);
     this.handleTrigger = this.handleTrigger.bind(this);
     this.handleEvent = this.handleEvent.bind(this);
     this.processStateUpdate = this.processStateUpdate.bind(this);
@@ -235,6 +236,12 @@ export default class TripTestHarness extends Component {
       const newScheduledActions = this.state.scheduledActions
         .concat(result.scheduledActions);
       this.setState({ scheduledActions: newScheduledActions });
+    }
+  }
+
+  handleAdminAction(name, params) {
+    if (name === 'reset') {
+      this.resetState(this.props.script, this.props.variantNames);
     }
   }
 
@@ -382,6 +389,7 @@ export default class TripTestHarness extends Component {
             trip={trip}
             onEvent={this.handleEvent}
             onAction={this.handleAction}
+            onAdminAction={this.handleAdminAction}
             onTrigger={this.handleTrigger} />
         </div>
         <div className="col-sm-3 script-tester-col">

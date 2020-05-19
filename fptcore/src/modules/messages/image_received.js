@@ -4,7 +4,7 @@ var WaypointCore = require('../../cores/waypoint');
 var distance = require('../../utils/distance');
 
 module.exports = {
-  help: 'Occurs when am image message has been received.',
+  help: 'Occurs when an image message has been received.',
   getTitle: function(scriptContent, spec) {
     var parts = ['image'];
     if (spec.geofence) {

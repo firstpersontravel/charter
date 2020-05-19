@@ -65,6 +65,10 @@ export default class SceneGrid extends Component {
     return triggerTitle;
   }
 
+  handleAdminAction(name, params) {
+    this.props.onAdminAction(name, params);
+  }
+
   handleAction(actionName, actionParams) {
     this.props.onAction(actionName, actionParams);
   }
@@ -164,7 +168,7 @@ export default class SceneGrid extends Component {
     );
   }
 
-  renderSceneRow(scene, colWidth) {
+  renderSceneRow(scene, colWidth, isFirst) {
     const players = this.getPlayersForScene(scene);
     const currentSceneName = this.props.trip.tripState.currentSceneName;
     const isCurrentScene = scene.name === currentSceneName;
@@ -214,6 +218,20 @@ export default class SceneGrid extends Component {
         this.renderTriggerBtn(scene, trigger)
       ));
 
+    const resetBtn = isFirst ? (
+      <button
+        onClick={() => this.handleAdminAction('reset', {
+          checkpoint_name: '__start'
+        })}
+        style={{
+          marginTop: 0,
+          marginBottom: '0.25em'
+        }}
+        className="constrain-text btn btn-block btn-xs btn-outline-secondary">
+        reset to start
+      </button>
+    ) : null;
+
     return (
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="scene-header">
@@ -236,6 +254,7 @@ export default class SceneGrid extends Component {
           </div>
         </div>
         <div className="col-sm-2">
+          {resetBtn}
           {triggerBtns}
         </div>
       </div>
@@ -249,8 +268,8 @@ export default class SceneGrid extends Component {
     const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;
     const colWidth = Math.floor(12 / maxPlayersInScene);
-    const renderedScenes = sortedScenes.map(scene => (
-      this.renderSceneRow(scene, colWidth)
+    const renderedScenes = sortedScenes.map((scene, i) => (
+      this.renderSceneRow(scene, colWidth, i === 0)
     ));
     return (
       <div>
@@ -264,5 +283,6 @@ SceneGrid.propTypes = {
   trip: PropTypes.object.isRequired,
   onEvent: PropTypes.func.isRequired,
   onAction: PropTypes.func.isRequired,
+  onAdminAction: PropTypes.func.isRequired,
   onTrigger: PropTypes.func.isRequired
 };

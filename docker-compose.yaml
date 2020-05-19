@@ -6,7 +6,6 @@ services:
       # Code
       - ./fptcore:/var/app/fptcore
       - ./headquarters:/var/app/headquarters
-      - /var/app/headquarters/node_modules  # use container node_modules
       # Static assets
       - ./static:/var/app/static
       - ./build:/var/app/build
@@ -16,7 +15,7 @@ services:
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/server.js | pino -c"
+    command: /bin/bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/server.js | pino -c"
     links: [mysql]
     depends_on: [mysql]
     ports: ["5001:5001"]
@@ -26,12 +25,11 @@ services:
     volumes:
       - ./fptcore:/var/app/fptcore
       - ./headquarters:/var/app/headquarters
-      - /var/app/headquarters/node_modules  # use container node_modules
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/worker.js | pino -c"
+    command: /bin/bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/worker.js | pino -c"
     links: [mysql]
     depends_on: [mysql]
 
@@ -39,12 +37,11 @@ services:
     image: fpt:latest
     volumes:
       - ./headquarters:/var/app/headquarters
-      - /var/app/headquarters/node_modules  # use container node_modules
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
     working_dir: /var/app/headquarters
-    command: bash -c "node bin/pubsub.js | pino -c"
+    command: /bin/bash -c "node bin/pubsub.js | pino -c"
     ports: ["5002:5002"]
 
   mysql:
