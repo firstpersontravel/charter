@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { TextUtil, coreRegistry } from 'fptcore';
+import { TextUtil, coreRegistry, coreWalker } from 'fptcore';
 
 import ResourceContainer from '../partials/ResourceContainer';
 import ResourceBadge from '../../partials/ResourceBadge';
@@ -55,6 +55,19 @@ function getNewResourceFields(collectionName, defaults) {
   });
 
   return fields;
+}
+
+function duplicateResource(collectionName, existingResource) {
+  const resourceType = TextUtil.singularize(collectionName);
+  const newName = newResourceNameForType(resourceType);
+  const clonedResource = _.cloneDeep(existingResource);
+  const newResource = Object.assign({}, clonedResource, { name: newName });
+  coreWalker.walkResource(resourceType, clonedResource, 'panels', (panel) => {
+    // Generate new panel IDs by random number. Hacky!
+    // eslint-disable-next-line no-param-reassign
+    panel.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  });
+  return newResource;
 }
 
 export default class ResourceShow extends Component {
@@ -213,14 +226,12 @@ export default class ResourceShow extends Component {
 
   handleDupeMainResource() {
     const collectionName = this.props.match.params.collectionName;
-    const resourceType = TextUtil.singularize(collectionName);
     const existingResource = this.getMainResource();
-    const newName = newResourceNameForType(resourceType);
-    const newResource = Object.assign({}, existingResource, { name: newName });
+    const newResource = duplicateResource(collectionName, existingResource);
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, newResource.name, newResource);
     this.handleUpdateScript(newScriptContent,
-      `${this.props.match.params.collectionName}/${newName}`, true);
+      `${this.props.match.params.collectionName}/${newResource.name}`, true);
   }
 
   handleDeleteMainResource() {
@@ -273,18 +284,16 @@ export default class ResourceShow extends Component {
   }
 
   handleDupeChildResource(collectionName, resourceName) {
-    const resourceType = TextUtil.singularize(collectionName);
     const collection = this.props.script.content[collectionName];
     const existingResource = _.find(collection, { name: resourceName });
-    const newName = newResourceNameForType(resourceType);
-    const newResource = Object.assign({}, existingResource, { name: newName });
+    const newResource = duplicateResource(collectionName, existingResource);
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, newResource.name, newResource);
     this.handleUpdateScript(newScriptContent,
       `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
     this.props.history.push({
-      search: `?child=${collectionName}.${newName}`
+      search: `?child=${collectionName}.${newResource.name}`
     });
   }
 

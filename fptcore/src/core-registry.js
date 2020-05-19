@@ -1,10 +1,8 @@
 const Registry = require('./registry/registry');
 const components = require('./registry/components');
 const modules = [
-  require('./modules/achievements/module'),
   require('./modules/audio/module'),
   require('./modules/calls/module'),
-  require('./modules/checkpoints/module'),
   require('./modules/cues/module'),
   require('./modules/email/module'),
   require('./modules/locations/module'),

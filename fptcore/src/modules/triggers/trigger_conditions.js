@@ -8,7 +8,8 @@ module.exports = {
       items: {
         type: 'list',
         items: { type: 'component', component: 'conditions' },
-        display: { label: false }
+        display: { label: false },
+        help: 'A list of subconditions, all of which must be true.'
       }
     },
     eval: (params, actionContext, subIf) => {
@@ -22,7 +23,8 @@ module.exports = {
       items: {
         type: 'list',
         items: { type: 'component', component: 'conditions' },
-        display: { label: false }
+        display: { label: false },
+        help: 'A list of subconditions, one of which must be true.'
       }
     },
     eval: (params, actionContext, subIf) => {
@@ -36,7 +38,8 @@ module.exports = {
         required: true,
         type: 'component',
         component: 'conditions',
-        display: { label: false }
+        display: { label: false },
+        help: 'A subcondition, which must be false.'
       }
     },
     eval: (params, actionContext, subIf) => {

@@ -5,8 +5,7 @@ export const sections = [
   ['scenes', 'Scenes', 'map'],
   ['locations', 'Location', 'map-pin'],
   ['variants', 'Variants', 'space-shuttle'],
-  ['interface', 'Interface', 'file-image-o'],
-  ['operations', 'Operations', 'gear']
+  ['interface', 'Interface', 'file-image-o']
 ];
 
 const sectionContent = {
@@ -33,11 +32,6 @@ const sectionContent = {
     children: ['content_pages']
   }, {
     collection: 'qr_codes'
-  }],
-  operations: [{
-    collection: 'achievements'
-  }, {
-    collection: 'checkpoints'
   }]
 };
 

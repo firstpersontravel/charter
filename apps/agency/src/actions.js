@@ -491,8 +491,8 @@ export function createTrip(fields, nextItems) {
   return function (dispatch) {
     createInstances('trips', fields, nextItems)(dispatch)
       .then(trip => (
-        postAdminAction(trip.orgId, trip.experienceId, trip.id,
-          'reset', { checkpoint_name: '__start' })(dispatch)
+        postAdminAction(trip.orgId, trip.experienceId, trip.id, 'reset')(
+          dispatch)
       ))
       .catch(processError);
   };

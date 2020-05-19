@@ -5,8 +5,7 @@
 // const TripResetHandler = require('../../src/handlers/trip_reset');
 
 describe('TripResetHandler', () => {
-  describe('#resetToCheckpoint', () => {
+  describe('#resetToStart', () => {
     it.skip('resets to start', () => {});
-    it.skip('resets to defined checkpoint', () => {});
   });
 });

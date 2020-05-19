@@ -41,8 +41,7 @@ async function fastForwardNextRoute(req, res) {
 
 async function resetRoute(req, res) {
   const tripId = req.params.tripId;
-  const checkpointName = req.body.checkpoint_name;
-  await TripResetHandler.resetToCheckpoint(tripId, checkpointName);
+  await TripResetHandler.resetToStart(tripId);
   res.json({ data: { ok: true } });
 }
 

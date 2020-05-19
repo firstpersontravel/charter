@@ -42,14 +42,6 @@ export default function Trip({ trip, children }) {
           <NavLink
             className="nav-link"
             activeClassName="active"
-            to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/achievements`}>
-            Achievements
-          </NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink
-            className="nav-link"
-            activeClassName="active"
             to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/gallery`}>
             Gallery
           </NavLink>

@@ -4,7 +4,12 @@ module.exports = {
   text_contains: {
     help: 'Condition passes if the content to the text contains any part of the \'part\' parameter.',
     properties: {
-      part: { type: 'string', required: true, display: { label: false } }
+      part: {
+        type: 'string',
+        required: true,
+        display: { label: false },
+        help: 'A fragment of text to look for in the text response.'
+      }
     },
     eval: (params, actionContext) => {
       const msg = _.get(actionContext.evalContext, 'event.message.content');

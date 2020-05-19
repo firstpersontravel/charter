@@ -4,7 +4,12 @@ module.exports = {
   submission_contains: {
     help: 'Condition passes if the submission contains any part of the \'part\' parameter.',
     properties: {
-      part: { type: 'string', required: true, display: { label: false } }
+      part: {
+        type: 'string',
+        required: true,
+        display: { label: false },
+        help: 'A text fragment which must be contained by the submission.'
+      }
     },
     eval: (params, actionContext) => {
       const msg = _.get(actionContext.evalContext, 'event.submission');

@@ -9,7 +9,6 @@ import GroupOverviewConnector from './connectors/GroupOverview';
 import GroupMessagesConnector from './connectors/GroupMessages';
 import GroupUpcomingConnector from './connectors/GroupUpcoming';
 import TripConnector from './connectors/Trip';
-import TripAchievementsConnector from './connectors/TripAchievements';
 import TripScenesConnector from './connectors/TripScenes';
 import TripGalleryConnector from './connectors/TripGallery';
 import TripMessagesConnector from './connectors/TripMessages';
@@ -62,9 +61,6 @@ function TripRoutes({ match }) {
         <Route
           path={`${match.path}/messages`}
           component={TripMessagesConnector} />
-        <Route
-          path={`${match.path}/achievements`}
-          component={TripAchievementsConnector} />
         <Route
           path={`${match.path}/gallery`}
           component={TripGalleryConnector} />

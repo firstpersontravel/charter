@@ -220,9 +220,7 @@ export default class SceneGrid extends Component {
 
     const resetBtn = isFirst ? (
       <button
-        onClick={() => this.handleAdminAction('reset', {
-          checkpoint_name: '__start'
-        })}
+        onClick={() => this.handleAdminAction('reset')}
         style={{
           marginTop: 0,
           marginBottom: '0.25em'
