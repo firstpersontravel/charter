@@ -11,7 +11,8 @@ const whitelistedEmails = [
   'gabe.smedresman@gmail.com',
   'gabe@firstperson.travel',
   'tech@firstperson.travel',
-  'agency@firstperson.travel'
+  'agency@firstperson.travel',
+  'charter@firstperson.travel'
 ];
 
 class EmailController {

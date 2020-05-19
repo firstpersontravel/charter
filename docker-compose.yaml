@@ -6,6 +6,7 @@ services:
       # Code
       - ./fptcore:/var/app/fptcore
       - ./headquarters:/var/app/headquarters
+      - /var/app/headquarters/node_modules/bcrypt  # use bcrypt from container
       # Static assets
       - ./static:/var/app/static
       - ./build:/var/app/build
@@ -25,6 +26,7 @@ services:
     volumes:
       - ./fptcore:/var/app/fptcore
       - ./headquarters:/var/app/headquarters
+      - /var/app/headquarters/node_modules/bcrypt  # use bcrypt from container
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH

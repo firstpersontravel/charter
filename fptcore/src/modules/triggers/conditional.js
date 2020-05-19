@@ -7,7 +7,10 @@ module.exports = {
   help: 'A conditional branch.',
   display: { form: 'block' }, // override general action form: 'inline'
   params: {
-    if: { type: 'component', component: 'conditions', required: true },
+    if: {
+      type: 'component',
+      component: 'conditions'
+    },
     actions: actionList,
     elseifs: {
       type: 'list',

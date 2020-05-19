@@ -12,7 +12,8 @@ function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
   const componentTypeKey = componentClass.typeKey;
   const componentOptions = [{ value: '', label: '---' }].concat(Object
     .keys(coreRegistry[componentType])
-    .map(key => ({ value: key, label: TextUtil.titleForKey(key) })));
+    .map(key => ({ value: key, label: TextUtil.titleForKey(key) })))
+    .sort((a, b) => (a.label > b.label ? 1 : -1));
 
   const newComponentBtn = (
     <span className="btn btn-sm btn-outline-secondary">
