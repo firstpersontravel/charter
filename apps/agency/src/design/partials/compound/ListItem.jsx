@@ -18,7 +18,7 @@ function ListItem({ script, resource, spec, value, name, path, opts,
   const rmBtn = (
     <button
       className="btn btn-sm btn-outline-secondary"
-      title={isRemoveDisabled ? '' : 'Cannot remove: other resources are referencing this item.'}
+      title={isRemoveDisabled ? 'Cannot remove: other resources are referencing this item.' : ''}
       disabled={isRemoveDisabled}
       onClick={() => {
         const updated = value.slice(0, index).concat(value.slice(index + 1));

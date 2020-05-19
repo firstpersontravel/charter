@@ -62,11 +62,21 @@ function duplicateResource(collectionName, existingResource) {
   const newName = newResourceNameForType(resourceType);
   const clonedResource = _.cloneDeep(existingResource);
   const newResource = Object.assign({}, clonedResource, { name: newName });
-  coreWalker.walkResource(resourceType, clonedResource, 'panels', (panel) => {
-    // Generate new panel IDs by random number. Hacky!
-    // eslint-disable-next-line no-param-reassign
-    panel.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-  });
+
+  // Generate new panel/action IDs by random number. Hacky!
+  coreWalker.walkResource(resourceType, clonedResource, 'panels',
+    (panel) => {
+      // eslint-disable-next-line no-param-reassign
+      panel.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+    });
+
+  // Generate new panel/action IDs by random number. Hacky!
+  coreWalker.walkResource(resourceType, clonedResource, 'actions',
+    (action) => {
+      // eslint-disable-next-line no-param-reassign
+      action.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+    });
+
   return newResource;
 }
 
