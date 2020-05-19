@@ -29,7 +29,7 @@ content:
       scene: SCENE-8
       title: Phil Followup
   inboxes:
-    - address: dispatch@tacosyndicate.family
+    - address: charter@firstperson.travel
       name: Jessie
       role: Jessie
   interfaces:
@@ -510,7 +510,6 @@ content:
 
             If you need to reschedule or cancel, please let me know with at
             least a day's notice if possible.
-          cc: dispatch@tacosyndicate.family
           from: Jessie
           name: send_email
           subject: 'Your Taco Syndicate tour on {{date}}.'
@@ -1098,7 +1097,6 @@ content:
 
 
             Jessie, from Dispatch
-          cc: dispatch@tacosyndicate.family
           from: Jessie
           name: send_email
           subject: Welcome to the family!
@@ -1323,7 +1321,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 30
+    version: 31
 assets:
   - data:
       end:

@@ -1,6 +1,5 @@
 const _ = require('lodash');
 
-const TextUtil = require('../../utils/text');
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
@@ -28,14 +27,6 @@ module.exports = {
       type: 'markdown',
       required: true,
       help: 'Body of the email.'
-    },
-    cc: {
-      type: 'email',
-      help: 'Email address to CC.'
-    },
-    bcc: {
-      type: 'email',
-      help: 'Email address to BCC.'
     }
   },
   getOps(params, actionContext) {
@@ -54,52 +45,12 @@ module.exports = {
       }];
     }
 
-    const toRole = _.find(actionContext.scriptContent.roles,
-      { name: params.to });
-    if (!toRole) {
-      return [{
-        operation: 'log',
-        level: 'error',
-        message: 'Could not find role named "' + params.to + '".'
-      }];
-    }
-
-    const toRoleSlug = TextUtil.varForText(toRole.title);
-    if (!toRoleSlug) {
-      return [{
-        operation: 'log',
-        level: 'error',
-        message: 'Could not generate slug for role "' + params.to + '".'
-      }];      
-    }
-    const toPlayerContext = actionContext.evalContext[toRoleSlug];
-    if (!toPlayerContext) {
-      return [{
-        operation: 'log',
-        level: 'error',
-        message: 'Could not find player context for "' + toRole.title + '".'
-      }];
-    }
-
-    if (!toPlayerContext.email) {
-      return [{
-        operation: 'log',
-        level: 'warn',
-        message: 'Tried to send email but player "' + toRole.title +
-          '" had no email address.'
-      }];
-    }
-
     return [{
       operation: 'sendEmail',
-      params: {
-        from: fromInbox.address,
-        to: toPlayerContext.email,
-        cc: params.cc,
-        bcc: params.bcc,
-        subject: subject,
-        bodyMarkdown: bodyMarkdown
-      }
+      fromEmail: fromInbox.address,
+      toRoleName: params.to,
+      subject: subject,
+      bodyMarkdown: bodyMarkdown
     }];
   }
 };

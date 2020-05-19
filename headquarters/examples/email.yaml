@@ -9,7 +9,7 @@ content:
   inboxes:
     - name: inbox
       role: system
-      address: system@system.com
+      address: charter@firstperson.travel
   scenes:
     - name: scene
       title: First scene
@@ -36,4 +36,4 @@ content:
             Sincerely yours
           id: 1
   meta:
-    version: 30
+    version: 31

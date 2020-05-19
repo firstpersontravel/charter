@@ -70,7 +70,18 @@ class KernelOpController {
   }
 
   static async sendEmail(objs, op) {
-    return EmailController.sendEmail(op.params);
+    const toPlayers = objs.players
+      .filter(p => p.roleName === op.toRoleName && p.userId)
+      .filter((p) => {
+        const user = objs.users.find(u => u.id === p.userId);
+        return user && user.email;
+      });
+    // Send email to each player matching role name.
+    for (const toPlayer of toPlayers) {
+      const toUser = objs.users.find(u => u.id === toPlayer.userId);
+      await EmailController.sendEmail(op.fromEmail, toUser.email,
+        op.subject, op.bodyMarkdown);
+    }
   }
 
   static async initiateCall(objs, op) {

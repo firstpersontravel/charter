@@ -1,6 +1,6 @@
 module.exports = {
   icon: 'envelope',
-  help: 'An email inbox that you have access to. (This requires some custom setup.)',
+  help: 'An email account that you have access to. (This requires some custom setup.)',
   properties: {
     name: { type: 'name', required: true },
     role: {
@@ -8,12 +8,14 @@ module.exports = {
       collection: 'roles',
       required: true,
       parent: true,
-      help: 'Role this inbox belongs to.'
+      help: 'Role this account belongs to.'
     },
     address: {
-      type: 'email',
+      type: 'enum',
+      options: ['charter@firstperson.travel'],
+      default: 'charter@firstperson.travel',
       required: true,
-      help: 'Email address to send from. Currently must be from @firstperson.travel.'
+      help: 'Email address to send from. Currently must be charter@firstperson.travel.'
     }
   },
   getTitle: function(scriptContent, spec) {

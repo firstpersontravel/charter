@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const assert = require('assert');
 
 const send_email = require('../../../src/modules/email/email_send');
@@ -13,7 +12,7 @@ describe('#send_email', () => {
       inboxes: [{
         name: 'INBOX',
         role: 'System',
-        address: 'system@system.com'
+        address: 'charter@firstperson.travel'
       }]
     },
     evalContext: {
@@ -36,27 +35,10 @@ describe('#send_email', () => {
 
     assert.deepStrictEqual(res, [{
       operation: 'sendEmail',
-      params: {
-        from: 'system@system.com',
-        to: 'player@test.com',
-        cc: undefined,
-        bcc: undefined,
-        subject: 'Your widget is ready!',
-        bodyMarkdown: 'Your order of 2 widget(s) is ready.'
-      }
-    }]);
-  });
-
-  it('logs warning if to email is not present', () => {
-    const clonedActionContext = _.cloneDeep(actionContext);
-    delete clonedActionContext.evalContext.player.email;
-
-    const res = send_email.getOps(params, clonedActionContext);
-
-    assert.deepStrictEqual(res, [{
-      operation: 'log',
-      level: 'warn',
-      message: 'Tried to send email but player "Player" had no email address.'
+      fromEmail: 'charter@firstperson.travel',
+      toRoleName: 'Player',
+      subject: 'Your widget is ready!',
+      bodyMarkdown: 'Your order of 2 widget(s) is ready.'
     }]);
   });
 });

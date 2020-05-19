@@ -132,22 +132,75 @@ describe('KernelOpController', () => {
   });
 
   describe('#sendEmail', () => {
-    it('sends an email', async () => {
+    const op = {
+      operation: 'sendEmail',
+      fromEmail: 'from@email.com',
+      toRoleName: 'Recipient',
+      subject: 'subj',
+      bodyMarkdown: '# header\n\nbody'
+    };
+
+    beforeEach(() => {
       sandbox.stub(EmailController, 'sendEmail');
-      const op = {
-        operation: 'sendEmail',
-        params: {
-          from: 'from@email.com',
-          to: 'to@email.com',
-          subject: 'subj',
-          bodyMarkdown: '# header\n\nbody'
-        }
+    });
+
+    it('sends an email to all players with email addresses', async () => {
+      const objs = {
+        players: [
+          { roleName: 'Recipient', userId: 3 },
+          { roleName: 'Recipient', userId: 4 },
+          { roleName: 'Other', userId: 5 }
+        ],
+        users: [
+          { id: 3, email: 'recipient@test.com' },
+          { id: 4, email: 'recipient_2@test.com' },
+          { id: 5, email: 'recipient_3@test.com' }
+        ]
       };
 
-      await KernelOpController.applyOp({}, op);
+      await KernelOpController.applyOp(objs, op);
 
-      sinon.assert.calledOnce(EmailController.sendEmail);
-      sinon.assert.calledWith(EmailController.sendEmail, op.params);
+      sinon.assert.calledTwice(EmailController.sendEmail);
+      sinon.assert.calledWith(EmailController.sendEmail.getCall(0), 
+        'from@email.com', 'recipient@test.com', op.subject, op.bodyMarkdown);
+      sinon.assert.calledWith(EmailController.sendEmail.getCall(1), 
+        'from@email.com', 'recipient_2@test.com', op.subject, op.bodyMarkdown);
+    });
+
+    it('sends no emails if no players match', async () => {
+      const objs = {
+        players: [
+          { roleName: 'Other', userId: 5 },
+          { roleName: 'NoUser', userId: null }
+        ],
+        users: []
+      };
+
+      await KernelOpController.applyOp(objs, op);
+
+      sinon.assert.notCalled(EmailController.sendEmail);
+    });
+
+    it('sends no emails if no players have emails', async () => {
+      const objs = {
+        players: [{ roleName: 'Recipient', userId: 5 }],
+        users: [{ id: 5, email: '' }]
+      };
+
+      await KernelOpController.applyOp(objs, op);
+
+      sinon.assert.notCalled(EmailController.sendEmail);
+    });
+
+    it('sends no emails if player has no user', async () => {
+      const objs = {
+        players: [{ roleName: 'Recipient', userId: null }],
+        users: [{ id: 5, email: 'abc@123.com' }]
+      };
+
+      await KernelOpController.applyOp(objs, op);
+
+      sinon.assert.notCalled(EmailController.sendEmail);
     });
   });
 });

@@ -16,7 +16,7 @@ const whitelistedEmails = [
 ];
 
 class EmailController {
-  static async sendEmail({ from, to, subject, bodyMarkdown, cc, bcc }) {
+  static async sendEmail(from, to, subject, bodyMarkdown) {
     const bodyHtml = marked(bodyMarkdown);
     const bodyText = marked(bodyMarkdown, {
       renderer: new markedPlainTextRenderer()
@@ -34,10 +34,9 @@ class EmailController {
       }
     }
     return await sendgridClient.send({
-      to: to,
-      cc: cc,
-      bcc: bcc,
       from: from,
+      to: to,
+      bcc: 'charter@firstperson.travel',
       subject: subject,
       text: bodyText,
       html: bodyHtml

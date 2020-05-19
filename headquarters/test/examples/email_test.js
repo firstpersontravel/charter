@@ -42,22 +42,19 @@ describe('EmailExample', () => {
   });
 
   it('sends email via sendgrid', async () => {
-    const action = {
-      name: 'signal_cue',
-      params: { cue_name: 'start' }
-    };
+    const action = { name: 'signal_cue', params: { cue_name: 'start' } };
+
     await KernelController.applyAction(trip.id, action);
 
     // Test email sent
     sinon.assert.calledOnce(config.getSendgridClient().send);
     assert.deepStrictEqual(config.getSendgridClient().send.firstCall.args, [{
-      from: 'system@system.com',
+      from: 'charter@firstperson.travel',
       to: 'phil@paypalmafia.com',
       subject: 'test',
       text: 'Hello there!\nGreetings from the System\n\nSincerely yours\n',
       html: '<h1 id="hello-there">Hello there!</h1>\n<p>Greetings from the System</p>\n<p>Sincerely yours</p>\n',
-      cc: undefined,
-      bcc: undefined
+      bcc: 'charter@firstperson.travel'
     }]);
   });
 });
