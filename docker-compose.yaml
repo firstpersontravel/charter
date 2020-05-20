@@ -5,8 +5,8 @@ services:
     volumes:
       # Code
       - ./fptcore:/var/app/fptcore
-      - ./headquarters:/var/app/headquarters
-      - /var/app/headquarters/node_modules/bcrypt  # use bcrypt from container
+      - ./headquarters:/var/app/hqdev
+      - /var/app/hqdev/node_modules # hide host node modules
       # Static assets
       - ./static:/var/app/static
       - ./build:/var/app/build
@@ -15,8 +15,9 @@ services:
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
-    working_dir: /var/app/headquarters
-    command: /bin/bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/server.js | pino -c"
+      - NODE_PATH=/var/app/headquarters/node_modules
+    working_dir: /var/app/hqdev
+    command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/server.js
     links: [mysql]
     depends_on: [mysql]
     ports: ["5001:5001"]
@@ -25,25 +26,28 @@ services:
     image: fpt:latest
     volumes:
       - ./fptcore:/var/app/fptcore
-      - ./headquarters:/var/app/headquarters
-      - /var/app/headquarters/node_modules/bcrypt  # use bcrypt from container
+      - ./headquarters:/var/app/hqdev
+      - /var/app/hqdev/node_modules # hide host node modules
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
-    working_dir: /var/app/headquarters
-    command: /bin/bash -c "nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/headquarters bin/worker.js | pino -c"
+      - NODE_PATH=/var/app/headquarters/node_modules
+    working_dir: /var/app/hqdev
+    command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/worker.js
     links: [mysql]
     depends_on: [mysql]
 
   pubsub:
     image: fpt:latest
     volumes:
-      - ./headquarters:/var/app/headquarters
+      - ./headquarters:/var/app/hqdev
+      - /var/app/hqdev/node_modules # hide host node modules
     env_file: [./secrets/env-local]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
-    working_dir: /var/app/headquarters
-    command: /bin/bash -c "node bin/pubsub.js | pino -c"
+      - NODE_PATH=/var/app/headquarters/node_modules
+    working_dir: /var/app/hqdev
+    command: node bin/pubsub.js
     ports: ["5002:5002"]
 
   mysql:

@@ -10,8 +10,7 @@ content:
     - name: content_page-ilctwq
       interface: Inductee
       panels:
-        - title: Messages
-          type: messages_browse
+        - type: messages_browse
           id: 20
       section: tab
       title: Messages
@@ -1321,7 +1320,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 31
+    version: 32
 assets:
   - data:
       end:

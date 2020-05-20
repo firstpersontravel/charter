@@ -104,7 +104,11 @@ module.exports = {
     icon: 'sticky-note',
     help: 'Displays a browsable interface of all messages for a player.',
     properties: {
-      title: { type: 'string', required: true }
+      as: {
+        type: 'reference',
+        collection: 'roles',
+        help: 'Which role to view messages as. Defaults to current player.'
+      }
     }
   },
   messages: {
@@ -112,8 +116,17 @@ module.exports = {
     help: 'Displays a browsable interface of all messages between a set of players.',
     properties: {
       title: { type: 'string' },
-      as: { type: 'reference', collection: 'roles', required: true },
-      with: { type: 'reference', collection: 'roles', required: true }
+      with: {
+        type: 'reference',
+        collection: 'roles',
+        required: true,
+        help: 'Which role to view messages with.'
+      },
+      as: {
+        type: 'reference',
+        collection: 'roles',
+        help: 'Which role to view messages as. Defaults to current player.'
+      }
     }
   },
   numberpad: {

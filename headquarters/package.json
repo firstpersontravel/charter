@@ -7,10 +7,10 @@
     "test": "mocha --timeout 10000 --recursive test",
     "migrate": "npm run migrate:db; npm run migrate:scripts",
     "migrate:db": "sequelize db:migrate",
-    "migrate:scripts": "node cmd/migrate-scripts.js | pino -c",
-    "dryrun:scripts:": "node cmd/migrate-scripts.js --dry-run | pino -c",
-    "migrate:examples": "node cmd/migrate-examples | pino -c",
-    "dryrun:examples": "node cmd/migrate-examples --dry-run | pino -c"
+    "migrate:scripts": "node cmd/migrate-scripts.js",
+    "dryrun:scripts:": "node cmd/migrate-scripts.js --dry-run",
+    "migrate:examples": "node cmd/migrate-examples",
+    "dryrun:examples": "node cmd/migrate-examples --dry-run"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
@@ -36,7 +36,8 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.25",
     "mysql2": "^1.5.3",
-    "pino": "^4.10.3",
+    "pino": "^6.2.1",
+    "pino-pretty": "^4.0.0",
     "react-s3-uploader": "^4.8.0",
     "sequelize": "^4.37.5",
     "sequelize-cli": "^4.0.0",

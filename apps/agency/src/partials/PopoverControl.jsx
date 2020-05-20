@@ -16,6 +16,7 @@ export default class PopoverControl extends Component {
       lastClosed: null
     };
     this.labelId = `label-${_.uniqueId()}`;
+    this.inputRef = React.createRef();
   }
 
   handleOpen() {
@@ -32,6 +33,9 @@ export default class PopoverControl extends Component {
       return;
     }
     this.setState({ isOpen: true, value: this.props.value });
+    if (this.inputRef.current) {
+      this.inputRef.current.focus();
+    }
   }
 
   handleClose(event) {
@@ -74,6 +78,7 @@ export default class PopoverControl extends Component {
       return (
         <select
           autoFocus
+          ref={this.inputRef}
           className="form-control mr-1 mb-1"
           style={{ maxWidth: '100%' }}
           value={this.state.value}
@@ -87,6 +92,7 @@ export default class PopoverControl extends Component {
       return (
         <textarea
           autoFocus
+          ref={this.inputRef}
           style={{ width: '100%', display: 'block' }}
           className="form-control mb-2"
           value={this.state.value}
@@ -97,6 +103,7 @@ export default class PopoverControl extends Component {
     return (
       <input
         autoFocus
+        ref={this.inputRef}
         type="text"
         className="form-control mr-1"
         style={{ width: '100%', display: 'block' }}

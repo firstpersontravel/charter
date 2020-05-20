@@ -26,7 +26,6 @@ content:
       title: Messages
       panels:
         - type: messages_browse
-          title: Messages
           id: 157
   roles:
     - name: Player
@@ -148,7 +147,7 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 31
+    version: 32
 assets:
   - type: directions
     data:

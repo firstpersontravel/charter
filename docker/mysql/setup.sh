@@ -25,4 +25,4 @@ echo "CREATE DATABASE galaxy;" | $MYSQL_CMD
 echo "CREATE DATABASE galaxy_test;" | $MYSQL_CMD
 
 # Restore backup
-$MYSQL_CMD galaxy < /docker-entrypoint-initdb.d/backup-2020-04-06.bak
+$MYSQL_CMD galaxy < /docker-entrypoint-initdb.d/backup-2020-05-19.bak

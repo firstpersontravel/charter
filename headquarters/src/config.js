@@ -4,6 +4,7 @@ const apn = require('apn');
 const fs = require('fs');
 const path = require('path');
 const pino = require('pino');
+const pinoPretty = require('pino-pretty');
 const faye = require('faye');
 const Sentry = require('@sentry/node');
 const Sequelize = require('sequelize');
@@ -47,7 +48,15 @@ Sentry.init({
 
 const serverPort = process.env.SERVER_PORT || 8000;
 const pubsubHost = process.env.SERVER_PUBSUB_URL || 'http://localhost';
-const logger = pino({ safe: true, base: {} });
+const logger = pino({
+  prettyPrint: {
+    levelFirst: true,
+    colorize: true,
+    translateTime: 'SYS:standard'
+  },
+  prettifier: pinoPretty,
+  base: {}
+});
 
 // Configure database
 const dbConfig = require('../config/config');

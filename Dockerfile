@@ -13,7 +13,8 @@ RUN npm install -q -g ember-cli@2.16.0 webpack webpack-cli bower
 # Install requirements for node-sass :{
 RUN apk add --update python make gcc g++
 
-# Install server node requirements
+# Install server node requirements into separate folder so bcrypt can
+# have native dependencies
 COPY headquarters/package.json headquarters/package-lock.json /var/app/headquarters/
 RUN cd /var/app/headquarters && npm -q install
 
