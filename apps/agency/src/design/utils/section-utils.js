@@ -35,8 +35,15 @@ const sectionContent = {
   }]
 };
 
-const sliceContent = {
-  scene: sliceName => ([{
+function getGlobalSceneContent(sliceName) {
+  return [{
+    collection: 'triggers',
+    filter: { scene: sliceName }
+  }];
+}
+
+function getSceneContent(sliceName) {
+  return [{
     collection: 'pages',
     filter: { scene: sliceName }
   }, {
@@ -48,19 +55,25 @@ const sliceContent = {
   }, {
     collection: 'triggers',
     filter: { scene: sliceName }
-  }]),
-  section: sliceName => sectionContent[sliceName]
-};
+  }];
+}
 
-export function getSliceContent(sliceType, sliceName) {
-  if (!sliceContent[sliceType]) {
-    return null;
+export function getSliceContent(scriptContent, sliceType, sliceName) {
+  if (sliceType === 'scene') {
+    const scene = scriptContent.scenes.find(s => s.name === sliceName);
+    if (scene && scene.global) {
+      return getGlobalSceneContent(sliceName);
+    }
+    return getSceneContent(sliceName);
   }
-  return sliceContent[sliceType](sliceName);
+  if (sliceType === 'section') {
+    return sectionContent[sliceName];
+  }
+  return null;
 }
 
 export function getContentList(scriptContent, sliceType, sliceName) {
-  const contentMap = getSliceContent(sliceType, sliceName);
+  const contentMap = getSliceContent(scriptContent, sliceType, sliceName);
   if (!contentMap) {
     return {};
   }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TextUtil } from 'fptcore';
+import { SceneCore, TextUtil } from 'fptcore';
 
 import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from '../../partials/ResourceBadge';
@@ -66,9 +66,11 @@ export default class ContentTree extends Component {
       disabled: true
     };
     const collection = this.props.contentList[collectionName] || [];
-    const items = collection.map(item => (
-      this.renderItem(collectionName, item)
-    ));
+    const items = collection
+      .sort(SceneCore.sortResource)
+      .map(item => (
+        this.renderItem(collectionName, item)
+      ));
     const newItem = this.renderNewItem(collectionName);
     return [header].concat(items).concat([newItem]);
   }

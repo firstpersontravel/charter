@@ -6,6 +6,7 @@ module.exports = {
     title: { type: 'string', required: true },
     global: {
       type: 'boolean',
+      title: 'Always active',
       default: false,
       help: 'Enable if this scene is always active. Otherwise, the triggers in this scene will only fire if it is the current scene of the trip.'
     }

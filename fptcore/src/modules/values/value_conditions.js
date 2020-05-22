@@ -6,6 +6,7 @@ module.exports = {
     properties: {
       ref: {
         type: 'lookupable',
+        title: 'Value',
         required: true,
         display: { label: false },
         help: 'A value to look up and see if it contains any non-false value.'
@@ -20,12 +21,14 @@ module.exports = {
     help: 'Condition passes if the value in \'ref1\' matches the value in \'ref2\'. If \'ref1\' or \'ref2\' are surrounded by double quotes, or are a number, or "true" or "false", then the value in the other reference will be matched to that simple value rather performing two lookups.',
     properties: {
       ref1: {
+        title: 'Value 1',
         type: 'lookupable',
         required: true,
         help: 'A value to look up and compare against the second.'
       },
       ref2: {
         type: 'lookupable',
+        title: 'Value 2',
         required: true,
         help: 'Another value to look up and compare against the first. In cases of a specific string, surround it with double quotes.'
       }
@@ -41,12 +44,14 @@ module.exports = {
     help: 'Condition passes if the value in \'string_ref\' contains the part in \'part_ref\'. If \'string_ref\' or \'part_ref\' are surrounded by double quotes, or are a number, or "true" or "false", then the value in the other reference will be matched to that simple value rather performing two lookups.',
     properties: {
       string_ref: {
+        title: 'Search',
         type: 'lookupable',
         required: true,
         help: 'A value to look up, which should contain text. In cases of a specific string, surround it with double quotes.'
       },
       part_ref: {
         type: 'lookupable',
+        title: 'For',
         required: true,
         help: 'A value to look up which should contain the fragment to check for. In cases of a specific string, surround it with double quotes.'
       }

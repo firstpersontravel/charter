@@ -29,8 +29,8 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
 }
 
 export default function SliceIndex({ script, match }) {
-  const sliceContent = getSliceContent(match.params.sliceType,
-    match.params.sliceName);
+  const sliceContent = getSliceContent(script.content,
+    match.params.sliceType, match.params.sliceName);
   if (!sliceContent) {
     return 'Invalid section.';
   }

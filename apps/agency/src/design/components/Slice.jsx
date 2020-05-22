@@ -1,6 +1,7 @@
-import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
+import { SceneCore } from 'fptcore';
 
 import ContentTree from '../partials/ContentTree';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
@@ -10,19 +11,24 @@ import { sections, getContentList } from '../utils/section-utils';
 export default class Slice extends Component {
   renderSidenav() {
     const script = this.props.script;
-    const sceneLinks = _.map(script.content.scenes, scene => ({
-      key: scene.name,
-      url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene/${scene.name}`,
-      label: (
-        <span>
-          <i
-            style={{ width: '1.5em' }}
-            className="d-none d-md-inline-block fa fa-puzzle-piece" />
-          &nbsp;{scene.title}
-        </span>
-      ),
-      text: scene.title
-    }));
+    const sceneLinks = (script.content.scenes || [])
+      .sort(SceneCore.sortResource)
+      .map(scene => ({
+        key: scene.name,
+        url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene/${scene.name}`,
+        label: (
+          <span>
+            <i
+              style={{ width: '1.5em' }}
+              className={
+                'd-none d-md-inline-block fa ' +
+                `${scene.global ? 'fa-globe' : 'fa-puzzle-piece'}`
+              } />
+            &nbsp;{scene.title}
+          </span>
+        ),
+        text: scene.title
+      }));
 
     const sectionLinks = sections.map(section => ({
       key: section[0],
@@ -46,7 +52,6 @@ export default class Slice extends Component {
       disabled: true
     };
 
-
     const scenesHeader = {
       key: 'scenes-header',
       url: '',
@@ -54,7 +59,6 @@ export default class Slice extends Component {
       text: 'Scenes',
       disabled: true
     };
-
 
     const items = [globalHeader]
       .concat(sectionLinks)

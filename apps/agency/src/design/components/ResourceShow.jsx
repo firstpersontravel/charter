@@ -132,7 +132,9 @@ export default class ResourceShow extends Component {
 
   getChildCollectionNames() {
     const collectionName = this.props.match.params.collectionName;
-    const sliceContent = getSliceContent(this.props.match.params.sliceType,
+    const sliceContent = getSliceContent(
+      this.props.script.content,
+      this.props.match.params.sliceType,
       this.props.match.params.sliceName);
     const thisContentMapItem = _.find(sliceContent,
       { collection: collectionName });

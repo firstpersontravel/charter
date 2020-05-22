@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'reactstrap';
 
-import { coreEvaluator, coreRegistry, coreWalker } from 'fptcore';
+import { coreEvaluator, coreRegistry, coreWalker, SceneCore } from 'fptcore';
 
 import ResourceBadge from '../partials/ResourceBadge';
 import Preview from '../operate/partials/Preview';
@@ -259,7 +259,7 @@ export default class SceneGrid extends Component {
   render() {
     const trip = this.props.trip;
     const scenes = trip.script.content.scenes || [];
-    const sortedScenes = _.sortBy(scenes, scene => !!scene.global);
+    const sortedScenes = scenes.sort(SceneCore.sortResource);
     const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;
     const colWidth = Math.floor(12 / maxPlayersInScene);
