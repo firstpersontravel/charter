@@ -59,7 +59,7 @@ export function getNewComponent(componentType, variant) {
   return fields;
 }
 
-export function getComponentOptions(componentType) {
+export function getComponentVariantOptions(componentType) {
   return [{ value: '', label: '---' }].concat(Object
     .keys(coreRegistry[componentType])
     .map(key => ({ value: key, label: TextUtil.titleForKey(key) })))

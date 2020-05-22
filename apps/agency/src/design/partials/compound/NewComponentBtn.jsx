@@ -6,16 +6,16 @@ import { TextUtil } from 'fptcore';
 import PopoverControl from '../../../partials/PopoverControl';
 import {
   getNewComponent,
-  getComponentOptions
+  getComponentVariantOptions
 } from '../../utils/resource-utils';
 
 function NewComponentBtn({ componentSpec, onConfirm, label }) {
   const componentType = componentSpec.component;
-  const componentOptions = getComponentOptions(componentType);
+  const variantOptions = getComponentVariantOptions(componentType);
   return (
     <PopoverControl
       title={`New ${TextUtil.singularize(componentType)}`}
-      choices={componentOptions}
+      choices={variantOptions}
       helpText={componentSpec.help}
       onConfirm={(val) => {
         if (!val) {

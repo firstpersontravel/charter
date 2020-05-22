@@ -8,7 +8,7 @@ import { coreWalker } from 'fptcore';
 import {
   duplicateComponent,
   getNewComponent,
-  getComponentOptions
+  getComponentVariantOptions
 } from '../../utils/resource-utils';
 import { newItemForSpec } from './utils';
 
@@ -43,7 +43,7 @@ function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
     // Show component types -- default dropdown doesn't work because
     // disappearing this context menu removes the relative positioning for
     // the popover.
-    const componentTypeOptions = getComponentOptions(itemSpec.component)
+    const variantOptions = getComponentVariantOptions(itemSpec.component)
       .map(opt => (
         <option key={opt.value} value={opt.value}>
           {opt.value === '' ? 'Add above' : opt.label}
@@ -66,7 +66,7 @@ function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
             onPropUpdate(path, updated);
             toggleDropdown();
           }}>
-          {componentTypeOptions}
+          {variantOptions}
         </select>
       </DropdownItem>
     );

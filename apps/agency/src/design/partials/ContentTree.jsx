@@ -23,7 +23,9 @@ export default class ContentTree extends Component {
       text: `${TextUtil.titleForKey(resourceType)}: ${itemTitle}`,
       label: (
         <span>
-          <ResourceBadge resourceType={resourceType} /> {itemTitle}
+          <ResourceBadge
+            showType={false}
+            resourceType={resourceType} /> {itemTitle}
         </span>
       )
     });
@@ -45,6 +47,7 @@ export default class ContentTree extends Component {
         <span>
           <span className="faint">+</span>&nbsp;
           <ResourceBadge
+            showType={false}
             style={{ opacity: '0.5' }}
             resourceType={resourceType} />
           &nbsp;

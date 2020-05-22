@@ -29,8 +29,8 @@ module.exports = {
         options: PANEL_BUTTON_STYLE_OPTIONS
       }
     },
-    getTitle(resource, scriptContent) {
-      return resource.text;
+    getTitle(resource, component, scriptContent) {
+      return component.text;
     }
   },
   choice: {
@@ -136,8 +136,8 @@ module.exports = {
       submit: { type: 'string', default: 'Submit' },
       placeholder: { type: 'string' }
     },
-    getTitle(resource, scriptContent) {
-      return resource.placeholder || '<no placeholder>';
+    getTitle(resource, component, scriptContent) {
+      return component.placeholder || '<no placeholder>';
     }
   },
   text: {
@@ -159,8 +159,8 @@ module.exports = {
       submit: { type: 'string', default: 'Submit' },
       placeholder: { type: 'string' }
     },
-    getTitle(resource, scriptContent) {
-      return resource.placeholder || '<no placeholder>';
+    getTitle(resource, component, scriptContent) {
+      return component.placeholder || '<no placeholder>';
     }
   },
   video: {

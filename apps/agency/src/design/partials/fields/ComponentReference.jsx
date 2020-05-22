@@ -6,23 +6,23 @@ import { coreRegistry, coreWalker, TextUtil } from 'fptcore';
 import BaseEmpty from './BaseEmpty';
 import BaseEnum from './BaseEnum';
 
-function titleForComponent(scriptContent, componentType, obj) {
+function titleForComponent(scriptContent, componentType, resource, obj) {
   const componentClass = coreRegistry.components[componentType];
   const componentTypeSingular = TextUtil.singularize(componentType);
   const variant = obj[componentClass.typeKey];
   const variantClass = coreRegistry[componentType][variant];
   if (variantClass && variantClass.getTitle) {
-    return variantClass.getTitle(obj, scriptContent);
+    return variantClass.getTitle(resource, obj, scriptContent);
   }
   return `${variant} ${componentTypeSingular} #${obj.id}`;
 }
 
-function labelForValue(script, spec, value) {
+function labelForValue(script, resource, spec, value) {
   const componentType = spec.componentType;
   const referringToComponent = coreWalker.getComponentById(script.content,
     componentType, value);
   if (referringToComponent) {
-    const title = titleForComponent(script.content, componentType,
+    const title = titleForComponent(script.content, componentType, resource,
       referringToComponent);
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
@@ -46,24 +46,25 @@ function labelForValue(script, spec, value) {
 function choicesForSpec(script, spec) {
   const componentClass = coreRegistry.components[spec.componentType];
   const typeKey = componentClass.typeKey;
-  const components = coreWalker
-    .getComponentsByType(script.content, spec.componentType)
-    .filter(obj => obj[typeKey] === spec.componentVariant);
+  const resAndComponents = coreWalker
+    .getResourcesAndComponentsByComponentType(script.content,
+      spec.componentType)
+    .filter(([res, obj]) => obj[typeKey] === spec.componentVariant);
 
   const specialChoices = [{ value: '', label: '---' }];
   if (spec.specialValues) {
     specialChoices.push(...spec.specialValues);
   }
-  const choices = specialChoices.concat(components.map(rel => ({
+  const choices = specialChoices.concat(resAndComponents.map(([res, rel]) => ({
     value: rel.id,
-    label: titleForComponent(script.content, spec.componentType, rel)
+    label: titleForComponent(script.content, spec.componentType, res, rel)
   })));
   return choices;
 }
 
 function ComponentReferenceField({ script, resource, spec, value, name, path,
   opts, onPropUpdate }) {
-  const label = labelForValue(script, spec, value);
+  const label = labelForValue(script, resource, spec, value);
   if (opts && opts.editable === false) {
     return label;
   }

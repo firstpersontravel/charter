@@ -116,11 +116,11 @@ class Walker {
   /**
    * Walk all components to get one by id.
    */
-  getComponentsByType(scriptContent, componentType) {
+  getResourcesAndComponentsByComponentType(scriptContent, componentType) {
     const components = [];
     this.walkComponents(scriptContent, componentType,
       (collectionName, resource, obj, paramSpec) => {
-        components.push(obj);
+        components.push([resource, obj]);
       });
     return components;
   }
@@ -128,15 +128,22 @@ class Walker {
   /**
    * Walk all components to get one by id.
    */
-  getComponentById(scriptContent, componentType, componentId) {
-    let component = null;
+  getResourceAndComponentById(scriptContent, componentType, componentId) {
+    let matchingResource = null;
+    let matchingComponent = null;
     this.walkComponents(scriptContent, componentType,
       (collectionName, resource, obj, paramSpec) => {
         if (obj.id === componentId) {
-          component = obj;
+          matchingResource = resource;
+          matchingComponent = obj;
         }
       });
-    return component;
+    return [matchingResource, matchingComponent];
+  }
+
+  getComponentById(scriptContent, componentType, componentId) {
+    return this.getResourceAndComponentById(scriptContent, componentType, 
+      componentId)[1];
   }
 
   /**
