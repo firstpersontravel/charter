@@ -41,7 +41,7 @@ describe('ContextCore', () => {
       };
       const result = ContextCore.gatherPlayerEvalContext(
         env, trip, player);
-      assert.deepEqual(result, expected);
+      assert.deepStrictEqual(result, expected);
     });
 
     it('gathers directive from script', () => {
@@ -144,9 +144,50 @@ describe('ContextCore', () => {
       };
 
       const result = ContextCore.gatherEvalContext(env, trip);
-      assert.deepEqual(result, expected);
+      assert.deepStrictEqual(result, expected);
       sinon.assert.calledWith(subcontextStub, env, trip, trip.players[0]);
       sinon.assert.calledWith(subcontextStub, env, trip, trip.players[1]);
+    });
+
+    it('gathers times with variablized titles', () => {
+      const trip = {
+        date: '2014-02-01',
+        script: {
+          content: {
+            times: [{
+              name: 'time-123',
+              title: 'Arrival'
+            }, {
+              name: 'time-456',
+              title: 'When the train comes home!'
+            }]
+          }
+        },
+        tripState: {},
+        history: {},
+        waypointOptions: {},
+        schedule: {
+          'time-123': '2017-02-16T21:44:02Z',
+          'time-456': '2017-02-16T23:44:02Z'
+        }
+      };
+
+      const expected = {
+        date: 'Saturday, February 1',
+        tripState: {},
+        schedule: {
+          'time-123': trip.schedule['time-123'],
+          'time-456': trip.schedule['time-456'],
+          'arrival': trip.schedule['time-123'],
+          'when_the_train_comes_home': trip.schedule['time-456']
+        },
+        history: {},
+        waypointOptions: {},
+        roleStates: {}
+      };
+
+      const result = ContextCore.gatherEvalContext(env, trip);
+      assert.deepStrictEqual(result, expected);
     });
 
     it('gathers context from waypoint options', () => {

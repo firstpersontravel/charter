@@ -37,12 +37,25 @@ class ContextCore {
    * Gather all context for a trip.
    */
   static gatherEvalContext(env, trip) {
+    // Gather schedule including var-ized time titles.
+    const scheduleByTitle = Object.fromEntries(
+      Object.keys(trip.schedule || {})
+        .map(timeName => (
+          (trip.script.content.times || []).find(t => t.name === timeName)
+        ))
+        .filter(Boolean)
+        .filter(time => !!time.title)
+        .map(time => (
+          [TextUtil.varForText(time.title), trip.schedule[time.name]]
+        )));
+    const schedule = Object.assign({}, trip.schedule, scheduleByTitle);
+
     // Gather core values
     const context = _.assign({}, trip.customizations, trip.values, {
       date: moment.utc(trip.date, 'YYYY-MM-DD').format('dddd, MMMM D'),
       tripState: trip.tripState,
       waypointOptions: trip.waypointOptions,
-      schedule: trip.schedule,
+      schedule: schedule,
       history: trip.history,
       roleStates: {}
     });
