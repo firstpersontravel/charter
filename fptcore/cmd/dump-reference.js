@@ -121,11 +121,16 @@ function renderField(sectionName, entryName, key, spec) {
   if (spec.type === 'object') {
     const props = Object.keys(spec.properties)
       .map(k => renderField(sectionName, entryName,
-        `${key}${sep}${TextUtil.titleForKey(k)}`, spec.properties[k]))
+        `${key}${sep}${titleForSpecKey(spec.properties[k], k)}`,
+        spec.properties[k]))
       .filter(Boolean);
     return props.join('\n');
   }
   return renderItem(key, spec);
+}
+
+function titleForSpecKey(spec, key) {
+  return spec.title || TextUtil.titleForKey(key);
 }
 
 function renderFields(sectionName, entryName, fields) {
@@ -138,8 +143,8 @@ function renderFields(sectionName, entryName, fields) {
     .filter(key => !HIDE_FIELDS.includes(key));
 
   const renderedFields = keys
-    .map(key => renderField(sectionName, entryName, TextUtil.titleForKey(key),
-      fields[key]))
+    .map(key => renderField(sectionName, entryName,
+      titleForSpecKey(fields[key], key), fields[key]))
     .filter(Boolean)
     .join('\n');
 

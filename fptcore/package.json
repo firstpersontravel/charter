@@ -4,6 +4,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "watch-docs": "nodemon cmd/dump-reference.js",
+    "build-docs": "node cmd/dump-reference.js",
     "pretest": "eslint . || echo 'Lint failed.'",
     "test": "mocha --recursive test"
   },

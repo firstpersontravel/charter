@@ -7,6 +7,7 @@
     "test_hq": "cd headquarters; npm test",
     "test_core": "cd fptcore; npm test",
     "test_agency": "cd apps/agency; npm test",
+    "build-docs": "cd fptcore; npm run build-docs",
     "build_travel": "cd apps/travel && ember build --env production && echo `TZ=US/Pacific date` > dist/build_timestamp.txt && rm -rf dist/dist.zip; zip -q -r dist/dist.zip dist",
     "build_agency": "cd apps/agency; export NODE_ENV=production; webpack --colors",
     "build": "npm run build_travel && npm run build_agency",
