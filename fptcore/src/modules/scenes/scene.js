@@ -7,12 +7,7 @@ module.exports = {
     global: {
       type: 'boolean',
       default: false,
-      help: 'Enable if this scene is always active.'
-    },
-    active_if: {
-      type: 'component',
-      component: 'conditions',
-      help: 'Global scenes can be activated or deactived by a conditional.'
+      help: 'Enable if this scene is always active. Otherwise, the triggers in this scene will only fire if it is the current scene of the trip.'
     }
   }
 };

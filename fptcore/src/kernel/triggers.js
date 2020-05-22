@@ -57,12 +57,7 @@ class KernelTriggers {
       return false;
     }
 
-    // If we have a conditional, return false if it's not true.
-    if (!evaluator.if(actionContext, scene.active_if)) {
-      return false;
-    }
-
-    // If it's global, and we've passed the conditional check, then it's active.
+    // If it's global, then it's always active.
     if (scene.global) {
       return true;
     }

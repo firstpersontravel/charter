@@ -37,4 +37,4 @@ content:
       event:
         type: scene_started
   meta:
-    version: 32
+    version: 33

@@ -28,21 +28,5 @@ describe('SceneCore', () => {
         { evalContext: {} });
       assert.strictEqual(res, '1');
     });
-
-    it('returns active conditional scene', () => {
-      const scriptContent = {
-        scenes: [
-          { name: '1', active_if: { op: 'value_is_true', ref: 'v' } },
-          { name: '2' }
-        ]
-      };
-      const res = SceneCore.getStartingSceneName(scriptContent, 
-        { evalContext: { v: 1 } });
-      assert.strictEqual(res, '1');
-
-      const res2 = SceneCore.getStartingSceneName(scriptContent,
-        { evalContext: { v: 0 } });
-      assert.strictEqual(res2, '2');
-    });
   });
 });

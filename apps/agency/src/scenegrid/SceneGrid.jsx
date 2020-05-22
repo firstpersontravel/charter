@@ -131,11 +131,8 @@ export default class SceneGrid extends Component {
     const trip = this.props.trip;
     const currentSceneName = this.props.trip.tripState.currentSceneName;
     const isCurrentScene = scene.name === currentSceneName;
-    const isActiveGlobalScene = scene.global && (
-      coreEvaluator.if(trip.actionContext, scene.active_if)
-    );
     const hasBeenTriggered = !!trip.history[trigger.name];
-    const canTrigger = isCurrentScene || isActiveGlobalScene;
+    const canTrigger = isCurrentScene || scene.global;
     const style = {
       marginTop: 0,
       marginBottom: '0.25em',

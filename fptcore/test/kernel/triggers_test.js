@@ -78,31 +78,7 @@ describe('KernelTriggers', () => {
       assert.strictEqual(res, true);
     });
 
-    it('returns true for active conditional scene', () => {
-      const actionContext = {
-        scriptContent: scriptContent,
-        evalContext: {
-          tripState: { currentSceneName: 'SCENE-2' },
-          val: 1
-        }
-      };
-      const res = KernelTriggers.isSceneActive('COND-1', actionContext);
-      assert.strictEqual(res, true);
-    });
-
-    it('returns false for inactive conditional scene', () => {
-      const actionContext = {
-        scriptContent: scriptContent,
-        evalContext: {
-          tripState: { currentSceneName: 'SCENE-2' },
-          val: 0
-        }
-      };
-      const res = KernelTriggers.isSceneActive('COND-1', actionContext);
-      assert.strictEqual(res, false);
-    });
-
-    it('returns false for inactive scene', () => {
+    it('returns false for non-current scene', () => {
       const actionContext = {
         scriptContent: scriptContent,
         evalContext: {
