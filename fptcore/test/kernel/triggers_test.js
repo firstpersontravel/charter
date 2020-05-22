@@ -111,34 +111,6 @@ describe('KernelTriggers', () => {
       const res = KernelTriggers.isTriggerActive(trigger, {});
       assert.strictEqual(res, false);
     });
-
-    it('returns true if if test passes', () => {
-      const trigger = { active_if: { op: 'value_is_true', ref: 'test' } };
-      const actionContext = { evalContext: { test: true } };
-      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
-      assert.strictEqual(res, true);
-    });
-
-    it('returns false if if test fails', () => {
-      const trigger = { active_if: { op: 'value_is_true', ref: 'test' } };
-      const actionContext = { evalContext: { test: false } };
-      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
-      assert.strictEqual(res, false);
-    });
-
-    it('returns true if non-repeatable and not previously run', () => {
-      const trigger = { name: 't', repeatable: false };
-      const actionContext = { evalContext: {} };
-      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
-      assert.strictEqual(res, true);
-    });
-
-    it('returns false if non-repeatable and previously run', () => {
-      const trigger = { name: 't', repeatable: false };
-      const actionContext = { evalContext: { history: { t: 'past time' } } };
-      const res = KernelTriggers.isTriggerActive(trigger, actionContext);
-      assert.strictEqual(res, false);
-    });
   });
 
   describe('#doesEventFireTriggerEvent', () => {

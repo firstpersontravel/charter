@@ -364,101 +364,128 @@ content:
       title: Departure
   triggers:
     - actions:
-        - duration: 3s
-          name: wait
-          id: 46
-        - content: >-
-            Enjoy! Remember -- there are benefits for those who play ball with
-            us. And risks for those who don't.
-          from_role_name: Phil
-          name: send_text
-          to_role_name: Inductee
-          id: 47
-      active_if:
-        items:
-          - op: value_is_true
-            ref: flag_vendor_coffee
-          - item:
-              op: value_is_true
-              ref: sent_phil_offer
-            op: not
-        op: and
+        - id: 100001
+          name: conditional
+          if:
+            op: and
+            items:
+              - op: not
+                item:
+                  op: value_is_true
+                  ref: counter_1
+              - items:
+                  - op: value_is_true
+                    ref: flag_vendor_coffee
+                  - item:
+                      op: value_is_true
+                      ref: sent_phil_offer
+                    op: not
+                op: and
+          actions:
+            - id: 100002
+              name: set_value
+              value_ref: counter_1
+              new_value_ref: 'true'
+            - duration: 3s
+              name: wait
+              id: 46
+            - content: >-
+                Enjoy! Remember -- there are benefits for those who play ball
+                with us. And risks for those who don't.
+              from_role_name: Phil
+              name: send_text
+              to_role_name: Inductee
+              id: 47
       event:
         from: Inductee
         to: Phil
         type: text_received
       name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL
-      repeatable: false
       scene: Phil
     - actions:
-        - name: set_value
-          new_value_ref: 'true'
-          value_ref: accepted_phil_offer
-          id: 48
-        - duration: 3s
-          name: wait
-          id: 49
-        - content: >-
-            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3
-          from_role_name: Phil
-          name: send_audio
-          to_role_name: Inductee
-          id: 50
-        - duration: 2m
-          name: wait
-          id: 51
-        - content: >-
-            Remember, look for any information you can find from the science
-            division of Terpeneutics. Send me a picture.
-          from_role_name: Phil
-          name: send_text
-          to_role_name: Inductee
-          id: 52
-      active_if:
-        items:
-          - op: value_is_true
-            ref: sent_phil_offer
-          - items:
-              - op: value_contains
-                part_ref: '"y"'
-                string_ref: event.message.content
-              - op: value_contains
-                part_ref: '"ok"'
-                string_ref: event.message.content
-              - op: value_contains
-                part_ref: '"sure"'
-                string_ref: event.message.content
-            op: or
-        op: and
+        - id: 100003
+          name: conditional
+          if:
+            op: and
+            items:
+              - op: not
+                item:
+                  op: value_is_true
+                  ref: counter_3
+              - items:
+                  - op: value_is_true
+                    ref: sent_phil_offer
+                  - items:
+                      - op: value_contains
+                        part_ref: '"y"'
+                        string_ref: event.message.content
+                      - op: value_contains
+                        part_ref: '"ok"'
+                        string_ref: event.message.content
+                      - op: value_contains
+                        part_ref: '"sure"'
+                        string_ref: event.message.content
+                    op: or
+                op: and
+          actions:
+            - id: 100004
+              name: set_value
+              value_ref: counter_3
+              new_value_ref: 'true'
+            - name: set_value
+              new_value_ref: 'true'
+              value_ref: accepted_phil_offer
+              id: 48
+            - duration: 3s
+              name: wait
+              id: 49
+            - content: >-
+                https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3
+              from_role_name: Phil
+              name: send_audio
+              to_role_name: Inductee
+              id: 50
+            - duration: 2m
+              name: wait
+              id: 51
+            - content: >-
+                Remember, look for any information you can find from the science
+                division of Terpeneutics. Send me a picture.
+              from_role_name: Phil
+              name: send_text
+              to_role_name: Inductee
+              id: 52
       event:
         from: Inductee
         to: Phil
         type: text_received
       name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL-2
-      repeatable: false
       scene: Phil
     - actions:
-        - name: set_value
-          new_value_ref: 'true'
-          value_ref: sent_phil_secret
-          id: 53
-        - content: >-
-            Hey thanks - this is gonna be huge for me. About that reward - hate
-            to break it to you, but there ain’t gonna be one. Tough break, kid,
-            but that’s business...
-          from_role_name: Phil
-          name: send_text
-          to_role_name: Inductee
-          id: 54
-      active_if:
-        items:
-          - op: value_is_true
-            ref: accepted_phil_offer
-          - item:
-              op: value_is_true
-              ref: sent_phil_secret
-            op: not
-        op: and
+        - id: 100005
+          name: conditional
+          if:
+            items:
+              - op: value_is_true
+                ref: accepted_phil_offer
+              - item:
+                  op: value_is_true
+                  ref: sent_phil_secret
+                op: not
+            op: and
+          actions:
+            - name: set_value
+              new_value_ref: 'true'
+              value_ref: sent_phil_secret
+              id: 53
+            - content: >-
+                Hey thanks - this is gonna be huge for me. About that reward -
+                hate to break it to you, but there ain’t gonna be one. Tough
+                break, kid, but that’s business...
+              from_role_name: Phil
+              name: send_text
+              to_role_name: Inductee
+              id: 54
       event:
         from: Inductee
         to: Phil
@@ -466,55 +493,62 @@ content:
       name: TRIGGER-Phil-MESSAGE-INDUCTEE-TO-PHIL-3
       scene: Phil
     - actions:
-        - content: >-
-            Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
-            the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call
-            at that time -- you should be at the lounge. Let me know if you're
-            still going to make it, or if you need any help getting there.
-          from_role_name: Jessie
-          name: send_text
-          to_role_name: Inductee
-          id: 55
-        - name: set_value
-          new_value_ref: 'true'
-          value_ref: sent_reminder_text
-          id: 56
-      active_if:
-        item:
-          op: value_is_true
-          ref: sent_reminder_text
-        op: not
+        - id: 100006
+          name: conditional
+          if:
+            item:
+              op: value_is_true
+              ref: sent_reminder_text
+            op: not
+          actions:
+            - content: >-
+                Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
+                tour of the Taco Syndicate Lounge, at 34 Page Street. I'll give
+                you a call at that time -- you should be at the lounge. Let me
+                know if you're still going to make it, or if you need any help
+                getting there.
+              from_role_name: Jessie
+              name: send_text
+              to_role_name: Inductee
+              id: 55
+            - name: set_value
+              new_value_ref: 'true'
+              value_ref: sent_reminder_text
+              id: 56
       event:
         time: TIME-REMINDER
         type: time_occurred
       name: TRIGGER-SCENE-0-TIME-OCCURRED
       scene: SCENE-0
     - actions:
-        - body: >
-            Greetings, Jessie here from Taco Syndicate dispatch.
+        - id: 100007
+          name: conditional
+          if:
+            item:
+              op: value_is_true
+              ref: sent_reminder_email
+            op: not
+          actions:
+            - body: >
+                Greetings, Jessie here from Taco Syndicate dispatch.
 
 
-            Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
-            the Taco Syndicate Lounge, at 34 Page Street, on {{date}}. Make sure
-            to get there on time!
+                Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
+                tour of the Taco Syndicate Lounge, at 34 Page Street, on
+                {{date}}. Make sure to get there on time!
 
 
-            If you need to reschedule or cancel, please let me know with at
-            least a day's notice if possible.
-          from: Jessie
-          name: send_email
-          subject: 'Your Taco Syndicate tour on {{date}}.'
-          to: Inductee
-          id: 57
-        - name: set_value
-          new_value_ref: 'true'
-          value_ref: sent_reminder_email
-          id: 58
-      active_if:
-        item:
-          op: value_is_true
-          ref: sent_reminder_email
-        op: not
+                If you need to reschedule or cancel, please let me know with at
+                least a day's notice if possible.
+              from: Jessie
+              name: send_email
+              subject: 'Your Taco Syndicate tour on {{date}}.'
+              to: Inductee
+              id: 57
+            - name: set_value
+              new_value_ref: 'true'
+              value_ref: sent_reminder_email
+              id: 58
       event:
         type: button_pressed
         button: 25
@@ -706,12 +740,15 @@ content:
       name: TRIGGER-SCENE-2-CUE-2-JESSIE-REMINDER
       scene: SCENE-2
     - actions:
-        - name: start_scene
-          scene_name: SCENE-3
-          id: 85
-      active_if:
-        op: text_contains
-        part: '3538'
+        - id: 100008
+          name: conditional
+          if:
+            op: text_contains
+            part: '3538'
+          actions:
+            - name: start_scene
+              scene_name: SCENE-3
+              id: 85
       event:
         from: Inductee
         to: Jessie
@@ -743,49 +780,60 @@ content:
       name: TRIGGER-SCENE-3-SCENE-STARTED
       scene: SCENE-3
     - actions:
-        - actions:
-            - name: send_to_page
-              page_name: PAGE-3-RT-KEY-VENDOR
-              role_name: Inductee
-              id: 91
-            - content: >-
-                {{pickup_vendor_instructions}} Send me a picture of what you
-                get, or text if you need help.
-              from_role_name: Jessie
-              name: send_text
-              to_role_name: Inductee
-              id: 92
-          else:
-            - name: send_to_page
-              page_name: PAGE-3-RT-KEY-BACKUP
-              role_name: Inductee
-              id: 93
-            - content: >-
-                Head across Franklin to a tree at the southeast corner of
-                Franklin and Oak. You'll find a lockbox inside the tree. The
-                code is 1648. Send me a picture of what you get inside, or text
-                if you need help.
-              from_role_name: Jessie
-              name: send_text
-              to_role_name: Inductee
-              id: 94
-            - content: key_pickup.jpeg
-              from_role_name: Jessie
-              name: send_image
-              to_role_name: Inductee
-              id: 95
-          if:
-            op: value_is_true
-            ref: flag_vendor_pickup
+        - id: 100009
           name: conditional
-          id: 90
+          if:
+            op: not
+            item:
+              op: value_is_true
+              ref: counter_9
+          actions:
+            - id: 100010
+              name: set_value
+              value_ref: counter_9
+              new_value_ref: 'true'
+            - actions:
+                - name: send_to_page
+                  page_name: PAGE-3-RT-KEY-VENDOR
+                  role_name: Inductee
+                  id: 91
+                - content: >-
+                    {{pickup_vendor_instructions}} Send me a picture of what you
+                    get, or text if you need help.
+                  from_role_name: Jessie
+                  name: send_text
+                  to_role_name: Inductee
+                  id: 92
+              else:
+                - name: send_to_page
+                  page_name: PAGE-3-RT-KEY-BACKUP
+                  role_name: Inductee
+                  id: 93
+                - content: >-
+                    Head across Franklin to a tree at the southeast corner of
+                    Franklin and Oak. You'll find a lockbox inside the tree. The
+                    code is 1648. Send me a picture of what you get inside, or
+                    text if you need help.
+                  from_role_name: Jessie
+                  name: send_text
+                  to_role_name: Inductee
+                  id: 94
+                - content: key_pickup.jpeg
+                  from_role_name: Jessie
+                  name: send_image
+                  to_role_name: Inductee
+                  id: 95
+              if:
+                op: value_is_true
+                ref: flag_vendor_pickup
+              name: conditional
+              id: 90
       event:
         contains: '1471'
         from: Inductee
         to: Jessie
         type: text_received
       name: TRIGGER-SCENE-3-MESSAGE-INDUCTEE-TO-JESSIE
-      repeatable: false
       scene: SCENE-3
     - actions:
         - name: start_scene
@@ -823,52 +871,66 @@ content:
       name: TRIGGER-SCENE-4-SCENE-STARTED
       scene: SCENE-4
     - actions:
-        - duration: 3s
-          name: wait
-          id: 101
-        - name: send_to_page
-          page_name: PAGE-4-CALA-DROP
-          role_name: Inductee
-          id: 102
-        - duration: 3s
-          name: wait
-          id: 103
-        - content: >-
-            Nice work. That code indicates the ring goes in a dead drop on a
-            telephone pole right outside the front entrance of Tacos Cala, on
-            the same side of Hickory. Use your Syndicate master to open the box,
-            and send me a picture of ring inside to confirm you've made the
-            drop. Remember to lock it back afterwards! And text me if you’ve run
-            into any trouble.
-          from_role_name: Jessie
-          name: send_text
-          to_role_name: Inductee
-          id: 104
-        - duration: 11s
-          name: wait
-          id: 105
-        - content: >-
-            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
-          from_role_name: Jessie
-          name: send_image
-          to_role_name: Inductee
-          id: 106
+        - id: 100011
+          name: conditional
+          if:
+            op: not
+            item:
+              op: value_is_true
+              ref: counter_11
+          actions:
+            - id: 100012
+              name: set_value
+              value_ref: counter_11
+              new_value_ref: 'true'
+            - duration: 3s
+              name: wait
+              id: 101
+            - name: send_to_page
+              page_name: PAGE-4-CALA-DROP
+              role_name: Inductee
+              id: 102
+            - duration: 3s
+              name: wait
+              id: 103
+            - content: >-
+                Nice work. That code indicates the ring goes in a dead drop on a
+                telephone pole right outside the front entrance of Tacos Cala,
+                on the same side of Hickory. Use your Syndicate master to open
+                the box, and send me a picture of ring inside to confirm you've
+                made the drop. Remember to lock it back afterwards! And text me
+                if you’ve run into any trouble.
+              from_role_name: Jessie
+              name: send_text
+              to_role_name: Inductee
+              id: 104
+            - duration: 11s
+              name: wait
+              id: 105
+            - content: >-
+                https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
+              from_role_name: Jessie
+              name: send_image
+              to_role_name: Inductee
+              id: 106
       event:
         contains: '8180'
         from: Inductee
         to: Jessie
         type: text_received
       name: TRIGGER-SCENE-4-MESSAGE-INDUCTEE-TO-JESSIE
-      repeatable: false
       scene: SCENE-4
     - actions:
-        - name: start_scene
-          scene_name: SCENE-6
-          id: 107
-      active_if:
-        op: value_equals
-        ref1: tripState.currentPageNamesByRole.Inductee
-        ref2: '"PAGE-4-CALA-DROP"'
+        - id: 100013
+          name: conditional
+          if:
+            op: value_equals
+            ref1: tripState.currentPageNamesByRole.Inductee
+            ref2: '"PAGE-4-CALA-DROP"'
+          actions:
+            - name: start_scene
+              scene_name: SCENE-6
+              id: 107
       event:
         from: Inductee
         to: Jessie
@@ -943,16 +1005,27 @@ content:
       name: TRIGGER-SCENE-6-SCENE-STARTED
       scene: SCENE-6
     - actions:
-        - name: start_scene
-          scene_name: SCENE-7
-          id: 122
+        - id: 100014
+          name: conditional
+          if:
+            op: not
+            item:
+              op: value_is_true
+              ref: counter_14
+          actions:
+            - id: 100015
+              name: set_value
+              value_ref: counter_14
+              new_value_ref: 'true'
+            - name: start_scene
+              scene_name: SCENE-7
+              id: 122
       event:
         contains: '6037'
         from: Inductee
         to: Jessie
         type: text_received
       name: TRIGGER-SCENE-6-MESSAGE-INDUCTEE-TO-JESSIE
-      repeatable: false
       scene: SCENE-6
     - actions:
         - name: set_value
@@ -1098,47 +1171,54 @@ content:
       name: TRIGGER-SCENE-8-SCENE-STARTED
       scene: SCENE-8
     - actions:
-        - content: >-
-            Too bad you decided not to take me up on my offer - the PayPal Mafia
-            is a powerful friend, and can be a powerful enemy. If you change
-            your mind, let me know...
-          from_role_name: Phil
-          name: send_text
-          to_role_name: Inductee
-          id: 143
-      active_if:
-        items:
-          - op: value_is_true
-            ref: accepted_phil_offer
-          - item:
-              op: value_is_true
-              ref: sent_phil_secret
-            op: not
-        op: and
+        - id: 100016
+          name: conditional
+          if:
+            items:
+              - op: value_is_true
+                ref: accepted_phil_offer
+              - item:
+                  op: value_is_true
+                  ref: sent_phil_secret
+                op: not
+            op: and
+          actions:
+            - content: >-
+                Too bad you decided not to take me up on my offer - the PayPal
+                Mafia is a powerful friend, and can be a powerful enemy. If you
+                change your mind, let me know...
+              from_role_name: Phil
+              name: send_text
+              to_role_name: Inductee
+              id: 143
       event:
         cue: CUE-8-PHIL-FOLLOWUP
         type: cue_signaled
       name: TRIGGER-SCENE-8-CUE-8-PHIL-FOLLOWUP
       scene: SCENE-8
     - actions:
-        - content: >-
-            Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}} tour of
-            the Taco Syndicate Lounge, at 34 Page Street. I'll give you a call
-            at that time -- you should be at the lounge. Let me know if you're
-            still going to make it, or if you need any help getting there.
-          from_role_name: Jessie
-          name: send_text
-          to_role_name: Inductee
-          id: 144
-        - name: set_value
-          new_value_ref: 'true'
-          value_ref: sent_reminder_text
-          id: 145
-      active_if:
-        item:
-          op: value_is_true
-          ref: sent_reminder_text
-        op: not
+        - id: 100017
+          name: conditional
+          if:
+            item:
+              op: value_is_true
+              ref: sent_reminder_text
+            op: not
+          actions:
+            - content: >-
+                Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
+                tour of the Taco Syndicate Lounge, at 34 Page Street. I'll give
+                you a call at that time -- you should be at the lounge. Let me
+                know if you're still going to make it, or if you need any help
+                getting there.
+              from_role_name: Jessie
+              name: send_text
+              to_role_name: Inductee
+              id: 144
+            - name: set_value
+              new_value_ref: 'true'
+              value_ref: sent_reminder_text
+              id: 145
       event:
         type: button_pressed
         button: 24
@@ -1312,7 +1392,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 35
+    version: 36
 assets:
   - data:
       end:

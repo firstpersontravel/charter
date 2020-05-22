@@ -34,5 +34,6 @@ content:
       scene: first
       event:
         type: scene_started
+      actions: []
   meta:
-    version: 35
+    version: 36

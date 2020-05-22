@@ -4,14 +4,10 @@ const fs = require('fs');
 const program = require('commander');
 const yaml = require('js-yaml');
 
-const config = require('../src/config');
-
 const ScriptCore = require('fptcore/src/cores/script');
 const Migrator = require('fptcore/src/migrator');
 
 const examplesPath = path.join(path.dirname(__dirname), 'examples');
-
-const logger = config.logger.child({ name: 'bin.migrate' });
 
 program
   .option('--dry-run', 'Dry run mode: do not save models.')
@@ -29,7 +25,7 @@ async function migrateScript(exampleName, isDryRun) {
   const latestVersion = ScriptCore.CURRENT_VERSION;
 
   if (oldVersion >= latestVersion) {
-    logger.info(
+    console.log(
       `Example ${exampleName} is up-to-date (version ${latestVersion}).`);
     return;
   }
@@ -38,10 +34,10 @@ async function migrateScript(exampleName, isDryRun) {
   try {
     ScriptCore.validateScriptContent(migratedContent);
   } catch (err) {
-    logger.error(`Example ${exampleName} failed validation: ${err.message}.`);
-    err.fieldErrors.forEach((innerErr) => {
-      logger.error(`- ${innerErr.path}: ${innerErr.message}`);
-    });
+    console.log(`Example ${exampleName} failed validation: ${err.message}`);
+    for (const innerErr of err.fieldErrors) {
+      console.log(`- ${innerErr.path}: ${innerErr.message}`);
+    }
     return;
   }
 

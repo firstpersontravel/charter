@@ -1,9 +1,6 @@
 const _ = require('lodash');
 
 const coreRegistry = require('../core-registry');
-const Evaluator = require('../utils/evaluator');
-
-const evaluator = new Evaluator(coreRegistry);
 
 class KernelTriggers {
   /**
@@ -34,12 +31,12 @@ class KernelTriggers {
 
     // Special case: if event is a time occurred event, treat the event
     // as non-repeatable *always*.
-    const treatAsNonrepeatable = event.type === 'time_occurred';
+    const isNonrepeatable = event.type === 'time_occurred';
     const hasFiredAlready = (
       actionContext.evalContext.history &&
       actionContext.evalContext.history[trigger.name]
     );
-    if (treatAsNonrepeatable && hasFiredAlready) {
+    if (isNonrepeatable && hasFiredAlready) {
       return false;
     }
 
@@ -80,17 +77,6 @@ class KernelTriggers {
     // Skip triggers that don't match the current scene
     if (trigger.scene) {
       if (!this.isSceneActive(trigger.scene, actionContext)) {
-        return false;
-      }
-    }
-    // Skip inactive triggers
-    if (!evaluator.if(actionContext, trigger.active_if)) {
-      return false;
-    }
-    // Skip non-repeatable triggers that have already fired.
-    if (trigger.repeatable === false) {
-      if (actionContext.evalContext.history &&
-          actionContext.evalContext.history[trigger.name]) {
         return false;
       }
     }
