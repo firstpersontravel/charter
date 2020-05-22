@@ -17,20 +17,26 @@ function getMessageActions(relay, body, media) {
         from_role_name: relay.asRoleName,
         to_role_name: relay.withRoleName,
         content: body,
-        from_relay_id: relay.id
+        from_relay_id: relay.id,
+        reply_needed: true
       }
     });
   }
   // Message images
-  actions.push(...media.map(mediaItem => ({
-    name: 'send_image',
-    params: {
-      from_role_name: relay.asRoleName,
-      to_role_name: relay.withRoleName,
-      content: mediaItem.url,
-      from_relay_id: relay.id
+  for (const mediaItem of media) {
+    if (mediaItem.contentType.startsWith('image/')) {
+      actions.push({
+        name: 'send_image',
+        params: {
+          from_role_name: relay.asRoleName,
+          to_role_name: relay.withRoleName,
+          content: mediaItem.url,
+          from_relay_id: relay.id,
+          reply_needed: true
+        }
+      });
     }
-  })));
+  }
   return actions;
 }
 

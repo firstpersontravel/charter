@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
@@ -24,17 +22,22 @@ module.exports = {
       medium: 'image',
       help: 'The content of the message to send.'
     },
+    // Special value for indicating that this message is from a player user
+    // and needs a reply.
+    reply_needed: {
+      required: false,
+      type: 'boolean',
+      display: { hidden: true }
+    },
     latitude: { required: false, type: 'number', display: { hidden: true } },
     longitude: { required: false, type: 'number', display: { hidden: true } },
     accuracy: { required: false, type: 'number', display: { hidden: true } },
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
   getOps(params, actionContext) {
-    const roles = actionContext.scriptContent.roles || [];
     const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content);
-    const fromRole = _.find(roles, { name: params.from_role_name });
-    const isReplyNeeded = fromRole.type === 'traveler';
+    const isReplyNeeded = !!params.reply_needed;
     return [{
       operation: 'createMessage',
       suppressRelayId: params.from_relay_id || null,

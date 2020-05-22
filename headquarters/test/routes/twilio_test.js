@@ -15,8 +15,8 @@ const TestUtil = require('../util');
 const scriptContent = {
   meta: { version: ScriptCore.CURRENT_VERSION },
   roles: [
-    { name: 'Actor', title: 'Actor', type: 'performer' },
-    { name: 'Player', title: 'Player', type: 'traveler' }
+    { name: 'Actor', title: 'Actor' },
+    { name: 'Player', title: 'Player' }
   ],
   relays: [
     { name: 'r1', for: 'Actor', as: 'Actor', with: 'Player' },
@@ -111,7 +111,8 @@ describe('twilioRoutes', () => {
           from_role_name: 'Player',
           to_role_name: 'Actor',
           content: 'Reply',
-          from_relay_id: travelerRelay.id
+          from_relay_id: travelerRelay.id,
+          reply_needed: true
         }
       };
       assert.deepEqual(

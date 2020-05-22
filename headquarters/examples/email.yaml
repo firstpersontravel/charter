@@ -2,10 +2,8 @@ content:
   roles:
     - name: player
       title: Player
-      type: traveler
     - name: system
       title: System
-      type: scripted
   inboxes:
     - name: inbox
       role: system
@@ -36,4 +34,4 @@ content:
             Sincerely yours
           id: 1
   meta:
-    version: 33
+    version: 34

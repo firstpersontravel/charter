@@ -4,11 +4,10 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'reactstrap';
 
-import { coreEvaluator, coreRegistry, coreWalker, SceneCore } from 'fptcore';
+import { coreRegistry, coreWalker, SceneCore } from 'fptcore';
 
 import ResourceBadge from '../partials/ResourceBadge';
 import Preview from '../operate/partials/Preview';
-import { sortForRole } from '../operate/utils';
 import { getPlayerIframeUrl } from '../utils';
 
 const promptsForTriggerEventTypes = {
@@ -36,15 +35,12 @@ export default class SceneGrid extends Component {
     const trip = this.props.trip;
     return _(trip.players)
       .filter(player => (
-        coreEvaluator.if(trip.actionContext, player.role.active_if)
-      ))
-      .filter(player => (
         _.find(trip.script.content.pages, {
           interface: player.role.interface,
           scene: scene.name
         })
       ))
-      .sortBy(player => sortForRole(player.role))
+      .sort((a, b) => SceneCore.sortResource(a.role, b.role))
       .value();
   }
 
@@ -174,10 +170,6 @@ export default class SceneGrid extends Component {
       this.renderScenePlayerColumn(scene, player, colWidth)
     ));
 
-    const globalMarker = scene.global ? (
-      <span className="faint ml-1">(global)</span>
-    ) : null;
-
     const canStartScene = !scene.global && !isCurrentScene;
     const startSceneButton = canStartScene ? (
       <a
@@ -231,6 +223,7 @@ export default class SceneGrid extends Component {
       <div key={scene.name} className={`row row-scene ${sceneClass}`}>
         <div className="scene-header">
           <ResourceBadge
+            resource={scene}
             resourceType="scene"
             className="mr-1"
             showType={false} />
@@ -241,7 +234,6 @@ export default class SceneGrid extends Component {
             <i className="fa fa-pencil" />
           </Link>
           {startSceneButton}
-          {globalMarker}
         </div>
         <div className="col-sm-10">
           <div className="row">

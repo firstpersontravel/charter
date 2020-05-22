@@ -3,20 +3,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { coreEvaluator } from 'fptcore';
+import { RoleCore, SceneCore } from 'fptcore';
 
 import ResponsiveTabs from '../../partials/ResponsiveTabs';
-import { sortForRole, canRoleHaveUser } from '../utils';
 
 function getAllPlayers(trips) {
-  const tripsById = _.fromPairs(_.map(trips, t => [t.id, t]));
   return _(trips)
     .map('players')
     .flatten()
-    .filter(player => coreEvaluator.if(
-      tripsById[player.tripId].actionContext,
-      player.role.active_if
-    ))
     .value();
 }
 
@@ -75,8 +69,8 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     return <div>No trips</div>;
   }
   const roles = _(group.script.content.roles)
-    .filter(role => canRoleHaveUser(role))
-    .sortBy([sortForRole, 'name'])
+    .filter(role => RoleCore.canRoleHaveUser(group.script.content, role))
+    .sort(SceneCore.sortResource)
     .value();
   const allPlayers = getAllPlayers(group.trips);
   const allUsers = _(allPlayers).map('user').uniq().value();

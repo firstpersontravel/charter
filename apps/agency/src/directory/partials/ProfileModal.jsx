@@ -102,7 +102,7 @@ export default class ProfileModal extends Component {
       <option key={role.name} value={role.name}>{role.title}</option>
     ));
     const role = _.find(roles, { name: this.state.roleName });
-    const requiredValues = (role && role.required_values) || [];
+    const requiredValues = (role && role.role_values) || [];
     const requiredValueRows = requiredValues
       .map(requiredValue => (
         <div className="row" key={requiredValue}>

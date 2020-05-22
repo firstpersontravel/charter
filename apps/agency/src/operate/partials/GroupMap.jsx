@@ -322,11 +322,7 @@ export default class GroupMap extends Component {
     const oneHourAgo = moment.utc().subtract(1, 'hour');
     const locatedAt = moment.utc(user.locationTimestamp);
     const locIsRecent = locatedAt.isAfter(oneHourAgo);
-    const isActor = playerGroup[0].role.type === 'performer';
-    const icons = isActor ?
-      [actorIcon, actorIconLocExpired] :
-      [userIcon, userIconExpired];
-    const icon = locIsRecent ? icons[0] : icons[1];
+    const icon = locIsRecent ? userIcon : userIconExpired;
     const position = L.latLng(
       user.locationLatitude,
       user.locationLongitude);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { SceneCore } from 'fptcore';
+import { SceneCore, coreRegistry } from 'fptcore';
 
 import ContentTree from '../partials/ContentTree';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
@@ -22,7 +22,7 @@ export default class Slice extends Component {
               style={{ width: '1.5em' }}
               className={
                 'd-none d-md-inline-block fa ' +
-                `${scene.global ? 'fa-globe' : 'fa-puzzle-piece'}`
+                `fa-${coreRegistry.resources.scene.icon(scene)}`
               } />
             &nbsp;{scene.title}
           </span>

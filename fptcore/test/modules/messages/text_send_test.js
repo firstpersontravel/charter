@@ -56,7 +56,6 @@ describe('#send_text', () => {
 
   it('sends text message with templating', () => {
     const params = {
-      medium: 'text',
       content: 'We are meeting at {{venue}}.',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
@@ -67,7 +66,7 @@ describe('#send_text', () => {
     assert.strictEqual(res[0].fields.content, 'We are meeting at the bar.');
   });
 
-  it('reply is needed for non-actor to actor', () => {
+  it('reply is needed if specified', () => {
     const actionContextWithActor = Object.assign({}, actionContext, {
       scriptContent: {
         roles: [
@@ -80,7 +79,8 @@ describe('#send_text', () => {
       medium: 'text',
       content: 'hi',
       from_role_name: 'Ally',
-      to_role_name: 'Babbit'
+      to_role_name: 'Babbit',
+      reply_needed: true
     };
 
     const res = send_text.getOps(params, actionContextWithActor);

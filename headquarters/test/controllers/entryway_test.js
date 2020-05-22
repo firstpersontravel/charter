@@ -1,6 +1,8 @@
 const moment = require('moment-timezone');
 const sinon = require('sinon');
 
+const RoleCore = require('fptcore/src/cores/role');
+
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
@@ -25,14 +27,11 @@ const mockScript = {
   },
   content: {
     roles: [{
-      name: 'actor',
-      type: 'performer'
+      name: 'actor'
     }, {
-      name: 'npc',
-      type: 'scripted',
+      name: 'npc'
     }, {
-      name: 'player',
-      type: 'traveler'
+      name: 'player'
     }]
   }
 };
@@ -40,9 +39,13 @@ const mockScript = {
 describe('EntrywayController', () => {
   describe('#assignActors', () => {
     it('assigns users for actor roles only', async () => {
+      sandbox.stub(RoleCore, 'canRoleHaveUser')
+        .callsFake((scriptContent, role) => (
+          role.name === 'actor' || role.name === 'player'
+        ));
       sandbox.stub(EntrywayController, 'assignActor').resolves();
 
-      await EntrywayController.assignActors(mockScript, mockTrip);
+      await EntrywayController.assignActors(mockScript, mockTrip, 'player');
 
       // Test called only once with the actor
       sinon.assert.calledOnce(EntrywayController.assignActor);

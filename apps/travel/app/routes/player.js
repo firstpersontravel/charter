@@ -147,7 +147,8 @@ export default Ember.Route.extend({
         content: content,
         latitude: lastFix && lastFix.coords.latitude,
         longitude: lastFix && lastFix.coords.longitude,
-        accuracy: lastFix && lastFix.coords.accuracy
+        accuracy: lastFix && lastFix.coords.accuracy,
+        reply_needed: true
       });
     },
 

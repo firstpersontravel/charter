@@ -2,10 +2,8 @@ content:
   roles:
     - name: Knight
       title: Knight
-      type: traveler
     - name: Sage
       title: Sage
-      type: scripted
   relays:
     - name: main
       for: Knight
@@ -83,4 +81,4 @@ content:
           content: Your quest is... the holy grail!
           id: 154
   meta:
-    version: 33
+    version: 34

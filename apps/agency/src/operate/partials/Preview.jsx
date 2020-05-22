@@ -106,7 +106,30 @@ function renderButton(trip, player, page, panel, onEvent) {
   );
 }
 
+function matchTriggerEvent(triggerEvent, eventSpecFields) {
+  if (!triggerEvent) {
+    return false;
+  }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const [k, v] of Object.entries(eventSpecFields)) {
+    if (!triggerEvent[k] || triggerEvent[k] !== v) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkForTrigger(scriptContent, eventSpecFields) {
+  return (scriptContent.triggers || [])
+    .filter(trigger => matchTriggerEvent(trigger.event, eventSpecFields))
+    .length > 0;
+}
+
 function renderDirections(trip, player, page, panel, onEvent) {
+  const filter = { type: 'directions_arrived', directions_id: panel.id };
+  if (!checkForTrigger(trip.script.content, filter)) {
+    return null;
+  }
   const destinationName = panel.destination_name || 'destination';
   const panelText = `Arrived at ${destinationName}`;
   const btnEvent = {
@@ -125,6 +148,10 @@ function renderDirections(trip, player, page, panel, onEvent) {
 }
 
 function renderNumberpad(trip, player, page, panel, onEvent) {
+  const filter = { type: 'numberpad_submitted', numberpad_id: panel.id };
+  if (!checkForTrigger(trip.script.content, filter)) {
+    return null;
+  }
   return (
     <button
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
@@ -152,6 +179,10 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
 }
 
 function renderTextEntry(trip, player, page, panel, onEvent) {
+  const filter = { type: 'text_entry_submitted', text_entry_id: panel.id };
+  if (!checkForTrigger(trip.script.content, filter)) {
+    return null;
+  }
   return (
     <button
       className="btn btn-block constrain-text btn-outline-secondary mb-2"

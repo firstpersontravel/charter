@@ -155,7 +155,7 @@ export default class ResourceView extends Component {
           {(hasUnsavableChanges && !isNew) ? revertBtn : null}
           {(!hasUnsavableChanges && !isNew) ? deleteBtn : null}
         </div>
-        <ResourceBadge resourceType={resourceType} />
+        <ResourceBadge resource={resource} resourceType={resourceType} />
         &nbsp;
         {this.renderTitle(resource)}
       </h5>

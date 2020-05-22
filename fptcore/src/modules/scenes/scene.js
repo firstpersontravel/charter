@@ -1,5 +1,5 @@
 module.exports = {
-  icon: 'puzzle-piece',
+  icon: scene => (scene && scene.global) ? 'globe' : 'puzzle-piece',
   help: 'A temporal unit of experience. Usually only one scene is active at a time.',
   properties: {
     name: { type: 'name', required: true },

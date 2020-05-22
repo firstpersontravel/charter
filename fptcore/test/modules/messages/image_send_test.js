@@ -11,6 +11,19 @@ describe('#send_image', () => {
     evaluateAt: now
   };
 
+  it('reply is needed if specified', () => {
+    const params = {
+      content: 'hi',
+      from_role_name: 'Ally',
+      to_role_name: 'Babbit',
+      reply_needed: true
+    };
+
+    const res = send_image.getOps(params, actionContext);
+
+    assert.strictEqual(res[0].fields.isReplyNeeded, true);
+  });
+
   it('sends image message with location', () => {
     const params = {
       content: 'url',

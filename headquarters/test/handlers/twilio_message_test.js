@@ -49,7 +49,8 @@ describe('TwilioMessageHandler', () => {
             from_role_name: 'From',
             content: 'incomïng mêssage',
             from_relay_id: 2,
-            to_role_name: 'To'
+            to_role_name: 'To',
+            reply_needed: true
           }
         }]);
     });
@@ -70,7 +71,8 @@ describe('TwilioMessageHandler', () => {
             from_role_name: 'From',
             content: 'http://test/image.jpg',
             from_relay_id: 2,
-            to_role_name: 'To'
+            to_role_name: 'To',
+            reply_needed: true
           }
         }]);
     });

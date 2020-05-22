@@ -190,8 +190,10 @@ class TripRelaysController {
     }
 
     // Send to inverse relays -- relays as the role sending the message. These
-    // should only send if the relay is for an actor, otherwise the player
-    // may get texts if they use an in-game interface to send a message.
+    // should only send if the relay is for a different role than the one
+    // who sent the message -- it's a 'cc' relay. There is no need to notify
+    // a role who, for instance, sent a message via the web, of having sent
+    // that message, over text.
     const invFilters = { as: message.fromRoleName, with: message.toRoleName };
     const invRelays = await this.ensureRelays(trip, invFilters);
 
@@ -199,11 +201,8 @@ class TripRelaysController {
       if (relay.id === suppressRelayId) {
         continue;
       }
-      // If the inv relay is not for an actor, skip sending the message.
-      // Only actors get notified if another user sent a message as the
-      // same role.
-      const role = _.find(script.content.roles, { name: relay.forRoleName });
-      if (role.type !== 'performer') {
+      // If this relay is for the user who sent the message, skip.
+      if (relay.for === message.fromRoleName) {
         continue;
       }
       const [body, mediaUrl] = await this._partsForRelayMessage(script, trip, 

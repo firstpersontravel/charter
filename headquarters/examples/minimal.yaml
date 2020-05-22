@@ -2,7 +2,6 @@ content:
   roles:
     - name: player
       title: Player
-      type: traveler
       interface: player
       starting_page: first_page
   scenes:
@@ -37,4 +36,4 @@ content:
       event:
         type: scene_started
   meta:
-    version: 33
+    version: 34

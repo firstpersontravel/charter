@@ -15,6 +15,7 @@ module.exports = {
   Kernel: require('./kernel/kernel'),
   KernelTriggers: require('./kernel/triggers'),
   PlayerCore: require('./cores/player'),
+  RoleCore: require('./cores/role'),
   SceneCore: require('./cores/scene'),
   ScriptCore: require('./cores/script'),
   TemplateUtil: require('./utils/template'),

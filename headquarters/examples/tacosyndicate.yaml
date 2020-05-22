@@ -303,24 +303,18 @@ content:
       name: Inductee
       starting_page: PAGE-1-START
       title: Inductee
-      type: traveler
     - name: Jessie
       interface: Jessie
       starting_page: PAGE-0-JESSIE
       title: Dispatch
-      type: performer
     - name: StageManager
       title: StageManager
-      type: performer
     - name: Phil
       title: Phil
-      type: scripted
     - name: Russell
       title: Russell
-      type: scripted
     - name: BigRockStaff1
       title: OfficeStaff
-      type: performer
   routes:
     - from: WAYPOINT-BIGROCK
       mode: walking
@@ -1320,7 +1314,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 33
+    version: 34
 assets:
   - data:
       end:

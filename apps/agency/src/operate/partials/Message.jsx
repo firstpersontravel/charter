@@ -42,10 +42,10 @@ function renderMessageIcon(message, fromPlayer, toPlayer) {
     icon = 'fa-exclamation-circle';
   } else if (message.name) {
     icon = 'fa-clock-o';
-  } else if (fromPlayer.role.type === 'performer') {
-    icon = 'fa-user-o';
-  } else {
+  } else if (message.isReplyNeeded) {
     icon = 'fa-user';
+  } else {
+    icon = 'fa-user-o';
   }
   return (
     <span className={textClass}>
@@ -103,16 +103,15 @@ export default function Message({ message, updateInstance }) {
   if (!fromPlayer || !toPlayer) {
     return null;
   }
-  const userPlayer = fromPlayer.role.type === 'performer' ? toPlayer :
-    fromPlayer;
-  const actorPlayer = userPlayer === fromPlayer ? toPlayer : fromPlayer;
+  const userPlayer = message.isReplyNeeded ? fromPlayer : toPlayer;
+  const actorPlayer = message.isReplyNeeded ? toPlayer : fromPlayer;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
   const timeShort = createdAt.tz(trip.experience.timezone).format(timeFormat);
   const content = renderMessageContent(message);
   const icon = renderMessageIcon(message, fromPlayer, toPlayer);
   const archivedClass = message.isArchived ? 'message-archived' : '';
-  const shouldShowRespond = fromPlayer.role.type === 'traveler' &&
+  const shouldShowRespond = message.isReplyNeeded &&
     !message.reponseReceivedAt;
   const respondBtn = shouldShowRespond ? (
     <Link

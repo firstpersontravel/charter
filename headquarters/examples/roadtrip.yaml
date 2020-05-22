@@ -3,7 +3,6 @@ content:
     - name: Driver
       title: Driver
       starting_page: Start
-      type: traveler
   scenes:
     - name: main
       title: Main
@@ -157,7 +156,7 @@ content:
           page_name: End
           id: 18
   meta:
-    version: 33
+    version: 34
 assets:
   - data:
       end:

@@ -3,17 +3,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { coreEvaluator, PlayerCore } from 'fptcore';
+import { coreEvaluator, PlayerCore, RoleCore } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
-import { canRoleHaveUser } from '../../operate/utils';
 import UserModal from '../../directory/partials/UserModal';
-
-function doesTripHaveRole(trip, roleName) {
-  const role = _.find(trip.script.content.roles, { name: roleName });
-  return coreEvaluator.if(trip.actionContext, role.active_if);
-}
 
 export default class GroupPlayers extends Component {
   constructor(props) {
@@ -149,8 +143,7 @@ export default class GroupPlayers extends Component {
   renderRoleCell(roleName, trip) {
     const experience = this.props.group.experience;
     const script = this.props.group.script;
-    const tripHasRole = doesTripHaveRole(trip, roleName);
-    if (!experience || !script || !tripHasRole) {
+    if (!experience || !script) {
       return null;
     }
     const role = _.find(script.content.roles, { name: roleName });
@@ -200,7 +193,7 @@ export default class GroupPlayers extends Component {
       return null;
     }
     return script.content.roles
-      .filter(role => canRoleHaveUser(role))
+      .filter(role => RoleCore.canRoleHaveUser(script.content, role))
       .map(role => this.renderRoleRow(trips, role));
   }
 

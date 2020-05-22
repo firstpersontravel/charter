@@ -25,6 +25,7 @@ export default class ContentTree extends Component {
         <span>
           <ResourceBadge
             showType={false}
+            resource={item}
             resourceType={resourceType} /> {itemTitle}
         </span>
       )

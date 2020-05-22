@@ -37,21 +37,24 @@ const COLORS = _(coreRegistry.resources)
   .fromPairs()
   .value();
 
-export function iconForResourceType(resourceType) {
+export function iconForResource(resourceType, resource) {
   const resourceClass = coreRegistry.resources[resourceType];
   if (!resourceClass || !resourceClass.icon) {
     return null;
   }
+  const isFunc = typeof resourceClass.icon === 'function';
+  const icon = isFunc ? resourceClass.icon(resource) : resourceClass.icon;
   return (
-    <i className={`fa fa-${resourceClass.icon}`} />
+    <i className={`fa fa-${icon}`} />
   );
 }
 
-export default function ResourceBadge({ resourceType, style, className, showType, ...props }) {
+export default function ResourceBadge({ resourceType, resource, style,
+  className, showType, ...props }) {
   const styleWithColor = Object.assign({
     backgroundColor: COLORS[resourceType] || '#cccccc'
   }, style);
-  const resourceIcon = iconForResourceType(resourceType);
+  const resourceIcon = iconForResource(resourceType, resource);
   let titleClass = 'ml-1 d-inline d-sm-none d-md-inline';
   if (showType === true) {
     titleClass = 'ml-1 d-inline';
@@ -74,11 +77,13 @@ export default function ResourceBadge({ resourceType, style, className, showType
 ResourceBadge.propTypes = {
   style: PropTypes.object,
   resourceType: PropTypes.string.isRequired,
+  resource: PropTypes.object,
   className: PropTypes.string,
   showType: PropTypes.bool
 };
 
 ResourceBadge.defaultProps = {
+  resource: null,
   style: {},
   className: '',
   showType: null

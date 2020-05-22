@@ -30,12 +30,10 @@ content:
   roles:
     - name: Player
       title: Player
-      type: traveler
       starting_page: PAGE-START
       interface: tablet
     - name: Guide
       title: Guide
-      type: scripted
   scenes:
     - name: SCENE-MAIN
       title: Main
@@ -147,7 +145,7 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 33
+    version: 34
 assets:
   - type: directions
     data:

@@ -11,6 +11,19 @@ describe('#send_audio', () => {
     evaluateAt: now
   };
 
+  it('reply is needed if specified', () => {
+    const params = {
+      content: 'hi',
+      from_role_name: 'Ally',
+      to_role_name: 'Babbit',
+      reply_needed: true
+    };
+
+    const res = send_audio.getOps(params, actionContext);
+
+    assert.strictEqual(res[0].fields.isReplyNeeded, true);
+  });
+
   it('sends audio message', () => {
     const params = {
       content: 'url',

@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 
+import { RoleCore } from 'fptcore';
+
 import Loader from '../../partials/Loader';
-import { canRoleHaveUser } from '../../operate/utils';
 
 export default class Directory extends Component {
   renderRole(roleName, roleProfiles) {
@@ -35,7 +36,7 @@ export default class Directory extends Component {
     const script = this.props.experience.script;
     const profiles = this.props.profiles;
     const roleNames = _(script.content.roles)
-      .filter(canRoleHaveUser)
+      .filter(RoleCore.canRoleHaveUser)
       .map('name')
       .value();
     return roleNames.map((roleName) => {

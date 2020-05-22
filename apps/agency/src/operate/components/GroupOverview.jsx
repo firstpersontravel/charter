@@ -3,13 +3,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { coreEvaluator } from 'fptcore';
+import { RoleCore, SceneCore, coreEvaluator } from 'fptcore';
 
 import GroupMap from '../partials/GroupMap';
-import {
-  sortForRole,
-  canRoleHaveUser
-} from '../utils';
 import { getUserIframeUrl, getPlayerIframeUrl } from '../../utils';
 
 function getAllPlayers(trips) {
@@ -17,10 +13,6 @@ function getAllPlayers(trips) {
   return _(trips)
     .map('players')
     .flatten()
-    .filter(player => coreEvaluator.if(
-      tripsById[player.tripId].actionContext,
-      player.role.active_if
-    ))
     .value();
 }
 
@@ -48,7 +40,8 @@ function getExternalUrl(group, trips, role, user) {
 
 export default class GroupOverview extends Component {
   renderAddUserIcon(player) {
-    if (!canRoleHaveUser(player.role)) {
+    const script = this.props.group.script;
+    if (!RoleCore.canRoleHaveUser(script.content, player.role)) {
       return null;
     }
     if (player.user) {
@@ -133,8 +126,8 @@ export default class GroupOverview extends Component {
       ));
 
     const roles = _(group.script.content.roles)
-      .filter(role => canRoleHaveUser(role))
-      .sortBy([sortForRole, 'name'])
+      .filter(role => RoleCore.canRoleHaveUser(group.script.content, role))
+      .sort(SceneCore.sortResource)
       .value();
     const allPlayers = getAllPlayers(group.trips);
 

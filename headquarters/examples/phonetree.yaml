@@ -2,10 +2,8 @@ content:
   roles:
     - name: Player
       title: Player
-      type: traveler
     - name: PhoneTree
       title: PhoneTree
-      type: scripted
   relays:
     - name: relay-1
       for: Player
@@ -91,4 +89,4 @@ content:
               id: 8
           id: 6
   meta:
-    version: 33
+    version: 34

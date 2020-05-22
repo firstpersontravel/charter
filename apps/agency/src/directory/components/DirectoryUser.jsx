@@ -130,7 +130,7 @@ export default class DirectoryUser extends Component {
     if (!role) {
       return null;
     }
-    const requiredValues = role.required_values || [];
+    const requiredValues = role.role_values || [];
     const renderedValues = requiredValues
       .map(requiredValue => (
         <div key={requiredValue}>

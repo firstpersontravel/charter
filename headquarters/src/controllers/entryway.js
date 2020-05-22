@@ -1,5 +1,7 @@
 const moment = require('moment-timezone');
 
+const RoleCore = require('fptcore/src/cores/role');
+
 const models = require('../models');
 
 const RelayController = require('./relay');
@@ -33,16 +35,19 @@ class EntrywayController {
   /**
    * Assign each user in the script by role.
    */
-  static async assignActors(script, trip) {
+  static async assignActors(script, trip, enteredRoleName) {
     // Find other roles that need to be assigned users
     for (const role of script.content.roles) {
-      // Find other roles that need to be assigned users
-      // If role doesn't allow being assigned users, or isn't an actor, skip.
-      if (role.type !== 'performer') {
+      // Ignore user role that started the experience
+      if (role.name === enteredRoleName) {
         continue;
       }
-      await EntrywayController.assignActor(script.experience, trip,
-        role);
+      // Find other roles that need to be assigned users
+      // If role doesn't allow being assigned users, or isn't an actor, skip.
+      if (!RoleCore.canRoleHaveUser(script.content, role)) {
+        continue;
+      }
+      await EntrywayController.assignActor(script.experience, trip, role);
     }
   }
 
@@ -109,7 +114,7 @@ class EntrywayController {
     });
 
     // Update all other users
-    await EntrywayController.assignActors(script, trip);
+    await EntrywayController.assignActors(script, trip, userRoleName);
 
     // And return!
     return trip;
