@@ -50,7 +50,7 @@ function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
         </option>
       ));
     return (
-      <DropdownItem onClick={(e) => { e.stopPropagation(); }}>
+      <DropdownItem>
         <select
           onClick={(e) => { e.stopPropagation(); }}
           className="form-control dropdown-item"
@@ -60,9 +60,9 @@ function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
               return;
             }
             const newComponent = getNewComponent(itemSpec.component, val);
-            const updated = value.slice(0, index - 1)
+            const updated = value.slice(0, index)
               .concat([newComponent])
-              .concat(value.slice(index - 1));
+              .concat(value.slice(index));
             onPropUpdate(path, updated);
             toggleDropdown();
           }}>
@@ -75,12 +75,10 @@ function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
   return (
     <DropdownItem
       className="dropdown-item btn btn-link"
-      onClick={(e) => {
-        e.stopPropagation();
-        e.nativeEvent.stopImmediatePropagation();
-        const updated = value.slice(0, index - 1)
+      onClick={() => {
+        const updated = value.slice(0, index)
           .concat([newItem])
-          .concat(value.slice(index - 1));
+          .concat(value.slice(index));
         onPropUpdate(path, updated);
       }}>
       <i className="fa fa-plus" /> Add item above
