@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 export function getStage() {
   if (window.location.host.indexOf('staging.firstperson.travel') > -1 ||
       window.location.host.indexOf('beta.firstperson.travel') > -1) {

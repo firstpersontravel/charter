@@ -44,25 +44,8 @@ const ActiveWaypointIcon = L.Icon.extend({
   }
 });
 
-const HorseIcon = L.Icon.extend({
-  options: {
-    iconUrl: '/static/images/horse-icon.png',
-    iconRetinaUrl: '/static/images/horse-icon-2x.png',
-    shadowUrl: '/static/images/marker-shadow.png',
-    shadowRetinaUrl: '/static/images/marker-shadow@2x.png',
-    iconSize: [25, 41],
-    shadowSize: [41, 41],
-    iconAnchor: [12, 41],
-    shadowAnchor: [12, 41]
-  }
-});
-
-const userIcon = new HorseIcon();
-const userIconExpired = new HorseIcon({
-  className: 'marker-grayscale'
-});
-const actorIcon = new PlayerIcon();
-const actorIconLocExpired = new PlayerIcon({
+const userIcon = new PlayerIcon();
+const userIconExpired = new PlayerIcon({
   className: 'marker-grayscale'
 });
 

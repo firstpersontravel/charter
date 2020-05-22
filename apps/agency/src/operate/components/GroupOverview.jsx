@@ -3,13 +3,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { RoleCore, SceneCore, coreEvaluator } from 'fptcore';
+import { RoleCore, SceneCore } from 'fptcore';
 
 import GroupMap from '../partials/GroupMap';
 import { getUserIframeUrl, getPlayerIframeUrl } from '../../utils';
 
 function getAllPlayers(trips) {
-  const tripsById = _.fromPairs(_.map(trips, t => [t.id, t]));
   return _(trips)
     .map('players')
     .flatten()
