@@ -1,37 +1,156 @@
-import React from 'react';
+import _ from 'lodash';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 import { coreWalker } from 'fptcore';
+
+import {
+  duplicateComponent,
+  getNewComponent,
+  getComponentOptions
+} from '../../utils/resource-utils';
+import { newItemForSpec } from './utils';
+
+function canRemove(script, itemSpec, item) {
+  if (itemSpec.type === 'component') {
+    const refs = coreWalker.getResourcesReferencingComponent(
+      script.content, itemSpec.component, item.id);
+    if (refs.length > 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function renderRemoveBtn(script, value, path, itemSpec, item, index, onPropUpdate) {
+  const removable = canRemove(script, itemSpec, item);
+  return (
+    <DropdownItem
+      onClick={() => {
+        const updated = value.slice(0, index).concat(value.slice(index + 1));
+        onPropUpdate(path, updated);
+      }}
+      className={`dropdown-item btn btn-link ${removable ? '' : 'disabled'}`}>
+      <i className="fa fa-trash-o" /> {removable ? 'Remove' : 'Can\'t remove'}
+    </DropdownItem>
+  );
+}
+
+function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
+  toggleDropdown) {
+  if (itemSpec.type === 'component') {
+    // Show component types -- default dropdown doesn't work because
+    // disappearing this context menu removes the relative positioning for
+    // the popover.
+    const componentTypeOptions = getComponentOptions(itemSpec.component)
+      .map(opt => (
+        <option key={opt.value} value={opt.value}>
+          {opt.value === '' ? 'Add above' : opt.label}
+        </option>
+      ));
+    return (
+      <DropdownItem onClick={(e) => { e.stopPropagation(); }}>
+        <select
+          onClick={(e) => { e.stopPropagation(); }}
+          className="form-control dropdown-item"
+          onChange={(e) => {
+            const val = e.target.value;
+            if (!val) {
+              return;
+            }
+            const newComponent = getNewComponent(itemSpec.component, val);
+            const updated = value.slice(0, index - 1)
+              .concat([newComponent])
+              .concat(value.slice(index - 1));
+            onPropUpdate(path, updated);
+            toggleDropdown();
+          }}>
+          {componentTypeOptions}
+        </select>
+      </DropdownItem>
+    );
+  }
+  const newItem = newItemForSpec(itemSpec);
+  return (
+    <DropdownItem
+      className="dropdown-item btn btn-link"
+      onClick={(e) => {
+        e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
+        const updated = value.slice(0, index - 1)
+          .concat([newItem])
+          .concat(value.slice(index - 1));
+        onPropUpdate(path, updated);
+      }}>
+      <i className="fa fa-plus" /> Add item above
+    </DropdownItem>
+  );
+}
+
+function duplicateItem(itemSpec, item) {
+  if (itemSpec.type === 'component') {
+    return duplicateComponent(itemSpec.component, item);
+  }
+  return _.cloneDeep(item);
+}
+
+function renderDupeBtn(value, path, itemSpec, item, index, onPropUpdate) {
+  return (
+    <DropdownItem
+      onClick={() => {
+        const dupe = duplicateItem(itemSpec, item);
+        const updated = value.slice(0, index)
+          .concat([dupe])
+          .concat(value.slice(index));
+        onPropUpdate(path, updated);
+      }}
+      className="dropdown-item btn btn-link">
+      <i className="fa fa-copy" /> Duplicate
+    </DropdownItem>
+  );
+}
+
+function renderItemMenu(script, resource, spec, value, name, path, opts,
+  item, index, onPropUpdate) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+
+  const itemSpec = spec.items;
+  const newItemBtn = renderNewItemBtn(value, path, itemSpec, item, index,
+    onPropUpdate, toggleDropdown);
+  const removeBtn = renderRemoveBtn(script, value, path, itemSpec, item, index,
+    onPropUpdate);
+  const dupeBtn = renderDupeBtn(value, path, itemSpec, item, index,
+    onPropUpdate);
+
+  return (
+    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+      <DropdownToggle
+        color=""
+        className="btn-sm btn-outline-secondary">
+        <i className="fa fa-circle" />
+      </DropdownToggle>
+      <DropdownMenu>
+        {newItemBtn}
+        {dupeBtn}
+        {removeBtn}
+      </DropdownMenu>
+    </Dropdown>
+  );
+}
 
 function ListItem({ script, resource, spec, value, name, path, opts,
   item, index, onPropUpdate, renderAny }) {
   const AnyField = renderAny;
   const itemPath = `${path}[${index}]`;
-  let isRemoveDisabled = false;
-  if (spec.items.type === 'component') {
-    const refs = coreWalker.getResourcesReferencingComponent(
-      script.content, spec.items.component, item.id);
-    if (refs.length > 0) {
-      isRemoveDisabled = true;
-    }
-  }
-  const rmBtn = (
-    <button
-      className="btn btn-sm btn-outline-secondary"
-      title={isRemoveDisabled ? 'Cannot remove: other resources are referencing this item.' : ''}
-      disabled={isRemoveDisabled}
-      onClick={() => {
-        const updated = value.slice(0, index).concat(value.slice(index + 1));
-        onPropUpdate(path, updated);
-      }}>
-      <i className="fa fa-minus" />
-    </button>
-  );
+  const itemMenu = renderItemMenu(script, resource, spec, value, name, path,
+    opts, item, index, onPropUpdate);
   return (
     // eslint-disable-next-line react/no-array-index-key
     <div key={index}>
       <div style={{ float: 'left' }}>
-        {rmBtn}
+        {itemMenu}
       </div>
       <div style={{ marginLeft: '2em' }}>
         <AnyField

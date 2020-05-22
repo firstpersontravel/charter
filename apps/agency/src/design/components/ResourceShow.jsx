@@ -3,15 +3,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { TextUtil, coreRegistry, coreWalker } from 'fptcore';
+import { TextUtil, coreRegistry } from 'fptcore';
 
 import ResourceContainer from '../partials/ResourceContainer';
 import ResourceBadge from '../../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
 import { assembleReverseReferences, getChildren } from '../utils/graph-utils';
 import {
-  defaultFieldsForClass,
-  newResourceNameForType
+  duplicateResource,
+  getNewResourceFields
 } from '../utils/resource-utils';
 import { titleForResource } from '../utils/text-utils';
 
@@ -35,49 +35,6 @@ function updateScriptContent(scriptContent, collectionName, resourceName,
     [collectionName]: newCollection
   });
   return updatedScriptContent;
-}
-
-function getNewResourceFields(collectionName, defaults) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = coreRegistry.resources[resourceType];
-  const newName = newResourceNameForType(resourceType);
-  const defaultFields = defaultFieldsForClass(resourceClass);
-  const fields = Object.assign({ name: newName }, defaultFields);
-
-  if (resourceClass.properties.title) {
-    fields.title = `New ${resourceType}`;
-  }
-
-  _.each(defaults, (val, key) => {
-    if (resourceClass.properties[key]) {
-      fields[key] = val;
-    }
-  });
-
-  return fields;
-}
-
-function duplicateResource(collectionName, existingResource) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const newName = newResourceNameForType(resourceType);
-  const clonedResource = _.cloneDeep(existingResource);
-  const newResource = Object.assign({}, clonedResource, { name: newName });
-
-  // Generate new panel/action IDs by random number. Hacky!
-  coreWalker.walkResource(resourceType, clonedResource, 'panels',
-    (panel) => {
-      // eslint-disable-next-line no-param-reassign
-      panel.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    });
-
-  // Generate new panel/action IDs by random number. Hacky!
-  coreWalker.walkResource(resourceType, clonedResource, 'actions',
-    (action) => {
-      // eslint-disable-next-line no-param-reassign
-      action.id = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-    });
-
-  return newResource;
 }
 
 export default class ResourceShow extends Component {

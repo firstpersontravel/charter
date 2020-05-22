@@ -19,7 +19,8 @@ function isBtnDisabled(trip, player, page) {
     return true;
   }
   // Btn only enabled if page is current page.
-  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
+  const curPageName = currentPageNamesByRole[player.roleName];
   if (page.name !== curPageName) {
     return true;
   }
@@ -256,7 +257,8 @@ function renderHeader(trip, player, page, onAction) {
     TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone, player.roleName) : '';
 
-  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
+  const curPageName = currentPageNamesByRole[player.roleName];
   const isCurrentPage = page.name === curPageName;
   const isAckedPage = player.acknowledgedPageName === page.name;
 
@@ -329,7 +331,8 @@ export default function Preview({ trip, player, page, onEvent, onAction }) {
     return null;
   }
   const isCurrentScene = page.scene === trip.tripState.currentSceneName;
-  const curPageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
+  const curPageName = currentPageNamesByRole[player.roleName];
   const isCurrentPage = page.name === curPageName;
   const curCardClass = isCurrentScene ? 'border-primary' : 'border-secondary';
   const curHeadClass = isCurrentScene ? 'bg-primary' : 'bg-secondary';

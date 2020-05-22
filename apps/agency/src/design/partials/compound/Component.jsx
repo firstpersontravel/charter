@@ -10,11 +10,18 @@ import NewComponentBtn from './NewComponentBtn';
 function ComponentField({ script, resource, spec, value, name, path, opts,
   onPropUpdate, renderAny }) {
   if (!value) {
+    const newComponentLabel = (
+      <span className="btn btn-sm btn-outline-secondary">
+        <i className="fa fa-plus" />
+      </span>
+    );
     return (
       <NewComponentBtn
+        label={newComponentLabel}
         componentSpec={spec}
-        newPath={path}
-        onPropUpdate={onPropUpdate} />
+        onConfirm={(newComponent) => {
+          onPropUpdate(path, newComponent);
+        }} />
     );
   }
 

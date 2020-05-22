@@ -1,8 +1,3 @@
-// Todo: make this safer
-function newResourceId() {
-  return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-}
-
 module.exports = {
   actions: {
     typeKey: 'name',
@@ -13,7 +8,6 @@ module.exports = {
         id: {
           type: 'integer',
           required: true,
-          default: () => newResourceId(),
           display: { hidden: true }
         }
       }
@@ -34,7 +28,6 @@ module.exports = {
         id: {
           type: 'integer',
           required: true,
-          default: () => newResourceId(),
           display: { hidden: true }
         },
         visible_if: {

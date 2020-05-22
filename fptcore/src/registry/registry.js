@@ -29,20 +29,23 @@ class Registry {
     }
   }
 
-  getComponentVariety(spec, value) {
-    const componentType = spec.component;
+  getComponentVarietyByType(componentType, value) {
     const componentDef = this.components[componentType];
     if (!componentDef) {
-      throw new Error(`Invalid component type "${spec.component}".`);
+      throw new Error(`Invalid component type "${componentType}".`);
     }
     return value ? value[componentDef.typeKey] : null;
+  }
+
+  getComponentVariety(spec, value) {
+    const componentType = spec.component;
+    return this.getComponentVarietyByType(componentType, value);
   }
 
   /**
    * Get resource class of a component property, merging common and variety.
    */
-  getComponentClass(spec, variety) {
-    const componentType = spec.component;
+  getComponentClassByType(componentType, variety) {
     const componentDef = this.components[componentType];
     if (!componentDef) {
       throw new Error(`Invalid component type "${componentType}".`);
@@ -73,6 +76,11 @@ class Registry {
     }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
     const componentClass = _.merge({}, typeClass, commonClass, varietyClass);
     return componentClass;
+  }
+
+  getComponentClass(spec, variety) {
+    const componentType = spec.component;
+    return this.getComponentClassByType(componentType, variety);
   }
 }
 

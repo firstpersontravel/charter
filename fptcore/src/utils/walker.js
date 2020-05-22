@@ -76,6 +76,18 @@ class Walker {
       paramType, iteree);
   }
 
+  /**
+   * Walk over all params in a resource.
+   */
+  walkComponent(componentType, component, paramType, iteree) {
+    const variety = this.registry.getComponentVarietyByType(
+      componentType, component);
+    const varietyClass = this.registry.getComponentClassByType(componentType,
+      variety);
+    this.walkParams(null, null, component, varietyClass.properties, paramType,
+      iteree);
+  }
+
   /*
    * Walk all resources in the script to iterate over all params
    */

@@ -9,11 +9,18 @@ import { newItemForSpec } from './utils';
 
 function renderNewItemBtn(itemSpec, newPath, onPropUpdate) {
   if (itemSpec.type === 'component') {
+    const newComponentLabel = (
+      <span className="btn btn-sm btn-outline-secondary">
+        <i className="fa fa-plus" />
+      </span>
+    );
     return (
       <NewComponentBtn
+        label={newComponentLabel}
         componentSpec={itemSpec}
-        newPath={newPath}
-        onPropUpdate={onPropUpdate} />
+        onConfirm={(newComponent) => {
+          onPropUpdate(newPath, newComponent);
+        }} />
     );
   }
   const newItem = newItemForSpec(itemSpec);

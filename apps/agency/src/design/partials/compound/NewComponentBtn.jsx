@@ -1,26 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { coreRegistry, TextUtil } from 'fptcore';
+import { TextUtil } from 'fptcore';
 
 import PopoverControl from '../../../partials/PopoverControl';
-import { defaultFieldsForSpecs } from '../../utils/resource-utils';
+import {
+  getNewComponent,
+  getComponentOptions
+} from '../../utils/resource-utils';
 
-function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
+function NewComponentBtn({ componentSpec, onConfirm, label }) {
   const componentType = componentSpec.component;
-  const componentClass = coreRegistry.components[componentType];
-  const componentTypeKey = componentClass.typeKey;
-  const componentOptions = [{ value: '', label: '---' }].concat(Object
-    .keys(coreRegistry[componentType])
-    .map(key => ({ value: key, label: TextUtil.titleForKey(key) })))
-    .sort((a, b) => (a.label > b.label ? 1 : -1));
-
-  const newComponentBtn = (
-    <span className="btn btn-sm btn-outline-secondary">
-      <i className="fa fa-plus" />
-    </span>
-  );
-
+  const componentOptions = getComponentOptions(componentType);
   return (
     <PopoverControl
       title={`New ${TextUtil.singularize(componentType)}`}
@@ -30,26 +21,18 @@ function NewComponentBtn({ componentSpec, newPath, onPropUpdate }) {
         if (!val) {
           return;
         }
-        const variantClass = coreRegistry.getComponentClass(componentSpec,
-          val);
-        if (!variantClass) {
-          console.error(`No variant ${val}.`);
-          return;
-        }
-        const defaults = defaultFieldsForSpecs(variantClass.properties);
-        const fields = Object.assign(defaults, { [componentTypeKey]: val });
-        onPropUpdate(newPath, fields);
+        onConfirm(getNewComponent(componentType, val));
       }}
-      label={newComponentBtn}
+      label={label}
       value={''}
       underlined={false} />
   );
 }
 
 NewComponentBtn.propTypes = {
+  label: PropTypes.node.isRequired,
   componentSpec: PropTypes.object.isRequired,
-  newPath: PropTypes.string.isRequired,
-  onPropUpdate: PropTypes.func.isRequired
+  onConfirm: PropTypes.func.isRequired
 };
 
 export default NewComponentBtn;
