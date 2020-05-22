@@ -51,6 +51,7 @@ export default class ResponsiveListGroup extends Component {
         className={`${this.props.itemClassName} ${item.disabled ? 'disabled faint' : ''}`}
         activeClassName={item.disabled ? '' : this.props.itemActiveClassName}
         exact={item.isExact}
+        isActive={item.isActive}
         key={item.key}
         to={item.url}>
         {item.label}
@@ -80,11 +81,12 @@ ResponsiveListGroup.propTypes = {
   itemActiveClassName: PropTypes.string,
   items: PropTypes.arrayOf(PropTypes.shape({
     disabled: PropTypes.bool,
+    isActive: PropTypes.func,
     isExact: PropTypes.bool,
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     label: PropTypes.node.isRequired,
     text: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired
+    url: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired
   })).isRequired
 };
 

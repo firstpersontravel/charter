@@ -35,36 +35,40 @@ const sectionContent = {
   }]
 };
 
-function getGlobalSceneContent(sliceName) {
+function getGlobalSceneContent(scriptContent, sceneName) {
   return [{
     collection: 'triggers',
-    filter: { scene: sliceName }
+    filter: { scene: sceneName }
   }];
 }
 
-function getSceneContent(sliceName) {
-  return [{
+function getSceneContent(scriptContent, sceneName) {
+  const pageSections = (scriptContent.interfaces || []).map(i => ({
+    key: `${sceneName}-pages-${i.name}`,
+    title: `${i.title} page`,
     collection: 'pages',
-    filter: { scene: sliceName }
-  }, {
+    filter: { scene: sceneName, interface: i.name }
+  }));
+  const sceneSections = [{
     collection: 'cues',
-    filter: { scene: sliceName }
+    filter: { scene: sceneName }
   }, {
     collection: 'clips',
-    filter: { scene: sliceName }
+    filter: { scene: sceneName }
   }, {
     collection: 'triggers',
-    filter: { scene: sliceName }
+    filter: { scene: sceneName }
   }];
+  return pageSections.concat(sceneSections);
 }
 
 export function getSliceContent(scriptContent, sliceType, sliceName) {
   if (sliceType === 'scene') {
     const scene = scriptContent.scenes.find(s => s.name === sliceName);
     if (scene && scene.global) {
-      return getGlobalSceneContent(sliceName);
+      return getGlobalSceneContent(scriptContent, sliceName);
     }
-    return getSceneContent(sliceName);
+    return getSceneContent(scriptContent, sliceName);
   }
   if (sliceType === 'section') {
     return sectionContent[sliceName];
@@ -72,18 +76,26 @@ export function getSliceContent(scriptContent, sliceType, sliceName) {
   return null;
 }
 
+export function getContentListItem(scriptContent, contentMapItem) {
+  const collectionName = contentMapItem.collection;
+  const items = contentMapItem.filter
+    ? _.filter(scriptContent[collectionName], contentMapItem.filter)
+    : scriptContent[collectionName];
+  return {
+    key: contentMapItem.key,
+    title: contentMapItem.title,
+    collection: contentMapItem.collection,
+    filter: contentMapItem.filter,
+    items: items
+  };
+}
+
 export function getContentList(scriptContent, sliceType, sliceName) {
   const contentMap = getSliceContent(scriptContent, sliceType, sliceName);
   if (!contentMap) {
-    return {};
+    return [];
   }
-  return Object.fromEntries(contentMap.map((contentMapItem) => {
-    const collectionName = contentMapItem.collection;
-    const items = contentMapItem.filter
-      ? _.filter(scriptContent[collectionName], contentMapItem.filter)
-      : scriptContent[collectionName];
-    return [contentMapItem.collection, items];
-  }));
+  return contentMap.map(item => getContentListItem(scriptContent, item));
 }
 
 function sliceForResource(collectionName, resource) {

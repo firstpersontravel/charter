@@ -53,6 +53,6 @@ module.exports = {
       }
       return spec.offset + ' after "' + time.title + '"';
     }
-    return 'at "' + time.title + '"';
+    return '"' + time.title + '"';
   }
 };

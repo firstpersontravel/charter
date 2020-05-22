@@ -34,7 +34,7 @@ export default function SliceIndex({ script, match }) {
   if (!sliceContent) {
     return 'Invalid section.';
   }
-  const collectionNames = sliceContent.map(i => i.collection);
+  const collectionNames = [...new Set(sliceContent.map(i => i.collection))];
   const renderedCreateItems = collectionNames.map(collectionName => (
     renderCreateResource(script, match.params.sliceType,
       match.params.sliceName, collectionName)

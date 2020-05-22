@@ -7,6 +7,15 @@ import { titleForResource } from '../utils/text-utils';
 import ResourceBadge from '../../partials/ResourceBadge';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
+function makeQueryString(params) {
+  if (!params) {
+    return '';
+  }
+  return `?${Object.keys(params)
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join('&')}`;
+}
+
 export default class ContentTree extends Component {
   renderItem(collectionName, item) {
     const resourceType = TextUtil.singularize(collectionName);
@@ -24,6 +33,7 @@ export default class ContentTree extends Component {
       label: (
         <span>
           <ResourceBadge
+            className="ml-3"
             showType={false}
             resource={item}
             resourceType={resourceType} /> {itemTitle}
@@ -32,54 +42,57 @@ export default class ContentTree extends Component {
     });
   }
 
-  renderNewItem(collectionName) {
+  renderNewItem(contentListItem) {
+    const collectionName = contentListItem.collection;
     const script = this.props.script;
     const resourceType = TextUtil.singularize(collectionName);
+    const queryString = makeQueryString(contentListItem.filter);
+    const title = contentListItem.title ?
+      contentListItem.title :
+      TextUtil.titleForKey(resourceType);
     return ({
-      key: collectionName,
-      url: (
-        `/${script.org.name}/${script.experience.name}` +
-        `/script/${script.revision}` +
-        `/design/${this.props.sliceType}/${this.props.sliceName}` +
-        `/${collectionName}/new`
+      key: `${contentListItem.key || collectionName}-new`,
+      isActive: (match, location) => (
+        match &&
+        location.pathname === match.url &&
+        location.search === queryString
       ),
-      text: `Add ${resourceType}`,
+      url: {
+        pathname: (
+          `/${script.org.name}/${script.experience.name}` +
+          `/script/${script.revision}` +
+          `/design/${this.props.sliceType}/${this.props.sliceName}` +
+          `/${collectionName}/new`
+        ),
+        search: queryString
+      },
+      text: `Add ${title.toLowerCase()}`,
       label: (
-        <span>
-          <span className="faint">+</span>&nbsp;
+        <span style={{ opacity: 0.7 }}>
           <ResourceBadge
+            className="mr-1"
             showType={false}
-            style={{ opacity: '0.5' }}
             resourceType={resourceType} />
-          &nbsp;
-          <span className="faint">Add {resourceType}</span>
+          Add {title.toLowerCase()}
         </span>
       )
     });
   }
 
-  renderCollectionItems(collectionName) {
-    const header = {
-      key: `${collectionName}-header`,
-      url: '',
-      label: TextUtil.titleForKey(collectionName),
-      text: TextUtil.titleForKey(collectionName),
-      disabled: true
-    };
-    const collection = this.props.contentList[collectionName] || [];
-    const items = collection
+  renderContentListItem(contentListItem) {
+    const items = (contentListItem.items || [])
       .sort(SceneCore.sortResource)
       .map(item => (
-        this.renderItem(collectionName, item)
+        this.renderItem(contentListItem.collection, item)
       ));
-    const newItem = this.renderNewItem(collectionName);
-    return [header].concat(items).concat([newItem]);
+    const newItem = this.renderNewItem(contentListItem);
+    return [newItem].concat(items);
   }
 
   render() {
     const contentList = this.props.contentList;
-    const allItems = Object.keys(contentList)
-      .map(collectionName => this.renderCollectionItems(collectionName))
+    const allItems = contentList
+      .map(item => this.renderContentListItem(item))
       .flat();
 
     return (
@@ -91,7 +104,7 @@ export default class ContentTree extends Component {
 ContentTree.propTypes = {
   sliceType: PropTypes.string.isRequired,
   sliceName: PropTypes.string.isRequired,
-  contentList: PropTypes.object.isRequired,
+  contentList: PropTypes.array.isRequired,
   script: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 };

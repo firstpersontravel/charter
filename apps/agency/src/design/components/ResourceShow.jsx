@@ -104,11 +104,8 @@ export default class ResourceShow extends Component {
   }
 
   getNewMainResourceFields() {
-    const defaults = Object.assign({}, this.props.location.query);
-    if (this.props.match.params.sliceType === 'scene') {
-      defaults.scene = this.props.match.params.sliceName;
-    }
-
+    const query = new URLSearchParams(this.props.location.search);
+    const defaults = Object.fromEntries(query.entries());
     const collectionName = this.props.match.params.collectionName;
     return getNewResourceFields(collectionName, defaults);
   }
