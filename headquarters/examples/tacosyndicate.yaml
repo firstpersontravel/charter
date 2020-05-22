@@ -301,11 +301,9 @@ content:
   roles:
     - interface: Inductee
       name: Inductee
-      starting_page: PAGE-1-START
       title: Inductee
     - name: Jessie
       interface: Jessie
-      starting_page: PAGE-0-JESSIE
       title: Dispatch
     - name: StageManager
       title: StageManager
@@ -1314,7 +1312,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 34
+    version: 35
 assets:
   - data:
       end:

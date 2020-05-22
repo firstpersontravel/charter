@@ -2,7 +2,7 @@ content:
   roles:
     - name: Driver
       title: Driver
-      starting_page: Start
+      interface: Driver
   scenes:
     - name: main
       title: Main
@@ -66,7 +66,7 @@ content:
     - scene: main
       interface: Driver
       name: Start
-      title: Start in San Francisco
+      title: 1. Start in San Francisco
       waypoint: start
       panels:
         - type: button
@@ -75,7 +75,7 @@ content:
     - scene: main
       interface: Driver
       name: Drive1
-      title: First drive
+      title: 2. First drive
       route: Drive1
       panels:
         - type: directions
@@ -85,7 +85,7 @@ content:
     - scene: main
       interface: Driver
       name: Break
-      title: Lunch break
+      title: 3. Lunch break
       waypoint: midpoint
       panels:
         - type: text
@@ -98,7 +98,7 @@ content:
       interface: Driver
       name: Drive2
       route: Drive2
-      title: Second drive
+      title: 4. Second drive
       panels:
         - type: directions
           route: Drive2
@@ -107,7 +107,7 @@ content:
     - scene: main
       interface: Driver
       name: End
-      title: End
+      title: 5. End
       waypoint: end
       panels:
         - type: text
@@ -156,7 +156,7 @@ content:
           page_name: End
           id: 18
   meta:
-    version: 34
+    version: 35
 assets:
   - data:
       end:

@@ -30,7 +30,6 @@ content:
   roles:
     - name: Player
       title: Player
-      starting_page: PAGE-START
       interface: tablet
     - name: Guide
       title: Guide
@@ -145,7 +144,7 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 34
+    version: 35
 assets:
   - type: directions
     data:

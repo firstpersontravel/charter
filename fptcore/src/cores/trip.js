@@ -30,9 +30,7 @@ class TripCore {
     var fields = {
       tripState: {
         currentSceneName: '',
-        currentPageNamesByRole: Object.fromEntries((scriptContent.roles || [])
-          .filter(role => role.starting_page)
-          .map(role => [role.name, role.starting_page]))
+        currentPageNamesByRole: {}
       },
       customizations: {},
       values: {},

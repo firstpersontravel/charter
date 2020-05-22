@@ -5,17 +5,8 @@ const PlayerCore = require('../../src/cores/player');
 describe('PlayerCore', () => {
   describe('#getInitialFields', () => {
     const scriptContent = {
-      pages: [{
-        name: 'PAGE-1'
-      }],
-      roles: [{
-        name: 'Sam',
-        actor: false,
-        starting_page: 'PAGE-1'
-      }],
-      variants: [
-        { name: 'default' }
-      ]
+      roles: [{ name: 'Sam' }],
+      variants: [{ name: 'default' }]
     };
 
     it('creates values from role', () => {

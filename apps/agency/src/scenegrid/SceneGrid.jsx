@@ -101,6 +101,7 @@ export default class SceneGrid extends Component {
       scene: scene.name
     });
     const renderedPages = pages
+      .sort(SceneCore.sortResource)
       .map(page => this.renderPlayerPage(player, page));
     const iframeLink = trip.id ? (
       <a

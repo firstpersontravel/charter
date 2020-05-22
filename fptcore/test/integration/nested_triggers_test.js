@@ -402,7 +402,10 @@ describe('Integration - Nested Triggers', () => {
     const result = Kernel.resultForEvent(event, sceneActionContext);
 
     assert.deepStrictEqual(result.nextContext.evalContext, {
-      tripState: { currentSceneName: 'SCENE-2' },
+      tripState: {
+        currentSceneName: 'SCENE-2',
+        currentPageNamesByRole: {}
+      },
       history: { trigger1: now.toISOString(), trigger2: now.toISOString() },
       val: true
     });

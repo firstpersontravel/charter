@@ -3,7 +3,6 @@ content:
     - name: player
       title: Player
       interface: player
-      starting_page: first_page
   scenes:
     - name: first
       title: First scene
@@ -36,4 +35,4 @@ content:
       event:
         type: scene_started
   meta:
-    version: 34
+    version: 35

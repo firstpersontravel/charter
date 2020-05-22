@@ -18,10 +18,7 @@ describe('TripsController', () => {
       const stubScript = {
         id: 2,
         content: {
-          roles: [{
-            name: 'fake',
-            starting_page: 'page-one'
-          }],
+          roles: [{ name: 'fake' }],
           scenes: [{
             name: 'SCENE-MAIN'
           }],
@@ -73,7 +70,7 @@ describe('TripsController', () => {
         date: '2018-01-01',
         tripState: {
           currentSceneName: '',
-          currentPageNamesByRole: { fake: 'page-one' }
+          currentPageNamesByRole: {}
         },
         groupId: 1,
         schedule: {

@@ -20,11 +20,6 @@ module.exports = {
       default: 1,
       help: 'The maximum number of players who may be a part of this trip as this role. This can be used to support groups of more than one player and device, all sharing the same trip state.'
     },
-    starting_page: {
-      type: 'reference',
-      collection: 'pages',
-      help: 'The page that this role will start the trip open.'
-    },
     role_values: {
       type: 'list',
       items: {

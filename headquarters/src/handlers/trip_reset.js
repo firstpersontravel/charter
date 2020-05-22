@@ -17,15 +17,11 @@ class TripResetHandler {
     const resetFields = TripCore.getInitialFields(script.content,
       trip.date, timezone, variants);
 
-    const startingPages = Object.fromEntries(script.content.roles
-      .filter(role => role.starting_page)
-      .map(role => [role.name, role.starting_page]));
-
     // Update trip vars
     await trip.update({
       tripState: {
         currentSceneName: '',
-        currentPageNamesByRole: startingPages
+        currentPageNamesByRole: {}
       },
       schedule: resetFields.schedule,
       values: resetFields.values,

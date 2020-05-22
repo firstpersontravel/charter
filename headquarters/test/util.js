@@ -111,6 +111,7 @@ async function createDummyTripForScript(script, variantNames) {
     variantNames || []);
   // Start to get to right scene.
   await TripResetHandler.resetToStart(trip.id);
+  await trip.reload();
   return trip;
 }
 
