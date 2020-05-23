@@ -24,14 +24,11 @@ describe('#send_image', () => {
     assert.strictEqual(res[0].fields.isReplyNeeded, true);
   });
 
-  it('sends image message with location', () => {
+  it('sends image message', () => {
     const params = {
       content: 'url',
       from_role_name: 'Ally',
-      to_role_name: 'Babbit',
-      latitude: 38.051112,
-      longitude: -122.693563,
-      accuracy: 30
+      to_role_name: 'Babbit'
     };
 
     const res = send_image.getOps(params, actionContext);
@@ -44,9 +41,6 @@ describe('#send_image', () => {
         createdAt: now,
         medium: 'image',
         content: 'url',
-        sentFromLatitude: 38.051112,
-        sentFromLongitude: -122.693563,
-        sentFromAccuracy: 30,
         isReplyNeeded: false,
         isInGallery: true
       },
@@ -55,17 +49,9 @@ describe('#send_image', () => {
       operation: 'event',
       event: {
         type: 'image_received',
-        message: {
-          from: 'Ally',
-          to: 'Babbit',
-          medium: 'image',
-          content: 'url'
-        },
-        location: {
-          latitude: 38.051112,
-          longitude: -122.693563,
-          accuracy: 30
-        }
+        from: 'Ally',
+        to: 'Babbit',
+        content: 'url'
       }
     }]);
   });

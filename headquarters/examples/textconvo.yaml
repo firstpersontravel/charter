@@ -2,13 +2,13 @@ content:
   roles:
     - name: Knight
       title: Knight
-    - name: Sage
-      title: Sage
+    - name: King
+      title: King
   relays:
     - name: main
       for: Knight
       as: Knight
-      with: Sage
+      with: King
       entryway: true
   scenes:
     - name: SCENE-MAIN
@@ -18,7 +18,7 @@ content:
       event:
         type: text_received
         from: Knight
-        to: Sage
+        to: King
       scene: SCENE-MAIN
       actions:
         - id: 100018
@@ -45,13 +45,13 @@ content:
                     part: hey
               actions:
                 - name: send_text
-                  from_role_name: Sage
+                  from_role_name: King
                   to_role_name: Knight
                   content: 'Why hello there, fine sir/lady/being! What is your name?'
                   id: 149
               else:
                 - name: send_text
-                  from_role_name: Sage
+                  from_role_name: King
                   to_role_name: Knight
                   content: 'How rude, not even a greeting! What is your name?'
                   id: 150
@@ -60,7 +60,7 @@ content:
       event:
         type: text_received
         from: Knight
-        to: Sage
+        to: King
       scene: SCENE-MAIN
       actions:
         - id: 100019
@@ -71,10 +71,10 @@ content:
           actions:
             - name: set_value
               value_ref: player_name
-              new_value_ref: event.message.content
+              new_value_ref: event.content
               id: 151
             - name: send_text
-              from_role_name: Sage
+              from_role_name: King
               to_role_name: Knight
               content: >-
                 Greetings, {{player_name}}. You may now await your righteous
@@ -84,9 +84,9 @@ content:
               duration: 10s
               id: 153
             - name: send_text
-              from_role_name: Sage
+              from_role_name: King
               to_role_name: Knight
               content: Your quest is... the holy grail!
               id: 154
   meta:
-    version: 36
+    version: 37

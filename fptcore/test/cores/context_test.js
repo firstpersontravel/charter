@@ -37,7 +37,10 @@ describe('ContextCore', () => {
         facetime: null,
         phone_number: null,
         directive: null,
-        skype: null
+        skype: null,
+        latitude: null,
+        longitude: null,
+        accuracy: null
       };
       const result = ContextCore.gatherPlayerEvalContext(
         env, trip, player);
@@ -76,7 +79,10 @@ describe('ContextCore', () => {
           profile: {
             photo: 'dustin.jpg',
             facetimeUsername: 'dustin'
-          }
+          },
+          locationLatitude: 1,
+          locationLongitude: 2,
+          locationAccuracy: 3
         }
       };
       const trip = {
@@ -88,6 +94,9 @@ describe('ContextCore', () => {
       assert.equal(result.phone_number, '1234567890');
       assert.equal(result.photo, 'dustin.jpg');
       assert.equal(result.facetime, 'dustin');
+      assert.equal(result.latitude, 1);
+      assert.equal(result.longitude, 2);
+      assert.equal(result.accuracy, 3);
     });
   });
 
@@ -138,8 +147,8 @@ describe('ContextCore', () => {
         sarai: saraiValues,
         vance: vanceValues,
         roleStates: {
-          'role-123': saraiValues,
-          'role-456': vanceValues
+          'role-123': [saraiValues],
+          'role-456': [vanceValues]
         }
       };
 

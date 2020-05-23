@@ -14,10 +14,24 @@ const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 describe('WalkingTourExample', () => {
   let script;
   let trip;
+  let user;
+  let player;
 
   beforeEach(async () => {
     script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
+    user = await models.User.create({
+      orgId: trip.orgId,
+      experienceId: trip.experienceId,
+      firstName: 'tester'
+    });
+    player = await models.Player.findOne({
+      where: { tripId: trip.id, roleName: 'Player' },
+      include: [{ model: models.User, as: 'user' }]
+    });
+    player.set({ userId: user.id });
+    await player.save();
+    await player.reload();
   });
 
   it('visits bon nene via geofence', async () => {
@@ -63,15 +77,18 @@ describe('WalkingTourExample', () => {
       'Welcome to Atlas Cafe! Send me an picture and i\'ll give you a sandwich recommendation.');
 
     // Send an image from somewhere else -- nothing should happen.
+    await user.update({
+      locationLatitude: 33.758273,
+      locationLongitude: -121.411681,
+      locationAccuracy: 40
+    });
+
     await KernelController.applyAction(trip.id, {
       name: 'send_image',
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
         content: 'url',
-        latitude: 33.758273,
-        longitude: -121.411681,
-        accuracy: 40
       }
     });
 
@@ -83,16 +100,19 @@ describe('WalkingTourExample', () => {
     assert.strictEqual(messages2.length, 2);
 
     // Send an image from Atlas Cafe
+    await user.update({
+      locationLatitude: 37.759002,
+      locationLongitude: -122.411496,
+      locationAccuracy: 30
+    });
+
     const now = moment.utc();
     await KernelController.applyAction(trip.id, {
       name: 'send_image',
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        content: 'another_url',
-        latitude: 37.759002,
-        longitude: -122.411496,
-        accuracy: 30
+        content: 'another_url'
       }
     }, now);
 

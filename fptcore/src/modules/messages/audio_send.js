@@ -29,9 +29,6 @@ module.exports = {
       type: 'boolean',
       display: { hidden: true }
     },
-    latitude: { required: false, type: 'number', display: { hidden: true } },
-    longitude: { required: false, type: 'number', display: { hidden: true } },
-    accuracy: { required: false, type: 'number', display: { hidden: true } },
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
   getOps(params, actionContext) {
@@ -47,9 +44,6 @@ module.exports = {
         createdAt: actionContext.evaluateAt,
         medium: 'audio',
         content: content,
-        sentFromLatitude: params.latitude || null,
-        sentFromLongitude: params.longitude || null,
-        sentFromAccuracy: params.accuracy || null,
         isReplyNeeded: isReplyNeeded,
         isInGallery: false
       }
@@ -57,17 +51,9 @@ module.exports = {
       operation: 'event',
       event: {
         type: 'audio_received',
-        message: {
-          from: params.from_role_name,
-          to: params.to_role_name,
-          medium: 'audio',
-          content: content
-        },
-        location: {
-          latitude: params.latitude,
-          longitude: params.longitude,
-          accuracy: params.accuracy
-        }
+        from: params.from_role_name,
+        to: params.to_role_name,
+        content: content
       }
     }];
   }

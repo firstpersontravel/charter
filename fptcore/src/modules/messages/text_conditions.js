@@ -12,7 +12,7 @@ module.exports = {
       }
     },
     eval: (params, actionContext) => {
-      const msg = _.get(actionContext.evalContext, 'event.message.content');
+      const msg = _.get(actionContext.evalContext, 'event.content');
       return (
         typeof msg === 'string' &&
         msg.toLowerCase().indexOf(params.part.toLowerCase()) > -1
@@ -23,7 +23,7 @@ module.exports = {
     help: 'Condition passes if the content to the text seems affirmitive (contains \'yes\', \'ok\', \'sure\', etc.',
     properties: {},
     eval: (params, actionContext) => {
-      const msg = _.get(actionContext.evalContext, 'event.message.content');
+      const msg = _.get(actionContext.evalContext, 'event.content');
       const affirmativeParts = ['y', 'yes', 'sure', 'ok'];
       if (typeof msg !== 'string') {
         return false;

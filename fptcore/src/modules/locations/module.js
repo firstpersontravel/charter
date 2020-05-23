@@ -5,7 +5,8 @@ module.exports = {
       resource: require('./geofence'),
       events: {
         geofence_entered: require('./geofence_entered')
-      }
+      },
+      conditions: require('./geofence_conditions')
     },
     route: {
       resource: require('./route')

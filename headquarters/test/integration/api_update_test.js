@@ -95,9 +95,7 @@ describe('API update', () => {
         'toRoleName',
         'name',
         'medium',
-        'content',
-        'sentFromLongitude',
-        'sentFromAccuracy'
+        'content'
       ];
       return Promise.all(forbiddenFields.map(fieldName => {
         return request(app)

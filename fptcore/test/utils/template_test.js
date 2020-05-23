@@ -59,7 +59,7 @@ describe('TemplateUtil', () => {
     });
 
     it('handles refs by role', () => {
-      const evalContext = { roleStates: { role2: { abc: 123 } } };
+      const evalContext = { roleStates: { role2: [{ abc: 123 }] } };
       assert.strictEqual(TemplateUtil.lookupRef(
         evalContext, 'player.abc', 'role2'), 123);
       assert.strictEqual(TemplateUtil.lookupRef(
@@ -158,7 +158,7 @@ describe('TemplateUtil', () => {
 
     it('templates with role', () => {
       const evalContext = {
-        roleStates: { role1: { color: 'red' } }
+        roleStates: { role1: [{ color: 'red' }] }
       };
       const text = 'My fave color is {{player.color}}.';
       assert.equal(

@@ -120,10 +120,7 @@ describe('KernelOpController', () => {
         tripId: 123,
         readAt: null,
         fromRoleName: 'BadGuy',
-        toRoleName: 'GoodGuy',
-        sentFromAccuracy: undefined,
-        sentFromLatitude: undefined,
-        sentFromLongitude: undefined
+        toRoleName: 'GoodGuy'
       }]);
       sinon.assert.calledWith(MessageController.sendMessage, fakeMessage);
       sinon.assert.calledWith(TripRelaysController.relayMessage, objs.trip,

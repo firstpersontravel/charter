@@ -33,7 +33,7 @@ module.exports = {
         visible_if: {
           type: 'component',
           component: 'conditions',
-          help: 'A test to determine if this panel is visible.'
+          help: 'A test to determine if this panel is visible. If this value is empty, the panel will always be visible.'
         }
       }
     }

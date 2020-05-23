@@ -764,56 +764,61 @@ content:
       name: TRIGGER-SCENE-3-SCENE-STARTED
       scene: SCENE-3
     - actions:
-        - id: 100009
+        - id: 110000
           name: conditional
           if:
-            op: not
-            item:
-              op: value_is_true
-              ref: sent_1471
+            op: text_contains
+            part: '1471'
           actions:
-            - id: 100010
-              name: set_value
-              value_ref: sent_1471
-              new_value_ref: 'true'
-            - actions:
-                - name: send_to_page
-                  page_name: PAGE-3-RT-KEY-VENDOR
-                  role_name: Inductee
-                  id: 91
-                - content: >-
-                    {{pickup_vendor_instructions}} Send me a picture of what you
-                    get, or text if you need help.
-                  from_role_name: Jessie
-                  name: send_text
-                  to_role_name: Inductee
-                  id: 92
-              else:
-                - name: send_to_page
-                  page_name: PAGE-3-RT-KEY-BACKUP
-                  role_name: Inductee
-                  id: 93
-                - content: >-
-                    Head across Franklin to a tree at the southeast corner of
-                    Franklin and Oak. You'll find a lockbox inside the tree. The
-                    code is 1648. Send me a picture of what you get inside, or
-                    text if you need help.
-                  from_role_name: Jessie
-                  name: send_text
-                  to_role_name: Inductee
-                  id: 94
-                - content: key_pickup.jpeg
-                  from_role_name: Jessie
-                  name: send_image
-                  to_role_name: Inductee
-                  id: 95
-              if:
-                op: value_is_true
-                ref: flag_vendor_pickup
+            - id: 100009
               name: conditional
-              id: 90
+              if:
+                op: not
+                item:
+                  op: value_is_true
+                  ref: sent_1471
+              actions:
+                - id: 100010
+                  name: set_value
+                  value_ref: sent_1471
+                  new_value_ref: 'true'
+                - actions:
+                    - name: send_to_page
+                      page_name: PAGE-3-RT-KEY-VENDOR
+                      role_name: Inductee
+                      id: 91
+                    - content: >-
+                        {{pickup_vendor_instructions}} Send me a picture of what
+                        you get, or text if you need help.
+                      from_role_name: Jessie
+                      name: send_text
+                      to_role_name: Inductee
+                      id: 92
+                  else:
+                    - name: send_to_page
+                      page_name: PAGE-3-RT-KEY-BACKUP
+                      role_name: Inductee
+                      id: 93
+                    - content: >-
+                        Head across Franklin to a tree at the southeast corner
+                        of Franklin and Oak. You'll find a lockbox inside the
+                        tree. The code is 1648. Send me a picture of what you
+                        get inside, or text if you need help.
+                      from_role_name: Jessie
+                      name: send_text
+                      to_role_name: Inductee
+                      id: 94
+                    - content: key_pickup.jpeg
+                      from_role_name: Jessie
+                      name: send_image
+                      to_role_name: Inductee
+                      id: 95
+                  if:
+                    op: value_is_true
+                    ref: flag_vendor_pickup
+                  name: conditional
+                  id: 90
       event:
-        contains: '1471'
         from: Inductee
         to: Jessie
         type: text_received
@@ -855,50 +860,55 @@ content:
       name: TRIGGER-SCENE-4-SCENE-STARTED
       scene: SCENE-4
     - actions:
-        - id: 100011
+        - id: 110001
           name: conditional
           if:
-            op: not
-            item:
-              op: value_is_true
-              ref: sent_8180
+            op: text_contains
+            part: '8180'
           actions:
-            - id: 100012
-              name: set_value
-              value_ref: sent_8180
-              new_value_ref: 'true'
-            - duration: 3s
-              name: wait
-              id: 101
-            - name: send_to_page
-              page_name: PAGE-4-CALA-DROP
-              role_name: Inductee
-              id: 102
-            - duration: 3s
-              name: wait
-              id: 103
-            - content: >-
-                Nice work. That code indicates the ring goes in a dead drop on a
-                telephone pole right outside the front entrance of Tacos Cala,
-                on the same side of Hickory. Use your Syndicate master to open
-                the box, and send me a picture of ring inside to confirm you've
-                made the drop. Remember to lock it back afterwards! And text me
-                if you’ve run into any trouble.
-              from_role_name: Jessie
-              name: send_text
-              to_role_name: Inductee
-              id: 104
-            - duration: 11s
-              name: wait
-              id: 105
-            - content: >-
-                https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
-              from_role_name: Jessie
-              name: send_image
-              to_role_name: Inductee
-              id: 106
+            - id: 100011
+              name: conditional
+              if:
+                op: not
+                item:
+                  op: value_is_true
+                  ref: sent_8180
+              actions:
+                - id: 100012
+                  name: set_value
+                  value_ref: sent_8180
+                  new_value_ref: 'true'
+                - duration: 3s
+                  name: wait
+                  id: 101
+                - name: send_to_page
+                  page_name: PAGE-4-CALA-DROP
+                  role_name: Inductee
+                  id: 102
+                - duration: 3s
+                  name: wait
+                  id: 103
+                - content: >-
+                    Nice work. That code indicates the ring goes in a dead drop
+                    on a telephone pole right outside the front entrance of
+                    Tacos Cala, on the same side of Hickory. Use your Syndicate
+                    master to open the box, and send me a picture of ring inside
+                    to confirm you've made the drop. Remember to lock it back
+                    afterwards! And text me if you’ve run into any trouble.
+                  from_role_name: Jessie
+                  name: send_text
+                  to_role_name: Inductee
+                  id: 104
+                - duration: 11s
+                  name: wait
+                  id: 105
+                - content: >-
+                    https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
+                  from_role_name: Jessie
+                  name: send_image
+                  to_role_name: Inductee
+                  id: 106
       event:
-        contains: '8180'
         from: Inductee
         to: Jessie
         type: text_received
@@ -989,23 +999,28 @@ content:
       name: TRIGGER-SCENE-6-SCENE-STARTED
       scene: SCENE-6
     - actions:
-        - id: 100014
+        - id: 110002
           name: conditional
           if:
-            op: not
-            item:
-              op: value_is_true
-              ref: sent_6037
+            op: text_contains
+            part: '6037'
           actions:
-            - id: 100015
-              name: set_value
-              value_ref: sent_6037
-              new_value_ref: 'true'
-            - name: start_scene
-              scene_name: SCENE-7
-              id: 122
+            - id: 100014
+              name: conditional
+              if:
+                op: not
+                item:
+                  op: value_is_true
+                  ref: sent_6037
+              actions:
+                - id: 100015
+                  name: set_value
+                  value_ref: sent_6037
+                  new_value_ref: 'true'
+                - name: start_scene
+                  scene_name: SCENE-7
+                  id: 122
       event:
-        contains: '6037'
         from: Inductee
         to: Jessie
         type: text_received
@@ -1377,7 +1392,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 36
+    version: 37
 assets:
   - data:
       end:

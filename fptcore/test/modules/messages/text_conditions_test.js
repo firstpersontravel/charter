@@ -10,13 +10,13 @@ describe('#text_contains', () => {
 
   it('finds text in middle', () => {
     const stmt = { op: 'text_contains', part: 'gabe' };
-    const context = { event: { message: { content: 'hi there gabe!' } } };
+    const context = { event: { content: 'hi there gabe!' } };
     assertIfEq(context, stmt, true);
   });
 
   it('is case insensitive', () => {
     const stmt = { op: 'text_contains', part: 'gabe' };
-    const context = { event: { message: { content: 'hi there GABE!' } } };
+    const context = { event: { content: 'hi there GABE!' } };
     assertIfEq(context, stmt, true);
   });
 });
@@ -28,14 +28,14 @@ describe('#text_is_affirmative', () => {
   }
 
   it('finds yes', () => {
-    const stmt = { op: 'text_contains', part: 'gabe' };
-    const context = { event: { message: { content: 'yes' } } };
+    const stmt = { op: 'text_is_affirmative' };
+    const context = { event: { content: 'yes' } };
     assertIfEq(context, stmt, true);
   });
 
   it('finds no', () => {
-    const stmt = { op: 'text_contains', part: 'gabe' };
-    const context = { event: { message: { content: 'NO' } } };
+    const stmt = { op: 'text_is_affirmative' };
+    const context = { event: { content: 'NO' } };
     assertIfEq(context, stmt, false);
   });
 });

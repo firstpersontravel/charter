@@ -41,9 +41,6 @@ describe('#send_audio', () => {
         createdAt: now,
         medium: 'audio',
         content: 'url',
-        sentFromLatitude: null,
-        sentFromLongitude: null,
-        sentFromAccuracy: null,
         isReplyNeeded: false,
         isInGallery: false
       },
@@ -52,17 +49,9 @@ describe('#send_audio', () => {
       operation: 'event',
       event: {
         type: 'audio_received',
-        message: {
-          from: 'Ally',
-          to: 'Babbit',
-          medium: 'audio',
-          content: 'url'
-        },
-        location: {
-          latitude: undefined,
-          longitude: undefined,
-          accuracy: undefined
-        }
+        from: 'Ally',
+        to: 'Babbit',
+        content: 'url'
       }
     }]);
   });

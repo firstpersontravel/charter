@@ -25,9 +25,9 @@ class TemplateUtil {
         (ref[0] === '\'' && ref[ref.length - 1] === '\'')) {
       return ref.slice(1, ref.length - 1);
     }
-    // If ref is player, replace player. with role state of that role.
+    // If ref is player, replace player. with first role state of that role.
     if (ref.startsWith('player.') && roleName) {
-      ref = `roleStates.${roleName}.${ref.split('.')[1]}`;
+      ref = `roleStates.${roleName}[0].${ref.split('.')[1]}`;
     }
     const result = _.get(evalContext, ref);
     return _.isUndefined(result) ? null : result;

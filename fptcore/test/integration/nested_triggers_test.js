@@ -287,9 +287,6 @@ describe('Integration - Nested Triggers', () => {
         createdAt: now,
         fromRoleName: 'Cowboy',
         toRoleName: 'Farmer',
-        sentFromLatitude: null,
-        sentFromLongitude: null,
-        sentFromAccuracy: null,
         isReplyNeeded: false,
         isInGallery: false
       },
@@ -298,17 +295,10 @@ describe('Integration - Nested Triggers', () => {
       operation: 'event',
       event: {
         type: 'text_received',
-        message: {
-          content: 'howdy',
-          from: 'Cowboy',
-          to: 'Farmer',
-          medium: 'text'
-        },
-        location: {
-          longitude: undefined,
-          latitude: undefined,
-          accuracy: undefined
-        }
+        content: 'howdy',
+        from: 'Cowboy',
+        to: 'Farmer',
+        message: { content: 'howdy' }
       }
     }]);
   });
@@ -344,9 +334,6 @@ describe('Integration - Nested Triggers', () => {
         createdAt: now,
         fromRoleName: 'Cowboy',
         toRoleName: 'Farmer',
-        sentFromLatitude: null,
-        sentFromLongitude: null,
-        sentFromAccuracy: null,
         isReplyNeeded: false,
         isInGallery: false
       },
@@ -355,17 +342,10 @@ describe('Integration - Nested Triggers', () => {
       operation: 'event',
       event: {
         type: 'text_received',
-        message: {
-          content: 'geewhiz',
-          from: 'Cowboy',
-          to: 'Farmer',
-          medium: 'text'
-        },
-        location: {
-          latitude: undefined,
-          longitude: undefined,
-          accuracy: undefined
-        }
+        content: 'geewhiz',
+        from: 'Cowboy',
+        to: 'Farmer',
+        message: { content: 'geewhiz' }
       }
     }]);
   });

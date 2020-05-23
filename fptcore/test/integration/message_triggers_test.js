@@ -53,7 +53,7 @@ describe('Integration - Message Triggers', () => {
           event: { type: 'text_received' },
           if: {
             op: 'value_contains',
-            string_ref: 'event.message.content',
+            string_ref: 'event.content',
             part_ref: '"1234"'
           },
           actions: [{
@@ -68,12 +68,9 @@ describe('Integration - Message Triggers', () => {
     };
     const okEvent = {
       type: 'text_received',
-      message: {
-        from: 'A',
-        to: 'B',
-        medium: 'text',
-        content: 'the code is 1234!'
-      }
+      from: 'A',
+      to: 'B',
+      content: 'the code is 1234!'
     };
     // Ok result should fire
     const hitResult = Kernel.resultForEvent(okEvent, actionContext);
@@ -88,7 +85,7 @@ describe('Integration - Message Triggers', () => {
           event: { type: 'text_received' },
           if: {
             op: 'value_contains',
-            string_ref: 'event.message.content',
+            string_ref: 'event.content',
             part_ref: '"1234"'
           },
           actions: [{
@@ -103,12 +100,9 @@ describe('Integration - Message Triggers', () => {
     };
     const missEvent = {
       type: 'text_received',
-      message: {
-        from: 'A',
-        to: 'B',
-        medium: 'text',
-        content: 'the code is 3456!'
-      }
+      from: 'A',
+      to: 'B',
+      content: 'the code is 3456!'
     };
     // Ok result should fire
     const missResult = Kernel.resultForEvent(missEvent, actionContext);

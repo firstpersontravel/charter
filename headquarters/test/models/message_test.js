@@ -67,20 +67,4 @@ describe('Message', () => {
     message.content = '';
     await assertValidation(message, { content: 'must be present' });
   });
-
-  it('allows location', async () => {
-    message.sentFromLatitude = 40.213;
-    message.sentFromLongitude = 28.213;
-    message.sentFromAccuracy = 30;
-    await message.validate();
-  });
-
-  it('disallows invalid location', async () => {
-    message.sentFromLatitude = 'abc';
-    message.sentFromAccuracy = false;
-    await assertValidation(message, {
-      sentFromLatitude: 'must be a valid number',
-      sentFromAccuracy: 'must be a valid number'
-    });
-  });
 });

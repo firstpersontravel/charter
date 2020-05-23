@@ -29,7 +29,10 @@ class ContextCore {
       facetime: profile.facetimeUsername || null,
       skype: profile.skypeUsername || null,
       phone_number: profile.phoneNumber || user.phoneNumber || null,
-      directive: page && page.directive || null
+      directive: page && page.directive || null,
+      latitude: user.locationLatitude || null,
+      longitude: user.locationLongitude || null,
+      accuracy: user.locationAccuracy || null
     });
   }
 
@@ -98,7 +101,10 @@ class ContextCore {
       }
       // Fill in role states by name -- if multiple players, choose one
       // arbitrarily.
-      context.roleStates[player.roleName] = playerContext;
+      if (!context.roleStates[player.roleName]) {
+        context.roleStates[player.roleName] = [];
+      }
+      context.roleStates[player.roleName].push(playerContext);
     });
     return context;
   }

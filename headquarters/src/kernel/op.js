@@ -53,9 +53,6 @@ class KernelOpController {
       name: op.fields.name,
       medium: op.fields.medium,
       content: op.fields.content,
-      sentFromLatitude: op.fields.sentFromLatitude,
-      sentFromLongitude: op.fields.sentFromLongitude,
-      sentFromAccuracy: op.fields.sentFromAccuracy,
       readAt: op.fields.readAt ? op.fields.readAt.toDate() : null,
       isReplyNeeded: op.fields.isReplyNeeded,
       isInGallery: op.fields.isInGallery
