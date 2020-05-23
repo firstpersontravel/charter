@@ -16,7 +16,10 @@ const TIMEZONES = [
   'US/Mountain',
   'US/Central',
   'US/Pacific',
-  'Europe/London'
+  'Europe/London',
+  'Europe/Amsterdam',
+  'Europe/Paris',
+  'Europe/Berlin'
 ];
 
 function nameForTitle(title) {
