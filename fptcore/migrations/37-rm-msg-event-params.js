@@ -9,17 +9,20 @@ module.exports = {
       if (trigger.event.type === 'text_received' ||
           trigger.event.type === 'image_received' ||
           trigger.event.type === 'audio_received') {
-        if (trigger.event.type === 'text_received' && trigger.event.contains) {
-          trigger.actions = [{
-            id: counter,
-            name: 'conditional',
-            if: { op: 'text_contains', part: trigger.event.contains },
-            actions: trigger.actions
-          }];
+        if (trigger.event.contains !== undefined) {
+          if (trigger.event.type === 'text_received' &&
+              trigger.event.contains) {
+            trigger.actions = [{
+              id: counter,
+              name: 'conditional',
+              if: { op: 'text_contains', part: trigger.event.contains },
+              actions: trigger.actions
+            }];
+            counter += 1;
+          }
           delete trigger.event.contains;
-          counter += 1;
         }
-        if (trigger.event.geofence) {
+        if (trigger.event.geofence !== undefined) {
           trigger.actions = [{
             id: counter,
             name: 'conditional',

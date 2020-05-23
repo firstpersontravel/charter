@@ -1,13 +1,10 @@
 const _ = require('lodash');
 const program = require('commander');
 
-const config = require('../src/config');
 const models = require('../src/models');
 
 const ScriptCore = require('fptcore/src/cores/script');
 const Migrator = require('fptcore/src/migrator');
-
-const logger = config.logger.child({ name: 'bin.migrate' });
 
 program
   .option('--dry-run', 'Dry run mode: do not save models.')
@@ -29,9 +26,9 @@ async function migrateScript(script, isDryRun) {
   try {
     await script.validate();
   } catch (err) {
-    logger.error(`Script #${script.id} failed validation: ${err.message}.`);
+    console.log(`Script #${script.id} failed validation: ${err.message}.`);
     err.errors[0].__raw.errors.forEach((innerErr) => {
-      logger.error(`- ${innerErr.path}: ${innerErr.message}`);
+      console.log(`- ${innerErr.path}: ${innerErr.message}`);
     });
     return false;
   }
@@ -43,10 +40,9 @@ async function migrateScript(script, isDryRun) {
   try {
     await script.save({ fields: ['content'] });
   } catch (err) {
-    logger.error(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
+    console.log(`Script #${script.id} (version ${oldVersion}) failed migration: ${err.message}.`);
     return false;
   }
-  // logger.info(`Script #${script.id} migrated from version ${oldVersion} to ${migrated.meta.version}.`);
   return true;
 }
 
@@ -65,7 +61,7 @@ async function migrateAll(isDryRun) {
       numNoop++;
     }
   }
-  logger.info(
+  console.log(
     `${numSucceeded} ok, ${numFailed} failed, ${numNoop} no change.`);
 }
 
