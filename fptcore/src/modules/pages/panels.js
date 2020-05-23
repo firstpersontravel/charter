@@ -5,6 +5,9 @@ const PANEL_TEXT_STYLE_OPTIONS = ['centered', 'banner'];
 const titleLen = 30;
 
 function truncate(str, len) {
+  if (!str) {
+    return '';
+  }
   return str.length > len ? `${str.slice(0, len - 2)}..` : str;
 }
 
