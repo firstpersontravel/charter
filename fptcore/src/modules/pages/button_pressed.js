@@ -39,7 +39,8 @@ module.exports = {
     if (!button) {
       return 'unknown btn';
     }
-    const buttonText = button.text || '<no text>';
-    return `btn "${buttonText}"`;
+    const btnTitle = registry.panels.button.getTitle(resource, button, 
+      scriptContent);
+    return `btn "${btnTitle}"`;
   }
 };

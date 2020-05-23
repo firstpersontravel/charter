@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -51,16 +50,11 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
         renderAny={renderAny} />
     ));
 
-  // Nest inline
-  const isInline = (
-    _.get(varietyClass, 'display.form') === 'inline' ||
-    _.get(opts, 'inline')
-  );
-  const titleBaseStyle = { fontWeight: 'bold' };
-  const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
-  const titleStyle = Object.assign(titleBaseStyle,
-    isInline ? inlineStyle : {});
-
+  const titleStyle = {
+    fontWeight: 'bold',
+    display: 'inline-block',
+    marginRight: '0.5em'
+  };
   return (
     <>
       <div style={titleStyle}>{TextUtil.titleForKey(variety)}</div>

@@ -369,22 +369,20 @@ content:
           if:
             op: and
             items:
-              - op: not
-                item:
+              - op: value_is_true
+                ref: flag_vendor_coffee
+              - item:
                   op: value_is_true
-                  ref: counter_1
-              - items:
-                  - op: value_is_true
-                    ref: flag_vendor_coffee
-                  - item:
-                      op: value_is_true
-                      ref: sent_phil_offer
-                    op: not
-                op: and
+                  ref: thanked_phil
+                op: not
+              - item:
+                  op: value_is_true
+                  ref: sent_phil_offer
+                op: not
           actions:
             - id: 100002
               name: set_value
-              value_ref: counter_1
+              value_ref: thanked_phil
               new_value_ref: 'true'
             - duration: 3s
               name: wait
@@ -411,27 +409,13 @@ content:
               - op: not
                 item:
                   op: value_is_true
-                  ref: counter_3
+                  ref: accepted_phil_offer
               - items:
                   - op: value_is_true
                     ref: sent_phil_offer
-                  - items:
-                      - op: value_contains
-                        part_ref: '"y"'
-                        string_ref: event.message.content
-                      - op: value_contains
-                        part_ref: '"ok"'
-                        string_ref: event.message.content
-                      - op: value_contains
-                        part_ref: '"sure"'
-                        string_ref: event.message.content
-                    op: or
+                  - op: text_is_affirmative
                 op: and
           actions:
-            - id: 100004
-              name: set_value
-              value_ref: counter_3
-              new_value_ref: 'true'
             - name: set_value
               new_value_ref: 'true'
               value_ref: accepted_phil_offer
@@ -786,11 +770,11 @@ content:
             op: not
             item:
               op: value_is_true
-              ref: counter_9
+              ref: sent_1471
           actions:
             - id: 100010
               name: set_value
-              value_ref: counter_9
+              value_ref: sent_1471
               new_value_ref: 'true'
             - actions:
                 - name: send_to_page
@@ -877,11 +861,11 @@ content:
             op: not
             item:
               op: value_is_true
-              ref: counter_11
+              ref: sent_8180
           actions:
             - id: 100012
               name: set_value
-              value_ref: counter_11
+              value_ref: sent_8180
               new_value_ref: 'true'
             - duration: 3s
               name: wait
@@ -924,9 +908,9 @@ content:
         - id: 100013
           name: conditional
           if:
-            op: value_equals
-            ref1: tripState.currentPageNamesByRole.Inductee
-            ref2: '"PAGE-4-CALA-DROP"'
+            op: role_page_is
+            role_name: Inductee
+            page_name: PAGE-4-CALA-DROP
           actions:
             - name: start_scene
               scene_name: SCENE-6
@@ -1011,11 +995,11 @@ content:
             op: not
             item:
               op: value_is_true
-              ref: counter_14
+              ref: sent_6037
           actions:
             - id: 100015
               name: set_value
-              value_ref: counter_14
+              value_ref: sent_6037
               new_value_ref: 'true'
             - name: start_scene
               scene_name: SCENE-7
@@ -1236,6 +1220,7 @@ content:
   variants:
     - customizations:
         flag_vendor_pickup: true
+        flag_vendor_coffee: true
         guidemarker1: '3538'
         guidemarker2: '1471'
         guidemarker3: '8180'

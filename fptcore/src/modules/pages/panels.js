@@ -1,6 +1,12 @@
-var PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
-var PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
-var PANEL_TEXT_STYLE_OPTIONS = ['centered', 'banner'];
+const PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
+const PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
+const PANEL_TEXT_STYLE_OPTIONS = ['centered', 'banner'];
+
+const titleLen = 30;
+
+function truncate(str, len) {
+  return str.length > len ? `${str.slice(0, len - 2)}..` : str;
+}
 
 module.exports = {
   audio_foreground: {
@@ -30,7 +36,7 @@ module.exports = {
       }
     },
     getTitle(resource, component, scriptContent) {
-      return component.text;
+      return truncate(component.text, titleLen);
     }
   },
   choice: {
@@ -137,7 +143,7 @@ module.exports = {
       placeholder: { type: 'string' }
     },
     getTitle(resource, component, scriptContent) {
-      return component.placeholder || '<no placeholder>';
+      return truncate(component.placeholder || '<no placeholder>', titleLen);
     }
   },
   text: {
@@ -160,7 +166,7 @@ module.exports = {
       placeholder: { type: 'string' }
     },
     getTitle(resource, component, scriptContent) {
-      return component.placeholder || '<no placeholder>';
+      return truncate(component.placeholder || '<no placeholder>', titleLen);
     }
   },
   video: {
