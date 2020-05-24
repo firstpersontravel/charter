@@ -200,7 +200,7 @@ export function associateAuthData(authData) {
   }
   // FullStory
   if (typeof FS === 'function') {
-    FS.identify(authData.user.id, {
+    FS.identify(`${getStage()}-${authData.user.id}`, {
       displayName: authData.user.email,
       email: authData.user.email
     });
@@ -290,7 +290,7 @@ export function logout() {
   return function (dispatch) {
     localStorage.removeItem('auth_latest');
     dispatch(reset());
-    if (typeof FS === 'object') {
+    if (typeof FS === 'function') {
       FS.anonymize();
     }
   };
