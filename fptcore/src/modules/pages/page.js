@@ -22,6 +22,7 @@ module.exports = {
       required: true
     },
     directive: {
+      title: 'Headline',
       type: 'string',
       help: 'A high-level directive for the player, that will be displayed in large font at the top of the interface.',
       display: { multiline: true }

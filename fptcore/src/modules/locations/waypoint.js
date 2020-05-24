@@ -39,20 +39,22 @@ var waypointOptionSpec = {
 
 module.exports = {
   icon: 'map-pin',
-  help: 'A location used by the trip. Each waypoint can have multiple options that can be set for each trip. For instance, a "lunch" waypoint can have two options, each a different restaurant.',
+  title: 'Place',
+  help: 'A place used by the trip. Each place can have multiple locations that can be set for each trip. For instance, a "lunch" place can have two locations, each a different restaurant.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     options: {
+      title: 'locations',
       type: 'list',
       default: defaultWaypointOptionList,
       items: waypointOptionSpec,
-      help: 'A list of locations that this waypoint could refer to.'
+      help: 'A list of locations that this place could refer to.'
     }
   },
   validateResource: function(script, resource) {
     if (!resource.options || !resource.options.length) {
-      return ['A waypoint must have at least one option.'];
+      return ['A place must have at least one option.'];
     }
   }
 };

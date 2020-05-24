@@ -1,6 +1,7 @@
 module.exports = {
   icon: 'envelope',
   help: 'An email account that you have access to. (This requires some custom setup.)',
+  title: 'Email account',
   properties: {
     name: { type: 'name', required: true },
     role: {

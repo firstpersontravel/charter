@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { SceneCore, TextUtil } from 'fptcore';
 
-import { titleForResource } from '../utils/text-utils';
+import { titleForResource, titleForResourceType } from '../utils/text-utils';
 import ResourceBadge from '../../partials/ResourceBadge';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
@@ -29,7 +29,7 @@ export default class ContentTree extends Component {
         `/design/${this.props.sliceType}/${this.props.sliceName}` +
         `/${collectionName}/${item.name}`
       ),
-      text: `${TextUtil.titleForKey(resourceType)}: ${itemTitle}`,
+      text: `${titleForResourceType(resourceType)}: ${itemTitle}`,
       label: (
         <span>
           <ResourceBadge
@@ -49,7 +49,7 @@ export default class ContentTree extends Component {
     const queryString = makeQueryString(contentListItem.filter);
     const title = contentListItem.title ?
       contentListItem.title :
-      TextUtil.titleForKey(resourceType);
+      titleForResourceType(resourceType);
     return ({
       key: `${contentListItem.key || collectionName}-new`,
       isActive: (match, location) => (

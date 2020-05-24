@@ -2,6 +2,7 @@ var _ = require('lodash');
 
 module.exports = {
   icon: 'phone',
+  title: 'Phone line',
   help: 'A phone number by which one player can contact another via text or phone calls.',
   properties: {
     name: { type: 'name', required: true },
@@ -10,7 +11,7 @@ module.exports = {
       collection: 'roles',
       required: true,
       parent: true,
-      help: 'The role who will be sending or receiving messages through this relay'
+      help: 'The role who will be sending or receiving messages through this phone line.'
     },
     as: {
       type: 'reference',
@@ -27,7 +28,7 @@ module.exports = {
     entryway: {
       type: 'boolean',
       default: false,
-      help: 'If this value is true, the relay will be assigned a universal number. New players can text this number to start a new trip.'
+      help: 'If this value is true, the phone line will be assigned a universal number. New players can text this number to start a new trip.'
     }
   },
   getTitle: function(scriptContent, resource) {

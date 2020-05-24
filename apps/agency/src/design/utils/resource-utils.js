@@ -2,6 +2,8 @@ import _ from 'lodash';
 
 import { TextUtil, coreRegistry, coreWalker } from 'fptcore';
 
+import { titleForResourceType } from './text-utils';
+
 const defaultFnsBySpecType = {
   media: () => `media-${Math.floor(Math.random() * 10000000).toString()}`
 };
@@ -106,7 +108,7 @@ export function getNewResourceFields(collectionName, defaults) {
   const fields = Object.assign({ name: newName }, defaultFields);
 
   if (resourceClass.properties.title) {
-    fields.title = `New ${resourceType}`;
+    fields.title = `New ${titleForResourceType(resourceType).toLowerCase()}`;
   }
 
   _.each(defaults, (val, key) => {

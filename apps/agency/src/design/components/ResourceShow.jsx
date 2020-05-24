@@ -13,7 +13,7 @@ import {
   duplicateResource,
   getNewResourceFields
 } from '../utils/resource-utils';
-import { titleForResource } from '../utils/text-utils';
+import { titleForResource, titleForResourceType } from '../utils/text-utils';
 
 function updateScriptContent(scriptContent, collectionName, resourceName,
   updatedResource) {
@@ -415,7 +415,7 @@ export default class ResourceShow extends Component {
         key={childResourceType}
         className="btn btn-sm btn-outline-secondary mr-2"
         to={{ search: `?child=${childCollectionName}.new` }}>
-        Add {childResourceType}
+        Add {titleForResourceType(childResourceType).toLowerCase()}
       </Link>
     );
   }

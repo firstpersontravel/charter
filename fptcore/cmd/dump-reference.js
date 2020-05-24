@@ -186,7 +186,16 @@ sidebar_label: ${title}
 
 ${intro}
 `;
-  for (const name of Object.keys(contents).sort()) {
+  const sortedEntries = Object
+    .keys(contents)
+    .sort((a, b) => {
+      const aEntry = contents[a];
+      const bEntry = contents[b];
+      const aSort = (aEntry.title || a).toLowerCase();
+      const bSort = (bEntry.title || b).toLowerCase();
+      return aSort < bSort ? -1 : 1;
+    });
+  for (const name of sortedEntries) {
     const entry = contents[name];
     page += renderEntry(sectionName, name, entry);
   }

@@ -2,7 +2,9 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { coreRegistry, TextUtil } from 'fptcore';
+import { coreRegistry } from 'fptcore';
+
+import { titleForResourceType } from '../design/utils/text-utils';
 
 const colors = [
   '#2e4d2e',
@@ -68,7 +70,7 @@ export default function ResourceBadge({ resourceType, resource, style,
       {...props}>
       {resourceIcon}
       <span className={titleClass}>
-        {TextUtil.titleForKey(resourceType)}
+        {titleForResourceType(resourceType)}
       </span>
     </span>
   );

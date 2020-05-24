@@ -6,6 +6,7 @@ import { coreRegistry, TextUtil } from 'fptcore';
 
 import ResourceBadge from '../../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
+import { titleForResourceType } from '../utils/text-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
   const resourceType = TextUtil.singularize(collectionName);
@@ -22,7 +23,7 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
           `/design/${sliceType}/${sliceName}` +
           `/${collectionName}/new`
         }>
-        Add {TextUtil.titleForKey(resourceType).toLowerCase()}
+        Add {titleForResourceType(resourceType).toLowerCase()}
       </Link>
     </p>
   );
