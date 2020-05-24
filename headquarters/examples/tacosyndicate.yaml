@@ -1,19 +1,5 @@
 content:
-  content_pages:
-    - name: content_page-ntsoxi
-      interface: Inductee
-      panels:
-        - type: current_page
-          id: 19
-      section: tab
-      title: Task
-    - name: content_page-ilctwq
-      interface: Inductee
-      panels:
-        - type: messages_browse
-          id: 20
-      section: tab
-      title: Messages
+  content_pages: []
   cues:
     - name: CUE-1-INITIATE-CALL
       scene: SCENE-1
@@ -33,11 +19,17 @@ content:
       role: Jessie
   interfaces:
     - name: Inductee
-      section: tab
       title: Inductee
-      type: tabs
+      tabs:
+        - title: Task
+          panels:
+            - type: current_page
+              id: 19
+        - title: Messages
+          panels:
+            - type: messages_browse
+              id: 20
     - name: Jessie
-      type: simple
       title: Jessie
   pages:
     - directive: Waiting for inductee
@@ -1384,7 +1376,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 38
+    version: 39
 assets:
   - data:
       end:

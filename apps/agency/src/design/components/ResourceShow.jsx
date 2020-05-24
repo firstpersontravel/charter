@@ -9,10 +9,7 @@ import ResourceContainer from '../partials/ResourceContainer';
 import ResourceBadge from '../../partials/ResourceBadge';
 import { getSliceContent } from '../utils/section-utils';
 import { assembleReverseReferences, getChildren } from '../utils/graph-utils';
-import {
-  duplicateResource,
-  getNewResourceFields
-} from '../utils/resource-utils';
+import { duplicateResource, createNewResource } from '../utils/resource-utils';
 import { titleForResource, titleForResourceType } from '../utils/text-utils';
 
 function updateScriptContent(scriptContent, collectionName, resourceName,
@@ -84,7 +81,7 @@ export default class ResourceShow extends Component {
             resourceClass.properties[key].collection === collectionName &&
             resourceClass.properties[key].parent
           ));
-        newPendingChildResource = getNewResourceFields(childCollectionName, {
+        newPendingChildResource = createNewResource(childCollectionName, {
           [childParentField]: props.match.params.resourceName
         });
       }
@@ -107,7 +104,7 @@ export default class ResourceShow extends Component {
     const query = new URLSearchParams(this.props.location.search);
     const defaults = Object.fromEntries(query.entries());
     const collectionName = this.props.match.params.collectionName;
-    return getNewResourceFields(collectionName, defaults);
+    return createNewResource(collectionName, defaults);
   }
 
   getMainResource() {

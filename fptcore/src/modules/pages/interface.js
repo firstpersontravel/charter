@@ -1,27 +1,33 @@
-const INTERFACE_TYPE_OPTIONS = ['simple', 'tabs'];
-
 module.exports = {
   icon: 'mobile-phone',
   help: 'A combination of panels that create a user interface for a tablet, phone, or device.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    type: {
-      type: 'enum',
-      options: INTERFACE_TYPE_OPTIONS,
-      default: 'simple',
-      required: true,
-      help: 'What type of interface to show. Currently just simple or tabs.'
-    },
-    section: {
-      type: 'string',
-      default: 'tab',
-      help: 'Section of content pages to use as subpages.'
-    }
-  },
-  validateResource: function(script, resource) {
-    if (!resource.type === 'tabs' && !resource.section) {
-      return ['Tabbed interfaces require a section.'];
+    tabs: {
+      type: 'list',
+      help: 'A list of tabs. If there is only one tab visible, the tabs bar will not be displayed.',
+      default: [{ title: 'Main', panels: [{ type: 'current_page' }] }],
+      items: {
+        type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+            required: true,
+            help: 'The title of this tab.'
+          },
+          visible_if: {
+            type: 'component',
+            component: 'conditions',
+            help: 'An optional test to determine if the tab is visible or not.'
+          },
+          panels: {
+            type: 'list',
+            help: 'List of user interface panels.',
+            items: { type: 'component', component: 'panels' }
+          }
+        }        
+      }
     }
   }
 };

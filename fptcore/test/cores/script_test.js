@@ -22,8 +22,7 @@ describe('ScriptCore', () => {
         interfaces: [{
           name: 'i',
           title: 'i',
-          type: 'simple',
-          section: ''
+          tabs: []
         }],
         pages: [{
           name: 'p',

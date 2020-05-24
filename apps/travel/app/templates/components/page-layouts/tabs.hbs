@@ -12,13 +12,15 @@
   </div>
 </div>
 
-<div class="page-layout-tabs-menu pure-menu pure-menu-horizontal">
-  <ul class="pure-menu-list">
-    {{#each visibleTabs as |tab|}}
-      {{page-layouts/tabs-item
-        tabs=this
-        tab=tab
-        action="selectTab"}}
-    {{/each}}
-  </ul>
-</div>
+{{#if showTabs}}
+  <div class="page-layout-tabs-menu pure-menu pure-menu-horizontal">
+    <ul class="pure-menu-list">
+      {{#each visibleTabs as |tab|}}
+        {{page-layouts/tabs-item
+          tabs=this
+          tab=tab
+          action="selectTab"}}
+      {{/each}}
+    </ul>
+  </div>
+{{/if}}

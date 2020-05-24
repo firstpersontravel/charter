@@ -100,26 +100,6 @@ export function newResourceNameForType(resourceType) {
   return `${resourceType}-${newId}`;
 }
 
-export function getNewResourceFields(collectionName, defaults) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = coreRegistry.resources[resourceType];
-  const newName = newResourceNameForType(resourceType);
-  const defaultFields = defaultFieldsForClass(resourceClass);
-  const fields = Object.assign({ name: newName }, defaultFields);
-
-  if (resourceClass.properties.title) {
-    fields.title = `New ${titleForResourceType(resourceType).toLowerCase()}`;
-  }
-
-  _.each(defaults, (val, key) => {
-    if (resourceClass.properties[key]) {
-      fields[key] = val;
-    }
-  });
-
-  return fields;
-}
-
 export function duplicateResource(collectionName, existingResource) {
   const resType = TextUtil.singularize(collectionName);
   const newName = newResourceNameForType(resType);
@@ -136,4 +116,25 @@ export function duplicateResource(collectionName, existingResource) {
   }
 
   return newResource;
+}
+
+
+export function createNewResource(collectionName, defaults) {
+  const resourceType = TextUtil.singularize(collectionName);
+  const resourceClass = coreRegistry.resources[resourceType];
+  const defaultFields = defaultFieldsForClass(resourceClass);
+
+  if (resourceClass.properties.title) {
+    const resourceTypeTitle = titleForResourceType(resourceType).toLowerCase();
+    defaultFields.title = `New ${resourceTypeTitle}`;
+  }
+
+  _.each(defaults, (val, key) => {
+    if (resourceClass.properties[key]) {
+      defaultFields[key] = val;
+    }
+  });
+
+  // Duplicate resource to add panel and action IDs if needed, and name
+  return duplicateResource(collectionName, defaultFields);
 }

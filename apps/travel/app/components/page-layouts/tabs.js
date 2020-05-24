@@ -1,6 +1,13 @@
 import Ember from 'ember';
 import WindowHeightMixin from '../../mixins/panels/window-height';
 
+const DEFAULT_TABS = [{
+  title: 'Main',
+  panels: [{
+    type: 'current_page'
+  }]
+}];
+
 export default Ember.Component.extend(WindowHeightMixin, {
   classNames: ['page-layout', 'page-layout-tabs'],
   target: Ember.computed.alias('targetObject'),
@@ -21,24 +28,22 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.observes('state').on('init'),
 
   tabs: function() {
-    var tabSection = this.get('pageLayout.section');
-    var scriptContent = this.get('trip.script.content');
-    if (!scriptContent) {
-      return [];
-    }
-    var tabPages = scriptContent.content_pages.filterBy('section', tabSection);
-    return tabPages;
+    var tabs = this.get('pageLayout.tabs');
+    return tabs && tabs.length ? tabs : DEFAULT_TABS;
   }.property('pageLayout'),
 
   visibleTabs: function() {
     return this.get('tabs').filter(function(tab) {
-      if (tab.visible === false) { return false; }
-      if (tab.active_if) {
-        return this.get('trip').evaluateIf(tab.active_if);
+      if (tab.visible_if) {
+        return this.get('trip').evaluateIf(tab.visible_if);
       }
       return true;
     }, this);
   }.property('tabs', 'trip.evalContext'),
+
+  showTabs: function() {
+    return this.get('visibleTabs.length') > 1;
+  }.property('visibleTabs'),
 
   selectedTab: function() {
     var tabName = this.get('selectedTabName');
@@ -47,10 +52,18 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.property('tabs', 'selectedTabName'),
 
   headerPanels: function() {
-    var headerPanels = [{
+    // Show page directive if visible, otherwise just experience title.
+    const headerPanels = [{
       type: 'text',
       visible_if: { op: 'value_is_true', ref: 'player.directive' },
-      text: '{{player.directive}}',
+      text: `{{player.directive}}`,
+      style: 'banner'
+    }, {
+      type: 'text',
+      visible_if: {
+        op: 'not', item: { op: 'value_is_true', ref: 'player.directive' }
+      },
+      text: this.get('trip.experience.title'),
       style: 'banner'
     }];
     return this.collectPanelPartials(headerPanels);
@@ -63,7 +76,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
         var innerPanels = this.get('pagePanels');
         if (!innerPanels || innerPanels.length === 0) {
           innerPanels = [];
-          // innerPanels = panel.default_panels || [];
         }
         collectedPanels = collectedPanels.concat(innerPanels);
       } else {

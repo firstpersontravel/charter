@@ -2,23 +2,16 @@ content:
   interfaces:
     - name: tablet
       title: Tablet
-      type: tabs
-      section: tabs
-  content_pages:
-    - name: nav
-      interface: tablet
-      section: tabs
-      title: Navigation
-      panels:
-        - type: current_page
-          id: 156
-    - name: messages
-      interface: tablet
-      section: tabs
-      title: Messages
-      panels:
-        - type: messages_browse
-          id: 157
+      tabs:
+        - title: Navigation
+          panels:
+            - type: current_page
+              id: 156
+        - title: Messages
+          panels:
+            - type: messages_browse
+              id: 157
+  content_pages: []
   roles:
     - name: Player
       title: Player
@@ -142,4 +135,4 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 38
+    version: 39

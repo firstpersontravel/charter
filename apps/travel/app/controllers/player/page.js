@@ -17,13 +17,6 @@ export default Ember.Controller.extend({
     return pageLayoutName;
   }.property('pageModel'),
 
-  pageLayoutComponentName: function() {
-    if (!this.get('pageModel')) {
-      return 'page-layouts/null';
-    }
-    return 'page-layouts/' + (this.get('pageLayout.type') || 'simple');
-  }.property('pageLayout'),
-
   pageModel: function() {
     var player = this.get('player.model');
     var script = player.get('trip.script');

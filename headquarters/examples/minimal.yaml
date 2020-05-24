@@ -13,7 +13,6 @@ content:
   interfaces:
     - name: player
       title: Player
-      type: simple
   pages:
     - name: first_page
       title: First page
@@ -31,4 +30,4 @@ content:
         type: scene_started
       actions: []
   meta:
-    version: 38
+    version: 39

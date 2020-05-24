@@ -60,7 +60,6 @@ content:
       title: Second drive
   interfaces:
     - name: Driver
-      type: simple
       title: Driver
   pages:
     - scene: main
@@ -156,7 +155,7 @@ content:
           page_name: End
           id: 18
   meta:
-    version: 38
+    version: 39
 assets:
   - data:
       end:
