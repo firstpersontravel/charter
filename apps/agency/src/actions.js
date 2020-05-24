@@ -66,8 +66,8 @@ function modelNameForCollectionName(collectionName) {
 
 function processError(err) {
   Sentry.withScope((scope) => {
-    if (typeof FS === 'object') {
-      scope.setExtra('FullStory URL', FS.getCurrentSessionURL(true));
+    if (typeof FS === 'function') {
+      scope.setExtra('Fullstory Record', FS.getCurrentSessionURL(true));
     }
     Sentry.captureException(err);
   });
