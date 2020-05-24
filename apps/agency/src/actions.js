@@ -190,10 +190,15 @@ export function associateAuthData(authData) {
   });
   // Autopilot
   if (typeof Autopilot === 'object') {
-    Autopilot.run('associate', authData.user.email);
+    const company = authData.orgs[0] && authData.orgs[0].title;
+    Autopilot.run('associate', {
+      Email: authData.user.email,
+      FirstName: authData.user.email,
+      Company: company
+    });
   }
   // FullStory
-  if (typeof FS === 'object') {
+  if (typeof FS === 'function') {
     FS.identify(authData.user.id, {
       displayName: authData.user.email,
       email: authData.user.email

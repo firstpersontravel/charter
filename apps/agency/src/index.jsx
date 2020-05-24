@@ -70,10 +70,7 @@ const app = (
 
 ReactDOM.render(app, document.getElementById('root'));
 
-window.addEventListener('load', (event) => {
-  if (!config.analyticsEnabled) {
-    return;
-  }
+if (config.analyticsEnabled) {
   /* eslint-disable */
 
   // Autopilot tracking code
@@ -107,4 +104,4 @@ window.addEventListener('load', (event) => {
   if (authData) {
     associateAuthData(authData);
   }
-});
+}
