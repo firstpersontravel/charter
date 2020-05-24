@@ -181,20 +181,21 @@ export function listCollection(collectionName, query, opts) {
 }
 
 export function associateAuthData(authData) {
+  const org = authData.orgs[0];
   // Sentry
   Sentry.configureScope((scope) => {
     scope.setUser({
       id: authData.user.id,
-      email: authData.user.email
+      email: authData.user.email,
+      orgName: org && org.name
     });
   });
   // Autopilot
   if (typeof Autopilot === 'object') {
-    const company = authData.orgs[0] && authData.orgs[0].title;
     Autopilot.run('associate', {
       Email: authData.user.email,
       FirstName: authData.user.email,
-      Company: company
+      Company: org && org.title
     });
   }
   // FullStory
