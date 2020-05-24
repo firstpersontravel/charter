@@ -19,6 +19,12 @@ describe('ScriptCore', () => {
           name: 's',
           title: 's'
         }],
+        interfaces: [{
+          name: 'i',
+          title: 'i',
+          type: 'simple',
+          section: ''
+        }],
         pages: [{
           name: 'p',
           scene: 's',
@@ -32,11 +38,12 @@ describe('ScriptCore', () => {
             type: 'audio_foreground'
           }]
         }],
-        interfaces: [{
-          name: 'i',
+        content_pages: [{
+          name: 'cp',
+          interface: 'i',
+          section: 'test',
           title: 'i',
-          type: 'simple',
-          header_panels: [{
+          panels: [{
             id: 3,
             type: 'text',
             text: 'hi'
@@ -51,10 +58,10 @@ describe('ScriptCore', () => {
       assert.throws(() => {
         ScriptCore.validateScriptContent(scriptContent);
       }, {
-        message: 'There was 1 error validating the following collections: interfaces.',
+        message: 'There was 1 error validating the following collections: content_pages.',
         fieldErrors: [{
-          path: 'interfaces[name=i]',
-          collection: 'interfaces',
+          path: 'content_pages[name=cp]',
+          collection: 'content_pages',
           message: 'Duplicate id in panels: 1'
         }]
       });

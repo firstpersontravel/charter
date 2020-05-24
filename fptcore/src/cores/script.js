@@ -7,7 +7,7 @@ const Validator = require('../utils/validator');
 const Walker = require('../utils/walker');
 const Errors = require('../errors');
 
-const CURRENT_VERSION = 37;
+const CURRENT_VERSION = 38;
 
 const metaSchema = {
   type: 'object',

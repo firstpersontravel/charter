@@ -1,6 +1,7 @@
 module.exports = {
   icon: 'sticky-note',
-  help: 'A section of static text or media that can be displayed in a user interface.',
+  title: 'Subpage',
+  help: 'A page that can be displayed in a list inside a Content Browse page.',
   properties: {
     name: { type: 'name', required: true },
     interface: {
@@ -12,11 +13,13 @@ module.exports = {
     },
     section: {
       type: 'string',
+      default: 'tab',
       required: true,
       help: 'A string indicating which a grouping for this content page. The the `content_browse` panel will show all visible content pages grouped by section.'
     },
     title: { type: 'string', required: true },
     active_if: {
+      title: 'Visible if',
       type: 'component',
       component: 'conditions',
       help: 'An optional test to determine if the panel is visible or not.'

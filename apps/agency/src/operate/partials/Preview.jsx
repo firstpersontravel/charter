@@ -27,40 +27,6 @@ function isBtnDisabled(trip, player, page) {
   return false;
 }
 
-function renderQr(trip, player, page, panel) {
-  const qrCode = _.find(trip.script.content.qr_codes, { name: panel.qr_code });
-  const redirectParams = {
-    e: trip.experience.id || 0,
-    r: qrCode.role,
-    c: qrCode.cue || '',
-    p: qrCode.page || ''
-  };
-  const queryString = Object
-    .keys(redirectParams)
-    .map(key => `${key}=${encodeURIComponent(redirectParams[key])}`)
-    .join('&');
-  const redirectUrl = `${window.location.origin}/r/?${queryString}`;
-  const qrParams = {
-    cht: 'qr',
-    chs: '500x500',
-    chl: redirectUrl
-  };
-  const qrString = Object
-    .keys(qrParams)
-    .map(key => `${key}=${encodeURIComponent(qrParams[key])}`)
-    .join('&');
-  const qrUrl = `https://chart.googleapis.com/chart?${qrString}`;
-  return (
-    <div>
-      <img
-        className="img-fluid"
-        src={qrUrl}
-        alt="QR code" />
-      <a href={redirectUrl}>{redirectUrl}</a>
-    </div>
-  );
-}
-
 function renderText(trip, player, page, panel) {
   const maxLength = 80;
   let humanized = TemplateUtil.templateText(trip.evalContext,
@@ -257,7 +223,6 @@ function renderYesno(trip, player, page, panel, onEvent, onAction) {
 }
 
 const panelRenderers = {
-  qr_display: renderQr,
   image: renderImage,
   text: renderText,
   yesno: renderYesno,

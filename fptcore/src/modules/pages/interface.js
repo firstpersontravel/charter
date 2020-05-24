@@ -15,12 +15,8 @@ module.exports = {
     },
     section: {
       type: 'string',
+      default: 'tab',
       help: 'Section of content pages to use as subpages.'
-    },
-    header_panels: {
-      type: 'list',
-      help: 'List of user interface panels to display at the top.',
-      items: { type: 'component', component: 'panels' }
     }
   },
   validateResource: function(script, resource) {

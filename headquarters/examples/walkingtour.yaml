@@ -4,14 +4,6 @@ content:
       title: Tablet
       type: tabs
       section: tabs
-      header_panels:
-        - type: text
-          style: banner
-          text: '{{Player.directive}}'
-          visible_if:
-            op: value_is_true
-            ref: Player.directive
-          id: 155
   content_pages:
     - name: nav
       interface: tablet
@@ -150,4 +142,4 @@ content:
           delta: 10
           id: 165
   meta:
-    version: 37
+    version: 38

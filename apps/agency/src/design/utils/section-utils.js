@@ -30,8 +30,6 @@ const sectionContent = {
   interface: [{
     collection: 'interfaces',
     children: ['content_pages']
-  }, {
-    collection: 'qr_codes'
   }]
 };
 

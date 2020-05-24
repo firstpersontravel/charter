@@ -19,7 +19,6 @@ const {
   contentRouter,
   entrywayRouter,
   galleryRouter,
-  redirectRouter,
   shortcutRouter
 } = require('./routers/page');
 
@@ -72,7 +71,6 @@ app.use('/auth', authRouter);
 app.use('/content', contentRouter);
 app.use('/entry', entrywayRouter);
 app.use('/gallery', galleryRouter);
-app.use('/r', redirectRouter);
 app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
 

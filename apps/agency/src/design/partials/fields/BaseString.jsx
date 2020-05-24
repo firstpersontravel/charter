@@ -5,7 +5,7 @@ import { Validations } from 'fptcore';
 
 import BaseEmpty from './BaseEmpty';
 import PopoverControl from '../../../partials/PopoverControl';
-import { typeTitleForSpec } from '../../utils/spec-utils';
+import { typeTitleForSpec, labelForSpec } from '../../utils/spec-utils';
 
 function bottomHelpForSpec(spec) {
   const validation = Validations[spec.type];
@@ -35,7 +35,7 @@ function BaseString({ spec, value, name, path, opts, validate, clean, onPropUpda
   };
   return (
     <PopoverControl
-      title={`${typeTitleForSpec(spec)}: ${name}`}
+      title={`${typeTitleForSpec(spec)}: ${labelForSpec(spec, name)}`}
       validate={validateWithBlank}
       helpText={spec.help}
       helpTextBottom={bottomHelpForSpec(spec)}

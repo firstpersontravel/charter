@@ -32,15 +32,7 @@ content:
       name: Jessie
       role: Jessie
   interfaces:
-    - header_panels:
-        - style: banner
-          text: '{{Inductee.directive}}'
-          type: text
-          visible_if:
-            op: value_is_true
-            ref: Inductee.directive
-          id: 21
-      name: Inductee
+    - name: Inductee
       section: tab
       title: Inductee
       type: tabs
@@ -1392,7 +1384,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 37
+    version: 38
 assets:
   - data:
       end:

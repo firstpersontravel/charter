@@ -5,7 +5,12 @@ export default Ember.Component.extend({
   target: Ember.computed.alias('targetObject'),
 
   headerPanels: function() {
-    var headerPanels =  this.get('pageLayout.header_panels') || [];
+    var headerPanels = [{
+      type: 'text',
+      visible_if: { op: 'value_is_true', ref: 'player.directive' },
+      text: '{{player.directive}}',
+      style: 'banner'
+    }];
     return this.collectPanelPartials(headerPanels);
   }.property('pageLayout', 'pagePanels'),
 

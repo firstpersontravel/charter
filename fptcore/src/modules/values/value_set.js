@@ -3,7 +3,8 @@ const _ = require('lodash');
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
-  help: 'Update a value in the trip state to either a constant number or string, or to match another value by reference.',
+  title: 'Set variable',
+  help: 'Update a variable in the trip state to either a constant number or string, or to match another variable by reference.',
   params: {
     value_ref: {
       required: true,

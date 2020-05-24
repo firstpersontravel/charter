@@ -8,7 +8,6 @@ const modules = [
   require('./modules/locations/module'),
   require('./modules/messages/module'),
   require('./modules/pages/module'),
-  require('./modules/qr/module'),
   require('./modules/relays/module'),
   require('./modules/roles/module'),
   require('./modules/scenes/module'),

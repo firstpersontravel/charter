@@ -14,11 +14,6 @@ content:
     - name: player
       title: Player
       type: simple
-      header_panels:
-        - id: 1
-          type: text
-          text: '{{player.directive}}'
-          style: banner
   pages:
     - name: first_page
       title: First page
@@ -36,4 +31,4 @@ content:
         type: scene_started
       actions: []
   meta:
-    version: 37
+    version: 38

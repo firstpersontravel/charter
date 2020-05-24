@@ -4,25 +4,37 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
-    default: { type: 'boolean', default: false },
-    section: { type: 'string' },
+    default: {
+      type: 'boolean',
+      default: false,
+      help: 'If default is set to true, all new trips will have these defaults set.'
+    },
+    section: {
+      title: 'Variant group',
+      help: 'You can group variants if you want to allow only one of a set to be selected. For instance, if you have a basic and deluxe variant, give both variants a group name of "package", and only one can be selected at a time.',
+      type: 'string'
+    },
     initial_values: {
+      title: 'Variable defaults',
       type: 'dictionary',
       keys: { type: 'simpleAttribute' },
       values: { type: 'simpleValue' }
     },
     customizations: {
+      title: 'Customization defaults',
       type: 'dictionary',
       keys: { type: 'simpleAttribute' },
       values: { type: 'simpleValue' }
     },
     waypoint_options: {
+      title: 'Location defaults',
       type: 'dictionary',
       keys: { type: 'reference', collection: 'waypoints' },
       // HMM -- how to refer to embedded subresources?
       values: { type: 'name' }
     },
     schedule: {
+      title: 'Time defaults',
       type: 'dictionary',
       keys: {
         type: 'reference',
