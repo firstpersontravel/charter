@@ -375,6 +375,7 @@ export default class ResourceShow extends Component {
         <div className="constrain-text">
           <ResourceBadge resourceType={resourceType} className="mr-1" />
           <Link
+            className="text-dark"
             to={{ search: `?child=${collectionName}.${childResource.name}` }}>
             {title}
           </Link>

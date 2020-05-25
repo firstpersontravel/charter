@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { TextUtil } from 'fptcore';
 
 import { titleForResource } from '../../utils/text-utils';
+import { urlForResource } from '../../utils/section-utils';
 import BaseEmpty from './BaseEmpty';
 import BaseEnum from './BaseEnum';
 import ResourceBadge from '../../../partials/ResourceBadge';
@@ -19,8 +21,11 @@ function labelForValue(script, spec, value) {
       referringToResource);
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
-        <ResourceBadge resourceType={resourceType} showType={false} />
-        &nbsp;{title}
+        <ResourceBadge
+          className="mr-1"
+          resourceType={resourceType}
+          showType={false} />
+        {title}
       </span>
     );
   }
@@ -66,17 +71,29 @@ function ReferenceField({ script, resource, spec, value, name, path, opts, onPro
   if (opts && opts.editable === false) {
     return label;
   }
+  const collection = script.content[spec.collection];
+  const referringToResource = _.find(collection, { name: value });
+  const link = referringToResource ? (
+    <Link
+      className="text-dark ml-1"
+      to={urlForResource(script, spec.collection, value)}>
+      <i className="faint fa fa-external-link-square" />
+    </Link>
+  ) : null;
   return (
-    <BaseEnum
-      spec={spec}
-      value={value}
-      name={name}
-      path={path}
-      opts={opts}
-      clean={val => (val === '' ? null : val)}
-      choices={choicesForSpec(script, resource, spec)}
-      label={label}
-      onPropUpdate={onPropUpdate} />
+    <>
+      <BaseEnum
+        spec={spec}
+        value={value}
+        name={name}
+        path={path}
+        opts={opts}
+        clean={val => (val === '' ? null : val)}
+        choices={choicesForSpec(script, resource, spec)}
+        label={label}
+        onPropUpdate={onPropUpdate} />
+      {link}
+    </>
   );
 }
 

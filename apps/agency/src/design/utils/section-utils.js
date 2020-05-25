@@ -3,20 +3,22 @@ import _ from 'lodash';
 export const sections = [
   ['roles', 'Roles', 'user'],
   ['scenes', 'Scenes', 'map'],
-  ['locations', 'Location', 'map-pin'],
-  ['variants', 'Variants', 'space-shuttle'],
-  ['interface', 'Interface', 'file-image-o']
+  ['places', 'Places', 'map-pin'],
+  ['variants', 'Variants', 'space-shuttle']
 ];
 
 const sectionContent = {
   roles: [{
     collection: 'roles',
     children: ['relays', 'inboxes']
+  }, {
+    collection: 'interfaces',
+    children: ['content_pages']
   }],
   scenes: [{
     collection: 'scenes'
   }],
-  locations: [{
+  places: [{
     collection: 'waypoints',
     children: ['geofences']
   }, {
@@ -26,10 +28,6 @@ const sectionContent = {
     collection: 'variants'
   }, {
     collection: 'times'
-  }],
-  interface: [{
-    collection: 'interfaces',
-    children: ['content_pages']
   }]
 };
 
@@ -96,23 +94,40 @@ export function getContentList(scriptContent, sliceType, sliceName) {
   return contentMap.map(item => getContentListItem(scriptContent, item));
 }
 
-function sliceForResource(collectionName, resource) {
+function sectionForResource(scriptContent, collectionName, resource) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const sectionName of Object.keys(sectionContent)) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const sectionContentItem of sectionContent[sectionName]) {
+      if (sectionContentItem.collection === collectionName) {
+        return sectionName;
+      }
+      if (sectionContentItem.children &&
+          sectionContentItem.children.includes(collectionName)) {
+        return sectionName;
+      }
+    }
+  }
+  throw new Error(`Could not find section for ${collectionName}.`);
+}
+
+function sliceForResource(scriptContent, collectionName, resource) {
   if (collectionName === 'scenes') {
     return { sliceType: 'scene', sliceName: resource.name };
   }
   if (resource.scene) {
     return { sliceType: 'scene', sliceName: resource.scene };
   }
-  const section = _.find(Object.keys(sectionContent), sectionName => (
-    !!sectionContent[sectionName][collectionName]
-  ));
-  return { sliceType: 'section', sliceName: section };
+  const sectionName = sectionForResource(scriptContent, collectionName,
+    resource);
+  return { sliceType: 'section', sliceName: sectionName };
 }
 
 export function urlForResource(script, collectionName, resourceName) {
   const collection = script.content[collectionName];
   const resource = _.find(collection, { name: resourceName });
-  const { sliceType, sliceName } = sliceForResource(collectionName, resource);
+  const { sliceType, sliceName } = sliceForResource(script.content,
+    collectionName, resource);
   return (
     `/${script.org.name}/${script.experience.name}` +
     `/script/${script.revision}` +
