@@ -3,7 +3,8 @@ const moment = require('moment');
 const TimeUtil = require('../../utils/time');
 
 module.exports = {
-  help: 'Wait a fixed period of time before a scheduled time.',
+  title: 'Wait before moment',
+  help: 'Wait a fixed period of time before a scheduled moment.',
   params: {
     until: {
       type: 'reference',

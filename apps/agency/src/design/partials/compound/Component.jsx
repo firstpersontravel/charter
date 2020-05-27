@@ -50,6 +50,7 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
         renderAny={renderAny} />
     ));
 
+  const varietyTitle = varietyClass.title || TextUtil.titleForKey(variety);
   const titleStyle = {
     fontWeight: 'bold',
     display: 'inline-block',
@@ -57,7 +58,7 @@ function ComponentField({ script, resource, spec, value, name, path, opts,
   };
   return (
     <>
-      <div style={titleStyle}>{TextUtil.titleForKey(variety)}</div>
+      <div style={titleStyle}>{varietyTitle}</div>
       {objectFields}
     </>
   );

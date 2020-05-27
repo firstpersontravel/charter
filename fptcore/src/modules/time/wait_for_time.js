@@ -1,7 +1,8 @@
 const moment = require('moment');
 
 module.exports = {
-  help: 'Wait a fixed period of time.',
+  help: 'Wait for a moment to arrive.',
+  title: 'Wait until moment',
   params: {
     until: {
       type: 'reference',

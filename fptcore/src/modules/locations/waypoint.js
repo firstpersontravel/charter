@@ -30,6 +30,7 @@ var waypointOptionSpec = {
     },
     title: { type: 'string' },
     values: {
+      title: 'Variable defaults',
       type: 'dictionary',
       keys: { type: 'simpleAttribute' },
       values: { type: 'simpleValue' }

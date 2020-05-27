@@ -13,8 +13,9 @@ function truncate(str, len) {
 
 module.exports = {
   audio_foreground: {
+    title: 'Audio',
     icon: 'sticky-note',
-    help: 'Displays an audio message that can be played at will.',
+    help: 'An audio clip that can be played at will.',
     properties: {
       path: {
         type: 'media',
@@ -26,7 +27,7 @@ module.exports = {
   },
   button: {
     icon: 'sticky-note',
-    help: 'Displays a button.',
+    help: 'A button.',
     properties: {
       text: {
         type: 'string',
@@ -44,7 +45,7 @@ module.exports = {
   },
   choice: {
     icon: 'sticky-note',
-    help: 'Displays a multiple choice option. When selected by a user, the curresponding value in the trip state will be updated.',
+    help: 'A multiple choice option. When selected by a user, the curresponding variable in the trip state will be updated.',
     properties: {
       text: {
         type: 'string',
@@ -69,8 +70,9 @@ module.exports = {
     }
   },
   content_browse: {
+    title: 'Browse subpages',
     icon: 'sticky-note',
-    help: 'Displays an index page of content. The user can browse through all visible content pages matching the given section.',
+    help: 'An index page of subpages. The user can browse through all visible subpages matching a given section.',
     properties: {
       title: { type: 'string', required: true },
       section: { type: 'string', required: true }
@@ -78,7 +80,7 @@ module.exports = {
   },
   current_page: {
     icon: 'sticky-note',
-    help: 'Shows the current page for this player. Should only be used as part of an interface.',
+    help: 'The current page for this player. Should only be used as part of an interface.',
     properties: {}
   },
   directions: {
@@ -98,7 +100,7 @@ module.exports = {
   },
   image: {
     icon: 'sticky-note',
-    help: 'Displays an image.',
+    help: 'An image.',
     properties: {
       path: {
         type: 'media',
@@ -110,8 +112,9 @@ module.exports = {
     }
   },
   messages_browse: {
+    title: 'Browse messages',
     icon: 'sticky-note',
-    help: 'Displays a browsable interface of all messages for a player.',
+    help: 'A browsable interface of all messages for a role.',
     properties: {
       as: {
         type: 'reference',
@@ -121,10 +124,12 @@ module.exports = {
     }
   },
   messages: {
+    title: 'Message thread',
     icon: 'sticky-note',
-    help: 'Displays a browsable interface of all messages between a set of players.',
+    help: 'All messages between two roles.',
     properties: {
-      title: { type: 'string' },
+      // TODO: remove this
+      title: { type: 'string', display: { hidden: true } },
       with: {
         type: 'reference',
         collection: 'roles',
@@ -139,11 +144,19 @@ module.exports = {
     }
   },
   numberpad: {
+    title: 'Number entry',
     icon: 'sticky-note',
-    help: 'Displays a numberpad.',
+    help: 'A number input.',
     properties: {
-      submit: { type: 'string', default: 'Submit' },
-      placeholder: { type: 'string' }
+      submit: {
+        title: 'Submit button label',
+        type: 'string',
+        default: 'Submit'
+      },
+      placeholder: {
+        title: 'Placeholder text',
+        type: 'string'
+      }
     },
     getTitle(resource, component, scriptContent) {
       return truncate(component.placeholder || '<no placeholder>', titleLen);
@@ -151,7 +164,7 @@ module.exports = {
   },
   text: {
     icon: 'sticky-note',
-    help: 'Displays simple text.',
+    help: 'A simple text.',
     properties: {
       text: { type: 'markdown', required: true },
       style: {
@@ -163,10 +176,17 @@ module.exports = {
   },
   text_entry: {
     icon: 'sticky-note',
-    help: 'Displays a text entry field.',
+    help: 'A text entry field.',
     properties: {
-      submit: { type: 'string', default: 'Submit' },
-      placeholder: { type: 'string' }
+      submit: {
+        title: 'Submit button label',
+        type: 'string',
+        default: 'Submit'
+      },
+      placeholder: {
+        title: 'Placeholder text',
+        type: 'string'
+      }
     },
     getTitle(resource, component, scriptContent) {
       return truncate(component.placeholder || '<no placeholder>', titleLen);
@@ -174,7 +194,7 @@ module.exports = {
   },
   video: {
     icon: 'sticky-note',
-    help: 'Displays a video.',
+    help: 'A video.',
     properties: {
       path: {
         type: 'media',
@@ -186,10 +206,14 @@ module.exports = {
   },
   yesno: {
     icon: 'sticky-note',
-    help: 'Displays a yes/no choice. When updated, the corresponding value in the trip state will be updated.',
+    help: 'A yes/no choice. When updated, the corresponding variable in the trip state will be updated.',
     properties: {
       text: { type: 'string', required: true },
-      value_ref: { type: 'simpleAttribute', required: true }
+      value_ref: {
+        title: 'Save to variable name',
+        type: 'simpleAttribute',
+        required: true
+      }
     }
   }
 };

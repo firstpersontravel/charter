@@ -19,12 +19,14 @@ module.exports = {
       help: 'The ending waypoint'
     },
     mode: {
+      title: 'Method',
       type: 'enum',
       options: ROUTE_VIA_OPTIONS,
       default: 'driving',
       help: 'The method of transit for directions.'
     },
     via: {
+      title: 'Waypoints',
       type: 'list',
       items: {
         type: 'coords',

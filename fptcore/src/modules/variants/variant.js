@@ -34,7 +34,7 @@ module.exports = {
       values: { type: 'name' }
     },
     schedule: {
-      title: 'Time defaults',
+      title: 'Moment schedule',
       type: 'dictionary',
       keys: {
         type: 'reference',

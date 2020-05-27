@@ -30,6 +30,7 @@ class ContextCore {
       skype: profile.skypeUsername || null,
       phone_number: profile.phoneNumber || user.phoneNumber || null,
       directive: page && page.directive || null,
+      headline: page && page.directive || null,
       latitude: user.locationLatitude || null,
       longitude: user.locationLongitude || null,
       accuracy: user.locationAccuracy || null

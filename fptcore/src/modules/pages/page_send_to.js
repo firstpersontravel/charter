@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 module.exports = {
-  help: 'Set a player to a page by role.',
+  help: 'Set a role to a page.',
   params: {
     role_name: {
       required: true,

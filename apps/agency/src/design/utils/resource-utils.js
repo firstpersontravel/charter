@@ -62,9 +62,13 @@ export function getNewComponent(componentType, variant) {
 }
 
 export function getComponentVariantOptions(componentType) {
+  const componentRegistry = coreRegistry[componentType];
   return [{ value: '', label: '---' }].concat(Object
-    .keys(coreRegistry[componentType])
-    .map(key => ({ value: key, label: TextUtil.titleForKey(key) })))
+    .keys(componentRegistry)
+    .map(key => ({
+      value: key,
+      label: componentRegistry[key].title || TextUtil.titleForKey(key)
+    })))
     .sort((a, b) => (a.label > b.label ? 1 : -1));
 }
 

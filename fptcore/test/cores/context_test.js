@@ -36,6 +36,7 @@ describe('ContextCore', () => {
         email: 'vance@vance.com',
         facetime: null,
         phone_number: null,
+        headline: null,
         directive: null,
         skype: null,
         latitude: null,

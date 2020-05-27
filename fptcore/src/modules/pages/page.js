@@ -28,11 +28,15 @@ module.exports = {
       display: { multiline: true }
     },
     waypoint: {
+      // TODO: remove this
+      display: { hidden: true },
       type: 'reference',
       collection: 'waypoints',
       help: 'An optional location for the activity corresponding to this page. This is only visible on the operations page, not to players.'
     },
     route: {
+      // TODO: remove this
+      display: { hidden: true },
       type: 'reference',
       collection: 'routes',
       help: 'An optional route corresponding to this page. This is only visible on the operations page, not to players.'
