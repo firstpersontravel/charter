@@ -116,8 +116,9 @@ export default class GroupPlayers extends Component {
       .concat(userChoices);
     const goToUser = user ? (
       <Link
+        className="ml-1"
         to={`/${group.org.name}/${group.experience.name}/directory/user/${user.id}`}>
-        <i className="fa fa-user" />
+        <i className="fa fa-external-link-square text-dark faint" />
       </Link>
     ) : null;
 
@@ -135,7 +136,7 @@ export default class GroupPlayers extends Component {
     return (
       <div>
         {userControl}
-        {' '}{goToUser}
+        {goToUser}
       </div>
     );
   }
@@ -179,7 +180,9 @@ export default class GroupPlayers extends Component {
         <td>{role.title}</td>
         {tripRoleCells}
         <td>
-          <Link className="ml-1" to={{ search: `?role=${role.name}` }}>
+          <Link
+            className="ml-1 text-dark"
+            to={{ search: `?role=${role.name}` }}>
             <i className="fa fa-user-plus" />
           </Link>
         </td>

@@ -146,10 +146,8 @@ class TripRelaysController {
    */
   static async _partsForRelayMessage(script, trip, relay, message) {
     if (message.medium === 'text') {
-      // Otherwise send the raw content as-is.
-      // Include SMS metadata if this relay is for an actor.
-      const forRole = _.find(script.content.roles, { name: relay.forRoleName });
-      const includeMeta = !!forRole.actor;
+      // TODO: include meta if this user is signed up for multiple active trips
+      const includeMeta = false;
       const body = this._formatMessageBody(script, trip, message, includeMeta);
       return [body, null];
     }
@@ -202,7 +200,7 @@ class TripRelaysController {
         continue;
       }
       // If this relay is for the user who sent the message, skip.
-      if (relay.for === message.fromRoleName) {
+      if (relay.forRoleName === message.fromRoleName) {
         continue;
       }
       const [body, mediaUrl] = await this._partsForRelayMessage(script, trip, 

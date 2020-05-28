@@ -63,19 +63,6 @@ content:
       interface: Jessie
       scene: SCENE-0
       title: Waiting for inductee
-    - directive: Head to the lounge and wait for Jessie's call.
-      name: PAGE-1-START
-      panels:
-        - text: Check out the phone in the lounge. Or text (707) 876-0019 to begin.
-          type: text
-          id: 26
-        - text: Trigger beginning
-          type: button
-          id: 27
-      interface: Inductee
-      scene: SCENE-1
-      title: Await call
-      waypoint: WAYPOINT-BIGROCK
     - directive: Intro call with the inductee
       name: PAGE-1-JESSIE
       panels:

@@ -139,8 +139,6 @@ describe('TripRelaysController', () => {
       // Should return list of relays
       assert.deepStrictEqual(res, [stubRelay]);
     });
-
-    it.skip('creates relay if does not exist', async () => {});
   });
 
   describe('#initiateCall', () => {
@@ -220,6 +218,8 @@ describe('TripRelaysController', () => {
   });
 
   describe('#relayMessage', () => {
-    it.skip('sends an admin message', () => {});
+    it.skip('relays message to forward relays', () => {});
+    it.skip('relays message to inverse relays', () => {});
+    it.skip('skips inverse relays for self', () => {});
   });
 });

@@ -181,11 +181,6 @@ export default Ember.Component.extend({
           reject("Error loading image for resizing.");
           return;
         }
-        // Rotate additional 90 degrees to compensate for tablet skew.
-        resizedCanvas = window.loadImage.scale(resizedCanvas, {
-          orientation: 6
-        });
-
         // Create jpeg
         resizedCanvas.toBlob(function(resizedBlob) {
           window.loadImage.parseMetaData(resizedBlob, function(data) {
