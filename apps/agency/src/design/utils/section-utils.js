@@ -2,9 +2,8 @@ import _ from 'lodash';
 
 export const sections = [
   ['roles', 'Roles', 'user'],
-  ['scenes', 'Scenes', 'map'],
   ['places', 'Places', 'map-pin'],
-  ['variants', 'Variants', 'space-shuttle']
+  ['defaults', 'Defaults', 'list-ul']
 ];
 
 const sectionContent = {
@@ -24,7 +23,7 @@ const sectionContent = {
   }, {
     collection: 'routes'
   }],
-  variants: [{
+  defaults: [{
     collection: 'variants'
   }, {
     collection: 'times'
@@ -46,13 +45,13 @@ function getSceneContent(scriptContent, sceneName) {
     filter: { scene: sceneName, interface: i.name }
   }));
   const sceneSections = [{
+    collection: 'triggers',
+    filter: { scene: sceneName }
+  }, {
     collection: 'cues',
     filter: { scene: sceneName }
   }, {
     collection: 'clips',
-    filter: { scene: sceneName }
-  }, {
-    collection: 'triggers',
     filter: { scene: sceneName }
   }];
   return pageSections.concat(sceneSections);

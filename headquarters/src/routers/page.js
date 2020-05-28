@@ -11,7 +11,11 @@ const { asyncRoute } = require('./utils');
 const entrywayRouter = express.Router();
 entrywayRouter.get('/:orgName/:experienceName',
   asyncRoute(entrywayRoutes.entrywayRoute));
+entrywayRouter.get('/:orgName/:experienceName/:interfaceTitleStub',
+  asyncRoute(entrywayRoutes.entrywayRoute));
 entrywayRouter.post('/:orgName/:experienceName',
+  asyncRoute(entrywayRoutes.entrywaySubmitRoute));
+entrywayRouter.post('/:orgName/:experienceName/:interfaceTitleStub',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));
 
 const shortcutRouter = express.Router();

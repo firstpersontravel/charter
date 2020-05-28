@@ -88,7 +88,7 @@ export default class TripModal extends Component {
       return null;
     }
     const trip = this.props.trip;
-    const newTitle = group ? `New trip on ${moment(group.date).format('MMM D, YYYY')}` : 'New trip';
+    const newTitle = group ? `New run on ${moment(group.date).format('MMM D, YYYY')}` : 'New run';
     const title = trip ? `Edit ${trip.title}` : newTitle;
     const isNew = !trip;
     const confirmLabel = isNew ? 'Create' : 'Update with values';

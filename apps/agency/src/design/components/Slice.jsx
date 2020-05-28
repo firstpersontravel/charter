@@ -47,8 +47,8 @@ export default class Slice extends Component {
     const globalHeader = {
       key: 'global-header',
       url: '',
-      label: 'Global',
-      text: 'Global',
+      label: 'Project',
+      text: 'Project',
       disabled: true
     };
 
@@ -60,9 +60,23 @@ export default class Slice extends Component {
       disabled: true
     };
 
+    const sceneListItem = {
+      key: 'scenes',
+      url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/section/scenes`,
+      label: (
+        <span>
+          <i
+            style={{ width: '1.5em' }}
+            className="d-none d-md-inline-block fa fa-puzzle-piece" />
+          &nbsp;Scene list
+        </span>
+      ),
+      text: 'Scene list'
+    };
+
     const items = [globalHeader]
       .concat(sectionLinks)
-      .concat([scenesHeader])
+      .concat([scenesHeader, sceneListItem])
       .concat(sceneLinks);
 
     return (

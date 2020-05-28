@@ -50,7 +50,18 @@ class TextUtil {
     return text
       .toLowerCase()
       .replace(/\s+/g, '_')
-      .replace(/[^\w]/g, '');
+      .replace(/[^\w_]/g, '');
+  }
+
+  // Underscored var name for text - underscores and lowercase chars.
+  static dashVarForText(text) {
+    if (!text) {
+      return null;
+    }
+    return text
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '');
   }
 
   // SUPER DUMB pluralization

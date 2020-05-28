@@ -1,5 +1,7 @@
-const _ = require('lodash');
 const models = require('../models');
+
+const SceneCore = require('fptcore/src/cores/scene');
+const TextUtil = require('fptcore/src/utils/text');
 
 const ExperienceController = require('../controllers/experience');
 const EntrywayController = require('../controllers/entryway');
@@ -53,6 +55,7 @@ const entrywayRoute = async (req, res) => {
 const entrywaySubmitRoute = async (req, res) => {
   const orgName = req.params.orgName;
   const experienceName = req.params.experienceName;
+  const interfaceTitleStub = req.params.interfaceTitleStub || null;
   const name = req.body.name;
   const email = req.body.email;
   const phoneNumber = req.body.phone.replace(/\D/g, '');
@@ -75,9 +78,19 @@ const entrywaySubmitRoute = async (req, res) => {
   });
 
   const script = await ExperienceController.findActiveScript(experience.id);
-  const playerRole = _.find(script.content.roles, { type: 'traveler' });
+  const interface = (script.content.interfaces || [])
+    .filter(i => (
+      interfaceTitleStub === null ||
+      interfaceTitleStub === TextUtil.dashVarToText(i.title)
+    ))
+    .sort(SceneCore.sortResource)[0];
+
+  const playerRole = (script.content.roles || [])
+    .filter(r => r.interface === interface.name)
+    .sort(SceneCore.sortResource)[0];
+
   if (!playerRole) {
-    res.status(500).send('No player role found.');
+    res.status(404).send('Entryway interface not found');
     return;
   }
 

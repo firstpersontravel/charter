@@ -147,7 +147,7 @@ export default class GroupOverview extends Component {
     return (
       <div>
         <div className="mb-2">
-          <h5>Trips</h5>
+          <h5>Runs</h5>
           {trips}
         </div>
         <div className="mb-2">

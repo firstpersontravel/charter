@@ -74,13 +74,13 @@ function shouldHideSpec(script, value, spec, keySpec, keyName) {
     return true;
   }
   // Hide optional references if no objects exist in that reference.
-  if (keySpec.type === 'reference' && !keySpec.required && !value[keyName]) {
-    const collectionName = keySpec.collection;
-    const collection = script.content[collectionName];
-    if (!collection || !collection.length) {
-      return true;
-    }
-  }
+  // if (keySpec.type === 'reference' && !keySpec.required && !value[keyName]) {
+  //   const collectionName = keySpec.collection;
+  //   const collection = script.content[collectionName];
+  //   if (!collection || !collection.length) {
+  //     return true;
+  //   }
+  // }
   return false;
 }
 

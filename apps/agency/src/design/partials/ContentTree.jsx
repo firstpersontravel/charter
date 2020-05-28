@@ -33,7 +33,6 @@ export default class ContentTree extends Component {
       label: (
         <span>
           <ResourceBadge
-            className="ml-3"
             showType={false}
             resource={item}
             resourceType={resourceType} /> {itemTitle}
@@ -57,6 +56,7 @@ export default class ContentTree extends Component {
         location.pathname === match.url &&
         location.search === queryString
       ),
+      className: 'mb-3',
       url: {
         pathname: (
           `/${script.org.name}/${script.experience.name}` +
@@ -80,13 +80,27 @@ export default class ContentTree extends Component {
   }
 
   renderContentListItem(contentListItem) {
+    const collectionName = contentListItem.collection;
+    const resourceType = TextUtil.singularize(collectionName);
+    const title = contentListItem.title ?
+      TextUtil.pluralize(contentListItem.title) :
+      TextUtil.pluralize(titleForResourceType(resourceType));
+    const headerItem = {
+      key: `${contentListItem.key || collectionName}-header`,
+      url: '',
+      label: title,
+      text: title,
+      disabled: true
+    };
     const items = (contentListItem.items || [])
       .sort(SceneCore.sortResource)
       .map(item => (
         this.renderItem(contentListItem.collection, item)
       ));
     const newItem = this.renderNewItem(contentListItem);
-    return [newItem].concat(items);
+    return [headerItem]
+      .concat(items)
+      .concat([newItem]);
   }
 
   render() {

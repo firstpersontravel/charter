@@ -5,7 +5,10 @@ import PropTypes from 'prop-types';
 
 import { TextUtil } from 'fptcore';
 
-import { titleForResource } from '../../utils/text-utils';
+import {
+  titleForResource,
+  titleForResourceType
+} from '../../utils/text-utils';
 import { urlForResource } from '../../utils/section-utils';
 import BaseEmpty from './BaseEmpty';
 import BaseEnum from './BaseEnum';
@@ -71,6 +74,20 @@ function ReferenceField({ script, resource, spec, value, name, path, opts, onPro
   if (opts && opts.editable === false) {
     return label;
   }
+
+  if (!value) {
+    const collectionName = spec.collection;
+    const resourceType = TextUtil.singularize(collectionName);
+    const collection = script.content[collectionName];
+    if (!collection || !collection.length) {
+      return (
+        <em className="faint">
+          No {titleForResourceType(resourceType).toLowerCase()}s exist.
+        </em>
+      );
+    }
+  }
+
   const collection = script.content[spec.collection];
   const referringToResource = _.find(collection, { name: value });
   const link = referringToResource ? (

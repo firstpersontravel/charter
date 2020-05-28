@@ -76,47 +76,16 @@ export default class GroupModal extends Component {
 
   render() {
     const group = this.props.group;
-    const title = group ? 'Edit block' : 'New block';
+    const title = group ? 'Edit run group' : 'New run group';
     const isNew = !group;
     const confirmLabel = isNew ? 'Create' : 'Update with values';
     const confirmColor = isNew ? 'primary' : 'danger';
-    const isValid = (
-      this.state.scriptId &&
-      this.state.date !== ''
-    );
-
-    const scripts = this.props.scripts;
-    const activeRev = _.get(_.find(scripts, 'isActive'), 'revision');
-    const scriptOptions = scripts.map(script => (
-      <option
-        key={script.id}
-        value={script.id}>
-        Rev. {script.revision}
-        &nbsp;({ // eslint-disable-next-line no-nested-ternary
-          script.isActive ? 'Active' : (script.revision >= activeRev ? 'Draft' : 'Superceded')})
-      </option>
-    ));
-
+    const isValid = (this.state.scriptId && this.state.date !== '');
     return (
       <Modal isOpen={this.props.isOpen} toggle={this.handleToggle} zIndex={3000}>
         <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
         <ModalBody>
           <form>
-            <div className="form-group row">
-              <label className="col-sm-3 col-form-label" htmlFor="g_script">
-                Script
-              </label>
-              <div className="col-sm-9">
-                <select
-                  className="form-control"
-                  id="g_script"
-                  onChange={this.handleChangeScript}
-                  ref={this.firstSelectRef}
-                  value={this.state.scriptId || ''}>
-                  {scriptOptions}
-                </select>
-              </div>
-            </div>
             <div className="form-group row">
               <label className="col-sm-3 col-form-label" htmlFor="g_date">
                 Date

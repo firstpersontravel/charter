@@ -4,10 +4,10 @@ const yaml = require('js-yaml');
 
 const TestUtil = require('../util');
 
-const examplePath = path.join(__dirname, '../../examples/minimal.yaml');
+const examplePath = path.join(__dirname, '../../examples/blank.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 
-describe('MinimalExample', () => {
+describe('BlankExample', () => {
 
   beforeEach(async () => {
     await TestUtil.createExample(example);

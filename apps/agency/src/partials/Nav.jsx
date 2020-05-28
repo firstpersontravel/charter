@@ -135,7 +135,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
         className="bold nav-link dropdown-toggle constrain-text"
         id="experiencesDropdown"
         data-toggle="dropdown">
-        {experience ? experience.title : 'Experiences'}
+        {experience ? experience.title : 'Projects'}
       </div>
       <div className="dropdown-menu" aria-labelledby="experiencesDropdown">
         {experienceLinks}
@@ -166,8 +166,8 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     _.find(groups, { id: Number(groupId) });
 
   const opsTitle = activeGroup ?
-    `Ops: ${moment.utc(activeGroup.date).format('MMM D')}` :
-    'Ops';
+    `Operate: ${moment.utc(activeGroup.date).format('MMM D')}` :
+    'Operate';
   const opsDropdown = groupLinks.length > 0 ? (
     <li className="nav-item dropdown">
       <NavLink
@@ -197,14 +197,14 @@ function renderMenu(org, experience, experiences, groups, groupId) {
           activeClassName="active"
           className="nav-link"
           to={`/${org.name}/${experience.name}/script`}>
-          Script
+          Create
         </NavLink>
       </li>
       <NavLink
         activeClassName="active"
         className="nav-link"
         to={entryUrl}>
-        Entry
+        Schedule
       </NavLink>
       {opsDropdown}
       <li className="nav-item">

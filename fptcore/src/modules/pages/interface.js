@@ -4,6 +4,11 @@ module.exports = {
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
+    entryway: {
+      type: 'boolean',
+      default: false,
+      help: 'If set to true, new participants can enter your experience via a webform into this interface.'
+    },
     tabs: {
       type: 'list',
       help: 'A list of tabs. If there is only one tab visible, the tabs bar will not be displayed.',

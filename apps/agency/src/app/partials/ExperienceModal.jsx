@@ -154,9 +154,8 @@ export default class ExperienceModal extends Component {
   render() {
     const experience = this.props.experience;
     const example = this.props.example;
-    const exampleTitle = example ? example.title.toLowerCase() : 'experience';
-    const title = experience ? 'Edit experience' :
-      `New ${exampleTitle}`;
+    const exampleTitle = example ? example.title.toLowerCase() : 'project';
+    const title = experience ? 'Edit project' : `New ${exampleTitle}`;
     const isNew = !experience;
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
@@ -168,6 +167,20 @@ export default class ExperienceModal extends Component {
 
     const host = window.location.host;
     const placeholderDomain = host;
+    const timezoneRow = isNew ? null : (
+      <div className="row">
+        <div className="form-group col-12">
+          <label htmlFor="exp_timezone">Time zone</label>
+          <select
+            className="form-control"
+            id="exp_timezone"
+            onChange={e => this.handleChangeField('timezone', e)}
+            value={this.state.timezone}>
+            {timezoneOptions}
+          </select>
+        </div>
+      </div>
+    );
     const domainRow = isNew ? null : (
       <div className="row">
         <div className="form-group col-12">
@@ -214,18 +227,7 @@ export default class ExperienceModal extends Component {
                   placeholder="Title" />
               </div>
             </div>
-            <div className="row">
-              <div className="form-group col-12">
-                <label htmlFor="exp_timezone">Time zone</label>
-                <select
-                  className="form-control"
-                  id="exp_timezone"
-                  onChange={e => this.handleChangeField('timezone', e)}
-                  value={this.state.timezone}>
-                  {timezoneOptions}
-                </select>
-              </div>
-            </div>
+            {timezoneRow}
             {domainRow}
           </form>
         </ModalBody>

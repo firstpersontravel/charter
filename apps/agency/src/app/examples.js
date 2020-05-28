@@ -1,8 +1,13 @@
 export default [{
-  name: 'minimal',
-  title: 'Minimal',
-  desc: 'An empty skeleton to fill with your work.',
+  name: 'blank',
+  title: 'Blank',
+  desc: 'A totally blank canvas.',
   demo: 'Contains just a starting scene and role.'
+}, {
+  name: 'hello-world',
+  title: 'Hello World',
+  desc: 'A basic hello.',
+  demo: 'A simple hello world project including a welcome page.'
 }, {
   name: 'phonetree',
   title: 'Phone tree',

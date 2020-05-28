@@ -34,7 +34,7 @@ class Experience extends Component {
       return (
         <Alert
           color="warning"
-          content="Experience not found."
+          content="Project not found."
           action={
             <Link to={`/${this.props.match.params.orgName}`}>Go back?</Link>
           } />

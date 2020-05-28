@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { TextUtil, coreRegistry, coreValidator } from 'fptcore';
 
-import { titleForResource } from '../utils/text-utils';
+import { titleForResource, titleForResourceType } from '../utils/text-utils';
 import PopoverControl from '../../partials/PopoverControl';
 import ResourceBadge from '../../partials/ResourceBadge';
 import ResourceField from './compound/Resource';
@@ -170,7 +170,7 @@ export default class ResourceView extends Component {
     const resource = this.state.pendingResource;
     const emptyTitle = (
       <span className="faint">
-        New {TextUtil.titleForKey(resourceType).toLowerCase()}
+        New {titleForResourceType(resourceType).toLowerCase()}
       </span>
     );
     const emptyWarning = resource.title ? null : (
@@ -190,7 +190,7 @@ export default class ResourceView extends Component {
       );
     }
     if (this.props.isNew) {
-      return `New ${resourceType}`;
+      return `New ${titleForResourceType(resourceType).toLowerCase()}`;
     }
     return titleForResource(script.content, collectionName, resource);
   }

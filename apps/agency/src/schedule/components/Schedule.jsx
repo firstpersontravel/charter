@@ -58,7 +58,7 @@ class Schedule extends Component {
       return (
         <div>
           { /* eslint-disable-next-line max-len */ }
-          <i className="fa fa-phone" /> Experience cannot be entered by text message. To enable, create an &apos;entryway&apos; relay.
+          <i className="fa fa-phone" /> Project cannot be entered by text message. To enable, create an &apos;entryway&apos; relay.
         </div>
       );
     }
@@ -96,17 +96,57 @@ class Schedule extends Component {
 
     return (
       <div>
-        <i className="fa fa-phone" /> Experience can be entered through calls or texts: {renderedEntryways}
+        <i className="fa fa-phone" /> Project can be entered through calls or texts: {renderedEntryways}
         {allocateRelaysBtn}
       </div>
     );
   }
 
   renderEntrywayWebpage() {
+    const activeScript = _.find(this.props.scripts, { isActive: true });
+    const entrywayInterfaces = _.filter(activeScript.content.interfaces,
+      { entryway: true });
+    if (!entrywayInterfaces.length) {
+      return (
+        <div>
+          <i className="fa fa-file mr-1" />
+          Project cannot be entered over the web. To enable, add an &apos;entryway&apos; interface.
+        </div>
+      );
+    }
+    const baseUrl =
+      `${window.location.origin}/entry/${this.props.org.name}/` +
+      `${this.props.experience.name}`;
+    const multipleInterfaces = entrywayInterfaces.length > 1;
+    return entrywayInterfaces.map((i) => {
+      const url = multipleInterfaces ?
+        `${baseUrl}/${TextUtil.dashVarForText(i.title)}` :
+        baseUrl;
+      return (
+        <div key={i.name}>
+          <i className="fa fa-file mr-1" />
+          Project can be entered at
+          <a
+            className="ml-1"
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer">
+            {url}
+          </a>
+        </div>
+      );
+    });
+  }
+
+  renderEntrywayNote() {
+    const activeScript = _.find(this.props.scripts, { isActive: true });
+    if (!activeScript) {
+      return null;
+    }
     return (
-      <div>
-        { /* eslint-disable-next-line max-len */ }
-        <i className="fa fa-file" /> Experience can be entered at: <a href={`${window.location.origin}/entry/${this.props.org.name}/${this.props.experience.name}`} target="_blank" rel="noopener noreferrer">{window.location.origin}/entry/{this.props.org.name}/{this.props.experience.name}</a>
+      <div className="alert alert-info">
+        {this.renderEntrywayRelay()}
+        {this.renderEntrywayWebpage()}
       </div>
     );
   }
@@ -171,8 +211,8 @@ class Schedule extends Component {
     const newGroupItem = isCurrentOrFuture ? [{
       key: 'new',
       isExact: true,
-      text: 'New block',
-      label: 'New block',
+      text: 'New run group',
+      label: 'New run group',
       url: `/${this.props.org.name}/${this.props.experience.name}/schedule/${this.props.match.params.year}/${this.props.match.params.month}?group=new`
     }] : [];
 
@@ -187,7 +227,7 @@ class Schedule extends Component {
       }
       return (
         <div className="alert alert-warning">
-          No trips for {moment.utc(cur, 'YYYY-MM').format('MMM YYYY')}.
+          No runs for {moment.utc(cur, 'YYYY-MM').format('MMM YYYY')}.
         </div>
       );
     }
@@ -209,10 +249,7 @@ class Schedule extends Component {
       <Link to={{ search: '?archived=true' }}>Show archived</Link>;
     return (
       <div className="container-fluid">
-        <div className="alert alert-info">
-          {this.renderEntrywayRelay()}
-          {this.renderEntrywayWebpage()}
-        </div>
+        {this.renderEntrywayNote()}
         <div className="row">
           <div className="col-sm-4">
             {this.renderMonth()}
@@ -254,7 +291,7 @@ Schedule.defaultProps = {
 };
 
 const withExp = withLoader(Schedule, ['experience.id'], (props) => {
-  // Non-archived trips, groups, and scripts are all queryed by the Experience
+  // Non-archived trips, groups, and scripts are all queryed by the Project
   // container.
   props.listCollection('relays', {
     orgId: props.experience.orgId,

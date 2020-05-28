@@ -115,7 +115,7 @@ export default class OrgIndex extends Component {
           <p className="card-text">
             <Link
               to={`/${this.props.org.name}/${experience.name}/script`}>
-              Edit script
+              Edit project
             </Link>
           </p>
           <p className="card-text">

@@ -154,7 +154,7 @@ class Group extends Component {
           <Link
             className="btn btn-outline-secondary"
             to={{ search: '?trip=new' }}>
-            Add trip
+            Add run
           </Link>
           &nbsp;
           <button
@@ -165,7 +165,7 @@ class Group extends Component {
           &nbsp;
           {opsBtn}
         </div>
-        <h4>{dateShort} ∙ Script Rev. {group.script.revision}</h4>
+        <h4>{dateShort}</h4>
       </div>
     );
   }
@@ -177,7 +177,7 @@ class Group extends Component {
           <Link
             className={`btn btn-block btn-primary ${this.props.group.isArchived ? 'disabled' : ''}`}
             to={{ search: '?trip=new' }}>
-            Add a trip to this block
+            Add a run to this run group
           </Link>
         </div>
       );

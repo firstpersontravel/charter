@@ -27,7 +27,7 @@ function renderTripItem(group, trip, isToplevel) {
     text: `${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
     label: (
       <span>
-        {isToplevel ? 'Trip: ' : ''}
+        {isToplevel ? 'Run: ' : ''}
         {trip.title} {trip.isArchived ? archivedIcon : null}
       </span>
     )
@@ -41,12 +41,12 @@ function renderTripsItem(group, currentTripId) {
   if (group.trips.length === 1) {
     return renderTripItem(group, group.trips[0], true);
   }
-  let tripTitle = 'Trips';
-  let tripLabel = 'Trips';
+  let tripTitle = 'Runs';
+  let tripLabel = 'Runs';
   if (currentTripId) {
     const trip = _.find(group.trips, { id: Number(currentTripId) });
     if (trip) {
-      tripTitle = `Trip: ${trip.title}`;
+      tripTitle = `Run: ${trip.title}`;
       tripLabel = (
         <span>{tripTitle}{trip.isArchived ? archivedIcon : null}</span>
       );
@@ -75,7 +75,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const allPlayers = getAllPlayers(group.trips);
   const allUsers = _(allPlayers).map('user').uniq().value();
 
-  let roleTitle = 'Roles';
+  let roleTitle = 'Participants';
 
   const path = history.location.pathname;
   const pathRoleMatch = path.match(/\/role\/([\w_-]+)\/(\d+)/);
@@ -87,7 +87,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     const userTitle = pathUserId !== '0' ?
       _.get(_.find(allUsers, { id: Number(pathUserId) }), 'firstName') :
       'No user';
-    roleTitle = `Role: ${role.title} (${userTitle})`;
+    roleTitle = `Participant: ${role.title} (${userTitle})`;
   }
 
   const pathTripMatch = path.match(/\/trip\/(\d+)/);
@@ -118,7 +118,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     .value();
 
   const items = [{
-    text: 'Group',
+    text: 'Run group',
     isExact: true,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}`
   }, {

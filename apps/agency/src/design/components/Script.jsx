@@ -330,13 +330,13 @@ class Script extends Component {
           <Link
             className="dropdown-item"
             to={`${window.location.pathname}?editing=true`}>
-            Edit experience
+            Edit project
           </Link>
           <button
             className="dropdown-item"
             onClick={this.handleArchiveExperienceToggle}
             type="button">
-            Archive experience
+            Archive project
           </button>
         </div>
       </div>
@@ -350,13 +350,13 @@ class Script extends Component {
               <NavLink
                 activeClassName="bold"
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design`}>
-                Design
+                Create
               </NavLink>
               &nbsp;|&nbsp;
               <NavLink
                 activeClassName="bold"
                 to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/test`}>
-                Test
+                Preview
               </NavLink>
             </div>
             <div className="col-sm-9 align-right-sm">
