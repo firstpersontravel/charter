@@ -3,6 +3,7 @@ const models = require('../models');
 const SceneCore = require('fptcore/src/cores/scene');
 const TextUtil = require('fptcore/src/utils/text');
 
+const TripResetHandler = require('../handlers/trip_reset');
 const ExperienceController = require('../controllers/experience');
 const EntrywayController = require('../controllers/entryway');
 
@@ -96,15 +97,16 @@ const entrywaySubmitRoute = async (req, res) => {
 
   const trip = await EntrywayController.createTrip(script, playerRole.name, 
     phoneNumber);
+
+  // Reset it to the start to initiate starting actions like start scene.
+  await TripResetHandler.resetToStart(trip.id);
+
   const player = await models.Player.findOne({
     where: { tripId: trip.id, roleName: playerRole.name }
   });
-  await models.User.update({
-    firstName: name,
-    email: email
-  }, {
-    where: { id: player.userId }
-  });
+  await models.User.update(
+    { firstName: name, email: email},
+    { where: { id: player.userId } });
 
   res.cookie(`exp-${experience.id}`, player.id);
   res.redirect(

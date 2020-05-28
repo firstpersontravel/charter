@@ -74,8 +74,11 @@ class EntrywayController {
       }
     });
     const title = localTime.format('h:mm a z');
+    const defaultVariantNames = (script.content.variants || [])
+      .filter(v => v.default)
+      .map(v => v.name);
     const trip = await TripsController.createTrip(group.id, title,
-      ['default']);
+      defaultVariantNames);
 
     // Look for a user, or create if doesn't exist.
     const [entrywayUser, ] = await models.User.findOrCreate({
