@@ -26,12 +26,15 @@ module.exports = {
       keys: { type: 'simpleAttribute' },
       values: { type: 'simpleValue' }
     },
+    // HIDE FOR NOW until we can figure out a better way to reference locations
+    // than just typing in the name
     waypoint_options: {
       title: 'Location defaults',
       type: 'dictionary',
       keys: { type: 'reference', collection: 'waypoints' },
       // HMM -- how to refer to embedded subresources?
-      values: { type: 'name' }
+      values: { type: 'name' },
+      display: { hidden: true }
     },
     schedule: {
       title: 'Moment schedule',

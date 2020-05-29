@@ -2,6 +2,8 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { TextUtil } from 'fptcore';
+
 import BaseEmpty from './BaseEmpty';
 import PopoverControl from '../../../partials/PopoverControl';
 
@@ -32,7 +34,7 @@ function BaseEnum({ spec, value, name, path, opts, choices, clean, label, onProp
   };
   return (
     <PopoverControl
-      title={name}
+      title={TextUtil.titleForSpec(spec, name)}
       choices={choices}
       helpText={spec.help}
       onConfirm={onEnumUpdate}

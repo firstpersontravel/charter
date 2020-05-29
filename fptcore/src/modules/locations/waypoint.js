@@ -28,9 +28,13 @@ var waypointOptionSpec = {
       display: { hidden: true },
       help: 'The coordinates of the location.'
     },
-    title: { type: 'string' },
+    title: {
+      type: 'string',
+      help: 'The title of this location for internal display.'
+    },
     values: {
       title: 'Variable defaults',
+      help: 'These values are accessible to a run when this location is selected. For instance, if there are directions associated with the various locations for a place, you could set those here.',
       type: 'dictionary',
       keys: { type: 'simpleAttribute' },
       values: { type: 'simpleValue' }

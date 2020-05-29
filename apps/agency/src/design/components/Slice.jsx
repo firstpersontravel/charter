@@ -47,8 +47,8 @@ export default class Slice extends Component {
     const globalHeader = {
       key: 'global-header',
       url: '',
-      label: 'Project',
-      text: 'Project',
+      label: 'Global elements',
+      text: 'Global elements',
       disabled: true
     };
 

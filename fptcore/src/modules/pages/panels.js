@@ -53,6 +53,7 @@ module.exports = {
         help: 'Visible title for the choice.'
       },
       value_ref: {
+        title: 'Save to variable name',
         type: 'simpleAttribute',
         required: true
       },
@@ -205,6 +206,7 @@ module.exports = {
     }
   },
   yesno: {
+    title: 'Yes or no',
     icon: 'sticky-note',
     help: 'A yes/no choice. When updated, the corresponding variable in the trip state will be updated.',
     properties: {

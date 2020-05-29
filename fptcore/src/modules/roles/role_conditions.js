@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 module.exports = {
   current_role_is: {
-    help: 'Condition passes if the current player has a specific role.',
+    help: 'A condition that passes if the current player has a specific role.',
     properties: {
       role_name: {
         type: 'reference',
@@ -20,7 +20,7 @@ module.exports = {
     }
   },
   role_page_is: {
-    help: 'Condition passes if a role is on a specific page.',
+    help: 'A condition that passes if a role is on a specific page.',
     properties: {
       role_name: {
         type: 'reference',

@@ -2,7 +2,7 @@ const TemplateUtil = require('../../utils/template');
 
 module.exports = {
   clip_answer_is: {
-    help: 'Condition passes if the response to the clip being answered contains any part of the \'response\' parameter.',
+    help: 'A condition that passes if the response to the clip being answered contains any part of the \'response\' parameter.',
     properties: {
       response: {
         type: 'string',

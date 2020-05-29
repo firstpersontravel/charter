@@ -30,5 +30,5 @@ content:
   variants:
     - default: true
       name: default
-      title: All trips
+      title: Defaults
 assets: []

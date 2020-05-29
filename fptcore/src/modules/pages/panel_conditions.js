@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 module.exports = {
   submission_contains: {
-    help: 'Condition passes if the submission contains any part of the \'part\' parameter.',
+    help: 'A condition that passes if the submission contains any part of the \'part\' parameter.',
     properties: {
       part: {
         type: 'string',

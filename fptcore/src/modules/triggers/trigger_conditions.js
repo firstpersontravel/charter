@@ -2,7 +2,8 @@ const _ = require('lodash');
 
 module.exports = {
   and: {
-    help: 'Condition passes only if all the subconditions pass.',
+    title: 'All',
+    help: 'A condition that passes only if all of its subconditions pass.',
     display: { form: 'block' },
     properties: {
       items: {
@@ -17,7 +18,8 @@ module.exports = {
     }
   },
   or: {
-    help: 'Condition passes if any of the subconditions pass.',
+    title: 'Any',
+    help: 'A condition that passes if any one of its subconditions pass.',
     display: { form: 'block' },
     properties: {
       items: {
@@ -32,7 +34,7 @@ module.exports = {
     }
   },
   not: {
-    help: 'Condition passes if the subcondition does not pass.',
+    help: 'A condition that passes if the subcondition does not pass.',
     properties: {
       item: {
         required: true,

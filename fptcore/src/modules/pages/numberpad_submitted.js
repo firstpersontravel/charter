@@ -1,14 +1,16 @@
 module.exports = {
-  help: 'Occurs when a user confirms a number on a numberpad.',
+  title: 'Number entry submitted',
+  help: 'Occurs when a user confirms a number on a number entry.',
   parentComponentType: 'panels',
   specParams: {
     numberpad: {
+      title: 'Number entry',
       required: true,
       type: 'componentReference',
       componentType: 'panels',
       componentVariant: 'numberpad',
       display: { label: false },
-      help: 'The numberpad that was submitted.'
+      help: 'The number entry that was submitted.'
     }
   },
   eventParams: {
@@ -18,12 +20,13 @@ module.exports = {
       collection: 'roles'
     },
     numberpad_id: {
+      title: 'Number entry',
       required: true,
       type: 'componentReference',
       componentType: 'panels',
       componentVariant: 'numberpad',
       display: { label: false },
-      help: 'The numberpad that was submitted.'
+      help: 'The number entry that was submitted.'
     },
     submission: {
       required: true,
@@ -35,14 +38,14 @@ module.exports = {
   },
   getTitle: function(scriptContent, resource, registry, walker) {
     if (!resource.numberpad) {
-      return 'numberpad arrived';
+      return 'number entry submitted';
     }
     const numberpad = walker.getComponentById(scriptContent, 'panels',
       resource.numberpad);
     if (!numberpad) {
-      return 'unknown numberpad';
+      return 'unknown number entry';
     }
-    const numberpadTitle = numberpad.placeholder || '<numberpad>';
+    const numberpadTitle = numberpad.placeholder || '<number entry>';
     return `submitted to "${numberpadTitle}"`;
   }
 };

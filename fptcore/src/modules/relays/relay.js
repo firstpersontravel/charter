@@ -13,17 +13,18 @@ module.exports = {
       parent: true,
       help: 'The role who will be sending or receiving messages through this phone line.'
     },
-    as: {
-      type: 'reference',
-      collection: 'roles',
-      required: true,
-      help: 'The role whose messages are received and sent. This will usually be the same as the "for" role, except when you want the "for" role to be impersonating somebody else. In that case, the "as" role is the role being impersonated.'
-    },
     with: {
+      title: 'Counterpart',
       type: 'reference',
       collection: 'roles',
       required: true,
       help: 'The role that is being messaged with.'
+    },
+    as: {
+      title: 'Impersonating',
+      type: 'reference',
+      collection: 'roles',
+      help: 'In cases where you want a participant to impersonate a different role, this is the role that is being impersonated. Otherwise this can be left blank.'
     },
     entryway: {
       type: 'boolean',

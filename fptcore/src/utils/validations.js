@@ -58,7 +58,7 @@ const Validations = {
 
   simpleValue: {
     help: 'A field that can be a string, number, or "true" or "false".',
-    title: 'Simple value',
+    title: 'Value',
     validate: (scriptContent, name, spec, param) => {
       if (!_.isString(param) && !_.isNumber(param) && !_.isBoolean(param)) {
         return [
@@ -115,7 +115,7 @@ const Validations = {
   },
 
   timeOffset: {
-    title: 'Time offset',
+    title: 'Duration',
     help: 'An offset of time indicated in a brief shorthand of number and unit. For instance, "10s" for ten seconds, "3.5h" for three and a half hours, or "-40m" for minus forty minutes. Negative offsets indicate a period prior to another time.',
     validate: (scriptContent, name, spec, param) => {
       if (!TimeUtil.timeOffsetRegex.test(param)) {
@@ -125,7 +125,8 @@ const Validations = {
   },
 
   name: {
-    help: 'A machine-readable name used for naming variables. Only letters, numbers, dashes or underscores are allowed.',
+    title: 'Reference',
+    help: 'A reference to the name of an element in the script.',
     validate: (scriptContent, name, spec, param) => {
       if (!_.isString(param)) {
         return ['Name param "' + name + '" ("' + param + '") should be a string.'];
@@ -168,8 +169,8 @@ const Validations = {
   },
 
   timeShorthand: {
-    help: 'A shorthand clock time, as defined in days relative to the start of the experience. For instance, "3:00pm" means 3pm the day of the experience. "5:30am" means 5:30am the day of the experience. "+1d 4:15pm" means 4:15pm the day after the day the experience started.',
-    title: 'Time shorthand',
+    help: 'A shorthand clock time, as defined in days relative to the start of the experience. For instance, `3:00pm` means 3pm the day of the experience. `5:30am` means 5:30am the day of the experience. `+1d 4:15pm` means 4:15pm the day after the day the experience started.',
+    title: 'Time',
     validate: (scriptContent, name, spec, param) => {
       if (!TimeUtil.timeShorthandRegex.test(param)) {
         return [
@@ -180,8 +181,8 @@ const Validations = {
   },
 
   simpleAttribute: {
-    help: 'A machine-readable name used for naming variables. Only letters, numbers, or underscores are allowed.',
-    title: 'Simple attribute',
+    help: 'A machine-readable name used for naming variables. Only letters, numbers, or underscores are allowed. For example, `date`, or `num_points` are valid variable names.',
+    title: 'Variable name',
     validate: (scriptContent, name, spec, param) => {
       if (!_.isString(param)) {
         return ['Simple attribute param "' + name + '" should be a string.'];
@@ -199,7 +200,7 @@ const Validations = {
   },
 
   lookupable: {
-    help: 'A machine-readable name used for looking up variables. Only letters, numbers, dashes or underscores are allowed. Periods may be used to look up children of data dictionaries: for example, "inductee.link" or "current.directive".',
+    help: 'A machine-readable name used for looking up variables. Only letters, numbers, dashes or underscores are allowed. For example, `date`, or `num_points`. Periods may be used to look up children of data dictionaries: for example, `inductee.link` or `current.directive`. Specific values can also be specified here by including the text in double quotes: the lookup `red` will look up the contents of the variable "red", whereas the lookup `"red"` will return the text value "red". Numbers like `1`, `400`, etc, can be used, as can the values `true` and `false`.',
     title: 'Lookup',
     validate: (scriptContent, name, spec, param) => {
       if (!_.isString(param)) {

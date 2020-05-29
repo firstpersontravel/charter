@@ -2,7 +2,7 @@ const GeofenceCore = require('../../cores/geofence');
 
 module.exports = {
   role_in_geofence: {
-    help: 'Condition passes if a role is within a geofence.',
+    help: 'A condition that passes if a role is within a geofence.',
     properties: {
       role: {
         type: 'reference',

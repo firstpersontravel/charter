@@ -22,7 +22,7 @@ const pageSettings = {
   events: { title: 'Events', fields: 'specParams' },
   panels: { title: 'Panels', fields: 'properties' },
   conditions: { title: 'Conditions', fields: 'properties' },
-  fieldtypes: { title: 'Field Types', fields: null }
+  fieldtypes: { title: 'Field types', fields: null }
 };
 
 const intros = {
@@ -60,8 +60,10 @@ function renderTypeTitle(spec) {
   }
   if (spec.type === 'componentReference') {
     const componentType = TextUtil.singularize(spec.componentType);
-    const title = TextUtil.titleForKey(componentType);
-    const variantTitle = TextUtil.titleForKey(spec.componentVariant);
+    const title = TextUtil.titleForKey(componentType).toLowerCase();
+    const variantClass = registry[spec.componentType][spec.componentVariant];
+    const variantTitle = TextUtil.titleForSpec(variantClass,
+      spec.componentVariant);
     const anchor = spec.componentVariant.replace(/_/g, '-');
     return `[${variantTitle} ${title}](${docsUrlPrefix}/${spec.componentType}#${anchor})`;
   }
@@ -122,7 +124,7 @@ function renderField(sectionName, entryName, key, spec) {
   if (spec.type === 'object') {
     const props = Object.keys(spec.properties)
       .map(k => renderField(sectionName, entryName,
-        `${key}${sep}${titleForSpecKey(spec.properties[k], k)}`,
+        `${key}${sep}${TextUtil.titleForSpec(spec.properties[k], k)}`,
         spec.properties[k]))
       .filter(Boolean);
     return props.join('\n');
