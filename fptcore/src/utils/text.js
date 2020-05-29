@@ -14,6 +14,18 @@ const singulars = {
 };
 
 class TextUtil {
+  static titleForSpec(spec, key) {
+    if (spec.title) {
+      return spec.title;
+    }
+    let simpleKey = key.replace('_name', '');
+    if (spec.type === 'reference') {
+      const resourceType = TextUtil.singularize(spec.collection);
+      simpleKey = simpleKey.replace(`_${resourceType}`, '');
+    }
+    return this.titleForKey(simpleKey);
+  }
+
   static titleForKey(key) {
     return key[0].toUpperCase() +
       key.toLowerCase().replace(/[_-]/g, ' ').substring(1);

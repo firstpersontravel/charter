@@ -48,7 +48,8 @@ function renderTypeTitle(spec) {
   }
   if (spec.type === 'reference') {
     const resourceType = TextUtil.singularize(spec.collection);
-    const resourceTitle = TextUtil.titleForKey(resourceType);
+    const resourceClass = registry.resources[resourceType];
+    const resourceTitle = TextUtil.titleForSpec(resourceClass, resourceType);
     const anchor = resourceType.replace(/_/g, '-');
     return `[${resourceTitle}](${docsUrlPrefix}/resources#${anchor})`;
   }
@@ -129,10 +130,6 @@ function renderField(sectionName, entryName, key, spec) {
   return renderItem(key, spec);
 }
 
-function titleForSpecKey(spec, key) {
-  return spec.title || TextUtil.titleForKey(key);
-}
-
 function renderFields(sectionName, entryName, fields) {
   if (!fields) {
     return '';
@@ -144,7 +141,7 @@ function renderFields(sectionName, entryName, fields) {
 
   const renderedFields = keys
     .map(key => renderField(sectionName, entryName,
-      titleForSpecKey(fields[key], key), fields[key]))
+      TextUtil.titleForSpec(fields[key], key), fields[key]))
     .filter(Boolean)
     .join('\n');
 
@@ -156,7 +153,76 @@ function renderFields(sectionName, entryName, fields) {
 | Field | Type | Description |
 | - | - | - |
 ${renderedFields}`;
+}
 
+function doesParamsReferenceResource(params, collectionName) {
+  for (const key of Object.keys(params)) {
+    // console.log('key', key, params[key], collectionName);
+    if (params[key].type === 'reference' &&
+        params[key].collection === collectionName) {
+      return key;
+    }
+  }
+  return null;
+}
+
+function renderEvents(resourceType) {
+  const collectionName = TextUtil.pluralize(resourceType);
+  const resourceSpec = registry.resources[resourceType];
+  const resourceTitle = resourceSpec.title ||
+    TextUtil.titleForKey(resourceType);
+  const eventsRendered = Object.keys(registry.events)
+    .filter((eventType) => {
+      const eventParams = registry.events[eventType].specParams;
+      return doesParamsReferenceResource(eventParams, collectionName);
+    })
+    .map((eventType) => {
+      const eventClass = registry.events[eventType];
+      const eventParams = registry.events[eventType].specParams;
+      const key = doesParamsReferenceResource(eventParams, collectionName);
+      const keySpec = eventParams[key];
+      const keyTitle = TextUtil.titleForSpec(keySpec, key);
+      const eventTitle = TextUtil.titleForSpec(eventClass, eventType);
+      return `* The \`${keyTitle}\` field of the [${eventTitle}](/docs/reference/events#${eventType}) event is a ${resourceTitle}.`;
+    });
+  if (!eventsRendered.length) {
+    return '';
+  }
+  return eventsRendered.join('\n');
+}
+
+function renderActions(resourceType) {
+  const collectionName = TextUtil.pluralize(resourceType);
+  const resourceSpec = registry.resources[resourceType];
+  const resourceTitle = TextUtil.titleForSpec(resourceSpec, resourceType);
+  const actionsRendered = Object.keys(registry.actions)
+    .filter((actionName) => {
+      // console.log('filter', actionName);
+      const actionParams = registry.actions[actionName].params;
+      return doesParamsReferenceResource(actionParams, collectionName);
+    })
+    .map((actionName) => {
+      const actionClass = registry.actions[actionName];
+      const actionParams = registry.actions[actionName].params;
+      const key = doesParamsReferenceResource(actionParams, collectionName);
+      const keySpec = actionParams[key];
+      const keyTitle = TextUtil.titleForSpec(keySpec, key);
+      const actionTitle = TextUtil.titleForSpec(actionClass, actionName);
+      return `* The \`${keyTitle}\` field of the [${actionTitle}](/docs/reference/actions#${actionName}) action is a ${resourceTitle}.`;
+    });
+  if (!actionsRendered.length) {
+    return '';
+  }
+  return actionsRendered.join('\n');
+}
+
+function renderReferences(sectionName, entryName) {
+  if (sectionName !== 'resources') {
+    return '';
+  }
+  return `
+${renderActions(entryName)}
+${renderEvents(entryName)}`;
 }
 
 function renderEntry(sectionName, entryName, entry) {
@@ -166,12 +232,13 @@ function renderEntry(sectionName, entryName, entry) {
 
   const fieldsProp = pageSettings[sectionName].fields;
   const fields = entry[fieldsProp];
-  const title = entry.title || TextUtil.titleForKey(entryName);
+  const title = TextUtil.titleForSpec(entry, entryName);
   return `## ${title}
 
 ${entry.help}
 
 ${renderFields(sectionName, entryName, fields)}
+${renderReferences(sectionName, entryName)}
 \n\n`;
 }
 

@@ -14,7 +14,3 @@ export function titleForResource(scriptContent, collectionName, resource) {
   }
   return resource.title || 'No title';
 }
-
-export function titleForSpec(spec, key) {
-  return spec.title || TextUtil.titleForKey(key);
-}

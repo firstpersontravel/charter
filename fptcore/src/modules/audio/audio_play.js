@@ -1,4 +1,5 @@
 module.exports = {
+  title: 'Play background audio',
   help: 'Start playing audio for a certain role.',
   params: {
     role_name: {

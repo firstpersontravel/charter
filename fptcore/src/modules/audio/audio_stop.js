@@ -1,4 +1,5 @@
 module.exports = {
+  title: 'Stop background audio',
   help: 'Stop audio and reset audio state.',
   params: {
     role_name: {

@@ -14,9 +14,11 @@ function timeForSpec(spec, evalContext) {
 }
 
 module.exports = {
-  help: 'Occurs when the current time reaches a scheduled time.',
+  title: 'Moment occurred',
+  help: 'Occurs when the current clock time reaches a scheduled moment.',
   specParams: {
     time: {
+      title: 'Moment',
       required: true,
       type: 'reference',
       collection: 'times',

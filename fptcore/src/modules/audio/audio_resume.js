@@ -1,4 +1,5 @@
 module.exports = {
+  title: 'Resume background audio',
   help: 'Resume currently paused audio.',
   params: {
     role_name: {

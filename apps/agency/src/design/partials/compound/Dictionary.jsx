@@ -2,9 +2,10 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { TextUtil } from 'fptcore';
+
 import BaseClear from '../fields/BaseClear';
 import { newItemsForSpecType } from './utils';
-import { titleForSpec } from '../../utils/text-utils';
 
 function DictionaryField({ script, resource, spec, value, name, path, opts,
   onPropUpdate, renderAny }) {
@@ -56,7 +57,8 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         onPropUpdate={onPropUpdate}
         spec={spec.keys}
         value={'New item'}
-        name={`New entry for ${titleForSpec(spec, name).toLowerCase()}`}
+        name={
+          `New entry for ${TextUtil.titleForSpec(spec, name).toLowerCase()}`}
         path={'INVALID'}
         opts={{
           onConfirm: val => onPropUpdate(`${path}[${val}]`, newItem)

@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 import { TextUtil, Validations } from 'fptcore';
 
 export function typeTitleForSpec(spec) {
@@ -10,13 +8,5 @@ export function typeTitleForSpec(spec) {
 }
 
 export function labelForSpec(spec, key) {
-  if (spec.title) {
-    return spec.title;
-  }
-  let simpleKey = key.replace('_name', '');
-  if (spec.type === 'reference') {
-    const resourceType = TextUtil.singularize(spec.collection);
-    simpleKey = simpleKey.replace(`_${resourceType}`, '');
-  }
-  return _.startCase(simpleKey);
+  return TextUtil.titleForSpec(spec, key);
 }

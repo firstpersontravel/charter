@@ -46,7 +46,7 @@ module.exports = {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },
     options: {
-      title: 'locations',
+      title: 'Locations',
       type: 'list',
       default: defaultWaypointOptionList,
       items: waypointOptionSpec,

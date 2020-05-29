@@ -1,6 +1,7 @@
 var moment = require('moment');
 
 module.exports = {
+  title: 'Pause background audio',
   help: 'Pause currently playing audio.',
   params: {
     role_name: {
