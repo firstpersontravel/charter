@@ -43,7 +43,7 @@ PROJECT_ROOT = os.path.dirname(__file__)
 FAB_ROOT = os.path.join(os.path.dirname(__file__), 'deploy')
 BOOTSTRAP_ROOT = os.path.join(FAB_ROOT, 'bootstrap')
 
-GIT_REMOTE = 'git@github.com:gabesmed/agency-server.git'
+GIT_REMOTE = 'git@github.com:firstpersontravel/charter.git'
 KEEP_RELEASES = 5  # Keep this many releases
 
 #######################################################
