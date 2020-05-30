@@ -10,12 +10,14 @@ module.exports = {
       required: true,
       type: 'simpleAttribute',
       title: 'Name',
-      display: { label: false }
+      display: { label: false },
+      help: 'The name of the variable to set.'
     },
     new_value_ref: {
       required: true,
       type: 'lookupable',
-      title: 'To'
+      title: 'To',
+      help: 'The name of a variable, the value of which we want to look up and use for the value to set. Or a specific number, true, false, or text surrounded by double quotes.'
     }
   },
   getOps(params, actionContext) {

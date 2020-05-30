@@ -1,5 +1,5 @@
 module.exports = {
-  help: 'Initiate a call from one player to another.',
+  help: 'Initiate a call from Charter to a user.',
   params: {
     to_role_name: {
       required: true,

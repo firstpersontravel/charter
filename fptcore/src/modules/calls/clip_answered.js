@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 module.exports = {
   help: 'Occurs when a player responds to a clip over the phone.',
+  title: 'Call clip answered',
   specParams: {
     clip: {
       required: true,

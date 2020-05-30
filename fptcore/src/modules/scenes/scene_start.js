@@ -9,7 +9,8 @@ module.exports = {
       required: true,
       type: 'reference',
       collection: 'scenes',
-      display: { label: false }
+      display: { label: false },
+      help: 'The scene to start.'
     }
   },
   getOps(params, actionContext) {

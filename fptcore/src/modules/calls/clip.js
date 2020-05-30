@@ -3,7 +3,7 @@ var CLIP_VOICE_OPTIONS = ['alice', 'man', 'woman'];
 module.exports = {
   title: 'Call clip',
   icon: 'volume-control-phone',
-  help: 'A unit of text or audio that can be played as part of phone calls.',
+  help: 'A snippet of audio that can be played as part of phone calls.',
   properties: {
     name: { type: 'name', required: true },
     title: { type: 'string', required: true },

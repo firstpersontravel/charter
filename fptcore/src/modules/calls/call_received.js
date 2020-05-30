@@ -1,5 +1,5 @@
 module.exports = {
-  help: 'Occurs when a player receives a call.',
+  help: 'Occurs when Charter receives a call initiated by a user.',
   specParams: {
     from: {
       required: true,

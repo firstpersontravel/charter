@@ -9,13 +9,13 @@ module.exports = {
       collection: 'interfaces',
       required: true,
       parent: true,
-      help: 'The parent interface in which this content page is displayed.'
+      help: 'The parent interface in which this subpage is displayed.'
     },
     section: {
       type: 'string',
       default: 'tab',
       required: true,
-      help: 'A string indicating which a grouping for this content page. The the `content_browse` panel will show all visible content pages grouped by section.'
+      help: 'A string indicating which a grouping for this subpage. The the "Browse Subpages" panel will show all visible subpages grouped by section.'
     },
     title: { type: 'string', required: true },
     active_if: {
@@ -26,7 +26,7 @@ module.exports = {
     },
     panels: {
       type: 'list',
-      help: 'List of user interface panels.',
+      help: 'Content of the subpage.',
       items: { type: 'component', component: 'panels' }
     }
   }

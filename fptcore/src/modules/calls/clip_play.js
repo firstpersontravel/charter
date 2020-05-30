@@ -3,12 +3,8 @@ const _ = require('lodash');
 const TemplateUtil = require('../../utils/template');
 
 module.exports = {
-  help: 'Play a clip on an active phone call.',
-  requiredEventTypes: [
-    'call_received', // type: call_received, from: role
-    'call_answered', // type: call_answered, to: role
-    'clip_answered', // type: clip_answered, clip: clip-name
-  ],
+  title: 'Play call clip',
+  help: 'Play a call clip on an active phone call.',
   params: {
     clip_name: {
       required: true,
