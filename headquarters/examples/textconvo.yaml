@@ -7,7 +7,6 @@ content:
   relays:
     - name: main
       for: Knight
-      as: Knight
       with: King
       entryway: true
   scenes:
@@ -89,4 +88,4 @@ content:
               content: Your quest is... the holy grail!
               id: 154
   meta:
-    version: 39
+    version: 40

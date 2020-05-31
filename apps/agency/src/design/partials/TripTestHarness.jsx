@@ -195,7 +195,9 @@ export default class TripTestHarness extends Component {
       scriptContent: this.props.script.content,
       evalContext: this.getEvalContext(),
       evaluateAt: moment.utc(),
-      timezone: this.props.script.experience.timezone
+      timezone: this.props.script.experience.timezone,
+      // Role name not filled in for evaluating text inerstions
+      currentRoleName: null
     };
   }
 

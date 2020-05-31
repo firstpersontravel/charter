@@ -57,7 +57,8 @@ class KernelUtil {
       scriptContent: objs.script.content,
       timezone: objs.experience.timezone,
       evalContext: this.prepareEvalContext(objs),
-      evaluateAt: evaluateAt
+      evaluateAt: evaluateAt,
+      currentRoleName: null
     };
   }
 

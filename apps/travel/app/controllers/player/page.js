@@ -41,14 +41,13 @@ export default Ember.Controller.extend({
     if (!panels) {
       return [];
     }
-    var trip = this.get('trip.model');
-    return panels.filter(function(panel) {
-      return trip.evaluateIf(panel.visible_if);
+    return panels.filter(panel => {
+      return this.get('player.model').evaluateIf(panel.visible_if);
     });
   },
 
   pagePanels: function() {
     var page = this.get('pageModel');
     return page ? this.filterPanels(page.panels) : [];
-  }.property('pageModel', 'trip.model.evalContext')
+  }.property('pageModel', 'player.evalContext')
 });

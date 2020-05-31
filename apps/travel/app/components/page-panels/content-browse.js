@@ -15,12 +15,11 @@ export default Ember.Component.extend(WindowHeightMixin, {
     if (!scriptContent || !scriptContent.content_pages) { return []; }
     var sectionItems = scriptContent.content_pages
       .filterBy('section', section);
-    var trip = this.get('trip');
-    return sectionItems.filter(function(item) {
+    return sectionItems.filter(item => {
       if (!item.active_if) { return true; }
-      return trip.evaluateIf(item.active_if);
+      return this.get('player').evaluateIf(item.active_if);
     });
-  }.property('params.section', 'trip.evalContext'),
+  }.property('params.section', 'player.evalContext'),
 
   menu: function() {
     var selectedItemName = this.get('selectedItemName');

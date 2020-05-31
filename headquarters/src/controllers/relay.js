@@ -41,7 +41,7 @@ class RelayController {
     return _.find(script.content.relays, r => (
       r.for === relay.forRoleName &&
       r.with === relay.withRoleName &&
-      r.as === relay.asRoleName
+      (r.as || r.for) === relay.asRoleName
     )) || null;
   }
 

@@ -427,7 +427,7 @@ class Script extends Component {
           isOpen={this.state.isArchiveExperienceModalOpen}
           onToggle={this.handleArchiveExperienceToggle}
           onConfirm={this.handleArchiveExperienceConfirm}
-          message="Are you sure you want to archive this experience?" />
+          message="Are you sure you want to archive this project?" />
       </div>
     );
   }

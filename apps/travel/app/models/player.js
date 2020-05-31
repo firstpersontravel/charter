@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import DS from 'ember-data';
-import RefUtils from '../utils/ref';
 
 import fptCore from 'fptcore';
 
@@ -48,20 +47,37 @@ export default DS.Model.extend({
     return this.get('contactName').split(' ')[0];
   }.property('contactName'),
 
-  setValue: function(valueRef, newValue) {
-    this.setValues([[valueRef, newValue]]);
-  },
-
-  setValues: function(valuePairs) {
-    var valuesCopy = Ember.$.extend(true, {}, this.get('values'));
-    valuePairs.forEach(function(arr) {
-      RefUtils.updateValues(valuesCopy, arr[0], arr[1]);
-    });
-    this.set('values', valuesCopy);
-  },
+  // must be invoked on the current player object
+  actionContext: function() {
+    return {
+      currentRoleName: this.get('roleName'),
+      evalContext: this.get('evalContext')
+    };
+  }.property('evalContext'),
 
   humanizeText: function(text) {
-    return fptCore.TemplateUtil.templateText(this.get('trip.evalContext'),
-      text, this.get('trip.experience.timezone'), this.get('roleName'));
-  }
+    return fptCore.TemplateUtil.templateText(
+      this.get('evalContext'), text,
+      this.get('trip.experience.timezone'),
+      this.get('roleName'));
+  },
+
+  evaluateIf: function(ifClause) {
+    return fptCore.coreEvaluator.if(this.get('actionContext'), ifClause);
+  },
+
+  evalContext: function() {
+    const env = { host: this.get('environment.host') };
+    const trip = this.get('trip').getCombinedTripData();
+    const context = fptCore.ContextCore.gatherEvalContext(env, trip);
+    return context;
+  }.property(
+    'values',
+    'trip.players.@each.currentPageName',
+    'trip.players.@each.values'),
+
+  lookupRef: function(ref) {
+    var context = this.get('evalContext');
+    return fptCore.TemplateUtil.lookupRef(context, ref);
+  },
 });

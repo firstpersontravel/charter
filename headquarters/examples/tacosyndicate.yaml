@@ -44,7 +44,7 @@ content:
         - text: Start
           type: button
           id: 23
-        - text: 'Send reminder text to {{Inductee.phone_number}}'
+        - text: 'Send reminder text {% if Inductee.phone_number %}to {{Inductee.phone_number}}{% endif %}'
           type: button
           visible_if:
             item:
@@ -52,7 +52,7 @@ content:
               ref: sent_reminder_text
             op: not
           id: 24
-        - text: 'Send reminder email to {{Inductee.email}}'
+        - text: 'Send reminder email {% if Inductee.email %}to {{Inductee.email}}{% endif %}'
           type: button
           visible_if:
             item:
@@ -237,20 +237,16 @@ content:
       scene: SCENE-8
       title: Follow-up
   relays:
-    - as: Inductee
-      for: Inductee
+    - for: Inductee
       name: RELAY-INDUCTEE-WITH-JESSIE
       with: Jessie
-    - as: Inductee
-      for: Inductee
+    - for: Inductee
       name: RELAY-INDUCTEE-WITH-PHIL
       with: Phil
-    - as: Inductee
-      for: Inductee
+    - for: Inductee
       name: RELAY-INDUCTEE-WITH-RUSSELL
       with: Russell
-    - as: Jessie
-      for: Jessie
+    - for: Jessie
       name: RELAY-JESSIE-WITH-INDUCTEE
       with: Inductee
     - as: Jessie
@@ -261,12 +257,10 @@ content:
       for: StageManager
       name: RELAY-STAGEMANAGER-WITH-INDUCTEE-2
       with: Inductee
-    - as: StageManager
-      for: StageManager
+    - for: StageManager
       name: RELAY-STAGEMANAGER-WITH-JESSIE
       with: Jessie
-    - as: BigRockStaff1
-      for: BigRockStaff1
+    - for: BigRockStaff1
       name: RELAY-BIGROCKSTAFF1-WITH-JESSIE
       with: Jessie
   roles:
@@ -1363,7 +1357,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 39
+    version: 40
 assets:
   - data:
       end:

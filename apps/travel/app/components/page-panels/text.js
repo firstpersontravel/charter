@@ -14,5 +14,5 @@ export default Ember.Component.extend({
 
   humanizedText: function() {
     return this.get('player').humanizeText(this.get('params.text'));
-  }.property('params.text', 'trip.evalContext')
+  }.property('params.text', 'player.evalContext')
 });

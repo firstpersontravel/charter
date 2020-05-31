@@ -7,14 +7,14 @@ export default Ember.Component.extend({
 
   humanizedText: function() {
     return this.get('player').humanizeText(this.get('params.text'));
-  }.property('params.text', 'trip.evalContext'),
+  }.property('params.text', 'player.evalContext'),
 
   items: function() {
     var currentValue = this.get('currentValue');
     return this.get('choices').map(function(choice) {
       var value;
       if (choice.value_ref) {
-        value = this.get('trip').lookupRef(choice.value_ref);
+        value = this.get('player').lookupRef(choice.value_ref);
       } else {
         value = choice.value;
       }
@@ -37,11 +37,11 @@ export default Ember.Component.extend({
         isSelected: value === currentValue
       };
     }, this);
-  }.property('choices', 'value', 'trip.evalContext'),
+  }.property('choices', 'value', 'player.evalContext'),
 
   currentValue: function() {
-    return this.get('trip').lookupRef(this.get('params.value_ref'));
-  }.property('params', 'trip.evalContext'),
+    return this.get('player').lookupRef(this.get('params.value_ref'));
+  }.property('params', 'player.evalContext'),
 
   actions: {
     select: function(valueRef) {

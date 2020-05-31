@@ -29,7 +29,7 @@ export default function DesignIndex({ match, experience, scripts, history,
     return (
       <Alert
         color="warning"
-        content="No script found for this experience."
+        content="No script found for this project."
         action={
           <span>
             <button
@@ -40,7 +40,7 @@ export default function DesignIndex({ match, experience, scripts, history,
                 });
                 history.push(`/${experience.org.name}`);
               }}>
-              Archive experience
+              Archive project
             </button>
             <Link className="btn btn-link" to={`/${match.params.orgName}`}>
               Back

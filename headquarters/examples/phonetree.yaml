@@ -7,7 +7,6 @@ content:
   relays:
     - name: relay-1
       for: Player
-      as: Player
       with: PhoneTree
       entryway: true
   scenes:
@@ -89,4 +88,4 @@ content:
               id: 8
           id: 6
   meta:
-    version: 39
+    version: 40

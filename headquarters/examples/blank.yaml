@@ -1,6 +1,6 @@
 content:
   meta:
-    version: 39
+    version: 40
   variants:
     - default: true
       name: default

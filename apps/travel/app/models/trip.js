@@ -1,13 +1,6 @@
-import Ember from 'ember';
 import DS from 'ember-data';
 
-import RefUtils from '../utils/ref';
-
-import fptCore from 'fptcore';
-
 export default DS.Model.extend({
-
-  environment: Ember.inject.service(),
 
   script: DS.belongsTo('script', {async: false}),
   experience: DS.belongsTo('experience', {async: false}),
@@ -29,11 +22,7 @@ export default DS.Model.extend({
     return this.get('tripState').currentSceneName;
   }.property('tripState'),
 
-  evaluateIf: function(ifClause) {
-    return fptCore.coreEvaluator.if(this.get('actionContext'), ifClause);
-  },
-
-  generateTrip: function() {
+  getCombinedTripData: function() {
     var experience = this.get('experience');
     var script = this.get('script').toJSON();
     script.content = JSON.parse(script.content);
@@ -63,35 +52,5 @@ export default DS.Model.extend({
       return p;
     }));
     return trip;
-  },
-
-  actionContext: function() {
-    return { evalContext: this.get('evalContext') };
-  }.property('evalContext'),
-
-  evalContext: function() {
-    var env = { host: this.get('environment.host') };
-    var context = fptCore.ContextCore.gatherEvalContext(env, this.generateTrip());
-    return context;
-  }.property(
-    'values',
-    'players.@each.currentPageName',
-    'players.@each.values'),
-
-  lookupRef: function(ref) {
-    var context = this.get('evalContext');
-    return fptCore.TemplateUtil.lookupRef(context, ref);
-  },
-
-  setValue: function(valueRef, newValue) {
-    this.setValues([[valueRef, newValue]]);
-  },
-
-  setValues: function(valuePairs) {
-    var valuesCopy = Ember.$.extend(true, {}, this.get('values'));
-    valuePairs.forEach(function(arr) {
-      RefUtils.updateValues(valuesCopy, arr[0], arr[1]);
-    });
-    this.set('values', valuesCopy);
   }
 });

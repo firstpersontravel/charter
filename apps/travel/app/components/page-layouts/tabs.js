@@ -3,9 +3,7 @@ import WindowHeightMixin from '../../mixins/panels/window-height';
 
 const DEFAULT_TABS = [{
   title: 'Main',
-  panels: [{
-    type: 'current_page'
-  }]
+  panels: [{ type: 'current_page' }]
 }];
 
 export default Ember.Component.extend(WindowHeightMixin, {
@@ -33,13 +31,13 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.property('pageLayout'),
 
   visibleTabs: function() {
-    return this.get('tabs').filter(function(tab) {
+    return this.get('tabs').filter(tab => {
       if (tab.visible_if) {
-        return this.get('trip').evaluateIf(tab.visible_if);
+        return this.get('player').evaluateIf(tab.visible_if);
       }
       return true;
     }, this);
-  }.property('tabs', 'trip.evalContext'),
+  }.property('tabs', 'player.evalContext'),
 
   showTabs: function() {
     return this.get('visibleTabs.length') > 1;
@@ -69,13 +67,17 @@ export default Ember.Component.extend(WindowHeightMixin, {
     return this.collectPanelPartials(headerPanels);
   }.property('pageLayout', 'pagePanels'),
 
-  collectPanelPartials: function(baseComponents) {
+  collectPanelPartials: function(basePanels) {
     var collectedPanels = [];
-    baseComponents.forEach(function(panel) {
+    basePanels.forEach(function(panel) {
       if (panel.type === 'current_page') {
         var innerPanels = this.get('pagePanels');
         if (!innerPanels || innerPanels.length === 0) {
-          innerPanels = [];
+          innerPanels = [{
+            type: 'text',
+            text: 'Nothing to display at the moment.',
+            style: 'centered'
+          }];
         }
         collectedPanels = collectedPanels.concat(innerPanels);
       } else {
@@ -84,7 +86,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     }, this);
 
     collectedPanels = collectedPanels.filter(panel => (
-      this.get('trip').evaluateIf(panel.visible_if)
+      this.get('player').evaluateIf(panel.visible_if)
     ));
 
     return collectedPanels;    

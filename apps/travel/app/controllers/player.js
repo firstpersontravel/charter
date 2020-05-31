@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-
+  environment: Ember.inject.service(),
   location: Ember.inject.service(),
   audio: Ember.inject.service(),
   application: Ember.inject.controller(),
