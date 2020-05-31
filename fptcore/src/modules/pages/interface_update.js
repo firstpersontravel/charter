@@ -1,6 +1,6 @@
 module.exports = {
-  title: 'Focus interface tab',
-  help: 'Bring up a specific tab on a tabbed interface.',
+  title: 'Focus tab',
+  help: 'Bring up a specific tab on an interface.',
   params: {
     role_name: {
       required: true,
