@@ -19,7 +19,7 @@ const helpItem = (
           className="btn btn-link dropdown-item"
           rel="noopener noreferrer"
           target="_blank"
-          href="https://charter-docs.firstperson.travel/docs/tutorials">
+          href="https://charter-docs.firstperson.travel/docs/tutorials/starter">
           Tutorials
         </a>
         <a
