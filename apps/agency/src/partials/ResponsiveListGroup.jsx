@@ -4,6 +4,18 @@ import PropTypes from 'prop-types';
 
 import { NavLink } from 'react-router-dom';
 
+// Convert url object into string
+function formatUrl(url) {
+  if (typeof url === 'object') {
+    return `${url.pathname}${url.search || ''}`;
+  }
+  return url;
+}
+
+function getUrlPath(url) {
+  return url.pathname || url;
+}
+
 export default class ResponsiveListGroup extends Component {
   constructor(props) {
     super(props);
@@ -20,15 +32,15 @@ export default class ResponsiveListGroup extends Component {
   renderSelect() {
     const enabledItems = this.props.items.filter(item => !item.disabled);
     const selectedItem = _.find(enabledItems, item => (
-      _.startsWith(window.location.pathname, item.url)
+      _.startsWith(window.location.pathname, getUrlPath(item.url))
     ));
-    const selectedUrl = _.get(selectedItem, 'url') || '';
+    const selectedUrl = formatUrl(_.get(selectedItem, 'url') || '');
     const emptyOption = selectedUrl ? null : (
       <option value="">---</option>
     );
     const renderedOptions = enabledItems
       .map(item => (
-        <option key={item.key} value={item.url}>
+        <option key={item.key} value={formatUrl(item.url)}>
           {item.text}
         </option>
       ));

@@ -240,7 +240,7 @@ export default class SceneGrid extends Component {
           </div>
         </div>
         <div className="col-sm-2">
-          <div style={{ position: 'sticky', top: 0 }}>
+          <div style={{ position: 'sticky', top: '5px' }}>
             {resetBtn}
             {triggerBtns}
           </div>

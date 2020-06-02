@@ -29,7 +29,9 @@ export default class ContentTree extends Component {
         `/design/${this.props.sliceType}/${this.props.sliceName}` +
         `/${collectionName}/${resource.name}`
       ),
-      text: `${titleForResourceType(resourceType)}: ${title}`,
+      text:
+        `${isNested ? '- ' : ''}` +
+        `${titleForResourceType(resourceType)}: ${title}`,
       label: (
         <span>
           <ResourceBadge
