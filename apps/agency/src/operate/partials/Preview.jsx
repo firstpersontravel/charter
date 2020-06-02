@@ -92,7 +92,7 @@ function checkForTrigger(scriptContent, eventSpecFields) {
 }
 
 function renderDirections(trip, player, page, panel, onEvent) {
-  const filter = { type: 'directions_arrived', directions_id: panel.id };
+  const filter = { type: 'directions_arrived', directions: panel.id };
   if (!checkForTrigger(trip.script.content, filter)) {
     return null;
   }
@@ -114,7 +114,7 @@ function renderDirections(trip, player, page, panel, onEvent) {
 }
 
 function renderNumberpad(trip, player, page, panel, onEvent) {
-  const filter = { type: 'numberpad_submitted', numberpad_id: panel.id };
+  const filter = { type: 'numberpad_submitted', numberpad: panel.id };
   if (!checkForTrigger(trip.script.content, filter)) {
     return null;
   }
@@ -145,7 +145,7 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
 }
 
 function renderTextEntry(trip, player, page, panel, onEvent) {
-  const filter = { type: 'text_entry_submitted', text_entry_id: panel.id };
+  const filter = { type: 'text_entry_submitted', text_entry: panel.id };
   if (!checkForTrigger(trip.script.content, filter)) {
     return null;
   }
