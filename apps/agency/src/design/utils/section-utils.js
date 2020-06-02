@@ -39,6 +39,23 @@ function getGlobalSceneFilters(scriptContent, sceneName) {
   }];
 }
 
+function isTriggerOnResources(trigger, collectionName, resources) {
+  if (!trigger.event) {
+    return false;
+  }
+  const eventClass = coreRegistry.events[trigger.event.type];
+  if (eventClass.parentCollectionName !== collectionName) {
+    return false;
+  }
+  const specParentProp = eventClass.parentCollectionSpecProperty;
+  if (!specParentProp) {
+    return false;
+  }
+  const resourceNames = resources.map(r => r.name);
+  const eventParentVal = trigger.event[specParentProp];
+  return resourceNames.includes(eventParentVal);
+}
+
 function isTriggerOnPages(trigger, pages) {
   if (!trigger.event) {
     return false;
@@ -66,6 +83,12 @@ function isTriggerOnPage(trigger, page) {
   return isTriggerOnPages(trigger, [page]);
 }
 
+export function isTriggerOnPageInScene(scriptContent, trigger, sceneName) {
+  const pagesInScene = (scriptContent.pages || [])
+    .filter(p => p.scene === sceneName);
+  return isTriggerOnPages(trigger, pagesInScene);
+}
+
 function getPageFilters(scriptContent, sceneName, iface) {
   return {
     key: `${sceneName}-pages-${iface.name}`,
@@ -84,19 +107,37 @@ function getSceneFilters(scriptContent, sceneName) {
     .map(i => getPageFilters(scriptContent, sceneName, i));
 
   const sceneSections = [{
+    collection: 'clips',
+    filter: { scene: sceneName },
+    nested: [{
+      collection: 'triggers',
+      filterFn: (clip, trigger) => isTriggerOnResources(trigger, 'clips',
+        [clip])
+    }]
+  }, {
+    collection: 'cues',
+    filter: { scene: sceneName },
+    nested: [{
+      collection: 'triggers',
+      filterFn: (cue, trigger) => isTriggerOnResources(trigger, 'cues', [cue])
+    }]
+  }, {
     collection: 'triggers',
     filter: { scene: sceneName },
     filterFn: (t) => {
-      const pagesInScene = (scriptContent.pages || [])
-        .filter(p => p.scene === sceneName);
-      return !isTriggerOnPages(t, pagesInScene);
+      if (isTriggerOnPageInScene(scriptContent, t, sceneName)) {
+        return false;
+      }
+      const cues = _.filter(scriptContent.cues, { scene: sceneName });
+      if (isTriggerOnResources(t, 'cues', cues)) {
+        return false;
+      }
+      const clips = _.filter(scriptContent.clips, { scene: sceneName });
+      if (isTriggerOnResources(t, 'clips', clips)) {
+        return false;
+      }
+      return true;
     }
-  }, {
-    collection: 'cues',
-    filter: { scene: sceneName }
-  }, {
-    collection: 'clips',
-    filter: { scene: sceneName }
   }];
   return pageSections.concat(sceneSections);
 }

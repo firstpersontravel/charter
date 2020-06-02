@@ -9,11 +9,12 @@ import { coreRegistry, coreWalker, SceneCore } from 'fptcore';
 import ResourceBadge from '../partials/ResourceBadge';
 import Preview from '../operate/partials/Preview';
 import { getPlayerIframeUrl } from '../utils';
+import { isTriggerOnPageInScene } from '../design/utils/section-utils';
 
 const promptsForTriggerEventTypes = {
   text_received: {
     prompt: 'What message?',
-    getEvent: result => ({ message: { content: result } })
+    getEvent: result => ({ content: result })
   },
   clip_answered: {
     prompt: 'What response?',
@@ -193,15 +194,12 @@ export default class SceneGrid extends Component {
         if (!trigger.event) {
           return false;
         }
-        // For now show all triggers; even those that can be activated more
-        // easily by buttons on the preview. This is because buttons in
-        // interface content pages (like other tabs) aren't shown in the
-        // preview by default so those could be untriggerable in testing.
-
-        // const eventResourceClass = coreRegistry.events[trigger.event.type];
-        // if (eventResourceClass.parentComponentType === 'panels') {
-        //   return false;
-        // }
+        // If trigger is on a page in the scene (not a global page) -- don't
+        // include it on the side since it's already covered by the page
+        // preview.
+        if (isTriggerOnPageInScene(trip.script.content, trigger, scene.name)) {
+          return false;
+        }
         return true;
       })
       .map(trigger => (

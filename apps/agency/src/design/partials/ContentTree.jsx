@@ -113,7 +113,12 @@ export default class ContentTree extends Component {
         this.renderItem(contentSection.collection, item)
       ))
       .flat();
+
     const newItem = this.renderNewItem(contentSection);
+    if (!items.length) {
+      return [newItem];
+    }
+
     return [headerItem]
       .concat(items)
       .concat([newItem]);

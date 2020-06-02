@@ -2,6 +2,8 @@ var _ = require('lodash');
 
 module.exports = {
   help: 'Occurs when a cue has been signaled.',
+  parentCollectionName: 'cues',
+  parentCollectionSpecProperty: 'cue',
   specParams: {
     cue: {
       required: true,

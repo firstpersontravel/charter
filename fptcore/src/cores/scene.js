@@ -1,7 +1,15 @@
 class SceneCore {
+  static sortProp(resource) {
+    // Special case to always put scene started trigger first.
+    if (resource.event && resource.event.type === 'scene_started') {
+      return '';
+    }
+    return (resource.title || resource.name).toLowerCase();
+  }
+
   static sortResource(a, b) {
-    const asort = (a.title || a.name).toLowerCase();
-    const bsort = (b.title || b.name).toLowerCase();
+    const asort = SceneCore.sortProp(a);
+    const bsort = SceneCore.sortProp(b);
     if (asort === bsort) {
       return 0;
     }
