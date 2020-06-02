@@ -6,7 +6,7 @@ import { SceneCore, coreRegistry } from 'fptcore';
 import ContentTree from '../partials/ContentTree';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 
-import { sections, getContentList } from '../utils/section-utils';
+import { sections, getSliceContent } from '../utils/section-utils';
 
 export default class Slice extends Component {
   renderSidenav() {
@@ -88,7 +88,7 @@ export default class Slice extends Component {
     const sliceType = this.props.match.params.sliceType;
     const sliceName = this.props.match.params.sliceName;
     const scriptContent = this.props.script.content;
-    const contentList = getContentList(scriptContent, sliceType, sliceName);
+    const contentList = getSliceContent(scriptContent, sliceType, sliceName);
     return (
       <div className="row row-eq-height script-editor-container">
         <div className="script-editor-col col-sm-2">

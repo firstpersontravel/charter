@@ -17,40 +17,55 @@ function makeQueryString(params) {
 }
 
 export default class ContentTree extends Component {
-  renderItem(collectionName, item) {
+  renderResource(collectionName, resource, isNested) {
     const resourceType = TextUtil.singularize(collectionName);
     const script = this.props.script;
-    const itemTitle = titleForResource(script.content, collectionName, item);
+    const title = titleForResource(script.content, collectionName, resource);
     return ({
-      key: `${collectionName}-${item.name}`,
+      key: `${collectionName}-${resource.name}`,
       url: (
         `/${script.org.name}/${script.experience.name}` +
         `/script/${script.revision}` +
         `/design/${this.props.sliceType}/${this.props.sliceName}` +
-        `/${collectionName}/${item.name}`
+        `/${collectionName}/${resource.name}`
       ),
-      text: `${titleForResourceType(resourceType)}: ${itemTitle}`,
+      text: `${titleForResourceType(resourceType)}: ${title}`,
       label: (
         <span>
           <ResourceBadge
             showType={false}
-            resource={item}
-            resourceType={resourceType} /> {itemTitle}
+            className={isNested ? 'ml-2' : ''}
+            resource={resource}
+            resourceType={resourceType} /> {title}
         </span>
       )
     });
   }
 
-  renderNewItem(contentListItem) {
-    const collectionName = contentListItem.collection;
+  renderNestedCollection(nestedCol) {
+    return nestedCol.items.map(i => (
+      this.renderResource(nestedCol.collection, i, true)
+    ));
+  }
+
+  renderItem(collectionName, item) {
+    const rootItem = this.renderResource(collectionName, item.resource, false);
+    const nestedItems = (item.nested || [])
+      .map(i => this.renderNestedCollection(i))
+      .flat();
+    return [rootItem].concat(nestedItems);
+  }
+
+  renderNewItem(contentSection) {
+    const collectionName = contentSection.collection;
     const script = this.props.script;
     const resourceType = TextUtil.singularize(collectionName);
-    const queryString = makeQueryString(contentListItem.filter);
-    const title = contentListItem.title ?
-      contentListItem.title :
+    const queryString = makeQueryString(contentSection.filter);
+    const title = contentSection.title ?
+      contentSection.title :
       titleForResourceType(resourceType);
     return ({
-      key: `${contentListItem.key || collectionName}-new`,
+      key: `${contentSection.key || collectionName}-new`,
       isActive: (match, location) => (
         match &&
         location.pathname === match.url &&
@@ -79,25 +94,26 @@ export default class ContentTree extends Component {
     });
   }
 
-  renderContentListItem(contentListItem) {
-    const collectionName = contentListItem.collection;
+  renderContentSection(contentSection) {
+    const collectionName = contentSection.collection;
     const resourceType = TextUtil.singularize(collectionName);
-    const title = contentListItem.title ?
-      TextUtil.pluralize(contentListItem.title) :
+    const title = contentSection.title ?
+      TextUtil.pluralize(contentSection.title) :
       TextUtil.pluralize(titleForResourceType(resourceType));
     const headerItem = {
-      key: `${contentListItem.key || collectionName}-header`,
+      key: `${contentSection.key || collectionName}-header`,
       url: '',
       label: title,
       text: title,
       disabled: true
     };
-    const items = (contentListItem.items || [])
-      .sort(SceneCore.sortResource)
+    const items = (contentSection.items || [])
+      .sort((a, b) => SceneCore.sortResource(a.resource, b.resource))
       .map(item => (
-        this.renderItem(contentListItem.collection, item)
-      ));
-    const newItem = this.renderNewItem(contentListItem);
+        this.renderItem(contentSection.collection, item)
+      ))
+      .flat();
+    const newItem = this.renderNewItem(contentSection);
     return [headerItem]
       .concat(items)
       .concat([newItem]);
@@ -106,7 +122,7 @@ export default class ContentTree extends Component {
   render() {
     const contentList = this.props.contentList;
     const allItems = contentList
-      .map(item => this.renderContentListItem(item))
+      .map(item => this.renderContentSection(item))
       .flat();
 
     return (

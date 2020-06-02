@@ -1,6 +1,7 @@
 module.exports = {
   help: 'Occurs when a user confirms arrival at a destination.',
   parentComponentType: 'panels',
+  parentComponentSpecProperty: 'directions',
   specParams: {
     directions: {
       required: true,
@@ -39,7 +40,16 @@ module.exports = {
     if (!directions) {
       return 'unknown directions';
     }
-    const directionsDest = directions.destination_name || '<no text>';
-    return `arrived at "${directionsDest}"`;
+    if (directions.route) {
+      const route = scriptContent.routes
+        .find(r => r.name === directions.route);
+      return `arrived along "${route.title}"`;
+    }
+    if (directions.waypoint) {
+      const waypoint = scriptContent.waypoints
+        .find(r => r.name === directions.waypoint);
+      return `arrived at "${waypoint.title}"`;
+    }
+    return `arrived at ${directions.destination_name || 'unknown dest'}`;
   }
 };

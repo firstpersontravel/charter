@@ -97,6 +97,19 @@ module.exports = {
       if (!resource.route && !resource.waypoint) {
         return ['Directions panel requires either a route or a waypoint.'];
       }
+    },
+    getTitle(resource, component, scriptContent) {
+      if (component.route) {
+        const route = scriptContent.routes
+          .find(r => r.name === component.route);
+        return `directions along "${route.title}"`;
+      }
+      if (component.waypoint) {
+        const waypoint = scriptContent.waypoints
+          .find(r => r.name === component.waypoint);
+        return `directions at "${waypoint.title}"`;
+      }
+      return `directions to ${component.destination_name || 'unknown'}`;
     }
   },
   image: {

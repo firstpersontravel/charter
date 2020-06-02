@@ -1,12 +1,14 @@
 import _ from 'lodash';
 
+import { coreWalker, coreRegistry } from 'fptcore';
+
 export const sections = [
   ['roles', 'Roles', 'user'],
   ['places', 'Places', 'map-pin'],
   ['defaults', 'Defaults', 'list-ul']
 ];
 
-const sectionContent = {
+const sectionFilters = {
   roles: [{
     collection: 'roles',
     children: ['relays', 'inboxes']
@@ -30,23 +32,65 @@ const sectionContent = {
   }]
 };
 
-function getGlobalSceneContent(scriptContent, sceneName) {
+function getGlobalSceneFilters(scriptContent, sceneName) {
   return [{
     collection: 'triggers',
     filter: { scene: sceneName }
   }];
 }
 
-function getSceneContent(scriptContent, sceneName) {
-  const pageSections = (scriptContent.interfaces || []).map(i => ({
-    key: `${sceneName}-pages-${i.name}`,
-    title: `${i.title} page`,
+function isTriggerOnPages(trigger, pages) {
+  if (!trigger.event) {
+    return false;
+  }
+  const panelIds = new Set();
+  // eslint-disable-next-line no-restricted-syntax
+  for (const page of pages) {
+    coreWalker.walkResource('page', page, 'panels', (panel) => {
+      panelIds.add(panel.id);
+    });
+  }
+  const eventClass = coreRegistry.events[trigger.event.type];
+  if (eventClass.parentComponentType !== 'panels') {
+    return false;
+  }
+  const specParentProp = eventClass.parentComponentSpecProperty;
+  if (!specParentProp) {
+    return false;
+  }
+  const eventParentVal = trigger.event[specParentProp];
+  return panelIds.has(eventParentVal);
+}
+
+function isTriggerOnPage(trigger, page) {
+  return isTriggerOnPages(trigger, [page]);
+}
+
+function getPageFilters(scriptContent, sceneName, iface) {
+  return {
+    key: `${sceneName}-pages-${iface.name}`,
+    title: `${iface.title} page`,
     collection: 'pages',
-    filter: { scene: sceneName, interface: i.name }
-  }));
+    filter: { scene: sceneName, interface: iface.name },
+    nested: [{
+      collection: 'triggers',
+      filterFn: (page, trigger) => isTriggerOnPage(trigger, page)
+    }]
+  };
+}
+
+function getSceneFilters(scriptContent, sceneName) {
+  const pageSections = (scriptContent.interfaces || [])
+    .map(i => getPageFilters(scriptContent, sceneName, i));
+
   const sceneSections = [{
     collection: 'triggers',
-    filter: { scene: sceneName }
+    filter: { scene: sceneName },
+    filterFn: (t) => {
+      const pagesInScene = (scriptContent.pages || [])
+        .filter(p => p.scene === sceneName);
+      return !isTriggerOnPages(t, pagesInScene);
+    }
   }, {
     collection: 'cues',
     filter: { scene: sceneName }
@@ -57,52 +101,83 @@ function getSceneContent(scriptContent, sceneName) {
   return pageSections.concat(sceneSections);
 }
 
-export function getSliceContent(scriptContent, sliceType, sliceName) {
+export function getSliceFilters(scriptContent, sliceType, sliceName) {
   if (sliceType === 'scene') {
     const scene = scriptContent.scenes.find(s => s.name === sliceName);
     if (scene && scene.global) {
-      return getGlobalSceneContent(scriptContent, sliceName);
+      return getGlobalSceneFilters(scriptContent, sliceName);
     }
-    return getSceneContent(scriptContent, sliceName);
+    return getSceneFilters(scriptContent, sliceName);
   }
   if (sliceType === 'section') {
-    return sectionContent[sliceName];
+    return sectionFilters[sliceName];
   }
   return null;
 }
 
-export function getContentListItem(scriptContent, contentMapItem) {
-  const collectionName = contentMapItem.collection;
-  const items = contentMapItem.filter
-    ? _.filter(scriptContent[collectionName], contentMapItem.filter)
-    : scriptContent[collectionName];
+function getNestedItems(scriptContent, nestedFilter, parentResource) {
+  const allItems = scriptContent[nestedFilter.collection] || [];
+  const items = allItems.filter(i => nestedFilter.filterFn(parentResource, i));
   return {
-    key: contentMapItem.key,
-    title: contentMapItem.title,
-    collection: contentMapItem.collection,
-    filter: contentMapItem.filter,
+    collection: nestedFilter.collection,
     items: items
   };
 }
 
-export function getContentList(scriptContent, sliceType, sliceName) {
-  const contentMap = getSliceContent(scriptContent, sliceType, sliceName);
-  if (!contentMap) {
+function getItem(scriptContent, contentFilter, resource) {
+  const nested = (contentFilter.nested || [])
+    .map(f => getNestedItems(scriptContent, f, resource));
+  return {
+    resource: resource,
+    nested: nested
+  };
+}
+
+function filterItems(scriptContent, contentFilter) {
+  const allItems = scriptContent[contentFilter.collection] || [];
+  const prefilteredItems = contentFilter.filter ?
+    _.filter(allItems, contentFilter.filter) :
+    allItems;
+  const filteredItems = contentFilter.filterFn ?
+    prefilteredItems.filter(contentFilter.filterFn) :
+    prefilteredItems;
+  return filteredItems;
+}
+
+function getItems(scriptContent, contentFilter) {
+  const items = filterItems(scriptContent, contentFilter);
+  return items.map(i => getItem(scriptContent, contentFilter, i));
+}
+
+function filterContent(scriptContent, contentFilter) {
+  const items = getItems(scriptContent, contentFilter);
+  return {
+    key: contentFilter.key,
+    title: contentFilter.title,
+    collection: contentFilter.collection,
+    filter: contentFilter.filter,
+    items: items
+  };
+}
+
+export function getSliceContent(scriptContent, sliceType, sliceName) {
+  const filters = getSliceFilters(scriptContent, sliceType, sliceName);
+  if (!filters) {
     return [];
   }
-  return contentMap.map(item => getContentListItem(scriptContent, item));
+  return filters.map(filter => filterContent(scriptContent, filter));
 }
 
 function sectionForResource(scriptContent, collectionName, resource) {
   // eslint-disable-next-line no-restricted-syntax
-  for (const sectionName of Object.keys(sectionContent)) {
+  for (const sectionName of Object.keys(sectionFilters)) {
     // eslint-disable-next-line no-restricted-syntax
-    for (const sectionContentItem of sectionContent[sectionName]) {
-      if (sectionContentItem.collection === collectionName) {
+    for (const sectionFilter of sectionFilters[sectionName]) {
+      if (sectionFilter.collection === collectionName) {
         return sectionName;
       }
-      if (sectionContentItem.children &&
-          sectionContentItem.children.includes(collectionName)) {
+      if (sectionFilter.children &&
+          sectionFilter.children.includes(collectionName)) {
         return sectionName;
       }
     }

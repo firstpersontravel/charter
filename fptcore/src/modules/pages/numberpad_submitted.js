@@ -2,6 +2,7 @@ module.exports = {
   title: 'Number entry submitted',
   help: 'Occurs when a user confirms a number on a number entry.',
   parentComponentType: 'panels',
+  parentComponentSpecProperty: 'numberpad',
   specParams: {
     numberpad: {
       title: 'Number entry',
