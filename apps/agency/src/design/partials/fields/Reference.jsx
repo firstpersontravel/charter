@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { TextUtil } from 'fptcore';
+import { SceneCore, TextUtil } from 'fptcore';
 
 import {
   titleForResource,
@@ -62,10 +62,12 @@ function choicesForSpec(script, resource, spec) {
   if (spec.specialValues) {
     specialChoices.push(...spec.specialValues);
   }
-  const choices = specialChoices.concat(filtered.map(rel => ({
-    value: rel.name,
-    label: titleForResource(script.content, spec.collection, rel)
-  })));
+  const choices = specialChoices.concat(filtered
+    .sort(SceneCore.sortResource)
+    .map(rel => ({
+      value: rel.name,
+      label: titleForResource(script.content, spec.collection, rel)
+    })));
   return choices;
 }
 

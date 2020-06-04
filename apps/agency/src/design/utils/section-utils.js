@@ -197,7 +197,8 @@ function filterContent(scriptContent, contentFilter) {
     title: contentFilter.title,
     collection: contentFilter.collection,
     filter: contentFilter.filter,
-    items: items
+    items: items,
+    children: contentFilter.children
   };
 }
 

@@ -130,6 +130,7 @@ export default class ResourceShow extends Component {
       this.props.script.content,
       this.props.match.params.sliceType,
       this.props.match.params.sliceName);
+    console.log('contentFilters', contentFilters);
     const filter = _.find(contentFilters, { collection: collectionName });
     return (filter && filter.children) || [];
   }

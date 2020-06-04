@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { coreRegistry, coreWalker, TextUtil } from 'fptcore';
+import { coreRegistry, coreWalker, TextUtil, SceneCore } from 'fptcore';
 
 import { urlForResource } from '../../utils/section-utils';
 import { titleForResource } from '../../utils/text-utils';
@@ -50,6 +50,7 @@ function choicesForSpec(script, spec) {
     .filter(([col, res, obj]) => obj[typeKey] === spec.componentVariant);
 
   const choices = [{ value: '', label: '---' }]
+    .sort((a, b) => SceneCore.sortResource(a[1], b[1]))
     .concat(resAndComponents.map(referringTo => ({
       value: referringTo[2].id,
       label: titleForComponent(script.content, spec.componentType,
