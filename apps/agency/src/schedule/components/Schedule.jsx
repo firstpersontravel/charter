@@ -66,7 +66,7 @@ class Schedule extends Component {
     const renderedEntryways = entrywaySpecs.map((entryway) => {
       const relay = _.find(this.props.experience.relays, {
         forRoleName: entryway.for,
-        asRoleName: entryway.as,
+        asRoleName: entryway.as || entryway.for,
         withRoleName: entryway.with,
         userPhoneNumber: ''
       });

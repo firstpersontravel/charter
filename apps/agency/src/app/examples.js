@@ -2,7 +2,7 @@ export default [{
   name: 'blank',
   title: 'Blank',
   desc: 'A totally blank canvas.',
-  demo: 'Contains just a starting scene and role.'
+  demo: 'A clean slate on which to begin a new project.'
 }, {
   name: 'hello-world',
   title: 'Hello World',
