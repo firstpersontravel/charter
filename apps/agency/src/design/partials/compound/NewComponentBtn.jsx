@@ -12,9 +12,11 @@ import {
 function NewComponentBtn({ componentSpec, onConfirm, label }) {
   const componentType = componentSpec.component;
   const variantOptions = getComponentVariantOptions(componentType);
+  const title = componentSpec.title ||
+    `New ${TextUtil.singularize(componentType).toLowerCase()}`;
   return (
     <PopoverControl
-      title={`New ${TextUtil.singularize(componentType)}`}
+      title={title}
       choices={variantOptions}
       helpText={componentSpec.help}
       onConfirm={(val) => {
