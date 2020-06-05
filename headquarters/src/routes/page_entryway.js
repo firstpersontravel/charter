@@ -82,7 +82,7 @@ const entrywaySubmitRoute = async (req, res) => {
   const interface = (script.content.interfaces || [])
     .filter(i => (
       interfaceTitleStub === null ||
-      interfaceTitleStub === TextUtil.dashVarToText(i.title)
+      interfaceTitleStub === TextUtil.dashVarForText(i.title)
     ))
     .sort(SceneCore.sortResource)[0];
 
