@@ -15,7 +15,12 @@ function extraMediaReferences(resourceType, resource) {
   const paths = [];
   coreWalker.walkResource(resourceType, resource, 'media',
     (path, spec, parent, key) => {
-      const label = parent.type || parent.name || key;
+      const label = (
+        parent.type ||
+        parent.title ||
+        parent.name ||
+        key
+      );
       paths.push({ path: path, label: label, medium: spec.medium });
     });
   return paths;

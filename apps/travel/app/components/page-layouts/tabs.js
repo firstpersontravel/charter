@@ -93,7 +93,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
   },
 
   tabPanels: function() {
-    return this.collectPanelPartials(this.get('selectedTab.panels'));
+    return this.collectPanelPartials(this.get('selectedTab.panels') || []);
   }.property('selectedTab', 'pagePanels'),
 
   actions: {
