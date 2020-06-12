@@ -304,6 +304,7 @@ describe('Validations', () => {
     it('permits with quotes', () => {
       ok(Validations.lookupable.validate({}, 's', {}, '"abc"'));
       ok(Validations.lookupable.validate({}, 's', {}, '\'A\''));
+      ok(Validations.lookupable.validate({}, 's', {}, '"It\'s a lovely day, Mary Poppins."'));
     });
 
     it('warns if not a string', () => {
