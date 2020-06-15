@@ -1,4 +1,4 @@
-cpu: '2304'
+cpu: '2560'
 executionRoleArn: arn:aws:iam::875382849197:role/charter-service
 family: charter-__ENVIRONMENT__
 memory: '5120'
