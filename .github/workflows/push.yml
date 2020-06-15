@@ -34,7 +34,8 @@ jobs:
     name: Lint agency
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Setup node
       uses: actions/setup-node@v1
       with:
@@ -48,7 +49,8 @@ jobs:
     name: Build travel
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Setup node
       uses: actions/setup-node@v1
       with:
@@ -67,7 +69,8 @@ jobs:
     name: Test core
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Setup node
       uses: actions/setup-node@v1
       with:
@@ -81,7 +84,8 @@ jobs:
     name: Test hq
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Setup node
       uses: actions/setup-node@v1
       with:
@@ -131,10 +135,9 @@ jobs:
       run: |
         sudo wget -q -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
         sudo chmod +x /usr/local/bin/yq
-        ls -la $GITHUB_WORKSPACE
         /usr/local/bin/yq r -j $GITHUB_WORKSPACE/deploy/ecs/task.yaml > /tmp/staging-${{ github.sha }}.json
-        sed -i 's/{{IMAGE}}/${{ steps.login-ecr.outputs.registry }}/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
-        sed -i 's/{{ENVIRONMENT}}/staging/g' /tmp/staging-${{ github.sha }}.json
+        sed -i 's/__IMAGE__/${{ steps.login-ecr.outputs.registry }}/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
+        sed -i 's/__ENVIRONMENT__/staging/g' /tmp/staging-${{ github.sha }}.json
         cat /tmp/staging-${{ github.sha }}.json
     - name: Deploy ECS Task Definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1

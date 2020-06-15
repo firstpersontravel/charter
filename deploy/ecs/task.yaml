@@ -1,12 +1,12 @@
 cpu: 2304
 executionRoleArn: arn:aws:iam::875382849197:role/charter-service
-family: charter-{{ENVIRONMENT}}
+family: charter-__ENVIRONMENT__
 memory: 5120
 networkMode: awsvpc
 requiresCompatibilities: [FARGATE]
 containerDefinitions:
   - name: server
-    image: {{IMAGE}}
+    image: __IMAGE__
     workingDirectory: /var/app/headquarters
     command: 'bin/server.js'
     essential: true
@@ -18,14 +18,14 @@ containerDefinitions:
     logConfiguration:
       logDriver: awslogs
       options:
-        awslogs-group: "/ecs/charter-{{ENVIRONMENT}}-server"
+        awslogs-group: "/ecs/charter-__ENVIRONMENT__-server"
         awslogs-region: us-west-2
         awslogs-stream-prefix: ecs
     portMappings:
       - containerPort: 5001
         protocol: tcp
   - name: worker
-    image: {{IMAGE}}
+    image: __IMAGE__
     workingDirectory: /var/app/headquarters
     command: 'bin/worker.js'
     essential: true
@@ -37,11 +37,11 @@ containerDefinitions:
     logConfiguration:
       logDriver: awslogs
       options:
-        awslogs-group: "/ecs/charter-{{ENVIRONMENT}}-worker"
+        awslogs-group: "/ecs/charter-__ENVIRONMENT__-worker"
         awslogs-region: us-west-2
         awslogs-stream-prefix: ecs
   - name: pubsub
-    image: {{IMAGE}}
+    image: __IMAGE__
     workingDirectory: /var/app/headquarters
     command: 'bin/pubsub.js'
     essential: true
@@ -53,7 +53,7 @@ containerDefinitions:
     logConfiguration:
       logDriver: awslogs
       options:
-        awslogs-group: "/ecs/charter-{{ENVIRONMENT}}-pubsub"
+        awslogs-group: "/ecs/charter-__ENVIRONMENT__-pubsub"
         awslogs-region: us-west-2
         awslogs-stream-prefix: ecs
     portMappings:
