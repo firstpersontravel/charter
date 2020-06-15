@@ -18,3 +18,18 @@ jobs:
       run: cd fptcore && npm -q install
     - name: Run tests
       run: cd fptcore && CI=true npm run test
+  test_hq:
+    name: Test hq
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: |
+        (cd fptcore && npm -q install)
+        (cd headquarters && npm -q install)
+    - name: Run tests
+      run: cd headquarters && CI=true npm run test
