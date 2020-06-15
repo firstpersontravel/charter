@@ -99,7 +99,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -126,6 +125,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Render Task Definition
       run: |
         sudo wget -q -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
@@ -135,7 +136,6 @@ jobs:
         sed -i 's/{{IMAGE}}/${{ steps.login-ecr.outputs.registry }}/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
         sed -i 's/{{ENVIRONMENT}}/staging/g' /tmp/staging-${{ github.sha }}.json
         cat /tmp/staging-${{ github.sha }}.json
-
     - name: Deploy ECS Task Definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
