@@ -14,7 +14,7 @@ containerDefinitions:
     memory: '2048'
     environmentFiles:
       - type: s3
-        value: arn:aws:s3:::fpt-tech/secrets/env-staging
+        value: arn:aws:s3:::fpt-tech/secrets/staging.env
     logConfiguration:
       logDriver: awslogs
       options:
@@ -33,7 +33,7 @@ containerDefinitions:
     memory: '2048'
     environmentFiles:
       - type: s3
-        value: arn:aws:s3:::fpt-tech/secrets/env-staging
+        value: arn:aws:s3:::fpt-tech/secrets/staging.env
     logConfiguration:
       logDriver: awslogs
       options:
@@ -49,7 +49,7 @@ containerDefinitions:
     memory: '1024'
     environmentFiles:
       - type: s3
-        value: arn:aws:s3:::fpt-tech/secrets/env-staging
+        value: arn:aws:s3:::fpt-tech/secrets/staging.env
     logConfiguration:
       logDriver: awslogs
       options:

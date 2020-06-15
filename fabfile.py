@@ -619,7 +619,7 @@ def install_nginx():
 
 def update_environment():
     # Upload env file
-    put(os.path.join(PROJECT_ROOT, 'secrets/env-%(stage)s' % env),
+    put(os.path.join(PROJECT_ROOT, 'secrets/%(stage)s.env' % env),
         '%(shared_path)s/env' % env)
     # Upload secrets to cached-copy of git repo so they can
     # easily fold into dir structure like local
