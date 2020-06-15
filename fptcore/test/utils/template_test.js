@@ -45,6 +45,8 @@ describe('TemplateUtil', () => {
       assert.strictEqual(TemplateUtil.lookupRef({}, '\'string\''), 'string');
       assert.strictEqual(TemplateUtil.lookupRef({}, '\'s_0_f934tg-@$#T$*R\''),
         's_0_f934tg-@$#T$*R');
+      assert.strictEqual(TemplateUtil.lookupRef({}, '"A string with spaces and characters, yah?"'), 'A string with spaces and characters, yah?');
+      assert.strictEqual(TemplateUtil.lookupRef({}, '\'A string with spaces and characters, yah?\''), 'A string with spaces and characters, yah?');
     });
 
     it('handles refs', () => {
