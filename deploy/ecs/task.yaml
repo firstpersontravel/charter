@@ -1,7 +1,7 @@
-cpu: '2560'
+cpu: '2048'
 executionRoleArn: arn:aws:iam::875382849197:role/charter-service
 family: charter-__ENVIRONMENT__
-memory: '5120'
+memory: '4096'
 networkMode: awsvpc
 requiresCompatibilities: [FARGATE]
 containerDefinitions:
@@ -10,8 +10,8 @@ containerDefinitions:
     workingDirectory: /var/app/headquarters
     command: ['bin/server.js']
     essential: true
-    cpu: '1024'
-    memory: '2048'
+    cpu: '768'
+    memory: '1536'
     environmentFiles:
       - type: s3
         value: arn:aws:s3:::fpt-tech/secrets/staging.env
@@ -29,8 +29,8 @@ containerDefinitions:
     workingDirectory: /var/app/headquarters
     command: ['bin/worker.js']
     essential: true
-    cpu: '1024'
-    memory: '2048'
+    cpu: '768'
+    memory: '1536'
     environmentFiles:
       - type: s3
         value: arn:aws:s3:::fpt-tech/secrets/staging.env
@@ -45,7 +45,7 @@ containerDefinitions:
     workingDirectory: /var/app/headquarters
     command: ['bin/pubsub.js']
     essential: true
-    cpu: '512'
+    cpu: '256'
     memory: '1024'
     environmentFiles:
       - type: s3
