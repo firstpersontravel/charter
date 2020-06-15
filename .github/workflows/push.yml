@@ -43,22 +43,32 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-2
+        aws-region: us-west-2
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: charter
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    # https://github.com/marketplace/actions/build-docker-images-using-cache
+    - uses: whoan/docker-build-with-cache-action@v5
+      with:
+        username: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+        password: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+        registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
+        image_name: charter
+        image_tag: latest
+        push_git_tag: true
+
+    # - name: Build, tag, and push image to Amazon ECR
+    #   id: build-image
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     ECR_REPOSITORY: charter
+    #     IMAGE_TAG: ${{ github.sha }}
+    #   run: |
+    #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+    #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
     # - name: Fill in the new image ID in the Amazon ECS task definition
     #   id: task-def
@@ -66,7 +76,7 @@ jobs:
     #   with:
     #     task-definition: task-definition.json
     #     container-name: sample-app
-    #     image: ${{ steps.build-image.outputs.image }}
+    #     image: 875382849197.dkr.ecr.us-west-2.amazonaws.com/charter:${{ github.sha }}
 
     # - name: Deploy Amazon ECS task definition
     #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
