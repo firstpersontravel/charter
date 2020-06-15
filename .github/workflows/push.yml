@@ -63,9 +63,9 @@ jobs:
       env:
         IMAGE: ${{ steps.login-ecr.outputs.registry }}/charter:${{ github.sha }}
       run: |
-        apt-get install jq
-        pip install yq
-        yq r -j deploy/ecs/task.yaml > /tmp/staging-${{ github.sha }}.json
+        sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
+        sudo chmod +x /usr/local/bin/yq
+        /usr/local/bin/yq r -j deploy/ecs/task.yaml > /tmp/staging-${{ github.sha }}.json
         sed -i "s/{{IMAGE}}/$IMAGE/g" /tmp/staging-${{ github.sha }}.json
         sed -i "s/{{ENVIRONMENT}}/staging/g" /tmp/staging-${{ github.sha }}.json
         cat /tmp/staging-${{ github.sha }}.json
