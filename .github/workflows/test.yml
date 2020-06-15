@@ -32,3 +32,35 @@ jobs:
         (cd headquarters && npm -q install)
     - name: Run tests
       run: cd headquarters && CI=true npm run test
+
+  lint_agency:
+    name: Lint agency
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: cd apps/agency && npm -q install
+    - name: Run lint
+      run: cd apps/agency && CI=true npm run test
+
+  build_travel:
+    name: Build travel
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: |
+        cd apps/travel
+        npm -q install
+        bower -q install
+        ln -s `pwd`/../../fptcore ./node_modules
+    - name: Build
+      run: cd apps/travel && CI=true npm run build
