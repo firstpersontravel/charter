@@ -56,8 +56,7 @@ jobs:
         password: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
         registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
         image_name: charter
-        image_tag: latest
-        push_git_tag: true
+        image_tag: ${{ github.sha }}
 
     # - name: Build, tag, and push image to Amazon ECR
     #   id: build-image
