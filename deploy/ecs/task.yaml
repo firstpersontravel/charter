@@ -1,0 +1,61 @@
+cpu: 2304
+executionRoleArn: arn:aws:iam::875382849197:role/charter-service
+family: charter-{{ENVIRONMENT}}
+memory: 5120
+networkMode: awsvpc
+requiresCompatibilities: [FARGATE]
+containerDefinitions:
+  - name: server
+    image: {{IMAGE}}
+    workingDirectory: /var/app/headquarters
+    command: 'bin/server.js'
+    essential: true
+    cpu: 1024
+    memory: 2048
+    environmentFiles:
+      - type: s3
+        value: arn:aws:s3:::fpt-tech/secrets/env-staging
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: "/ecs/charter-{{ENVIRONMENT}}-server"
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: ecs
+    portMappings:
+      - containerPort: 5001
+        protocol: tcp
+  - name: worker
+    image: {{IMAGE}}
+    workingDirectory: /var/app/headquarters
+    command: 'bin/worker.js'
+    essential: true
+    cpu: 1024
+    memory: 2048
+    environmentFiles:
+      - type: s3
+        value: arn:aws:s3:::fpt-tech/secrets/env-staging
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: "/ecs/charter-{{ENVIRONMENT}}-worker"
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: ecs
+  - name: pubsub
+    image: {{IMAGE}}
+    workingDirectory: /var/app/headquarters
+    command: 'bin/pubsub.js'
+    essential: true
+    cpu: 512
+    memory: 1024
+    environmentFiles:
+      - type: s3
+        value: arn:aws:s3:::fpt-tech/secrets/env-staging
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: "/ecs/charter-{{ENVIRONMENT}}-pubsub"
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: ecs
+    portMappings:
+      - containerPort: 5002
+        protocol: tcp
