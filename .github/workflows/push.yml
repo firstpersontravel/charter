@@ -63,10 +63,12 @@ jobs:
       env:
         IMAGE: ${{ steps.login-ecr.outputs.registry }}/charter:${{ github.sha }}
       run: |
+        apt-get install jq
         pip install yq
         yq r -j deploy/ecs/task.yaml > /tmp/staging-${{ github.sha }}.json
         sed -i "s/{{IMAGE}}/$IMAGE/g" /tmp/staging-${{ github.sha }}.json
         sed -i "s/{{ENVIRONMENT}}/staging/g" /tmp/staging-${{ github.sha }}.json
+        cat /tmp/staging-${{ github.sha }}.json
 
     - name: Deploy ECS Task Definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
