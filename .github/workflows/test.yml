@@ -60,6 +60,7 @@ jobs:
       run: |
         cd apps/travel
         npm -q install
+        npm -q -g install bower
         bower -q install
         ln -s `pwd`/../../fptcore ./node_modules
     - name: Build
