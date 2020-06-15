@@ -16,6 +16,7 @@ jobs:
       run: cd fptcore && npm -q install
     - name: Run tests
       run: cd fptcore && CI=true npm run test
+
   test_hq:
     name: Test hq
     runs-on: ubuntu-latest
