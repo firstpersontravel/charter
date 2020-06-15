@@ -136,7 +136,7 @@ jobs:
         sudo wget -q -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
         sudo chmod +x /usr/local/bin/yq
         /usr/local/bin/yq r -j $GITHUB_WORKSPACE/deploy/ecs/task.yaml > /tmp/staging-${{ github.sha }}.json
-        sed -i '' 's/__IMAGE__/${{ steps.login-ecr.outputs.registry }}/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
+        sed -i '' 's/__IMAGE__/${{ steps.login-ecr.outputs.registry }}\/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
         sed -i '' 's/__ENVIRONMENT__/staging/g' /tmp/staging-${{ github.sha }}.json
         cat /tmp/staging-${{ github.sha }}.json
     - name: Deploy ECS Task Definition
