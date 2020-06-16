@@ -209,7 +209,13 @@ const Validations = {
       if (!param) {
         return ['Lookupable attribute param "' + name + '" should not be blank.'];
       }
-      if (!/^['"]?[\w\d_.-]+['"]?$/.test(param)) {
+      if ((/^"/.test(param)) && (!/^"[^"]+"$/.test(param))) {
+        return ['Lookupable param "' + name + '" ("' + param + '") should only have quotes at the beginning and end.'];
+      }
+      if ((/^'/.test(param)) && (!/^'[^']+'$/.test(param))) {
+        return ['Lookupable param "' + name + '" ("' + param + '") should only have quotes at the beginning and end.'];
+      }
+      if ((!/^['"]/.test(param)) && (!/^[\w\d_.-]+$/.test(param))) {
         return ['Lookupable param "' + name + '" ("' + param + '") should be alphanumeric with underscores, dashes and periods.'];
       }
     }
