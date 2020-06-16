@@ -307,12 +307,21 @@ describe('Validations', () => {
       ok(Validations.lookupable.validate({}, 's', {}, '"It\'s a lovely day, Mary Poppins."'));
     });
 
+    it('warns if a quoted string does not complete', () => {
+      err(Validations.lookupable.validate({}, 's', {}, '"abc'),
+        'Lookupable param "s" (""abc") should only have quotes at the beginning and end.');
+      err(Validations.lookupable.validate({}, 's', {}, '"abc\''),
+        'Lookupable param "s" (""abc\'") should only have quotes at the beginning and end.');
+    });
+
     it('warns if not a string', () => {
       err(Validations.lookupable.validate({}, 's', {}, 1),
         'Lookupable param "s" ("1") should be a string.');
     });
 
     it('warns if contains invalid characters', () => {
+      err(Validations.lookupable.validate({}, 's', {}, 'a"b'),
+        'Lookupable param "s" ("a"b") should be alphanumeric with underscores, dashes and periods.');
       err(Validations.lookupable.validate({}, 's', {}, 'a=b'),
         'Lookupable param "s" ("a=b") should be alphanumeric with underscores, dashes and periods.');
       err(Validations.lookupable.validate({}, 's', {}, 'b^$(D'),
