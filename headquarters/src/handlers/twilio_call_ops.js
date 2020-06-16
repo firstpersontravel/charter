@@ -58,7 +58,7 @@ class TwilioCallOps {
   }
 
   static async gather(tripId, relay, twimlResponse, twimlOp) {
-    const twilioHost = config.env.TWILIO_HOST;
+    const twilioHost = config.env.HQ_TWILIO_HOST;
     const gather = twimlResponse.gather(Object.assign({
       input: 'dtmf speech',
       timeout: 10, // longer timeout

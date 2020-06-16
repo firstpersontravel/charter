@@ -2,30 +2,12 @@ require('module-alias/register');
 
 const MomentTimezonePlugin = require('moment-timezone-data-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
-const _ = require('lodash');
 const path = require('path');
-const webpack = require('webpack');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const nodeEnv = isProduction ? 'production' : 'development';
-
-const env = {
-  NODE_ENV: nodeEnv,
-  GIT_HASH: (process.env.GIT_HASH || '').trim(),
-  GOOGLE_API_KEY: process.env.FRONTEND_GOOGLE_API_KEY,
-  SENTRY_DSN: process.env.FRONTEND_SENTRY_DSN,
-  SENTRY_ENVIRONMENT: process.env.FRONTEND_SENTRY_ENVIRONMENT,
-  S3_CONTENT_BUCKET: process.env.S3_CONTENT_BUCKET,
-  SERVER_URL: process.env.FRONTEND_SERVER_URL,
-  PUBSUB_URL: process.env.FRONTEND_PUBSUB_URL,
-  ANALYTICS_ENABLED: process.env.FRONTEND_ANALYTICS_ENABLED
-};
 
 const currentYear = new Date().getFullYear();
 const plugins = [
-  new webpack.DefinePlugin({
-    'process.env': _.mapValues(env, v => JSON.stringify(v))
-  }),
   // To strip all locales except “en”
   new MomentLocalesPlugin(),
   // To include only specific zones, use the matchZones option

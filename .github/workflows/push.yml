@@ -123,6 +123,7 @@ jobs:
         registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
         image_name: charter
         image_tag: ${{ github.sha }}
+        build_extra_args: ''
 
   deploy:
     name: Deploy to staging ECS
@@ -139,12 +140,12 @@ jobs:
         aws-region: us-west-2
     - name: Render Task Definition
       run: |
-        sudo wget -q -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64
-        sudo chmod +x /usr/local/bin/yq
-        /usr/local/bin/yq r -j $GITHUB_WORKSPACE/deploy/ecs/task.yaml > /tmp/staging-${{ github.sha }}.json
+        pip3 install pyyaml
+        deploy/ecs/print_task.py staging > /tmp/staging-${{ github.sha }}.json
+        sed -i.bak 's/__GIT_HASH__/${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
         sed -i.bak 's/__IMAGE__/${{ steps.login-ecr.outputs.registry }}\/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
         sed -i.bak 's/__ENVIRONMENT__/staging/g' /tmp/staging-${{ github.sha }}.json
-        cat /tmp/staging-${{ github.sha }}.json
+        cat 
     - name: Deploy ECS Task Definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:

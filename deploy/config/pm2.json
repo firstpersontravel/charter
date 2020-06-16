@@ -24,7 +24,7 @@
     "exec_mode": "cluster_mode",
     "instances": 1,
     "env": {
-      "PUBSUB_PORT": "5002"
+      "HQ_PUBSUB_PORT": "5002"
     }
   }]
 }

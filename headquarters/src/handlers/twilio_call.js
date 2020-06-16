@@ -54,7 +54,7 @@ class TwilioCallHandler {
     if (!config.getTwilioClient()) {
       return;
     }
-    const twilioHost = config.env.TWILIO_HOST;
+    const twilioHost = config.env.HQ_TWILIO_HOST;
     const twimlBase64 = encodeURIComponent(
       Buffer.from(twiml.toString()).toString('base64'));
     const url = (

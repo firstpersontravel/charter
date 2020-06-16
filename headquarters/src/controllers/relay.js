@@ -51,7 +51,7 @@ class RelayController {
   static async findSiblings(relay, asRoleName, withRoleName) {
     return await models.Relay.findAll({
       where: {
-        stage: config.env.STAGE,
+        stage: config.env.HQ_STAGE,
         experienceId: relay.experienceId,
         tripId: relay.tripId,
         withRoleName: withRoleName,
@@ -102,12 +102,12 @@ class RelayController {
     }
     // Protection in non-production from texting anyone who is not Gabe.
     if (!config.isTesting &&
-        config.env.STAGE !== 'production' &&
+        config.env.HQ_STAGE !== 'production' &&
         !_.includes(whitelistedNumbers, toUser.phoneNumber)) {
       logger.warn(`Relay ${relay.id} is not to a whitelisted number.`);
       return;
     }
-    const twilioHost = config.env.TWILIO_HOST;
+    const twilioHost = config.env.HQ_TWILIO_HOST;
     const callOpts = {
       to: `+1${toUser.phoneNumber}`,
       from: `+1${relay.relayPhoneNumber}`,
@@ -154,7 +154,7 @@ class RelayController {
     }
     const toPhoneNumber = toPlayer.user.phoneNumber;
     // Protection in non-production from texting anyone who is not Gabe.
-    if (config.env.STAGE !== 'production' &&
+    if (config.env.HQ_STAGE !== 'production' &&
         !_.includes(whitelistedNumbers, toPhoneNumber)) {
       return;
     }

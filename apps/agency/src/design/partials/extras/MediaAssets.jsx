@@ -5,6 +5,8 @@ import ReactS3Uploader from 'react-s3-uploader';
 
 import { coreWalker } from 'fptcore';
 
+import config from '../../../config';
+
 const MEDIA_MIME_TYPES = {
   image: 'image/*',
   video: 'video/*',
@@ -66,7 +68,7 @@ class MediaAsset extends Component {
 
   handleUploadFinish() {
     this.setState({ uploading: false, progress: null, error: null });
-    const bucket = process.env.S3_CONTENT_BUCKET;
+    const bucket = config.contentBucket;
     const fullPath = this.getFullPath();
     const publicUrl = `https://${bucket}.s3.amazonaws.com/${fullPath}`;
     this.updateAsset(publicUrl);

@@ -12,9 +12,6 @@ containerDefinitions:
     essential: true
     cpu: '768'
     memory: '1536'
-    environmentFiles:
-      - type: s3
-        value: arn:aws:s3:::fpt-tech/secrets/staging.env
     logConfiguration:
       logDriver: awslogs
       options:
@@ -31,9 +28,6 @@ containerDefinitions:
     essential: true
     cpu: '768'
     memory: '1536'
-    environmentFiles:
-      - type: s3
-        value: arn:aws:s3:::fpt-tech/secrets/staging.env
     logConfiguration:
       logDriver: awslogs
       options:
@@ -47,9 +41,6 @@ containerDefinitions:
     essential: true
     cpu: '256'
     memory: '1024'
-    environmentFiles:
-      - type: s3
-        value: arn:aws:s3:::fpt-tech/secrets/staging.env
     logConfiguration:
       logDriver: awslogs
       options:

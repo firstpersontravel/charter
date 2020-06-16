@@ -13,7 +13,7 @@ bayeux.on('handshake', function(clientId) {
   console.info(`Client connected: ${clientId}`);
 });
 
-const pubsubPort = process.env.PUBSUB_PORT || 8000;
+const pubsubPort = process.env.HQ_PUBSUB_PORT || 8000;
 
 try {
   server.listen(pubsubPort, function() {

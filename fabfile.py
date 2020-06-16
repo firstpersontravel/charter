@@ -716,16 +716,13 @@ def copy_environment():
 def build_apps():
     with cd(env.release_path):
         run(
-            'export GIT_HASH=`cat ./.githash` && '
-            'export $(cat ./env | xargs) && '
             'cd apps/agency && '
             'export NODE_ENV=production && '
             'webpack --colors')
     with cd(env.release_path):
         run(
-            'export GIT_HASH=`cat ./.githash` && '
-            'export $(cat ./env | xargs) && '
             'cd apps/travel && '
+            'export NODE_ENV=production && '
             'ember build --env %(stage)s' % env)
 
 #######################################################
@@ -775,7 +772,7 @@ def app_graceful_restart():
 def db_load_from_remote():
     local_path = '~/Downloads/%s_backup.sql' % env.stage
     with cd(env.hq_path):
-        run('export $(cat ../env | xargs) && mysqldump -h $DATABASE_HOST -p$DATABASE_PASSWORD -u $DATABASE_USER $DATABASE_NAME > /home/deploy/backup.sql')
+        run('export $(cat ../env | xargs) && mysqldump -h $HQ_DATABASE_HOST -p$HQ_DATABASE_PASSWORD -u $HQ_DATABASE_USER $HQ_DATABASE_NAME > /home/deploy/backup.sql')
     get(remote_path='/home/deploy/backup.sql',
         local_path=local_path)
     local('mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < %s' % local_path)

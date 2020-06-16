@@ -283,7 +283,7 @@ describe('TwilioCallHandler', () => {
       const twimlBase64 = encodeURIComponent(
         Buffer.from(twimlSentinel.toString()).toString('base64'));
       const base64Url = (
-        `${config.env.TWILIO_HOST}/endpoints/twilio/` +
+        `${config.env.HQ_TWILIO_HOST}/endpoints/twilio/` +
         `calls/interrupt?twiml=${twimlBase64}`
       );
 

@@ -25,7 +25,7 @@ class RelaysController {
       .incomingPhoneNumbers
       .create({ phoneNumber: availableNumber.phoneNumber });
 
-    const twilioHost = config.env.TWILIO_HOST;
+    const twilioHost = config.env.HQ_TWILIO_HOST;
     const updatedNumber = await purchasedNumber.update({
       voiceUrl: `${twilioHost}/endpoints/twilio/calls/incoming`,
       statusCallback: `${twilioHost}/endpoints/twilio/calls/incoming_status`,
@@ -46,7 +46,7 @@ class RelaysController {
     // Find existing numbers for this environment.
     const allExistingNumbers = await twilioClient.incomingPhoneNumbers.list();
     const envExistingNumbers = _(allExistingNumbers)
-      .filter(num => num.smsUrl.indexOf(config.env.TWILIO_HOST) === 0)
+      .filter(num => num.smsUrl.indexOf(config.env.HQ_TWILIO_HOST) === 0)
       .map(num => num.phoneNumber.replace('+1', ''))
       .value();
     let overlaps;
@@ -81,7 +81,7 @@ class RelaysController {
   static async ensureRelay(orgId, experienceId, tripId, relaySpec, userNum) {
     // Get relay if it exists, either for everyone or for this user.
     const relayFields = {
-      stage: config.env.STAGE,
+      stage: config.env.HQ_STAGE,
       orgId: orgId,
       experienceId: experienceId,
       tripId: tripId,
@@ -117,7 +117,7 @@ class RelaysController {
   static async findByNumber(relayNumber, userNum) {
     return await models.Relay.findOne({
       where: {
-        stage: config.env.STAGE,
+        stage: config.env.HQ_STAGE,
         relayPhoneNumber: relayNumber,
         userPhoneNumber: { [Sequelize.Op.or]: ['', userNum] },
         isActive: true

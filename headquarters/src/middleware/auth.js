@@ -17,7 +17,7 @@ const tokenPayloadForReq = async (req) => {
     return null;
   }
   try {
-    return await jwt.verify(tokenString, config.env.JWT_SECRET);
+    return await jwt.verify(tokenString, config.env.HQ_JWT_SECRET);
   } catch (err) {
     logger.warn(err.message);
     return null;

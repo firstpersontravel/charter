@@ -41,13 +41,13 @@ for (const k in process.env) {
 
 // Configure raven
 Sentry.init({
-  dsn: env.SENTRY_DSN,
-  environment: env.SENTRY_ENVIRONMENT,
+  dsn: env.HQ_SENTRY_DSN,
+  environment: env.HQ_SENTRY_ENVIRONMENT,
   release: env.GIT_HASH
 });
 
-const serverPort = process.env.SERVER_PORT || 8000;
-const pubsubHost = process.env.SERVER_PUBSUB_URL || 'http://localhost';
+const serverPort = process.env.HQ_SERVER_PORT || 8000;
+const pubsubHost = process.env.HQ_PUBSUB_URL || 'http://localhost';
 const logger = pino({
   prettyPrint: {
     levelFirst: true,
@@ -75,32 +75,32 @@ Sequelize.Validator.notNull = function (item) { return !this.isNull(item); };
 
 // Configure push provider
 function getApnProvider() {
-  if (!env.APNS_ENABLED) {
+  if (!env.HQ_APNS_ENABLED) {
     return null;
   }
   return new apn.Provider({
     token: {
-      key: path.join(__dirname, '../..', env.APNS_TOKEN_PATH),
-      keyId: env.APNS_KEY_ID,
-      teamId: env.APNS_TEAM_ID
+      key: path.join(__dirname, '../..', env.HQ_APNS_TOKEN_PATH),
+      keyId: env.HQ_APNS_KEY_ID,
+      teamId: env.HQ_APNS_TEAM_ID
     },
-    production: (env.APNS_SANDBOX === false)
+    production: (env.HQ_APNS_SANDBOX === false)
   });
 }
 let apnProvider = getApnProvider();
 
 // Configure Twilio
 function getTwilioClient() {
-  if (!env.TWILIO_ENABLED) {
+  if (!env.HQ_TWILIO_ENABLED) {
     return null;
   }
-  return new twilio(env.TWILIO_SID, env.TWILIO_AUTHTOKEN);
+  return new twilio(env.HQ_TWILIO_SID, env.HQ_TWILIO_AUTHTOKEN);
 }
 let twilioClient = getTwilioClient();
 
 // Configure SendGrid
 let sendgridClient = require('@sendgrid/mail');
-sendgridClient.setApiKey(env.SENDGRID_API_KEY);
+sendgridClient.setApiKey(env.HQ_SENDGRID_KEY);
 
 // Configure faye
 const fayePath = `${pubsubHost}/pubsub`;

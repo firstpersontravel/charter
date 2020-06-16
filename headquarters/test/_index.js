@@ -11,13 +11,13 @@ const mocks = require('./mocks');
 
 // Set flag for consumption in app.
 config.isTesting = true;
-config.env.STAGE = 'test';
-config.env.APP_PUBLIC_URL = 'http://test';
-config.env.SERVER_PUBSUB_URL = 'http://testpubsub';
-config.env.TWILIO_HOST = 'http://twilio.test';
-config.env.TWILIO_MEDIA_HOST = 'http://twilio.media';
-config.env.JWT_SECRET = 'test_secret';
-config.env.S3_CONTENT_BUCKET = 'test_bucket';
+config.env.HQ_STAGE = 'test';
+config.env.HQ_PUBLIC_URL = 'http://test';
+config.env.HQ_PUBSUB_URL = 'http://testpubsub';
+config.env.HQ_TWILIO_HOST = 'http://twilio.test';
+config.env.HQ_TWILIO_MEDIA_HOST = 'http://twilio.media';
+config.env.HQ_JWT_SECRET = 'test_secret';
+config.env.HQ_CONTENT_BUCKET = 'test_bucket';
 
 // Disable logs in tests
 if (!config.env.SHOW_TEST_LOGS) {

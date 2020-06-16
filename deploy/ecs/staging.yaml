@@ -1,0 +1,35 @@
+environment:
+- { name: FRONTEND_ANALYTICS_ENABLED, value: 'false' }
+- { name: FRONTEND_CONTENT_BUCKET, value: fpt-agency-content-staging }
+- { name: FRONTEND_PUBSUB_URL, value: https://beta.firstperson.travel:5002 }
+- { name: FRONTEND_SENTRY_DSN, value: https://2cf7ae92e52142358afa2003761aa8ad@sentry.io/1390590 }
+- { name: FRONTEND_SENTRY_ENVIRONMENT, value: staging }
+- { name: FRONTEND_SERVER_URL, value: https://beta.firstperson.travel }
+- { name: GIT_HASH, value: '__GIT_HASH__' }
+- { name: HQ_APNS_ENABLED, value: 'false' }
+- { name: HQ_APNS_SANDBOX, value: 'true' }
+- { name: HQ_CONTENT_BUCKET, value: fpt-agency-content-staging }
+- { name: HQ_DATABASE_HOST, value: fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com }
+- { name: HQ_DATABASE_NAME, value: agency_staging }
+- { name: HQ_PUBLIC_URL, value: https://beta.firstperson.travel }
+- { name: HQ_PUBSUB_PORT, value: '5002' }
+- { name: HQ_PUBSUB_URL, value: http://localhost:5002 }
+- { name: HQ_SENTRY_DSN, value: https://150dc48f146b499190850da19315fa8a@sentry.io/103090 }
+- { name: HQ_SENTRY_ENVIRONMENT, value: staging }
+- { name: HQ_SERVER_PORT, value: '5001' }
+- { name: HQ_STAGE, value: staging }
+- { name: HQ_TWILIO_ENABLED, value: 'false' }
+- { name: HQ_TWILIO_HOST, value: https://beta.firstperson.travel }
+- { name: HQ_TWILIO_MEDIA_HOST, value: https://fpt-agency-content-staging.s3.amazonaws.com }
+- { name: NODE_ENV, value: production }
+secrets:
+- { name: FRONTEND_GOOGLE_API_KEY, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.google-api-key }
+- { name: HQ_APNS_KEY_ID, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.apns-key-id }
+- { name: HQ_APNS_TEAM_ID, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.apns-team-id }
+- { name: HQ_APNS_TOKEN, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.apns-token }
+- { name: HQ_DATABASE_PASSWORD, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.staging.db-password }
+- { name: HQ_DATABASE_USER, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.staging.db-user }
+- { name: HQ_JWT_SECRET, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.staging.jwt-secret }
+- { name: HQ_SENDGRID_KEY, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.sendgrid-key }
+- { name: HQ_TWILIO_AUTHTOKEN, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.twilio-token }
+- { name: HQ_TWILIO_SID, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.twilio-sid }
