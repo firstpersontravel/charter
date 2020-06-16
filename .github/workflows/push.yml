@@ -140,7 +140,7 @@ jobs:
         aws-region: us-west-2
     - name: Render Task Definition
       run: |
-        pip3 install pyyaml
+        pip install pyyaml
         deploy/ecs/print_task.py staging > /tmp/staging-${{ github.sha }}.json
         sed -i.bak 's/__GIT_HASH__/${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
         sed -i.bak 's/__IMAGE__/${{ steps.login-ecr.outputs.registry }}\/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
