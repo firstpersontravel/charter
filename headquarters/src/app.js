@@ -81,6 +81,11 @@ app.use('/s3', s3Router({
   uniquePrefix: false
 }));
 
+// Health check
+app.get('/health', (req, res) => {
+  res.send('ok');
+});
+
 const hostRedirects = {
   'app.firstperson.travel': 'charter.firstperson.travel',
   'staging.firstperson.travel': 'beta.firstperson.travel',

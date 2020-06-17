@@ -1,7 +1,7 @@
-cpu: '2048'
+cpu: 2048
 executionRoleArn: arn:aws:iam::875382849197:role/charter-service
 family: charter-__ENVIRONMENT__
-memory: '4096'
+memory: 4096
 networkMode: awsvpc
 requiresCompatibilities: [FARGATE]
 containerDefinitions:
@@ -10,8 +10,8 @@ containerDefinitions:
     workingDirectory: /var/app/headquarters
     command: ['bin/server.js']
     essential: true
-    cpu: '768'
-    memory: '1536'
+    cpu: 768
+    memory: 1536
     logConfiguration:
       logDriver: awslogs
       options:
@@ -26,8 +26,8 @@ containerDefinitions:
     workingDirectory: /var/app/headquarters
     command: ['bin/worker.js']
     essential: true
-    cpu: '768'
-    memory: '1536'
+    cpu: 768
+    memory: 1536
     logConfiguration:
       logDriver: awslogs
       options:
@@ -39,8 +39,8 @@ containerDefinitions:
     workingDirectory: /var/app/headquarters
     command: ['bin/pubsub.js']
     essential: true
-    cpu: '256'
-    memory: '1024'
+    cpu: 256
+    memory: 1024
     logConfiguration:
       logDriver: awslogs
       options:

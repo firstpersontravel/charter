@@ -2,7 +2,11 @@ const http = require('http');
 const faye = require('faye');
 
 // Start listening
-const server = http.createServer();
+const server = http.createServer((req, res) => {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.write('ok');
+  res.end();
+});
 
 // Create pubsub and attach to server
 const bayeux = new faye.NodeAdapter({ mount: '/pubsub' });

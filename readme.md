@@ -1,161 +1,137 @@
-## Agency server
+# Charter
+
+## Local Setup
 
 ### Prerequisites
 
-```sh
-# install via brew
-brew install node
-brew install awscli
+    # install via brew
+    brew install node
+    brew install awscli
 
-# install fabric
-pip install fabric==1.14.0 termcolor boto jinja2
+    # install fabric
+    pip install fabric==1.14.0 termcolor boto jinja2
 
-# set up n
-npm install -g n
-n 12.5.0
-npm install -g bower
+    # set up n
+    npm install -g n
+    n 12.5.0
+    npm install -g bower
 
-# install webpack
-npm install -g webpack
+    # install webpack
+    npm install -g webpack
 
-# set up pre-commit hook
-cp precommit.sh ./.git/hooks/pre-commit
+    # set up pre-commit hook
+    cp precommit.sh ./.git/hooks/pre-commit
 
-# create a minimal local env (fill in )
-mkdir -p secrets
-cat << EOF > secrets/local.env
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-FRONTEND_ANALYTICS_ENABLED=false
-FRONTEND_CONTENT_BUCKET=fpt-agency-content-local
-FRONTEND_GOOGLE_API_KEY=
-FRONTEND_PUBSUB_URL=http://localhost:5002
-FRONTEND_SERVER_URL=http://localhost:5001
-HQ_APNS_ENABLED=false
-HQ_CONTENT_BUCKET=fpt-agency-content-local
-HQ_DATABASE_HOST=mysql
-HQ_DATABASE_NAME=galaxy
-HQ_DATABASE_PASSWORD=galaxypassword
-HQ_DATABASE_USER=galaxy
-HQ_JWT_SECRET=
-HQ_PUBLIC_URL=http://localhost:5001
-HQ_PUBSUB_PORT=5002
-HQ_PUBSUB_URL=http://pubsub:5002
-HQ_SENDGRID_KEY=
-HQ_SERVER_PORT=5001
-HQ_STAGE=development
-HQ_TWILIO_ENABLED=false
-NODE_ENV=development
-EOF
-```
+    # create a local env
+    mkdir -p secrets
+    cp deploy/example.env secrets/local.env
 
 ### Local docker setup
 
-# Rebuild if you add new modules
-docker build . -t fpt:latest
-docker-compose up -d
+    # Rebuild if you add new modules
+    docker build . -t fpt:latest
+    docker-compose up -d
 
 ### Build js apps locally
 
-```
-# download secrets
-npm run download_secrets
+    # download secrets
+    npm run download_secrets
 
-# setup core
-cd fptcore
-    npm install
+    # setup core
+    cd fptcore
+        npm install
 
-# setup travel
-cd apps/travel
-    npm install
-    bower -q install
-    ln -s `pwd`/../../fptcore ./node_modules
+    # setup travel
+    cd apps/travel
+        npm install
+        bower -q install
+        ln -s `pwd`/../../fptcore ./node_modules
 
-# setup agency
-cd apps/agency
-    npm install
+    # setup agency
+    cd apps/agency
+        npm install
 
-# run tests
-npm test
+    # run tests
+    npm test
 
-# watch all local apps in parallel
-npm run watch
+    # watch all local apps in parallel
+    npm run watch
 
-# Run agency only
-cd apps/agency
-webpack-dev-server
+    # Run agency only
+    cd apps/agency
+    webpack-dev-server
 
-# show logs in HQ tests
-SHOW_TEST_LOGS=1 npm run test_hq
-```
+    # show logs in HQ tests
+    SHOW_TEST_LOGS=1 npm run test_hq
 
 ### Migrations
 
-```
-# Run migrations
-docker-compose exec server sequelize db:migrate
+    # Run migrations
+    docker-compose exec server sequelize db:migrate
 
-# Create a new migration
-docker-compose exec server sequelize migration:generate --name add-some-fields
+    # Create a new migration
+    docker-compose exec server sequelize migration:generate --name add-some-fields
 
-# Run script migrations
-docker-compose run server npm run scripts:migrate
-```
+    # Run script migrations
+    docker-compose run server npm run scripts:migrate
 
 ### Random tips
 
-```
-# If the docker clock gets out of sync:
-docker run --rm --privileged alpine hwclock -s
+    # If the docker clock gets out of sync:
+    docker run --rm --privileged alpine hwclock -s
 
-# Clear contaniers
-docker kill $(docker ps -q)
-docker rm $(docker ps -a -q)
-docker rmi $(docker images -q) --force
-docker volume ls -qf dangling=true | xargs docker volume rm
+    # Clear contaniers
+    docker kill $(docker ps -q)
+    docker rm $(docker ps -a -q)
+    docker rmi $(docker images -q) --force
+    docker volume ls -qf dangling=true | xargs docker volume rm
 
-# Clean non-tracked cruft
-git clean -xdf
-```
+    # Clean non-tracked cruft
+    git clean -xdf
 
-### Build for production
+## Build for production
 
-```
-# build for production
-npm run build
-open "http://localhost:5001/travel"
-```
+### Building locally for production
+
+    npm run build
+    open "http://localhost:5001/travel"
+
+### Deploying with terraform
+
+    export AWS_PROFILE=fpt
+    export GIT_HASH=`aws ecr describe-images --region us-west-2 --repository-name charter --output text --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[*]' | tr '\t' '\n' | tail -1`
+    deploy/ecs/render_task.py staging $GIT_HASH | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
+
+    cd deploy/terraform/environments/staging
+    terraform init
+    terraform plan
+
+## Native app
 
 ### Set up native app
 
-```
-cd native/ios/Traveler
-pod install
-```
+    cd native/ios/Traveler
+    pod install
 
 ### Build native app
 
-```    
-# run local tunnel
-ngrok http -subdomain=firstpersontravel 5001
+    # run local tunnel
+    ngrok http -subdomain=firstpersontravel 5001
 
-# build travel app in xcode
-```
+    # build travel app in xcode
+
+## Debugging
 
 ### Getting a nice console
 
-```
-dc exec server node --experimental-repl-await
-```
+    dc exec server node --experimental-repl-await
 
 ### Creating a user
 
-```
-node ./cmd/create-org.js <name> <title>
-node ./cmd/create-user.js <org-name> <email> <pw>
-```
+    node ./cmd/create-org.js <name> <title>
+    node ./cmd/create-user.js <org-name> <email> <pw>
 
-### Todo later:
+## Todo later:
     
     - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams

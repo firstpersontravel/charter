@@ -105,10 +105,7 @@ jobs:
     - name: Render Task Definition
       run: |
         pip install pyyaml
-        deploy/ecs/merge_task.py staging > /tmp/staging-${{ github.sha }}.json
-        sed -i.bak 's/__GIT_HASH__/${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
-        sed -i.bak 's/__IMAGE__/${{ steps.login-ecr.outputs.registry }}\/charter:${{ github.sha }}/g' /tmp/staging-${{ github.sha }}.json
-        sed -i.bak 's/__ENVIRONMENT__/staging/g' /tmp/staging-${{ github.sha }}.json
+        deploy/ecs/render_task.py staging ${{ github.sha }} > /tmp/staging-${{ github.sha }}.json
         cat 
     - name: Deploy ECS Task Definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
