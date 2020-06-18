@@ -67,6 +67,18 @@ data "aws_iam_policy_document" "charter_task_policy" {
     resources = ["*"]
   }
 
+  # Push logs to cloudwatch
+  statement {
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+      "logs:DescribeLogStreams"
+    ]
+    
+    resources = ["arn:aws:logs:*:*:*"]
+  }
+
   # Push to S3 for signing
   statement {
     actions = ["s3:PutObject"]
@@ -85,11 +97,6 @@ resource "aws_iam_role_policy" "charter_task_policy" {
   name   = "charter-${var.environment_name}-task-policy"
   role   = aws_iam_role.charter_task.id
   policy = data.aws_iam_policy_document.charter_task_policy.json
-}
-
-resource "aws_iam_role_policy_attachment" "charter_task_ecs_policy" {
-  role       = aws_iam_role.charter_task.id
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole"
 }
 
 resource "aws_ecs_task_definition" "charter_bootstrap" {
