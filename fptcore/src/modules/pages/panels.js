@@ -176,6 +176,21 @@ module.exports = {
       return truncate(component.placeholder || '<no placeholder>', titleLen);
     }
   },
+  role_assignment: {
+    title: 'Role assignment',
+    icon: 'sticky-note',
+    help: 'A panel that lets a game admin role invite and assign new players as designated roles.',
+    properties: {
+      role_names: {
+        type: 'list',
+        help: 'The list of roles that can be assigned.',
+        items: {
+          type: 'reference',
+          collection: 'roles',
+        }
+      }
+    }
+  },
   text: {
     icon: 'sticky-note',
     help: 'A simple text.',

@@ -23,5 +23,9 @@
     "migrate:undo": "docker-compose exec server sequelize db:migrate:undo",
     "migrate:scripts": "docker-compose exec server npm run migrate:scripts",
     "migrate:examples": "docker-compose exec server npm run migrate:examples"
+  },
+  "dependencies": {
+    "sqlite3": "^4.2.0",
+    "webpack-cli": "^3.3.11"
   }
 }
