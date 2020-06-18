@@ -23,13 +23,13 @@ environment:
 - { name: HQ_TWILIO_MEDIA_HOST, value: https://fpt-agency-content-staging.s3.amazonaws.com }
 - { name: NODE_ENV, value: production }
 secrets:
-- { name: FRONTEND_GOOGLE_API_KEY, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.google-api-key }
-- { name: HQ_APNS_KEY_ID, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.apns-key-id }
-- { name: HQ_APNS_TEAM_ID, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.apns-team-id }
-- { name: HQ_APNS_TOKEN, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.apns-token }
-- { name: HQ_DATABASE_PASSWORD, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.staging.db-password }
-- { name: HQ_DATABASE_USER, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.staging.db-user }
-- { name: HQ_JWT_SECRET, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.staging.jwt-secret }
-- { name: HQ_SENDGRID_KEY, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.sendgrid-key }
-- { name: HQ_TWILIO_AUTHTOKEN, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.twilio-token }
-- { name: HQ_TWILIO_SID, valueFrom: arn:aws:ssm:region:875382849197:parameter/charter.global.twilio-sid }
+- { name: FRONTEND_GOOGLE_API_KEY, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.google-api-key }
+- { name: HQ_APNS_KEY_ID, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.apns-key-id }
+- { name: HQ_APNS_TEAM_ID, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.apns-team-id }
+- { name: HQ_APNS_TOKEN, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.apns-token }
+- { name: HQ_DATABASE_PASSWORD, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.staging.db-password }
+- { name: HQ_DATABASE_USER, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.staging.db-user }
+- { name: HQ_JWT_SECRET, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.staging.jwt-secret }
+- { name: HQ_SENDGRID_KEY, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.sendgrid-key }
+- { name: HQ_TWILIO_AUTHTOKEN, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.twilio-token }
+- { name: HQ_TWILIO_SID, valueFrom: arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.twilio-sid }
