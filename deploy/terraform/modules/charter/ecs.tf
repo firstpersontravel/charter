@@ -12,16 +12,16 @@ resource "aws_security_group" "charter_task" {
   vpc_id      = data.aws_vpc.charter.id
 
   ingress {
-    from_port = 5001
-    to_port   = 5001
-    protocol  = "tcp"
+    from_port       = 5001
+    to_port         = 5001
+    protocol        = "tcp"
     security_groups = [aws_security_group.charter_ingress.id]
   }
 
   ingress {
-    from_port = 5002
-    to_port   = 5002
-    protocol  = "tcp"
+    from_port       = 5002
+    to_port         = 5002
+    protocol        = "tcp"
     security_groups = [aws_security_group.charter_ingress.id]
   }
 
@@ -33,9 +33,50 @@ resource "aws_security_group" "charter_task" {
   }
 }
 
+data "aws_iam_policy_document" "charter_task_trust" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "charter_task_policy" {
+  # Get SSM parameters
+  statement {
+    actions = ["ssm:GetParameter"]
+    resources = [
+      "arn:aws:ssm::875382849197:parameter/charter.global.*",
+      "arn:aws:ssm::875382849197:parameter/charter.staging.*"
+    ]
+  }
+
+  # Push to S3 for signing
+  statement {
+    actions = ["s3:PutObject"]
+    resources = [
+      "arn:aws:s3:::fpt-agency-content*/*"
+    ]
+  }
+}
+
+resource "aws_iam_role" "charter_task" {
+  name   = "charter-${var.environment_name}-task"
+  assume_role_policy = data.aws_iam_policy_document.charter_task_trust.json
+}
+
+resource "aws_iam_role_policy" "charter_task_policy" {
+  name   = "charter-${var.environment_name}-task-policy"
+  role   = aws_iam_role.charter_task.id
+  policy = data.aws_iam_policy_document.charter_task_policy.json
+}
+
 resource "aws_ecs_task_definition" "charter_bootstrap" {
   family                   = "charter-${var.environment_name}"
-  execution_role_arn       = "arn:aws:iam::875382849197:role/charter-service"
+  execution_role_arn       = aws_iam_role.charter_task.arn
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
@@ -49,14 +90,14 @@ resource "aws_ecs_service" "charter" {
   desired_count = 1
 
   network_configuration {
-    subnets = data.aws_subnet_ids.charter.ids
+    subnets         = data.aws_subnet_ids.charter.ids
     security_groups = [aws_security_group.charter_task.id]
   }
 
   capacity_provider_strategy {
     capacity_provider = "FARGATE"
-    weight = 1
-    base = 0
+    weight            = 1
+    base              = 0
   }
 
   load_balancer {

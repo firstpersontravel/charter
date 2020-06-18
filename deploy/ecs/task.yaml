@@ -1,6 +1,7 @@
-cpu: '2048'
-executionRoleArn: arn:aws:iam::875382849197:role/charter-service
+# Provisioned by terraform
+executionRoleArn: arn:aws:iam::875382849197:role/charter-staging-task
 family: charter-__ENVIRONMENT__
+cpu: '2048'
 memory: '4096'
 networkMode: awsvpc
 requiresCompatibilities: [FARGATE]

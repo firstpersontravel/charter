@@ -43,7 +43,7 @@ module.exports = {
       // By default, remove players' current page, since we're changing scene.
       // If there is a new page for that player in this scene, then auto-nav
       // to the first one sorted by name.
-      const pagesForRole = scriptContent.pages
+      const pagesForRole = (scriptContent.pages || [])
         .filter(p => (
           p.interface === role.interface && p.scene === newSceneName
         ))
