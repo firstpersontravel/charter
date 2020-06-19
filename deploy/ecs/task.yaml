@@ -9,7 +9,7 @@ containerDefinitions:
   - name: server
     image: __IMAGE__
     workingDirectory: /var/app/headquarters
-    command: ['bin/server.js']
+    command: ['node', 'bin/server.js']
     essential: true
     cpu: '768'
     memory: '1536'
@@ -18,14 +18,14 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: charter-__ENVIRONMENT__-server
+        awslogs-stream-prefix: server
     portMappings:
       - containerPort: 5001
         protocol: tcp
   - name: worker
     image: __IMAGE__
     workingDirectory: /var/app/headquarters
-    command: ['bin/worker.js']
+    command: ['node', 'bin/worker.js']
     essential: true
     cpu: '768'
     memory: '1536'
@@ -34,11 +34,11 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: charter-__ENVIRONMENT__-worker
+        awslogs-stream-prefix: worker
   - name: pubsub
     image: __IMAGE__
     workingDirectory: /var/app/headquarters
-    command: ['bin/pubsub.js']
+    command: ['node', 'bin/pubsub.js']
     essential: true
     cpu: '256'
     memory: '1024'
@@ -47,7 +47,7 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: charter-__ENVIRONMENT__-pubsub
+        awslogs-stream-prefix: pubsub
     portMappings:
       - containerPort: 5002
         protocol: tcp
