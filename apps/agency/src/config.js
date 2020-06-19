@@ -1,6 +1,6 @@
 export default {
-  s3ContentBucket: process.env.S3_CONTENT_BUCKET,
-  serverUrl: process.env.SERVER_URL,
-  pubsubUrl: process.env.PUBSUB_URL,
-  analyticsEnabled: process.env.ANALYTICS_ENABLED === 'true'
+  contentBucket: window.config.FRONTEND_CONTENT_BUCKET,
+  serverUrl: window.config.FRONTEND_SERVER_URL,
+  pubsubUrl: window.config.FRONTEND_PUBSUB_URL,
+  analyticsEnabled: window.config.FRONTEND_ANALYTICS_ENABLED === 'true'
 };

@@ -46,7 +46,7 @@ class KernelUtil {
    */
   static prepareEvalContext(objs) {
     const trip = this._assembleTripFields(objs);
-    const host = objs.experience.domain || config.env.APP_PUBLIC_URL;
+    const host = objs.experience.domain || config.env.HQ_PUBLIC_URL;
     const env = { host: host };
     // Create the context.
     return ContextCore.gatherEvalContext(env, trip);

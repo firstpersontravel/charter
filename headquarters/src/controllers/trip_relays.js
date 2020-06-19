@@ -108,8 +108,8 @@ class TripRelaysController {
     }
     // For text messges, add some debug text if we're sending it to
     // an actor role.
-    const stage = config.env.STAGE === 'production' ?
-      '' : `${config.env.STAGE[0].toUpperCase()}${config.env.STAGE.substr(1)} `;
+    const stage = config.env.HQ_STAGE === 'production' ?
+      '' : `${config.env.HQ_STAGE} `;
     const fromRole = script.content.roles
       .find(r => r.name === message.fromRoleName) || { title: '?' };
     const toRole = script.content.roles

@@ -25,7 +25,7 @@ class EmailController {
     if (!sendgridClient) {
       return null;
     }
-    if (!config.isTesting && config.env.STAGE !== 'production') {
+    if (!config.isTesting && config.env.HQ_STAGE !== 'production') {
       if (!_.some(whitelistedEmails, function(em) {
         return to.indexOf(em) > -1;
       })) {

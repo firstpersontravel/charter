@@ -1,0 +1,58 @@
+# Provisioned by terraform
+executionRoleArn: arn:aws:iam::875382849197:role/charter-staging-task
+family: charter-__ENVIRONMENT__
+cpu: '2048'
+memory: '4096'
+networkMode: awsvpc
+requiresCompatibilities: [FARGATE]
+containerDefinitions:
+  - name: server
+    image: __IMAGE__
+    workingDirectory: /var/app/headquarters
+    command: ['node', 'bin/server.js']
+    essential: true
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: charter-__ENVIRONMENT__
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
+    portMappings:
+      - containerPort: 5001
+        protocol: tcp
+  - name: worker
+    image: __IMAGE__
+    workingDirectory: /var/app/headquarters
+    command: ['node', 'bin/worker.js']
+    essential: true
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: charter-__ENVIRONMENT__
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
+  - name: pubsub
+    image: __IMAGE__
+    workingDirectory: /var/app/headquarters
+    command: ['node', 'bin/pubsub.js']
+    essential: true
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: charter-__ENVIRONMENT__
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
+    portMappings:
+      - containerPort: 5002
+        protocol: tcp
+  - name: migrate
+    image: __IMAGE__
+    workingDirectory: /var/app/headquarters
+    command: ['npm', 'run', 'migrate']
+    essential: false
+    logConfiguration:
+      logDriver: awslogs
+      options:
+        awslogs-group: charter-__ENVIRONMENT__
+        awslogs-region: us-west-2
+        awslogs-stream-prefix: charter-__ENVIRONMENT__

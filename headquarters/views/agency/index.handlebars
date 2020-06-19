@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Charter by First Person Travel</title>
+    <title>Charter</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="/static/images/favicon.png"/>
@@ -9,13 +9,16 @@
     <div id='root'></div>
     <script src="/static/agency/jquery.min.js"></script>
     <script src="/static/agency/bootstrap.bundle.min.js"></script>
+    <script type='text/javascript'>
+    window.config = {{{envJson}}};
+    </script>
     <script src="/build/agency/bundle.js"></script>
     <script type='text/javascript'>
     if (window.location.host.indexOf('localhost') > -1) {
       document.write('\<script src="http://localhost:8080/webpack-dev-server.js"\>\<\/script\>');
     }
     </script>
-    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyAzpjfBIV5JMsMDLm358mugG8CR_7fObDM"
+    <script src="//maps.googleapis.com/maps/api/js?key={{googleApiKey}}"
     async defer></script>
   </body>
 </html>

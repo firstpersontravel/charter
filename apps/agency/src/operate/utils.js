@@ -8,7 +8,7 @@ export function fullMediaUrl(org, experience, url) {
   if (_.startsWith(url, 'http')) {
     return url;
   }
-  const host = `https://${config.s3ContentBucket}.s3.amazonaws.com`;
+  const host = `https://${config.contentBucket}.s3.amazonaws.com`;
   return `${host}/${org.name}/${experience.name}/${url}`;
 }
 

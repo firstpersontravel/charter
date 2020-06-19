@@ -14,9 +14,9 @@ import reducers, { initialState } from './reducers';
 import { associateAuthData } from './actions';
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.SENTRY_ENVIRONMENT,
-  release: process.env.GIT_HASH
+  dsn: window.config.FRONTEND_SENTRY_DSN,
+  environment: window.config.FRONTEND_SENTRY_ENVIRONMENT,
+  release: window.config.GIT_HASH
 });
 
 // const loggerMiddleware = createLogger();

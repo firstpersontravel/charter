@@ -76,10 +76,15 @@ app.use('/endpoints/twilio', twilioRouter);
 
 // S3 signing url
 app.use('/s3', s3Router({
-  bucket: config.env.S3_CONTENT_BUCKET,
+  bucket: config.env.HQ_CONTENT_BUCKET,
   ACL: 'public-read',
   uniquePrefix: false
 }));
+
+// Health check
+app.get('/health', (req, res) => {
+  res.send('ok');
+});
 
 const hostRedirects = {
   'app.firstperson.travel': 'charter.firstperson.travel',
@@ -109,9 +114,25 @@ app.use('/favicon.ico', serveFile('static/favicon.ico'));
 app.use('/apple-touch-icon-precomposed.png',
   serveFile('static/images/apple-touch-icon-precomposed.png'));
 
-// Serve one-page apps
+// Serve one-page travel app
 app.use('/travel', serveFile('apps/travel/dist/index.html'));
-app.use('', serveFile('apps/agency/static/index.html'));
+
+// Serve one-page agency app
+app.use('', (req, res) => {
+  res.render('agency/index', {
+    layout: null,
+    googleApiKey: config.env.FRONTEND_GOOGLE_API_KEY,
+    envJson: JSON.stringify({
+      GIT_HASH: config.env.GIT_HASH,
+      FRONTEND_SENTRY_DSN: config.env.FRONTEND_SENTRY_DSN,
+      FRONTEND_SENTRY_ENVIRONMENT: config.env.FRONTEND_SENTRY_ENVIRONMENT,
+      FRONTEND_CONTENT_BUCKET: config.env.FRONTEND_CONTENT_BUCKET,
+      FRONTEND_SERVER_URL: config.env.FRONTEND_SERVER_URL,
+      FRONTEND_PUBSUB_URL: config.env.FRONTEND_PUBSUB_URL,
+      FRONTEND_ANALYTICS_ENABLED: config.env.FRONTEND_ANALYTICS_ENABLED
+    })
+  });
+});
 
 // The error handler must be before any other error middleware
 app.use(Sentry.Handlers.errorHandler());

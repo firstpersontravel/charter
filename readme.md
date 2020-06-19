@@ -1,4 +1,6 @@
-## Agency server
+# Charter
+
+## Local Setup
 
 ### Prerequisites
 
@@ -19,6 +21,10 @@
 
     # set up pre-commit hook
     cp precommit.sh ./.git/hooks/pre-commit
+
+    # create a local env
+    mkdir -p secrets
+    cp deploy/example.env secrets/local.env
 
 ### Local docker setup
 
@@ -83,11 +89,24 @@
     # Clean non-tracked cruft
     git clean -xdf
 
-### Build for production
+## Build for production
 
-    # build for production
+### Building locally for production
+
     npm run build
     open "http://localhost:5001/travel"
+
+### Deploying with terraform
+
+    export AWS_PROFILE=fpt
+    export GIT_HASH=`aws ecr describe-images --region us-west-2 --repository-name charter --output text --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[*]' | tr '\t' '\n' | tail -1`
+    deploy/ecs/render_task.py staging $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
+
+    cd deploy/terraform/environments/staging
+    terraform init
+    terraform plan
+
+## Native app
 
 ### Set up native app
 
@@ -95,11 +114,13 @@
     pod install
 
 ### Build native app
-    
+
     # run local tunnel
     ngrok http -subdomain=firstpersontravel 5001
 
     # build travel app in xcode
+
+## Debugging
 
 ### Getting a nice console
 
@@ -110,7 +131,7 @@
     node ./cmd/create-org.js <name> <title>
     node ./cmd/create-user.js <org-name> <email> <pw>
 
-### Todo later:
+## Todo later:
     
     - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams

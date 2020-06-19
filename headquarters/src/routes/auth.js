@@ -18,7 +18,7 @@ function slugify(text) {
 function createToken(user, durationSecs) {
   const payload = { iss: 'fpt', sub: user.id, aud: 'web' };
   const opts = { expiresIn: durationSecs, algorithm: 'HS256' };
-  const token = jwt.sign(payload, config.env.JWT_SECRET, opts);
+  const token = jwt.sign(payload, config.env.HQ_JWT_SECRET, opts);
   return token;
 }
 
@@ -140,7 +140,7 @@ const infoRoute = async (req, res) => {
   }
   let payload;
   try {
-    payload = await jwt.verify(tokenString, config.env.JWT_SECRET);
+    payload = await jwt.verify(tokenString, config.env.HQ_JWT_SECRET);
   } catch (err) {
     res.status(401);
     res.json({ data: null, error: err.message });

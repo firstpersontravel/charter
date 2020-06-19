@@ -7,7 +7,7 @@ class TwilioCallUtil {
    * Generate a path for referred media.
    */
   static getTwilioMediaPath(orgName, experienceName, mediaPath) {
-    const mediaHost = config.env.TWILIO_MEDIA_HOST;
+    const mediaHost = config.env.HQ_TWILIO_MEDIA_HOST;
     return `${mediaHost}/${orgName}/${experienceName}/${mediaPath}`;
   }
 

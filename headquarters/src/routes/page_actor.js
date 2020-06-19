@@ -167,7 +167,7 @@ const playerShowRoute = async (req, res) => {
     orgName: req.params.orgName,
     orgTitle: objs.trip.org.title,
     pages: pages,
-    stage: config.env.STAGE,
+    stage: config.env.HQ_STAGE,
     tripIds: player.tripId
   };
   if (req.query.is_partial) {
@@ -227,7 +227,7 @@ const userShowRoute = async (req, res) => {
     orgTitle: user.org.title,
     userName: `${user.firstName} ${user.lastName}`,
     pages: pages,
-    stage: config.env.STAGE,
+    stage: config.env.HQ_STAGE,
     tripIds: _.map(players, 'tripId').join(',')
   };
   if (req.query.is_partial) {

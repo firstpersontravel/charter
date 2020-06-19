@@ -19,7 +19,7 @@ describe('TextConvoExample', () => {
 
   beforeEach(async () => {
     config.getTwilioClient().incomingPhoneNumbers.list.resolves([{
-      smsUrl: `${config.env.TWILIO_HOST}/url`,
+      smsUrl: `${config.env.HQ_TWILIO_HOST}/url`,
       phoneNumber: '+13334445555'
     }]);
     script = await TestUtil.createExample(example);

@@ -24,3 +24,5 @@ profile
 DerivedData
 Pods
 .githash
+deploy/terraform/**/containers.json
+**/.terraform
