@@ -25,9 +25,6 @@ def main(env_name, git_hash, integer_resources):
     env_path = os.path.join(os.path.dirname(__file__), '{}.yaml'.format(env_name))
     env_data = yaml.safe_load(open(env_path))
     for container_data in task_data['containerDefinitions']:
-        if integer_resources:
-            container_data['cpu'] = int(container_data['cpu'])
-            container_data['memory'] = int(container_data['memory'])
         container_data['environment'] = construct_env(env_data['environment'])
         container_data['secrets'] = construct_secrets(env_data['secrets'])
     image_url = '{}/charter:{}'.format(registry, git_hash)

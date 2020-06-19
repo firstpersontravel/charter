@@ -51,7 +51,7 @@ const pubsubHost = process.env.HQ_PUBSUB_URL || 'http://localhost';
 const logger = pino({
   prettyPrint: {
     levelFirst: true,
-    colorize: true,
+    colorize: false,
     translateTime: 'SYS:standard'
   },
   prettifier: pinoPretty,
