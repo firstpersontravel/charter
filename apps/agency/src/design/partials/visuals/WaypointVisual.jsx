@@ -6,13 +6,11 @@ import StaticMapImg from '../StaticMapImg';
 export default function WaypointVisual({ resource }) {
   const coords = resource.options
     .map(opt => opt.coords)
-    .filter(Boolean)
-    .map(c => `markers=${c.join(',')}`)
-    .join('|');
+    .filter(Boolean);
   return (
     <StaticMapImg
       className="img-fluid"
-      markers={[coords]}
+      markers={coords}
       size="300x300" />
   );
 }

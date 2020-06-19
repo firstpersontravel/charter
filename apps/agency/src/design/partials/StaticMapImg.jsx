@@ -13,8 +13,10 @@ export default function StaticMapImg({ size, polylines, markers, paths, ...props
     mapUrl += `&${pathParams}`;
   }
 
-  if (markers) {
-    const markerParams = markers.join('&');
+  if (markers && markers.length) {
+    const markerParams = markers
+      .map(c => `markers=${c.join(',')}`)
+      .join('&');
     mapUrl += `&${markerParams}`;
   }
 
