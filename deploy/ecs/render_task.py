@@ -6,6 +6,15 @@ import yaml
 import json
 
 registry = '875382849197.dkr.ecr.us-west-2.amazonaws.com'
+ssm = 'arn:aws:ssm:us-west-2:875382849197:parameter'
+
+def construct_env(env):
+    return [{ 'name': k, 'value': v } for (k, v) in env.iteritems()]
+
+def construct_secrets(secrets):
+    return [
+        { 'name': k, 'valueFrom': '{}/{}'.format(ssm, v) }
+        for (k, v) in secrets.iteritems()]
 
 def main(env_name, git_hash):
     task_path = os.path.join(os.path.dirname(__file__), 'task.yaml')
@@ -17,8 +26,8 @@ def main(env_name, git_hash):
     for container_data in task_data['containerDefinitions']:
         container_data['cpu'] = str(container_data['cpu'])
         container_data['memory'] = str(container_data['memory'])
-        container_data['environment'] = env_data['environment']
-        container_data['secrets'] = env_data['secrets']
+        container_data['environment'] = construct_env(env_data['environment'])
+        container_data['secrets'] = construct_secrets(env_data['secrets'])
     image_url = '{}/charter:{}'.format(registry, git_hash)
     text = (json
         .dumps(task_data, indent=2)
