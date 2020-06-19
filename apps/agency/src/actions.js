@@ -232,8 +232,8 @@ export function makeAuthRequest(url, params, name) {
           dispatch(saveInstances('auth', [{ id: 'latest', data: null }]));
           return null;
         }
-        // Signup failure
-        if (response.status === 422) {
+        // Signup failure or forbidden token error
+        if (response.status === 422 || response.status === 403) {
           return response.json()
             .then((data) => {
               dispatch(saveRequest(reqName, 'rejected', data.error));
@@ -295,6 +295,26 @@ export function logout() {
       FS.anonymize();
     }
   };
+}
+
+export function lostPassword(email) {
+  const params = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email })
+  };
+  return makeAuthRequest(`${config.serverUrl}/auth/lost-pw`, params,
+    'lostPassword');
+}
+
+export function resetPassword(token, newPassword) {
+  const params = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: token, newPassword: newPassword })
+  };
+  return makeAuthRequest(`${config.serverUrl}/auth/reset-pw`, params,
+    'resetPassword');
 }
 
 export function retrieveInstance(collectionName, instanceId) {

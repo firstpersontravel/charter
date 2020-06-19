@@ -20,6 +20,8 @@ const {
 const User = database.define('User', snakeCaseColumns({
   email: mutableModifier(optionalStringField(255)),
   passwordHash: mutableModifier(optionalStringField(60)),
+  passwordResetToken: mutableModifier(optionalStringField(32)),
+  passwordResetExpiry: mutableModifier(allowNullModifier(datetimeField())),
   firstName: mutableModifier(optionalStringField(255)),
   lastName: mutableModifier(optionalStringField(255)),
   phoneNumber: mutableModifier(optionalStringField(10)),

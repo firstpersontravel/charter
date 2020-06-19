@@ -71,7 +71,11 @@ apiRouter.use('/log-entries', createModelRouter(models.LogEntry,
 // And for users, which are shared
 const userOpts = {
   requireFilters: ['orgId', 'experienceId'],
-  blacklistFields: ['passwordHash']
+  blacklistFields: [
+    'passwordHash',
+    'passwordResetToken',
+    'passwordResetExpiry'
+  ]
 };
 apiRouter.use('/users', createModelRouter(models.User, userOpts));
 

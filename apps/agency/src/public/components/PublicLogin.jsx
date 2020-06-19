@@ -85,13 +85,19 @@ export default class PublicLogin extends Component {
                 onChange={e => this.setState({ password: e.target.value })}
                 placeholder="Password" />
             </div>
-            <button
-              type="submit"
-              disabled={!this.canSubmit()}
-              onClick={this.handleSubmit}
-              className="btn btn-primary">
-              {this.isLoggingIn() ? 'Logging in...' : 'Log in'}
-            </button>
+            <div>
+              <button
+                type="submit"
+                disabled={!this.canSubmit()}
+                onClick={this.handleSubmit}
+                className="btn btn-primary">
+                {this.isLoggingIn() ? 'Logging in...' : 'Log in'}
+              </button>
+              <Link
+                className="ml-2"
+                to="/lost-pw">Forgot your password?
+              </Link>
+            </div>
           </form>
           <p>
             {

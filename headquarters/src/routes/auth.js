@@ -1,10 +1,12 @@
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const Sequelize = require('sequelize');
 
 const config = require('../config');
 const models = require('../models');
 const authMiddleware = require('../middleware/auth');
+const EmailController = require('../controllers/email');
 
 function slugify(text) {
   return text.toString().toLowerCase()
@@ -60,18 +62,23 @@ async function respondWithUserAuthInfo(res, user, tokenString) {
   res.json({ data: data });
 }
 
+async function findUser(email) {
+  return await models.User.findOne({
+    where: {
+      email: email.toLowerCase(),
+      experienceId: null,
+      passwordHash: { [Sequelize.Op.not]: '' }
+    }
+  });  
+}
+
 /**
  * Check user credentials, and set an auth cookie if true.
  */
 const loginRoute = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const user = await models.User.findOne({
-    where: {
-      email: email,
-      passwordHash: { [Sequelize.Op.not]: '' }
-    }
-  });
+  const user = await findUser(email);
   const matchHash = (user && user.passwordHash) || DUMMY_HASH;
   const isMatch = await bcrypt.compare(password, matchHash);
   if (!isMatch) {
@@ -88,22 +95,16 @@ const signupRoute = async (req, res) => {
   const orgTitle = req.body.orgTitle;
   const orgName = slugify(orgTitle);
   // Users w/no experienceId are loggin-able users
-  const existingUser = await models.User.findOne({
-    where: {
-      email: email,
-      experienceId: null,
-      passwordHash: { [Sequelize.Op.not]: '' },
-    }
-  });
+  const existingUser = await findUser(email);
   if (existingUser) {
-    res.status(422).send({
+    res.status(422).json({
       error: 'A user with this email already exists.'
     });
     return;
   }
   const existingOrg = await models.Org.findOne({ where: { name: orgName } });
   if (existingOrg) {
-    res.status(422).send({
+    res.status(422).json({
       error: 'A workspace with this name already exists.'
     });
     return;
@@ -112,7 +113,7 @@ const signupRoute = async (req, res) => {
   const org = await models.Org.create({ name: orgName, title: orgTitle });
   const pwHash = await bcrypt.hash(password, 10);
   const user = await models.User.create({
-    email: email,
+    email: email.toLowerCase(),
     orgId: org.id,
     experienceId: null,
     passwordHash: pwHash
@@ -157,8 +158,78 @@ const infoRoute = async (req, res) => {
   await respondWithUserAuthInfo(res, user, newTokenString);
 };
 
+const RESET_PASSWORD_LINK_DURATION_MSEC = 86400 * 1000; // one day
+const LOST_PASSWORD_FROM = 'charter@firstperson.travel';
+const LOST_PASSWORD_SUBJECT = 'Reset your Charter password';
+const LOST_PASSWORD_BODY = `
+## Reset your Charter Password
+
+Did you recently ask us to reset your password? If so, you can follow this link to create a new password for your account.
+
+<link>
+
+If not, you can just ignore this message.
+
+Thank you!
+–The Charter Team`;
+
+const lostPasswordRoute = async (req, res) => {
+  const email = req.body.email;
+  const user = await findUser(email);
+  if (!user) {
+    res.status(200);
+    res.json({ data: null });
+    return;
+  }
+  const resetToken = crypto.randomBytes(16).toString('hex');
+  const nowMsec = new Date().valueOf();
+  const resetExpiry = new Date(nowMsec + RESET_PASSWORD_LINK_DURATION_MSEC);
+  await user.update({
+    passwordResetToken: resetToken,
+    passwordResetExpiry: resetExpiry
+  });
+  const resetLink = `${config.env.HQ_PUBLIC_URL}/reset-pw?token=${resetToken}`;
+  const body = LOST_PASSWORD_BODY.replace('<link>', resetLink);
+  await EmailController.sendEmail(LOST_PASSWORD_FROM, user.email,
+    LOST_PASSWORD_SUBJECT, body);
+  res.status(200);
+  res.json({ data: null });
+};
+
+const resetPasswordRoute = async (req, res) => {
+  const token = req.body.token;
+  const newPassword = req.body.newPassword;
+  const user = await models.User.findOne({
+    where: {
+      passwordResetToken: token,
+      experienceId: null,
+      passwordHash: { [Sequelize.Op.not]: '' }
+    }
+  });
+  if (!user) {
+    res.status(403);
+    res.json({ error: 'That token is not valid.' });
+    return;
+  }
+  if (new Date().valueOf() > user.passwordResetExpiry.valueOf()) {
+    res.status(403);
+    res.json({ error: 'That token has expired.' });
+    return;
+  }
+  const pwHash = await bcrypt.hash(newPassword, 10);
+  user.update({
+    passwordHash: pwHash,
+    passwordResetToken: '',
+    passwordResetExpiry: null
+  });
+  res.status(200);
+  res.json({ data: null });
+};
+
 module.exports = {
   loginRoute,
   signupRoute,
+  lostPasswordRoute,
+  resetPasswordRoute,
   infoRoute
 };

@@ -63,7 +63,7 @@ export default class PublicSignup extends Component {
         <div className="col-md-6 offset-md-3">
           <h1>Welcome to Charter!</h1>
           <p>
-            You can create an account here. If you already have an account, <Link to="/login">please log in.</Link>
+            You can create an account here. Already have an account? <Link to="/login">Log in!</Link>
           </p>
           {this.renderSignupErrorAlert()}
           {this.renderSignupFailedAlert()}
