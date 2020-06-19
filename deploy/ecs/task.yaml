@@ -16,7 +16,7 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: server
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
     portMappings:
       - containerPort: 5001
         protocol: tcp
@@ -30,7 +30,7 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: worker
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
   - name: pubsub
     image: __IMAGE__
     workingDirectory: /var/app/headquarters
@@ -41,7 +41,7 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: pubsub
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
     portMappings:
       - containerPort: 5002
         protocol: tcp
@@ -55,4 +55,4 @@ containerDefinitions:
       options:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: migrate
+        awslogs-stream-prefix: charter-__ENVIRONMENT__
