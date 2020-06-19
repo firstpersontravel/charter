@@ -6,6 +6,10 @@ data "aws_ecs_cluster" "charter" {
   cluster_name = "charter"
 }
 
+resource "aws_cloudwatch_log_group" "charter" {
+  name = "charter-${var.environment_name}"
+}
+
 resource "aws_security_group" "charter_task" {
   name        = "charter-${var.environment_name}-task"
   description = "Allow task inbound traffic"
@@ -75,7 +79,7 @@ data "aws_iam_policy_document" "charter_task_policy" {
       "logs:PutLogEvents",
       "logs:DescribeLogStreams"
     ]
-    
+
     resources = ["arn:aws:logs:*:*:*"]
   }
 

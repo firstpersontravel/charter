@@ -16,9 +16,9 @@ containerDefinitions:
     logConfiguration:
       logDriver: awslogs
       options:
-        awslogs-group: "/ecs/charter-__ENVIRONMENT__-server"
+        awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: ecs
+        awslogs-stream-prefix: charter-__ENVIRONMENT__-server
     portMappings:
       - containerPort: 5001
         protocol: tcp
@@ -32,9 +32,9 @@ containerDefinitions:
     logConfiguration:
       logDriver: awslogs
       options:
-        awslogs-group: "/ecs/charter-__ENVIRONMENT__-worker"
+        awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: ecs
+        awslogs-stream-prefix: charter-__ENVIRONMENT__-worker
   - name: pubsub
     image: __IMAGE__
     workingDirectory: /var/app/headquarters
@@ -45,9 +45,9 @@ containerDefinitions:
     logConfiguration:
       logDriver: awslogs
       options:
-        awslogs-group: "/ecs/charter-__ENVIRONMENT__-pubsub"
+        awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
-        awslogs-stream-prefix: ecs
+        awslogs-stream-prefix: charter-__ENVIRONMENT__-pubsub
     portMappings:
       - containerPort: 5002
         protocol: tcp
