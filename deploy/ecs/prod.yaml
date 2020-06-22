@@ -1,6 +1,6 @@
 resources:
-  cpu: '1024'
-  memory: '2048'
+  cpu: '2048'
+  memory: '4096'
 environment:
   FRONTEND_ANALYTICS_ENABLED: 'false'
   FRONTEND_CONTENT_BUCKET: fpt-agency-content-staging

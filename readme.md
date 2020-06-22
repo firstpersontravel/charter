@@ -133,6 +133,8 @@
 
 ## Todo later:
     
+    - https://devexpress.github.io/testcafe/
+    - https://github.com/team-video/tragopan
     - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams
     - https://github.com/parcel-bundler/parcel
