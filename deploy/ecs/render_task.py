@@ -26,7 +26,7 @@ def main(env_name, git_hash, integer_resources):
     env_data = yaml.safe_load(open(env_path))
 
     # Add resources to core info
-    task_data.update(env_data['resoources'])
+    task_data.update(env_data['resources'])
     if integer_resources:
         task_data['cpu'] = int(task_data['cpu'])
         task_data['memory'] = int(task_data['memory'])

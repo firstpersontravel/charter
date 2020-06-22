@@ -118,7 +118,7 @@ jobs:
         wait-for-minutes: 5
 
   deploy_prod:
-    name: Deploy to staging
+    name: Deploy to production
     if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
     needs: [build, test_core, test_hq, lint_agency, build_travel]
