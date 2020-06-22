@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "charter_task_policy" {
     actions = ["ssm:GetParameters"]
     resources = [
       "arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.*",
-      "arn:aws:ssm:us-west-2:875382849197:parameter/charter.staging.*"
+      "arn:aws:ssm:us-west-2:875382849197:parameter/charter.${var.environment_name}.*"
     ]
   }
 

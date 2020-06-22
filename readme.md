@@ -8,9 +8,6 @@
     brew install node
     brew install awscli
 
-    # install fabric
-    pip install fabric==1.14.0 termcolor boto jinja2
-
     # set up n
     npm install -g n
     n 12.5.0
@@ -88,6 +85,13 @@
 
     # Clean non-tracked cruft
     git clean -xdf
+
+### Pull production DB for testing
+
+    export $(cat ./secrets/production.env | xargs)
+    mysqldump -h $HQ_DATABASE_HOST -p$HQ_DATABASE_PASSWORD -u $HQ_DATABASE_USER $HQ_DATABASE_NAME > /tmp/bak.sql
+    mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
+    docker-compose exec server npm run migrate
 
 ## Build for production
 
