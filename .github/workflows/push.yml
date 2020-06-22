@@ -134,13 +134,13 @@ jobs:
     - name: Render Task Definition
       run: |
         pip install pyyaml
-        deploy/ecs/render_task.py prod ${{ github.sha }} > /tmp/prod-${{ github.sha }}.json
+        deploy/ecs/render_task.py production ${{ github.sha }} > /tmp/prod-${{ github.sha }}.json
         cat 
     - name: Deploy ECS Task Definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: /tmp/prod-${{ github.sha }}.json
-        service: charter-prod
+        service: charter-production
         cluster: charter
         wait-for-service-stability: true
         wait-for-minutes: 5
