@@ -36,6 +36,7 @@
 
     # download secrets
     npm run download_secrets
+    cp secrets/local.env deploy/example.env
 
     # setup core
     cd fptcore
@@ -54,8 +55,9 @@
     # run tests
     npm test
 
-    # watch all local apps in parallel
+    # watch all local apps in parallel (should be run to ensure code file changes are reflected live)
     npm run watch
+    http://localhost:5001
 
     # Run agency only
     cd apps/agency
@@ -124,12 +126,20 @@
 
 ### Getting a nice console
 
-    dc exec server node --experimental-repl-await
+    docker-compose exec server node --experimental-repl-await
+
+### Access mysql on docker (pwd: root)
+
+    docker run -it --network charter_default --rm mysql mysql galaxy -hcharter_mysql_1 -uroot -p
+
+### Seeing logs on docker
+
+    docker logs charter_server_1
 
 ### Creating a user
 
-    node ./cmd/create-org.js <name> <title>
-    node ./cmd/create-user.js <org-name> <email> <pw>
+    docker-compose exec server node cmd/create-org.js <name> <title>
+    docker-compose exec server node cmd/create-user.js <org-name> <email> <pw>
 
 ## Todo later:
     
