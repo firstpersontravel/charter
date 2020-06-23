@@ -1,6 +1,7 @@
-on: [push]
-  # push:
-  #   branches: [master]
+on:
+  push:
+    branches:
+      -master
 
 name: Deploy to ECS
 
