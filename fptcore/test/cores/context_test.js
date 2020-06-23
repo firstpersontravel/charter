@@ -16,7 +16,7 @@ describe('ContextCore', () => {
   describe('#gatherPlayerEvalContext', () => {
     it('gathers values from player', () => {
       const trip = {
-        id: 1,
+        tripId: 1,
         script: { name: 'test' },
         tripState: {}
       };
@@ -31,6 +31,7 @@ describe('ContextCore', () => {
       };
       const expected = {
         link: 'https://test.test/s/10',
+        signupLink: 'https://test.test/entry/t/' + trip.tripId + '/r/' + player.roleName,
         contact_name: 'Vance Farraday',
         photo: null,
         email: 'vance@vance.com',

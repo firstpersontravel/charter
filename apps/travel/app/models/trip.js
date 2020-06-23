@@ -27,6 +27,7 @@ export default DS.Model.extend({
     var script = this.get('script').toJSON();
     script.content = JSON.parse(script.content);
     var trip = this.toJSON();
+    trip.tripId = this.id;
     trip.script = script;
     trip.schedule = JSON.parse(trip.schedule);
     trip.tripState = JSON.parse(trip.tripState);
