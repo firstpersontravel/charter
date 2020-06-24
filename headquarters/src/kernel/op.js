@@ -37,6 +37,9 @@ class KernelOpController {
     });
   }
 
+  // can change this operation; not currently used by anything (TODo: check)
+  // change to refer to playerId instead of a roleName
+  // call from switchRole
   static async updatePlayerFields(objs, op) {
     const players = _.filter(objs.players, { roleName: op.roleName });
     return Promise.all(players.map(player => player.update(op.fields)));
