@@ -34,8 +34,7 @@
 
 ### Build js apps locally
 
-    # download secrets
-    npm run download_secrets
+    # set up local secrets
     cp secrets/local.env deploy/example.env
 
     # setup core
