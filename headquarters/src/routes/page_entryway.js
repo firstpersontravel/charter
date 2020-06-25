@@ -100,15 +100,13 @@ const signupSubmitRoute = async (req, res) => {
     .sort(SceneCore.sortResource)[0];
 
   if (!playerRole) {
-    res.status(404).send('Entryway interface not found');
+    res.status(404).send('Role not found');
     return;
   }
 
   const player = await models.Player.findOne({
     where: { tripId: trip.id, roleName: playerRole.name }
   });
-  console.log("Found player:");
-  console.log(player);
   // Look for a user by phone number, or create if doesn't exist.
   const [entrywayUser, ] = await models.User.findOrCreate({
     where: {
@@ -123,8 +121,6 @@ const signupSubmitRoute = async (req, res) => {
   await models.User.update(
     { firstName: name, email: email},
     { where: { id: entrywayUser.id } });
-  console.log("Made/found user:");
-  console.log(entrywayUser);
   // Associate this player with the registered user
   await models.Player.update(
     { userId: entrywayUser.id },
