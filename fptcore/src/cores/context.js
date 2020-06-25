@@ -17,7 +17,7 @@ class ContextCore {
     const page = _.find(_.get(trip, 'script.content.pages') || [],
       { name: pageName }) || {};
     const link = (env.host || '') + '/s/' + player.id;
-    const signupLink = (env.host || '') + '/entry/t/' + trip.tripId + '/r/' + player.roleName;
+    const signupLink = (env.host || '') + '/entry/t/' + trip.id + '/r/' + player.roleName;
     const fullName = user.lastName ?
       (user.firstName + ' ' + user.lastName) :
       user.firstName;
