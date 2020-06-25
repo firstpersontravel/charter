@@ -16,7 +16,7 @@ environment:
   HQ_DATABASE_NAME: agency_staging
   HQ_PUBLIC_URL: https://beta.firstperson.travel
   HQ_PUBSUB_PORT: '5002'
-  HQ_PUBSUB_URL: https://beta.firstperson.travel:5002
+  HQ_PUBSUB_URL: https://localhost:5002
   HQ_SENTRY_DSN: https://150dc48f146b499190850da19315fa8a@sentry.io/103090
   HQ_SENTRY_ENVIRONMENT: staging
   HQ_SERVER_PORT: '5001'
