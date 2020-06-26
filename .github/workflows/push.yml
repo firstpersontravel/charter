@@ -115,7 +115,7 @@ jobs:
         service: charter-staging
         cluster: charter
         wait-for-service-stability: true
-        wait-for-minutes: 5
+        wait-for-minutes: 10
 
   deploy_prod:
     name: Deploy to production
@@ -143,4 +143,4 @@ jobs:
         service: charter-production
         cluster: charter
         wait-for-service-stability: true
-        wait-for-minutes: 5
+        wait-for-minutes: 10
