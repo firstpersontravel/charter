@@ -165,7 +165,8 @@ export default class GroupMap extends Component {
       .flatten()
       .filter((player) => {
         const trip = _.find(this.props.trips, { id: player.tripId });
-        return !!trip.tripState.currentPageNamesByRole[player.roleName];
+        const pageNamesByRole = trip.tripState.currentPageNamesByRole || {};
+        return !!pageNamesByRole[player.roleName];
       })
       .value();
 
