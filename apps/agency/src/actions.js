@@ -207,7 +207,7 @@ export function associateAuthData(authData) {
     });
   }
   // GoSquared
-  if (_gs && typeof _gs === 'function') {
+  if (typeof _gs === 'function') {
     _gs('identify', {
       email: authData.user.email,
       name: authData.user.email,
