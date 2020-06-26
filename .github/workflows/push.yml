@@ -119,7 +119,7 @@ jobs:
 
   deploy_prod:
     name: Deploy to production
-    if: github.ref == 'refs/heads/production'
+    if: github.ref == 'refs/heads/deploy/prod'
     runs-on: ubuntu-latest
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
