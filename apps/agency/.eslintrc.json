@@ -13,9 +13,8 @@
     "window": true,
     "google": true,
     "fptcore": true,
-    "Autopilot": true,
     "FS": true,
-    "_gs": true
+    "Intercom": true
   },
   "rules": {
     "class-methods-use-this": 0,

@@ -191,28 +191,35 @@ export function associateAuthData(authData) {
       orgName: org && org.name
     });
   });
-  // Autopilot
-  if (typeof Autopilot === 'object') {
-    Autopilot.run('associate', {
-      Email: authData.user.email,
-      FirstName: authData.user.email,
-      Company: org && org.title
-    });
-  }
   // FullStory
   if (typeof FS === 'function') {
     FS.identify(`${getStage()}-${authData.user.id}`, {
-      displayName: authData.user.email,
+      displayName: authData.user.fullName,
       email: authData.user.email
     });
   }
-  // GoSquared
-  if (typeof _gs === 'function') {
-    _gs('identify', {
+  // Intercom
+  if (typeof Intercom === 'function') {
+    window.intercomSettings = {
+      app_id: 'm4npk55n',
+      name: authData.user.fullName,
       email: authData.user.email,
-      name: authData.user.email,
-      company_name: org && org.title
-    });
+      user_id: authData.user.id,
+      company: org && org.title
+      // created_at: 1312182000 // Signup date as a Unix timestamp
+    };
+    Intercom('update');
+  }
+}
+
+function deassociateAuthData() {
+  // FullStory
+  if (typeof FS === 'function') {
+    FS.anonymize();
+  }
+  // Intercom
+  if (typeof Intercom === 'function') {
+    Intercom('shutdown');
   }
 }
 
@@ -221,6 +228,7 @@ function authenticate(dispatch, reqName, authData) {
   dispatch(saveInstances('auth', [{ id: reqName, data: authData }]));
   dispatch(saveInstances('auth', [{ id: 'latest', data: authData }]));
   if (!authData) {
+    deassociateAuthData();
     return;
   }
   dispatch(saveInstances('orgs', authData.orgs));
@@ -282,11 +290,12 @@ export function login(email, password) {
   return makeAuthRequest(`${config.serverUrl}/auth/login`, params, 'login');
 }
 
-export function signup(email, password, orgTitle) {
+export function signup(fullName, email, password, orgTitle) {
   const params = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      fullName: fullName,
       email: email,
       password: password,
       orgTitle: orgTitle
@@ -299,9 +308,7 @@ export function logout() {
   return function (dispatch) {
     localStorage.removeItem('auth_latest');
     dispatch(reset());
-    if (typeof FS === 'function') {
-      FS.anonymize();
-    }
+    deassociateAuthData();
   };
 }
 

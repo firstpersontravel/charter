@@ -27,6 +27,19 @@ function createToken(user, durationSecs) {
 // Dummy hash of '12345'.
 const DUMMY_HASH = '$2b$10$H2vj6CxZj7NgrAusLS2QdOi4VlyHfFA.oKzjEZlPE1m2CdF63WjcW';
 
+function getUserName(user) {
+  if (user.firstName && user.lastName) {
+    return `${user.firstName} ${user.lastName}`;
+  }
+  if (user.firstName) {
+    return user.firstName;
+  }
+  if (user.lastName) {
+    return user.lastName;
+  }
+  return null;
+}
+
 /**
  * Get user auth info data from user and org roles.
  */
@@ -39,7 +52,8 @@ async function getUserAuthInfo(user, tokenString) {
     jwt: tokenString,
     user: {
       id: user.id,
-      email: user.email
+      email: user.email,
+      fullName: getUserName(user)
     },
     orgs: orgRoles.map(orgRole => ({
       id: orgRole.org.id,
@@ -90,6 +104,7 @@ const loginRoute = async (req, res) => {
 };
 
 const signupRoute = async (req, res) => {
+  const fullName = req.body.fullName;
   const email = req.body.email;
   const password = req.body.password;
   const orgTitle = req.body.orgTitle;
@@ -110,9 +125,14 @@ const signupRoute = async (req, res) => {
     return;
   }
 
+  const nameParts = fullName.split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
   const org = await models.Org.create({ name: orgName, title: orgTitle });
   const pwHash = await bcrypt.hash(password, 10);
   const user = await models.User.create({
+    firstName: firstName,
+    lastName: lastName,
     email: email.toLowerCase(),
     orgId: org.id,
     experienceId: null,
