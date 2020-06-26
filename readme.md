@@ -105,6 +105,13 @@
     export AWS_PROFILE=fpt
     export GIT_HASH=`aws ecr describe-images --region us-west-2 --repository-name charter --output text --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[*]' | tr '\t' '\n' | tail -1`
 
+    # Test
+    deploy/ecs/render_task.py test $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/test/containers.json
+
+    cd deploy/terraform/environments/test
+    terraform init
+    terraform plan
+
     # Staging
     deploy/ecs/render_task.py staging $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
 
