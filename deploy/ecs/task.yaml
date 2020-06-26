@@ -1,5 +1,3 @@
-# Provisioned by terraform
-executionRoleArn: arn:aws:iam::875382849197:role/charter-staging-task
 family: charter-__ENVIRONMENT__
 networkMode: awsvpc
 requiresCompatibilities: [FARGATE]

@@ -1,3 +1,4 @@
+role: arn:aws:iam::875382849197:role/charter-production-task
 resources:
   cpu: '2048'
   memory: '4096'

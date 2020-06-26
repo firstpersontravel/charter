@@ -25,8 +25,10 @@ def main(env_name, git_hash, integer_resources):
     env_path = os.path.join(os.path.dirname(__file__), '{}.yaml'.format(env_name))
     env_data = yaml.safe_load(open(env_path))
 
-    # Add resources to core info
+    # Add resources and role to core info
     task_data.update(env_data['resources'])
+    task_data['role'] = env_data['role']
+
     if integer_resources:
         task_data['cpu'] = int(task_data['cpu'])
         task_data['memory'] = int(task_data['memory'])

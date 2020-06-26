@@ -1,3 +1,4 @@
+role: arn:aws:iam::875382849197:role/charter-staging-task
 resources:
   cpu: '1024'
   memory: '2048'
