@@ -27,7 +27,7 @@ def main(env_name, git_hash, integer_resources):
 
     # Add resources and role to core info
     task_data.update(env_data['resources'])
-    task_data['role'] = env_data['role']
+    task_data['executionRoleArn'] = env_data['role']
 
     if integer_resources:
         task_data['cpu'] = int(task_data['cpu'])
