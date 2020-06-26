@@ -205,7 +205,7 @@ export function associateAuthData(authData) {
       name: authData.user.fullName,
       email: authData.user.email,
       user_id: authData.user.id,
-      company: org && org.title
+      company: org ? { id: org.id, name: org.title } : null
       // created_at: 1312182000 // Signup date as a Unix timestamp
     };
     Intercom('update');
