@@ -8,9 +8,6 @@
     brew install node
     brew install awscli
 
-    # install fabric
-    pip install fabric==1.14.0 termcolor boto jinja2
-
     # set up n
     npm install -g n
     n 12.5.0
@@ -89,6 +86,13 @@
     # Clean non-tracked cruft
     git clean -xdf
 
+### Pull production DB for testing
+
+    export $(cat ./secrets/production.env | xargs)
+    mysqldump -h $HQ_DATABASE_HOST -p$HQ_DATABASE_PASSWORD -u $HQ_DATABASE_USER $HQ_DATABASE_NAME > /tmp/bak.sql
+    mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
+    docker-compose exec server npm run migrate
+
 ## Build for production
 
 ### Building locally for production
@@ -100,9 +104,18 @@
 
     export AWS_PROFILE=fpt
     export GIT_HASH=`aws ecr describe-images --region us-west-2 --repository-name charter --output text --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[*]' | tr '\t' '\n' | tail -1`
+
+    # Staging
     deploy/ecs/render_task.py staging $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
 
     cd deploy/terraform/environments/staging
+    terraform init
+    terraform plan
+
+    # Production
+    deploy/ecs/render_task.py production $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/production/containers.json
+
+    cd deploy/terraform/environments/production
     terraform init
     terraform plan
 
@@ -133,6 +146,8 @@
 
 ## Todo later:
     
+    - https://devexpress.github.io/testcafe/
+    - https://github.com/team-video/tragopan
     - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams
     - https://github.com/parcel-bundler/parcel

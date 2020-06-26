@@ -17,22 +17,36 @@ def construct_secrets(secrets):
         for k in sorted(secrets.iterkeys())]
 
 def main(env_name, git_hash, integer_resources):
+    # Load core info
     task_path = os.path.join(os.path.dirname(__file__), 'task.yaml')
     task_data = yaml.safe_load(open(task_path))
+
+    # Load env info
+    env_path = os.path.join(os.path.dirname(__file__), '{}.yaml'.format(env_name))
+    env_data = yaml.safe_load(open(env_path))
+
+    # Add resources and role to core info
+    task_data.update(env_data['resources'])
+    task_data['executionRoleArn'] = env_data['role']
+
     if integer_resources:
         task_data['cpu'] = int(task_data['cpu'])
         task_data['memory'] = int(task_data['memory'])
-    env_path = os.path.join(os.path.dirname(__file__), '{}.yaml'.format(env_name))
-    env_data = yaml.safe_load(open(env_path))
+
+    # Add env to core info
     for container_data in task_data['containerDefinitions']:
         container_data['environment'] = construct_env(env_data['environment'])
         container_data['secrets'] = construct_secrets(env_data['secrets'])
+
+    # Fill in env, image, git hash
     image_url = '{}/charter:{}'.format(registry, git_hash)
     text = (json
         .dumps(task_data, indent=2)
         .replace('__ENVIRONMENT__', env_name)
         .replace('__IMAGE__', image_url)
         .replace('__GIT_HASH__', git_hash))
+
+    # Output results to stdout
     print(text)
 
 if __name__ == '__main__':
