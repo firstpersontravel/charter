@@ -14,7 +14,8 @@
     "google": true,
     "fptcore": true,
     "Autopilot": true,
-    "FS": true
+    "FS": true,
+    "_gs": true
   },
   "rules": {
     "class-methods-use-this": 0,

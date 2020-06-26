@@ -206,6 +206,14 @@ export function associateAuthData(authData) {
       email: authData.user.email
     });
   }
+  // GoSquared
+  if (_gs && typeof _gs === 'function') {
+    _gs('identify', {
+      email: authData.user.email,
+      name: authData.user.email,
+      company_name: org && org.title
+    });
+  }
 }
 
 function authenticate(dispatch, reqName, authData) {
