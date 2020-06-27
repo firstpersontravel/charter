@@ -1,16 +1,16 @@
-var http = require('http');
+const http = require('http');
 
-var app = require('../src/app');
-var config = require('../src/config');
+const app = require('../src/app');
+const config = require('../src/config');
 
 // Start listening
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 try {
   server.listen(config.serverPort, function() {
-    // var host = server.address().address;
-    // var port = server.address().port;
-    // config.logger.info({ name: 'server' }, `listening at ${host}:${port}`);
+    const host = server.address().address;
+    const port = server.address().port;
+    config.logger.info({ name: 'server' }, `listening at ${host}:${port}`);
   });
 } catch(err) {
   config.logger.error(err.message);
