@@ -182,6 +182,9 @@ export default class ResourceShow extends Component {
     this.handleUpdateScript(newScriptContent,
       `${this.props.match.params.collectionName}/${updatedResource.name}`,
       this.isNewMainResource());
+
+    const isNew = this.isNewMainResource();
+    this.trackResourceUpdate(isNew ? 'Created' : 'Updated', collectionName);
   }
 
   handleDupeMainResource() {
@@ -192,6 +195,7 @@ export default class ResourceShow extends Component {
       collectionName, newResource.name, newResource);
     this.handleUpdateScript(newScriptContent,
       `${this.props.match.params.collectionName}/${newResource.name}`, true);
+    this.trackResourceUpdate('Duplicated', collectionName);
   }
 
   handleDeleteMainResource() {
@@ -212,21 +216,25 @@ export default class ResourceShow extends Component {
       collectionName, resourceName, null);
     // Save and redirect to slice root
     this.handleUpdateScript(newScriptContent, '', true);
+    this.trackResourceUpdate('Deleted', collectionName);
   }
 
   handleUpdateChildResource(collectionName, updatedResource) {
     const newScriptContent = this.getScriptContentWithUpdatedResource(
       collectionName, updatedResource.name, updatedResource);
     this.handleUpdateScript(newScriptContent,
-      `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
+      `${this.props.match.params.collectionName}/` +
+      `${this.props.match.params.resourceName}`,
       false);
     // If we're editing a new child resource, redirect to it once created
-    if (this.state.pendingChildResource &&
-        updatedResource.name === this.state.pendingChildResource.name) {
+    const isNew = this.state.pendingChildResource &&
+      updatedResource.name === this.state.pendingChildResource.name;
+    if (isNew) {
       this.props.history.push({
         search: `?child=${collectionName}.${updatedResource.name}`
       });
     }
+    this.trackResourceUpdate(isNew ? 'Created' : 'Updated', collectionName);
   }
 
   handleDeleteChildResource(collectionName, resourceName) {
@@ -241,6 +249,7 @@ export default class ResourceShow extends Component {
     this.handleUpdateScript(newScriptContent,
       `${this.props.match.params.collectionName}/${this.props.match.params.resourceName}`,
       false);
+    this.trackResourceUpdate('Deleted', collectionName);
   }
 
   handleDupeChildResource(collectionName, resourceName) {
@@ -255,6 +264,7 @@ export default class ResourceShow extends Component {
     this.props.history.push({
       search: `?child=${collectionName}.${newResource.name}`
     });
+    this.trackResourceUpdate('Duplicated', collectionName);
   }
 
   handleUpdateScript(newScriptContent, redirectToResource, forceRedirect) {
@@ -293,6 +303,14 @@ export default class ResourceShow extends Component {
         `/${this.props.match.params.sliceName}` +
         `/${redirectToResource}`);
     }
+  }
+
+  trackResourceUpdate(actionWord, collectionName) {
+    const resourceType = TextUtil.singularize(collectionName);
+    const typeTitle = titleForResourceType(resourceType);
+    const vowels = ['a', 'e', 'i', 'o', 'u'];
+    const aOrAn = vowels.includes(typeTitle[0].toLowerCase()) ? 'an' : 'a';
+    this.props.trackEvent(`${actionWord} ${aOrAn} ${typeTitle}`);
   }
 
   renderMainResource(canDelete) {
@@ -501,5 +519,6 @@ ResourceShow.propTypes = {
   match: PropTypes.object.isRequired,
   saveRevision: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
-  updateInstance: PropTypes.func.isRequired
+  updateInstance: PropTypes.func.isRequired,
+  trackEvent: PropTypes.func.isRequired
 };

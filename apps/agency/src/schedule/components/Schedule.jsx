@@ -44,6 +44,7 @@ class Schedule extends Component {
       experienceId: this.props.experience.id,
       scriptId: fields.scriptId
     });
+    this.props.trackEvent('Created a run group');
     this.handleCreateGroupToggle();
     const oldMax = Math.max(...this.props.groups.map(g => g.id));
     this.setState({ redirectToNext: oldMax });
@@ -283,6 +284,7 @@ Schedule.propTypes = {
   createInstance: PropTypes.func.isRequired,
   updateRelays: PropTypes.func.isRequired,
   systemActionRequestState: PropTypes.string,
+  trackEvent: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired
 };
 

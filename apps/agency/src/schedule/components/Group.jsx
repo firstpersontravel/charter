@@ -96,6 +96,7 @@ class Group extends Component {
         role, tripFields.variantNames.split(',')),
       insertions: { tripId: 'id' }
     })));
+    this.props.trackEvent('Created a run');
   }
 
   renderTripRow(group, trip) {
@@ -255,7 +256,8 @@ Group.propTypes = {
   children: PropTypes.node.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired
+  location: PropTypes.object.isRequired,
+  trackEvent: PropTypes.func.isRequired
 };
 
 const loadProps = ['match.params.groupId', 'group.trips.length'];
