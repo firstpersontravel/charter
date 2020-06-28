@@ -223,6 +223,15 @@ function deassociateAuthData() {
   }
 }
 
+export function trackEvent(eventName, metadata) {
+  return function (dispatch) {
+    // Intercom
+    if (typeof Intercom === 'function') {
+      Intercom('trackEvent', eventName, metadata);
+    }
+  };
+}
+
 function authenticate(dispatch, reqName, authData) {
   localStorage.setItem('auth_latest', JSON.stringify(authData));
   dispatch(saveInstances('auth', [{ id: reqName, data: authData }]));

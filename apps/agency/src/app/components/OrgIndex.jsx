@@ -35,6 +35,8 @@ export default class OrgIndex extends Component {
         return r
           .json()
           .then((data) => {
+            this.props.trackEvent('Created a project',
+              { example: example.title });
             this.createExperienceFromExample(fields, data.content,
               data.assets || []);
             this.props.history.push(`/${this.props.org.name}/${fields.name}`);
@@ -183,5 +185,6 @@ OrgIndex.propTypes = {
   history: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   experiences: PropTypes.array.isRequired,
-  createInstances: PropTypes.func.isRequired
+  createInstances: PropTypes.func.isRequired,
+  trackEvent: PropTypes.func.isRequired
 };
