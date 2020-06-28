@@ -130,7 +130,6 @@ export default class ResourceShow extends Component {
       this.props.script.content,
       this.props.match.params.sliceType,
       this.props.match.params.sliceName);
-    console.log('contentFilters', contentFilters);
     const filter = _.find(contentFilters, { collection: collectionName });
     return (filter && filter.children) || [];
   }
@@ -308,9 +307,10 @@ export default class ResourceShow extends Component {
   trackResourceUpdate(actionWord, collectionName) {
     const resourceType = TextUtil.singularize(collectionName);
     const typeTitle = titleForResourceType(resourceType);
-    const vowels = ['a', 'e', 'i', 'o', 'u'];
-    const aOrAn = vowels.includes(typeTitle[0].toLowerCase()) ? 'an' : 'a';
-    this.props.trackEvent(`${actionWord} ${aOrAn} ${typeTitle}`);
+    this.props.trackEvent('Updated a project', {
+      action: actionWord,
+      resourceType: typeTitle
+    });
   }
 
   renderMainResource(canDelete) {

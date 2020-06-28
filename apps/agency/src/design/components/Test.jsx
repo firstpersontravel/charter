@@ -128,7 +128,8 @@ export default class Test extends Component {
             <TripTestHarness
               script={this.props.script}
               variantNames={variantNames}
-              startedAt={this.state.startedAt} />
+              startedAt={this.state.startedAt}
+              trackEvent={this.props.trackEvent} />
           </div>
         </div>
       </div>
@@ -137,5 +138,6 @@ export default class Test extends Component {
 }
 
 Test.propTypes = {
-  script: PropTypes.object.isRequired
+  script: PropTypes.object.isRequired,
+  trackEvent: PropTypes.func.isRequired
 };

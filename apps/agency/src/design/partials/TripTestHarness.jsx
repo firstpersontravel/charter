@@ -241,10 +241,17 @@ export default class TripTestHarness extends Component {
     }
   }
 
+  trackPreviewEvent(eventType) {
+    this.props.trackEvent('Interacted with a preview', {
+      eventType: eventType
+    });
+  }
+
   handleAdminAction(name, params) {
     if (name === 'reset') {
       this.resetState(this.props.script, this.props.variantNames);
     }
+    this.trackPreviewEvent('reset');
   }
 
   handleAction(name, params) {
@@ -257,6 +264,7 @@ export default class TripTestHarness extends Component {
     const actionContext = this.getActionContext();
     const result = Kernel.resultForImmediateAction(action, actionContext);
     this.processResult(result);
+    this.trackPreviewEvent(name);
   }
 
   handleEvent(event) {
@@ -270,6 +278,7 @@ export default class TripTestHarness extends Component {
     const actionContext = this.getActionContext();
     const result = Kernel.resultForEvent(event, actionContext);
     this.processResult(result);
+    this.trackPreviewEvent(event.type);
   }
 
   handleTrigger(name, event) {
@@ -279,6 +288,7 @@ export default class TripTestHarness extends Component {
     const result = Kernel.resultForTrigger(trigger, event, actionContext,
       actionContext);
     this.processResult(result);
+    this.trackPreviewEvent('trigger');
   }
 
   handleTimer() {
@@ -406,5 +416,6 @@ export default class TripTestHarness extends Component {
 TripTestHarness.propTypes = {
   script: PropTypes.object.isRequired,
   variantNames: PropTypes.arrayOf(PropTypes.string).isRequired,
-  startedAt: PropTypes.number.isRequired
+  startedAt: PropTypes.number.isRequired,
+  trackEvent: PropTypes.func.isRequired
 };
