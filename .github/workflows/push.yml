@@ -1,9 +1,5 @@
 on: [push]
-  # push:
-  #   branches: [master]
-
-name: Deploy to ECS
-
+name: Test & Deploy
 jobs:
   lint_agency:
     name: Lint agency
