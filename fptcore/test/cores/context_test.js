@@ -31,6 +31,7 @@ describe('ContextCore', () => {
       };
       const expected = {
         link: 'https://test.test/s/10',
+        join_link: 'https://test.test/entry/t/' + trip.id + '/r/' + player.roleName,
         contact_name: 'Vance Farraday',
         photo: null,
         email: 'vance@vance.com',

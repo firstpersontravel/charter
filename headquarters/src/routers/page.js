@@ -9,6 +9,10 @@ const { asyncRoute } = require('./utils');
 
 // Public routes
 const entrywayRouter = express.Router();
+entrywayRouter.get('/t/:tripId/r/:roleName',
+  asyncRoute(entrywayRoutes.joinRoute));
+entrywayRouter.post('/t/:tripId/r/:roleName',
+  asyncRoute(entrywayRoutes.joinSubmitRoute));
 entrywayRouter.get('/:orgName/:experienceName',
   asyncRoute(entrywayRoutes.entrywayRoute));
 entrywayRouter.get('/:orgName/:experienceName/:interfaceTitleStub',
@@ -17,6 +21,7 @@ entrywayRouter.post('/:orgName/:experienceName',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));
 entrywayRouter.post('/:orgName/:experienceName/:interfaceTitleStub',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));
+
 
 const shortcutRouter = express.Router();
 shortcutRouter.get('/:playerId',
