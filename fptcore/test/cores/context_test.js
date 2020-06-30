@@ -17,23 +17,24 @@ describe('ContextCore', () => {
     it('gathers values from player', () => {
       const trip = {
         id: 1,
-        script: { name: 'test' },
+        script: { name: 'test', content: { roles: [{ name: 'Vance', title: 'Vance Farraday' }] } },
         tripState: {}
       };
       const player = {
         id: 10,
         roleName: 'Vance',
         user: {
-          firstName: 'Vance',
-          lastName: 'Farraday',
-          email: 'vance@vance.com'
+          firstName: 'Troy',
+          lastName: 'McClure',
+          email: 'troy@example.com'
         }
       };
       const expected = {
         link: 'https://test.test/s/10',
         contact_name: 'Vance Farraday',
+        user_name: 'Troy McClure',
         photo: null,
-        email: 'vance@vance.com',
+        email: 'troy@example.com',
         facetime: null,
         phone_number: null,
         headline: null,
