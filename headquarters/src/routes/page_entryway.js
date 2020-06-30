@@ -7,7 +7,7 @@ const TripResetHandler = require('../handlers/trip_reset');
 const ExperienceController = require('../controllers/experience');
 const EntrywayController = require('../controllers/entryway');
 
-const joinTripEntrywayRoute = async (req, res) => {
+const joinRoute = async (req, res) => {
   const tripId = req.params.tripId;
   const trip = await models.Trip.findOne({
     where: {
@@ -56,7 +56,7 @@ const joinTripEntrywayRoute = async (req, res) => {
   });
 };
 
-const joinTripEntrywaySubmitRoute = async (req, res) => {
+const joinSubmitRoute = async (req, res) => {
   const tripId = req.params.tripId;
   const roleName = req.params.roleName;
 
@@ -243,6 +243,6 @@ const entrywaySubmitRoute = async (req, res) => {
 module.exports = {
   entrywayRoute,
   entrywaySubmitRoute,
-  joinTripEntrywayRoute,
-  joinTripEntrywaySubmitRoute
+  joinRoute,
+  joinSubmitRoute
 };

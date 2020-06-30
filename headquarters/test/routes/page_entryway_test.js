@@ -36,7 +36,7 @@ describe('pageEntrywayRoutes', () => {
     roleName: roleName
   };
 
-  describe('#joinTripEntrywayRoute', () => {
+  describe('#joinRoute', () => {
     it('returns 200 if they are not yet in the experience', async () => {
       // stub db response
       sandbox.stub(models.Trip, 'findOne').resolves(trip);
@@ -50,7 +50,7 @@ describe('pageEntrywayRoutes', () => {
           roleName: roleName
         }
       });
-      await pageEntrywayRoutes.joinTripEntrywayRoute(req, res);
+      await pageEntrywayRoutes.joinRoute(req, res);
 
       // Test found trip with correct arguments
       sinon.assert.calledOnce(models.Trip.findOne);
@@ -111,7 +111,7 @@ describe('pageEntrywayRoutes', () => {
         },
         cookies: cookies
       });
-      await pageEntrywayRoutes.joinTripEntrywayRoute(req, res);
+      await pageEntrywayRoutes.joinRoute(req, res);
 
       // Test found player with correct arguments
       sinon.assert.calledOnce(models.Player.findOne);
@@ -133,7 +133,7 @@ describe('pageEntrywayRoutes', () => {
     });
   });
 
-  describe('#joinTripEntrywaySubmitRoute', () => {
+  describe('#joinSubmitRoute', () => {
     describe('if submitted with proper user data', () => {
       const userData = {
         name: 'Test User',
@@ -173,7 +173,7 @@ describe('pageEntrywayRoutes', () => {
           },
           body: userData
         });
-        await pageEntrywayRoutes.joinTripEntrywaySubmitRoute(req, res);
+        await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
         // Test found trip with correct arguments
         sinon.assert.calledOnce(models.Trip.findOne);
@@ -215,7 +215,7 @@ describe('pageEntrywayRoutes', () => {
           },
           body: userData
         });
-        await pageEntrywayRoutes.joinTripEntrywaySubmitRoute(req, res);
+        await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
         sinon.assert.calledOnce(models.User.findOrCreate);
         assert.deepStrictEqual(models.User.findOrCreate.firstCall.args, [{
@@ -237,7 +237,7 @@ describe('pageEntrywayRoutes', () => {
           },
           body: userData
         });
-        await pageEntrywayRoutes.joinTripEntrywaySubmitRoute(req, res);
+        await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
         sinon.assert.calledOnce(models.Player.update);
         assert.deepStrictEqual(models.Player.update.firstCall.args, [

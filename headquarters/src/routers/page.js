@@ -14,13 +14,13 @@ entrywayRouter.get('/:orgName/:experienceName',
 entrywayRouter.get('/:orgName/:experienceName/:interfaceTitleStub',
   asyncRoute(entrywayRoutes.entrywayRoute));
 entrywayRouter.get('/t/:tripId/r/:roleName',
-  asyncRoute(entrywayRoutes.signupRoute));
+  asyncRoute(entrywayRoutes.joinRoute));
 entrywayRouter.post('/:orgName/:experienceName',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));
 entrywayRouter.post('/:orgName/:experienceName/:interfaceTitleStub',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));
 entrywayRouter.post('/t/:tripId/r/:roleName',
-  asyncRoute(entrywayRoutes.signupSubmitRoute));
+  asyncRoute(entrywayRoutes.joinSubmitRoute));
 
 
 const shortcutRouter = express.Router();
