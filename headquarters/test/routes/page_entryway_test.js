@@ -14,11 +14,7 @@ describe('pageEntrywayRoutes', () => {
   const experience = {
     id: experienceId,
     title: 'Experience',
-    org: {
-      id: orgId,
-      name: 'org',
-      title: 'Org'
-    }
+    org: { id: orgId, name: 'org', title: 'Org' }
   };
   const tripId = 5;
   const trip = {
