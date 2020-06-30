@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import config from '../../config';
+
 const BASE_URL = 'https://maps.googleapis.com/maps/api/staticmap';
 
 export default function StaticMapImg({ size, polylines, markers, paths, ...props }) {
-  let mapUrl = `${BASE_URL}?key=${process.env.GOOGLE_API_KEY}&size=${size}`;
+  let mapUrl = `${BASE_URL}?key=${config.googleApiKey}&size=${size}`;
 
   if (polylines) {
     const pathParams = polylines
