@@ -60,12 +60,13 @@ function renderPlayerCell(player, isFirst) {
 
   const joinUrl = `/entry/t/${trip.id}/r/${player.roleName}`;
   const joinLink = player.user ? null : (
-    <div>
+    <>
+      <br />
       <strong>Join:</strong>&nbsp;
       <a href={joinUrl} target="_blank" rel="noopener noreferrer">
         <i className="fa fa-external-link" />
       </a>
-    </div>
+    </>
   );
 
   return (
