@@ -1,6 +1,5 @@
 const assert = require('assert');
 const httpMocks = require('node-mocks-http');
-const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
@@ -18,10 +17,10 @@ describe('pageEntrywayRoutes', () => {
   };
   const tripId = 5;
   const trip = {
-        id: tripId,
-        org_id: orgId,
-        experience: experience
-      };
+    id: tripId,
+    org_id: orgId,
+    experience: experience
+  };
   const roleName = 'role-aabbcc';
   const script = {
     content: { roles: [{ name: roleName }] },
@@ -37,7 +36,7 @@ describe('pageEntrywayRoutes', () => {
     roleName: roleName
   };
 
-  describe('#entrywaySignupRoute', () => {
+  describe('#joinTripEntrywayRoute', () => {
     it('returns 200 if they are not yet in the experience', async () => {
       // stub db response
       sandbox.stub(models.Trip, 'findOne').resolves(trip);
@@ -51,7 +50,7 @@ describe('pageEntrywayRoutes', () => {
           roleName: roleName
         }
       });
-      await pageEntrywayRoutes.signupRoute(req, res);
+      await pageEntrywayRoutes.joinTripEntrywayRoute(req, res);
 
       // Test found trip with correct arguments
       sinon.assert.calledOnce(models.Trip.findOne);
@@ -71,7 +70,7 @@ describe('pageEntrywayRoutes', () => {
       }]);
 
       sinon.assert.calledOnce(ExperienceController.findActiveScript);
-      assert.deepStrictEqual(ExperienceController.findActiveScript.firstCall.args, [experience.id])
+      assert.deepStrictEqual(ExperienceController.findActiveScript.firstCall.args, [experience.id]);
 
       // Test rendered ok
       assert.strictEqual(res.statusCode, 200);
@@ -102,7 +101,7 @@ describe('pageEntrywayRoutes', () => {
       sandbox.stub(models.Player, 'findOne').resolves(existingPlayer);
 
       var cookies = {
-        ["exp-" + experience.id]: existingPlayer.id
+        ['exp-' + experience.id]: existingPlayer.id
       };
       const res = httpMocks.createResponse();
       const req = httpMocks.createRequest({
@@ -112,17 +111,17 @@ describe('pageEntrywayRoutes', () => {
         },
         cookies: cookies
       });
-      await pageEntrywayRoutes.signupRoute(req, res);
+      await pageEntrywayRoutes.joinTripEntrywayRoute(req, res);
 
       // Test found player with correct arguments
       sinon.assert.calledOnce(models.Player.findOne);
       assert.deepStrictEqual(models.Player.findOne.firstCall.args, [{
         where: { id: existingPlayer.id },
-          include: [{
-            model: models.Trip,
-            as: 'trip',
-            where: { isArchived: false }
-          }]
+        include: [{
+          model: models.Trip,
+          as: 'trip',
+          where: { isArchived: false }
+        }]
       }]);
 
       // Test rendered redirect
@@ -130,11 +129,11 @@ describe('pageEntrywayRoutes', () => {
       const redirect_uri = `/travel/u/${existingPlayer.userId || 0}` +
                            `/p/${existingPlayer.tripId}` +
                            `/role/${existingPlayer.roleName}`;
-      assert.strictEqual(res._getRedirectUrl(), redirect_uri)
+      assert.strictEqual(res._getRedirectUrl(), redirect_uri);
     });
   });
 
-  describe('#entrywaySignupSubmitRoute', () => {
+  describe('#joinTripEntrywaySubmitRoute', () => {
     describe('if submitted with proper user data', () => {
       const userData = {
         name: 'Test User',
@@ -174,7 +173,7 @@ describe('pageEntrywayRoutes', () => {
           },
           body: userData
         });
-        await pageEntrywayRoutes.signupSubmitRoute(req, res);
+        await pageEntrywayRoutes.joinTripEntrywaySubmitRoute(req, res);
 
         // Test found trip with correct arguments
         sinon.assert.calledOnce(models.Trip.findOne);
@@ -194,7 +193,7 @@ describe('pageEntrywayRoutes', () => {
         }]);
 
         sinon.assert.calledOnce(ExperienceController.findActiveScript);
-        assert.deepStrictEqual(ExperienceController.findActiveScript.firstCall.args, [experience.id])
+        assert.deepStrictEqual(ExperienceController.findActiveScript.firstCall.args, [experience.id]);
 
         // Test the cookie was set properly
         assert.deepStrictEqual(res.cookies[`exp-${experience.id}`].value, player.id);
@@ -204,7 +203,7 @@ describe('pageEntrywayRoutes', () => {
         const redirect_uri = `/travel/u/${player.userId || 0}` +
                              `/p/${player.tripId}` +
                              `/role/${player.roleName}`;
-        assert.strictEqual(res._getRedirectUrl(), redirect_uri)
+        assert.strictEqual(res._getRedirectUrl(), redirect_uri);
       });
 
       it('creates user', async () => {
@@ -216,7 +215,7 @@ describe('pageEntrywayRoutes', () => {
           },
           body: userData
         });
-        await pageEntrywayRoutes.signupSubmitRoute(req, res);
+        await pageEntrywayRoutes.joinTripEntrywaySubmitRoute(req, res);
 
         sinon.assert.calledOnce(models.User.findOrCreate);
         assert.deepStrictEqual(models.User.findOrCreate.firstCall.args, [{
@@ -238,7 +237,7 @@ describe('pageEntrywayRoutes', () => {
           },
           body: userData
         });
-        await pageEntrywayRoutes.signupSubmitRoute(req, res);
+        await pageEntrywayRoutes.joinTripEntrywaySubmitRoute(req, res);
 
         sinon.assert.calledOnce(models.Player.update);
         assert.deepStrictEqual(models.Player.update.firstCall.args, [

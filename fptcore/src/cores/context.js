@@ -17,14 +17,14 @@ class ContextCore {
     const page = _.find(_.get(trip, 'script.content.pages') || [],
       { name: pageName }) || {};
     const link = (env.host || '') + '/s/' + player.id;
-    const signupLink = (env.host || '') + '/entry/t/' + trip.id + '/r/' + player.roleName;
+    const join_link = (env.host || '') + '/entry/t/' + trip.id + '/r/' + player.roleName;
     const fullName = user.lastName ?
       (user.firstName + ' ' + user.lastName) :
       user.firstName;
     const contactName = role.title || fullName || null;
     return _.assign({}, profile.values, {
       link: link,
-      signupLink: signupLink,
+      join_link: join_link,
       email: profile.email || user.email || null,
       contact_name: contactName,
       photo: profile.photo || null,
