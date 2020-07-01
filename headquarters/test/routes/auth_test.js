@@ -106,6 +106,7 @@ describe('authRoutes', () => {
       sandbox.stub(models.Org, 'findOne').resolves(null);
       sandbox.stub(bcrypt, 'hash').resolves('123');
       req.body = {
+        fullName: 'gabe test',
         email: 'GABE@TEST.COM',
         password: 'deth2bunnies',
         orgTitle: 'Doggos Heaven'
@@ -149,6 +150,8 @@ describe('authRoutes', () => {
       });
       sinon.assert.calledOnce(models.User.create);
       sinon.assert.calledWith(models.User.create, {
+        firstName: 'gabe',
+        lastName: 'test',
         email: 'gabe@test.com',
         orgId: 1,
         experienceId: null,
@@ -166,6 +169,8 @@ describe('authRoutes', () => {
       sandbox.stub(models.User, 'findOne').resolves({ id: 3 });
       sandbox.stub(models.Org, 'findOne').resolves(null);
       req.body = {
+        firstName: 'gabe',
+        lastName: 'test',
         email: 'GaBE@TESt.CoM',
         password: 'deth2bunnies',
         orgTitle: 'Doggos Heaven'
@@ -213,7 +218,11 @@ describe('authRoutes', () => {
     it('returns user and org info if logged in', async () => {
       const mockToken = jwt.sign({ sub: 2 }, 'test_secret',
         { algorithm: 'HS256' });
-      const mockUser = { email: 'test@test.com' };
+      const mockUser = {
+        firstName: 'gabe',
+        lastName: 'test',
+        email: 'test@test.com'
+      };
       const mockRoles = [{
         isAdmin: true,
         org: { name: 'name', title: 'title' }
@@ -229,7 +238,7 @@ describe('authRoutes', () => {
       assert.deepStrictEqual(JSON.parse(res._getData()), {
         data: {
           jwt: 'mock_signed',
-          user: { email: 'test@test.com' },
+          user: { fullName: 'gabe test', email: 'test@test.com' },
           orgs: [{ name: 'name', title: 'title' }]
         }
       });

@@ -8,9 +8,6 @@
     brew install node
     brew install awscli
 
-    # install fabric
-    pip install fabric==1.14.0 termcolor boto jinja2
-
     # set up n
     npm install -g n
     n 12.5.0
@@ -54,8 +51,9 @@
     # run tests
     npm test
 
-    # watch all local apps in parallel
+    # watch all local apps in parallel to rebuild on changes
     npm run watch
+    open http://localhost:5001
 
     # Run agency only
     cd apps/agency
@@ -89,6 +87,13 @@
     # Clean non-tracked cruft
     git clean -xdf
 
+### Pull production DB for testing
+
+    export $(cat ./secrets/production.env | xargs)
+    mysqldump -h $HQ_DATABASE_HOST -p$HQ_DATABASE_PASSWORD -u $HQ_DATABASE_USER $HQ_DATABASE_NAME > /tmp/bak.sql
+    mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
+    docker-compose exec server npm run migrate
+
 ## Build for production
 
 ### Building locally for production
@@ -100,9 +105,25 @@
 
     export AWS_PROFILE=fpt
     export GIT_HASH=`aws ecr describe-images --region us-west-2 --repository-name charter --output text --query 'sort_by(imageDetails,& imagePushedAt)[*].imageTags[*]' | tr '\t' '\n' | tail -1`
+
+    # Test
+    deploy/ecs/render_task.py test $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/test/containers.json
+
+    cd deploy/terraform/environments/test
+    terraform init
+    terraform plan
+
+    # Staging
     deploy/ecs/render_task.py staging $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
 
     cd deploy/terraform/environments/staging
+    terraform init
+    terraform plan
+
+    # Production
+    deploy/ecs/render_task.py production $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/production/containers.json
+
+    cd deploy/terraform/environments/production
     terraform init
     terraform plan
 
@@ -124,15 +145,21 @@
 
 ### Getting a nice console
 
-    dc exec server node --experimental-repl-await
+    # Node server
+    docker-compose exec server node --experimental-repl-await
+
+    # MySQL console
+    docker-compose exec mysql mysql galaxy -ugalaxy -pgalaxypassword
 
 ### Creating a user
 
-    node ./cmd/create-org.js <name> <title>
-    node ./cmd/create-user.js <org-name> <email> <pw>
+    docker-compose exec server node ./cmd/create-org.js <name> <title>
+    docker-compose exec server node ./cmd/create-user.js <org-name> <email> <pw>
 
 ## Todo later:
     
+    - https://devexpress.github.io/testcafe/
+    - https://github.com/team-video/tragopan
     - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams
     - https://github.com/parcel-bundler/parcel

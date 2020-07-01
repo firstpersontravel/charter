@@ -7,7 +7,8 @@ import {
   createInstance,
   updateInstance,
   createTrip,
-  listCollection
+  listCollection,
+  trackEvent
 } from '../../actions';
 import { lookupGroup } from './utils';
 import Group from '../components/Group';
@@ -28,7 +29,8 @@ const mapDispatchToProps = dispatch => ({
   createTrip: (...args) => dispatch(createTrip(...args)),
   createInstance: (...args) => dispatch(createInstance(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args)),
-  listCollection: (...args) => dispatch(listCollection(...args))
+  listCollection: (...args) => dispatch(listCollection(...args)),
+  trackEvent: (...args) => dispatch(trackEvent(...args))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Group);

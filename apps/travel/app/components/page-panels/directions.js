@@ -70,9 +70,17 @@ export default Ember.Component.extend(WindowHeightMixin, {
     return distance !== null && distance < distanceThreshold;
   }.property('distanceToWaypoint'),
 
+  hasArrivalTrigger: function() {
+    return !!(this.get('trip.script.content.triggers') || []).find(trigger => (
+      trigger.event &&
+      trigger.event.type === 'directions_arrived' &&
+      trigger.event.directions === this.get('params.id')
+    ));
+  }.property('params.id'),
+
   shouldShowArrivalConfirmation: function() {
-    return this.get('isCloseToWaypoint') && this.get('params.cue');
-  }.property('isCloseToWaypoint', 'params.cue'),
+    return this.get('isCloseToWaypoint') && this.get('hasArrivalTrigger');
+  }.property('isCloseToWaypoint', 'hasArrivalTrigger'),
 
   directionsRoute: function() {
     if (!this.get('params.route')) { return null; }
@@ -138,7 +146,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     return this.get('params.destination_name') ||
       this.get('toWaypoint.address') ||
       this.get('toWaypoint.title');
-  }.property('params'),
+  }.property('params', 'toWaypoint'),
 
   originLocation: function() {
     var coords = this.get('fromWaypoint.coords');

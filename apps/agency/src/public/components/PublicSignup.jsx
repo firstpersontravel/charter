@@ -5,12 +5,15 @@ import PropTypes from 'prop-types';
 export default class PublicSignup extends Component {
   constructor(props) {
     super(props);
-    this.state = { email: '', password: '', orgTitle: '' };
+    this.state = { fullName: '', email: '', password: '', orgTitle: '' };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   canSubmit() {
-    if (!this.state.email || !this.state.password || !this.state.orgTitle) {
+    if (!this.state.fullName ||
+        !this.state.email ||
+        !this.state.password ||
+        !this.state.orgTitle) {
       return false;
     }
     if (this.isSigningUp()) {
@@ -25,8 +28,8 @@ export default class PublicSignup extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.signup(this.state.email, this.state.password,
-      this.state.orgTitle);
+    this.props.signup(this.state.fullName, this.state.email,
+      this.state.password, this.state.orgTitle);
   }
 
   renderSignupErrorAlert() {
@@ -69,16 +72,28 @@ export default class PublicSignup extends Component {
           {this.renderSignupFailedAlert()}
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
+              <label htmlFor="fullNameInput">Your name</label>
+              <input
+                type="text"
+                name="fullName"
+                className="form-control"
+                autoComplete="name"
+                id="fullNameInput"
+                value={this.state.fullName}
+                onChange={e => this.setState({ fullName: e.target.value })}
+                placeholder="What is your name?" />
+            </div>
+            <div className="form-group">
               <label htmlFor="emailInput">Email address</label>
               <input
                 type="email"
                 name="email"
                 className="form-control"
-                autoComplete="username"
+                autoComplete="email"
                 id="emailInput"
                 value={this.state.email}
                 onChange={e => this.setState({ email: e.target.value })}
-                placeholder="Enter email" />
+                placeholder="What's your email?" />
             </div>
             <div className="form-group">
               <label htmlFor="pwInput">Password</label>
@@ -90,7 +105,7 @@ export default class PublicSignup extends Component {
                 id="pwInput"
                 value={this.state.password}
                 onChange={e => this.setState({ password: e.target.value })}
-                placeholder="Password" />
+                placeholder="What would you like your password to be?" />
             </div>
             <div className="form-group">
               <label htmlFor="orgNameInput">
@@ -99,11 +114,12 @@ export default class PublicSignup extends Component {
               <input
                 type="text"
                 name="orgTitle"
+                autoComplete="organization"
                 className="form-control"
                 id="orgNameInput"
                 value={this.state.orgTitle}
                 onChange={e => this.setState({ orgTitle: e.target.value })}
-                placeholder="Enter a name for your workspace" />
+                placeholder="What would you like to name your workspace?" />
             </div>
             <button
               type="submit"

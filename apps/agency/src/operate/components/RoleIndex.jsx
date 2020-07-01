@@ -58,6 +58,17 @@ function renderPlayerCell(player, isFirst) {
     </div>
   ) : null;
 
+  const joinUrl = `/entry/t/${trip.id}/r/${player.roleName}`;
+  const joinLink = player.user ? null : (
+    <>
+      <br />
+      <strong>Join:</strong>&nbsp;
+      <a href={joinUrl} target="_blank" rel="noopener noreferrer">
+        <i className="fa fa-external-link" />
+      </a>
+    </>
+  );
+
   return (
     <div className="row" key={player.id}>
       <div className="col-sm-6">
@@ -79,6 +90,7 @@ function renderPlayerCell(player, isFirst) {
           <a href={getPlayerIframeUrl(trip, player)} target="_blank" rel="noopener noreferrer">
             <i className="fa fa-external-link" />
           </a>
+          {joinLink}
         </p>
       </div>
     </div>
