@@ -2,6 +2,8 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
+const panels = require('fptcore/src/modules/pages/panels');
+
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const KernelUtil = require('../../src/kernel/util');
@@ -50,6 +52,9 @@ describe('apiViewRoutes', () => {
         })
       };
 
+      sandbox.stub(panels.text, 'export').returns('__text__exported__');
+      sandbox.stub(panels.button, 'export').returns('__button__exported__');
+
       sandbox.stub(models.Player, 'findByPk').resolves(mockPlayer);
       sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(mockObjs);
 
@@ -61,16 +66,10 @@ describe('apiViewRoutes', () => {
           interface: {
             tabs: [{
               title: 'Main',
-              panels: [{
-                text: 'Press this red button',
-                type: 'button'
-              }]
+              panels: ['__button__exported__']
             }, {
               title: 'Other',
-              panels: [{
-                text: 'Hi, head here: the pub',
-                type: 'text'
-              }]
+              panels: ['__text__exported__']
             }]
           }
         }

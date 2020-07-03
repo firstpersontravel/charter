@@ -1,3 +1,5 @@
+const TemplateUtil = require('../../utils/template');
+
 const PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
 const PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
 const PANEL_TEXT_STYLE_OPTIONS = ['centered', 'banner'];
@@ -23,6 +25,9 @@ module.exports = {
         display: { hidden: true },
         help: 'The audio file to play.'
       }
+    },
+    export(panel, actionContext) {
+      return {};
     }
   },
   button: {
@@ -41,6 +46,12 @@ module.exports = {
     },
     getTitle(resource, component, scriptContent) {
       return truncate(component.text, titleLen);
+    },
+    export(panel, actionContext) {
+      return {
+        text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
+          actionContext.timezone, actionContext.currentRoleName)
+      };
     }
   },
   choice: {
@@ -68,6 +79,14 @@ module.exports = {
           }
         }
       }
+    },
+    export(panel, actionContext) {
+      return {
+        text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
+          actionContext.timezone, actionContext.currentRoleName),
+        value_ref: panel.value_ref,
+        choices: panel.choices
+      };
     }
   },
   content_browse: {
@@ -186,6 +205,12 @@ module.exports = {
         options: PANEL_TEXT_STYLE_OPTIONS,
         help: 'Choose centered to center your text, or banner to give it a highlighted background.'
       }
+    },
+    export(panel, actionContext) {
+      return {
+        text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
+          actionContext.timezone, actionContext.currentRoleName)
+      };
     }
   },
   text_entry: {
