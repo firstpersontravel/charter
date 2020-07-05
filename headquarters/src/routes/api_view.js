@@ -1,67 +1,60 @@
-const Evaluator = require('fptcore/src/utils/evaluator');
+const moment = require('moment-timezone');
+
 const coreRegistry = require('fptcore/src/core-registry');
+const coreEvaluator = require('fptcore/src/core-evaluator');
 
 const models = require('../models');
 const KernelUtil = require('../kernel/util');
 
-const evaluator = new Evaluator(coreRegistry);
+const defaultInterface = { tabs: [{ panels: [{ type: 'current_page' }] }] };
 
-const defaultInterface = {
-  type: 'simple',
-  section: null
-};
-
-const defaultContentPages = [{
-  panels: [{ type: 'current_page' }]
-}];
-
-function prepPanel(panel) {
-  return panel;
+function prepPanel(panel, actionContext) {
+  const panelComponent = coreRegistry.panels[panel.type];
+  if (panelComponent.export) {
+    return panelComponent.export(panel, actionContext);
+  }
+  return null;
 }
 
-function prepContentPage(scriptContent, trip, player, contentPage,
-  actionContext) {
-  const roleName = player.roleName;
+function prepTab(scriptContent, trip, tab, actionContext) {
+  const roleName = actionContext.currentRoleName;
   const currentPageName = trip.tripState.currentPageNamesByRole[roleName];
   const currentPage = scriptContent.pages
     .find(p => p.name === currentPageName);
-  const panels = contentPage.panels
-    .filter(panel => evaluator.if(actionContext, panel.visible_if))
+  const panels = tab.panels
+    .filter(panel => coreEvaluator.if(actionContext, panel.visible_if))
     .flatMap(panel => (
       panel.type === 'current_page' ? currentPage.panels : [panel]
     ));
   return {
-    panels: panels.map(panel => prepPanel(panel))
+    title: tab.title,
+    panels: panels.map(panel => prepPanel(panel, actionContext))
   };
 }
 
-function prepInterface(scriptContent, trip, player, actionContext) {
-  const role = scriptContent.roles.find(r => r.name === player.roleName);
+function prepInterface(scriptContent, trip, actionContext) {
+  const roleName = actionContext.currentRoleName;
+  const role = scriptContent.roles.find(r => r.name === roleName);
   const interface = role.interface ?
     scriptContent.interfaces.find(l => l.name === role.interface) :
     defaultInterface;
-  const sectionName = interface.section;
-  const contentPagesInSection = (scriptContent.content_pages || [])
-    .filter(p => p.section === sectionName);
-  const contentPages = contentPagesInSection.length > 0 ?
-    contentPagesInSection :
-    defaultContentPages;
-  const preparedContentPages = contentPages
-    .map(p => prepContentPage(scriptContent, trip, player, p, actionContext));
+  const tabs = interface.tabs && interface.tabs.length ?
+    interface.tabs : defaultInterface.tabs;
   return {
-    type: interface.type,
-    contentPages: preparedContentPages
+    tabs: tabs
+      .filter(tab => coreEvaluator.if(actionContext, tab.visible_if))
+      .map(p => prepTab(scriptContent, trip, p, actionContext))
   };
 }
 
 async function getPlayerViewRoute(req, res) {
   const playerId = req.params.playerId;
-  const player = await models.Player.getByPk(playerId);
+  const player = await models.Player.findByPk(playerId);
   const objs = await KernelUtil.getObjectsForTrip(player.tripId);
-  const actionContext = KernelUtil.prepareActionContext(objs);
+  const actionContext = KernelUtil.prepareActionContext(objs, moment.utc(),
+    player.roleName);
   const scriptContent = objs.script.content;
-  const interface = prepInterface(scriptContent, objs.trip, player,
-    actionContext);
+  const interface = prepInterface(scriptContent, objs.trip, actionContext);
   res.json({
     data: {
       interface: interface

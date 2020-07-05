@@ -12,7 +12,7 @@ class Walker {
     if (paramSpec.type === 'component') {
       // If we're looking for this kind of component, call the iteree, but don't
       // return, in case this component can be recursively nested inside itself.
-      if (paramType === paramSpec.component) {
+      if (paramType === null || paramType === paramSpec.component) {
         iteree(obj, paramSpec, parent, key);
       }
       // Create the compoment class and iterate over all of its params.
@@ -48,8 +48,9 @@ class Walker {
       }
       return;
     }
-    // If we've made it to here, we're a simple type.
-    if (paramSpec.type === paramType) {
+    // If we've made it to here, we're a simple type. If paramType is null,
+    // then we want to return all fields.
+    if (paramSpec.type === paramType || paramType === null) {
       iteree(obj, paramSpec, parent, key);
     }
   }

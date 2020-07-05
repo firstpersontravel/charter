@@ -52,13 +52,13 @@ class KernelUtil {
     return ContextCore.gatherEvalContext(env, trip);
   }
 
-  static prepareActionContext(objs, evaluateAt) {
+  static prepareActionContext(objs, evaluateAt, roleName=null) {
     return {
       scriptContent: objs.script.content,
       timezone: objs.experience.timezone,
       evalContext: this.prepareEvalContext(objs),
       evaluateAt: evaluateAt,
-      currentRoleName: null
+      currentRoleName: roleName
     };
   }
 
