@@ -89,8 +89,11 @@
 
 ### Pull production DB for testing
 
-    export $(cat ./secrets/production.env | xargs)
-    mysqldump -h $HQ_DATABASE_HOST -p$HQ_DATABASE_PASSWORD -u $HQ_DATABASE_USER $HQ_DATABASE_NAME > /tmp/bak.sql
+    DB_HOST=fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
+    DB_NAME=agency
+    DB_PW=`aws ssm get-parameter --name charter.production.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+    DB_USER=`aws ssm get-parameter --name charter.production.db-user --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+    mysqldump -h $DB_HOST -p$DB_PW -u $DB_USER $DB_NAME > /tmp/bak.sql
     mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
     docker-compose exec server npm run migrate
 

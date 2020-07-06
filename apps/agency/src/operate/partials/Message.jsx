@@ -28,7 +28,7 @@ function renderMessageContent(message) {
   return message.content;
 }
 
-function renderMessageIcon(message, fromPlayer, toPlayer) {
+function renderMessageIcon(message) {
   // Give a check to messages replied to within the last hour.
   const oneHourAgo = moment.utc().subtract(1, 'hour');
   let textClass = '';
@@ -96,35 +96,34 @@ export default function Message({ message, updateInstance }) {
     return null;
   }
   const trip = message.trip;
-  const toPlayer = trip.players
-    .find(p => p.roleName === message.toRoleName);
-  const fromPlayer = trip.players
-    .find(p => p.roleName === message.fromRoleName);
-  if (!fromPlayer || !toPlayer) {
+  const roles = trip.script.content.roles || [];
+  const toRole = roles.find(r => r.name === message.toRoleName);
+  const fromRole = roles.find(r => r.name === message.fromRoleName);
+  if (!fromRole || !toRole) {
     return null;
   }
-  const userPlayer = message.isReplyNeeded ? fromPlayer : toPlayer;
-  const actorPlayer = message.isReplyNeeded ? toPlayer : fromPlayer;
+  const userRole = message.isReplyNeeded ? fromRole : toRole;
+  const actorRole = message.isReplyNeeded ? toRole : fromRole;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
   const timeShort = createdAt.tz(trip.experience.timezone).format(timeFormat);
   const content = renderMessageContent(message);
-  const icon = renderMessageIcon(message, fromPlayer, toPlayer);
+  const icon = renderMessageIcon(message);
   const archivedClass = message.isArchived ? 'message-archived' : '';
   const shouldShowRespond = message.isReplyNeeded &&
     !message.reponseReceivedAt;
   const respondBtn = shouldShowRespond ? (
     <Link
       className="btn btn-xs btn-outline-secondary"
-      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${actorPlayer.roleName}&with=${userPlayer.roleName}`}>
-      Respond to {userPlayer.role.title}
+      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${actorRole.name}&with=${userRole.name}`}>
+      Respond to {userRole.title}
     </Link>
   ) : null;
 
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <strong className="mr-1">{fromPlayer.role.title}:</strong>
+      <strong className="mr-1">{fromRole.title}:</strong>
       {content}
       &nbsp;
       <span className="faint">{timeShort}</span>
