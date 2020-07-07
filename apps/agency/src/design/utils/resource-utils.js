@@ -4,15 +4,8 @@ import { TextUtil, coreRegistry, coreWalker } from 'fptcore';
 
 import { titleForResourceType } from './text-utils';
 
-const defaultFnsBySpecType = {
-  media: () => `media-${Math.floor(Math.random() * 10000000).toString()}`
-};
-
 export function doesSpecHaveDefault(spec) {
   if (spec.default !== undefined) {
-    return true;
-  }
-  if (defaultFnsBySpecType[spec.type]) {
     return true;
   }
   return false;
@@ -24,9 +17,6 @@ export function defaultForSpec(spec) {
   }
   if (spec.default !== undefined) {
     return spec.default;
-  }
-  if (defaultFnsBySpecType[spec.type]) {
-    return defaultFnsBySpecType[spec.type]();
   }
   return null;
 }

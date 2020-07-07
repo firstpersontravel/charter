@@ -10,7 +10,7 @@ program
   .option('--dry-run', 'Dry run mode: do not save models.')
   .parse(process.argv);
 
-async function migrateScript(script, isDryRun) {
+async function migrateScript(script, assets, isDryRun) {
   // For some reason, getting script.content updates `dataValues` which
   // triggers a validation error on the json field. So we do the get *after*
   // validating.
@@ -20,7 +20,7 @@ async function migrateScript(script, isDryRun) {
   if (oldVersion >= latestVersion) {
     return null;
   }
-  const migrated = Migrator.migrateScriptContent(script.content);
+  const migrated = Migrator.migrateScriptContent(script.content, assets);
   script.set({ content: migrated });
 
   try {
@@ -50,15 +50,23 @@ async function migrateAll(isDryRun) {
   let numFailed = 0;
   let numSucceeded = 0;
   let numNoop = 0;
-  const scripts = await models.Script.findAll();
-  for (const script of scripts) {
-    const res = await migrateScript(script, isDryRun);
-    if (res === true) {
-      numSucceeded++;
-    } else if (res === false) {
-      numFailed++;
-    } else {
-      numNoop++;
+  const experiences = await models.Experience.findAll();
+  for (const experience of experiences) {
+    const scripts = await models.Script.findAll({
+      where: { experienceId: experience.id }
+    });
+    const assets = await models.Asset.findAll({
+      where: { experienceId: experience.id }
+    });
+    for (const script of scripts) {
+      const res = await migrateScript(script, assets, isDryRun);
+      if (res === true) {
+        numSucceeded++;
+      } else if (res === false) {
+        numFailed++;
+      } else {
+        numNoop++;
+      }
     }
   }
   console.log(

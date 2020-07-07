@@ -15,8 +15,7 @@ module.exports = {
   },
   getOps(params, actionContext) {
     // Find the clip.
-    const clip = _.find(actionContext.scriptContent.clips,
-      { name: params.clip_name });
+    const clip = _.find(actionContext.scriptContent.clips, { name: params.clip_name });
     if (!clip) {
       return [{
         operation: 'log',
@@ -26,14 +25,24 @@ module.exports = {
     }
 
     // Play audio if it is present.
-    const playClause = clip.path ?
-      { clause: 'play', media: clip.path } :
-      {
+    let playClause;
+    if (clip.audio) {
+      playClause = { clause: 'play', media: clip.audio };
+    } else if (clip.transcript) {
+      const transcript = TemplateUtil.templateText(actionContext.evalContext,
+        clip.transcript, actionContext.timezone);
+      playClause = {
         clause: 'say',
         voice: clip.voice || 'alice',
-        message: TemplateUtil.templateText(actionContext.evalContext,
-          clip.transcript, actionContext.timezone)
+        message: transcript
       };
+    } else {
+      return [{
+        operation: 'log',
+        level: 'warning',
+        message: 'No transcript or audio for clip.'
+      }];
+    }
 
     // If we expect a response, return the play within a gather
     // clause.

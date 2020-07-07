@@ -12,7 +12,8 @@ describe('Migrations', () => {
       }
       for (const test of migration.tests) {
         const scriptContent = _.cloneDeep(test.before);
-        Migrator.runMigrations(migration.migrations, scriptContent);
+        const assets = test.assets || [];
+        Migrator.runMigrations(migration.migrations, scriptContent, assets);
         assert.deepStrictEqual(scriptContent, test.after);
       }
     });

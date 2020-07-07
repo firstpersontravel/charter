@@ -24,7 +24,7 @@ describe('#play_clip', () => {
       scriptContent: {
         clips: [{
           name: 'CLIP-TEST',
-          path: 'audio.mp3'
+          audio: 'audio.mp3'
         }]
       }
     };
@@ -63,7 +63,7 @@ describe('#play_clip', () => {
       scriptContent: {
         clips: [{
           name: 'CLIP-TEST',
-          path: 'audio.mp3',
+          audio: 'audio.mp3',
           answer_expected: true,
           answer_hints: ['yes', 'no']
         }]

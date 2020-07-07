@@ -1,18 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import MediaAssets from './extras/MediaAssets';
 import RouteAssets from './extras/RouteAssets';
 
 const assetComponentsByResourceType = {
-  audio: MediaAssets,
-  clip: MediaAssets,
-  content_page: MediaAssets,
-  page: MediaAssets,
-  route: RouteAssets,
-  relay: MediaAssets,
-  trigger: MediaAssets,
-  interface: MediaAssets
+  route: RouteAssets
 };
 
 export default class ResourceExtras extends Component {

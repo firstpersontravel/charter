@@ -144,10 +144,17 @@ const Validations = {
     help: 'Uploaded media: an image, video, or audio clip.',
     validate: (scriptContent, name, spec, param) => {
       if (!_.isString(param)) {
-        return ['Media param "' + name + '" should be a string.'];
+        return [`Media param "${name}" should be a string.`];
       }
       if (spec.required && !param) {
-        return ['Media param "' + name + '" should not be blank.'];
+        return [`Media param "${name}" should not be blank.`];
+      }
+      if (param) {
+        if (!param.startsWith('https://') &&
+            !param.startsWith('http://') &&
+            !/^\{\{[.\w_-]+\}\}$/.test(param)) {
+          return [`Media param "${name}" must be a URL.`];
+        }
       }
     }
   },

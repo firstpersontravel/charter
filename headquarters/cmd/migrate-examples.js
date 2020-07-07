@@ -31,7 +31,8 @@ async function migrateScript(exampleName, isDryRun) {
       `Example ${exampleName} is up-to-date (version ${latestVersion}).`);
     return;
   }
-  const migratedContent = Migrator.migrateScriptContent(exampleData.content);
+  const migratedContent = Migrator.migrateScriptContent(exampleData.content,
+    exampleData.assets);
 
   try {
     ScriptCore.validateScriptContent(migratedContent);
