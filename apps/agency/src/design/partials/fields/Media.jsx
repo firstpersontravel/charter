@@ -105,7 +105,11 @@ class MediaField extends Component {
     }
     if (this.props.spec.medium === 'image') {
       return (
-        <img alt={this.props.name} className="img-fluid" src={this.props.value} />
+        <img
+          alt={this.props.name}
+          style={{ maxWidth: 300, maxHeight: 300 }}
+          className="img-fluid"
+          src={this.props.value} />
       );
     }
     if (this.props.spec.medium === 'video') {
