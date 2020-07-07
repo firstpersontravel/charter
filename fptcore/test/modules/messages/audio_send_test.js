@@ -13,7 +13,7 @@ describe('#send_audio', () => {
 
   it('reply is needed if specified', () => {
     const params = {
-      content: 'hi',
+      audio: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit',
       reply_needed: true
@@ -26,7 +26,7 @@ describe('#send_audio', () => {
 
   it('sends audio message', () => {
     const params = {
-      content: 'url',
+      audio: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
@@ -51,7 +51,7 @@ describe('#send_audio', () => {
         type: 'audio_received',
         from: 'Ally',
         to: 'Babbit',
-        content: 'url'
+        url: 'url'
       }
     }]);
   });

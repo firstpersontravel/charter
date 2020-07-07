@@ -3,10 +3,10 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   classNames: ['page-panel-video'],
   fullPath: function() {
-    if (!this.get('params.path')) {
+    if (!this.get('params.video')) {
       return null;
     }
-    var path = this.get('player').humanizeText(this.get('params.path'));
+    var path = this.get('player').humanizeText(this.get('params.video'));
     return this.get('trip.script').urlForContentPath(path);
   }.property('params'),
 

@@ -24,10 +24,10 @@ module.exports = {
       default: 'alice',
       help: 'The voice used to generate audio via speech-to-text. Only required if there is not a media path.'
     },
-    path: {
+    audio: {
       type: 'media',
       medium: 'audio',
-      help: 'Media to play.'
+      help: 'The audio clip to play.'
     },
     answer_expected: {
       type: 'boolean',
@@ -37,11 +37,6 @@ module.exports = {
       type: 'list',
       items: { type: 'string', help: 'An option for the voice answer.' },
       help: 'List of suggestions for decoding the voice of the answer.'
-    }
-  },
-  validateResource: function(script, resource) {
-    if (!resource.transcript && !resource.path) {
-      return ['Clip resource requires either a transcript or a media path.'];
     }
   }
 };

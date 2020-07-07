@@ -4,10 +4,22 @@ const ACTION_FIELDS = {
   send_image: 'content'
 };
 
+const ACTION_NEW_FIELDS = {
+  play_audio: 'audio',
+  send_audio: 'audio',
+  send_image: 'image'
+};
+
 const PANEL_FIELDS = {
   audio_foreground: 'path',
   image: 'path',
   video: 'path'
+};
+
+const PANEL_NEW_FIELDS = {
+  audio_foreground: 'audio',
+  image: 'image',
+  video: 'video'
 };
 
 function getUrlFromAssets(assets, val) {
@@ -37,14 +49,13 @@ module.exports = {
         return;
       }
       const key = ACTION_FIELDS[action.name];
-      if (!action[key]) {
-        return;
-      }
-      const url = getUrlFromAssets(assets, action[key]);
-      if (url) {
-        action[key] = url;
-      } else {
-        delete action[key];
+      const val = action[key];
+      delete action[key];
+      if (val) {
+        const url = getUrlFromAssets(assets, val);
+        if (url) {
+          action[ACTION_NEW_FIELDS[action.name]] = url;
+        }
       }
     },
     panels: function(panel, scriptContent, resource, assets) {
@@ -52,26 +63,23 @@ module.exports = {
         return;
       }
       const key = PANEL_FIELDS[panel.type];
-      if (!panel[key]) {
-        return;
-      }
-      const url = getUrlFromAssets(assets, panel[key]);
-      if (url) {
-        panel[key] = url;
-      } else {
-        delete panel[key];
+      const val = panel[key];
+      delete panel[key];
+      if (val) {
+        const url = getUrlFromAssets(assets, val);
+        if (url) {
+          panel[PANEL_NEW_FIELDS[panel.type]] = url;
+        }
       }
     },
     clips: function(clip, scriptContent, assets) {
-      if (!clip.path) {
-        return;
-      }
-      const url = getUrlFromAssets(assets, clip.path);
-      if (url) {
-        clip.path = url;
-      } else {
-        delete clip.path;
-        if (!clip.transcript) {
+      const val = clip.path;
+      delete clip.path;
+      if (val) {
+        const url = getUrlFromAssets(assets, val);
+        if (url) {
+          clip.audio = url;
+        } else if (!clip.transcript) {
           clip.transcript = 'This clip is empty.';
         }
       }
@@ -85,26 +93,42 @@ module.exports = {
     ],
     before: {
       triggers: [{
-        actions: [{ name: 'play_audio', path: 'a.mp3' }]
+        actions: [
+          { name: 'play_audio', path: 'a.mp3' },
+          { name: 'send_audio', content: 'a.mp3' },
+          { name: 'send_image', content: 'c.jpg' }
+        ]
       }],
       pages: [{
-        panels: [{ type: 'image', path: 'c.jpg' }]
+        panels: [
+          { type: 'image', path: 'c.jpg' },
+          { type: 'audio_foreground', path: 'd.m4a' },
+          { type: 'video', path: 'c.jpg' }
+        ]
       }],
       clips: [
         { path: 'd.m4a' },
         { transcript: 'hi' },
-        { path: '' }
+        { path: 'invalid' }
       ]
     },
     after: {
       triggers: [{
-        actions: [{ name: 'play_audio', path: 'http://server/a.mp3' }]
+        actions: [
+          { name: 'play_audio', audio: 'http://server/a.mp3' },
+          { name: 'send_audio', audio: 'http://server/a.mp3' },
+          { name: 'send_image', image: 'https://host/c.jpg' }
+        ]
       }],
       pages: [{
-        panels: [{ type: 'image', path: 'https://host/c.jpg' }]
+        panels: [
+          { type: 'image', image: 'https://host/c.jpg' },
+          { type: 'audio_foreground', audio: 'http://host/path/d.m4a' },
+          { type: 'video', video: 'https://host/c.jpg' }
+        ]
       }],
       clips: [
-        { path: 'http://host/path/d.m4a' },
+        { audio: 'http://host/path/d.m4a' },
         { transcript: 'hi' },
         { transcript: 'This clip is empty.' },
       ]

@@ -88,7 +88,7 @@ describe('WalkingTourExample', () => {
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        content: 'url',
+        image: 'url',
       }
     });
 
@@ -112,7 +112,7 @@ describe('WalkingTourExample', () => {
       params: {
         from_role_name: 'Player',
         to_role_name: 'Guide',
-        content: 'another_url'
+        image: 'another_url'
       }
     }, now);
 

@@ -9,7 +9,7 @@ module.exports = {
       display: { label: false },
       help: 'The role to play the audio for.'
     },
-    path: {
+    audio: {
       type: 'media',
       medium: 'audio',
       help: 'The audio file to play.'

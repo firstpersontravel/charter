@@ -20,7 +20,7 @@ panels.audio_foreground = {
   icon: 'sticky-note',
   help: 'An audio clip that can be played at will.',
   properties: {
-    path: {
+    audio: {
       type: 'media',
       medium: 'audio',
       help: 'The audio file to play.'
@@ -141,7 +141,7 @@ panels.image = {
   icon: 'sticky-note',
   help: 'An image.',
   properties: {
-    path: {
+    image: {
       type: 'media',
       medium: 'image'
     },
@@ -248,7 +248,7 @@ panels.video = {
   icon: 'sticky-note',
   help: 'A video.',
   properties: {
-    path: {
+    video: {
       type: 'media',
       medium: 'video'
     }

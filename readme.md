@@ -93,7 +93,7 @@
     DB_NAME=agency
     DB_PW=`aws ssm get-parameter --name charter.production.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
     DB_USER=`aws ssm get-parameter --name charter.production.db-user --region us-west-2 --with-decryption | jq -r .Parameter.Value`
-    mysqldump -h $DB_HOST -p$DB_PW -u $DB_USER $DB_NAME > /tmp/bak.sql
+    mysqldump --column-statistics=0 -h $DB_HOST -p$DB_PW -u $DB_USER $DB_NAME --result-file=/tmp/bak.sql
     mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
     docker-compose exec server npm run migrate
 

@@ -152,7 +152,7 @@ const Validations = {
       if (param) {
         if (!param.startsWith('https://') &&
             !param.startsWith('http://') &&
-            !/^\{\{[\w_-.]+\}\}$/.test(param)) {
+            !/^\{\{[.\w_-]+\}\}$/.test(param)) {
           return [`Media param "${name}" must be a URL.`];
         }
       }
