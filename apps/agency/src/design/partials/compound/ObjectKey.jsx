@@ -98,7 +98,8 @@ function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
     Object.assign({}, opts, { inline: true }) :
     opts;
   const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
-  const itemStyle = isInline ? inlineStyle : {};
+  const blockStyle = { verticalAlign: 'top' };
+  const itemStyle = isInline ? inlineStyle : blockStyle;
   const itemPath = `${path}${path ? '.' : ''}${keyName}`;
   const itemValue = _.get(value, keyName);
   return (

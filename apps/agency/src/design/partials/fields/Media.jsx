@@ -80,7 +80,7 @@ class MediaField extends Component {
     }
     return (
       <ReactS3Uploader
-        className="ml-2"
+        className="m-1 ml-2"
         style={this.state.uploading ? { display: 'none' } : null}
         signingUrl="/s3/sign"
         signingUrlMethod="GET"
@@ -108,18 +108,18 @@ class MediaField extends Component {
         <img
           alt={this.props.name}
           style={{ maxWidth: 300, maxHeight: 300 }}
-          className="img-fluid"
+          className="m-1 img-fluid"
           src={this.props.value} />
       );
     }
     if (this.props.spec.medium === 'video') {
       return (
-        <video src={this.props.value} controls />
+        <video className="m-1" src={this.props.value} controls />
       );
     }
     if (this.props.spec.medium === 'audio') {
       return (
-        <audio src={this.props.value} controls />
+        <audio className="m-1" src={this.props.value} controls />
       );
     }
     return null;
