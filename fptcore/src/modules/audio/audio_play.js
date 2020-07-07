@@ -11,12 +11,18 @@ module.exports = {
     },
     path: {
       type: 'media',
-      display: { hidden: true },
-      required: true, medium: 'audio',
+      medium: 'audio',
       help: 'The audio file to play.'
     }
   },
   getOps(params, actionContext) {
+    if (!params.path) {
+      return [{
+        operation: 'log',
+        level: 'warn',
+        message: 'Tried to play audio with no media.'       
+      }];
+    }
     return [{
       operation: 'updateTripValues',
       values: {

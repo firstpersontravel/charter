@@ -293,7 +293,7 @@ describe('Validator', () => {
         panels: [{
           type: 'image',
           style: 'float-right',
-          path: '{{Sarai.photo}}'
+          path: 'https://path/path.jpg'
         }, {
           type: 'text',
           text: 'You are meeting Sarai.'

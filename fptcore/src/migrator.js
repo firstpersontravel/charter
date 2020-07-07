@@ -33,16 +33,17 @@ Migrator.getMigrations = function(currentMigrationNum) {
   });
 };
 
-Migrator.runMigration = function(collectionName, migrationFn, scriptContent) {
+Migrator.runMigration = function(collectionName, migrateFn, scriptContent, 
+  assets) {
   if (collectionName === 'scriptContent') {
-    migrationFn(scriptContent);
+    migrateFn(scriptContent, assets);
     return;
   }
   if (coreRegistry.components[collectionName]) {
     const componentType = collectionName;
     walker.walkAllFields(scriptContent, componentType,
       (collectionName, resource, value, spec) => (
-        migrationFn(value, scriptContent, resource)
+        migrateFn(value, scriptContent, resource, assets)
       ));
     return;
   }
@@ -55,7 +56,7 @@ Migrator.runMigration = function(collectionName, migrationFn, scriptContent) {
     return;
   }
   for (const item of scriptContent[collectionName].slice()) {
-    migrationFn(item, scriptContent);
+    migrateFn(item, scriptContent, assets);
   }
 };
 
@@ -66,24 +67,24 @@ Migrator.getMigrationFns = function(migrations) {
   return Object.entries(migrations);
 };
 
-Migrator.runMigrations = function(migrations, scriptContent) {
-  const migrationFns = Migrator.getMigrationFns(migrations);
-  for (const [collectionName, migrationFn] of migrationFns) {
-    Migrator.runMigration(collectionName, migrationFn, scriptContent);
+Migrator.runMigrations = function(migrations, scriptContent, assets) {
+  const migrateFns = Migrator.getMigrationFns(migrations);
+  for (const [collectionName, migrateFn] of migrateFns) {
+    Migrator.runMigration(collectionName, migrateFn, scriptContent, assets);
   }
 };
 
 /**
  * Return migrated script content up to version number.
  */
-Migrator.migrateScriptContent = function(scriptContent) {
+Migrator.migrateScriptContent = function(scriptContent, assets) {
   var migrated = _.cloneDeep(scriptContent);
   if (!migrated.meta) {
     migrated.meta = { version: 0 };
   }
   var currentMigrationNum = migrated.meta.version;
   for (const migration of Migrator.getMigrations(currentMigrationNum)) {
-    Migrator.runMigrations(migration.migrations, migrated);
+    Migrator.runMigrations(migration.migrations, migrated, assets);
     migrated.meta.version = migration.num;
   }
   return migrated;

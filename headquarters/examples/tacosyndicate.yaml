@@ -44,7 +44,9 @@ content:
         - text: Start
           type: button
           id: 23
-        - text: 'Send reminder text {% if Inductee.phone_number %}to {{Inductee.phone_number}}{% endif %}'
+        - text: >-
+            Send reminder text {% if Inductee.phone_number %}to
+            {{Inductee.phone_number}}{% endif %}
           type: button
           visible_if:
             item:
@@ -52,7 +54,9 @@ content:
               ref: sent_reminder_text
             op: not
           id: 24
-        - text: 'Send reminder email {% if Inductee.email %}to {{Inductee.email}}{% endif %}'
+        - text: >-
+            Send reminder email {% if Inductee.email %}to {{Inductee.email}}{%
+            endif %}
           type: button
           visible_if:
             item:
@@ -773,7 +777,8 @@ content:
                       name: send_text
                       to_role_name: Inductee
                       id: 94
-                    - content: key_pickup.jpeg
+                    - content: >-
+                        https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/key_pickup.jpeg
                       from_role_name: Jessie
                       name: send_image
                       to_role_name: Inductee
@@ -1357,7 +1362,7 @@ content:
           title: Back Entrance
       title: Back Entrance
   meta:
-    version: 40
+    version: 41
 assets:
   - data:
       end:

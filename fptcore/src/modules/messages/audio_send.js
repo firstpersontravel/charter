@@ -16,9 +16,7 @@ module.exports = {
       help: 'The role to send the message to.'
     },
     content: {
-      required: true,
       type: 'media',
-      display: { hidden: true },
       medium: 'audio',
       help: 'The content of the message to send.'
     },
@@ -32,6 +30,13 @@ module.exports = {
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
   getOps(params, actionContext) {
+    if (!params.content) {
+      return [{
+        operation: 'log',
+        level: 'warn',
+        message: 'Tried to send audio with no media.'
+      }];
+    }
     const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content);
     const isReplyNeeded = !!params.reply_needed;

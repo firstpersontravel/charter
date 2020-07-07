@@ -23,7 +23,6 @@ panels.audio_foreground = {
     path: {
       type: 'media',
       medium: 'audio',
-      display: { hidden: true },
       help: 'The audio file to play.'
     }
   },
@@ -144,11 +143,12 @@ panels.image = {
   properties: {
     path: {
       type: 'media',
-      medium: 'image',
-      display: { hidden: true },
-      required: true
+      medium: 'image'
     },
-    style: { type: 'enum', options: PANEL_IMAGE_STYLE_OPTIONS }
+    style: {
+      type: 'enum',
+      options: PANEL_IMAGE_STYLE_OPTIONS
+    }
   }
 };
 
@@ -250,9 +250,7 @@ panels.video = {
   properties: {
     path: {
       type: 'media',
-      medium: 'video',
-      display: { hidden: true },
-      required: true
+      medium: 'video'
     }
   }
 };

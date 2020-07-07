@@ -29,7 +29,7 @@ describe('Migrator', () => {
         migrations: { scriptContent: migrationStub }
       }]);
 
-      const migrated = Migrator.migrateScriptContent(scriptContent);
+      const migrated = Migrator.migrateScriptContent(scriptContent, []);
 
       sinon.assert.calledOnce(migrationStub);
 
@@ -40,7 +40,7 @@ describe('Migrator', () => {
       const scriptContent = { meta: { version: 2 } };
       sandbox.stub(Migrator, 'getMigrations').returns([]);
 
-      const migrated = Migrator.migrateScriptContent(scriptContent);
+      const migrated = Migrator.migrateScriptContent(scriptContent, []);
 
       assert.deepStrictEqual(migrated, scriptContent);
     });
@@ -58,16 +58,17 @@ describe('Migrator', () => {
     });
 
     it('migrates resources', () => {
+      const assets = [{ asset: 1 }];
       const scriptContent = { scenes: [{ name: 1 }, { name: 2 }] };
       const migration = sinon.stub();
 
-      Migrator.runMigration('scenes', migration, scriptContent);
+      Migrator.runMigration('scenes', migration, scriptContent, assets);
 
       sinon.assert.calledTwice(migration);
       assert.deepStrictEqual(migration.firstCall.args,
-        [scriptContent.scenes[0], scriptContent]);
+        [scriptContent.scenes[0], scriptContent, assets]);
       assert.deepStrictEqual(migration.secondCall.args,
-        [scriptContent.scenes[1], scriptContent]);
+        [scriptContent.scenes[1], scriptContent, assets]);
     });
 
     it('skips resources when absent', () => {

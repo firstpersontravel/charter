@@ -26,9 +26,8 @@ module.exports = {
     },
     path: {
       type: 'media',
-      default: '',
       medium: 'audio',
-      help: 'Media path for an audio clip to play.'
+      help: 'Media to play.'
     },
     answer_expected: {
       type: 'boolean',

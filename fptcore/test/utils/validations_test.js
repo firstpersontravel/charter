@@ -222,8 +222,17 @@ describe('Validations', () => {
   });
 
   describe('#media', () => {
-    it('permits path', () => {
-      ok(Validations.media.validate({}, 's', {}, 'abc.mp3'));
+    it('permits URL', () => {
+      ok(Validations.media.validate({}, 's', {}, 'https://server/abc.mp3'));
+    });
+
+    it('permits lookup', () => {
+      ok(Validations.media.validate({}, 's', {}, '{{Role.var_name}}'));
+    });
+
+    it('warns if not URL', () => {
+      err(Validations.media.validate({}, 's', {}, 'abc.mp3'),
+        'Media param "s" must be a URL.');
     });
 
     it('warns if not a string', () => {
@@ -234,7 +243,8 @@ describe('Validations', () => {
     });
 
     it('warns if required and blank', () => {
-      ok(Validations.media.validate({}, 's', { required: true }, 'val'));
+      ok(Validations.media.validate({}, 's', { required: true },
+        'https://server/path'));
       err(Validations.media.validate({}, 's', { required: true }, ''),
         'Media param "s" should not be blank.');
     });
