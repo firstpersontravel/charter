@@ -5,6 +5,13 @@ import PropTypes from 'prop-types';
 
 import StaticMapImg from '../StaticMapImg';
 
+function titleForLocation(location) {
+  if (!location) {
+    return 'No location';
+  }
+  return location.title || location.address || location.coords.map(i => i.toFixed(6)).join(', ');
+}
+
 class RouteOption extends Component {
   constructor(props) {
     super(props);
@@ -119,14 +126,14 @@ class RouteOption extends Component {
     const dirAsset = this.getDirAsset();
     const status = dirAsset ? (
       <span className="text-success">
-        Updated {moment.utc(dirAsset.updatedAt).format('MMM DD, YYYY')}
+        Updated {moment.utc(dirAsset.updatedAt).format('MMM D, YYYY')}
       </span>
     ) : (
-      <span className="text-danger">Not generated</span>
+      <span className="text-danger">Needed</span>
     );
     return (
       <div>
-        {fromOpt.title} to {toOpt.title}: {status}&nbsp;
+        {titleForLocation(fromOpt.location)} to {titleForLocation(toOpt.location)}: {status}&nbsp;
         {this.renderFetchBtn()}
       </div>
     );
