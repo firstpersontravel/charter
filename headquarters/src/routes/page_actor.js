@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 const Sequelize = require('sequelize');
 
 const Evaluator = require('fptcore/src/utils/evaluator');
@@ -8,7 +9,7 @@ const TemplateUtil = require('fptcore/src/utils/template');
 
 const config = require('../config');
 const models = require('../models');
-const KernelUtil = require('../kernel/util');
+const ActionContext = require('../kernel/action_context');
 
 const evaluator = new Evaluator(coreRegistry);
 
@@ -60,11 +61,11 @@ function getPanel(trip, player, evalContext, timezone, pageInfo, panel) {
 /**
  * Construct an object of the page
  */
-function getPage(objs, actionContext, player) {
-  const script = objs.script;
-  const trip = objs.trip;
+function getPage(actionContext, player) {
+  const script = actionContext._objs.script;
+  const trip = actionContext._objs.trip;
   const evalContext = actionContext.evalContext;
-  const timezone = objs.experience.timezone;
+  const timezone = actionContext._objs.experience.timezone;
   const pageInfo = PlayerCore.getPageInfo(script, evalContext, trip, player);
   if (!pageInfo) {
     return null;
@@ -80,7 +81,7 @@ function getPage(objs, actionContext, player) {
     .value();
   const role = _.find(script.content.roles, { name: player.roleName });
   return {
-    experienceTitle: objs.experience.title,
+    experienceTitle: actionContext._objs.experience.title,
     tripId: trip.id,
     tripTitle: trip.title,
     player: player,
@@ -154,18 +155,17 @@ const playerShowRoute = async (req, res) => {
     res.redirect(`/actor/${req.params.orgName}`);
     return;
   }
-  const objs = await KernelUtil.getObjectsForTrip(player.tripId);
-  const actionContext = KernelUtil.prepareActionContext(objs);
-  const page = getPage(objs, actionContext, player);
+  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(), player.roleName);
+  const page = getPage(actionContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
-  const role = (objs.script.content.roles || [])
+  const role = (actionContext._objs.script.content.roles || [])
     .find(role => role.name === player.roleName);
   const params = {
     pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
     userId: '',
     userName: role ? role.title : 'Unknown role',
     orgName: req.params.orgName,
-    orgTitle: objs.trip.org.title,
+    orgTitle: actionContext._objs.trip.org.title,
     pages: pages,
     stage: config.env.HQ_STAGE,
     tripIds: player.tripId
@@ -205,16 +205,12 @@ const userShowRoute = async (req, res) => {
     .sortBy(player => player.trip.createdAt)
     .value();
 
-  const objsList = await Promise.all(playersByTripTime.map(player => (
-    KernelUtil.getObjectsForTrip(player.tripId)
+  const actionContexts = await Promise.all(playersByTripTime.map(player => (
+    ActionContext.createForTripId(player.tripId, moment.utc(), player.roleName)
   )));
 
   const pages = _(players)
-    .map((player, i) => {
-      const objs = objsList[i];
-      const actionContext = KernelUtil.prepareActionContext(objs);
-      return getPage(objs, actionContext, player);
-    })
+    .map((player, i) => getPage(actionContexts[i], player))
     .filter(Boolean)
     .sortBy('sort')
     .map((page, i) => Object.assign(page, { isFirst: i === 0 }))

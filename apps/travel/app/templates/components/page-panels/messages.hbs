@@ -49,12 +49,12 @@
       {{input
         class="pure-u-2-3 message-input"
         value=messageInput
-        enter="sendMessage"
+        enter="sendText"
         placeholder=placeholder
         disabled=(if canSendTexts false true)}}
       <button
           class="pure-button pure-button-primary pure-u-1-6"
-          {{action "sendMessage"}}
+          {{action "sendText"}}
           disabled={{isSendTextDisabled}}>
         Send
       </button>

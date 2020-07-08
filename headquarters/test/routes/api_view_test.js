@@ -6,7 +6,7 @@ const panels = require('fptcore/src/modules/pages/panels');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
-const KernelUtil = require('../../src/kernel/util');
+const ActionContext = require('../../src/kernel/action_context');
 const apiViewRoutes = require('../../src/routes/api_view');
 
 describe('apiViewRoutes', () => {
@@ -41,22 +41,26 @@ describe('apiViewRoutes', () => {
         }]
       };
       const mockPlayer = models.Player.build({ tripId: 200, roleName: 'P' });
-      const mockObjs = {
-        script: models.Script.build({ content: mockScriptContent }),
-        experience: models.Experience.build({ timezone: 'US/Pacific' }),
-        trip: models.Trip.build({
-          values: { color: 'red', destination: 'the pub' },
-          tripState: {
-            currentPageNamesByRole: { P: 'page1' },
-          }
-        })
+      const mockActionContext = {
+        scriptContent: mockScriptContent,
+        currentRoleName: 'P',
+        _objs: {
+          script: models.Script.build({ content: mockScriptContent }),
+          experience: models.Experience.build({ timezone: 'US/Pacific' }),
+          trip: models.Trip.build({
+            values: { color: 'red', destination: 'the pub' },
+            tripState: {
+              currentPageNamesByRole: { P: 'page1' },
+            }
+          })
+        }
       };
 
       sandbox.stub(panels.text, 'export').returns('__text__exported__');
       sandbox.stub(panels.button, 'export').returns('__button__exported__');
 
       sandbox.stub(models.Player, 'findByPk').resolves(mockPlayer);
-      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(mockObjs);
+      sandbox.stub(ActionContext, 'createForTripId').resolves(mockActionContext);
 
       await apiViewRoutes.getPlayerViewRoute(req, res);
 

@@ -4,7 +4,7 @@ const coreRegistry = require('fptcore/src/core-registry');
 const coreEvaluator = require('fptcore/src/core-evaluator');
 
 const models = require('../models');
-const KernelUtil = require('../kernel/util');
+const ActionContext = require('../kernel/action_context');
 
 const defaultInterface = { tabs: [{ panels: [{ type: 'current_page' }] }] };
 
@@ -16,10 +16,11 @@ function prepPanel(panel, actionContext) {
   return null;
 }
 
-function prepTab(scriptContent, trip, tab, actionContext) {
+function prepTab(tab, actionContext) {
+  const trip = actionContext._objs.trip;
   const roleName = actionContext.currentRoleName;
   const currentPageName = trip.tripState.currentPageNamesByRole[roleName];
-  const currentPage = scriptContent.pages
+  const currentPage = actionContext.scriptContent.pages
     .find(p => p.name === currentPageName);
   const panels = tab.panels
     .filter(panel => coreEvaluator.if(actionContext, panel.visible_if))
@@ -32,29 +33,27 @@ function prepTab(scriptContent, trip, tab, actionContext) {
   };
 }
 
-function prepInterface(scriptContent, trip, actionContext) {
+function prepInterface(actionContext) {
   const roleName = actionContext.currentRoleName;
-  const role = scriptContent.roles.find(r => r.name === roleName);
+  const role = actionContext.scriptContent.roles.find(r => r.name === roleName);
   const interface = role.interface ?
-    scriptContent.interfaces.find(l => l.name === role.interface) :
+    actionContext.scriptContent.interfaces.find(l => l.name === role.interface) :
     defaultInterface;
   const tabs = interface.tabs && interface.tabs.length ?
     interface.tabs : defaultInterface.tabs;
   return {
     tabs: tabs
       .filter(tab => coreEvaluator.if(actionContext, tab.visible_if))
-      .map(p => prepTab(scriptContent, trip, p, actionContext))
+      .map(p => prepTab(p, actionContext))
   };
 }
 
 async function getPlayerViewRoute(req, res) {
   const playerId = req.params.playerId;
   const player = await models.Player.findByPk(playerId);
-  const objs = await KernelUtil.getObjectsForTrip(player.tripId);
-  const actionContext = KernelUtil.prepareActionContext(objs, moment.utc(),
+  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(),
     player.roleName);
-  const scriptContent = objs.script.content;
-  const interface = prepInterface(scriptContent, objs.trip, actionContext);
+  const interface = prepInterface(actionContext);
   res.json({
     data: {
       interface: interface

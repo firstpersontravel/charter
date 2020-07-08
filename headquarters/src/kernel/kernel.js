@@ -1,35 +1,15 @@
 const _ = require('lodash');
-const moment = require('moment');
 
 const Kernel = require('fptcore/src/kernel/kernel');
 
 const config = require('../config');
 const ActionController = require('../controllers/action');
 const KernelOpController = require('./op');
-const KernelUtil = require('./util');
+const ActionContext = require('./action_context');
 
 const logger = config.logger.child({ name: 'kernel.kernel' });
 
 class KernelController {
-  /**
-   * Intermediate function.
-   */
-  static _resultForImmediateActionAndObjs(objs, action, evaluateAt) {
-    const actionContext = KernelUtil.prepareActionContext(objs, evaluateAt);
-    return Kernel.resultForImmediateAction(action, actionContext);
-  }
-
-  static _resultForEventAndObjs(objs, event, evaluateAt) {
-    const actionContext = KernelUtil.prepareActionContext(objs, evaluateAt);
-    return Kernel.resultForEvent(event, actionContext);
-  }
-
-  static _resultForTriggerAndObjs(objs, trigger, event, evaluateAt) {
-    const actionContext = KernelUtil.prepareActionContext(objs, evaluateAt);
-    return Kernel.resultForTrigger(trigger, event, actionContext,
-      actionContext);
-  }
-
   static async _applyOp(objs, op) {
     await KernelOpController.applyOp(objs, op);
   }
@@ -52,11 +32,9 @@ class KernelController {
    */
   static async applyAction(tripId, action, applyAt) {
     logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
-    const evaluateAt = applyAt || moment.utc();
-    const objs = await KernelUtil.getObjectsForTrip(tripId);
-    const result = this._resultForImmediateActionAndObjs(objs, action,
-      evaluateAt);
-    await this._applyResult(objs, result);
+    const actionContext = await ActionContext.createForTripId(tripId, applyAt);
+    const result = Kernel.resultForImmediateAction(action, actionContext);
+    await this._applyResult(actionContext._objs, result);
     return result;
   }
 
@@ -65,10 +43,9 @@ class KernelController {
    */
   static async applyEvent(tripId, event, applyAt) {
     logger.info(event, `(Trip #${tripId}) Applying event: ${event.type}.`);
-    const evaluateAt = applyAt || moment.utc();
-    const objs = await KernelUtil.getObjectsForTrip(tripId);
-    const result = this._resultForEventAndObjs(objs, event, evaluateAt);
-    await this._applyResult(objs, result);
+    const actionContext = await ActionContext.createForTripId(tripId, applyAt);
+    const result = Kernel.resultForEvent(event, actionContext);
+    await this._applyResult(actionContext._objs, result);
     return result;
   }
 
@@ -77,16 +54,13 @@ class KernelController {
    */
   static async applyTrigger(tripId, triggerName, event, applyAt) {
     logger.info(`(Trip #${tripId}) Applying trigger: ${triggerName}.`);
-    const evaluateAt = applyAt || moment.utc();
-    const objs = await KernelUtil.getObjectsForTrip(tripId);
-    const trigger = _.find(objs.script.content.triggers || [],
-      { name: triggerName });
+    const actionContext = await ActionContext.createForTripId(tripId, applyAt);
+    const trigger = _.find(actionContext._objs.script.content.triggers || [], { name: triggerName });
     if (!trigger) {
       return null;
     }
-    const result = this._resultForTriggerAndObjs(objs, trigger, event,
-      evaluateAt);
-    await this._applyResult(objs, result);
+    const result = Kernel.resultForTrigger(trigger, event, actionContext, actionContext);
+    await this._applyResult(actionContext._objs, result);
     return result;
   }
 }

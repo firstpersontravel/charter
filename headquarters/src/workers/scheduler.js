@@ -7,7 +7,7 @@ const KernelTriggers = require('fptcore/src/kernel/triggers');
 
 const config = require('../config');
 const models = require('../models');
-const KernelUtil = require('../kernel/util');
+const ActionContext = require('../kernel/action_context');
 const { fmtLocal } = require('./util');
 
 const logger = config.logger.child({ name: 'workers.scheduler' });
@@ -25,8 +25,7 @@ class SchedulerWorker {
   /**
    * Get all triggers that should fire based on time elapsing.
    */
-  static _getTimeOccuranceActions(trip, actionContext, threshold) {
-    const now = moment.utc();
+  static _getTimeOccuranceActions(actionContext, threshold) {
     const toTimestamp = threshold.unix();
 
     // Create time occurred event
@@ -35,16 +34,15 @@ class SchedulerWorker {
       timestamp: toTimestamp
     };
 
-    const triggers = KernelTriggers.triggersForEvent(timeOccurredEvent,
-      actionContext);
-
+    const triggers = KernelTriggers.triggersForEvent(timeOccurredEvent, actionContext);
     return triggers.map((trigger) => {
       const intendedAt = this._getTriggerIntendedAt(trigger, actionContext);
-      const scheduleAt = intendedAt.isAfter(now) ? intendedAt : now;
+      const scheduleAt = intendedAt.isAfter(actionContext.evaluateAt) ?
+        intendedAt : actionContext.evaluateAt;
       // Construct schdeduled action
       return {
-        orgId: trip.orgId,
-        tripId: trip.id,
+        orgId: actionContext._objs.trip.orgId,
+        tripId: actionContext._objs.trip.id,
         type: 'trigger',
         name: trigger.name,
         params: {},
@@ -84,13 +82,11 @@ class SchedulerWorker {
     }
   }
 
-  static getNextTriggerAndTime(objs) {
-    const now = moment.utc();
-    const actionContext = KernelUtil.prepareActionContext(objs, now);
+  static getNextTriggerAndTime(actionContext) {
     // Create time occurred event for 10 years from now.
     const timeOccurredEvent = {
       type: 'time_occurred',
-      timestamp: now.clone().add(10, 'years').unix()
+      timestamp: actionContext.evaluateAt.clone().add(10, 'years').unix()
     };
     const triggers = KernelTriggers.triggersForEvent(timeOccurredEvent,
       actionContext);
@@ -105,8 +101,8 @@ class SchedulerWorker {
     if (!nextTriggerWithTime) {
       return [null, null];
     }
-    if (nextTriggerWithTime[1].isBefore(now)) {
-      return [nextTriggerWithTime[0], now];
+    if (nextTriggerWithTime[1].isBefore(actionContext.evaluateAt)) {
+      return [nextTriggerWithTime[0], actionContext.evaluateAt];
     }
     return nextTriggerWithTime;
   }
@@ -116,22 +112,22 @@ class SchedulerWorker {
    */
   static async _updateTripNextScheduleAt(tripId) {
     const now = moment.utc();
-    const objs = await KernelUtil.getObjectsForTrip(tripId);
-    const [nextTrigger, nextTime] = this.getNextTriggerAndTime(objs);
-
-    await objs.trip.update({
+    const actionContext = await ActionContext.createForTripId(tripId, now);
+    const [nextTrigger, nextTime] = this.getNextTriggerAndTime(actionContext);
+    const trip = actionContext._objs.trip;
+    await trip.update({
       scheduleUpdatedAt: now.toDate(),
       scheduleAt: nextTime ? nextTime.toDate() : null
     });
 
     if (nextTime) {
       logger.info(
-        `Updating scheduleAt for ${objs.trip.experience.title} ` + 
-        `"${objs.trip.title}" to ${fmtLocal(nextTime)}. (${JSON.stringify(nextTrigger)})`);
+        `Updating scheduleAt for ${trip.experience.title} ` + 
+        `"${trip.title}" to ${fmtLocal(nextTime)}. (${JSON.stringify(nextTrigger)})`);
     } else {
       logger.info(
-        `No upcoming scheduled actions for ${objs.trip.experience.title} ` + 
-        `"${objs.trip.title}".`);
+        `No upcoming scheduled actions for ${trip.experience.title} ` + 
+        `"${trip.title}".`);
     }
 
   }
@@ -168,14 +164,10 @@ class SchedulerWorker {
    * Schedule actions for a trip.
    */
   static async _scheduleTripActions(tripId, threshold) {
-    const objs = await KernelUtil.getObjectsForTrip(tripId);
-    const trip = objs.trip;
-    const now = moment.utc();
-    const actionContext = KernelUtil.prepareActionContext(objs, now);
+    const actionContext = await ActionContext.createForTripId(tripId);
 
     // Get actions based on occurance of time.
-    const actions = this._getTimeOccuranceActions(trip, actionContext,
-      threshold);
+    const actions = this._getTimeOccuranceActions(actionContext, threshold);
     // logger.info(
     //   `Found ${actions.length} actions for ${trip.experience.title} ` +
     //   `"${trip.title}" up to ${fmtLocal(threshold)}`);

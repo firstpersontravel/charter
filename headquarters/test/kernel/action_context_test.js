@@ -5,14 +5,14 @@ const ContextCore = require('fptcore/src/cores/context');
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
-const KernelUtil = require('../../src/kernel/util');
+const ActionContext = require('../../src/kernel/action_context');
 
-describe('KernelUtil', () => {
+describe('ActionContext', () => {
   describe('#getObjectsForTrip', () => {
     it.skip('gets all needed objects for a trip', () => {});
   });
 
-  describe('#prepareEvalContext', () => {
+  describe('#_prepareEvalContext', () => {
     it('creates trip context', () => {
       const sentinel = 'abc';
       sandbox.stub(ContextCore, 'gatherEvalContext').returns(sentinel);
@@ -45,7 +45,7 @@ describe('KernelUtil', () => {
         })]
       };
 
-      const res = KernelUtil.prepareEvalContext(objs);
+      const res = ActionContext._prepareEvalContext(objs);
 
       sinon.assert.calledOnce(ContextCore.gatherEvalContext);
 

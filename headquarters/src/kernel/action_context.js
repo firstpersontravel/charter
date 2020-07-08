@@ -1,12 +1,12 @@
 const _ = require('lodash');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const ContextCore = require('fptcore/src/cores/context');
 
 const config = require('../config');
 const models = require('../models');
 
-class KernelUtil {
+class ActionContext {
   /**
    * Create player context with the user and profile objects.
    */
@@ -44,35 +44,11 @@ class KernelUtil {
   /**
    * Create trip context suitable for passing into the action parser.
    */
-  static prepareEvalContext(objs) {
+  static _prepareEvalContext(objs) {
     const trip = this._assembleTripFields(objs);
     const host = objs.experience.domain || config.env.HQ_PUBLIC_URL;
     const env = { host: host };
-    // Create the context.
     return ContextCore.gatherEvalContext(env, trip);
-  }
-
-  static prepareActionContext(objs, evaluateAt, roleName=null) {
-    return {
-      scriptContent: objs.script.content,
-      timezone: objs.experience.timezone,
-      evalContext: this.prepareEvalContext(objs),
-      evaluateAt: evaluateAt,
-      currentRoleName: roleName
-    };
-  }
-
-  /**
-   * Apply an action and gather the results.
-   */
-  static async getEvalContext(tripId) {
-    const objs = await this.getObjectsForTrip(tripId);
-    return this.prepareEvalContext(objs);
-  }
-
-  static async getActionContext(tripId) {
-    const objs = await this.getObjectsForTrip(tripId);
-    return this.prepareActionContext(objs, moment.utc());    
   }
 
   /**
@@ -109,6 +85,27 @@ class KernelUtil {
       users: users
     };
   }
+
+  constructor(tripId, evaluateAt=null, roleName=null) {
+    this._tripId = tripId;
+    this._evaluateAt = evaluateAt || moment.utc();
+    this._currentRoleName = roleName;
+  }
+
+  async init() {
+    this._objs = await this.constructor.getObjectsForTrip(this._tripId);
+    this.scriptContent = this._objs.script.content;
+    this.timezone = this._objs.experience.timezone;
+    this.evalContext = this.constructor._prepareEvalContext(this._objs);
+    this.evaluateAt = this._evaluateAt;
+    this.currentRoleName = this._currentRoleName;
+  }
+
+  static async createForTripId(tripId, evaluateAt=null, roleName=null) {
+    const actionContext = new ActionContext(tripId, evaluateAt, roleName);
+    await actionContext.init();
+    return actionContext;
+  }
 }
 
-module.exports = KernelUtil;
+module.exports = ActionContext;

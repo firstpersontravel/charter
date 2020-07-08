@@ -233,8 +233,8 @@ export default Ember.Component.extend({
       return self.get('media').upload(file, key)
         .then(function() {
           self.triggerAction({
-            action: 'sendMessage',
-            actionContext: [asRoleName, toRoleName, 'image', url]
+            action: 'sendImage',
+            actionContext: [asRoleName, toRoleName, url]
           });          
         });
     });
@@ -254,16 +254,15 @@ export default Ember.Component.extend({
   }.observes('messages'),
 
   actions: {
-    sendMessage: function() {
+    sendText: function() {
       if (!this.get('messageInput')) { return; }
       if (this.get('messageInput') === '') { return; }
       var asRoleName = this.get('asPlayer.roleName');
       var toRoleName = this.get('withPlayer.roleName');
       // this.set('isSendingMessage', true);
       this.triggerAction({
-        action: 'sendMessage',
-        actionContext: [asRoleName, toRoleName,
-          'text', this.get('messageInput')]
+        action: 'sendText',
+        actionContext: [asRoleName, toRoleName, this.get('messageInput')]
       });
       this.set('messageInput', '');
     },
