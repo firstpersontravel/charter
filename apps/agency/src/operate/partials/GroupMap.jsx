@@ -62,7 +62,7 @@ function renderGeofenceOptions(script, geofence) {
   return waypointOptions.map(waypointOption => (
     <Circle
       key={`${geofence.name}-${waypointOption.name}`}
-      center={L.latLng(waypointOption.coords[0], waypointOption.coords[1])}
+      center={L.latLng(waypointOption.location.coords[0], waypointOption.location.coords[1])}
       radius={geofence.distance}
       weight={2}
       fill={false}
@@ -139,7 +139,7 @@ export default class GroupMap extends Component {
     const waypoints = WaypointCore.getAllWaypointOptions(script.content);
     return waypoints
       .map(waypoint => (
-        L.latLng(waypoint.coords[0], waypoint.coords[1])
+        L.latLng(waypoint.location.coords[0], waypoint.location.coords[1])
       ));
   }
 
@@ -192,7 +192,7 @@ export default class GroupMap extends Component {
           return [
             <Marker
               key={`${player.id}-target`}
-              position={waypointOption.coords}
+              position={waypointOption.location.coords}
               icon={activeWaypointIcon}>
               <Popup>
                 <RouterForwarder context={this.context}>

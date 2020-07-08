@@ -3,7 +3,7 @@ content:
     - name: player
       title: Player
   meta:
-    version: 41
+    version: 42
   pages:
     - directive: Hello from Charter!
       interface: player

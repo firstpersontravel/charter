@@ -8,10 +8,10 @@ const scriptContent = {
     name: 'w1',
     options: [{
       name: 'sf',
-      coords: [37.77604, -122.427428]
+      location: { coords: [37.77604, -122.427428] }
     }, {
       name: 'petaluma',
-      coords: [38.239191, -122.634324]
+      location: { coords: [38.239191, -122.634324] }
     }]
   }],
   geofences: [{

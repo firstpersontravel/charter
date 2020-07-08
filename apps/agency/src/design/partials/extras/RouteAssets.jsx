@@ -25,8 +25,8 @@ class RouteOption extends Component {
     const toOpt = this.props.toOpt;
     const mode = this.props.route.mode || 'driving';
     const request = {
-      origin: `${fromOpt.coords[0]},${fromOpt.coords[1]}`,
-      destination: `${toOpt.coords[0]},${toOpt.coords[1]}`,
+      origin: `${fromOpt.location.coords[0]},${fromOpt.location.coords[1]}`,
+      destination: `${toOpt.location.coords[0]},${toOpt.location.coords[1]}`,
       travelMode: mode.toUpperCase()
     };
     if (this.props.route.via && this.props.route.via.length > 0) {

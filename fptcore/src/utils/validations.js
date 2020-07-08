@@ -1,17 +1,36 @@
 const _ = require('lodash');
+const jsonschema = require('jsonschema');
 
 const TimeUtil = require('./time');
 
+const validator = new jsonschema.Validator();
+const locationSchema = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    address: { type: 'string' },
+    coords: { type: 'array', minItems: 2, maxItems: 2, items: { type: 'number'} }
+  },
+  required: ['coords'],
+  additionalProperties: false
+};
+
+function checkSchemaParam(typeName, name, param, schema) {
+  const opts = { propertyName: name };
+  const result = validator.validate(param, schema, opts);
+  if (!result.valid) {
+    const errs = result.errors
+      .map(e => `${e.property} ${e.message}`)
+      .join(', ');
+    return [`${typeName} param "${name}" must be valid: ${errs}.`];
+  }  
+}
+
 const Validations = {
-  address: {
-    help: 'A geocodable address, including city, state and ZIP/postal code. For example: "111 Main Street, San Francisco CA 94110".',
+  location: {
+    help: 'A geocodable address, including city, state and ZIP/postal code.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
-        return ['Address param "' + name + '" should be a string.'];
-      }
-      if (spec.required && param === '') {
-        return ['Address param "' + name + '" should not be blank.'];
-      }
+      return checkSchemaParam('Location', name, param, locationSchema);
     }
   },
 

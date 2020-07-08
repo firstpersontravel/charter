@@ -17,22 +17,14 @@ var waypointOptionSpec = {
       display: { hidden: true },
       default: defaultWaypointOptionName
     },
-    address: {
-      type: 'address',
+    location: {
+      type: 'location',
+      display: { label: false },
       required: true,
       help: 'The address of the location.'
     },
-    coords: {
-      type: 'coords',
-      required: true,
-      display: { hidden: true },
-      help: 'The coordinates of the location.'
-    },
-    title: {
-      type: 'string',
-      help: 'The title of this location for internal display.'
-    },
     values: {
+      display: { hidden: true },
       title: 'Variable defaults',
       help: 'These values are accessible to a run when this location is selected. For instance, if there are directions associated with the various locations for a place, you could set those here.',
       type: 'dictionary',

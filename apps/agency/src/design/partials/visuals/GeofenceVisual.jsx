@@ -28,14 +28,14 @@ function circle(lat, lng, rad) {
     ]));
 }
 
-export default function WaypointVisual({ script, resource }) {
+export default function GeofenceVisual({ script, resource }) {
   const waypointName = resource.center;
   const waypoint = _.find(script.content.waypoints, { name: waypointName });
   if (!waypoint) {
     return null;
   }
   const paths = waypoint.options
-    .map(opt => opt.coords)
+    .map(opt => opt.location.coords)
     .filter(Boolean)
     .map(c => circle(c[0], c[1], resource.distance || 1))
     .map(circ => `path=${circ.join('|')}`);
@@ -48,7 +48,7 @@ export default function WaypointVisual({ script, resource }) {
   );
 }
 
-WaypointVisual.propTypes = {
+GeofenceVisual.propTypes = {
   script: PropTypes.object.isRequired,
   resource: PropTypes.object.isRequired
 };

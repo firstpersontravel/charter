@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import GeofenceVisual from './visuals/GeofenceVisual';
-import WaypointVisual from './visuals/WaypointVisual';
 
 const visualComponentsByResourceType = {
-  waypoint: WaypointVisual,
   geofence: GeofenceVisual
 };
 

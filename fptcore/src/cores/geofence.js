@@ -7,7 +7,7 @@ class GeofenceCore {
     const waypointOption = WaypointCore.optionForWaypoint(scriptContent,
       geofence.center, waypointOptions);
     const dist = distance(latitude, longitude,
-      waypointOption.coords[0], waypointOption.coords[1]);
+      waypointOption.location.coords[0], waypointOption.location.coords[1]);
     return dist - accuracy <= geofence.distance;    
   }
 

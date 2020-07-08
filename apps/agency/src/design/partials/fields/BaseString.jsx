@@ -7,7 +7,7 @@ import BaseEmpty from './BaseEmpty';
 import PopoverControl from '../../../partials/PopoverControl';
 import { typeTitleForSpec, labelForSpec } from '../../utils/spec-utils';
 
-function bottomHelpForSpec(spec) {
+export function bottomHelpForSpec(spec) {
   const validation = Validations[spec.type];
   if (!validation || !validation.help) {
     return null;

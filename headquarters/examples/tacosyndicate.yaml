@@ -1309,60 +1309,66 @@ content:
   waypoints:
     - name: WAYPOINT-BIGROCK
       options:
-        - address: '37.774287, -122.421473'
-          coords:
-            - 37.774287
-            - -122.421473
-          name: WAYPOINT-BIGROCK
-          title: Big Rock
+        - name: WAYPOINT-BIGROCK
+          location:
+            title: Big Rock
+            address: '37.774287, -122.421473'
+            coords:
+              - 37.774287
+              - -122.421473
       title: Big Rock
     - name: WAYPOINT-CAFE
       options:
-        - address: Gough and Oak
-          coords:
-            - 37.774922
-            - -122.422497
-          name: WAYPOINT-CAFE
-          title: 20th Century Cafe
+        - name: WAYPOINT-CAFE
+          location:
+            title: 20th Century Cafe
+            address: Gough and Oak
+            coords:
+              - 37.774922
+              - -122.422497
       title: 20th Century Cafe
     - name: WAYPOINT-RT-ROTISSERIE
       options:
-        - address: 101 Oak St
-          coords:
-            - 37.775146
-            - -122.421052
-          name: WAYPOINT-RT-ROTISSERIE
-          title: RT Rotisserie
+        - name: WAYPOINT-RT-ROTISSERIE
+          location:
+            title: RT Rotisserie
+            address: 101 Oak St
+            coords:
+              - 37.775146
+              - -122.421052
       title: RT Rotisserie
     - name: WAYPOINT-RT-BACKUP
       options:
-        - address: '37.775166, -122.420827'
-          coords:
-            - 37.775166
-            - -122.420827
-          name: WAYPOINT-RT-BACKUP
-          title: Tree at Southeast Corner of Franklin & Oak
+        - name: WAYPOINT-RT-BACKUP
+          location:
+            title: Tree at Southeast Corner of Franklin & Oak
+            address: '37.775166, -122.420827'
+            coords:
+              - 37.775166
+              - -122.420827
       title: Tree at Southeast Corner of Franklin & Oak
     - name: WAYPOINT-CALA
       options:
-        - address: 50 Hickory St
-          coords:
-            - 37.775836
-            - -122.420348
-          name: WAYPOINT-CALA
-          title: Tacos Cala
+        - name: WAYPOINT-CALA
+          location:
+            title: Tacos Cala
+            address: 50 Hickory St
+            coords:
+              - 37.775836
+              - -122.420348
       title: Tacos Cala
     - name: WAYPOINT-BIGROCK-BACK
       options:
-        - address: 37 Lily St
-          coords:
-            - 37.774685
-            - -122.42148
-          name: WAYPOINT-BIGROCK-BACK
-          title: Back Entrance
+        - name: WAYPOINT-BIGROCK-BACK
+          location:
+            title: Back Entrance
+            address: 37 Lily St
+            coords:
+              - 37.774685
+              - -122.42148
       title: Back Entrance
   meta:
-    version: 41
+    version: 42
 assets:
   - data:
       end:

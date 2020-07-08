@@ -11,35 +11,39 @@ content:
       title: Starting point
       options:
         - name: sf
-          title: San Francisco
-          address: San Francisco
-          coords:
-            - 37.77604
-            - -122.427428
+          location:
+            title: San Francisco
+            address: San Francisco
+            coords:
+              - 37.77604
+              - -122.427428
     - name: midpoint
       title: Midpoint
       options:
         - name: petaluma
-          title: Petaluma
-          address: Petaluma
-          coords:
-            - 38.239191
-            - -122.634324
+          location:
+            title: Petaluma
+            address: Petaluma
+            coords:
+              - 38.239191
+              - -122.634324
     - name: end
       title: End
       options:
         - name: sr
-          title: Santa Rosa
-          address: Santa Rosa
-          coords:
-            - 38.439097
-            - -122.715336
+          location:
+            title: Santa Rosa
+            address: Santa Rosa
+            coords:
+              - 38.439097
+              - -122.715336
         - name: bodegabay
-          title: Bodega bay
-          address: Bodega bay
-          coords:
-            - 38.33441
-            - -123.044989
+          location:
+            title: Bodega bay
+            address: Bodega bay
+            coords:
+              - 38.33441
+              - -123.044989
   geofences:
     - name: GEOFENCE-MIDPOINT
       center: midpoint
@@ -155,7 +159,7 @@ content:
           page_name: End
           id: 18
   meta:
-    version: 41
+    version: 42
 assets:
   - data:
       end:

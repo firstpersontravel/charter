@@ -329,4 +329,31 @@ describe('Validations', () => {
         'Lookupable param "s" ("b^$(D") should be alphanumeric with underscores, dashes and periods.');
     });
   });
+
+  describe('#location', () => {
+    it('permits full location objects', () => {
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', address: '123 Main St', coords: [1, 2] }));
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', address: '123 Main St', coords: [1.4, 2.2] }));
+    });
+
+    it('permits missing address', () => {
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', address: '', coords: [1.4, 2.2] }));
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', coords: [1.4, 2.2] }));
+    });
+
+    it('permits missing title', () => {
+      ok(Validations.location.validate({}, 's', {}, { title: '', address: '123 Main St', coords: [1.4, 2.2] }));
+      ok(Validations.location.validate({}, 's', {}, { address: '123 Main St', coords: [1.4, 2.2] }));
+    });
+
+    it('warns if a field is missing', () => {
+      err(Validations.location.validate({}, 's', {}, { address: '123 Main St', title: 'Test' }),
+        'Location param "s" must be valid: s requires property "coords".');
+    });
+
+    it('warns if not an object', () => {
+      err(Validations.location.validate({}, 's', {}, '123 Main St'),
+        'Location param "s" must be valid: s is not of a type(s) object.');
+    });
+  });
 });
