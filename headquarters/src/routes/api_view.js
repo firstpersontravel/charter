@@ -8,15 +8,18 @@ const ActionContext = require('../kernel/action_context');
 
 const defaultInterface = { tabs: [{ panels: [{ type: 'current_page' }] }] };
 
-function prepPanel(panel, actionContext) {
+function exportPanel(panel, actionContext) {
   const panelComponent = coreRegistry.panels[panel.type];
   if (panelComponent.export) {
-    return panelComponent.export(panel, actionContext);
+    return {
+      type: panel.type,
+      data: panelComponent.export(panel, actionContext)
+    };
   }
   return null;
 }
 
-function prepTab(tab, actionContext) {
+function exportTab(tab, actionContext) {
   const trip = actionContext._objs.trip;
   const roleName = actionContext.currentRoleName;
   const currentPageName = trip.tripState.currentPageNamesByRole[roleName];
@@ -29,11 +32,11 @@ function prepTab(tab, actionContext) {
     ));
   return {
     title: tab.title,
-    panels: panels.map(panel => prepPanel(panel, actionContext))
+    panels: panels.map(panel => exportPanel(panel, actionContext))
   };
 }
 
-function prepInterface(actionContext) {
+function exportInterface(actionContext) {
   const roleName = actionContext.currentRoleName;
   const role = actionContext.scriptContent.roles.find(r => r.name === roleName);
   const interface = role.interface ?
@@ -44,7 +47,7 @@ function prepInterface(actionContext) {
   return {
     tabs: tabs
       .filter(tab => coreEvaluator.if(actionContext, tab.visible_if))
-      .map(p => prepTab(p, actionContext))
+      .map(p => exportTab(p, actionContext))
   };
 }
 
@@ -53,7 +56,7 @@ async function getPlayerViewRoute(req, res) {
   const player = await models.Player.findByPk(playerId);
   const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(),
     player.roleName);
-  const interface = prepInterface(actionContext);
+  const interface = exportInterface(actionContext);
   res.json({
     data: {
       interface: interface

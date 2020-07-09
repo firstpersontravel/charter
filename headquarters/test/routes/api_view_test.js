@@ -70,10 +70,10 @@ describe('apiViewRoutes', () => {
           interface: {
             tabs: [{
               title: 'Main',
-              panels: ['__button__exported__']
+              panels: [{ type: 'button', data: '__button__exported__' }]
             }, {
               title: 'Other',
-              panels: ['__text__exported__']
+              panels: [{ type: 'text', data: '__text__exported__' }]
             }]
           }
         }

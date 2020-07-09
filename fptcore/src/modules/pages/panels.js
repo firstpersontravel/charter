@@ -27,7 +27,7 @@ panels.audio_foreground = {
     }
   },
   export(panel, actionContext) {
-    return {};
+    return { audio: panel.audio };
   }
 };
 
@@ -49,10 +49,7 @@ panels.button = {
     return truncate(component.text, titleLen);
   },
   export(panel, actionContext) {
-    return {
-      text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
-        actionContext.timezone, actionContext.currentRoleName)
-    };
+    return { text: actionContext.templateText(panel.text) };
   }
 };
 
@@ -84,8 +81,7 @@ panels.choice = {
   },
   export(panel, actionContext) {
     return {
-      text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
-        actionContext.timezone, actionContext.currentRoleName),
+      text: actionContext.templateText(panel.text),
       value_ref: panel.value_ref,
       choices: panel.choices
     };
@@ -99,13 +95,30 @@ panels.content_browse = {
   properties: {
     title: { type: 'string', required: true },
     section: { type: 'string', required: true }
+  },
+  export(panel, actionContext) {
+    const contentPages = (actionContext.scriptContent.content_pages || [])
+      .filter(contentPage => contentPage.section === panel.section)
+      .filter(contentPage => actionContext.if(contentPage.visible_if));
+    return {
+      subpages: contentPages.map(contentPage => ({
+        panels: (contentPage.panels || []).map(subpanel => ({
+          type: subpanel.type,
+          data: actionContext.registry.panels[subpanel.type].export(subpanel, actionContext)
+        }))
+      }))
+    };
   }
 };
 
 panels.current_page = {
   icon: 'sticky-note',
   help: 'The current page for this player. Should only be used as part of an interface.',
-  properties: {}
+  properties: {},
+  export(panel, actionContext) {
+    // should never be returned as the api_view should replace this with the current page.
+    return null;
+  }
 };
 
 panels.directions = {
@@ -134,6 +147,9 @@ panels.directions = {
       return `directions at "${waypoint.title}"`;
     }
     return `directions to ${component.destination_name || 'unknown'}`;
+  },
+  export(panel, actionContext) {
+    return {};
   }
 };
 

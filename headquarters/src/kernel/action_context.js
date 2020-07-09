@@ -1,7 +1,10 @@
 const _ = require('lodash');
 const moment = require('moment-timezone');
 
+const coreEvaluator = require('fptcore/src/core-evaluator');
+const coreRegistry = require('fptcore/src/core-registry');
 const ContextCore = require('fptcore/src/cores/context');
+const TemplateUtil = require('fptcore/src/utils/template');
 
 const config = require('../config');
 const models = require('../models');
@@ -86,6 +89,12 @@ class ActionContext {
     };
   }
 
+  static async createForTripId(tripId, evaluateAt=null, roleName=null) {
+    const actionContext = new ActionContext(tripId, evaluateAt, roleName);
+    await actionContext.init();
+    return actionContext;
+  }
+
   constructor(tripId, evaluateAt=null, roleName=null) {
     this._tripId = tripId;
     this._evaluateAt = evaluateAt || moment.utc();
@@ -94,6 +103,8 @@ class ActionContext {
 
   async init() {
     this._objs = await this.constructor.getObjectsForTrip(this._tripId);
+    this.registry = coreRegistry;
+    this.evaluator = coreEvaluator;
     this.scriptContent = this._objs.script.content;
     this.timezone = this._objs.experience.timezone;
     this.evalContext = this.constructor._prepareEvalContext(this._objs);
@@ -101,10 +112,24 @@ class ActionContext {
     this.currentRoleName = this._currentRoleName;
   }
 
-  static async createForTripId(tripId, evaluateAt=null, roleName=null) {
-    const actionContext = new ActionContext(tripId, evaluateAt, roleName);
-    await actionContext.init();
-    return actionContext;
+  async findAssetData(assetType, assetName) {
+    const asset = await models.Asset.findOne({
+      where: {
+        experienceId: this._objs.experience.id,
+        type: assetType,
+        name: assetName,
+        isArchived: false
+      }
+    });
+    return asset ? asset.data : null;
+  }
+
+  templateText(text) {
+    return TemplateUtil.templateText(this.evalContext, text, this.timezone, this.currentRoleName);
+  }
+
+  if(ifStatement) {
+    return this.evaluator.if(this, ifStatement);
   }
 }
 
