@@ -45,6 +45,7 @@
     "react": "^16.0.0",
     "react-addons-css-transition-group": "^16.0.0-alpha.3",
     "react-addons-transition-group": "^16.0.0-alpha.3",
+    "react-color": "^2.18.1",
     "react-datepicker": "^1.4.0",
     "react-dom": "^16.0.0",
     "react-leaflet": "^2.6.3",

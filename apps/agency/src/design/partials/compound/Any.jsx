@@ -2,12 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import BooleanField from '../fields/Boolean';
+import ColorField from '../fields/Color';
 import ComponentField from './Component';
 import ComponentReferenceField from '../fields/ComponentReference';
 import CoordsField from '../fields/Coords';
 import DictionaryField from './Dictionary';
-import EnumField from '../fields/Enum';
 import EmailField from '../fields/Email';
+import EnumField from '../fields/Enum';
 import IntegerField from '../fields/Integer';
 import ListField from './List';
 import LocationField from '../fields/Location';
@@ -26,6 +27,7 @@ import TimeShorthandField from '../fields/TimeShorthand';
 
 const fieldComponents = {
   boolean: BooleanField,
+  color: ColorField,
   component: ComponentField,
   componentReference: ComponentReferenceField,
   coords: CoordsField,

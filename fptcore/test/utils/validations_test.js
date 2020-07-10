@@ -64,7 +64,6 @@ describe('Validations', () => {
         '"Gabe\'s Mom" <a-b-c@d_eF.net>'));
     });
 
-
     it('warns if not a string', () => {
       err(Validations.email.validate({}, 's', {}, []),
         'Email param "s" should be a string.');
@@ -88,6 +87,32 @@ describe('Validations', () => {
         'Email param "s" should be a valid email.');
       err(Validations.email.validate({}, 's', {}, '<john@domain> "test"'),
         'Email param "s" should be a valid email.');
+    });
+  });
+
+  describe('#color', () => {
+    it('permits color', () => {
+      ok(Validations.color.validate({}, 's', {}, '#ccaa88'));
+      ok(Validations.color.validate({}, 's', {}, '#AABB00'));
+    });
+
+    it('warns if not a string', () => {
+      err(Validations.color.validate({}, 's', {}, []), 'Color param "s" should be a string.');
+    });
+
+    it('warns if blank', () => {
+      err(Validations.color.validate({}, 's', {}, ''), 'Color param "s" should not be blank.');
+    });
+
+    it('warns if not a valid color', () => {
+      err(Validations.color.validate({}, 's', {}, 'aaaaaa'),
+        'Color param "s" (aaaaaa) should be a hex color.');
+      err(Validations.color.validate({}, 's', {}, '#ff00mz'),
+        'Color param "s" (#ff00mz) should be a hex color.');
+      err(Validations.color.validate({}, 's', {}, '#000'),
+        'Color param "s" (#000) should be a hex color.');
+      err(Validations.color.validate({}, 's', {}, '#aacc0'),
+        'Color param "s" (#aacc0) should be a hex color.');
     });
   });
 

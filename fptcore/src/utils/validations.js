@@ -117,6 +117,21 @@ const Validations = {
     }
   },
 
+  color: {
+    help: 'A color, in hexadecimal format. (i.e. #FFFFFF)',
+    validate: (scriptContent, name, spec, param) => {
+      if (!_.isString(param)) {
+        return [`Color param "${name}" should be a string.`];
+      }
+      if (param === '') {
+        return [`Color param "${name}" should not be blank.`];
+      }
+      if (!/^#[A-Fa-f0-9]{6}$/.test(param)) {
+        return [`Color param "${name}" (${param}) should be a hex color.`];
+      }
+    }
+  },
+
   enum: {
     help: 'A field allowing a choice between a limited set of values. The specific set of options will be different for each field and documented in that field.',
     title: 'Enumeration',

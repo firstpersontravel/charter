@@ -13,6 +13,7 @@ function BooleanField({ spec, value, name, path, opts, onPropUpdate }) {
   const existing = _.isUndefined(value) ? def : value;
   return (
     <input
+      className="ml-1 mt-2"
       style={style}
       type="checkbox"
       checked={!!existing}
