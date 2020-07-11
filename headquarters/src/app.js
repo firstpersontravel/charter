@@ -39,11 +39,11 @@ app.use((req, res, next) => {
 });
 
 // Log requests
-const staticPrefixes = ['/static', '/build', '/travel/dist'];
+const ignorePrefixes = ['/static', '/build', '/travel/dist', '/health'];
 app.use((req, res, next) => {
   // Don't log static file requests.
-  for (const staticPrefix of staticPrefixes) {
-    if (req.originalUrl.startsWith(staticPrefix)) {
+  for (const ignorePrefix of ignorePrefixes) {
+    if (req.originalUrl.startsWith(ignorePrefix)) {
       next();
       return;
     }
@@ -110,7 +110,7 @@ app.use('/static', express.static(path.join(root, 'static')));
 app.use('/build', express.static(path.join(root, 'build')));
 app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
 app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
-app.use('/favicon.ico', serveFile('static/favicon.ico'));
+app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 app.use('/apple-touch-icon-precomposed.png',
   serveFile('static/images/apple-touch-icon-precomposed.png'));
 

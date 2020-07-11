@@ -195,7 +195,7 @@ export default class GroupPlayers extends Component {
     if (!script) {
       return null;
     }
-    return script.content.roles
+    return (script.content.roles || [])
       .filter(role => RoleCore.canRoleHaveUser(script.content, role))
       .map(role => this.renderRoleRow(trips, role));
   }

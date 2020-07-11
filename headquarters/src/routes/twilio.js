@@ -16,6 +16,11 @@ function handleTwimlResponse(res, twimlResponse) {
 }
 
 async function incomingCallRoute(req, res) {
+  if (!req.body.From.startsWith('+1')) {
+    logger.warn('Incoming call received from international number.');
+    res.status(200).end();
+    return;
+  }
   const fromNumber = req.body.From.replace('+1', '');
   const toNumber = req.body.To.replace('+1', '');
   const twimlResponse = await (
@@ -25,30 +30,29 @@ async function incomingCallRoute(req, res) {
 }
 
 async function incomingCallStatusRoute(req, res) {
-  const fromNumber = req.body.From.replace('+1', '');
-  const toNumber = req.body.To.replace('+1', '');
-  if (fromNumber.length > 10 || toNumber.length > 10) {
-    logger.warn('Status received with international numbers.');
-    res.status(200).send('International numbers not supported.');
+  if (!req.body.From.startsWith('+1')) {
+    logger.warn('Status received from international number.');
+    res.status(200).end();
     return;
   }
-
+  const fromNumber = req.body.From.replace('+1', '');
+  const toNumber = req.body.To.replace('+1', '');
   const relay = await RelaysController.findByNumber(toNumber, fromNumber);
   if (!relay) {
     logger.warn('Status received without matching relay.');
-    res.status(500).send('No relay match.');
+    res.status(500).end();
     return;
   }
 
   const player = await RelayController.lookupPlayer(relay, fromNumber);
   if (!player) {
     logger.warn('Status received without matching player.');
-    res.status(500).send('No player match.');
+    res.status(500).end();
     return;
   }
   if (req.body.CallStatus !== 'completed') {
     logger.warn(`Unrecognized call status: ${req.body.CallStatus}`);
-    res.status(200).send('OK');
+    res.status(200).end();
     return;
   }
   await TwilioCallHandler.handleCallEnded(relay.id, player.tripId);
@@ -104,6 +108,11 @@ async function callInterruptRoute(req, res) {
 }
 
 async function incomingMessageRoute(req, res) {
+  if (!req.body.From.startsWith('+1')) {
+    logger.warn('Incoming message received from international number.');
+    res.status(200).end();
+    return;
+  }
   const fromNumber = req.body.From.replace('+1', '');
   const toNumber = req.body.To.replace('+1', '');
   const body = req.body.Body;

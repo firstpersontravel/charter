@@ -89,7 +89,7 @@ class Group extends Component {
   }
 
   initializeTrip(group, tripFields) {
-    const roles = group.script.content.roles;
+    const roles = group.script.content.roles || [];
     this.props.createTrip(tripFields, roles.map(role => ({
       collection: 'players',
       fields: this.initialFieldsForRole(group.experience, group.script,

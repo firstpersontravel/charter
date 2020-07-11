@@ -34,7 +34,7 @@ class MessageController {
         as: 'user'
       }]
     });
-    if (!toPlayer.user || !toPlayer.user.devicePushToken) {
+    if (!toPlayer || !toPlayer.user || !toPlayer.user.devicePushToken) {
       return;
     }
     const pushBody = message.medium === 'text' ?
