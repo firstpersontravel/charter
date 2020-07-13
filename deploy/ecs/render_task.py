@@ -32,7 +32,7 @@ def main(env_name, git_hash, integer_resources):
 
     # Set roles
     task_data['executionRoleArn'] = exec_role_format.format(env_name)
-    task_data['taskRoleArn'] = task_role_format.format(task_role)
+    task_data['taskRoleArn'] = task_role_format.format(env_name)
 
     if integer_resources:
         task_data['cpu'] = int(task_data['cpu'])
