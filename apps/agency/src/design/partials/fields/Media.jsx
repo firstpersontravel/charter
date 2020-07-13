@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactS3Uploader from 'react-s3-uploader';
+import * as Sentry from '@sentry/browser';
 
 import config from '../../../config';
 
@@ -35,6 +36,7 @@ class MediaField extends Component {
   }
 
   handleUploadError(message, file) {
+    Sentry.captureMessage(message, 'error');
     this.setState({ uploading: false, progress: null, error: message });
   }
 

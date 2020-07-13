@@ -38,7 +38,7 @@
     "mysql2": "^1.5.3",
     "pino": "^6.2.1",
     "pino-pretty": "^4.0.0",
-    "react-s3-uploader": "^4.8.0",
+    "react-s3-uploader": "^4.9.3",
     "sequelize": "^4.37.5",
     "sequelize-cli": "^4.0.0",
     "twilio": "^3.42.0"
