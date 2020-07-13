@@ -1,12 +1,17 @@
 const INTERFACE_TYPEFACE_OPTIONS = [
-  'Arial',
-  'Times New Roman',
-  'Courier New',
-  'Verdana',
-  'Palatino',
-  'Comic Sans MS',
-  'Lucida Grande',
-  'Raleway'
+  'Arvo',
+  'BioRhyme',
+  'Courier Prime',
+  'Crimson',
+  'Inconsolata',
+  'Inter',
+  'Lora',
+  'Montserrat',
+  'Playfair',
+  'Raleway',
+  'Roboto',
+  'Source Sans',
+  'Work Sans'
 ];
 
 module.exports = {
@@ -56,6 +61,7 @@ module.exports = {
       help: 'Color to use for the navigation elements of your interface: the header and tabs.'
     },
     accent_color: {
+      title: 'Active color',
       type: 'color',
       default: '#666666',
       help: 'Color to use for active areas like the selected tab.'

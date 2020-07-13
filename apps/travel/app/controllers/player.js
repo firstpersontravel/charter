@@ -75,7 +75,7 @@ export default Ember.Controller.extend({
   }.property('interface'),
 
   fontFamily: function() {
-    return this.get('interface.typeface') || 'Raleway';
+    return this.get('interface.font_family') || 'Raleway';
   }.property('interface'),
 
   lastFixDidChange: function() {
