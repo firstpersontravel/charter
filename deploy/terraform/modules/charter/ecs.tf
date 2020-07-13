@@ -79,5 +79,4 @@ resource "aws_ecs_service" "charter" {
 
   # Track the latest ACTIVE revision
   task_definition = "${aws_ecs_task_definition.charter_bootstrap.family}:${max("${aws_ecs_task_definition.charter_bootstrap.revision}", "${data.aws_ecs_task_definition.charter.revision}")}"
-
 }
