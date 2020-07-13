@@ -209,6 +209,9 @@ export function associateAuthData(authData) {
       // created_at: 1312182000 // Signup date as a Unix timestamp
     };
     Intercom('update');
+    // Intercom cookie for use in docs/charter site
+    const intercomCookie = btoa(JSON.stringify(window.intercomSettings));
+    document.cookie = `fpt_intercom=${intercomCookie};domain=.firstperson.travel`;
   }
 }
 
@@ -220,6 +223,8 @@ function deassociateAuthData() {
   // Intercom
   if (typeof Intercom === 'function') {
     Intercom('shutdown');
+    // Clear intercom cookie
+    document.cookie = 'fpt_intercom=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 }
 
