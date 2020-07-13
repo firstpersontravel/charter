@@ -4,13 +4,13 @@
 
 * { box-sizing: border-box; }
 
-@color-olive: #859c68; // headerColor
-@color-teal-dark: #47876e; // accent darkened
-@color-teal-light: #4da793; // accent
-@color-sand-light: #ede7b6; // bgColor
-@color-sand-dark: #e2c362; // bgColor darkened
-@color-orange-bright: #f9670f; // primary
-@color-orange-faded: #f3a842; // primary lightened
+@color-olive: #ccc; // headerColor
+@color-teal-dark: #888; // accent darkened
+@color-teal-light: #aaa; // accent
+@color-sand-light: #fff; // bgColor
+@color-sand-dark: #ccc; // bgColor darkened
+@color-orange-bright: #444; // primary
+@color-orange-faded: #555; // primary lightened
 
 /**
  * Generic styles
@@ -86,6 +86,10 @@ p { margin: 0.5em 0; }
         background-color: @color-teal-dark;
         color: @color-teal-light;
     }
+}
+
+.pure-button {
+    border-radius: 8px;
 }
 
 label.pure-button, button.pure-button, a.pure-button {
@@ -279,7 +283,6 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 .page-panel-messages-browse {
     .messages-list {}
     .messages-detail-inner {
-        margin: 0.5em;
         .page-panel-messages {
             margin-bottom: 0; // HACK to accommodate for tab bottom
         }
@@ -287,6 +290,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 }
 
 .page-panel-messages {
+    padding: 0.5em;
     h1 { margin-top: 0; }
     margin-bottom: 50px; // HACK to accommodate for tab bottom
     .messages-item {

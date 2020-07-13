@@ -255,6 +255,7 @@ function renderHeader(trip, player, page, onAction) {
 
   const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
   const curPageName = currentPageNamesByRole[player.roleName];
+  const isCurrentScene = page.scene === trip.tripState.currentSceneName;
   const isCurrentPage = page.name === curPageName;
   const isAckedPage = player.acknowledgedPageName === page.name;
 
@@ -278,7 +279,8 @@ function renderHeader(trip, player, page, onAction) {
     </span>
   ) : null;
 
-  const goToPageButton = (onAction && !isCurrentPage) ? (
+  const showGoToPageBtn = onAction && isCurrentScene && !isCurrentPage;
+  const goToPageButton = (showGoToPageBtn) ? (
     // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <a
       style={{ cursor: 'pointer' }}

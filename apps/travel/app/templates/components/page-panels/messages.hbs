@@ -28,21 +28,32 @@
     <div class='image-upload-container'></div>
     <form enctype="multipart/form-data" class="pure-g">
       {{#if canInitiateCalls}}
-        <a class="pure-button pure-button-primary pure-u-1-12"
+        <a
+          class="pure-button pure-button-primary pure-u-1-12"
+          style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
           href="{{callUrl}}">
           <i class='fa fa-phone'></i>
         </a>
       {{else}}
-        <a class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled' disabled>
+        <a
+          class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled'
+          style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
+          disabled>
           <i class='fa fa-phone'></i>
         </a>
       {{/if}}
       {{#if canSendImages}}
-        <label for="image-upload" class="pure-button pure-button-primary pure-u-1-12">
+        <label
+          for="image-upload"
+          style="border-radius: 0;"
+          class="pure-button pure-button-primary pure-u-1-12">
           <i class='fa fa-camera'></i>
         </label>
       {{else}}
-        <a class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled' disabled>
+        <a
+          class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled'
+          style="border-radius: 0;"
+          disabled>
           <i class='fa fa-camera'></i>
         </a>
       {{/if}}
@@ -53,6 +64,7 @@
         placeholder=placeholder
         disabled=(if canSendTexts false true)}}
       <button
+          style="border-top-left-radius: 0; border-bottom-left-radius: 0;"
           class="pure-button pure-button-primary pure-u-1-6"
           {{action "sendText"}}
           disabled={{isSendTextDisabled}}>
