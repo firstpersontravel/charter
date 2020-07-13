@@ -1,3 +1,7 @@
+locals {
+  content_bucket_name = var.environment_name == "production" ? "fpt-agency-content" : "fpt-agency-content-${var.environment_name}"
+}
+
 data "aws_iam_policy_document" "charter_task_trust" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -12,10 +16,8 @@ data "aws_iam_policy_document" "charter_task_trust" {
 data "aws_iam_policy_document" "charter_task_policy" {
   # Push to S3 for file uploads
   statement {
-    actions = ["s3:PutObject"]
-    resources = [
-      "arn:aws:s3:::fpt-agency-content*/*"
-    ]
+    actions = ["s3:*"]
+    resources = ["arn:aws:s3:::${local.content_bucket_name}/*"]
   }
 }
 
