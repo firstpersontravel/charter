@@ -48,13 +48,24 @@ app.use((req, res, next) => {
       return;
     }
   }
+  const startedAt = new Date().valueOf();
   // config.logger.info({ name: 'request' },
   //   `${req.method} ${req.originalUrl} ...`);
   res.on('finish', () => {
+    const reqDurationMsec = new Date().valueOf() - startedAt;
+    const devInfo = { name: 'request' };
+    const reqInfo = {
+      name: 'request',
+      path: req.originalUrl,
+      status: res.statusCode,
+      duration: reqDurationMsec,
+      size: parseInt(res.get('Content-Length') || 0)
+    };
     config.logger.info(
-      { name: 'request' },
+      config.env.HQ_STAGE === 'development' ? devInfo : reqInfo,
       `${req.method} ${req.originalUrl} - ` +
       `${res.statusCode} ${res.statusMessage} - ` +
+      `${reqDurationMsec}ms - ` +
       `${res.get('Content-Length') || 0}b sent`);
   });
   next();
