@@ -75,11 +75,17 @@ app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
 
 // S3 signing url
-app.use('/s3', s3Router({
+const s3Opts = {
   bucket: config.env.HQ_CONTENT_BUCKET,
   ACL: 'public-read',
   uniquePrefix: false
-}));
+};
+if (config.env.HQ_STAGE === 'staging') {
+  // special case: staging bucket is in us-east-1 -- other buckets are us-west-2
+  // like our ECS cluster.
+  s3Opts.region = 'us-east-1';
+}
+app.use('/s3', s3Router(s3Opts));
 
 // Health check
 app.get('/health', (req, res) => {
