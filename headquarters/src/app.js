@@ -56,7 +56,9 @@ app.use((req, res, next) => {
     const devInfo = { name: 'request' };
     const reqInfo = {
       name: 'request',
+      method: req.method,
       path: req.originalUrl,
+      ip: req.ip,
       status: res.statusCode,
       duration: reqDurationMsec,
       size: parseInt(res.get('Content-Length') || 0)
