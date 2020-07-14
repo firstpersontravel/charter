@@ -6,8 +6,10 @@ const { sandbox } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
+const RelaysController = require('../../src/controllers/relays');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
+const TwilioUtil = require('../../src/handlers/twilio_util');
 
 describe('TwilioCallHandler', () => {
   describe('#_triggerEventAndGatherTwiml', () => {
@@ -175,19 +177,101 @@ describe('TwilioCallHandler', () => {
   });
 
   describe('#handleIncomingCall', () => {
-    it.skip('hangs up if relay not found', async () => {});
+    const mockRelay = { asRoleName: 'Player', withRoleName: 'Recipient' };
+    const mockScript = {};
+    const mockSpec = {};
+    const mockTripId = 123;
 
-    it.skip('hangs up if no spec found', async () => {});
+    it('hangs up if relay not found', async () => {
+      sandbox.stub(RelaysController, 'findByNumber').resolves(null);
 
-    it.skip('hangs up if phone-in disallowed and no voicemail', async () => {
+      const res = await TwilioCallHandler.handleIncomingCall(
+        '+11111111111', '+12222222222');
+
+      // Test returns twiml sentinel
+      assert.strictEqual(
+        res.toString(),
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<Response><Say>No Charter relay found for this number.' +
+        '</Say></Response>');
     });
 
-    it.skip('plays voicemail if phone-in disallowed and defined', async () => {
+    it('hangs up if no spec found', async () => {
+      sandbox.stub(RelaysController, 'findByNumber').resolves(mockRelay);
+      sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
+      sandbox.stub(RelayController, 'specForRelay').returns(null);
+  
+      const res = await TwilioCallHandler.handleIncomingCall(
+        '+11111111111', '+12222222222');
+
+      // Test returns twiml sentinel
+      assert.strictEqual(
+        res.toString(),
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<Response><Say>No Charter relay spec found for this number.' +
+        '</Say></Response>');
     });
 
-    it.skip('returns gathered twiml', async () => {});
+    it('returns gathered twiml', async () => {
+      const twimlSentinel = new twilio.twiml.VoiceResponse();
+      twimlSentinel.say({}, 'message');
+  
+      sandbox.stub(RelaysController, 'findByNumber').resolves(mockRelay);
+      sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
+      sandbox.stub(RelayController, 'specForRelay').returns(mockSpec);
+      sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(mockTripId);
+  
+      // Return twiml
+      sandbox
+        .stub(TwilioCallHandler, '_triggerEventAndGatherTwiml')
+        .resolves(twimlSentinel);
 
-    it.skip('plays voicemail if no twiml was gathered', async () => {});
+      const res = await TwilioCallHandler.handleIncomingCall(
+        '+11111111111', '+12222222222');
+
+      // Test returns twiml sentinel
+      assert.strictEqual(res, twimlSentinel);
+
+      // Test event was called properly
+      sinon.assert.calledWith(
+        TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
+        mockTripId, mockRelay, {
+          type: 'call_received',
+          from: 'Player',
+          to: 'Recipient'
+        });
+    });
+
+    it('plays default message if no twiml was gathered', async () => {
+      sandbox.stub(RelaysController, 'findByNumber').resolves(mockRelay);
+      sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
+      sandbox.stub(RelayController, 'specForRelay').returns(mockSpec);
+      sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(mockTripId);
+  
+      // Return twiml
+      sandbox
+        .stub(TwilioCallHandler, '_triggerEventAndGatherTwiml')
+        .resolves(new twilio.twiml.VoiceResponse());
+
+      const res = await TwilioCallHandler.handleIncomingCall(
+        '+11111111111', '+12222222222');
+
+      // Test returns twiml sentinel
+      assert.strictEqual(
+        res.toString(),
+        '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<Response><Say>No Charter behavior handled this incoming call.' +
+        '</Say></Response>');
+
+      // Test event was called properly
+      sinon.assert.calledWith(
+        TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
+        mockTripId, mockRelay, {
+          type: 'call_received',
+          from: 'Player',
+          to: 'Recipient'
+        });
+    });
   });
 
   describe('#handleCallResponse', () => {

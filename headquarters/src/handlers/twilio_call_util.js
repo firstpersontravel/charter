@@ -19,6 +19,12 @@ class TwilioCallUtil {
     response.hangup();
     return response;
   }
+
+  static say(phrase) {
+    const response = new twilio.twiml.VoiceResponse();
+    response.say(phrase);
+    return response;
+  }
 }
 
 module.exports = TwilioCallUtil;
