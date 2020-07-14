@@ -23,7 +23,7 @@ describe('pageEntrywayRoutes', () => {
   };
   const roleName = 'role-aabbcc';
   const script = {
-    content: { roles: [{ name: roleName }] },
+    content: { roles: [{ name: roleName, }] },
     details: 'script details',
     experience: experience,
     experienceId: experienceId,

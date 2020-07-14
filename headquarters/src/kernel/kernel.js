@@ -54,6 +54,7 @@ class KernelController {
     logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
+    objs.acting_player_id = action.params.player_id;
     const result = this._resultForImmediateActionAndObjs(objs, action,
       evaluateAt);
     await this._applyResult(objs, result);
@@ -67,6 +68,7 @@ class KernelController {
     logger.info(event, `(Trip #${tripId}) Applying event: ${event.type}.`);
     const evaluateAt = applyAt || moment.utc();
     const objs = await KernelUtil.getObjectsForTrip(tripId);
+    objs.acting_player_id = event.player_id;
     const result = this._resultForEventAndObjs(objs, event, evaluateAt);
     await this._applyResult(objs, result);
     return result;

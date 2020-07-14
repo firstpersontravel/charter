@@ -3,7 +3,7 @@ module.exports = {
   resources: {
     role: {
       actions: {
-        switch_role: require('./role_switch')
+        change_role: require('./role_change')
       },
       resource: require('./role'),
       conditions: require('./role_conditions')

@@ -51,6 +51,7 @@ export default DS.Model.extend({
   actionContext: function() {
     return {
       currentRoleName: this.get('roleName'),
+      currentPlayerId: this.id,
       evalContext: this.get('evalContext')
     };
   }.property('evalContext'),

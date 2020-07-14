@@ -65,11 +65,11 @@ describe('KernelOpController', () => {
   describe('#updatePlayerFields', () => {
     it('applies a deep value change to a player', async () => {
       const objs = {
-        players: [{ roleName: 'Test', update: sandbox.stub().resolves() }]
+        players: [{ id: 'somePlayerId', update: sandbox.stub().resolves() }]
       };
       const op = {
         operation: 'updatePlayerFields',
-        roleName: 'Test',
+        playerId: 'somePlayerId',
         fields: { field: true }
       };
 

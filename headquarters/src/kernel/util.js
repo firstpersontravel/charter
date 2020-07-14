@@ -53,12 +53,14 @@ class KernelUtil {
   }
 
   static prepareActionContext(objs, evaluateAt) {
+    const acting_player = objs.players.find(player => player.id == objs.acting_player_id);
     return {
       scriptContent: objs.script.content,
       timezone: objs.experience.timezone,
       evalContext: this.prepareEvalContext(objs),
       evaluateAt: evaluateAt,
-      currentRoleName: null
+      currentRoleName: acting_player && acting_player.roleName,
+      currentPlayerId: acting_player && acting_player.id
     };
   }
 

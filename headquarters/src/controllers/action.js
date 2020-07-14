@@ -6,7 +6,7 @@ const models = require('../models');
 const logger = config.logger.child({ name: 'controllers.action' });
 
 class ActionController {
-  static async scheduleAction(trip, action) {
+  static async scheduleAction(trip, action, playerId) {
     const now = moment.utc();
     const scheduleAt = action.scheduleAt || now;
     const scheduleAtLocal = moment(scheduleAt)
@@ -19,6 +19,8 @@ class ActionController {
     const fields = {
       orgId: trip.orgId,
       tripId: trip.id,
+      // TODO: add playerId to scheduled actions, or params?? should this just be a serialized blob?
+      // playerId: playerId,
       type: 'action',
       name: action.name,
       params: action.params,

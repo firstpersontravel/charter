@@ -64,17 +64,17 @@ describe('KernelResult', () => {
 
     describe('#updatePlayerFields', () => {
       it('updates player fields', () => {
-        const actionContext = { evalContext: { Phone: {} } };
+        const actionContext = { evalContext: { 'testPlayerId': {} } };
         const ops = [{
           operation: 'updatePlayerFields',
-          roleName: 'Phone',
+          playerId: 'testPlayerId',
           fields: { otherField: '456' }
         }];
         
         const res = KernelResult.tempUpdateContext(ops, actionContext);
 
         assert.deepStrictEqual(res.evalContext,
-          { Phone: { otherField: '456' } });
+          { 'testPlayerId': { otherField: '456' } });
       });
     });
   });
