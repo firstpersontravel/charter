@@ -14,7 +14,7 @@ const playerShortcutRoute = async (req, res) => {
   res.redirect(
     `/travel/u/${player.userId || 0}` +
     `/p/${player.tripId}` +
-    `/role/${player.roleName}`
+    `/p/${player.id}`
   );
 };
 

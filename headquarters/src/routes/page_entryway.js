@@ -43,7 +43,7 @@ const joinRoute = async (req, res) => {
       res.redirect(
         `/travel/u/${player.userId || 0}` +
         `/p/${player.tripId}` +
-        `/role/${player.roleName}`);
+        `/p/${player.id}`);
       return;
     }
   }
@@ -126,7 +126,8 @@ const joinSubmitRoute = async (req, res) => {
   res.redirect(
     `/travel/u/${player.userId || 0}` +
     `/p/${player.tripId}` +
-    `/role/${player.roleName}`);
+    `/p/${player.id}`
+  );
 };
 
 
@@ -163,7 +164,7 @@ const entrywayRoute = async (req, res) => {
       res.redirect(
         `/travel/u/${player.userId || 0}` +
         `/p/${player.tripId}` +
-        `/role/${player.roleName}`);
+        `/p/${player.id}`);
       return;
     }
   }
@@ -236,8 +237,8 @@ const entrywaySubmitRoute = async (req, res) => {
   res.cookie(`exp-${experience.id}`, player.id);
   res.redirect(
     `/travel/u/${player.userId || 0}` +
-    `/p/${player.tripId}` +
-    `/role/${player.roleName}`);
+    `/p/${player.tripId}`+
+    `/p/${player.id}`);
 };
 
 module.exports = {

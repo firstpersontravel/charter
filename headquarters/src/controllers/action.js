@@ -15,7 +15,8 @@ class ActionController {
       .tz('US/Pacific')
       .format('h:mm:ssa z');
     logger.info(action.params,
-      `Scheduling ${action.name} for ${scheduleAtLocal}.`);
+      `Scheduling ${action.name} from player ${playerId} for ${scheduleAtLocal}.`);
+    // TODO: refactor various context used by action into a data blob (orgId, tripId, playerId, triggerName, event)
     const fields = {
       orgId: trip.orgId,
       tripId: trip.id,

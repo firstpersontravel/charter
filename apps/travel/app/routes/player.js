@@ -11,7 +11,7 @@ export default Ember.Route.extend({
     var players = trip.get('players');
     var user = this.modelFor('user');
     // want this to actually get the user's player for this trip, if the user exists (regardless of the params.role_name)
-    return players.findBy('roleName', params.role_name);
+    return players.findBy('id', params.player_id);
   },
 
   setupController: function(controller, context) {

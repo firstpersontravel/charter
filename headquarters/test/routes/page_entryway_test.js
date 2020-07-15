@@ -128,7 +128,7 @@ describe('pageEntrywayRoutes', () => {
       assert.strictEqual(res.statusCode, 302);
       const redirect_uri = `/travel/u/${existingPlayer.userId || 0}` +
                            `/p/${existingPlayer.tripId}` +
-                           `/role/${existingPlayer.roleName}`;
+                           `/p/${existingPlayer.id}`;
       assert.strictEqual(res._getRedirectUrl(), redirect_uri);
     });
   });
@@ -202,7 +202,7 @@ describe('pageEntrywayRoutes', () => {
         assert.strictEqual(res.statusCode, 302);
         const redirect_uri = `/travel/u/${player.userId || 0}` +
                              `/p/${player.tripId}` +
-                             `/role/${player.roleName}`;
+                             `/p/${player.id}`;
         assert.strictEqual(res._getRedirectUrl(), redirect_uri);
       });
 
