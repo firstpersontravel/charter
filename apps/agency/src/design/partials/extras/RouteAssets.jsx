@@ -5,6 +5,13 @@ import PropTypes from 'prop-types';
 
 import StaticMapImg from '../StaticMapImg';
 
+function titleForLocation(location) {
+  if (!location) {
+    return 'No location';
+  }
+  return location.title || location.address || location.coords.map(i => i.toFixed(6)).join(', ');
+}
+
 class RouteOption extends Component {
   constructor(props) {
     super(props);
@@ -25,8 +32,8 @@ class RouteOption extends Component {
     const toOpt = this.props.toOpt;
     const mode = this.props.route.mode || 'driving';
     const request = {
-      origin: `${fromOpt.coords[0]},${fromOpt.coords[1]}`,
-      destination: `${toOpt.coords[0]},${toOpt.coords[1]}`,
+      origin: `${fromOpt.location.coords[0]},${fromOpt.location.coords[1]}`,
+      destination: `${toOpt.location.coords[0]},${toOpt.location.coords[1]}`,
       travelMode: mode.toUpperCase()
     };
     if (this.props.route.via && this.props.route.via.length > 0) {
@@ -119,14 +126,14 @@ class RouteOption extends Component {
     const dirAsset = this.getDirAsset();
     const status = dirAsset ? (
       <span className="text-success">
-        Updated {moment.utc(dirAsset.updatedAt).format('MMM DD, YYYY')}
+        Updated {moment.utc(dirAsset.updatedAt).format('MMM D, YYYY')}
       </span>
     ) : (
-      <span className="text-danger">Not generated</span>
+      <span className="text-danger">Needed</span>
     );
     return (
       <div>
-        {fromOpt.title} to {toOpt.title}: {status}&nbsp;
+        {titleForLocation(fromOpt.location)} to {titleForLocation(toOpt.location)}: {status}&nbsp;
         {this.renderFetchBtn()}
       </div>
     );

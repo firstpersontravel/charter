@@ -1,17 +1,36 @@
 const _ = require('lodash');
+const jsonschema = require('jsonschema');
 
 const TimeUtil = require('./time');
 
+const validator = new jsonschema.Validator();
+const locationSchema = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    address: { type: 'string' },
+    coords: { type: 'array', minItems: 2, maxItems: 2, items: { type: 'number'} }
+  },
+  required: ['coords'],
+  additionalProperties: false
+};
+
+function checkSchemaParam(typeName, name, param, schema) {
+  const opts = { propertyName: name };
+  const result = validator.validate(param, schema, opts);
+  if (!result.valid) {
+    const errs = result.errors
+      .map(e => `${e.property} ${e.message}`)
+      .join(', ');
+    return [`${typeName} param "${name}" must be valid: ${errs}.`];
+  }  
+}
+
 const Validations = {
-  address: {
-    help: 'A geocodable address, including city, state and ZIP/postal code. For example: "111 Main Street, San Francisco CA 94110".',
+  location: {
+    help: 'A geocodable address, including city, state and ZIP/postal code.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
-        return ['Address param "' + name + '" should be a string.'];
-      }
-      if (spec.required && param === '') {
-        return ['Address param "' + name + '" should not be blank.'];
-      }
+      return checkSchemaParam('Location', name, param, locationSchema);
     }
   },
 
@@ -98,6 +117,21 @@ const Validations = {
     }
   },
 
+  color: {
+    help: 'A color, in hexadecimal format. (i.e. #FFFFFF)',
+    validate: (scriptContent, name, spec, param) => {
+      if (!_.isString(param)) {
+        return [`Color param "${name}" should be a string.`];
+      }
+      if (param === '') {
+        return [`Color param "${name}" should not be blank.`];
+      }
+      if (!/^#[A-Fa-f0-9]{6}$/.test(param)) {
+        return [`Color param "${name}" (${param}) should be a hex color.`];
+      }
+    }
+  },
+
   enum: {
     help: 'A field allowing a choice between a limited set of values. The specific set of options will be different for each field and documented in that field.',
     title: 'Enumeration',
@@ -144,10 +178,17 @@ const Validations = {
     help: 'Uploaded media: an image, video, or audio clip.',
     validate: (scriptContent, name, spec, param) => {
       if (!_.isString(param)) {
-        return ['Media param "' + name + '" should be a string.'];
+        return [`Media param "${name}" should be a string.`];
       }
       if (spec.required && !param) {
-        return ['Media param "' + name + '" should not be blank.'];
+        return [`Media param "${name}" should not be blank.`];
+      }
+      if (param) {
+        if (!param.startsWith('https://') &&
+            !param.startsWith('http://') &&
+            !/^\{\{[.\w_-]+\}\}$/.test(param)) {
+          return [`Media param "${name}" must be a URL.`];
+        }
       }
     }
   },

@@ -54,7 +54,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   distanceToWaypoint: function() {
     var currentCoords = this.get('selfLocation');
-    var destCoords = this.get('toWaypoint.coords');
+    var destCoords = this.get('toWaypoint.location.coords');
     if (!currentCoords || !destCoords) {
       return null;
     }
@@ -144,17 +144,17 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   destinationName: function() {
     return this.get('params.destination_name') ||
-      this.get('toWaypoint.address') ||
-      this.get('toWaypoint.title');
+      this.get('toWaypoint.location.address') ||
+      this.get('toWaypoint.location.title');
   }.property('params', 'toWaypoint'),
 
   originLocation: function() {
-    var coords = this.get('fromWaypoint.coords');
+    var coords = this.get('fromWaypoint.location.coords');
     return coords ? L.latLng(coords[0], coords[1]) : null;
   }.property('fromWaypoint'),
 
   destinationLocation: function() {
-    var coords = this.get('toWaypoint.coords');
+    var coords = this.get('toWaypoint.location.coords');
     return coords ? L.latLng(coords[0], coords[1]) : null;
   }.property('toWaypoint'),
 

@@ -12,7 +12,10 @@ export default Ember.Component.extend({
   }.property('params.style'),
 
   fullPath: function() {
-    var path = this.get('player').humanizeText(this.get('params.path'));
+    if (!this.get('params.image')) {
+      return null;
+    }
+    var path = this.get('player').humanizeText(this.get('params.image'));
     return this.get('trip.script').urlForContentPath(path);
   }.property('params')
 

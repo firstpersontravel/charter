@@ -140,11 +140,20 @@ export default Ember.Route.extend({
         });
     },
 
-    sendMessage: function(asRoleName, toRoleName, medium, content) {
-      this.makeAction(`send_${medium}`, {
+    sendText: function(asRoleName, toRoleName, content) {
+      this.makeAction('send_text', {
         from_role_name: asRoleName,
         to_role_name: toRoleName,
         content: content,
+        reply_needed: true
+      });
+    },
+
+    sendImage: function(asRoleName, toRoleName, url) {
+      this.makeAction('send_image', {
+        from_role_name: asRoleName,
+        to_role_name: toRoleName,
+        image: url,
         reply_needed: true
       });
     },

@@ -11,13 +11,13 @@ describe('GeofenceCore', () => {
         { name: 'dinner', center: 'dinner', distance: 25 }
       ],
       waypoints: [
-        { name: 'cottage', options: [{ coords: [37.758273, -122.411681] }] },
-        { name: 'atlas', options: [{ coords: [37.759010, -122.411497] }] },
+        { name: 'cottage', options: [{ location: { coords: [37.758273, -122.411681] } }] },
+        { name: 'atlas', options: [{ location: { coords: [37.759010, -122.411497] } }] },
         {
           name: 'dinner',
           options: [
-            { name: 'eiji', coords: [37.764151, -122.430658] },
-            { name: 'schmidts', coords: [37.758769, -122.414902] }
+            { name: 'eiji', location: { coords: [37.764151, -122.430658] } },
+            { name: 'schmidts', location: { coords: [37.758769, -122.414902] } }
           ]
         }
       ]

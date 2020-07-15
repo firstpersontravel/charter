@@ -39,22 +39,35 @@ app.use((req, res, next) => {
 });
 
 // Log requests
-const staticPrefixes = ['/static', '/build', '/travel/dist'];
+const ignorePrefixes = ['/static', '/build', '/travel/dist', '/health'];
 app.use((req, res, next) => {
   // Don't log static file requests.
-  for (const staticPrefix of staticPrefixes) {
-    if (req.originalUrl.startsWith(staticPrefix)) {
+  for (const ignorePrefix of ignorePrefixes) {
+    if (req.originalUrl.startsWith(ignorePrefix)) {
       next();
       return;
     }
   }
+  const startedAt = new Date().valueOf();
   // config.logger.info({ name: 'request' },
   //   `${req.method} ${req.originalUrl} ...`);
   res.on('finish', () => {
+    const reqDurationMsec = new Date().valueOf() - startedAt;
+    const devInfo = { name: 'request' };
+    const reqInfo = {
+      name: 'request',
+      method: req.method,
+      path: req.originalUrl,
+      ip: req.ip,
+      status: res.statusCode,
+      duration: reqDurationMsec,
+      size: parseInt(res.get('Content-Length') || 0)
+    };
     config.logger.info(
-      { name: 'request' },
+      config.env.HQ_STAGE === 'development' ? devInfo : reqInfo,
       `${req.method} ${req.originalUrl} - ` +
       `${res.statusCode} ${res.statusMessage} - ` +
+      `${reqDurationMsec}ms - ` +
       `${res.get('Content-Length') || 0}b sent`);
   });
   next();
@@ -75,11 +88,17 @@ app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
 
 // S3 signing url
-app.use('/s3', s3Router({
+const s3Opts = {
   bucket: config.env.HQ_CONTENT_BUCKET,
   ACL: 'public-read',
   uniquePrefix: false
-}));
+};
+if (config.env.HQ_STAGE === 'staging') {
+  // special case: staging bucket is in us-east-1 -- other buckets are us-west-2
+  // like our ECS cluster.
+  s3Opts.region = 'us-east-1';
+}
+app.use('/s3', s3Router(s3Opts));
 
 // Health check
 app.get('/health', (req, res) => {
@@ -110,7 +129,7 @@ app.use('/static', express.static(path.join(root, 'static')));
 app.use('/build', express.static(path.join(root, 'build')));
 app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
 app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
-app.use('/favicon.ico', serveFile('static/favicon.ico'));
+app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 app.use('/apple-touch-icon-precomposed.png',
   serveFile('static/images/apple-touch-icon-precomposed.png'));
 

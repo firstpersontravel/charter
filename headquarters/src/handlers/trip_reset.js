@@ -4,7 +4,7 @@ const PlayerCore = require('fptcore/src/cores/player');
 
 const NotifyController = require('../controllers/notify');
 const Kernel = require('../kernel/kernel');
-const KernelUtil = require('../kernel/util');
+const ActionContext = require('../kernel/action_context');
 const models = require('../models');
 
 class TripResetHandler {
@@ -68,7 +68,7 @@ class TripResetHandler {
         { model: models.Experience, as: 'experience' }
       ]
     });
-    const actionContext = await KernelUtil.getActionContext(tripId);
+    const actionContext = await ActionContext.createForTripId(tripId);
     const players = await models.Player.findAll({
       where: { tripId: tripId },
       include: [{ model: models.User, as: 'user' }]

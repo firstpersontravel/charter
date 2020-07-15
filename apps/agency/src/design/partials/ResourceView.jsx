@@ -92,7 +92,11 @@ export default class ResourceView extends Component {
 
   handlePropertyUpdate(path, newValue) {
     const newResource = _.cloneDeep(this.state.pendingResource);
-    if (newValue !== '___DELETE') {
+    if (typeof path === 'object') {
+      for (const itemPath of Object.keys(path)) {
+        _.set(newResource, itemPath, path[itemPath]);
+      }
+    } else if (newValue !== '___DELETE') {
       _.set(newResource, path, newValue);
     } else {
       _.unset(newResource, path);

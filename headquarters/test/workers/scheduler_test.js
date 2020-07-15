@@ -4,9 +4,8 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const SchedulerWorker = require('../../src/workers/scheduler');
-// const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');
-const KernelUtil = require('../../src/kernel/util');
+const ActionContext = require('../../src/kernel/action_context');
 
 describe('SchedulerWorker', () => {
   describe('#_getTriggerIntendedAt', () => {
@@ -15,6 +14,7 @@ describe('SchedulerWorker', () => {
         event: { type: 'time_occurred', time: 'time', offset: '10m' }
       };
       const actionContext = {
+        evaluateAt: moment.utc(),
         evalContext: {
           schedule: { time: '2018-03-03T04:00:00Z' }
         }
@@ -49,25 +49,24 @@ describe('SchedulerWorker', () => {
     };
     const actionContext = {
       scriptContent: scriptContent,
+      evaluateAt: now,
+      _objs: { trip: mockTrip },
       evalContext: { schedule: { '1hAgo': oneHourAgo.toISOString() } }
     };
 
     it('generates actions for past time triggers', () => {
-      const res = SchedulerWorker._getTimeOccuranceActions(mockTrip, 
-        actionContext, now);
+      const res = SchedulerWorker._getTimeOccuranceActions(actionContext, now);
       assert.strictEqual(res.length, 2);
     });
 
     it('does not actions for future time triggers', () => {
-      const res = SchedulerWorker._getTimeOccuranceActions(mockTrip, 
-        actionContext, now.clone().subtract(2, 'hours'));
+      const res = SchedulerWorker._getTimeOccuranceActions(actionContext, now.clone().subtract(2, 'hours'));
       assert.strictEqual(res.length, 0);
     });
 
     it('schedules action for now past time triggers', () => {
       sandbox.stub(moment, 'utc').returns(now);
-      const res = SchedulerWorker._getTimeOccuranceActions(mockTrip, 
-        actionContext, now.clone().subtract(1, 'hours'));
+      const res = SchedulerWorker._getTimeOccuranceActions(actionContext, now.clone().subtract(1, 'hours'));
       assert.deepStrictEqual(res, [{
         orgId: mockTrip.orgId,
         tripId: mockTrip.id,
@@ -81,13 +80,13 @@ describe('SchedulerWorker', () => {
     });
 
     it('schedules action for intended time of future time triggers', () => {
-      const now = oneHourAgo.clone().subtract(30, 'minutes');
+      const ninetyMinsAgo = oneHourAgo.clone().subtract(30, 'minutes');
+      const pastContext = Object.assign({}, actionContext, { evaluateAt: ninetyMinsAgo });
       const oldMomentUtc = moment.utc;
       sandbox.stub(moment, 'utc').callsFake(arg => (
         arg ? oldMomentUtc(arg) : now
       ));
-      const res = SchedulerWorker._getTimeOccuranceActions(mockTrip, 
-        actionContext, oneHourAgo);
+      const res = SchedulerWorker._getTimeOccuranceActions(pastContext, oneHourAgo);
       assert.strictEqual(res.length, 1);
       assert.strictEqual(res[0].name, 't3');
       assert.strictEqual(res[0].createdAt.unix(), now.unix());
@@ -182,13 +181,14 @@ describe('SchedulerWorker', () => {
         },
         script: { content: scriptContent }
       };
-      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
+      sandbox.stub(ActionContext, 'createForTripId').resolves({
+        evaluateAt: moment.utc(),
         scriptContent: scriptContent,
         evalContext: {
           history: {},
           schedule: { t: future.toISOString() }
-        }
+        },
+        _objs: objs
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
@@ -210,13 +210,14 @@ describe('SchedulerWorker', () => {
         },
         script: { content: scriptContent }
       };
-      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
+      sandbox.stub(ActionContext, 'createForTripId').resolves({
+        evaluateAt: moment.utc(),
         scriptContent: scriptContent,
         evalContext: {
           history: {},
           schedule: { t: now.toISOString() }
-        }
+        },
+        _objs: objs
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
@@ -238,13 +239,14 @@ describe('SchedulerWorker', () => {
         },
         script: { content: { triggers: [] } }
       };
-      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
+      sandbox.stub(ActionContext, 'createForTripId').resolves({
+        evaluateAt: moment.utc(),
         scriptContent: objs.script.content,
         evalContext: {
           history: {},
           schedule: { t: now.toISOString() }
-        }
+        },
+        _objs: objs
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);
@@ -266,13 +268,14 @@ describe('SchedulerWorker', () => {
         },
         script: { content: scriptContent }
       };
-      sandbox.stub(KernelUtil, 'getObjectsForTrip').resolves(objs);
-      sandbox.stub(KernelUtil, 'prepareActionContext').returns({
+      sandbox.stub(ActionContext, 'createForTripId').resolves({
+        evaluateAt: moment.utc(),
         scriptContent: scriptContent,
         evalContext: {
           history: { t3: true },
           schedule: { t: now.toISOString() }
-        }
+        },
+        _objs: objs
       });
 
       await SchedulerWorker._updateTripNextScheduleAt(1);

@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import AddressField from '../fields/Address';
 import BooleanField from '../fields/Boolean';
+import ColorField from '../fields/Color';
 import ComponentField from './Component';
 import ComponentReferenceField from '../fields/ComponentReference';
 import CoordsField from '../fields/Coords';
 import DictionaryField from './Dictionary';
-import EnumField from '../fields/Enum';
 import EmailField from '../fields/Email';
+import EnumField from '../fields/Enum';
 import IntegerField from '../fields/Integer';
 import ListField from './List';
+import LocationField from '../fields/Location';
 import LookupableField from '../fields/Lookupable';
 import MarkdownField from '../fields/Markdown';
 import MediaField from '../fields/Media';
@@ -25,8 +26,8 @@ import TimeOffsetField from '../fields/TimeOffset';
 import TimeShorthandField from '../fields/TimeShorthand';
 
 const fieldComponents = {
-  address: AddressField,
   boolean: BooleanField,
+  color: ColorField,
   component: ComponentField,
   componentReference: ComponentReferenceField,
   coords: CoordsField,
@@ -35,6 +36,7 @@ const fieldComponents = {
   enum: EnumField,
   integer: IntegerField,
   list: ListField,
+  location: LocationField,
   lookupable: LookupableField,
   markdown: MarkdownField,
   media: MediaField,

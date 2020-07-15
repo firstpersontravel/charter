@@ -44,7 +44,9 @@ content:
         - text: Start
           type: button
           id: 23
-        - text: 'Send reminder text {% if Inductee.phone_number %}to {{Inductee.phone_number}}{% endif %}'
+        - text: >-
+            Send reminder text {% if Inductee.phone_number %}to
+            {{Inductee.phone_number}}{% endif %}
           type: button
           visible_if:
             item:
@@ -52,7 +54,9 @@ content:
               ref: sent_reminder_text
             op: not
           id: 24
-        - text: 'Send reminder email {% if Inductee.email %}to {{Inductee.email}}{% endif %}'
+        - text: >-
+            Send reminder email {% if Inductee.email %}to {{Inductee.email}}{%
+            endif %}
           type: button
           visible_if:
             item:
@@ -388,12 +392,12 @@ content:
             - duration: 3s
               name: wait
               id: 49
-            - content: >-
-                https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3
-              from_role_name: Phil
+            - from_role_name: Phil
               name: send_audio
               to_role_name: Inductee
               id: 50
+              audio: >-
+                https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-6.mp3
             - duration: 2m
               name: wait
               id: 51
@@ -610,12 +614,12 @@ content:
         - duration: 3s
           name: wait
           id: 72
-        - content: >-
-            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/guidemarker.png
-          from_role_name: Jessie
+        - from_role_name: Jessie
           name: send_image
           to_role_name: Inductee
           id: 73
+          image: >-
+            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/guidemarker.png
         - duration: 12s
           name: wait
           id: 74
@@ -643,12 +647,12 @@ content:
         - duration: 190s
           name: wait
           id: 78
-        - content: >-
-            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3
-          from_role_name: Phil
+        - from_role_name: Phil
           name: send_audio
           to_role_name: Inductee
           id: 79
+          audio: >-
+            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-2.mp3
         - actions:
             - content: >-
                 Get a coffee at 20th Century Cafe right by you -- 198 Gough --
@@ -773,11 +777,12 @@ content:
                       name: send_text
                       to_role_name: Inductee
                       id: 94
-                    - content: key_pickup.jpeg
-                      from_role_name: Jessie
+                    - from_role_name: Jessie
                       name: send_image
                       to_role_name: Inductee
                       id: 95
+                      image: >-
+                        https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/key_pickup.jpeg
                   if:
                     op: value_is_true
                     ref: flag_vendor_pickup
@@ -867,12 +872,12 @@ content:
                 - duration: 11s
                   name: wait
                   id: 105
-                - content: >-
-                    https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
-                  from_role_name: Jessie
+                - from_role_name: Jessie
                   name: send_image
                   to_role_name: Inductee
                   id: 106
+                  image: >-
+                    https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/deaddrop.jpeg
       event:
         from: Inductee
         to: Jessie
@@ -953,12 +958,12 @@ content:
         - duration: 120m
           name: wait
           id: 120
-        - content: >-
-            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-31.mp3
-          from_role_name: Russell
+        - from_role_name: Russell
           name: send_audio
           to_role_name: Inductee
           id: 121
+          audio: >-
+            https://fpt-agency-content.s3.amazonaws.com/firstpersontravel/tacosyndicate/message-31.mp3
       event:
         type: scene_started
       name: TRIGGER-SCENE-6-SCENE-STARTED
@@ -1304,60 +1309,66 @@ content:
   waypoints:
     - name: WAYPOINT-BIGROCK
       options:
-        - address: '37.774287, -122.421473'
-          coords:
-            - 37.774287
-            - -122.421473
-          name: WAYPOINT-BIGROCK
-          title: Big Rock
+        - name: WAYPOINT-BIGROCK
+          location:
+            title: Big Rock
+            address: '37.774287, -122.421473'
+            coords:
+              - 37.774287
+              - -122.421473
       title: Big Rock
     - name: WAYPOINT-CAFE
       options:
-        - address: Gough and Oak
-          coords:
-            - 37.774922
-            - -122.422497
-          name: WAYPOINT-CAFE
-          title: 20th Century Cafe
+        - name: WAYPOINT-CAFE
+          location:
+            title: 20th Century Cafe
+            address: Gough and Oak
+            coords:
+              - 37.774922
+              - -122.422497
       title: 20th Century Cafe
     - name: WAYPOINT-RT-ROTISSERIE
       options:
-        - address: 101 Oak St
-          coords:
-            - 37.775146
-            - -122.421052
-          name: WAYPOINT-RT-ROTISSERIE
-          title: RT Rotisserie
+        - name: WAYPOINT-RT-ROTISSERIE
+          location:
+            title: RT Rotisserie
+            address: 101 Oak St
+            coords:
+              - 37.775146
+              - -122.421052
       title: RT Rotisserie
     - name: WAYPOINT-RT-BACKUP
       options:
-        - address: '37.775166, -122.420827'
-          coords:
-            - 37.775166
-            - -122.420827
-          name: WAYPOINT-RT-BACKUP
-          title: Tree at Southeast Corner of Franklin & Oak
+        - name: WAYPOINT-RT-BACKUP
+          location:
+            title: Tree at Southeast Corner of Franklin & Oak
+            address: '37.775166, -122.420827'
+            coords:
+              - 37.775166
+              - -122.420827
       title: Tree at Southeast Corner of Franklin & Oak
     - name: WAYPOINT-CALA
       options:
-        - address: 50 Hickory St
-          coords:
-            - 37.775836
-            - -122.420348
-          name: WAYPOINT-CALA
-          title: Tacos Cala
+        - name: WAYPOINT-CALA
+          location:
+            title: Tacos Cala
+            address: 50 Hickory St
+            coords:
+              - 37.775836
+              - -122.420348
       title: Tacos Cala
     - name: WAYPOINT-BIGROCK-BACK
       options:
-        - address: 37 Lily St
-          coords:
-            - 37.774685
-            - -122.42148
-          name: WAYPOINT-BIGROCK-BACK
-          title: Back Entrance
+        - name: WAYPOINT-BIGROCK-BACK
+          location:
+            title: Back Entrance
+            address: 37 Lily St
+            coords:
+              - 37.774685
+              - -122.42148
       title: Back Entrance
   meta:
-    version: 40
+    version: 42
 assets:
   - data:
       end:

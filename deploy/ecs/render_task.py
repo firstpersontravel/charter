@@ -5,6 +5,8 @@ import os
 import yaml
 import json
 
+exec_role_format = 'arn:aws:iam::875382849197:role/charter-{}-exec'
+task_role_format = 'arn:aws:iam::875382849197:role/charter-{}-task'
 registry = '875382849197.dkr.ecr.us-west-2.amazonaws.com'
 ssm = 'arn:aws:ssm:us-west-2:875382849197:parameter'
 
@@ -27,7 +29,10 @@ def main(env_name, git_hash, integer_resources):
 
     # Add resources and role to core info
     task_data.update(env_data['resources'])
-    task_data['executionRoleArn'] = env_data['role']
+
+    # Set roles
+    task_data['executionRoleArn'] = exec_role_format.format(env_name)
+    task_data['taskRoleArn'] = task_role_format.format(env_name)
 
     if integer_resources:
         task_data['cpu'] = int(task_data['cpu'])

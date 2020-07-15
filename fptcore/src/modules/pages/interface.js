@@ -1,3 +1,19 @@
+const INTERFACE_TYPEFACE_OPTIONS = [
+  'Arvo',
+  'BioRhyme',
+  'Courier Prime',
+  'Crimson',
+  'Inconsolata',
+  'Inter',
+  'Lora',
+  'Montserrat',
+  'Playfair',
+  'Raleway',
+  'Roboto',
+  'Source Sans',
+  'Work Sans'
+];
+
 module.exports = {
   icon: 'mobile-phone',
   help: 'A combination of panels that create a user interface for a tablet, phone, or device.',
@@ -33,6 +49,38 @@ module.exports = {
           }
         }        
       }
+    },
+    background_color: {
+      type: 'color',
+      default: '#ffffff',
+      help: 'Color to use for the background of your interface.'
+    },
+    header_color: {
+      type: 'color',
+      default: '#aaaaaa',
+      help: 'Color to use for the navigation elements of your interface: the header and tabs.'
+    },
+    accent_color: {
+      title: 'Active color',
+      type: 'color',
+      default: '#666666',
+      help: 'Color to use for active areas like the selected tab.'
+    },
+    primary_color: {
+      type: 'color',
+      default: '#aa0000',
+      help: 'Color to use for primary actions like buttons.'
+    },
+    font_family: {
+      type: 'enum',
+      default: 'Raleway',
+      options: INTERFACE_TYPEFACE_OPTIONS,
+      help: 'The font family to use for text in your interface.'
+    },
+    custom_css: {
+      type: 'string',
+      display: { multiline: true },
+      help: 'Supply any custom styles to be inserted into your interface.'
     }
   }
 };

@@ -15,10 +15,8 @@ module.exports = {
       collection: 'roles',
       help: 'The role to send the message to.'
     },
-    content: {
-      required: true,
+    image: {
       type: 'media',
-      display: { hidden: true },
       medium: 'image',
       help: 'The content of the message to send.'
     },
@@ -32,8 +30,14 @@ module.exports = {
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
   getOps(params, actionContext) {
-    const content = TemplateUtil.templateText(actionContext.evalContext,
-      params.content);
+    if (!params.image) {
+      return [{
+        operation: 'log',
+        level: 'warn',
+        message: 'Tried to send image with no media.'
+      }];
+    }
+    const content = TemplateUtil.templateText(actionContext.evalContext, params.image);
     const isReplyNeeded = !!params.reply_needed;
     return [{
       operation: 'createMessage',
@@ -53,7 +57,7 @@ module.exports = {
         type: 'image_received',
         from: params.from_role_name,
         to: params.to_role_name,
-        content: content
+        url: content
       }
     }];
   }

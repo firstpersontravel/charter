@@ -49,8 +49,8 @@ export default Ember.Controller.extend({
       var waypointOption = waypointOptions.findBy('name', waypointOptionName);
       if (!waypointOption) { return; }
       this.setLocationToCoords(
-        waypointOption.coords[0],
-        waypointOption.coords[1]);
+        waypointOption.location.coords[0],
+        waypointOption.location.coords[1]);
     }
   }
 });

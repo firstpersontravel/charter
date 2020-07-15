@@ -48,15 +48,19 @@ Sentry.init({
 
 const serverPort = process.env.HQ_SERVER_PORT || 8000;
 const pubsubHost = process.env.HQ_PUBSUB_URL || 'http://localhost';
-const logger = pino({
-  prettyPrint: {
-    levelFirst: true,
-    ignore: 'time',
-    colorize: false
-  },
-  prettifier: pinoPretty,
-  base: {}
-});
+
+// Pretty print logs locally
+const pinoConfig = {
+  base: {},
+  formatters: {
+    level: (label) => ({ level: label })
+  }
+};
+if (process.env.HQ_STAGE === 'development') {
+  pinoConfig.prettyPrint = { ignore: 'time', colorize: false };
+  pinoConfig.prettifier = pinoPretty;
+}
+const logger = pino(pinoConfig);
 
 // Configure database
 const dbConfig = require('../config/config');

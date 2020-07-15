@@ -64,7 +64,6 @@ describe('Validations', () => {
         '"Gabe\'s Mom" <a-b-c@d_eF.net>'));
     });
 
-
     it('warns if not a string', () => {
       err(Validations.email.validate({}, 's', {}, []),
         'Email param "s" should be a string.');
@@ -88,6 +87,32 @@ describe('Validations', () => {
         'Email param "s" should be a valid email.');
       err(Validations.email.validate({}, 's', {}, '<john@domain> "test"'),
         'Email param "s" should be a valid email.');
+    });
+  });
+
+  describe('#color', () => {
+    it('permits color', () => {
+      ok(Validations.color.validate({}, 's', {}, '#ccaa88'));
+      ok(Validations.color.validate({}, 's', {}, '#AABB00'));
+    });
+
+    it('warns if not a string', () => {
+      err(Validations.color.validate({}, 's', {}, []), 'Color param "s" should be a string.');
+    });
+
+    it('warns if blank', () => {
+      err(Validations.color.validate({}, 's', {}, ''), 'Color param "s" should not be blank.');
+    });
+
+    it('warns if not a valid color', () => {
+      err(Validations.color.validate({}, 's', {}, 'aaaaaa'),
+        'Color param "s" (aaaaaa) should be a hex color.');
+      err(Validations.color.validate({}, 's', {}, '#ff00mz'),
+        'Color param "s" (#ff00mz) should be a hex color.');
+      err(Validations.color.validate({}, 's', {}, '#000'),
+        'Color param "s" (#000) should be a hex color.');
+      err(Validations.color.validate({}, 's', {}, '#aacc0'),
+        'Color param "s" (#aacc0) should be a hex color.');
     });
   });
 
@@ -222,8 +247,17 @@ describe('Validations', () => {
   });
 
   describe('#media', () => {
-    it('permits path', () => {
-      ok(Validations.media.validate({}, 's', {}, 'abc.mp3'));
+    it('permits URL', () => {
+      ok(Validations.media.validate({}, 's', {}, 'https://server/abc.mp3'));
+    });
+
+    it('permits lookup', () => {
+      ok(Validations.media.validate({}, 's', {}, '{{Role.var_name}}'));
+    });
+
+    it('warns if not URL', () => {
+      err(Validations.media.validate({}, 's', {}, 'abc.mp3'),
+        'Media param "s" must be a URL.');
     });
 
     it('warns if not a string', () => {
@@ -234,7 +268,8 @@ describe('Validations', () => {
     });
 
     it('warns if required and blank', () => {
-      ok(Validations.media.validate({}, 's', { required: true }, 'val'));
+      ok(Validations.media.validate({}, 's', { required: true },
+        'https://server/path'));
       err(Validations.media.validate({}, 's', { required: true }, ''),
         'Media param "s" should not be blank.');
     });
@@ -317,6 +352,33 @@ describe('Validations', () => {
         'Lookupable param "s" ("a=b") should be alphanumeric with underscores, dashes and periods.');
       err(Validations.lookupable.validate({}, 's', {}, 'b^$(D'),
         'Lookupable param "s" ("b^$(D") should be alphanumeric with underscores, dashes and periods.');
+    });
+  });
+
+  describe('#location', () => {
+    it('permits full location objects', () => {
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', address: '123 Main St', coords: [1, 2] }));
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', address: '123 Main St', coords: [1.4, 2.2] }));
+    });
+
+    it('permits missing address', () => {
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', address: '', coords: [1.4, 2.2] }));
+      ok(Validations.location.validate({}, 's', {}, { title: 'Test', coords: [1.4, 2.2] }));
+    });
+
+    it('permits missing title', () => {
+      ok(Validations.location.validate({}, 's', {}, { title: '', address: '123 Main St', coords: [1.4, 2.2] }));
+      ok(Validations.location.validate({}, 's', {}, { address: '123 Main St', coords: [1.4, 2.2] }));
+    });
+
+    it('warns if a field is missing', () => {
+      err(Validations.location.validate({}, 's', {}, { address: '123 Main St', title: 'Test' }),
+        'Location param "s" must be valid: s requires property "coords".');
+    });
+
+    it('warns if not an object', () => {
+      err(Validations.location.validate({}, 's', {}, '123 Main St'),
+        'Location param "s" must be valid: s is not of a type(s) object.');
     });
   });
 });

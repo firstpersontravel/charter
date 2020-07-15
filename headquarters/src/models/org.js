@@ -10,8 +10,8 @@ const {
  * Org model.
  */
 const Org = database.define('Org', snakeCaseColumns({
-  name: requiredStringField(32),
-  title: requiredStringField(32),
+  name: requiredStringField(64),
+  title: requiredStringField(64),
   isPersonal: booleanField(false)
 }));
 

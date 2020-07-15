@@ -4,15 +4,13 @@
 
 * { box-sizing: border-box; }
 
-@color-olive: #859c68;
-@color-turquoise-dark: #449ba0;
-@color-turquoise-light: #bbf5ef;
-@color-teal-dark: #47876e;
-@color-teal-light: #4da793;
-@color-sand-light: #ede7b6;
-@color-sand-dark: #e2c362;
-@color-orange-bright: #f9670f;
-@color-orange-faded: #f3a842;
+@color-olive: #ccc; // headerColor
+@color-teal-dark: #888; // accent darkened
+@color-teal-light: #aaa; // accent
+@color-sand-light: #fff; // bgColor
+@color-sand-dark: #ccc; // bgColor darkened
+@color-orange-bright: #444; // primary
+@color-orange-faded: #555; // primary lightened
 
 /**
  * Generic styles
@@ -85,9 +83,13 @@ p { margin: 0.5em 0; }
     }
 
     .pure-menu-selected .pure-menu-link {
-        background-color: @color-turquoise-dark;
-        color: @color-turquoise-light;
+        background-color: @color-teal-dark;
+        color: @color-teal-light;
     }
+}
+
+.pure-button {
+    border-radius: 8px;
 }
 
 label.pure-button, button.pure-button, a.pure-button {
@@ -244,16 +246,12 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     }
 }
 
-.olive-band {
-    background: @color-olive;
-    color: white;
-    padding: 0.5em;
-    text-align: center;    
-}
-
 .page-panel-text {
     &.page-panel-text-banner {
-        .olive-band();
+        background: @color-olive;
+        color: white;
+        padding: 0.5em;
+        text-align: center;   
         font-size: 1.5em;
     }
     &.page-panel-text-centered {
@@ -267,19 +265,6 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     button {
         margin: 4em 0em;
         padding: 1em 1em;
-    }
-}
-
-.page-panel-countdown {
-    .olive-band();
-    .timer {
-        font-size: 4em;
-        margin-top: -0.2em;
-    }
-    .caption {
-        font-size: 80%;
-        text-transform: uppercase;
-        letter-spacing: 1px;
     }
 }
 
@@ -298,7 +283,6 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 .page-panel-messages-browse {
     .messages-list {}
     .messages-detail-inner {
-        margin: 0.5em;
         .page-panel-messages {
             margin-bottom: 0; // HACK to accommodate for tab bottom
         }
@@ -306,6 +290,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 }
 
 .page-panel-messages {
+    padding: 0.5em;
     h1 { margin-top: 0; }
     margin-bottom: 50px; // HACK to accommodate for tab bottom
     .messages-item {
@@ -442,23 +427,3 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
         padding: 4em 4em;
     }
 }
-
-// script specific
-.script-theheadlandsgamble {
-    .page-panel-text-banner {
-        p::before {
-            content: "Task at hand: ";
-            font-weight: bold;
-        }
-    }
-}
-
-.script-tacosyndicate {
-    .page-panel-text-banner {
-        p::before {
-            content: "Dispatch: ";
-            font-weight: bold;
-        }
-    }
-}
-

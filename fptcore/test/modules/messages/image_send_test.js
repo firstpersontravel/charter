@@ -13,7 +13,7 @@ describe('#send_image', () => {
 
   it('reply is needed if specified', () => {
     const params = {
-      content: 'hi',
+      image: 'hi',
       from_role_name: 'Ally',
       to_role_name: 'Babbit',
       reply_needed: true
@@ -26,7 +26,7 @@ describe('#send_image', () => {
 
   it('sends image message', () => {
     const params = {
-      content: 'url',
+      image: 'url',
       from_role_name: 'Ally',
       to_role_name: 'Babbit'
     };
@@ -51,7 +51,7 @@ describe('#send_image', () => {
         type: 'image_received',
         from: 'Ally',
         to: 'Babbit',
-        content: 'url'
+        url: 'url'
       }
     }]);
   });

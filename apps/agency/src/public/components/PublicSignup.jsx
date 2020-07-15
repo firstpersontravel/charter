@@ -112,6 +112,7 @@ export default class PublicSignup extends Component {
                 Workspace name (this could be a company or group name, or just your name)
               </label>
               <input
+                maxLength="64"
                 type="text"
                 name="orgTitle"
                 autoComplete="organization"

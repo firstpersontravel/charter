@@ -37,75 +37,10 @@ resource "aws_security_group" "charter_task" {
   }
 }
 
-data "aws_iam_policy_document" "charter_task_trust" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "charter_task_policy" {
-  # Get SSM parameters
-  statement {
-    actions = ["ssm:GetParameters"]
-    resources = [
-      "arn:aws:ssm:us-west-2:875382849197:parameter/charter.global.*",
-      "arn:aws:ssm:us-west-2:875382849197:parameter/charter.${var.environment_name}.*"
-    ]
-  }
-
-  # Pull container from ECR
-  statement {
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:BatchGetImage",
-      "ecr:GetAuthorizationToken",
-      "ecr:GetDownloadUrlForLayer"
-    ]
-
-    # "arn:aws:ecr:us-west-2:875382849197:repository/charter"
-    resources = ["*"]
-  }
-
-  # Push logs to cloudwatch
-  statement {
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-      "logs:DescribeLogStreams"
-    ]
-
-    resources = ["arn:aws:logs:*:*:*"]
-  }
-
-  # Push to S3 for signing
-  statement {
-    actions = ["s3:PutObject"]
-    resources = [
-      "arn:aws:s3:::fpt-agency-content*/*"
-    ]
-  }
-}
-
-resource "aws_iam_role" "charter_task" {
-  name               = "charter-${var.environment_name}-task"
-  assume_role_policy = data.aws_iam_policy_document.charter_task_trust.json
-}
-
-resource "aws_iam_role_policy" "charter_task_policy" {
-  name   = "charter-${var.environment_name}-task-policy"
-  role   = aws_iam_role.charter_task.id
-  policy = data.aws_iam_policy_document.charter_task_policy.json
-}
-
 resource "aws_ecs_task_definition" "charter_bootstrap" {
   family                   = "charter-${var.environment_name}"
-  execution_role_arn       = aws_iam_role.charter_task.arn
+  execution_role_arn       = aws_iam_role.charter_exec.arn
+  task_role_arn            = aws_iam_role.charter_task.arn
   network_mode             = "awsvpc"
   cpu                      = 2048
   memory                   = 4096
@@ -144,5 +79,4 @@ resource "aws_ecs_service" "charter" {
 
   # Track the latest ACTIVE revision
   task_definition = "${aws_ecs_task_definition.charter_bootstrap.family}:${max("${aws_ecs_task_definition.charter_bootstrap.revision}", "${data.aws_ecs_task_definition.charter.revision}")}"
-
 }

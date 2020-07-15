@@ -200,7 +200,7 @@ export function associateAuthData(authData) {
   }
   // Intercom
   if (typeof Intercom === 'function') {
-    window.intercomSettings = {
+    const intercomSettings = {
       app_id: 'm4npk55n',
       name: authData.user.fullName,
       email: authData.user.email,
@@ -208,7 +208,11 @@ export function associateAuthData(authData) {
       company: org ? { id: org.id, name: org.title } : null
       // created_at: 1312182000 // Signup date as a Unix timestamp
     };
+    window.intercomSettings = intercomSettings;
     Intercom('update');
+    // Intercom cookie for use in docs/charter site
+    const intercomCookie = btoa(JSON.stringify(intercomSettings));
+    document.cookie = `fpt_intercom=${intercomCookie};domain=.firstperson.travel`;
   }
 }
 
@@ -220,6 +224,8 @@ function deassociateAuthData() {
   // Intercom
   if (typeof Intercom === 'function') {
     Intercom('shutdown');
+    // Clear intercom cookie
+    document.cookie = 'fpt_intercom=; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 }
 

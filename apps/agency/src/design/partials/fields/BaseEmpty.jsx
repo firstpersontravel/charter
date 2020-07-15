@@ -20,9 +20,7 @@ function BaseEmpty({ spec }) {
   );
   const nullText = nullIsNone ? 'None' : 'Empty';
   let label = _.get(spec, 'display.placeholder') || nullText;
-  if (spec.type === 'media') {
-    label = 'Name your media, then you can upload it.';
-  } else if (doesSpecHaveDefault(spec)) {
+  if (doesSpecHaveDefault(spec)) {
     label = `${stringOrYesNo(defaultForSpec(spec))} by default`;
   }
   return (
