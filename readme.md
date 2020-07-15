@@ -65,13 +65,13 @@
 ### Migrations
 
     # Run migrations
-    docker-compose exec server sequelize db:migrate
+    docker-compose exec server sequelize migrate:db
 
     # Create a new migration
     docker-compose exec server sequelize migration:generate --name add-some-fields
 
     # Run script migrations
-    docker-compose run server npm run scripts:migrate
+    docker-compose run server npm run migrate:scripts
 
 ### Random tips
 

@@ -20,8 +20,7 @@ class ActionController {
     const fields = {
       orgId: trip.orgId,
       tripId: trip.id,
-      // TODO: add playerId to scheduled actions, or params?? should this just be a serialized blob?
-      // playerId: playerId,
+      playerId: playerId,
       type: 'action',
       name: action.name,
       params: action.params,

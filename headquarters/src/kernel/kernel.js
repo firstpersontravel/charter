@@ -43,7 +43,7 @@ class KernelController {
   static async _applyResult(objs, result) {
     await this._applyOps(objs, result.resultOps);
     for (const action of result.scheduledActions) {
-      await ActionController.scheduleAction(objs.trip, action);
+      await ActionController.scheduleAction(objs.trip, action, objs.acting_player_id);
     }
   }
 
