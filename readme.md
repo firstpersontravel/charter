@@ -35,8 +35,7 @@
     npm run download_secrets
 
     # setup core
-    cd fptcore
-        npm install
+    cd fptcore && npm install && cd ..
 
     # setup travel
     cd apps/travel
@@ -45,8 +44,7 @@
         ln -s `pwd`/../../fptcore ./node_modules
 
     # setup agency
-    cd apps/agency
-        npm install
+    cd apps/agency && npm install && cd ../..
 
     # run tests
     npm test
@@ -86,6 +84,9 @@
 
     # Clean non-tracked cruft
     git clean -xdf
+
+    # Fix bcrypt
+    docker-compose exec server npm rebuild bcrypt --build-from-source
 
 ### Pull production DB for testing
 

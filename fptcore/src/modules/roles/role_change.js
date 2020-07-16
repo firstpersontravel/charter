@@ -11,7 +11,7 @@ module.exports = {
   getOps(params, actionContext) {
     return [{
       operation: 'updatePlayerFields',
-      playerId: actionContext.currentPlayerId,
+      playerId: actionContext.actingPlayerId,
       fields: {
         roleName: params.to_role_name
       }
@@ -19,7 +19,7 @@ module.exports = {
       operation: 'event',
       event: {
         type: 'role_changed',
-        playerId: actionContext.currentPlayerId,
+        playerId: actionContext.actingPlayerId,
         toRoleName: params.to_role_name
       }
     }];

@@ -24,7 +24,7 @@ class KernelController {
   static async _applyResult(actionContext, result) {
     await this._applyOps(actionContext._objs, result.resultOps);
     for (const action of result.scheduledActions) {
-      await ActionController.scheduleAction(actionContext._objs.trip, action, actionContext.acting_player_id);
+      await ActionController.scheduleAction(actionContext._objs.trip, action, actionContext.actingPlayerId);
     }
   }
 
@@ -34,7 +34,8 @@ class KernelController {
   static async applyAction(tripId, action, applyAt) {
     logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
     const actionContext = await ActionContext.createForTripId(tripId, applyAt);
-    actionContext.acting_player_id = action.params.player_id;
+    // Note: for scheduled actions, this is in action.playerId directly; for immediate actions, in params (potentially a cleanup opportunity here)
+    actionContext.actingPlayerId = action.playerId || parseInt(action.params.player_id);
     const result = Kernel.resultForImmediateAction(action, actionContext);
     await this._applyResult(actionContext, result);
     return result;
@@ -46,7 +47,7 @@ class KernelController {
   static async applyEvent(tripId, event, applyAt) {
     logger.info(event, `(Trip #${tripId}) Applying event: ${event.type}.`);
     const actionContext = await ActionContext.createForTripId(tripId, applyAt);
-    actionContext.acting_player_id = event.player_id;
+    actionContext.actingPlayerId = parseInt(event.player_id);
     const result = Kernel.resultForEvent(event, actionContext);
     await this._applyResult(actionContext, result);
     return result;
@@ -58,7 +59,7 @@ class KernelController {
   static async applyTrigger(tripId, triggerName, event, applyAt) {
     logger.info(`(Trip #${tripId}) Applying trigger: ${triggerName}.`);
     const actionContext = await ActionContext.createForTripId(tripId, applyAt);
-    actionContext.acting_player_id = event.player_id;
+    actionContext.actingPlayerId = parseInt(event.player_id);
     const trigger = _.find(actionContext._objs.script.content.triggers || [], { name: triggerName });
     if (!trigger) {
       return null;
