@@ -30,10 +30,6 @@ export default Ember.Route.extend({
     refresh: function() {
       console.log('refresh ignored');
     },
-
-    refreshScript: function() {
-      console.log('refreshScript ignored');
-    },
     
     reload: function() {
       location.reload(true);  

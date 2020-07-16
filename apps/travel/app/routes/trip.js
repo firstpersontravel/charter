@@ -5,8 +5,6 @@ export default Ember.Route.extend({
   api: Ember.inject.service(),
   environment: Ember.inject.service(),
 
-  forceRefreshScript: false,
-
   model: function(params) {
     var self = this;
     return this.refreshTripData(params.trip_id)
@@ -32,15 +30,11 @@ export default Ember.Route.extend({
 
   refreshTripData: function(tripId) {
     var isScriptAlreadyLoaded = !!this.store.peekAll('script').get('length');
-    var shouldRefreshScript = (
-      !isScriptAlreadyLoaded ||
-      this.get('forceRefreshScript')
-    );
+    var shouldRefreshScript = !isScriptAlreadyLoaded;
     var refreshUrl = (
       `/api/legacy/trip/${tripId}` +
       (shouldRefreshScript ? '?script=true' : '')
     );
-    this.set('forceRefreshScript', false);
     tripId = tripId || self.context.id;
     var self = this;
     return this.get('api')
@@ -58,7 +52,6 @@ export default Ember.Route.extend({
   },
 
   actions: {
-
     acknowledgePage: function(pageName) {
       console.log('acknowledgePage ignored');
     },
@@ -68,11 +61,6 @@ export default Ember.Route.extend({
       this.refresh();
     },
 
-    refreshScript: function() {
-      this.set('forceRefreshScript', true);
-      this.refresh();
-    },
-    
     reload: function() {
       location.reload(true);      
     }

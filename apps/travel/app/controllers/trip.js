@@ -111,10 +111,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
       this.send('refresh');
     },
 
-    refreshScript: function() {
-      this.send('refreshScript');
-    },
-
     reload: function() {
       this.send('reload');
     }

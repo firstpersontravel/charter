@@ -13,7 +13,6 @@ Router.map(function() {
       this.route('index', {path: '/'});
       this.route('player', {path: '/role/:role_name', resetNamespace: true}, function() {
         this.route('page', {path: '/'});
-        this.route('admin', {path: '/admin'});
       });
     });
   });

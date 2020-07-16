@@ -205,10 +205,6 @@ export default Ember.Route.extend({
         role_name: player.get('roleName'),
         audio_name: player.get('values.audio.name')
       });
-    },
-
-    goToAdmin: function() {
-      this.transitionTo('player.admin');
     }
   }
 });
