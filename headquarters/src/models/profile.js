@@ -1,7 +1,7 @@
 const database = require('../config').database;
 const Experience = require('./experience');
 const Org = require('./org');
-const User = require('./user');
+const Participant = require('./participant');
 
 const {
   belongsToField,
@@ -30,6 +30,6 @@ const Profile = database.define('Profile', snakeCaseColumns({
 
 Profile.belongsTo(Org, belongsToField('org'));
 Profile.belongsTo(Experience, belongsToField('experience'));
-Profile.belongsTo(User, belongsToField('user'));
+Profile.belongsTo(Participant, belongsToField('participant'));
 
 module.exports = Profile;

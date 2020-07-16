@@ -52,11 +52,7 @@ describe('authRoutes', () => {
       // Test call made correctly
       sinon.assert.calledOnce(models.User.findOne);
       sinon.assert.calledWith(models.User.findOne, {
-        where: {
-          email: 'gabe@test.com',
-          experienceId: null,
-          passwordHash: { [Sequelize.Op.not]: '' }
-        }
+        where: { email: 'gabe@test.com' }
       });
     });
 
@@ -73,11 +69,7 @@ describe('authRoutes', () => {
       // Test call made correctly
       sinon.assert.calledOnce(models.User.findOne);
       sinon.assert.calledWith(models.User.findOne, {
-        where: { 
-          email: 'gabe@test.com',
-          experienceId: null,
-          passwordHash: { [Sequelize.Op.not]: '' }
-        }
+        where: { email: 'gabe@test.com' }
       });
     });
 
@@ -131,11 +123,7 @@ describe('authRoutes', () => {
       // Test finds were called
       sinon.assert.calledOnce(models.User.findOne);
       sinon.assert.calledWith(models.User.findOne, {
-        where: { 
-          email: 'gabe@test.com',
-          experienceId: null,
-          passwordHash: { [Sequelize.Op.not]: '' }
-        }
+        where: { email: 'gabe@test.com' }
       });
       sinon.assert.calledOnce(models.Org.findOne);
       sinon.assert.calledWith(models.Org.findOne, {
@@ -153,8 +141,6 @@ describe('authRoutes', () => {
         firstName: 'gabe',
         lastName: 'test',
         email: 'gabe@test.com',
-        orgId: 1,
-        experienceId: null,
         passwordHash: '123'
       });
       sinon.assert.calledOnce(models.OrgRole.create);

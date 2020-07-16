@@ -78,7 +78,7 @@ describe('apiActionsRoutes', () => {
   describe('#updateDeviceStateRoute', () => {
     it('updates device state', async () => {
       const req = httpMocks.createRequest({
-        params: { userId: 100 },
+        params: { participantId: 100 },
         body: {
           client_id: 123,
           location_latitude: '40.2',

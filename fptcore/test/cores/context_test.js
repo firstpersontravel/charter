@@ -23,9 +23,8 @@ describe('ContextCore', () => {
       const player = {
         id: 10,
         roleName: 'Vance',
-        user: {
-          firstName: 'Troy',
-          lastName: 'McClure',
+        participant: {
+          name: 'Troy McClure',
           email: 'troy@example.com'
         }
       };
@@ -33,7 +32,7 @@ describe('ContextCore', () => {
         link: 'https://test.test/s/10',
         join_link: 'https://test.test/entry/t/' + trip.id + '/r/' + player.roleName,
         contact_name: 'Vance Farraday',
-        user_name: 'Troy McClure',
+        participant_name: 'Troy McClure',
         photo: null,
         email: 'troy@example.com',
         facetime: null,
@@ -74,10 +73,10 @@ describe('ContextCore', () => {
       assert.equal(result.directive, 'Go to the Tavern');
     });
 
-    it('gathers values from user', () => {
+    it('gathers values from participant', () => {
       const player = {
         roleName: 'Dustin',
-        user: {
+        participant: {
           phoneNumber: '1234567890',
           profile: {
             photo: 'dustin.jpg',
@@ -126,10 +125,10 @@ describe('ContextCore', () => {
         values: { abc: '123' },
         players: [{
           roleName: 'role-123',
-          user: { id: 3 }
+          participant: { id: 3 }
         }, {
           roleName: 'role-456',
-          user: null
+          participant: null
         }]
       };
 

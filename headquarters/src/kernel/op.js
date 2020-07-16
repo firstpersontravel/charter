@@ -68,15 +68,15 @@ class KernelOpController {
 
   static async sendEmail(objs, op) {
     const toPlayers = objs.players
-      .filter(p => p.roleName === op.toRoleName && p.userId)
+      .filter(p => p.roleName === op.toRoleName && p.participantId)
       .filter((p) => {
-        const user = objs.users.find(u => u.id === p.userId);
-        return user && user.email;
+        const participant = objs.participants.find(u => u.id === p.participantId);
+        return participant && participant.email;
       });
     // Send email to each player matching role name.
     for (const toPlayer of toPlayers) {
-      const toUser = objs.users.find(u => u.id === toPlayer.userId);
-      await EmailController.sendEmail(op.fromEmail, toUser.email,
+      const toParticipant = objs.participants.find(u => u.id === toPlayer.participantId);
+      await EmailController.sendEmail(op.fromEmail, toParticipant.email,
         op.subject, op.bodyMarkdown);
     }
   }

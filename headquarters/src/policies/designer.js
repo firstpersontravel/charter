@@ -50,7 +50,7 @@ const designerCanUpdateUsers = {
     if (!subject.isDesigner) {
       return;
     }
-    const allowedModelNames = ['User', 'Profile'];
+    const allowedModelNames = ['Participant', 'Profile'];
     const allowedActions = ['create', 'update'];
     if (_.includes(allowedModelNames, resource.modelName)) {
       if (_.includes(allowedActions, action)) {

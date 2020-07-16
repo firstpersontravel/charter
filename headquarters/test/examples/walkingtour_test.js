@@ -14,22 +14,22 @@ const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
 describe('WalkingTourExample', () => {
   let script;
   let trip;
-  let user;
+  let participant;
   let player;
 
   beforeEach(async () => {
     script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
-    user = await models.User.create({
+    participant = await models.Participant.create({
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'tester'
     });
     player = await models.Player.findOne({
       where: { tripId: trip.id, roleName: 'Player' },
-      include: [{ model: models.User, as: 'user' }]
+      include: [{ model: models.Participant, as: 'participant' }]
     });
-    player.set({ userId: user.id });
+    player.set({ participantId: participant.id });
     await player.save();
     await player.reload();
   });
@@ -77,7 +77,7 @@ describe('WalkingTourExample', () => {
       'Welcome to Atlas Cafe! Send me an picture and i\'ll give you a sandwich recommendation.');
 
     // Send an image from somewhere else -- nothing should happen.
-    await user.update({
+    await participant.update({
       locationLatitude: 33.758273,
       locationLongitude: -121.411681,
       locationAccuracy: 40
@@ -100,7 +100,7 @@ describe('WalkingTourExample', () => {
     assert.strictEqual(messages2.length, 2);
 
     // Send an image from Atlas Cafe
-    await user.update({
+    await participant.update({
       locationLatitude: 37.759002,
       locationLongitude: -122.411496,
       locationAccuracy: 30

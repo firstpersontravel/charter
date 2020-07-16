@@ -91,7 +91,7 @@ describe('TripsController', () => {
         orgId: 200,
         tripId: 3,
         roleName: 'fake',
-        userId: null,
+        participantId: null,
         acknowledgedPageAt: null,
         acknowledgedPageName: ''
       });

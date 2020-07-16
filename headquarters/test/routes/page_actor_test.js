@@ -13,25 +13,18 @@ describe('pageActorRoutes', () => {
       const req = httpMocks.createRequest();
       const res = httpMocks.createResponse();
 
-      sandbox.stub(models.Org, 'findOne').resolves({
-        id: 1,
-        name: 'org',
-        title: 'Org'
-      });
+      sandbox.stub(models.Org, 'findOne')
+        .resolves({ id: 1, name: 'org', title: 'Org' });
 
       // stub db response
       sandbox.stub(models.Player, 'findAll').resolves([{
         roleName: 'Gabe',
-        user: { id: 10, firstName: 'g', lastName: 's' },
+        participant: { id: 10, name: 'g s' },
         trip: {
           script: {
-            content: {
-              roles: [{
-                name: 'Gabe',
-                type: 'performer'
-              }]
-            }
-          }
+            content: { roles: [{ name: 'Gabe', title: 'Chief Gabe' }] }
+          },
+          experience: { title: 'Amazing Adventure' }
         }
       }]);
 
@@ -40,15 +33,18 @@ describe('pageActorRoutes', () => {
       // Test found players with correct arguments
       sinon.assert.calledOnce(models.Player.findAll);
       assert.deepStrictEqual(models.Player.findAll.firstCall.args, [{
-        where: { userId: { [Sequelize.Op.not]: null } },
+        where: { participantId: { [Sequelize.Op.not]: null } },
         include: [{
           model: models.Trip,
           as: 'trip',
           where: { isArchived: false },
-          include: [{ model: models.Script, as: 'script' }]
+          include: [
+            { model: models.Script, as: 'script' },
+            { model: models.Experience, as: 'experience' }
+          ]
         }, {
-          model: models.User,
-          as: 'user'
+          model: models.Participant,
+          as: 'participant'
         }, {
           model: models.Org,
           as: 'org',
@@ -63,10 +59,11 @@ describe('pageActorRoutes', () => {
         layout: 'actor',
         orgName: 'org',
         orgTitle: 'Org',
-        users: [{
+        participants: [{
           id: 10,
-          firstName: 'g',
-          lastName: 's'
+          name: 'g s',
+          experienceTitle: 'Amazing Adventure',
+          roleTitles: 'Chief Gabe'
         }]
       });
     });
@@ -77,7 +74,7 @@ describe('pageActorRoutes', () => {
     it.skip('returns 404 if does not exist', () => {});
   });
 
-  describe('#userShowRoute', () => {
+  describe('#participantShowRoute', () => {
     it.skip('returns 200', () => {});
     it.skip('returns 404 if does not exist', () => {});
   });

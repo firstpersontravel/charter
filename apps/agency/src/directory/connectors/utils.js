@@ -25,9 +25,9 @@ export function lookupExperience(state, ownProps) {
   });
 }
 
-export function lookupUsers(state, ownProps) {
+export function lookupParticipants(state, ownProps) {
   return instancesFromDatastore(state, {
-    col: 'users',
+    col: 'participants',
     filter: { experience: { name: ownProps.match.params.experienceName } },
     include: {
       experience: instanceIncluder('experiences', 'id', 'experienceId')
@@ -55,7 +55,7 @@ export function lookupProfiles(state, ownProps) {
       experience: instanceIncluder('experiences', 'id', 'experienceId', {
         script: getExperienceActiveScript
       }),
-      user: instanceIncluder('users', 'id', 'userId'),
+      participant: instanceIncluder('participant', 'id', 'participantId'),
       role: getProfileRole
     }
   });

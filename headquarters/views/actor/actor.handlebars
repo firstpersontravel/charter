@@ -105,13 +105,13 @@ function getLocation() {
 }
 
 function transmitLocation(fix) {
-  var userId = $("#data-user-id").html();
-  if (!userId) {
+  var participantId = $("#data-participant-id").html();
+  if (!participantId) {
     return;
   }
   $.ajax({
     type: 'put',
-    url: '/api/users/' + userId,
+    url: '/api/participants/' + participantId,
     data: {
       locationLatitude: fix.coords.latitude,
       locationLongitude: fix.coords.longitude,
@@ -210,7 +210,7 @@ $(function() {
   </ul>
 </nav>
 
-<div style='display: none;' id='data-user-id'>{{userId}}</div>
+<div style='display: none;' id='data-participant-id'>{{participantId}}</div>
 
 <div id='container'>
   {{> actor}}

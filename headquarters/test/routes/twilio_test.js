@@ -27,14 +27,14 @@ const scriptContent = {
 describe('twilioRoutes', () => {
 
   let trip;
-  let travelerUser;
-  let actorUser;
+  let travelerParticipant;
+  let actorParticipant;
   let travelerRelay;
 
   beforeEach(async () => {
     const script = await TestUtil.createScriptWithContent(scriptContent);
     trip = await TestUtil.createDummyTripForScript(script, []);
-    travelerUser = await models.User.create({
+    travelerParticipant = await models.Participant.create({
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'tester1',
@@ -42,7 +42,7 @@ describe('twilioRoutes', () => {
       isArchived: false,
       isActive: true
     });
-    actorUser = await models.User.create({
+    actorParticipant = await models.Participant.create({
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'actor2',
@@ -52,10 +52,10 @@ describe('twilioRoutes', () => {
     });
 
     await models.Player.update(
-      { userId: travelerUser.id },
+      { participantId: travelerParticipant.id },
       { where: { tripId: trip.id, roleName: 'Player' } });
     await models.Player.update(
-      { userId: actorUser.id },
+      { participantId: actorParticipant.id },
       { where: { tripId: trip.id, roleName: 'Actor' } });
 
     travelerRelay = await models.Relay.create({
@@ -67,7 +67,7 @@ describe('twilioRoutes', () => {
       asRoleName: 'Player',
       withRoleName: 'Actor',
       relayPhoneNumber: '9999999999',
-      userPhoneNumber: ''
+      participantPhoneNumber: ''
     });
     
     await models.Relay.create({
@@ -79,7 +79,7 @@ describe('twilioRoutes', () => {
       asRoleName: 'Actor',
       withRoleName: 'Player',
       relayPhoneNumber: '9999999998',
-      userPhoneNumber: ''
+      participantPhoneNumber: ''
     });
   });
 
@@ -89,7 +89,7 @@ describe('twilioRoutes', () => {
       const req = httpMocks.createRequest({
         body: {
           SmsStatus: 'incoming',
-          From: `+1${travelerUser.phoneNumber}`, // user
+          From: `+1${travelerParticipant.phoneNumber}`, // participant
           To: `+1${travelerRelay.relayPhoneNumber}`,   // relay
           Body: 'Reply',
           NumMedia: '0'
@@ -131,7 +131,7 @@ describe('twilioRoutes', () => {
         body: {
           CallStatus: 'ringing',
           Direction: 'inbound',
-          From: `+1${travelerUser.phoneNumber}`,
+          From: `+1${travelerParticipant.phoneNumber}`,
           To: `+1${travelerRelay.relayPhoneNumber}`
         }
       });
@@ -196,7 +196,7 @@ describe('twilioRoutes', () => {
           AnsweredBy: 'machine_beep_end',
           Direction: 'outbound-api',
           From: `+1${travelerRelay.relayPhoneNumber}`,  // Player relay
-          To: `+1${travelerUser.phoneNumber}`     // Player user
+          To: `+1${travelerParticipant.phoneNumber}`     // Player participant
         }
       });
       const res = httpMocks.createResponse();
@@ -236,7 +236,7 @@ describe('twilioRoutes', () => {
           AnsweredBy: 'human',
           Direction: 'outbound-api',
           From: `+1${travelerRelay.relayPhoneNumber}`,  // Player relay
-          To: `+1${travelerUser.phoneNumber}`     // Player user
+          To: `+1${travelerParticipant.phoneNumber}`     // Player participant
         }
       });
       const res = httpMocks.createResponse();

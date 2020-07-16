@@ -30,7 +30,7 @@ shortcutRouter.get('/:playerId',
 // Actor routes
 const actorRouter = express.Router();
 actorRouter.get('/:orgName', asyncRoute(actorRoutes.actorsListRoute));
-actorRouter.get('/:orgName/user/:userId', asyncRoute(actorRoutes.userShowRoute));
+actorRouter.get('/:orgName/participant/:participantId', asyncRoute(actorRoutes.participantShowRoute));
 actorRouter.get('/:orgName/player/:playerId', asyncRoute(actorRoutes.playerShowRoute));
 
 // Gallery routes

@@ -15,7 +15,7 @@ class TripsController {
     const fields = Object.assign(initialFields, {
       orgId: trip.orgId,
       tripId: trip.id,
-      userId: null,
+      participantId: null,
     });
     return await models.Player.create(fields);
   }

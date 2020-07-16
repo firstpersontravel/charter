@@ -8,22 +8,22 @@ const RelaysController = require('../../src/controllers/relays');
 const TripRelaysController = require('../../src/controllers/trip_relays');
 
 describe('TripRelaysController', () => {
-  describe('#userNumberForRelay', () => {
+  describe('#participantNumberForRelay', () => {
     const trip = { id: 1 };
 
-    it('looks up user phone number for a relay', async () => {
+    it('looks up participant phone number for a relay', async () => {
       const relaySpec = { for: 'ForRole' };
-      const player = { user: { phoneNumber: '1234567890' } };
+      const player = { participant: { phoneNumber: '1234567890' } };
 
       sandbox.stub(models.Player, 'findOne').resolves(player);
 
       const res = await (
-        TripRelaysController.userNumberForRelay(trip, relaySpec)
+        TripRelaysController.participantNumberForRelay(trip, relaySpec)
       );
-      assert.strictEqual(res, player.user.phoneNumber);
+      assert.strictEqual(res, player.participant.phoneNumber);
       sinon.assert.calledWith(models.Player.findOne, {
         where: { roleName: 'ForRole', tripId: 1 },
-        include: [{ model: models.User, as: 'user' }]
+        include: [{ model: models.Participant, as: 'participant' }]
       });
     });
 
@@ -33,19 +33,19 @@ describe('TripRelaysController', () => {
       sandbox.stub(models.Player, 'findOne').resolves(null);
 
       const res = await (
-        TripRelaysController.userNumberForRelay(trip, relaySpec)
+        TripRelaysController.participantNumberForRelay(trip, relaySpec)
       );
       assert.strictEqual(res, null);
     });
 
-    it('returns null when no user phone number', async () => {
+    it('returns null when no participant phone number', async () => {
       const relaySpec = { for: 'ForRole' };
-      const player = { user: null };
+      const player = { participant: null };
 
       sandbox.stub(models.Player, 'findOne').resolves(player);
 
       const res = await (
-        TripRelaysController.userNumberForRelay(trip, relaySpec)
+        TripRelaysController.participantNumberForRelay(trip, relaySpec)
       );
       assert.strictEqual(res, null);
     });
@@ -59,13 +59,13 @@ describe('TripRelaysController', () => {
 
     it('fetches relay by phone number', async () => {
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
-      sandbox.stub(TripRelaysController, 'userNumberForRelay')
+      sandbox.stub(TripRelaysController, 'participantNumberForRelay')
         .resolves(phoneNum);
 
       const res = await TripRelaysController.ensureRelay(trip, relaySpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.calledWith(TripRelaysController.userNumberForRelay,
+      sinon.assert.calledWith(TripRelaysController.participantNumberForRelay,
         trip, relaySpec);
       sinon.assert.calledWith(RelaysController.ensureRelay,
         2, 10, 1, relaySpec, phoneNum);
@@ -74,27 +74,27 @@ describe('TripRelaysController', () => {
     it('fetches relay for entryway', async () => {
       const entrywaySpec = { for: 'Role', entryway: true, experienceId: 10 };
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
-      sandbox.stub(TripRelaysController, 'userNumberForRelay');
+      sandbox.stub(TripRelaysController, 'participantNumberForRelay');
 
       const res = await TripRelaysController.ensureRelay(
         trip, entrywaySpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.notCalled(TripRelaysController.userNumberForRelay);
+      sinon.assert.notCalled(TripRelaysController.participantNumberForRelay);
       sinon.assert.calledWith(RelaysController.ensureRelay,
         2, 10, null, entrywaySpec, '');
     });
 
     it('returns null if no phone number found', async () => {
       sandbox.stub(RelaysController, 'ensureRelay');
-      sandbox.stub(TripRelaysController, 'userNumberForRelay')
+      sandbox.stub(TripRelaysController, 'participantNumberForRelay')
         .resolves(null);
 
       const res = await TripRelaysController.ensureRelay(trip, relaySpec);
 
       assert.strictEqual(res, null);
       sinon.assert.notCalled(RelaysController.ensureRelay);
-      sinon.assert.calledWith(TripRelaysController.userNumberForRelay,
+      sinon.assert.calledWith(TripRelaysController.participantNumberForRelay,
         trip, relaySpec);
     });
   });
@@ -161,7 +161,7 @@ describe('TripRelaysController', () => {
       // test player looked for for target
       sinon.assert.calledWith(models.Player.findOne, {
         where: { tripId: 10, roleName: 'Player' },
-        include: [{ model: models.User, as: 'user' }]
+        include: [{ model: models.Participant, as: 'participant' }]
       });
       // Test initiate call was called with resulting records
       sinon.assert.calledWith(RelayController.initiateCall,
@@ -204,7 +204,7 @@ describe('TripRelaysController', () => {
       // test player looked for for target
       sinon.assert.calledWith(models.Player.findOne, {
         where: { tripId: 10, roleName: 'Player' },
-        include: [{ model: models.User, as: 'user' }]
+        include: [{ model: models.Participant, as: 'participant' }]
       });
       sinon.assert.notCalled(RelayController.initiateCall);
     });

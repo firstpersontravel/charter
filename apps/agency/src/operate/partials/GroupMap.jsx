@@ -44,8 +44,8 @@ const ActiveWaypointIcon = L.Icon.extend({
   }
 });
 
-const userIcon = new PlayerIcon();
-const userIconExpired = new PlayerIcon({
+const participantIcon = new PlayerIcon();
+const participantIconExpired = new PlayerIcon({
   className: 'marker-grayscale'
 });
 
@@ -174,7 +174,7 @@ export default class GroupMap extends Component {
       .map((player) => {
         const trip = _.find(this.props.trips, { id: player.tripId });
         const playerLink = (
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.roleName}/${player.userId || 0}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.roleName}/${player.participantId || 0}`}>
             {trip.title}{' '}
             {player.roleName}
           </Link>
@@ -230,11 +230,11 @@ export default class GroupMap extends Component {
         }
         const coords = PolylineEncoded.decode(directions.data.polyline);
         const destination = coords[coords.length - 1];
-        const user = player.user;
-        const userCoords = user &&
-          user.locationLatitude &&
-          [user.locationLatitude, user.locationLongitude];
-        const coordsRemaining = getPolylineRemaining(coords, userCoords);
+        const participant = player.participant;
+        const participantCoords = participant &&
+          participant.locationLatitude &&
+          [participant.locationLatitude, participant.locationLongitude];
+        const coordsRemaining = getPolylineRemaining(coords, participantCoords);
         return [
           <Polyline
             key={player.id}
@@ -260,20 +260,13 @@ export default class GroupMap extends Component {
       .value();
   }
 
-  getUsersWithLoc() {
-    const players = _.flatMap(this.props.trips, 'players');
-    const users = _.uniq(_.filter(_.map(players, 'user'), Boolean));
-    const usersWithLoc = _.filter(users, 'locationLatitude');
-    return usersWithLoc;
-  }
-
   getPlayerGroups() {
     const players = _.filter(
       _.flatMap(this.props.trips, 'players'),
-      'user.locationLatitude');
+      'participant.locationLatitude');
     return groupByLocation(players,
-      'user.locationLatitude',
-      'user.locationLongitude',
+      'participant.locationLatitude',
+      'participant.locationLongitude',
       GROUPING_THRESHOLD);
   }
 
@@ -284,16 +277,16 @@ export default class GroupMap extends Component {
     return (
       <div key={player.id}>
         <div>
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/role/${player.roleName}/${player.userId || 0}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/role/${player.roleName}/${player.participantId || 0}`}>
             {trip.title}{' '}
             {player.roleName}{' '}
-            ({player.user.firstName})
+            ({player.participant.firstName})
           </Link>
         </div>
         <div className="mb-1">
           <i className="fa fa-location-arrow" />
           &nbsp;{moment
-            .utc(player.user.locationTimestamp)
+            .utc(player.participant.locationTimestamp)
             .tz(timezone)
             .format('ddd, h:mmA z')}
         </div>
@@ -302,20 +295,20 @@ export default class GroupMap extends Component {
   }
 
   renderMarker(playerGroup) {
-    const user = playerGroup[0].user;
+    const participant = playerGroup[0].participant;
     const oneHourAgo = moment.utc().subtract(1, 'hour');
-    const locatedAt = moment.utc(user.locationTimestamp);
+    const locatedAt = moment.utc(participant.locationTimestamp);
     const locIsRecent = locatedAt.isAfter(oneHourAgo);
-    const icon = locIsRecent ? userIcon : userIconExpired;
+    const icon = locIsRecent ? participantIcon : participantIconExpired;
     const position = L.latLng(
-      user.locationLatitude,
-      user.locationLongitude);
+      participant.locationLatitude,
+      participant.locationLongitude);
     const playerSections = playerGroup
       .map(player => (
         this.renderMarkerPlayerSection(player)
       ));
     return (
-      <Marker key={user.id} position={position} icon={icon}>
+      <Marker key={participant.id} position={position} icon={icon}>
         <Popup>
           <RouterForwarder context={this.context}>
             <div>

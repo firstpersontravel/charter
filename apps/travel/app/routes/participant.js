@@ -18,7 +18,7 @@ export default Ember.Route.extend({
     var apiHost = this.get('environment.apiHost');
     try {
       window.webkit.messageHandlers.register_native_api_client.postMessage({
-        user_id: context.id,
+        participant_id: context.id,
         api_host: apiHost
       });
     } catch(err) {

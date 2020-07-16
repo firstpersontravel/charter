@@ -78,16 +78,16 @@ export default Ember.Controller.extend(RealtimeMixin, {
 
     deviceState: function(content) {
       if (content.client_id === this.get('api').get('clientId')) {
-        // console.log('self-originated remote user state update ignored:',
+        // console.log('self-originated remote participant state update ignored:',
         //   content);
         return;
       }
-      var user = this.store.peekRecord('user', content.user_id);
-      if (!user) {
+      var participant = this.store.peekRecord('participant', content.participant_id);
+      if (!participant) {
         return;
       }
-      // console.log('user state updated');
-      user.setProperties({
+      // console.log('participant state updated');
+      participant.setProperties({
         locationLatitude: content.device_state.location_latitude,
         locationLongitude: content.device_state.location_longitude,
         locationAccuracy: content.device_state.location_accuracy,

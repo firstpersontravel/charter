@@ -13,7 +13,7 @@ describe('TwilioUtil', () => {
     const player = { tripId: 100 };
 
     it('returns player trip id if exists', async () => {
-      const relay = { id: 10, userPhoneNumber: '2223334444' };
+      const relay = { id: 10, participantPhoneNumber: '2223334444' };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(player);
       sandbox.stub(EntrywayController, 'createTripFromRelay');
 
@@ -31,7 +31,7 @@ describe('TwilioUtil', () => {
     });
 
     it('creates a trip if none exist', async () => {
-      const relay = { id: 10, userPhoneNumber: '' };
+      const relay = { id: 10, participantPhoneNumber: '' };
       const stubTrip = { id: 2 };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
       sandbox.stub(EntrywayController, 'createTripFromRelay')
@@ -52,7 +52,7 @@ describe('TwilioUtil', () => {
     });
 
     it('does not create a trip for non-entryway', async () => {
-      const relay = { id: 10, userPhoneNumber: '4445556666' };
+      const relay = { id: 10, participantPhoneNumber: '4445556666' };
       const stubTrip = { id: 2 };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
       sandbox.stub(EntrywayController, 'createTripFromRelay')

@@ -55,6 +55,7 @@ apiRouter.use('/experiences', createModelRouter(models.Experience,
 const expRecordOpts = { requireFilters: ['orgId', 'experienceId'] };
 apiRouter.use('/assets', createModelRouter(models.Asset, expRecordOpts));
 apiRouter.use('/groups', createModelRouter(models.Group, expRecordOpts));
+apiRouter.use('/participants', createModelRouter(models.Participant, expRecordOpts));
 apiRouter.use('/profiles', createModelRouter(models.Profile, expRecordOpts));
 apiRouter.use('/relays', createModelRouter(models.Relay, expRecordOpts));
 apiRouter.use('/scripts', createModelRouter(models.Script, expRecordOpts));
@@ -67,24 +68,12 @@ apiRouter.use('/players', createModelRouter(models.Player, tripRecordOpts));
 apiRouter.use('/log-entries', createModelRouter(models.LogEntry,
   tripRecordOpts));
 
-
-// And for users, which are shared
-const userOpts = {
-  requireFilters: ['orgId', 'experienceId'],
-  blacklistFields: [
-    'passwordHash',
-    'passwordResetToken',
-    'passwordResetExpiry'
-  ]
-};
-apiRouter.use('/users', createModelRouter(models.User, userOpts));
-
 // Action routes
 apiRouter.post('/trips/:tripId/actions',
   asyncRoute(apiActionsRoutes.createActionRoute));
 apiRouter.post('/trips/:tripId/events',
   asyncRoute(apiActionsRoutes.createEventRoute));
-apiRouter.post('/users/:userId/device_state',
+apiRouter.post('/participants/:participantId/device_state',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
 
 // Experience admin routes
@@ -108,8 +97,8 @@ apiRouter.get('/view/player/:playerId',
   asyncRoute(apiViewRoutes.getPlayerViewRoute));
 
 // Legacy
-apiRouter.get('/legacy/user/:id',
-  asyncRoute(apiLegacyRoutes.getUserRoute));
+apiRouter.get('/legacy/participant/:id',
+  asyncRoute(apiLegacyRoutes.getParticipantRoute));
 apiRouter.get('/legacy/trip/:id',
   asyncRoute(apiLegacyRoutes.getTripRoute));
 

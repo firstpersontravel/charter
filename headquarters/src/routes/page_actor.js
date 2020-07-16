@@ -49,7 +49,8 @@ function getPanel(trip, player, evalContext, timezone, pageInfo, panel) {
   const customParams = supportedPartials[panelType](evalContext, player, panel,
     timezone);
   return Object.assign(panel, customParams, {
-    type: 'panels/' + panelType,
+    panelType: panel.type,
+    panelPartial: 'panels/' + panelType,
     panelId: panel.id,
     roleName: player.roleName,
     sceneTitle: pageInfo.scene.title,
@@ -106,7 +107,7 @@ const actorsListRoute = async (req, res) => {
     return;
   }
   const players = await models.Player.findAll({
-    where: { userId: { [Sequelize.Op.not]: null } },
+    where: { participantId: { [Sequelize.Op.not]: null } },
     include: [{
       model: models.Trip,
       as: 'trip',
@@ -114,32 +115,41 @@ const actorsListRoute = async (req, res) => {
       include: [{
         model: models.Script,
         as: 'script'
+      }, {
+        model: models.Experience,
+        as: 'experience'
       }]
     }, {
-      model: models.User,
-      as: 'user'
+      model: models.Participant,
+      as: 'participant'
     }, {
       model: models.Org,
       as: 'org',
       where: { id: org.id }
     }]
   });
-  // Just show all users for now. How to filter for actors; figure out later.
-  const users = _.uniqBy(_.map(players, 'user'), 'id');
+  // Just show all participants for now. How to filter for actors; figure out later.
+  const participants = _.uniqBy(_.map(players, 'participant'), 'id');
   res.render('actor/actors', {
     layout: 'actor',
     orgName: org.name,
     orgTitle: org.title,
-    users: users.map(user => ({
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName
+    participants: participants.map(participant => ({
+      id: participant.id,
+      name: participant.name,
+      experienceTitle: players
+        .find(p => p.participant.id === participant.id)
+        .trip.experience.title,
+      roleTitles: players
+        .filter(p => p.participant.id === participant.id)
+        .map(p => p.trip.script.content.roles.find(r => r.name === p.roleName).title)
+        .join(', ')
     }))
   });
 };
 
 /**
- * Show a single player (even if they have no user).
+ * Show a single player (even if they have no participant).
  */
 const playerShowRoute = async (req, res) => {
   const playerId = req.params.playerId;
@@ -162,8 +172,8 @@ const playerShowRoute = async (req, res) => {
     .find(role => role.name === player.roleName);
   const params = {
     pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
-    userId: '',
-    userName: role ? role.title : 'Unknown role',
+    participantId: '',
+    participantName: role ? role.title : 'Unknown role',
     orgName: req.params.orgName,
     orgTitle: actionContext._objs.trip.org.title,
     pages: pages,
@@ -178,23 +188,23 @@ const playerShowRoute = async (req, res) => {
 };
 
 /**
- * Show a user, including all active players.
+ * Show a participant, including all active players.
  */
-const userShowRoute = async (req, res) => {
-  const user = await models.User.findOne({
-    where: { id: req.params.userId },
+const participantShowRoute = async (req, res) => {
+  const participant = await models.Participant.findOne({
+    where: { id: req.params.participantId },
     include: [{
       model: models.Org,
       as: 'org',
       where: { name: req.params.orgName }
     }]
   });
-  if (!user) {
+  if (!participant) {
     res.redirect(`/actor/${req.params.orgName}`);
     return;
   }
   const players = await models.Player.findAll({
-    where: { userId: user.id },
+    where: { participantId: participant.id },
     include: [{
       model: models.Trip,
       as: 'trip',
@@ -218,10 +228,10 @@ const userShowRoute = async (req, res) => {
 
   const params = {
     pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
-    userId: req.params.userId,
+    participantId: req.params.participantId,
     orgName: req.params.orgName,
-    orgTitle: user.org.title,
-    userName: `${user.firstName} ${user.lastName}`,
+    orgTitle: participant.org.title,
+    participantName: `${participant.firstName} ${participant.lastName}`,
     pages: pages,
     stage: config.env.HQ_STAGE,
     tripIds: _.map(players, 'tripId').join(',')
@@ -236,5 +246,5 @@ const userShowRoute = async (req, res) => {
 module.exports = {
   actorsListRoute,
   playerShowRoute,
-  userShowRoute
+  participantShowRoute
 };

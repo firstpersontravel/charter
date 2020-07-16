@@ -14,7 +14,7 @@ describe('pageShortcutRoutes', () => {
 
       // Stub response
       const mockPlayer = {
-        userId: 10,
+        participantId: 10,
         tripId: 2,
         trip: { experienceId: 3 },
         roleName: 'Phone'

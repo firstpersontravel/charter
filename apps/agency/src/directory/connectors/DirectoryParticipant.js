@@ -1,20 +1,20 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import DirectoryUser from '../components/DirectoryUser';
+import DirectoryParticipant from '../components/DirectoryParticipant';
 import { lookupExperience } from './utils';
 import { instanceIncluder, instancesFromDatastore } from '../../datastore-utils';
 import { createInstance, retrieveInstance, updateInstance } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => ({
   experience: lookupExperience(state, ownProps),
-  user: _.find(state.datastore.users, {
-    id: Number(ownProps.match.params.userId)
+  participant: _.find(state.datastore.participants, {
+    id: Number(ownProps.match.params.participantId)
   }),
   profiles: instancesFromDatastore(state, {
     col: 'profiles',
     filter: {
-      userId: Number(ownProps.match.params.userId),
+      participantId: Number(ownProps.match.params.participantId),
       experience: { name: ownProps.match.params.experienceName }
     },
     include: {
@@ -29,4 +29,4 @@ const mapDispatchToProps = dispatch => ({
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(DirectoryUser);
+export default connect(mapStateToProps, mapDispatchToProps)(DirectoryParticipant);

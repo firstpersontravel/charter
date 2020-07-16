@@ -6,19 +6,18 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 const PHONE_REGEX = /^\d{10}$/;
 const EMAIL_REGEX = /^[\w._-]+@[\w.-]+$/;
 
-export default class UserModal extends Component {
-  static getDefaultState(user) {
+export default class ParticipantModal extends Component {
+  static getDefaultState(participant) {
     return {
-      firstName: user ? user.firstName : '',
-      lastName: user ? user.lastName : '',
-      email: user ? user.email : '',
-      phoneNumber: user ? user.phoneNumber : ''
+      name: participant ? participant.name : '',
+      email: participant ? participant.email : '',
+      phoneNumber: participant ? participant.phoneNumber : ''
     };
   }
 
   constructor(props) {
     super(props);
-    this.state = UserModal.getDefaultState(props.user);
+    this.state = ParticipantModal.getDefaultState(props.participant);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
@@ -26,7 +25,7 @@ export default class UserModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(UserModal.getDefaultState(nextProps.user));
+    this.setState(ParticipantModal.getDefaultState(nextProps.participant));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -57,7 +56,7 @@ export default class UserModal extends Component {
   }
 
   isValid() {
-    if (this.state.firstName === '') {
+    if (this.state.name === '') {
       return false;
     }
     if (this.state.phoneNumber && !PHONE_REGEX.test(this.state.phoneNumber)) {
@@ -70,9 +69,9 @@ export default class UserModal extends Component {
   }
 
   render() {
-    const user = this.props.user;
-    const title = user ? 'Edit user' : 'New user';
-    const isNew = !user;
+    const participant = this.props.participant;
+    const title = participant ? 'Edit participant' : 'New participant';
+    const isNew = !participant;
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
     return (
@@ -84,44 +83,34 @@ export default class UserModal extends Component {
           <ModalHeader toggle={this.handleToggle}>{title}</ModalHeader>
           <ModalBody>
             <div className="row">
-              <div className="form-group col-sm-6">
-                <label htmlFor="user_first_name">First name</label>
+              <div className="form-group col-sm-12">
+                <label htmlFor="participant_name">Full name</label>
                 <input
                   type="text"
-                  id="user_first_name"
+                  id="participant_name"
                   className="form-control"
-                  value={this.state.firstName}
+                  value={this.state.name}
                   ref={this.firstInputRef}
-                  onChange={_.curry(this.handleChangeField)('firstName')}
-                  placeholder="First name" />
-              </div>
-              <div className="form-group col-sm-6">
-                <label htmlFor="user_last_name">Last name</label>
-                <input
-                  type="text"
-                  id="user_last_name"
-                  className="form-control"
-                  value={this.state.lastName}
-                  onChange={_.curry(this.handleChangeField)('lastName')}
-                  placeholder="Last name" />
+                  onChange={_.curry(this.handleChangeField)('name')}
+                  placeholder="Full name" />
               </div>
             </div>
             <div className="row">
               <div className="form-group col-sm-6">
-                <label htmlFor="user_email">Email</label>
+                <label htmlFor="participant_email">Email</label>
                 <input
                   type="email"
-                  id="user_email"
+                  id="participant_email"
                   className="form-control"
                   value={this.state.email}
                   onChange={_.curry(this.handleChangeField)('email')}
                   placeholder="Email" />
               </div>
               <div className="form-group col-sm-6">
-                <label htmlFor="user_last_name">Phone number</label>
+                <label htmlFor="participant_last_name">Phone number</label>
                 <input
                   type="text"
-                  id="user_phone_number"
+                  id="participant_phone_number"
                   className="form-control"
                   value={this.state.phoneNumber}
                   onChange={_.curry(this.handleChangeField)('phoneNumber')}
@@ -147,13 +136,13 @@ export default class UserModal extends Component {
   }
 }
 
-UserModal.propTypes = {
+ParticipantModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  user: PropTypes.object,
+  participant: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };
 
-UserModal.defaultProps = {
-  user: null
+ParticipantModal.defaultProps = {
+  participant: null
 };

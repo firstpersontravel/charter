@@ -41,7 +41,7 @@ const createEventRoute = async (req, res) => {
  * Update the device state.
  */
 const updateDeviceStateRoute = async (req, res) => {
-  const userId = req.params.userId;
+  const participantId = req.params.participantId;
   const clientId = req.body.client_id;
   const params = {
     locationLatitude: Number(req.body.location_latitude),
@@ -53,7 +53,7 @@ const updateDeviceStateRoute = async (req, res) => {
     deviceBattery: _.isUndefined(req.body.device_battery) ?
       null : Number(req.body.device_battery)
   };
-  await DeviceStateHandler.updateDeviceState(userId, params, clientId);
+  await DeviceStateHandler.updateDeviceState(participantId, params, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 };

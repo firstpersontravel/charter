@@ -74,8 +74,8 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
     const relays = allRelays.filter(r => (
       r.stage === stage && r.relayPhoneNumber === plainNum
     ));
-    const numEntryways = relays.filter(r => !r.userPhoneNumber).length;
-    const numDynamic = relays.filter(r => r.userPhoneNumber).length;
+    const numEntryways = relays.filter(r => !r.participantPhoneNumber).length;
+    const numDynamic = relays.filter(r => r.participantPhoneNumber).length;
     relays.forEach(r => accountedRelayIds.add(r.id));
     let expText = '-'.padEnd(71);
     if (relays.length > 0) {

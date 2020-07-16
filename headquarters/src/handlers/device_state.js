@@ -9,12 +9,12 @@ const models = require('../models');
 
 class DeviceStateHandler {
   /**
-   * Update the user device state.
+   * Update the participant device state.
    */
-  static async _updateUserDeviceState(user, fields) {
+  static async _updateParticipantDeviceState(participant, fields) {
     const updates = {};
     const locationDate = new Date(fields.locationTimestamp * 1000);
-    if (locationDate > user.locationTimestamp || 0) {
+    if (locationDate > participant.locationTimestamp || 0) {
       updates.locationLatitude = fields.locationLatitude;
       updates.locationLongitude = fields.locationLongitude;
       updates.locationTimestamp = new Date(fields.locationTimestamp * 1000);
@@ -27,13 +27,13 @@ class DeviceStateHandler {
     if (fields.deviceIsActive) {
       updates.deviceLastActive = moment.utc();
     }
-    return user.update(updates);
+    return participant.update(updates);
   }
 
   /**
    * Send notifications and enter geofences if needed.
    */
-  static async _notifyNewDeviceState(user, trip, player, oldState,
+  static async _notifyNewDeviceState(participant, trip, player, oldState,
     clientId) {
     const script = await models.Script.findByPk(trip.scriptId);
     // Calculate new geofences
@@ -41,8 +41,8 @@ class DeviceStateHandler {
       script.content, oldState.latitude, oldState.longitude,
       oldState.accuracy, trip.waypointOptions);
     const newGeofences = GeofenceCore.geofencesInArea(
-      script.content, user.locationLatitude, user.locationLongitude,
-      user.locationAccuracy, trip.waypointOptions);
+      script.content, participant.locationLatitude, participant.locationLongitude,
+      participant.locationAccuracy, trip.waypointOptions);
     const enteredGeofenceNames = _.difference(
       _.map(newGeofences, 'name'),
       _.map(oldGeofences, 'name')
@@ -58,58 +58,32 @@ class DeviceStateHandler {
       await NotifyController.notifyEvent(trip.id, event, clientId);
     }
     // Notify new device state
-    await NotifyController.notifyUserDeviceState(trip.id, user, clientId);
+    await NotifyController.notifyParticipantDeviceState(trip.id, participant, clientId);
   }
 
   /**
-   * Update user state and send notifications to all active players.
-   *
-   * Location update path
-   * Native update from tablet
-   *   - iOS -> server update_device_state
-   *            -> creates enterGeofence events on server
-   *               -> calls realtimeEvents.event with enterGeofence on
-   *                  other clients [NEEDED]
-   *            -> sends 'device_state' realtime event to other clients
-   *               -> calls realtimeEvents.deviceState on other clients
-   *                  -> sets user.location props locally (no new event)
-   *                  -> does not enterGeofence events locally
-   *   - iOS -> local nativeLocationUpdate
-   *            -> sets user.location props locally (no new event)
-   *            -> creates enterGeofence events locally
-   * Web update from tablet location or debug bar
-   *   - web > `location.handleFix` > `lastFixDidChange` >
-   *     `player.updateLocation`
-   *     -> server update_device_state
-   *          -> creates enterGeofence events on server
-   *             -> calls realtimeEvents.event with enterGeofence on
-   *                other clients [NEEDED]
-   *          -> sends 'device_state' realtime event to other clients
-   *             -> calls realtimeEvents.deviceState on other clients
-   *                -> sets user.location props locally (no new event)
-   *                -> does not enterGeofence events locally
-   *     -> create enterGeofence events locally
+   * Update participant state and send notifications to all active players.
    */
-  static async updateDeviceState(userId, fields, clientId=null) {
-    const user = await models.User.findByPk(userId);
+  static async updateDeviceState(participantId, fields, clientId=null) {
+    const participant = await models.Participant.findByPk(participantId);
     const trips = await models.Trip.findAll({
       where: { isArchived: false }
     });
     // Save old state
     const oldState = {
-      latitude: user.latitude,
-      longitude: user.longitude,
-      accuracy: user.accuracy
+      latitude: participant.latitude,
+      longitude: participant.longitude,
+      accuracy: participant.accuracy
     };
-    await this._updateUserDeviceState(user, fields);
+    await this._updateParticipantDeviceState(participant, fields);
     for (let trip of trips) {
       const player = await models.Player.findOne({
-        where: { userId: user.id, tripId: trip.id }
+        where: { participantId: participant.id, tripId: trip.id }
       });
       if (!player) {
         continue;
       }
-      await this._notifyNewDeviceState(user, trip, player, oldState, clientId);
+      await this._notifyNewDeviceState(participant, trip, player, oldState, clientId);
     }
   }
 }

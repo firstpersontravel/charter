@@ -62,7 +62,7 @@ describe('ActionContext', () => {
           acknowledgedPageName: '',
           id: 123,
           roleName: 'Role',
-          user: null
+          participant: null
         }],
         schedule: objs.trip.schedule,
         script: objs.script.get({ plain: true }),

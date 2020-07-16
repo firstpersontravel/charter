@@ -6,15 +6,15 @@ import { Link } from 'react-router-dom';
 import { TextUtil } from 'fptcore';
 
 import Loader from '../../partials/Loader';
-import UserModal from '../partials/UserModal';
+import ParticipantModal from '../partials/ParticipantModal';
 import ProfileModal from '../partials/ProfileModal';
 
-export default class DirectoryUser extends Component {
+export default class DirectoryParticipant extends Component {
   constructor(props) {
     super(props);
-    this.handleUserToggleArchived = this.handleUserToggleArchived.bind(this);
-    this.handleUpdateUser = this.handleUpdateUser.bind(this);
-    this.handleUserModalClose = this.handleUserModalClose.bind(this);
+    this.handleParticipantToggleArchived = this.handleParticipantToggleArchived.bind(this);
+    this.handleUpdateParticipant = this.handleUpdateParticipant.bind(this);
+    this.handleParticipantModalClose = this.handleParticipantModalClose.bind(this);
     this.handleUpdateProfile = this.handleUpdateProfile.bind(this);
     this.handleProfileModalClose = this.handleProfileModalClose.bind(this);
     this.handleProfileToggleActive = this.handleProfileToggleActive.bind(this);
@@ -23,40 +23,39 @@ export default class DirectoryUser extends Component {
   }
 
   componentWillMount() {
-    this.loadData(this.props.match.params.userId);
+    this.loadData(this.props.match.params.participantId);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.match.params.userId !== this.props.match.params.userId) {
-      this.loadData(nextProps.match.params.userId);
+    if (nextProps.match.params.participantId !== this.props.match.params.participantId) {
+      this.loadData(nextProps.match.params.participantId);
     }
   }
 
-  loadData(userId) {
-    this.props.retrieveInstance('users', userId);
+  loadData(participantId) {
+    this.props.retrieveInstance('participants', participantId);
   }
 
-  handleUserToggleArchived() {
-    this.props.updateInstance('users', this.props.user.id, {
-      isArchived: !this.props.user.isArchived
+  handleParticipantToggleArchived() {
+    this.props.updateInstance('participants', this.props.participant.id, {
+      isArchived: !this.props.participant.isArchived
     });
   }
 
-  handleUserModalClose() {
+  handleParticipantModalClose() {
     const experience = this.props.experience;
     this.props.history.push(
       `/${experience.org.name}/${experience.name}/directory` +
-      `/user/${this.props.user.id}`);
+      `/${this.props.participant.id}`);
   }
 
-  handleUpdateUser(fields) {
-    this.props.updateInstance('users', this.props.user.id, {
-      firstName: fields.firstName,
-      lastName: fields.lastName,
+  handleUpdateParticipant(fields) {
+    this.props.updateInstance('participants', this.props.participant.id, {
+      name: fields.name,
       phoneNumber: fields.phoneNumber,
       email: fields.email
     });
-    this.handleUserModalClose();
+    this.handleParticipantModalClose();
   }
 
   handleProfileModalClose() {
@@ -64,7 +63,7 @@ export default class DirectoryUser extends Component {
     const query = new URLSearchParams(this.props.location.search);
     this.props.history.push(
       `/${experience.org.name}/${experience.name}/directory` +
-      `/user/${this.props.user.id}` +
+      `/${this.props.participant.id}` +
       `${query.get('archived_profiles') ? '?archived_profiles=true' : ''}`);
   }
 
@@ -75,7 +74,7 @@ export default class DirectoryUser extends Component {
       const create = Object.assign({}, fields, {
         orgId: this.props.experience.orgId,
         experienceId: this.props.experience.id,
-        userId: this.props.user.id
+        participantId: this.props.participant.id
       });
       this.props.createInstance('profiles', create);
     } else {
@@ -99,13 +98,13 @@ export default class DirectoryUser extends Component {
     });
   }
 
-  renderUserFields() {
+  renderParticipantFields() {
     return (
       <p>
-        <strong>Email:</strong> {this.props.user.email}
+        <strong>Email:</strong> {this.props.participant.email}
         <br />
         <strong>Phone:</strong>
-        &nbsp;{TextUtil.formatPhone(this.props.user.phoneNumber)}
+        &nbsp;{TextUtil.formatPhone(this.props.participant.phoneNumber)}
         <br />
       </p>
     );
@@ -151,7 +150,7 @@ export default class DirectoryUser extends Component {
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/${experience.org.name}/${experience.name}/directory/user/${this.props.user.id}`,
+              pathname: `/${experience.org.name}/${experience.name}/directory/${this.props.participant.id}`,
               search: `?editing_profile=${profile.id}&archived_profiles=${archivedProfiles}`
             }}>
             Edit
@@ -194,19 +193,19 @@ export default class DirectoryUser extends Component {
     if (!this.props.experience.script) {
       return <div className="col-sm-9"><Loader /></div>;
     }
-    if (!this.props.user) {
+    if (!this.props.participant) {
       return <div className="col-sm-9">User not found.</div>;
     }
     const query = new URLSearchParams(this.props.location.search);
     const archivedProfiles = query.get('archived_profiles');
     const editingProfileId = query.get('editing_profile');
-    const isEditingUser = query.get('editing');
+    const isEditingParticipant = query.get('editing');
     const experience = this.props.experience;
     const editingProfile = editingProfileId ?
       _.find(this.props.profiles, { id: Number(editingProfileId) }) :
       null;
-    const user = this.props.user;
-    const userFields = this.renderUserFields();
+    const participant = this.props.participant;
+    const participantFields = this.renderParticipantFields();
     const profilesList = this.renderProfilesList();
     const hasAnyArchived = _.find(this.props.profiles, { isArchived: true });
     const isShowingArchived = !!archivedProfiles;
@@ -215,7 +214,7 @@ export default class DirectoryUser extends Component {
         &nbsp;
         <Link
           className="btn btn-sm btn-outline-secondary"
-          to={`/${experience.org.name}/${experience.name}/directory/user/${user.id}?archived_profiles=true`}>
+          to={`/${experience.org.name}/${experience.name}/directory/${participant.id}?archived_profiles=true`}>
           Show archived profiles
         </Link>
       </span>
@@ -224,39 +223,39 @@ export default class DirectoryUser extends Component {
       <div className="col-sm-9">
         <h3>
           <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link> &rsaquo;&nbsp;
-          {user.firstName} {user.lastName}
+          {participant.name}
         </h3>
         <p>
           <Link
             className="btn btn-sm btn-outline-secondary"
-            to={`/${experience.org.name}/${experience.name}/directory/user/${user.id}?editing=true`}>
+            to={`/${experience.org.name}/${experience.name}/directory/${participant.id}?editing=true`}>
             Edit
           </Link>
           &nbsp;
           <button
             className="btn btn-sm btn-outline-secondary"
-            onClick={this.handleUserToggleArchived}>
-            {user.isArchived ? 'Unarchive' : 'Archive'}
+            onClick={this.handleParticipantToggleArchived}>
+            {participant.isArchived ? 'Unarchive' : 'Archive'}
           </button>
         </p>
-        {userFields}
+        {participantFields}
         {profilesList}
         <div className="mt-2">
           <Link
             className="btn btn-sm btn-outline-secondary"
             to={{
-              pathname: `/${experience.org.name}/${experience.name}/directory/user/${user.id}`,
+              pathname: `/${experience.org.name}/${experience.name}/directory/${participant.id}`,
               search: `?editing_profile=new&archived_profiles=${archivedProfiles}`
             }}>
             Create profile
           </Link>
           {showArchivedButton}
         </div>
-        <UserModal
-          isOpen={!!isEditingUser}
-          user={user}
-          onClose={this.handleUserModalClose}
-          onConfirm={this.handleUpdateUser} />
+        <ParticipantModal
+          isOpen={!!isEditingParticipant}
+          participant={participant}
+          onClose={this.handleParticipantModalClose}
+          onConfirm={this.handleUpdateParticipant} />
         <ProfileModal
           isOpen={!!editingProfileId}
           experience={this.props.experience}
@@ -268,18 +267,18 @@ export default class DirectoryUser extends Component {
   }
 }
 
-DirectoryUser.propTypes = {
+DirectoryParticipant.propTypes = {
   retrieveInstance: PropTypes.func.isRequired,
   createInstance: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   location: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
-  user: PropTypes.object,
+  participant: PropTypes.object,
   experience: PropTypes.object.isRequired,
   profiles: PropTypes.array.isRequired
 };
 
-DirectoryUser.defaultProps = {
-  user: null
+DirectoryParticipant.defaultProps = {
+  participant: null
 };

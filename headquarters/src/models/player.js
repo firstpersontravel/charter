@@ -2,7 +2,7 @@ const database = require('../config').database;
 
 const Org = require('./org');
 const Trip = require('./trip');
-const User = require('./user');
+const Participant = require('./participant');
 
 const {
   allowNullModifier,
@@ -25,6 +25,7 @@ const Player = database.define('Player', snakeCaseColumns({
 
 Player.belongsTo(Org, belongsToField('org'));
 Player.belongsTo(Trip, belongsToField('trip'));
-Player.belongsTo(User, mutableModifier(allowNullModifier(belongsToField('user'))));
+Player.belongsTo(Participant, mutableModifier(allowNullModifier(
+  belongsToField('participant'))));
 
 module.exports = Player;

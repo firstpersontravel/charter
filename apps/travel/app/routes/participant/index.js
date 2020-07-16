@@ -5,14 +5,14 @@ export default Ember.Route.extend({
   api: Ember.inject.service(),
 
   afterModel: function() {
-    var user = this.modelFor('user');
-    if (!user) {
+    var participant = this.modelFor('participant');
+    if (!participant) {
       throw new Error('User not found.');
     }
     var self = this;
     return this.get('api')
       .getData('/api/players/', {
-        userId: user.id,
+        participantId: participant.id,
         sort: '-id',
         count: 1
       })
@@ -20,7 +20,7 @@ export default Ember.Route.extend({
         var playerData = results.data.players[0];
         if (!playerData) {
           self.transitionTo('login');
-          alert(`${user.get('email')} has no active trips.`);
+          alert(`${participant.get('email')} has no active trips.`);
           return;
         }
         var playerRoleName = playerData.roleName;

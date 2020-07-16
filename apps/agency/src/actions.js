@@ -426,7 +426,7 @@ export function bulkUpdate(collectionName, query, fields) {
 
 export function refreshLiveData(orgId, experienceId, tripIds) {
   return function (dispatch) {
-    dispatch(listCollection('users', {
+    dispatch(listCollection('participants', {
       orgId: orgId,
       experienceId: experienceId,
       isArchived: false

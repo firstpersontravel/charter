@@ -62,19 +62,19 @@ class RelayController {
   }
 
   /**
-   * Get player for the "for" role for this relay and a given user phone
+   * Get player for the "for" role for this relay and a given participant phone
    * number.
    */
-  static async lookupPlayer(relay, userNumber) {
+  static async lookupPlayer(relay, participantNumber) {
     // If we found an existing matching player with this number,
     // then we're good -- return it -- even if this is an entryway because
-    // that means a specific user has already been assigned.
+    // that means a specific participant has already been assigned.
     return await models.Player.findOne({
       where: { roleName: relay.forRoleName },
       include: [{
-        model: models.User,
-        as: 'user',
-        where: { phoneNumber: userNumber }
+        model: models.Participant,
+        as: 'participant',
+        where: { phoneNumber: participantNumber }
       }, {
         model: models.Trip,
         as: 'trip',
@@ -94,22 +94,22 @@ class RelayController {
     if (!config.getTwilioClient()) {
       return;
     }
-    // Needs a user and phone number.
-    const toUser = await toPlayer.getUser();
-    if (!toUser || !toUser.phoneNumber) {
-      logger.warn(`Relay ${relay.id} has no user phone number.`);
+    // Needs a participant and phone number.
+    const toParticipant = await toPlayer.getParticipant();
+    if (!toParticipant || !toParticipant.phoneNumber) {
+      logger.warn(`Relay ${relay.id} has no participant phone number.`);
       return;
     }
     // Protection in non-production from texting anyone who is not Gabe.
     if (!config.isTesting &&
         config.env.HQ_STAGE !== 'production' &&
-        !_.includes(whitelistedNumbers, toUser.phoneNumber)) {
+        !_.includes(whitelistedNumbers, toParticipant.phoneNumber)) {
       logger.warn(`Relay ${relay.id} is not to a whitelisted number.`);
       return;
     }
     const twilioHost = config.env.HQ_TWILIO_HOST;
     const callOpts = {
-      to: `+1${toUser.phoneNumber}`,
+      to: `+1${toParticipant.phoneNumber}`,
       from: `+1${relay.relayPhoneNumber}`,
       machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
       url: (
@@ -147,12 +147,12 @@ class RelayController {
     // to the TravelAgent as well.
     const toPlayer = await models.Player.findOne({
       where: { tripId: trip.id, roleName: relay.forRoleName },
-      include: [{ model: models.User, as: 'user' }]
+      include: [{ model: models.Participant, as: 'participant' }]
     });
-    if (!_.get(toPlayer, 'user.phoneNumber')) {
+    if (!_.get(toPlayer, 'participant.phoneNumber')) {
       return;
     }
-    const toPhoneNumber = toPlayer.user.phoneNumber;
+    const toPhoneNumber = toPlayer.participant.phoneNumber;
     // Protection in non-production from texting anyone who is not Gabe.
     if (config.env.HQ_STAGE !== 'production' &&
         !_.includes(whitelistedNumbers, toPhoneNumber)) {

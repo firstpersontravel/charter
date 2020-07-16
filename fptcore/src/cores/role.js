@@ -1,5 +1,5 @@
 class RoleCore {
-  static canRoleHaveUser(scriptContent, role) {
+  static canRoleHaveParticipant(scriptContent, role) {
     // Role can have a user if it has an interface
     if (role.interface) {
       return true;

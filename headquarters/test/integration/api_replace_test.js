@@ -74,7 +74,7 @@ describe('API replace', () => {
                 acknowledgedPageAt: '2018-01-01T00:00:00.000Z',
                 acknowledgedPageName: 'newPage',
                 roleName: 'Dummy',
-                userId: null
+                participantId: null
               }
             }
           });

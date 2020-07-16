@@ -8,13 +8,13 @@ import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
 import { getPlayerIframeUrl } from '../../utils';
 
-function renderMap(trip, user) {
-  if (!user || !user.locationLatitude) {
+function renderMap(trip, participant) {
+  if (!participant || !participant.locationLatitude) {
     return <div>No location available</div>;
   }
   const center = L.latLng(
-    user.locationLatitude,
-    user.locationLongitude);
+    participant.locationLatitude,
+    participant.locationLongitude);
   return (
     <GroupMap
       group={trip.group}
@@ -24,14 +24,14 @@ function renderMap(trip, user) {
   );
 }
 
-function renderUser(player, user) {
-  if (!user) {
+function renderParticipant(player, participant) {
+  if (!participant) {
     return 'None';
   }
   return (
     <Link
-      to={`/${player.org.name}/${player.experience.name}/directory/user/${user.id}`}>
-      {user.firstName} {user.lastName}
+      to={`/${player.org.name}/${player.experience.name}/directory/${participant.id}`}>
+      {participant.name}
     </Link>
   );
 }
@@ -51,15 +51,15 @@ function renderPlayerCell(player, isFirst) {
   const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
-    renderMap(trip, player.user) : null;
-  const renderedUser = isFirst ? (
+    renderMap(trip, player.participant) : null;
+  const renderedParticipant = isFirst ? (
     <div>
-      <strong>User:</strong> {renderUser(player, player.user)}
+      <strong>User:</strong> {renderParticipant(player, player.participant)}
     </div>
   ) : null;
 
   const joinUrl = `/entry/t/${trip.id}/r/${player.roleName}`;
-  const joinLink = player.user ? null : (
+  const joinLink = player.participant ? null : (
     <>
       <br />
       <strong>Join:</strong>&nbsp;
@@ -76,7 +76,7 @@ function renderPlayerCell(player, isFirst) {
       </div>
       <div className="col-sm-6">
         {renderedMap}
-        {renderedUser}
+        {renderedParticipant}
         <p>
           <strong>Player:</strong>
           {' '}
@@ -97,7 +97,7 @@ function renderPlayerCell(player, isFirst) {
   );
 }
 
-export default function RoleIndex({ user, players }) {
+export default function RoleIndex({ participant, players }) {
   const playersSorted = _(players)
     .filter('trip.script')
     .filter(player => !!player.role.interface)
@@ -116,10 +116,10 @@ export default function RoleIndex({ user, players }) {
 }
 
 RoleIndex.propTypes = {
-  user: PropTypes.object,
+  participant: PropTypes.object,
   players: PropTypes.array.isRequired
 };
 
 RoleIndex.defaultProps = {
-  user: null
+  participant: null
 };

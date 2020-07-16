@@ -69,25 +69,25 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     return <div>No trips</div>;
   }
   const roles = _(group.script.content.roles)
-    .filter(role => RoleCore.canRoleHaveUser(group.script.content, role))
+    .filter(role => RoleCore.canRoleHaveParticipant(group.script.content, role))
     .sort(SceneCore.sortResource)
     .value();
   const allPlayers = getAllPlayers(group.trips);
-  const allUsers = _(allPlayers).map('user').uniq().value();
+  const allParticipants = _(allPlayers).map('participant').uniq().value();
 
   let roleTitle = 'Participants';
 
   const path = history.location.pathname;
   const pathRoleMatch = path.match(/\/role\/([\w_-]+)\/(\d+)/);
   const pathRoleName = pathRoleMatch ? pathRoleMatch[1] : null;
-  const pathUserId = pathRoleMatch ? pathRoleMatch[2] : null;
+  const pathParticipantId = pathRoleMatch ? pathRoleMatch[2] : null;
 
-  if (pathRoleName && pathUserId) {
+  if (pathRoleName && pathParticipantId) {
     const role = _.find(group.script.content.roles, { name: pathRoleName });
-    const userTitle = pathUserId !== '0' ?
-      _.get(_.find(allUsers, { id: Number(pathUserId) }), 'firstName') :
+    const participantName = pathParticipantId !== '0' ?
+      _.get(_.find(allParticipants, { id: Number(pathParticipantId) }), 'name') :
       'No user';
-    roleTitle = `Participant: ${role.title} (${userTitle})`;
+    roleTitle = `Participant: ${role.title} (${participantName})`;
   }
 
   const pathTripMatch = path.match(/\/trip\/(\d+)/);
@@ -98,15 +98,15 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     return _(allPlayers)
       .filter(player => !!player.role.interface)
       .filter({ roleName: role.name })
-      .map('user')
+      .map('participant')
       .uniq()
-      .map(user => ({
+      .map(participant => ({
         url: (
           `/${group.org.name}/${group.experience.name}` +
           `/operate/${group.id}` +
-          `/role/${role.name}/${user ? user.id : 0}`
+          `/role/${role.name}/${participant ? participant.id : 0}`
         ),
-        text: `${role.title} (${user ? user.firstName : 'No user'})`
+        text: `${role.title} (${participant ? participant.name : 'No user'})`
       }))
       .flatten()
       .value();

@@ -19,7 +19,7 @@ describe('EmailExample', () => {
   beforeEach(async () => {
     script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
-    const user = await models.User.create({
+    const participant = await models.Participant.create({
       orgId: script.orgId,
       experienceId: script.experienceId,
       firstName: 'Phil',
@@ -29,11 +29,11 @@ describe('EmailExample', () => {
     await models.Profile.create({
       orgId: script.orgId,
       experienceId: script.experienceId,
-      userId: user.id,
+      participantId: participant.id,
       roleName: 'player',
       isActive: true
     });
-    await models.Player.update({ userId: user.id }, {
+    await models.Player.update({ participantId: participant.id }, {
       where: {
         tripId: trip.id,
         roleName: 'player'

@@ -87,12 +87,12 @@ describe('pageEntrywayRoutes', () => {
       sandbox.stub(models.Trip, 'findOne').resolves(trip);
 
       const existingRoleName = 'role-zzzxxt';
-      const existingUserId = 11;
+      const existingParticipantId = 11;
       const existingPlayerId = 13;
       const existingPlayer = {
         id: existingPlayerId,
         roleName: existingRoleName,
-        userId: existingUserId,
+        participantId: existingParticipantId,
         trip: {
           id: tripId
         }
@@ -126,7 +126,7 @@ describe('pageEntrywayRoutes', () => {
 
       // Test rendered redirect
       assert.strictEqual(res.statusCode, 302);
-      const redirect_uri = `/travel/u/${existingPlayer.userId || 0}` +
+      const redirect_uri = `/travel/u/${existingPlayer.participantId || 0}` +
                            `/p/${existingPlayer.tripId}` +
                            `/role/${existingPlayer.roleName}`;
       assert.strictEqual(res._getRedirectUrl(), redirect_uri);
@@ -134,20 +134,20 @@ describe('pageEntrywayRoutes', () => {
   });
 
   describe('#joinSubmitRoute', () => {
-    describe('if submitted with proper user data', () => {
-      const userData = {
-        name: 'Test User',
-        email: 'testuser@example.com',
+    describe('if submitted with proper participant data', () => {
+      const participantData = {
+        name: 'Test Participant',
+        email: 'testparticipant@example.com',
         phone: '5555555555'
       };
-      const newUserId = 17;
-      const user = {
-        id: newUserId,
-        firstName: 'name',
+      const newParticipantId = 17;
+      const participant = {
+        id: newParticipantId,
+        name: 'name',
         orgId: orgId,
         experienceId: experienceId,
         isActive: true,
-        phoneNumber: userData.phone
+        phoneNumber: participantData.phone
       };
 
       beforeEach(() => {
@@ -158,37 +158,28 @@ describe('pageEntrywayRoutes', () => {
         // stub player for role in trip
         sandbox.stub(models.Player, 'findOne').resolves(player);
 
-        // stub user and player updates
-        sandbox.stub(models.User, 'findOrCreate').resolves([user]);
-        sandbox.stub(models.User, 'update').resolves(null);
+        // stub participant and player updates
+        sandbox.stub(models.Participant, 'findOrCreate').resolves([participant]);
+        sandbox.stub(models.Participant, 'update').resolves(null);
         sandbox.stub(models.Player, 'update').resolves(null);
       });
 
       it('finds the trip and redirects to the player interface', async () => {
         const res = httpMocks.createResponse();
         const req = httpMocks.createRequest({
-          params: {
-            tripId: tripId,
-            roleName: roleName,
-          },
-          body: userData
+          params: { tripId: tripId, roleName: roleName },
+          body: participantData
         });
         await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
         // Test found trip with correct arguments
         sinon.assert.calledOnce(models.Trip.findOne);
         assert.deepStrictEqual(models.Trip.findOne.firstCall.args, [{
-          where: {
-            id: tripId,
-            isArchived: false
-          },
+          where: { id: tripId, isArchived: false },
           include: [{
             model: models.Experience,
             as: 'experience',
-            include: [{
-              model: models.Org,
-              as: 'org'
-            }]
+            include: [{ model: models.Org, as: 'org' }]
           }]
         }]);
 
@@ -200,48 +191,46 @@ describe('pageEntrywayRoutes', () => {
 
         // Test rendered redirect
         assert.strictEqual(res.statusCode, 302);
-        const redirect_uri = `/travel/u/${player.userId || 0}` +
+        const redirect_uri = `/travel/u/${player.participantId || 0}` +
                              `/p/${player.tripId}` +
                              `/role/${player.roleName}`;
         assert.strictEqual(res._getRedirectUrl(), redirect_uri);
       });
 
-      it('creates user', async () => {
+      it('creates participant', async () => {
         const res = httpMocks.createResponse();
         const req = httpMocks.createRequest({
-          params: {
-            tripId: tripId,
-            roleName: roleName,
-          },
-          body: userData
+          params: { tripId: tripId, roleName: roleName },
+          body: participantData
         });
         await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
-        sinon.assert.calledOnce(models.User.findOrCreate);
-        assert.deepStrictEqual(models.User.findOrCreate.firstCall.args, [{
+        sinon.assert.calledOnce(models.Participant.findOrCreate);
+        assert.deepStrictEqual(models.Participant.findOrCreate.firstCall.args, [{
           where: {
             orgId: script.orgId,
             experienceId: script.experienceId,
             isActive: true,
-            phoneNumber: userData.phone
+            phoneNumber: participantData.phone
           },
-          defaults: { firstName: `${script.experience.title} Player` }
+          defaults: {
+            name: 'Test Participant',
+            email: 'testparticipant@example.com'
+          }
         }]);
       });
-      it('assigns user to role in trip', async () => {
+
+      it('assigns participant to role in trip', async () => {
         const res = httpMocks.createResponse();
         const req = httpMocks.createRequest({
-          params: {
-            tripId: tripId,
-            roleName: roleName,
-          },
-          body: userData
+          params: { tripId: tripId, roleName: roleName },
+          body: participantData
         });
         await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
         sinon.assert.calledOnce(models.Player.update);
         assert.deepStrictEqual(models.Player.update.firstCall.args, [
-          { userId: user.id },
+          { participantId: participant.id },
           { where: { id: player.id } }
         ]);
       });

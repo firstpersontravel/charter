@@ -21,8 +21,8 @@ describe('TwilioCallHandler', () => {
         relayPhoneNumber: '8887776666'
       };
       const stubPlayer = {
-        userId: 9,
-        user: { phoneNumber: '9995551212'}
+        participantId: 9,
+        participant: { phoneNumber: '9995551212'}
       };
       // Stub searching for opposite relay
       sandbox
@@ -58,7 +58,7 @@ describe('TwilioCallHandler', () => {
       assert.deepStrictEqual(
         models.Player.findOne.firstCall.args, [{
           where: { tripId: 1, roleName: 'ToPerson' },
-          include: [{ model: models.User, as: 'user' }]
+          include: [{ model: models.Participant, as: 'participant' }]
         }]);
       // Assert response
       assert.strictEqual(

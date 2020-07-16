@@ -78,12 +78,8 @@ async function respondWithUserAuthInfo(res, user, tokenString) {
 
 async function findUser(email) {
   return await models.User.findOne({
-    where: {
-      email: email.toLowerCase(),
-      experienceId: null,
-      passwordHash: { [Sequelize.Op.not]: '' }
-    }
-  });  
+    where: { email: email.toLowerCase() }
+  });
 }
 
 /**
@@ -109,7 +105,6 @@ const signupRoute = async (req, res) => {
   const password = req.body.password;
   const orgTitle = req.body.orgTitle;
   const orgName = slugify(orgTitle);
-  // Users w/no experienceId are loggin-able users
   const existingUser = await findUser(email);
   if (existingUser) {
     res.status(422).json({
@@ -134,8 +129,6 @@ const signupRoute = async (req, res) => {
     firstName: firstName,
     lastName: lastName,
     email: email.toLowerCase(),
-    orgId: org.id,
-    experienceId: null,
     passwordHash: pwHash
   });
 

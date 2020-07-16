@@ -26,7 +26,7 @@ describe('RelaysController', () => {
   describe('#findByNumber', () => {
     const stubRelay = {
       relayPhoneNumber: '1234567890',
-      userPhoneNumber: '9999999999'
+      participantPhoneNumber: '9999999999'
     };
 
     it('locates relay', async () => {
@@ -35,7 +35,7 @@ describe('RelaysController', () => {
 
       const result = await RelaysController.findByNumber(
         stubRelay.relayPhoneNumber,
-        stubRelay.userPhoneNumber
+        stubRelay.participantPhoneNumber
       );
 
       assert.strictEqual(result, stubRelay);
@@ -44,7 +44,7 @@ describe('RelaysController', () => {
           isActive: true,
           relayPhoneNumber: '1234567890',
           stage: 'test',
-          userPhoneNumber: { [Sequelize.Op.or]: ['', '9999999999'] }
+          participantPhoneNumber: { [Sequelize.Op.or]: ['', '9999999999'] }
         }
       });
     });

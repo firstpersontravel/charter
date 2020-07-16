@@ -144,11 +144,11 @@ describe('KernelOpController', () => {
     it('sends an email to all players with email addresses', async () => {
       const objs = {
         players: [
-          { roleName: 'Recipient', userId: 3 },
-          { roleName: 'Recipient', userId: 4 },
-          { roleName: 'Other', userId: 5 }
+          { roleName: 'Recipient', participantId: 3 },
+          { roleName: 'Recipient', participantId: 4 },
+          { roleName: 'Other', participantId: 5 }
         ],
-        users: [
+        participants: [
           { id: 3, email: 'recipient@test.com' },
           { id: 4, email: 'recipient_2@test.com' },
           { id: 5, email: 'recipient_3@test.com' }
@@ -167,10 +167,10 @@ describe('KernelOpController', () => {
     it('sends no emails if no players match', async () => {
       const objs = {
         players: [
-          { roleName: 'Other', userId: 5 },
-          { roleName: 'NoUser', userId: null }
+          { roleName: 'Other', participantId: 5 },
+          { roleName: 'NoUser', participantId: null }
         ],
-        users: []
+        participants: []
       };
 
       await KernelOpController.applyOp(objs, op);
@@ -180,8 +180,8 @@ describe('KernelOpController', () => {
 
     it('sends no emails if no players have emails', async () => {
       const objs = {
-        players: [{ roleName: 'Recipient', userId: 5 }],
-        users: [{ id: 5, email: '' }]
+        players: [{ roleName: 'Recipient', participantId: 5 }],
+        participants: [{ id: 5, email: '' }]
       };
 
       await KernelOpController.applyOp(objs, op);
@@ -189,10 +189,10 @@ describe('KernelOpController', () => {
       sinon.assert.notCalled(EmailController.sendEmail);
     });
 
-    it('sends no emails if player has no user', async () => {
+    it('sends no emails if player has no participant', async () => {
       const objs = {
-        players: [{ roleName: 'Recipient', userId: null }],
-        users: [{ id: 5, email: 'abc@123.com' }]
+        players: [{ roleName: 'Recipient', participantId: null }],
+        participants: [{ id: 5, email: 'abc@123.com' }]
       };
 
       await KernelOpController.applyOp(objs, op);

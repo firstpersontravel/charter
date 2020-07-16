@@ -4,31 +4,31 @@ export default Ember.Route.extend({
 
   api: Ember.inject.service(),
 
-  getLoggedInUserId: function() {
-    return localStorage.getItem('user_id');
+  getLoggedInParticipantId: function() {
+    return localStorage.getItem('participant_id');
   },
 
-  refreshUser: function(userId) {
+  refreshParticipant: function(participantId) {
     var self = this;
     return this.get('api')
-      .getData('/api/legacy/user/' + userId)
+      .getData('/api/legacy/participant/' + participantId)
       .then(function(results) {
         var serializer = Ember.getOwner(self).lookup('serializer:api');
         serializer.set('store', self.store);
         serializer.pushPayload(self.store, results);
-        return self.store.peekRecord('user', userId);
+        return self.store.peekRecord('participant', participantId);
       });
   },
 
   beforeModel: function() {
     var self = this;
-    var userId = this.getLoggedInUserId();
-    if (!userId) {
+    var participantId = this.getLoggedInParticipantId();
+    if (!participantId) {
       return self.transitionTo('login');
     }
-    return self.refreshUser(userId)
-      .then(function(user) {
-        return self.transitionTo('user', user);
+    return self.refreshParticipant(participantId)
+      .then(function(participant) {
+        return self.transitionTo('participant', participant);
       });
   }
 });

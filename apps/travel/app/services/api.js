@@ -47,8 +47,8 @@ export default Ember.Service.extend({
     return this.ajax(url, method, JSON.stringify(data), 'application/json');
   },
 
-  updateLocation: function(userId, latitude, longitude, accuracy, timestamp) {
-    return this.sendData(`/api/users/${userId}/device_state`, 'post', {
+  updateLocation: function(participantId, latitude, longitude, accuracy, timestamp) {
+    return this.sendData(`/api/participants/${participantId}/device_state`, 'post', {
       location_latitude: latitude,
       location_longitude: longitude,
       location_accuracy: accuracy,

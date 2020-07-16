@@ -15,7 +15,7 @@ export const initialState = {
     groups: [],
     profiles: [],
     trips: [],
-    users: [],
+    participants: [],
     players: [],
     messages: [],
     relays: [],
