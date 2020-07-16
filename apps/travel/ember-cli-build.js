@@ -38,10 +38,10 @@ module.exports = function(defaults) {
   // please specify an object with the list of modules as keys
   // along with the exports of each module as its value.
 
-  var cssFiles = new Funnel('bower_components/font-awesome/css', {
+  var cssFiles = new Funnel('node_modules/font-awesome/css', {
     destDir: 'assets/css'
   });
-  var fontFiles = new Funnel('bower_components/font-awesome/fonts', {
+  var fontFiles = new Funnel('node_modules/font-awesome/fonts', {
     destDir: 'assets/fonts'
   });
 
@@ -58,10 +58,10 @@ module.exports = function(defaults) {
     }]
   });
 
-  app.import('bower_components/featherlight/release/featherlight.min.css');
-  app.import('bower_components/featherlight/release/featherlight.min.js');
+  app.import('node_modules/featherlight/release/featherlight.min.css');
+  app.import('node_modules/featherlight/release/featherlight.min.js');
 
-  app.import('bower_components/Leaflet.encoded/Polyline.encoded.js');
+  app.import('node_modules/polyline-encoded/Polyline.encoded.js');
 
   // Copy-pasta'd from /pubsub/faye/client.js
   app.import('vendor/faye-client.min.js');
@@ -72,8 +72,8 @@ module.exports = function(defaults) {
   app.import('vendor/js-canvas-to-blob.js');
 
   // Moment
-  app.import('bower_components/moment/min/moment.min.js');
-  app.import('bower_components/moment-timezone/builds/moment-timezone-with-data-2012-2022.min.js');
+  app.import('node_modules/moment/min/moment.min.js');
+  app.import('node_modules/moment-timezone/builds/moment-timezone-with-data-2012-2022.min.js');
 
   // Sweet Alert
   app.import('vendor/sweetalert-dev.js');
@@ -84,7 +84,7 @@ module.exports = function(defaults) {
   app.import('vendor/mapbox.standalone.css');
 
   // Raven
-  app.import('bower_components/raven-js/dist/raven.js');
+  app.import('node_modules/raven-js/dist/raven.js');
 
   return new MergeTrees([app.toTree(), cssFiles, fontFiles]);
 };
