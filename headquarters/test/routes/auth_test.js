@@ -63,7 +63,6 @@ describe('authRoutes', () => {
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 401);
-      assert.strictEqual(res.cookies.fptauth, undefined);
 
       // Test call made correctly
       sinon.assert.calledOnce(models.User.findOne);
@@ -80,7 +79,37 @@ describe('authRoutes', () => {
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 401);
-      assert.strictEqual(res.cookies.fptauth, undefined);
+    });
+
+    it('returns 400 if missing param', async () => {
+      const fullBody = { email: 'test@test.com', password: 'deth2bunnies' };
+
+      for (const requiredParam of ['email', 'password']) {
+        const body = Object.assign({}, fullBody);
+        delete body[requiredParam];
+        req = httpMocks.createRequest({ body: body });
+        res = httpMocks.createResponse();
+
+        await authRoutes.loginRoute(req, res);
+
+        // Test redirect happens correctly
+        assert.strictEqual(res.statusCode, 400);
+      }
+    });
+
+    it('returns 400 if invalid param', async () => {
+      const fullBody = { email: 'test@test.com', password: 'deth2bunnies' };
+
+      for (const requiredParam of ['email', 'password']) {
+        const body = Object.assign({}, fullBody, { [requiredParam]: 123 });
+        req = httpMocks.createRequest({ body: body });
+        res = httpMocks.createResponse();
+
+        await authRoutes.loginRoute(req, res);
+
+        // Test redirect happens correctly
+        assert.strictEqual(res.statusCode, 400);
+      }
     });
   });
 
@@ -155,8 +184,7 @@ describe('authRoutes', () => {
       sandbox.stub(models.User, 'findOne').resolves({ id: 3 });
       sandbox.stub(models.Org, 'findOne').resolves(null);
       req.body = {
-        firstName: 'gabe',
-        lastName: 'test',
+        fullName: 'gabe test',
         email: 'GaBE@TESt.CoM',
         password: 'deth2bunnies',
         orgTitle: 'Doggos Heaven'
@@ -180,6 +208,7 @@ describe('authRoutes', () => {
       sandbox.stub(models.User, 'findOne').resolves(null);
       sandbox.stub(models.Org, 'findOne').resolves({ id: 2 });
       req.body = {
+        fullName: 'gabe test',
         email: 'GaBE@TESt.CoM',
         password: 'deth2bunnies',
         orgTitle: 'Doggos Heaven'
@@ -197,6 +226,40 @@ describe('authRoutes', () => {
       sinon.assert.notCalled(models.Org.create);
       sinon.assert.notCalled(models.User.create);
       sinon.assert.notCalled(models.OrgRole.create);
+    });
+
+    const fullBody = {
+      fullName: 'gabe test',
+      email: 'GaBE@TESt.CoM',
+      password: 'deth2bunnies',
+      orgTitle: 'Doggos Heaven'
+    };
+
+    it('returns 400 if missing param', async () => {
+      for (const requiredParam of Object.keys(fullBody)) {
+        const body = Object.assign({}, fullBody);
+        delete body[requiredParam];
+        req = httpMocks.createRequest({ body: body });
+        res = httpMocks.createResponse();
+
+        await authRoutes.signupRoute(req, res);
+
+        // Test redirect happens correctly
+        assert.strictEqual(res.statusCode, 400);
+      }
+    });
+
+    it('returns 400 if invalid param', async () => {
+      for (const requiredParam of Object.keys(fullBody)) {
+        const body = Object.assign({}, fullBody, { [requiredParam]: [] });
+        req = httpMocks.createRequest({ body: body });
+        res = httpMocks.createResponse();
+
+        await authRoutes.signupRoute(req, res);
+
+        // Test redirect happens correctly
+        assert.strictEqual(res.statusCode, 400);
+      }
     });
   });
 
@@ -381,6 +444,35 @@ Thank you!
 
       // Does not reset password
       sinon.assert.notCalled(fakeUser.update);
+    });
+
+    const fullBody = { token: '123', newPassword: 'i<3jonas' };
+
+    it('returns 400 if missing param', async () => {
+      for (const requiredParam of Object.keys(fullBody)) {
+        const body = Object.assign({}, fullBody);
+        delete body[requiredParam];
+        req = httpMocks.createRequest({ body: body });
+        res = httpMocks.createResponse();
+
+        await authRoutes.resetPasswordRoute(req, res);
+
+        // Test redirect happens correctly
+        assert.strictEqual(res.statusCode, 400);
+      }
+    });
+
+    it('returns 400 if invalid param', async () => {
+      for (const requiredParam of Object.keys(fullBody)) {
+        const body = Object.assign({}, fullBody, { [requiredParam]: [] });
+        req = httpMocks.createRequest({ body: body });
+        res = httpMocks.createResponse();
+
+        await authRoutes.resetPasswordRoute(req, res);
+
+        // Test redirect happens correctly
+        assert.strictEqual(res.statusCode, 400);
+      }
     });
   });
 });

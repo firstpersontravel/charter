@@ -107,6 +107,12 @@ async function findUser(email) {
 const loginRoute = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  for (const param of [email, password]) {
+    if (!param || typeof param !== 'string') {
+      res.status(400).send('');
+      return;  
+    }
+  }
   const user = await findUser(email);
   const matchHash = (user && user.passwordHash) || DUMMY_HASH;
   const isMatch = await bcrypt.compare(password, matchHash);
@@ -123,6 +129,12 @@ const signupRoute = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const orgTitle = req.body.orgTitle;
+  for (const param of [fullName, email, password, orgTitle]) {
+    if (!param || typeof param !== 'string') {
+      res.status(400).send('');
+      return;  
+    }
+  }
   const orgName = slugify(orgTitle);
   const existingUser = await findUser(email);
   if (existingUser) {
@@ -220,6 +232,10 @@ Thank you!
 
 const lostPasswordRoute = async (req, res) => {
   const email = req.body.email;
+  if (!email || typeof email !== 'string') {
+    res.status(400).send('');
+    return;  
+  }
   const user = await findUser(email);
   if (!user) {
     res.status(200);
@@ -244,6 +260,12 @@ const lostPasswordRoute = async (req, res) => {
 const resetPasswordRoute = async (req, res) => {
   const token = req.body.token;
   const newPassword = req.body.newPassword;
+  for (const param of [token, newPassword]) {
+    if (!param || typeof param !== 'string') {
+      res.status(400).send('');
+      return;  
+    }
+  }
   const user = await models.User.findOne({
     where: {
       passwordResetToken: token,
