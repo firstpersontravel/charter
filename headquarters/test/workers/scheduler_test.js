@@ -1,8 +1,8 @@
 const assert = require('assert');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const sinon = require('sinon');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const SchedulerWorker = require('../../src/workers/scheduler');
 const TestUtil = require('../util');
 const ActionContext = require('../../src/kernel/action_context');
@@ -33,8 +33,7 @@ describe('SchedulerWorker', () => {
 
   describe('#_getTimeOccuranceActions', () => {
     const mockTrip = { orgId: 1, id: 2 };
-    const now = moment.utc();
-    const oneHourAgo = now.clone().subtract(1, 'hours');
+    const oneHourAgo = mockNow.clone().subtract(1, 'hours');
     const scriptContent = {
       triggers: [{
         event: { type: 'time_occurred', time: '1hAgo', offset: '10m' },
@@ -49,24 +48,26 @@ describe('SchedulerWorker', () => {
     };
     const actionContext = {
       scriptContent: scriptContent,
-      evaluateAt: now,
+      evaluateAt: mockNow.clone(),
       _objs: { trip: mockTrip },
       evalContext: { schedule: { '1hAgo': oneHourAgo.toISOString() } }
     };
 
     it('generates actions for past time triggers', () => {
-      const res = SchedulerWorker._getTimeOccuranceActions(actionContext, now);
+      const res = SchedulerWorker
+        ._getTimeOccuranceActions(actionContext, mockNow.clone());
       assert.strictEqual(res.length, 2);
     });
 
     it('does not actions for future time triggers', () => {
-      const res = SchedulerWorker._getTimeOccuranceActions(actionContext, now.clone().subtract(2, 'hours'));
+      const res = SchedulerWorker
+        ._getTimeOccuranceActions(actionContext, mockNow.clone().subtract(2, 'hours'));
       assert.strictEqual(res.length, 0);
     });
 
     it('schedules action for now past time triggers', () => {
-      sandbox.stub(moment, 'utc').returns(now);
-      const res = SchedulerWorker._getTimeOccuranceActions(actionContext, now.clone().subtract(1, 'hours'));
+      const res = SchedulerWorker
+        ._getTimeOccuranceActions(actionContext, mockNow.clone().subtract(1, 'hours'));
       assert.deepStrictEqual(res, [{
         orgId: mockTrip.orgId,
         tripId: mockTrip.id,
@@ -74,36 +75,30 @@ describe('SchedulerWorker', () => {
         name: 't3',
         params: {},
         triggerName: '',
-        createdAt: now,
-        scheduledAt: now
+        createdAt: mockNow.clone(),
+        scheduledAt: mockNow.clone()
       }]);
     });
 
     it('schedules action for intended time of future time triggers', () => {
       const ninetyMinsAgo = oneHourAgo.clone().subtract(30, 'minutes');
       const pastContext = Object.assign({}, actionContext, { evaluateAt: ninetyMinsAgo });
-      const oldMomentUtc = moment.utc;
-      sandbox.stub(moment, 'utc').callsFake(arg => (
-        arg ? oldMomentUtc(arg) : now
-      ));
       const res = SchedulerWorker._getTimeOccuranceActions(pastContext, oneHourAgo);
       assert.strictEqual(res.length, 1);
       assert.strictEqual(res[0].name, 't3');
-      assert.strictEqual(res[0].createdAt.unix(), now.unix());
+      assert.strictEqual(res[0].createdAt.unix(), mockNow.unix());
       assert.strictEqual(res[0].scheduledAt.unix(),
         oneHourAgo.clone().subtract(10, 'minutes').unix());
     });
   });
 
   describe('#updateScheduleAts', () => {
-    const now = moment.utc();
     let trip;
 
     beforeEach(async () => {
-      sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(SchedulerWorker, '_updateTripNextScheduleAt').resolves();
       trip = await TestUtil.createDummyTrip();
-      await trip.update({ scheduleUpdatedAt: now.toDate() });
+      await trip.update({ scheduleUpdatedAt: mockNow.toDate() });
     });
 
     it('does not update scheduleAt trip if no recent update', async () => {
@@ -113,7 +108,7 @@ describe('SchedulerWorker', () => {
     });
 
     it('updates trip scheduleAt if hasn\'t been updated', async () => {
-      await trip.update({ scheduleUpdatedAt: null, updatedAt: now.toDate() });
+      await trip.update({ scheduleUpdatedAt: null, updatedAt: mockNow.toDate() });
 
       await SchedulerWorker.updateScheduleAts();
 
@@ -124,7 +119,7 @@ describe('SchedulerWorker', () => {
 
     it('updates trip scheduleAt after trip update', async () => {
       await trip.update({
-        updatedAt: now.clone().add(1, 'minute').toDate()
+        updatedAt: mockNow.clone().add(1, 'minute').toDate()
       });
 
       await SchedulerWorker.updateScheduleAts();
@@ -137,7 +132,7 @@ describe('SchedulerWorker', () => {
     it('updates trip scheduleAt after script update', async () => {
       const script = await trip.getScript();
       await script.update({
-        updatedAt: now.clone().add(1, 'minute').toDate()
+        updatedAt: mockNow.clone().add(1, 'minute').toDate()
       });
 
       await SchedulerWorker.updateScheduleAts();
@@ -149,8 +144,7 @@ describe('SchedulerWorker', () => {
   });
 
   describe('#_updateTripNextScheduleAt', () => {
-    const now = moment.utc();
-    const future = moment.utc().add(1, 'hours');
+    const future = mockNow.clone().add(1, 'hours');
     const scriptContent = {
       triggers: [{
         event: { type: 'time_occurred', time: 't', offset: '10m' },
@@ -163,13 +157,6 @@ describe('SchedulerWorker', () => {
         name: 't3'
       }]
     };
-
-    beforeEach(() => {
-      const oldMomentUtc = moment.utc;
-      sandbox.stub(moment, 'utc').callsFake(arg => (
-        arg ? oldMomentUtc(arg) : now
-      ));
-    });
 
     it('updates scheduleAt to next trigger time if future', async () => {
       const objs = {
@@ -195,7 +182,7 @@ describe('SchedulerWorker', () => {
 
       sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
-        scheduleUpdatedAt: now.toDate(),
+        scheduleUpdatedAt: mockNow.toDate(),
         scheduleAt: future.clone().subtract(10, 'minutes').toDate()
       });
     });
@@ -215,7 +202,7 @@ describe('SchedulerWorker', () => {
         scriptContent: scriptContent,
         evalContext: {
           history: {},
-          schedule: { t: now.toISOString() }
+          schedule: { t: mockNow.toISOString() }
         },
         _objs: objs
       });
@@ -224,8 +211,8 @@ describe('SchedulerWorker', () => {
 
       sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
-        scheduleUpdatedAt: now.toDate(),
-        scheduleAt: now.toDate()
+        scheduleUpdatedAt: mockNow.toDate(),
+        scheduleAt: mockNow.toDate()
       });
     });
 
@@ -244,7 +231,7 @@ describe('SchedulerWorker', () => {
         scriptContent: objs.script.content,
         evalContext: {
           history: {},
-          schedule: { t: now.toISOString() }
+          schedule: { t: mockNow.toISOString() }
         },
         _objs: objs
       });
@@ -253,7 +240,7 @@ describe('SchedulerWorker', () => {
 
       sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
-        scheduleUpdatedAt: now.toDate(),
+        scheduleUpdatedAt: mockNow.toDate(),
         scheduleAt: null
       });
     });
@@ -273,7 +260,7 @@ describe('SchedulerWorker', () => {
         scriptContent: scriptContent,
         evalContext: {
           history: { t3: true },
-          schedule: { t: now.toISOString() }
+          schedule: { t: mockNow.toISOString() }
         },
         _objs: objs
       });
@@ -282,8 +269,8 @@ describe('SchedulerWorker', () => {
 
       sinon.assert.calledOnce(objs.trip.update);
       sinon.assert.calledWith(objs.trip.update.getCall(0), {
-        scheduleUpdatedAt: now.toDate(),
-        scheduleAt: now.clone().add(10, 'minutes').toDate()
+        scheduleUpdatedAt: mockNow.toDate(),
+        scheduleAt: mockNow.clone().add(10, 'minutes').toDate()
       });
     });
   });

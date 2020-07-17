@@ -13,6 +13,7 @@ function postAction($btn, data) {
     $.ajax({
       type: 'post',
       url: '/api/trips/' + data.trip_id + '/actions',
+      headers: { Authorization: 'Bearer {{authToken}}' },
       contentType: 'application/json',
       data: JSON.stringify(body),
       dataType: 'html',
@@ -40,6 +41,7 @@ function postEvent($btn, data) {
     $.ajax({
       type: 'post',
       url: '/api/trips/' + data.trip_id + '/events',
+      headers: { Authorization: 'Bearer {{authToken}}' },
       contentType: 'application/json',
       data: JSON.stringify(body),
       dataType: 'html',
@@ -112,6 +114,7 @@ function transmitLocation(fix) {
   $.ajax({
     type: 'put',
     url: '/api/participants/' + participantId,
+    headers: { Authorization: 'Bearer {{authToken}}' },
     data: {
       locationLatitude: fix.coords.latitude,
       locationLongitude: fix.coords.longitude,

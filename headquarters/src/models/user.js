@@ -14,6 +14,7 @@ const {
  * User model.
  */
 const User = database.define('User', snakeCaseColumns({
+  createdAt: datetimeField(),
   email: mutableModifier(requiredStringField(255)),
   passwordHash: mutableModifier(requiredStringField(60)),
   passwordResetToken: mutableModifier(optionalStringField(32)),

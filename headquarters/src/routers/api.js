@@ -6,19 +6,14 @@ const apiAdminRoutes = require('../routes/api_admin');
 const apiLegacyRoutes = require('../routes/api_legacy');
 const apiRestRoutes = require('../routes/api_rest');
 const apiViewRoutes = require('../routes/api_view');
-const Authorizor = require('../authorization/authorizer');
-const Policy = require('../authorization/policy');
-const designerPolicies = require('../policies/designer');
+const authz = require('../authorization/authz');
+const { authMiddleware } = require('../middleware/auth');
 const config = require('../config');
 const models = require('../models');
 const { asyncRoute } = require('./utils');
 
-// Create authorization framework
-const apiPolicy = new Policy(designerPolicies);
-const apiAuthorizor = new Authorizor(apiPolicy);
-
 const apiRouter = express.Router();
-
+apiRouter.use(asyncRoute(authMiddleware));
 apiRouter.use(Sentry.Handlers.requestHandler());
 
 /**
@@ -27,13 +22,13 @@ apiRouter.use(Sentry.Handlers.requestHandler());
 function createModelRouter(model, opts={}) {
   // Create routes
   const routes = {
-    list: apiRestRoutes.listCollectionRoute(model, apiAuthorizor, opts),
-    create: apiRestRoutes.createRecordRoute(model, apiAuthorizor, opts),
-    retrieve: apiRestRoutes.retrieveRecordRoute(model, apiAuthorizor, opts),
-    replace: apiRestRoutes.replaceRecordRoute(model, apiAuthorizor, opts),
-    replaceBulk: apiRestRoutes.replaceRecordsRoute(model, apiAuthorizor, opts),
-    update: apiRestRoutes.updateRecordRoute(model, apiAuthorizor, opts),
-    updateBulk: apiRestRoutes.updateRecordsRoute(model, apiAuthorizor, opts)
+    list: apiRestRoutes.listCollectionRoute(model, authz, opts),
+    create: apiRestRoutes.createRecordRoute(model, authz, opts),
+    retrieve: apiRestRoutes.retrieveRecordRoute(model, authz, opts),
+    replace: apiRestRoutes.replaceRecordRoute(model, authz, opts),
+    replaceBulk: apiRestRoutes.replaceRecordsRoute(model, authz, opts),
+    update: apiRestRoutes.updateRecordRoute(model, authz, opts),
+    updateBulk: apiRestRoutes.updateRecordsRoute(model, authz, opts)
   };
   // Create and return router
   const router = express.Router();
@@ -73,7 +68,7 @@ apiRouter.post('/trips/:tripId/actions',
   asyncRoute(apiActionsRoutes.createActionRoute));
 apiRouter.post('/trips/:tripId/events',
   asyncRoute(apiActionsRoutes.createEventRoute));
-apiRouter.post('/participants/:participantId/device_state',
+apiRouter.post('/trips/:tripId/device_state/:participantId',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
 
 // Experience admin routes
@@ -83,10 +78,6 @@ apiRouter.post('/admin/experiences/:experienceId/update_relays',
 // Trip admin routes
 apiRouter.post('/admin/trips/:tripId/notify',
   asyncRoute(apiAdminRoutes.notifyRoute));
-apiRouter.post('/admin/trips/:tripId/fast_forward',
-  asyncRoute(apiAdminRoutes.fastForwardRoute));
-apiRouter.post('/admin/trips/:tripId/fast_forward_next',
-  asyncRoute(apiAdminRoutes.fastForwardNextRoute));
 apiRouter.post('/admin/trips/:tripId/reset',
   asyncRoute(apiAdminRoutes.resetRoute));
 apiRouter.post('/admin/trips/:tripId/trigger',

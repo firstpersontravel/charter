@@ -4,6 +4,7 @@ const Org = require('./org');
 const {
   belongsToField,
   booleanField,
+  datetimeField,
   requiredStringField,
   mutableModifier,
   optionalStringField,
@@ -14,6 +15,7 @@ const {
  * Experience model.
  */
 const Experience = database.define('Experience', snakeCaseColumns({
+  createdAt: datetimeField(),
   name: mutableModifier(requiredStringField(255)),
   title: mutableModifier(requiredStringField(255)),
   domain: mutableModifier(optionalStringField(64)),

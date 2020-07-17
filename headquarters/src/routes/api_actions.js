@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const authz = require('../authorization/authz');
+const models = require('../models');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 const DeviceStateHandler = require('../handlers/device_state');
@@ -16,6 +18,8 @@ const createActionRoute = async (req, res) => {
     res.json({ error: 'Name required.' });
     return;
   }
+  const trip = await models.Trip.findByPk(tripId);
+  authz.checkRecord(req, 'action', models.Trip, trip);
   const action = { name: req.body.name, params: req.body.params || {} };
   await KernelController.applyAction(tripId, action);
   await NotifyController.notifyAction(tripId, action, clientId);
@@ -31,6 +35,8 @@ const createEventRoute = async (req, res) => {
   const tripId = req.params.tripId;
   const clientId = req.body.client_id;
   const event = _.omit(req.body, ['client_id']);
+  const trip = await models.Trip.findByPk(tripId);
+  authz.checkRecord(req, 'event', models.Trip, trip);
   await KernelController.applyEvent(tripId, event);
   await NotifyController.notifyEvent(tripId, event, clientId);
   res.status(200);
@@ -42,7 +48,11 @@ const createEventRoute = async (req, res) => {
  */
 const updateDeviceStateRoute = async (req, res) => {
   const participantId = req.params.participantId;
+  const tripId = req.params.tripId;
   const clientId = req.body.client_id;
+  // Include trip id just for auth checking
+  const trip = await models.Trip.findByPk(tripId);
+  authz.checkRecord(req, 'deviceState', models.Trip, trip);
   const params = {
     locationLatitude: Number(req.body.location_latitude),
     locationLongitude: Number(req.body.location_longitude),

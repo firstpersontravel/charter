@@ -1,13 +1,9 @@
-const errors = require('../errors');
-
-// Default subject until we have actual user accounts.
-const DEFAULT_SUBJECT = { isDesigner: true, name: 'default' };
+const errors = require('../../errors');
 
 /**
  * A class to check authorization requests.
  */
 class Authorizer {
-
   constructor(policy) {
     this.policy = policy;
   }
@@ -15,8 +11,37 @@ class Authorizer {
   /**
    * Function to get a subject from a request.
    */
-  subjectForReq() {
-    return DEFAULT_SUBJECT;
+  subjectForReq(req) {
+    // If a user, use that first.
+    if (req.auth && req.auth.user) {
+      return {
+        isUser: true,
+        name: req.auth.user.email,
+        orgIds: req.auth.user.orgRoles.map(orgRole => orgRole.orgId)
+      };
+    }
+    // Then participant
+    if (req.auth && req.auth.participant) {
+      return {
+        isParticipant: true,
+        name: req.auth.participant.name,
+        orgId: req.auth.participant.orgId,
+        experienceId: req.auth.participant.experienceId,
+        tripIds: req.auth.players.map(player => player.tripId)
+      };
+    }
+    // Then trip
+    if (req.auth && req.auth.trip) {
+      return {
+        isParticipant: true,
+        name: req.auth.trip.title,
+        orgId: req.auth.trip.orgId,
+        experienceId: req.auth.trip.experienceId,
+        tripIds: [req.auth.trip.id]
+      };
+    }
+    // Then anonymous
+    return { name: 'anonymous' };
   }
 
   /**

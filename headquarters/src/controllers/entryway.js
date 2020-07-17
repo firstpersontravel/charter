@@ -88,7 +88,10 @@ class EntrywayController {
         isActive: true,
         phoneNumber: participantNumber
       },
-      defaults: { name: `${script.experience.title} Player` }
+      defaults: {
+        createdAt: moment.utc(),
+        name: `${script.experience.title} Player`
+      }
     });
 
     // Create profile if not already exists

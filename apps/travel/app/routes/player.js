@@ -116,6 +116,7 @@ export default Ember.Route.extend({
     },
 
     updateLocation: function(fix) {
+      var trip = this.context.get('trip');
       var participant = this.context.get('participant');
       if (!participant) { return; }
       var oldLatitude = participant.get('locationLatitude');
@@ -128,7 +129,7 @@ export default Ember.Route.extend({
         locationTimestamp: moment.utc(fix.timestamp)
       });
       this.get('api')
-        .updateLocation(participant.id,
+        .updateLocation(trip.id, participant.id,
           fix.coords.latitude, fix.coords.longitude,
           fix.coords.accuracy, Math.floor(fix.timestamp / 1000))
         .then(function() {

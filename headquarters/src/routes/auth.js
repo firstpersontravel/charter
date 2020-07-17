@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const moment = require('moment-timezone');
 const Sequelize = require('sequelize');
 
 const config = require('../config');
@@ -17,11 +18,29 @@ function slugify(text) {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
-function createToken(user, durationSecs) {
-  const payload = { iss: 'fpt', sub: user.id, aud: 'web' };
-  const opts = { expiresIn: durationSecs, algorithm: 'HS256' };
+function createToken(subType, subId, durationSecs) {
+  const payload = {
+    iss: 'fpt',
+    sub: `${subType}:${subId}`,
+    aud: 'web',
+    iat: moment.utc().unix(),
+    exp: moment.utc().add(durationSecs, 'seconds').unix()
+  };
+  const opts = { algorithm: 'HS256' };
   const token = jwt.sign(payload, config.env.HQ_JWT_SECRET, opts);
   return token;
+}
+
+function createUserToken(user, durationSecs) {
+  return createToken('user', user.id, durationSecs);
+}
+
+function createParticipantToken(participant, durationSecs) {
+  return createToken('participant', participant.id, durationSecs);
+}
+
+function createTripToken(trip, durationSecs) {
+  return createToken('trip', trip.id, durationSecs);
 }
 
 // Dummy hash of '12345'.
@@ -95,7 +114,7 @@ const loginRoute = async (req, res) => {
     res.status(401).send('');
     return;
   }
-  const tokenString = createToken(user, SESSION_DURATION_SECS);
+  const tokenString = createUserToken(user, SESSION_DURATION_SECS);
   await respondWithUserAuthInfo(res, user, tokenString);
 };
 
@@ -123,9 +142,14 @@ const signupRoute = async (req, res) => {
   const nameParts = fullName.split(' ');
   const firstName = nameParts[0] || '';
   const lastName = nameParts.slice(1).join(' ') || '';
-  const org = await models.Org.create({ name: orgName, title: orgTitle });
+  const org = await models.Org.create({
+    createdAt: moment.utc(),
+    name: orgName,
+    title: orgTitle
+  });
   const pwHash = await bcrypt.hash(password, 10);
   const user = await models.User.create({
+    createdAt: moment.utc(),
     firstName: firstName,
     lastName: lastName,
     email: email.toLowerCase(),
@@ -138,7 +162,7 @@ const signupRoute = async (req, res) => {
     isAdmin: true
   });
 
-  const tokenString = createToken(user, SESSION_DURATION_SECS);
+  const tokenString = createUserToken(user, SESSION_DURATION_SECS);
   await respondWithUserAuthInfo(res, user, tokenString);
 };
 
@@ -154,20 +178,28 @@ const infoRoute = async (req, res) => {
   }
   let payload;
   try {
-    payload = await jwt.verify(tokenString, config.env.HQ_JWT_SECRET);
+    payload = await authMiddleware.verifyToken(tokenString);
   } catch (err) {
     res.status(401);
-    res.json({ data: null, error: err.message });
+    res.json({ data: null, error: 'Invalid token' });
     return;
   }
-  const user = await models.User.findByPk(payload.sub);
+  // Support old tokens so that we don't log folks out.
+  const [subType, subId] = payload.sub.toString().includes(':') ?
+    payload.sub.split(':') : ['user', payload.sub];
+
+  if (subType !== 'user') {
+    res.status(401);
+    res.json({ data: null, error: 'Not a user' });
+  }
+  const user = await models.User.findByPk(Number(subId));
   if (!user) {
     res.status(200);
     res.json({ data: null, error: 'User not found' });
     return;
   }
   // Refresh token string every time info is called.
-  const newTokenString = createToken(user, SESSION_DURATION_SECS);
+  const newTokenString = createUserToken(user, SESSION_DURATION_SECS);
   await respondWithUserAuthInfo(res, user, newTokenString);
 };
 
@@ -195,7 +227,7 @@ const lostPasswordRoute = async (req, res) => {
     return;
   }
   const resetToken = crypto.randomBytes(16).toString('hex');
-  const nowMsec = new Date().valueOf();
+  const nowMsec = moment.utc().valueOf();
   const resetExpiry = new Date(nowMsec + RESET_PASSWORD_LINK_DURATION_MSEC);
   await user.update({
     passwordResetToken: resetToken,
@@ -240,6 +272,9 @@ const resetPasswordRoute = async (req, res) => {
 };
 
 module.exports = {
+  createParticipantToken,
+  createTripToken,
+  createUserToken,
   loginRoute,
   signupRoute,
   lostPasswordRoute,

@@ -1,8 +1,8 @@
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
-const yaml = require('js-yaml');
 const moment = require('moment');
+const yaml = require('js-yaml');
 
 const models = require('../../src/models');
 const KernelController = require('../../src/kernel/kernel');
@@ -21,6 +21,7 @@ describe('WalkingTourExample', () => {
     script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
     participant = await models.Participant.create({
+      createdAt: moment.utc(),
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'tester'

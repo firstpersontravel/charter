@@ -1,5 +1,6 @@
 const assert = require('assert');
 const httpMocks = require('node-mocks-http');
+const moment = require('moment-timezone');
 const sinon = require('sinon');
 const twilio = require('twilio');
 
@@ -35,6 +36,7 @@ describe('twilioRoutes', () => {
     const script = await TestUtil.createScriptWithContent(scriptContent);
     trip = await TestUtil.createDummyTripForScript(script, []);
     travelerParticipant = await models.Participant.create({
+      createdAt: moment.utc(),
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'tester1',
@@ -43,6 +45,7 @@ describe('twilioRoutes', () => {
       isActive: true
     });
     actorParticipant = await models.Participant.create({
+      createdAt: moment.utc(),
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'actor2',

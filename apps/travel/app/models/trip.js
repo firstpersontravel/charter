@@ -5,6 +5,9 @@ export default DS.Model.extend({
   script: DS.belongsTo('script', {async: false}),
   experience: DS.belongsTo('experience', {async: false}),
 
+  // Auth token snuck in via legacy API.
+  authToken: DS.attr('string'),
+
   date: DS.attr('string'),
   templateName: DS.attr('string'),
   tripState: DS.attr('obj'),

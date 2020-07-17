@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken');
 
 const config = require('../config');
+const models = require('../models');
+const { authenticationError } = require('../errors');
 
-const logger = config.logger.child({ name: 'middleware.auth' });
+const verifyOpts = { algorithm: 'HS256', clockTolerance: 2 };
 
 const tokenForReq = req => {
   if (req.get('Authorization')) {
@@ -11,31 +13,82 @@ const tokenForReq = req => {
   return null;
 };
 
-const tokenPayloadForReq = async (req) => {
+async function verifyToken(tokenString) {
+  return await jwt.verify(tokenString, config.env.HQ_JWT_SECRET, verifyOpts);
+}
+
+async function authMiddleware(req, res, next) {
   const tokenString = tokenForReq(req);
   if (!tokenString) {
-    return null;
+    req.auth = null;
+    next();
+    return;
   }
-  try {
-    return await jwt.verify(tokenString, config.env.HQ_JWT_SECRET);
-  } catch (err) {
-    logger.warn(err.message);
-    return null;
-  }
-};
 
-const authMiddleware = async (req, res, next) => {
-  const token = await tokenPayloadForReq(req);
-  if (token) {
-    req.userId = token.sub;
-  } else {
-    req.userId = null;
+  let payload;
+  try {
+    payload = await verifyToken(tokenString);
+  } catch (err) {
+    next(authenticationError('Invalid token'));
+    return;
   }
-  next();
-};
+
+  // Support existing tokens w/o a type.
+  const [subType, subId] = payload.sub.toString().includes(':') ?
+    payload.sub.split(':') : ['user', payload.sub];
+
+  // Load user for user token
+  if (subType === 'user') {
+    const user = await models.User.findByPk(Number(subId), {
+      include: [{ model: models.OrgRole, as: 'orgRoles' }]
+    });
+    if (!user) {
+      next(authenticationError('Invalid user'));
+      return;
+    }
+    req.auth = { user: user };
+    next();
+    return;
+  }
+
+  // Check participant
+  if (subType === 'participant') {
+    const participant = await models.Participant.findByPk(Number(subId));
+    const players = await models.Player.findAll({
+      where: { participantId: participant.id },
+      include: [{
+        model: models.Trip,
+        where: { isArchived: false }
+      }]
+    });
+    if (!participant) {
+      next(authenticationError('Invalid participant'));
+      return;
+    }
+    req.auth = { participant: participant, players: players };
+    next();
+    return;
+  }
+
+  // Check trip
+  if (subType === 'trip') {
+    const trip = await models.Trip.findByPk(Number(subId));
+    if (!trip) {
+      next(authenticationError('Invalid trip'));
+      return;
+    }
+    req.auth = { trip: trip };
+    next();
+    return;
+  }
+
+  // Invalid sub type
+  next(authenticationError('Invalid token'));
+  return;
+}
 
 module.exports = {
   authMiddleware,
   tokenForReq,
-  tokenPayloadForReq
+  verifyToken
 };

@@ -1,8 +1,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const { sandbox } = require('../mocks');
-const Policy = require('../../src/authorization/policy');
+const { sandbox } = require('../../mocks');
+const Policy = require('../../../src/authorization/logic/policy');
 
 describe('Policy', () => {
   const subject = { name: 'tester' };
@@ -95,13 +95,12 @@ describe('Policy', () => {
     });
 
     it('annotates result with message on new record', () => {
-      const resource = { modelName: 'Model', record: null, fieldName: null };
+      const resource = { modelName: 'Model', record: {}, fieldName: null };
 
       const res = policy.hasPermission(subject, action, resource, {});
 
       const expectedMessage = (
-        'Action "adjustment" on new Model ' +
-        'by user "tester" allowed.'
+        'Action \'adjustment\' on record \'model\' by \'tester\' allowed.'
       );
       const expectedResult = Object.assign({}, { message: expectedMessage },
         stubResult);
@@ -118,7 +117,7 @@ describe('Policy', () => {
       const res = policy.hasPermission(subject, action, resource, {});
 
       const expectedMessage = 
-        'Action "adjustment" on Model #3 by user "tester" allowed.';
+        'Action \'adjustment\' on record \'model #3\' by \'tester\' allowed.';
       const expectedResult = Object.assign({}, { message: expectedMessage },
         stubResult);
       assert.deepStrictEqual(res, expectedResult);
@@ -134,8 +133,7 @@ describe('Policy', () => {
       const res = policy.hasPermission(subject, action, resource, {});
 
       const expectedMessage = (
-        'Action "adjustment" on field "abc" of Model #3 ' +
-        'by user "tester" allowed.'
+        'Action \'adjustment\' on field \'abc\' of record \'model #3\' by \'tester\' allowed.'
       );
       const expectedResult = Object.assign({}, { message: expectedMessage },
         stubResult);

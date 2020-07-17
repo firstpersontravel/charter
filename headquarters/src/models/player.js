@@ -1,5 +1,6 @@
 const database = require('../config').database;
 
+const Experience = require('./experience');
 const Org = require('./org');
 const Trip = require('./trip');
 const Participant = require('./participant');
@@ -24,6 +25,7 @@ const Player = database.define('Player', snakeCaseColumns({
 }));
 
 Player.belongsTo(Org, belongsToField('org'));
+Player.belongsTo(Experience, belongsToField('experience'));
 Player.belongsTo(Trip, belongsToField('trip'));
 Player.belongsTo(Participant, mutableModifier(allowNullModifier(
   belongsToField('participant'))));

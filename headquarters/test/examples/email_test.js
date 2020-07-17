@@ -1,6 +1,7 @@
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
+const moment = require('moment-timezone');
 const sinon = require('sinon');
 const yaml = require('js-yaml');
 
@@ -20,6 +21,7 @@ describe('EmailExample', () => {
     script = await TestUtil.createExample(example);
     trip = await TestUtil.createDummyTripForScript(script);
     const participant = await models.Participant.create({
+      createdAt: moment.utc(),
       orgId: script.orgId,
       experienceId: script.experienceId,
       firstName: 'Phil',

@@ -1,11 +1,20 @@
 const sinon = require('sinon');
+const moment = require('moment-timezone');
 
 const config = require('../src/config');
 
 const mocks = sinon.sandbox.create();
 const sandbox = sinon.sandbox.create();
 
+const oldUtc = moment.utc;
+const mockNow = oldUtc();
+
 function createTestMocks() {
+  // Time
+  mocks
+    .stub(moment, 'utc')
+    .callsFake(s => s ? oldUtc(s) : mockNow.clone());
+
   // Push notifications
   mocks.stub(config, 'getApnProvider').returns({
     send: mocks.stub().resolves()
@@ -43,5 +52,6 @@ function teardownTestMocks() {
 module.exports = {
   createTestMocks: createTestMocks,
   sandbox: sandbox,
+  mockNow: mockNow,
   teardownTestMocks: teardownTestMocks
 };

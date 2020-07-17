@@ -10,6 +10,7 @@ const TemplateUtil = require('fptcore/src/utils/template');
 const config = require('../config');
 const models = require('../models');
 const ActionContext = require('../kernel/action_context');
+const { createTripToken, createParticipantToken } = require('../routes/auth');
 
 const evaluator = new Evaluator(coreRegistry);
 
@@ -166,6 +167,7 @@ const playerShowRoute = async (req, res) => {
     return;
   }
   const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(), player.roleName);
+  const trip = actionContext._objs.trip;
   const page = getPage(actionContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
   const role = (actionContext._objs.script.content.roles || [])
@@ -175,7 +177,7 @@ const playerShowRoute = async (req, res) => {
     participantId: '',
     participantName: role ? role.title : 'Unknown role',
     orgName: req.params.orgName,
-    orgTitle: actionContext._objs.trip.org.title,
+    orgTitle: trip.org.title,
     pages: pages,
     stage: config.env.HQ_STAGE,
     tripIds: player.tripId
@@ -183,6 +185,8 @@ const playerShowRoute = async (req, res) => {
   if (req.query.is_partial) {
     res.render('partials/actor', Object.assign({ layout: false }, params));
   } else {
+    // Create an auth token on loading the full page.
+    params.authToken = createTripToken(trip, 86400);
     res.render('actor/actor', Object.assign({ layout: 'actor' }, params));
   }
 };
@@ -239,6 +243,8 @@ const participantShowRoute = async (req, res) => {
   if (req.query.is_partial) {
     res.render('partials/actor', Object.assign({ layout: false }, params));
   } else {
+    // Create a one-day token on loading the full page.
+    params.authToken = createParticipantToken(participant, 86400);
     res.render('actor/actor', Object.assign({ layout: 'actor' }, params));
   }
 };

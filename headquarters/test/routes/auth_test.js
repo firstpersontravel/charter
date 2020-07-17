@@ -2,18 +2,18 @@ const assert = require('assert');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const httpMocks = require('node-mocks-http');
-const moment = require('moment');
 const sinon = require('sinon');
 const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');
 const authMiddleware = require('../../src/middleware/auth');
 const authRoutes = require('../../src/routes/auth');
 const EmailController = require('../../src/controllers/email');
 
 const mockUser = {
+  id: 1,
   // Password hash for "i<3bunnies"
   passwordHash: '$2b$10$cdu9gygyP.sQCI.EhCR2neDtm9x/I.mJaqJxcpjGSPHRg77IphbB2'
 };
@@ -31,7 +31,6 @@ describe('authRoutes', () => {
     it('returns a token if login is correct', async () => {
       sandbox.stub(models.User, 'findOne').resolves(mockUser);
       req.body = { email: 'gabe@test.com', password: 'i<3bunnies' };
-      const now = moment.utc();
 
       await authRoutes.loginRoute(req, res);
 
@@ -40,14 +39,14 @@ describe('authRoutes', () => {
       const data = JSON.parse(res._getData()).data;
       assert.ok(data.jwt);
 
-      const tokenString = data.jwt;
-      const decoded = jwt.verify(tokenString, 'test_secret');
-
-      assert.strictEqual(decoded.iss, 'fpt');
-      assert.strictEqual(decoded.aud, 'web');
-      // Issued at and expiration are in range
-      assert(Math.abs(now.unix() - decoded.iat) < 2);
-      assert(Math.abs(now.add(7, 'days').unix() - decoded.exp) < 2);
+      const decoded = jwt.verify(data.jwt, 'test_secret');
+      assert.deepStrictEqual(decoded, {
+        iss: 'fpt',
+        aud: 'web',
+        sub: 'user:1',
+        iat: mockNow.clone().unix(),
+        exp: mockNow.clone().add(7, 'days').unix(),
+      });
 
       // Test call made correctly
       sinon.assert.calledOnce(models.User.findOne);
@@ -93,7 +92,6 @@ describe('authRoutes', () => {
     });
 
     it('creates a new user and org', async () => {
-      const now = moment.utc();
       sandbox.stub(models.User, 'findOne').resolves(null);
       sandbox.stub(models.Org, 'findOne').resolves(null);
       sandbox.stub(bcrypt, 'hash').resolves('123');
@@ -111,14 +109,14 @@ describe('authRoutes', () => {
       const data = JSON.parse(res._getData()).data;
       assert.ok(data.jwt);
 
-      const tokenString = data.jwt;
-      const decoded = jwt.verify(tokenString, 'test_secret');
-
-      assert.strictEqual(decoded.iss, 'fpt');
-      assert.strictEqual(decoded.aud, 'web');
-      // Issued at and expiration are in range
-      assert(Math.abs(now.unix() - decoded.iat) < 2);
-      assert(Math.abs(now.add(7, 'days').unix() - decoded.exp) < 2);
+      const decoded = jwt.verify(data.jwt, 'test_secret');
+      assert.deepStrictEqual(decoded, {
+        iss: 'fpt',
+        aud: 'web',
+        sub: 'user:2',
+        iat: mockNow.clone().unix(),
+        exp: mockNow.clone().add(7, 'days').unix(),
+      });
 
       // Test finds were called
       sinon.assert.calledOnce(models.User.findOne);
@@ -133,11 +131,13 @@ describe('authRoutes', () => {
       // Test objects were created ok
       sinon.assert.calledOnce(models.Org.create);
       sinon.assert.calledWith(models.Org.create, {
+        createdAt: mockNow,
         name: 'doggos-heaven',
         title: 'Doggos Heaven'
       });
       sinon.assert.calledOnce(models.User.create);
       sinon.assert.calledWith(models.User.create, {
+        createdAt: mockNow,
         firstName: 'gabe',
         lastName: 'test',
         email: 'gabe@test.com',
@@ -202,7 +202,7 @@ describe('authRoutes', () => {
 
   describe('#infoRoute', () => {
     it('returns user and org info if logged in', async () => {
-      const mockToken = jwt.sign({ sub: 2 }, 'test_secret',
+      const mockToken = jwt.sign({ sub: 'user:2' }, 'test_secret',
         { algorithm: 'HS256' });
       const mockUser = {
         firstName: 'gabe',
@@ -231,7 +231,7 @@ describe('authRoutes', () => {
     });
 
     it('returns 401 on invalid token', async () => {
-      const mockToken = jwt.sign({ sub: 2 }, 'bad', { algorithm: 'HS256' });
+      const mockToken = jwt.sign({ sub: 'user:2' }, 'bad', { algorithm: 'HS256' });
       sandbox.stub(authMiddleware, 'tokenForReq').returns(mockToken);
 
       await authRoutes.infoRoute(req, res);
@@ -239,7 +239,7 @@ describe('authRoutes', () => {
       assert.strictEqual(res.statusCode, 401);
       assert.deepStrictEqual(JSON.parse(res._getData()), {
         data: null,
-        error: 'invalid signature'
+        error: 'Invalid token'
       });
     });
 
@@ -274,7 +274,6 @@ describe('authRoutes', () => {
       assert.deepStrictEqual(JSON.parse(res._getData()), { data: null });
 
       // Sends email
-      const now = new Date();
       const expectedBody = `
 ## Reset your Charter Password
 
@@ -293,12 +292,10 @@ Thank you!
 
       // Updates user
       sinon.assert.calledOnce(fakeUser.update);
-      assert.strictEqual(
-        fakeUser.update.getCall(0).args[0].passwordResetToken, '616263');
-      assert.strictEqual(
-        Math.floor(fakeUser.update.getCall(0).args[0].passwordResetExpiry.valueOf() / 1000),
-        Math.floor((now.valueOf() + 86400 * 1000) / 1000)
-      );
+      sinon.assert.calledWith(fakeUser.update, {
+        passwordResetToken: '616263',
+        passwordResetExpiry: mockNow.clone().add(1, 'days').toDate()
+      });
     });
 
     it('returns ok if user does not exist', async () => {

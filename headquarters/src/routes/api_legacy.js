@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const models = require('../models');
+const { createTripToken } = require('./auth');
 
 function camelToDash(str) {
   return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
@@ -47,7 +48,7 @@ async function getParticipantRoute(req, res) {
 }
 
 /**
- * Legacy getter for THG app in JSONAPI format.
+ * Legacy getter for THG app in JSONAPI format. There is no security here.
  */
 async function getTripRoute(req, res) {
   const includeScript = !!req.query.script;
@@ -94,7 +95,7 @@ async function getTripRoute(req, res) {
     .filter({ type: 'directions' })
     .map('data')
     .value();
-
+  
   const objs = players
     .concat(messages)
     .concat(actions)
@@ -114,6 +115,9 @@ async function getTripRoute(req, res) {
     .map(message => ({ id: message.id, type: 'message' }));
   data.relationships.player = players
     .map(player => ({ id: player.id, type: 'player' }));
+  
+  // Sneak in a day-long auth token
+  data.attributes['auth-token'] = createTripToken(trip, 86400);
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };

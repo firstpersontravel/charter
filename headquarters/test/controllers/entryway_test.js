@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const RoleCore = require('fptcore/src/cores/role');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 const EntrywayController = require('../../src/controllers/entryway');
@@ -137,7 +137,10 @@ describe('EntrywayController', () => {
           isActive: true,
           phoneNumber: '123'
         },
-        defaults: { name: 'Script Player' }
+        defaults: {
+          createdAt: mockNow,
+          name: 'Script Player'
+        }
       });
       sinon.assert.calledWith(models.Profile.findOrCreate, {
         where: {

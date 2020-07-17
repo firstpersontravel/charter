@@ -1,3 +1,5 @@
+const moment = require('moment-timezone');
+
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
@@ -6,6 +8,7 @@ describe('Participant', () => {
 
   beforeEach(() => {
     participant = models.Participant.build({
+      createdAt: moment.utc(),
       orgId: 100,
       experienceId: 1,
     });

@@ -6,10 +6,11 @@ export default Ember.Route.extend({
   environment: Ember.inject.service(),
 
   model: function(params) {
-    var self = this;
     return this.refreshTripData(params.trip_id)
-      .then(function() {
-        return self.store.peekRecord('trip', params.trip_id);
+      .then(() => {
+        const trip = this.store.peekRecord('trip', params.trip_id);
+        this.get('api').set('authToken', trip.get('authToken'));
+        return trip;
       });
   },
 

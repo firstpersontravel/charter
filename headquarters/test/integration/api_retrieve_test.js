@@ -3,33 +3,35 @@ const request = require('supertest');
 const moment = require('moment');
 
 const app = require('../../src/app');
-const { sandbox } = require('../mocks');
+const { mockNow } = require('../mocks');
+const { createUserToken } = require('../../src/routes/auth');
 const TestUtil = require('../util');
 
 describe('API retrieve', () => {
-  const now = moment.utc();
   const today = moment.utc().format('YYYY-MM-DD');
   let group;
   let trip;
+  let user;
 
   beforeEach(async () => {
-    sandbox.stub(moment, 'utc').returns(now);
     trip = await TestUtil.createDummyTrip();
     group = await trip.getGroup();
+    user = await TestUtil.createDummyUser(trip.orgId);
   });
 
   describe('GET /api/trips/:id', () => {
     it('retrieves trip', () => {
       return request(app)
         .get(`/api/trips/${trip.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .set('Accept', 'application/json')
         .expect(200)
         .then((res) => {
           assert.deepStrictEqual(res.body, {
             data: {
               trip: {
-                createdAt: now.toISOString(),
-                updatedAt: now.toISOString(),
+                createdAt: mockNow.toISOString(),
+                updatedAt: mockNow.toISOString(),
                 id: trip.id,
                 experienceId: trip.experienceId,
                 scriptId: trip.scriptId,
@@ -60,6 +62,7 @@ describe('API retrieve', () => {
     it('fails on missing object', () => {
       return request(app)
         .get('/api/trips/12345')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .set('Accept', 'application/json')
         .expect(404)
         .then((res) => {

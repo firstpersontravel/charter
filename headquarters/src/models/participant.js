@@ -18,6 +18,7 @@ const {
  * Participant model.
  */
 const Participant = database.define('Participant', snakeCaseColumns({
+  createdAt: datetimeField(),
   name: mutableModifier(optionalStringField(255)),
   email: mutableModifier(optionalStringField(255)),
   phoneNumber: mutableModifier(optionalStringField(10)),
