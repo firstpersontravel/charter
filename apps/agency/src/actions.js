@@ -52,7 +52,6 @@ function updateRevisionHistory(recordName, oldContent, newContent) {
     newContent: newContent
   };
 }
-
 function setGlobalError(err) {
   return {
     type: 'setGlobalError',
@@ -74,6 +73,19 @@ function processError(err) {
   });
 }
 
+function getRequestErrorInfo(err) {
+  return {
+    data: err.data || null,
+    status: err.status || null,
+    message: err.message || null
+  };
+}
+
+function handleRequestError(err, dispatch) {
+  dispatch(setGlobalError(getRequestErrorInfo(err)));
+  processError(err);
+}
+
 class RequestError extends Error {
   constructor(message, url, params, status, response) {
     super(message);
@@ -87,7 +99,7 @@ class RequestError extends Error {
   }
 }
 
-function handleResponseError(url, params, response) {
+function throwRequestError(url, params, response) {
   let responseData;
   return response.json()
     .then((data) => { responseData = data; })
@@ -120,7 +132,7 @@ function fetchJsonAssuringSuccess(url, params) {
   return fetch(url, addAuthHeader(params))
     .then((response) => {
       if (response.status >= 400) {
-        return handleResponseError(url, params, response);
+        return throwRequestError(url, params, response);
       }
       return response.json();
     });
@@ -139,11 +151,15 @@ function request(collectionName, instanceId, operationName, url, params,
         return data;
       },
       (err) => {
-        console.error(`Error requesting ${url}.`, params);
-        console.error(err);
-        const errdata = { data: err.data || null, status: err.status || null };
-        dispatch(saveRequest(requestName, 'rejected', errdata));
-        // Rethrow err, to be caught later in the stack.
+        console.error(`Error with ${params.method} to ${url}.`);
+        if (err.response) {
+          console.error(JSON.stringify(err.response, null, 2));
+        } else if (err.stack) {
+          console.error(err.stack);
+        }
+        dispatch(saveRequest(requestName, 'rejected', getRequestErrorInfo(err)));
+        // Rethrow to be caught by handleRequestError after
+        // the individual calls have skipped their success handling.
         throw err;
       }
     );
@@ -177,7 +193,7 @@ export function listCollection(collectionName, query, opts) {
         }
         dispatch(saveInstances(collectionName, response.data[collectionName]));
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -286,7 +302,7 @@ export function makeAuthRequest(url, params, name) {
       .catch((err) => {
         console.error('Unknown error', err);
         dispatch(saveRequest(reqName, 'rejected', 'Unknown error'));
-        processError(err);
+        handleRequestError(err, dispatch);
       });
   };
 }
@@ -359,7 +375,7 @@ export function retrieveInstance(collectionName, instanceId) {
       .then((response) => {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -377,7 +393,7 @@ export function createInstance(collectionName, fields) {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
         return response.data[modelName];
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -401,7 +417,7 @@ export function updateInstance(collectionName, instanceId, fields) {
         dispatch(saveInstances(collectionName, [response.data[modelName]]));
         return response.data[modelName];
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -420,7 +436,7 @@ export function bulkUpdate(collectionName, query, fields) {
         dispatch(saveInstances(collectionName, response.data[collectionName]));
         return response.data[collectionName];
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -467,7 +483,7 @@ export function postAction(orgId, experienceId, tripId, actionName,
       .then((response) => {
         dispatch(refreshLiveData(orgId, experienceId, [tripId]));
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -486,7 +502,7 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
           dispatch(refreshLiveData(orgId, experienceId, [tripId]));
         }
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -502,7 +518,7 @@ export function postEvent(orgId, experienceId, tripId, event) {
       .then((response) => {
         dispatch(refreshLiveData(orgId, experienceId, [tripId]));
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -518,7 +534,7 @@ export function updateRelays(orgId, experienceId) {
           stage: getStage()
         }));
       })
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -540,7 +556,7 @@ export function createInstances(collection, fields, nextItems) {
           }));
       })
       .then(() => firstCreatedItem)
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 
@@ -551,7 +567,7 @@ export function createTrip(fields, nextItems) {
         postAdminAction(trip.orgId, trip.experienceId, trip.id, 'reset')(
           dispatch)
       ))
-      .catch(processError);
+      .catch(err => handleRequestError(err, dispatch));
   };
 }
 

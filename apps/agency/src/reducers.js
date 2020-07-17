@@ -111,7 +111,7 @@ function updateRevisionHistoryHandler(state, action) {
 
 function setGlobalErrorHandler(state, action) {
   return update(state, {
-    globalError: action.err
+    globalError: { $set: action.err }
   });
 }
 

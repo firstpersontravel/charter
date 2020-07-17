@@ -99,7 +99,10 @@ apiRouter.use(Sentry.Handlers.errorHandler());
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars
 apiRouter.use(function(err, req, res, next) {
-  config.logger.error({ name: 'error' }, err.stack);
+  // Log full error stack only if it's an internal error or 5XX
+  if (!err.status || err.status >= 500) {
+    config.logger.error({ name: 'error' }, err.stack);
+  }
   const errorStatus = err.status || 500;
   const errorResponse = Object.assign({
     type: err.type,

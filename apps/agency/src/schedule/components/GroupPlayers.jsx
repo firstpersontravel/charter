@@ -24,6 +24,7 @@ export default class GroupPlayers extends Component {
         roleName, trip.variantNames.split(','));
       const fields = Object.assign({
         orgId: trip.orgId,
+        experienceId: trip.experienceId,
         tripId: trip.id,
         participantId: participantId
       }, initialFields);
@@ -32,8 +33,7 @@ export default class GroupPlayers extends Component {
     }
     // If it exists, update the player.
     const updateFields = { participantId: participant ? participant.id : null };
-    this.props.updateInstance('players', player.id,
-      updateFields);
+    this.props.updateInstance('players', player.id, updateFields);
   }
 
   handleParticipantModalClose() {
