@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
+const moment = require('moment-timezone');
 
 const config = require('../config');
 const models = require('../models');
 const { authenticationError } = require('../errors');
-
-const verifyOpts = { algorithm: 'HS256', clockTolerance: 2 };
 
 const tokenForReq = req => {
   if (req.get('Authorization')) {
@@ -14,7 +13,10 @@ const tokenForReq = req => {
 };
 
 async function verifyToken(tokenString) {
-  return await jwt.verify(tokenString, config.env.HQ_JWT_SECRET, verifyOpts);
+  return await jwt.verify(tokenString, config.env.HQ_JWT_SECRET, {
+    algorithm: 'HS256',
+    clockTimestamp: moment.utc().unix()
+  });
 }
 
 async function authMiddleware(req, res, next) {
