@@ -288,7 +288,7 @@ export function makeAuthRequest(url, params, name) {
             });
         }
         // Other network error
-        if (response.status !== 200) {
+        if (!response.status || response.status !== 200) {
           dispatch(saveRequest(reqName, 'rejected', 'Network error'));
           return null;
         }
