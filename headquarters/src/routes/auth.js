@@ -18,6 +18,9 @@ function slugify(text) {
     .replace(/-+$/, '');            // Trim - from end of text
 }
 
+// Login lasts for a day.
+const SESSION_DURATION_SECS = 86400;
+
 function createToken(subType, subId, durationSecs) {
   const payload = {
     iss: 'fpt',
@@ -82,9 +85,6 @@ async function getUserAuthInfo(user, tokenString) {
     }))
   };
 }
-
-// Login lasts for a week.
-const SESSION_DURATION_SECS = 86400 * 7;
 
 /**
  * Respond with the user info and orgs.
@@ -301,5 +301,6 @@ module.exports = {
   signupRoute,
   lostPasswordRoute,
   resetPasswordRoute,
-  infoRoute
+  infoRoute,
+  SESSION_DURATION_SECS
 };

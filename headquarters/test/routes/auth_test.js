@@ -45,7 +45,7 @@ describe('authRoutes', () => {
         aud: 'web',
         sub: 'user:1',
         iat: mockNow.clone().unix(),
-        exp: mockNow.clone().add(7, 'days').unix(),
+        exp: mockNow.clone().add(authRoutes.SESSION_DURATION_SECS, 'seconds').unix(),
       });
 
       // Test call made correctly
@@ -144,7 +144,7 @@ describe('authRoutes', () => {
         aud: 'web',
         sub: 'user:2',
         iat: mockNow.clone().unix(),
-        exp: mockNow.clone().add(7, 'days').unix(),
+        exp: mockNow.clone().add(authRoutes.SESSION_DURATION_SECS, 'seconds').unix(),
       });
 
       // Test finds were called

@@ -53,12 +53,20 @@ const enhancer = enhancers(
   )
 );
 
-const authData = JSON.parse(localStorage.getItem('auth_latest') || 'null');
-const authOrgs = _.get(authData, 'orgs') || [];
-const authInstances = authData ? [{ id: 'latest', data: authData }] : [];
 const initialStateCopy = _.cloneDeep(initialState);
-initialStateCopy.datastore.auth = authInstances;
-initialStateCopy.datastore.orgs = authOrgs;
+
+// Check if we have a token and it's not expired.
+const authData = JSON.parse(localStorage.getItem('auth_latest') || 'null');
+if (authData && authData.jwt) {
+  const payload = JSON.parse(atob(authData.jwt.split('.')[1]));
+  const isValid = new Date().valueOf() / 1000 < payload.exp;
+  if (isValid) {
+    const authOrgs = _.get(authData, 'orgs') || [];
+    const authInstances = authData ? [{ id: 'latest', data: authData }] : [];
+    initialStateCopy.datastore.auth = authInstances;
+    initialStateCopy.datastore.orgs = authOrgs;
+  }
+}
 
 const store = createStore(reducers, initialStateCopy, enhancer);
 

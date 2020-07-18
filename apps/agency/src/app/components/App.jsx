@@ -3,41 +3,58 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 
+const TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // Refresh every hour
+
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
+    this.refreshToken = this.refreshToken.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchAuthInfo();
+    this.refreshTokenInterval = setInterval(this.refreshToken,
+      TOKEN_REFRESH_INTERVAL);
   }
 
   componentDidCatch(error, errorInfo) {
     this.props.crash(error, errorInfo);
   }
 
+  componentWillUnmount() {
+    clearInterval(this.refreshTokenInterval);
+    this.refreshTokenInterval = null;
+  }
+
   static getDerivedStateFromError(error) {
     return { hasError: true };
   }
 
-  renderUnknownError() {
+  refreshToken() {
+    // Only refresh if we're logged in.
+    if (this.props.authInfo) {
+      this.props.fetchAuthInfo();
+    }
+  }
+
+  renderErrorModal(icon, header, body, feedback) {
+    const feedbackBtn = feedback ? (
+      <Button
+        color="secondary mr-1"
+        onClick={() => Sentry.showReportDialog()}>
+        Report feedback
+      </Button>
+    ) : null;
     return (
       <Modal isOpen centered zIndex={3000}>
         <ModalHeader>
-          <i className="fa fa-exclamation-triangle" />&nbsp;
-          We&apos;re sorry, there was an error.
+          <i className={`mr-1 fa fa-${icon}`} />
+          {header}
         </ModalHeader>
-        <ModalBody>
-          We&apos;ve been notified and we&apos;ll fix this right away.
-          In the meantime, you can reload the page and try what you were doing again.
-        </ModalBody>
+        <ModalBody>{body}</ModalBody>
         <ModalFooter>
-          <Button
-            color="secondary mr-1"
-            onClick={() => Sentry.showReportDialog()}>
-            Report feedback
-          </Button>
+          {feedbackBtn}
           <Button
             color="primary"
             onClick={() => { window.location = window.location.href; }}>
@@ -46,67 +63,69 @@ export default class App extends Component {
         </ModalFooter>
       </Modal>
     );
+  }
+
+  renderUnknownError() {
+    return this.renderErrorModal(
+      'exclamation-triangle',
+      'We\'re sorry, there was an error.',
+      'We\'ve been notified and we\'ll fix this right away. ' +
+      'In the meantime, you can reload the page and try what you were doing again.',
+      true);
   }
 
   renderNetworkError() {
-    return (
-      <Modal isOpen centered zIndex={3000}>
-        <ModalHeader>
-          <i className="fa fa-wifi" />&nbsp;
-          Couldn&apos;t reach the Charter server.
-        </ModalHeader>
-        <ModalBody>
-          Please check your connection and try again.
-          You may need to retry your last action.
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color="primary"
-            onClick={() => { window.location = window.location.href; }}>
-            Reload the page
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
+    return this.renderErrorModal(
+      'wifi',
+      'Couldn\'t reach the Charter server.',
+      'Please check your connection and try again. ' +
+      'You may need to retry your last action.',
+      false);
   }
 
   renderValidationError() {
-    return (
-      <Modal isOpen centered zIndex={3000}>
-        <ModalHeader>
-          <i className="fa fa-exclamation-triangle" />&nbsp;
-          There was a validation error updating your project.
-        </ModalHeader>
-        <ModalBody>
-          This shouldn&apos;t normally happen.
-          We&apos;ve been notified and we&apos;ll fix this right away.
-          In the meantime, you can reload the page and try something different.
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color="secondary mr-1"
-            onClick={() => Sentry.showReportDialog()}>
-            Report feedback
-          </Button>
-          <Button
-            color="primary"
-            onClick={() => { window.location = window.location.href; }}>
-            Reload the page
-          </Button>
-        </ModalFooter>
-      </Modal>
-    );
+    return this.renderErrorModal(
+      'exclamation-triangle',
+      'There was a validation error updating your project.',
+      'This shouldn\'t normally happen.' +
+      'We\'ve been notified and we\'ll fix this right away.' +
+      'In the meantime, you can reload the page and try something different.',
+      false);
+  }
+
+  renderAuthError() {
+    return this.renderErrorModal(
+      'lock',
+      'You have been logged out',
+      'Please log in again. Apologies for the inconvenience!',
+      true);
+  }
+
+  renderForbiddenError() {
+    return this.renderErrorModal(
+      'lock',
+      'You do not have permission to perform this operation',
+      'Please let us know if you think you are seeing this message in error.',
+      true);
   }
 
   renderError(err) {
     if (!err) {
       return this.renderUnknownError();
     }
-    if (!err.status || err.message === 'Failed to fetch') {
+    if (err.message === 'Failed to fetch') {
       return this.renderNetworkError();
     }
-    if (err.status >= 400 && err.status < 500) {
-      return this.renderValidationError();
+    if (err.status) {
+      if (err.status === 401) {
+        return this.renderAuthError();
+      }
+      if (err.status === 403) {
+        return this.renderForbiddenError();
+      }
+      if (err.status === 400 || err.status === 422) {
+        return this.renderValidationError();
+      }
     }
     return this.renderUnknownError();
   }
@@ -120,6 +139,7 @@ export default class App extends Component {
 }
 
 App.propTypes = {
+  authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
   globalError: PropTypes.object,
   crash: PropTypes.func.isRequired,
@@ -127,5 +147,6 @@ App.propTypes = {
 };
 
 App.defaultProps = {
+  authInfo: null,
   globalError: null
 };

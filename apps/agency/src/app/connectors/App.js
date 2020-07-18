@@ -1,9 +1,11 @@
 import { connect } from 'react-redux';
 
 import App from '../components/App';
+import { latestAuthData } from '../../datastore-utils';
 import { crash, fetchAuthInfo } from '../../actions';
 
 const mapStateToProps = state => ({
+  authInfo: latestAuthData(state),
   globalError: state.globalError
 });
 
