@@ -34,7 +34,6 @@ const Trip = database.define('Trip', snakeCaseColumns({
     jsonField(database, 'Trip', 'waypointOptions')),
   schedule: mutableModifier(jsonField(database, 'Trip', 'schedule')),
   history: mutableModifier(jsonField(database, 'Trip', 'history')),
-  galleryName: mutableModifier(optionalStringField(64)),
   scheduleAt: mutableModifier(allowNullModifier(datetimeField())),
   scheduleUpdatedAt: mutableModifier(allowNullModifier(datetimeField())),
   isArchived: mutableModifier(booleanField(false))

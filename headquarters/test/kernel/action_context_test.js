@@ -54,7 +54,6 @@ describe('ActionContext', () => {
         tripState: objs.trip.tripState,
         customizations: {},
         date: '01-01-2015',
-        galleryName: '',
         history: objs.trip.history,
         id: null,
         isArchived: false,

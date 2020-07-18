@@ -47,7 +47,6 @@ describe('API retrieve', () => {
                 schedule: {},
                 scheduleUpdatedAt: null,
                 scheduleAt: null,
-                galleryName: '',
                 variantNames: '',
                 title: 'test',
                 values: {},

@@ -73,7 +73,6 @@ class Group extends Component {
       scriptId: group.scriptId,
       date: group.date,
       title: fields.title,
-      galleryName: _.kebabCase(fields.title),
       variantNames: fields.variantNames.join(','),
       tripState: { currentSceneName: '' }
     });
