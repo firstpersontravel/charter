@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -54,11 +53,6 @@ function renderMessage(trip, message, updateInstance) {
 const defaultHost = `${window.location.protocol}//${window.location.host}`;
 
 export default class TripGallery extends Component {
-  constructor(props) {
-    super(props);
-    this.editGalleryName = this.editGalleryName.bind(this);
-  }
-
   componentDidMount() {
     this.loadData(this.props.trip);
   }
@@ -76,32 +70,14 @@ export default class TripGallery extends Component {
     this.props.listCollection('messages', {
       orgId: trip.orgId,
       tripId: trip.id,
-      medium: 'image',
-      name: ''
+      medium: 'image'
     });
-  }
-
-  editGalleryName(e) {
-    e.preventDefault();
-    const trip = this.props.trip;
-    const defaultGalleryName = _.kebabCase(trip.title);
-    // eslint-disable-next-line no-alert
-    const newGalleryName = prompt(
-      'What would you like the new gallery name to be?',
-      trip.galleryName || defaultGalleryName);
-    if (newGalleryName && newGalleryName !== trip.galleryName) {
-      this.props.updateInstance('trips', trip.id, {
-        galleryName: newGalleryName
-      });
-    }
   }
 
   renderLink() {
     const trip = this.props.trip;
     const host = (isProduction() && trip.script.host) || defaultHost;
-    const [y, m, d] = trip.date.split('-');
-    const alias = trip.galleryName || trip.id;
-    const url = `${host}/gallery/${y}/${m}/${d}/${alias}`;
+    const url = `${host}/gallery/${trip.id}`;
     return (
       <p>
         Gallery link:&nbsp;
@@ -111,10 +87,6 @@ export default class TripGallery extends Component {
           href={url}>
           {url}
         </a>
-        &nbsp;
-        <span className="text-primary cursor-pointer" onClick={this.editGalleryName}>
-          <i className="fa fa-pencil" />
-        </span>
       </p>
     );
   }

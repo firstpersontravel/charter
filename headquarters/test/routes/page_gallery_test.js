@@ -9,12 +9,12 @@ const pageGalleryRoutes = require('../../src/routes/page_gallery');
 describe('pageGalleryRoutes', () => {
   describe('#galleryRoute', () => {
     it('shows gallery by name', async () => {
-      const req = httpMocks.createRequest({ params: { alias: 'abc' } });
+      const req = httpMocks.createRequest({ params: { tripId: 123 } });
       const res = httpMocks.createResponse();
 
       // Stub responses
       const mockTrip = {
-        id: 1,
+        id: 123,
         title: 'some people',
         experience: { title: 'The Headlands Gamble' }
       };
@@ -34,14 +34,13 @@ describe('pageGalleryRoutes', () => {
       // Test search calls made correctly
       sinon.assert.calledOnce(models.Trip.findOne);
       assert.deepStrictEqual(models.Trip.findOne.firstCall.args, [{
-        where: { galleryName: 'abc' },
+        where: { id: 123 },
         include: [{ model: models.Experience, as: 'experience' }]
       }]);
       sinon.assert.calledOnce(models.Message.findAll);
       assert.deepStrictEqual(models.Message.findAll.firstCall.args, [{
         where: {
-          tripId: 1,
-          name: '',
+          tripId: 123,
           medium: 'image',
           isArchived: false,
           isInGallery: true

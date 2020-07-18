@@ -35,8 +35,7 @@ actorRouter.get('/:orgName/player/:playerId', asyncRoute(actorRoutes.playerShowR
 
 // Gallery routes
 const galleryRouter = express.Router();
-galleryRouter.get('/:year/:month/:day/:alias',
-  asyncRoute(galleryRoutes.galleryRoute));
+galleryRouter.get('/:tripId', asyncRoute(galleryRoutes.galleryRoute));
 
 // Content routes
 const contentRouter = express.Router();

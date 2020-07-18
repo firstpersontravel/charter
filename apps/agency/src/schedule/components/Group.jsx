@@ -54,9 +54,11 @@ class Group extends Component {
       _.find(this.props.participants, { id: profile.participantId })
     ));
     const participantId = participants.length === 1 ? participants[0].id : null;
-    const fields = Object.assign(
-      { orgId: experience.orgId, participantId: participantId },
-      PlayerCore.getInitialFields(script.content, role.name, variantNames));
+    const fields = Object.assign({
+      orgId: experience.orgId,
+      experienceId: experience.id,
+      participantId: participantId
+    }, PlayerCore.getInitialFields(script.content, role.name, variantNames));
     return fields;
   }
 

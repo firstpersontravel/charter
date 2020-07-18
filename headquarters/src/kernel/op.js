@@ -50,19 +50,15 @@ class KernelOpController {
       fromRoleName: op.fields.fromRoleName,
       toRoleName: op.fields.toRoleName,
       createdAt: op.fields.createdAt.toDate(),
-      name: op.fields.name,
       medium: op.fields.medium,
       content: op.fields.content,
-      readAt: op.fields.readAt ? op.fields.readAt.toDate() : null,
       isReplyNeeded: op.fields.isReplyNeeded,
       isInGallery: op.fields.isInGallery
     };
     const message = await models.Message.create(fields);
     await MessageController.sendMessage(message);
-    if (!fields.readAt) {
-      await TripRelaysController.relayMessage(objs.trip, message,
-        op.suppressRelayId);
-    }
+    await TripRelaysController.relayMessage(objs.trip, message,
+      op.suppressRelayId);
     return message;
   }
 

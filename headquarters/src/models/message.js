@@ -9,7 +9,6 @@ const {
   datetimeField,
   enumStringField,
   mutableModifier,
-  optionalStringField,
   requiredStringField,
   snakeCaseColumns,
   textField
@@ -24,11 +23,9 @@ const Message = database.define('Message', snakeCaseColumns({
   createdAt: datetimeField(),
   fromRoleName: requiredStringField(32),
   toRoleName: requiredStringField(32),
-  name: optionalStringField(64),
   medium: enumStringField(5, MESSAGE_MEDIUM_OPTIONS),
   content: textField(),
   isReplyNeeded: booleanField(false),
-  readAt: mutableModifier(allowNullModifier(datetimeField())),
   replyReceivedAt: mutableModifier(allowNullModifier(datetimeField())),
   isInGallery: mutableModifier(booleanField(false)),
   isArchived: mutableModifier(booleanField(false))

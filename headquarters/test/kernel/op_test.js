@@ -112,13 +112,11 @@ describe('KernelOpController', () => {
         createdAt: now.toDate(),
         content: 'die!',
         medium: 'text',
-        name: undefined,
         orgId: 456,
         experienceId: 789,
         isInGallery: undefined,
         isReplyNeeded: undefined,
         tripId: 123,
-        readAt: null,
         fromRoleName: 'BadGuy',
         toRoleName: 'GoodGuy'
       }]);

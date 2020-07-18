@@ -78,7 +78,6 @@ describe('API update', () => {
       const permittedFields = [
         ['isInGallery', true, true],
         ['isArchived', true, true],
-        ['readAt', now, now.toISOString()],
         ['replyReceivedAt', now, now.toISOString()]
       ];
       return Promise.all(permittedFields.map(([fieldName, val, valResp]) => {
