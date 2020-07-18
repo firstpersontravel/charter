@@ -58,6 +58,7 @@ app.use((req, res, next) => {
       name: 'request',
       method: req.method,
       path: req.originalUrl,
+      pattern: req.originalUrl.split('?')[0].replace(/\d+/g, 'xxx'),
       ip: req.ip,
       status: res.statusCode,
       duration: reqDurationMsec,
