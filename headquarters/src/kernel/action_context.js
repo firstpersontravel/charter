@@ -56,32 +56,6 @@ class ActionContext {
     return ContextCore.gatherEvalContext(env, trip);
   }
 
-  // TODO: remove this code, probably?
-  // static prepareActionContext(objs, evaluateAt) {
-  //   const acting_player = objs.players.find(player => player.id == objs.acting_player_id);
-  //   return {
-  //     scriptContent: objs.script.content,
-  //     timezone: objs.experience.timezone,
-  //     evalContext: this.prepareEvalContext(objs),
-  //     evaluateAt: evaluateAt,
-  //     currentRoleName: acting_player && acting_player.roleName,
-  //     currentPlayerId: acting_player && acting_player.id
-  //   };
-  // }
-
-  // /**
-  //  * Apply an action and gather the results.
-  //  */
-  // static async getEvalContext(tripId) {
-  //   const objs = await this.getObjectsForTrip(tripId);
-  //   return this.prepareEvalContext(objs);
-  // }
-
-  // static async getActionContext(tripId) {
-  //   const objs = await this.getObjectsForTrip(tripId);
-  //   return this.prepareActionContext(objs, moment.utc());    
-  // }
-
   /**
    * Get objects needed for a trip.
    */
