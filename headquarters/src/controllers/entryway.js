@@ -85,7 +85,7 @@ class EntrywayController {
       where: {
         orgId: script.orgId,
         experienceId: script.experienceId,
-        isActive: true,
+        isArchived: false,
         phoneNumber: participantNumber
       },
       defaults: {

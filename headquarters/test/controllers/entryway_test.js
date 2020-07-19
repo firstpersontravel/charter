@@ -134,7 +134,7 @@ describe('EntrywayController', () => {
         where: {
           orgId: 9,
           experienceId: 20,
-          isActive: true,
+          isArchived: false,
           phoneNumber: '123'
         },
         defaults: {
