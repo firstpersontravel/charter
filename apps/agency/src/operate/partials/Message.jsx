@@ -102,7 +102,7 @@ export default function Message({ message, updateInstance }) {
   if (!fromRole || !toRole) {
     return null;
   }
-  const userRole = message.isReplyNeeded ? fromRole : toRole;
+  const audienceRole = message.isReplyNeeded ? fromRole : toRole;
   const actorRole = message.isReplyNeeded ? toRole : fromRole;
   const createdAt = moment.utc(message.createdAt);
   const timeFormat = 'ddd h:mma';
@@ -115,8 +115,8 @@ export default function Message({ message, updateInstance }) {
   const respondBtn = shouldShowRespond ? (
     <Link
       className="btn btn-xs btn-outline-secondary"
-      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${actorRole.name}&with=${userRole.name}`}>
-      Respond to {userRole.title}
+      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${actorRole.name}&with=${audienceRole.name}`}>
+      Respond to {audienceRole.title}
     </Link>
   ) : null;
 

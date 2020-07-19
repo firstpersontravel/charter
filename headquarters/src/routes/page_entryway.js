@@ -41,7 +41,7 @@ const joinRoute = async (req, res) => {
     });
     if (player) {
       res.redirect(
-        `/travel/u/${player.userId || 0}` +
+        `/travel/u/${player.participantId || 0}` +
         `/p/${player.tripId}` +
         `/p/${player.id}`);
       return;
@@ -104,27 +104,27 @@ const joinSubmitRoute = async (req, res) => {
   const player = await models.Player.findOne({
     where: { tripId: trip.id, roleName: playerRole.name }
   });
-  // Look for a user by phone number, or create if doesn't exist.
-  const [entrywayUser, ] = await models.User.findOrCreate({
+  // Look for a participant by phone number, or create if doesn't exist.
+  const [entrywayParticipant, ] = await models.Participant.findOrCreate({
     where: {
       orgId: script.orgId,
       experienceId: script.experienceId,
       isActive: true,
       phoneNumber: phoneNumber
     },
-    defaults: { firstName: `${script.experience.title} Player` }
+    defaults: { name: name, email: email }
   });
-  // Add firstName and email to user
-  await models.User.update(
-    { firstName: name, email: email},
-    { where: { id: entrywayUser.id } });
-  // Associate this player with the registered user
+  // Add firstName and email to participant
+  await models.Participant.update(
+    { name: name, email: email},
+    { where: { id: entrywayParticipant.id } });
+  // Associate this player with the registered participant
   await models.Player.update(
-    { userId: entrywayUser.id },
+    { participantId: entrywayParticipant.id },
     { where: { id: player.id } });
   res.cookie(`exp-${experience.id}`, player.id);
   res.redirect(
-    `/travel/u/${player.userId || 0}` +
+    `/travel/u/${player.participantId || 0}` +
     `/p/${player.tripId}` +
     `/p/${player.id}`
   );
@@ -162,7 +162,7 @@ const entrywayRoute = async (req, res) => {
     });
     if (player) {
       res.redirect(
-        `/travel/u/${player.userId || 0}` +
+        `/travel/u/${player.participantId || 0}` +
         `/p/${player.tripId}` +
         `/p/${player.id}`);
       return;
@@ -230,13 +230,13 @@ const entrywaySubmitRoute = async (req, res) => {
   const player = await models.Player.findOne({
     where: { tripId: trip.id, roleName: playerRole.name }
   });
-  await models.User.update(
-    { firstName: name, email: email},
-    { where: { id: player.userId } });
+  await models.Participant.update(
+    { name: name, email: email },
+    { where: { id: player.participantId } });
 
   res.cookie(`exp-${experience.id}`, player.id);
   res.redirect(
-    `/travel/u/${player.userId || 0}` +
+    `/travel/u/${player.participantId || 0}` +
     `/p/${player.tripId}`+
     `/p/${player.id}`);
 };

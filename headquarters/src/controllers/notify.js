@@ -27,15 +27,15 @@ class NotifyController {
     await this._notifyFaye(`/${channel}`, message);
   }
 
-  static async notifyUserDeviceState(tripId, user, clientId=null) {
+  static async notifyParticipantDeviceState(tripId, participant, clientId=null) {
     return await this.notify(tripId, 'device_state', {
       client_id: clientId,
-      user_id: user.id,
+      participant_id: participant.id,
       device_state: {
-        location_latitude: user.locationLatitude,
-        location_longitude: user.locationLongitude,
-        location_accuracy: user.locationAccuracy,
-        location_timestamp: user.locationTimestamp
+        location_latitude: participant.locationLatitude,
+        location_longitude: participant.locationLongitude,
+        location_accuracy: participant.locationAccuracy,
+        location_timestamp: participant.locationTimestamp
       }
     });
   }

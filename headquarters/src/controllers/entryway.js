@@ -9,11 +9,11 @@ const TripsController = require('./trips');
 
 class EntrywayController {
   /**
-   * Update the player to assign a user when starting a new trip
+   * Update the player to assign a participant when starting a new trip
    * for a entryway.
    */
   static async assignActor(experience, trip, role) {
-    // If we pass through here, try finding a user for this role.
+    // If we pass through here, try finding a participant for this role.
     const roleProfiles = await models.Profile.findAll({
       where: {
         isActive: true,
@@ -26,25 +26,25 @@ class EntrywayController {
       return;
     }
     const matchingProfile = roleProfiles[0];
-    // Update role player with this user
-    await models.Player.update({ userId: matchingProfile.userId }, {
+    // Update role player with this participant
+    await models.Player.update({ participantId: matchingProfile.participantId }, {
       where: { tripId: trip.id, roleName: role.name }
     });
   }
 
   /**
-   * Assign each user in the script by role.
+   * Assign each participant in the script by role.
    */
   static async assignActors(script, trip, enteredRoleName) {
-    // Find other roles that need to be assigned users
+    // Find other roles that need to be assigned participants
     for (const role of script.content.roles) {
-      // Ignore user role that started the experience
+      // Ignore participant role that started the experience
       if (role.name === enteredRoleName) {
         continue;
       }
-      // Find other roles that need to be assigned users
-      // If role doesn't allow being assigned users, or isn't an actor, skip.
-      if (!RoleCore.canRoleHaveUser(script.content, role)) {
+      // Find other roles that need to be assigned participants
+      // If role doesn't allow being assigned participants, or isn't an actor, skip.
+      if (!RoleCore.canRoleHaveParticipant(script.content, role)) {
         continue;
       }
       await EntrywayController.assignActor(script.experience, trip, role);
@@ -62,7 +62,7 @@ class EntrywayController {
   /**
    * Create a new trip with properties.
    */
-  static async createTrip(script, userRoleName, userNumber) {
+  static async createTrip(script, participantRoleName, participantNumber) {
     const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {
@@ -80,30 +80,32 @@ class EntrywayController {
     const trip = await TripsController.createTrip(group.id, title,
       defaultVariantNames);
 
-    // Look for a user, or create if doesn't exist.
-    const [entrywayUser, ] = await models.User.findOrCreate({
+    // Look for a participant, or create if doesn't exist.
+    const [entrywayParticipant, ] = await models.Participant.findOrCreate({
       where: {
         orgId: script.orgId,
         experienceId: script.experienceId,
         isActive: true,
-        phoneNumber: userNumber
+        phoneNumber: participantNumber
       },
-      defaults: { firstName: `${script.experience.title} Player` }
+      defaults: {
+        createdAt: moment.utc(),
+        name: `${script.experience.title} Player`
+      }
     });
 
     // Create profile if not already exists
     const [entrywayProfile, ] = await models.Profile.findOrCreate({
       where: {
-        userId: entrywayUser.id,
+        participantId: entrywayParticipant.id,
         orgId: script.orgId,
         experienceId: script.experienceId,
-        roleName: userRoleName,
+        roleName: participantRoleName,
         isArchived: false
       },
       defaults: {
         isActive: true,
-        isArchived: false,
-        firstName: `${script.experience.title} Player`
+        isArchived: false
       }
     });
 
@@ -111,13 +113,13 @@ class EntrywayController {
       await entrywayProfile.update({ isActive: true });
     }
 
-    // Update the entryway player to be assigned to entryway user.
-    await models.Player.update({ userId: entrywayUser.id }, {
-      where: { tripId: trip.id, roleName: userRoleName }
+    // Update the entryway player to be assigned to entryway participant.
+    await models.Player.update({ participantId: entrywayParticipant.id }, {
+      where: { tripId: trip.id, roleName: participantRoleName }
     });
 
-    // Update all other users
-    await EntrywayController.assignActors(script, trip, userRoleName);
+    // Update all other participants
+    await EntrywayController.assignActors(script, trip, participantRoleName);
 
     // And return!
     return trip;

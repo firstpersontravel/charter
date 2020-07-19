@@ -86,10 +86,10 @@ describe('apiRestRoutes', () => {
       // Assert authz calls are made
       sinon.assert.calledOnce(dummyAuthz.checkRecord);
       sinon.assert.calledWith(dummyAuthz.checkRecord,
-        req, 'create', Model, null);
+        req, 'create', Model, record);
       sinon.assert.calledOnce(dummyAuthz.checkFields);
       sinon.assert.calledWith(dummyAuthz.checkFields,
-        req, 'create', Model, null, req.body);
+        req, 'create', Model, record, req.body);
     });
 
     it('does not allow creation with id', async () => {

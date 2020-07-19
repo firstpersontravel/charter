@@ -4,31 +4,31 @@ import PropTypes from 'prop-types';
 import { NavLink, Link } from 'react-router-dom';
 
 import Loader from '../../partials/Loader';
-import UserModal from '../partials/UserModal';
+import ParticipantModal from '../partials/ParticipantModal';
 
 export default class DirectoryIndex extends Component {
   constructor(props) {
     super(props);
-    this.handleCreateUser = this.handleCreateUser.bind(this);
-    this.handleUserModalClose = this.handleUserModalClose.bind(this);
+    this.handleCreateParticipant = this.handleCreateParticipant.bind(this);
+    this.handleParticipantModalClose = this.handleParticipantModalClose.bind(this);
   }
 
-  getUsers() {
+  getParticipants() {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
-    return this.props.users.filter((user) => {
+    return this.props.participants.filter((participant) => {
       if (roleName === 'Archived') {
-        return user.isArchived === true;
+        return participant.isArchived === true;
       }
-      if (user.isArchived) {
+      if (participant.isArchived) {
         return false;
       }
-      const userProfiles = _.filter(this.props.profiles, {
-        userId: user.id
+      const participantProfiles = _.filter(this.props.profiles, {
+        participantId: participant.id
       });
       if (roleName) {
         const roleParams = { roleName: roleName };
-        if (!_.find(userProfiles, roleParams)) {
+        if (!_.find(participantProfiles, roleParams)) {
           return false;
         }
       }
@@ -36,14 +36,13 @@ export default class DirectoryIndex extends Component {
     });
   }
 
-  handleCreateUser(fields) {
+  handleCreateParticipant(fields) {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
-    const userFields = {
+    const participantFields = {
       orgId: this.props.experience.orgId,
       experienceId: this.props.experience.id,
-      firstName: fields.firstName,
-      lastName: fields.lastName,
+      name: fields.name,
       phoneNumber: fields.phoneNumber,
       email: fields.email
     };
@@ -55,14 +54,14 @@ export default class DirectoryIndex extends Component {
         roleName: roleName
       },
       insertions: {
-        userId: 'id'
+        participantId: 'id'
       }
     }] : null;
-    this.props.createInstances('users', userFields, profilesToCreate);
-    this.handleUserModalClose();
+    this.props.createInstances('participants', participantFields, profilesToCreate);
+    this.handleParticipantModalClose();
   }
 
-  handleUserModalClose() {
+  handleParticipantModalClose() {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
     const experience = this.props.experience;
@@ -71,22 +70,22 @@ export default class DirectoryIndex extends Component {
       `${roleName ? `?role=${roleName}` : ''}`);
   }
 
-  renderUser(user) {
+  renderParticipant(participant) {
     const statusIcons = [];
-    if (user.locationTimestamp) {
+    if (participant.locationTimestamp) {
       statusIcons.push(<i key="location" className="fa fa-location-arrow" />);
     }
-    if (user.devicePushToken) {
+    if (participant.devicePushToken) {
       statusIcons.push(<i key="comment" className="fa fa-comment" />);
     }
     const experience = this.props.experience;
-    const profileParams = { userId: user.id };
-    const userProfiles = _(this.props.profiles)
+    const profileParams = { participantId: participant.id };
+    const participantProfiles = _(this.props.profiles)
       .filter(profileParams)
       .sortBy('isActive')
       .reverse()
       .value();
-    const roleLinks = _.map(userProfiles, profile => (
+    const roleLinks = _.map(participantProfiles, profile => (
       <span key={profile.id}>
         <NavLink
           style={{
@@ -94,7 +93,7 @@ export default class DirectoryIndex extends Component {
           }}
           to={{
             pathname: `/${experience.org.name}/${experience.name}/directory`,
-            query: { role: profile.roleName }
+            search: `?role=${profile.roleName}`
           }}>
           {_.get(profile, 'role.title')}
         </NavLink>
@@ -102,11 +101,11 @@ export default class DirectoryIndex extends Component {
       </span>
     ));
     return (
-      <tr key={user.id}>
+      <tr key={participant.id}>
         <td>
           <Link
-            to={`/${experience.org.name}/${experience.name}/directory/user/${user.id}`}>
-            {user.firstName} {user.lastName}
+            to={`/${experience.org.name}/${experience.name}/directory/${participant.id}`}>
+            {participant.name}
           </Link>
         </td>
         <td>{roleLinks}</td>
@@ -136,7 +135,7 @@ export default class DirectoryIndex extends Component {
     );
   }
 
-  renderNewUserButton() {
+  renderNewParticipantButton() {
     const experience = this.props.experience;
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
@@ -146,7 +145,7 @@ export default class DirectoryIndex extends Component {
     const role = _.find(experience.script.content.roles, { name: roleName });
     const roleTitle = role && role.title;
 
-    const btnTitle = roleName ? `New ${roleTitle} user` : 'New user';
+    const btnTitle = roleName ? `New ${roleTitle} participant` : 'New participant';
     return (
       <div>
         <Link
@@ -162,15 +161,15 @@ export default class DirectoryIndex extends Component {
   }
 
   render() {
-    if (this.props.users.isLoading ||
+    if (this.props.participants.isLoading ||
         this.props.profiles.isLoading) {
       return <Loader />;
     }
     const query = new URLSearchParams(this.props.location.search);
     const editing = query.get('editing');
 
-    const users = this.getUsers();
-    const userRows = users.map(user => this.renderUser(user));
+    const participants = this.getParticipants();
+    const participantRows = participants.map(p => this.renderParticipant(p));
     const header = this.renderHeader();
     return (
       <div className="col-sm-9">
@@ -184,15 +183,15 @@ export default class DirectoryIndex extends Component {
             </tr>
           </thead>
           <tbody>
-            {userRows}
+            {participantRows}
           </tbody>
         </table>
-        {this.renderNewUserButton()}
-        <UserModal
+        {this.renderNewParticipantButton()}
+        <ParticipantModal
           isOpen={!!editing}
-          user={null}
-          onClose={this.handleUserModalClose}
-          onConfirm={this.handleCreateUser} />
+          participant={null}
+          onClose={this.handleParticipantModalClose}
+          onConfirm={this.handleCreateParticipant} />
       </div>
     );
   }
@@ -204,5 +203,5 @@ DirectoryIndex.propTypes = {
   history: PropTypes.object.isRequired,
   experience: PropTypes.object.isRequired,
   profiles: PropTypes.array.isRequired,
-  users: PropTypes.array.isRequired
+  participants: PropTypes.array.isRequired
 };

@@ -11,21 +11,21 @@ const ALLOWED_MEDIA_EXTENSIONS = ['jpg', 'jpeg', 'png', 'mp3', 'mp4'];
 
 class TripRelaysController {
   /**
-   * Get the user phone number for a relay spec -- either blank if its a
-   * entryway, null if the user wasn't found, or a phone number.
+   * Get the participant phone number for a relay spec -- either blank if its a
+   * entryway, null if the participant wasn't found, or a phone number.
    */
-  static async userNumberForRelay(trip, relaySpec) {
-    // Find the player and user for this trip and relay spec.
+  static async participantNumberForRelay(trip, relaySpec) {
+    // Find the player and participant for this trip and relay spec.
     const player = await models.Player.findOne({
       where: { roleName: relaySpec.for, tripId: trip.id },
-      include: [{ model: models.User, as: 'user' }]
+      include: [{ model: models.Participant, as: 'participant' }]
     });
-    // Can't create or find a relay for a user without a phone number, so skip
+    // Can't create or find a relay for a participant without a phone number, so skip
     // this relay without creating it.
-    if (!_.get(player, 'user.phoneNumber')) {
+    if (!_.get(player, 'participant.phoneNumber')) {
       return null;
     }
-    return player.user.phoneNumber;
+    return player.participant.phoneNumber;
   }
 
   /**
@@ -37,17 +37,17 @@ class TripRelaysController {
       return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
         null, relaySpec, '');
     }
-    // Otherwise, look up the user phone number for a relay.
-    const userPhoneNumber = await this.userNumberForRelay(trip, relaySpec);
+    // Otherwise, look up the participant phone number for a relay.
+    const participantPhoneNumber = await this.participantNumberForRelay(trip, relaySpec);
     // If no player was found, or the player doesn't have a phone
     // number, then we can't create a relay, so we have to return null.
-    if (userPhoneNumber === null) {
+    if (participantPhoneNumber === null) {
       return null;
     }
     // If we have a phone number, then we can ensure a relay exists for that
     // number.
     return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
-      trip.id, relaySpec, userPhoneNumber);
+      trip.id, relaySpec, participantPhoneNumber);
   }
 
   /**
@@ -70,7 +70,7 @@ class TripRelaysController {
       this.ensureRelay(trip, relaySpec))
     ));
 
-    // Filter out null responses returned for users w/no phone numbers.
+    // Filter out null responses returned for participants w/no phone numbers.
     return relays.filter(Boolean);
   }
 
@@ -90,7 +90,7 @@ class TripRelaysController {
     // Get player for this trip.
     const player = await models.Player.findOne({
       where: { tripId: trip.id, roleName: relay.forRoleName },
-      include: [{ model: models.User, as: 'user' }]
+      include: [{ model: models.Participant, as: 'participant' }]
     });
     if (!player) {
       logger.warn(`Relay ${relay.id} has no player.`);
@@ -146,7 +146,7 @@ class TripRelaysController {
    */
   static async _partsForRelayMessage(script, trip, relay, message) {
     if (message.medium === 'text') {
-      // TODO: include meta if this user is signed up for multiple active trips
+      // TODO: include meta if this participant is signed up for multiple active trips
       const includeMeta = false;
       const body = this._formatMessageBody(script, trip, message, includeMeta);
       return [body, null];
@@ -199,7 +199,7 @@ class TripRelaysController {
       if (relay.id === suppressRelayId) {
         continue;
       }
-      // If this relay is for the user who sent the message, skip.
+      // If this relay is for the participant who sent the message, skip.
       if (relay.forRoleName === message.fromRoleName) {
         continue;
       }

@@ -276,6 +276,7 @@ function listCollectionRoute(model, authz, opts={}) {
     const count = Number(req.query.count || LIST_COUNT_DEFAULT);
     const order = orderFromParam(model, req.query.sort);
     const whereQuery = _.omit(req.query, ['sort', 'count', 'offset']);
+    authz.checkRecord(req, 'list', model, whereQuery);
     const where = whereFromQuery(model, whereQuery, opts);
     const records = await model.findAll({
       offset: offset,
@@ -292,13 +293,13 @@ function listCollectionRoute(model, authz, opts={}) {
 
 function createRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
-    authz.checkRecord(req, 'create', model, null);
-    authz.checkFields(req, 'create', model, null, req.body);
     const fields = deserializeFields(model, req.body, opts);
     if (fields.id) {
       throw errors.badRequestError('Id is not allowed on create.');
     }
-    const record = model.build();
+    const record = model.build(fields);
+    authz.checkRecord(req, 'create', model, record);
+    authz.checkFields(req, 'create', model, record, req.body);
     await updateRecord(model, record, fields);
     respondWithRecord(res, model, record, opts, 201);
   };

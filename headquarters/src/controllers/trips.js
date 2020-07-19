@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const TripCore = require('fptcore/src/cores/trip');
 const PlayerCore = require('fptcore/src/cores/player');
@@ -14,8 +14,9 @@ class TripsController {
       variantNames);
     const fields = Object.assign(initialFields, {
       orgId: trip.orgId,
+      experienceId: trip.experienceId,
       tripId: trip.id,
-      userId: null,
+      participantId: null,
     });
     return await models.Player.create(fields);
   }

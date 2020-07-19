@@ -5,6 +5,7 @@ export default Ember.Service.extend({
 
   environment: Ember.inject.service(),
 
+  authToken: null, // should be filled in once obtained
   apiRequestsInProgress: 0,
   timeout: 60000,
 
@@ -19,11 +20,15 @@ export default Ember.Service.extend({
     var self = this;
     this.incrementProperty('apiRequestsInProgress');
     var basePath = this.get('environment.apiHost') || '';
+    const headers = this.get('authToken') ?
+      { Authorization: `Bearer ${self.get('authToken')}` } :
+      {};
     return new Ember.RSVP.Promise(function(resolve, reject) {
       $.ajax({
         url: basePath + url,
         method: method,
         contentType: contentType,
+        headers: headers,
         data: data,
         dataType: 'json',
         timeout: self.get('timeout'),
@@ -47,8 +52,8 @@ export default Ember.Service.extend({
     return this.ajax(url, method, JSON.stringify(data), 'application/json');
   },
 
-  updateLocation: function(userId, latitude, longitude, accuracy, timestamp) {
-    return this.sendData(`/api/users/${userId}/device_state`, 'post', {
+  updateLocation: function(tripId, participantId, latitude, longitude, accuracy, timestamp) {
+    return this.sendData(`/api/trips/${tripId}/device_state/${participantId}`, 'post', {
       location_latitude: latitude,
       location_longitude: longitude,
       location_accuracy: accuracy,

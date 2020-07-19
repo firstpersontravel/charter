@@ -5,11 +5,13 @@ import RoleIndex from '../components/RoleIndex';
 import { lookupPlayersByRole } from './utils';
 
 const mapStateToProps = (state, ownProps) => {
-  const userId = ownProps.match.params.userId !== '0' ?
-    Number(ownProps.match.params.userId) : null;
-  const user = userId ? _.find(state.datastore.users, { id: userId }) : null;
+  const participantId = ownProps.match.params.participantId !== '0' ?
+    Number(ownProps.match.params.participantId) : null;
+  const participant = participantId ?
+    _.find(state.datastore.participants, { id: participantId }) :
+    null;
   return {
-    user: user,
+    participant: participant,
     players: lookupPlayersByRole(state, ownProps)
   };
 };

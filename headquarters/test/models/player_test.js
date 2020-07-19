@@ -1,4 +1,4 @@
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
@@ -8,7 +8,9 @@ describe('Player', () => {
 
   beforeEach(() => {
     player = models.Player.build({
+      createdAt: moment.utc(),
       orgId: 100,
+      experienceId: 3,
       tripId: 2,
       roleName: 'Role'
     });
@@ -21,6 +23,11 @@ describe('Player', () => {
   it('requires an org', async () => {
     player.orgId = null;
     await assertValidation(player, { orgId: 'must be present' });
+  });
+
+  it('requires an experience', async () => {
+    player.experienceId = null;
+    await assertValidation(player, { experienceId: 'must be present' });
   });
 
   it('requires a trip', async () => {

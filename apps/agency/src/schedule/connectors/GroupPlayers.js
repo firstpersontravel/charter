@@ -10,7 +10,7 @@ import GroupPlayers from '../components/GroupPlayers';
 
 const mapStateToProps = (state, ownProps) => ({
   group: lookupGroup(state, ownProps),
-  users: state.datastore.users,
+  participants: state.datastore.participants,
   profiles: state.datastore.profiles
 });
 

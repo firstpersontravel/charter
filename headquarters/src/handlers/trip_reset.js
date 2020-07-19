@@ -47,8 +47,8 @@ class TripResetHandler {
 
     // Reset user location
     await player.update(fields);
-    if (player.user) {
-      await player.user.update({
+    if (player.participant) {
+      await player.participant.update({
         locationLatitude: null,
         locationLongitude: null,
         locationAccuracy: null,
@@ -71,7 +71,7 @@ class TripResetHandler {
     const actionContext = await ActionContext.createForTripId(tripId);
     const players = await models.Player.findAll({
       where: { tripId: tripId },
-      include: [{ model: models.User, as: 'user' }]
+      include: [{ model: models.Participant, as: 'participant' }]
     });
 
     // Reset to starting scene

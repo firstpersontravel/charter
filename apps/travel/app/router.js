@@ -8,14 +8,12 @@ var Router = Ember.Router.extend({
 Router.map(function() {
   this.route('index', {path: '/'});
   this.route('login', {path: '/login'});
-  this.route('user', {path: '/u/:id', resetNamespace: true}, function() {
+  this.route('participant', {path: '/u/:id', resetNamespace: true}, function() {
     // TODO: change to r ("run")
     this.route('trip', {path: '/p/:trip_id', resetNamespace: true}, function() {  
       this.route('page', {path: '/'});
       this.route('player', {path: '/p/:player_id', resetNamespace: true}, function() {
         this.route('page', {path: '/'});
-        // TODO: remove admin route
-        this.route('admin', {path: '/admin'});
       });
     });
   });

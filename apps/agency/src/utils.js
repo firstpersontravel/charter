@@ -14,11 +14,11 @@ export function isProduction() {
   return getStage() === 'production';
 }
 
-export function getUserIframeUrl(group, user) {
-  return `/actor/${group.org.name}/user/${user.id}?nogps=1&noack=1`;
+export function getParticipantIframeUrl(group, participant) {
+  return `/actor/${group.org.name}/participant/${participant.id}?nogps=1&noack=1`;
 }
 
 export function getPlayerIframeUrl(trip, player) {
-  const userId = player.user ? player.user.id : 0;
-  return `/travel/u/${userId}/p/${trip.id}/p/${player.id}?nogps=true&mute=true&noack=true`;
+  const participantId = player.participant ? player.participant.id : 0;
+  return `/travel/u/${participantId}/p/${trip.id}/p/${player.id}?nogps=true&mute=true&noack=true`;
 }

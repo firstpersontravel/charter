@@ -35,7 +35,6 @@ class KernelController {
     logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
     const actionContext = await ActionContext.createForTripId(tripId, applyAt);
     // Note: for scheduled actions, this is in action.event.player_id; for immediate actions, in params (potentially a cleanup opportunity here)
-    if (action.params != null) 
     actionContext.actingPlayerId = parseInt((action.params && action.params.player_id) || 
         (action.event && action.event.player_id));
     const result = Kernel.resultForImmediateAction(action, actionContext);

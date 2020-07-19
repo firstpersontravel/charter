@@ -7,47 +7,46 @@ import { PlayerCore, RoleCore } from 'fptcore';
 
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
-import UserModal from '../../directory/partials/UserModal';
+import ParticipantModal from '../../directory/partials/ParticipantModal';
 
 export default class GroupPlayers extends Component {
   constructor(props) {
     super(props);
-    this.handleAssignUser = this.handleAssignUser.bind(this);
-    this.handleUserModalClose = this.handleUserModalClose.bind(this);
-    this.handleCreateUser = this.handleCreateUser.bind(this);
+    this.handleAssignParticipant = this.handleAssignParticipant.bind(this);
+    this.handleParticipantModalClose = this.handleParticipantModalClose.bind(this);
+    this.handleCreateParticipant = this.handleCreateParticipant.bind(this);
   }
 
-  handleAssignUser(roleName, trip, player, userId) {
-    const user = _.find(this.props.users, { id: Number(userId) });
+  handleAssignParticipant(roleName, trip, player, participantId) {
+    const participant = _.find(this.props.participants, { id: Number(participantId) });
     if (!player) {
       const initialFields = PlayerCore.getInitialFields(trip.script.content,
         roleName, trip.variantNames.split(','));
       const fields = Object.assign({
         orgId: trip.orgId,
+        experienceId: trip.experienceId,
         tripId: trip.id,
-        userId: userId
+        participantId: participantId
       }, initialFields);
       this.props.createInstance('players', fields);
       return;
     }
     // If it exists, update the player.
-    const updateFields = { userId: user ? user.id : null };
-    this.props.updateInstance('players', player.id,
-      updateFields);
+    const updateFields = { participantId: participant ? participant.id : null };
+    this.props.updateInstance('players', player.id, updateFields);
   }
 
-  handleUserModalClose() {
+  handleParticipantModalClose() {
     this.props.history.push({ search: '' });
   }
 
-  handleCreateUser(fields) {
+  handleCreateParticipant(fields) {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
-    const userFields = {
+    const participantFields = {
       orgId: this.props.group.orgId,
       experienceId: this.props.group.experienceId,
-      firstName: fields.firstName,
-      lastName: fields.lastName,
+      name: fields.name,
       phoneNumber: fields.phoneNumber,
       email: fields.email
     };
@@ -59,11 +58,11 @@ export default class GroupPlayers extends Component {
         roleName: roleName
       },
       insertions: {
-        userId: 'id'
+        participantId: 'id'
       }
     }] : null;
-    this.props.createInstances('users', userFields, profilesToCreate);
-    this.handleUserModalClose();
+    this.props.createInstances('participants', participantFields, profilesToCreate);
+    this.handleParticipantModalClose();
   }
 
   renderScheduleHeader(trip) {
@@ -80,63 +79,65 @@ export default class GroupPlayers extends Component {
     const script = this.props.group.script;
 
     const role = _.find(script.content.roles, { name: roleName });
-    const userIdsAlreadyChosen = _.filter(trip.players, { roleName: roleName })
+    const participantIdsAlreadyChosen = _.filter(trip.players, { roleName: roleName })
       .filter(p => p !== player)
-      .map(p => p.user)
+      .map(p => p.participant)
       .filter(Boolean)
-      .map(user => user.id);
-    const user = player && player.user;
+      .map(participant => participant.id);
+    const participant = player && player.participant;
 
-    let userLabel = 'Unassigned';
-    let userClass = 'faint';
-    let userId = '';
+    let participantLabel = 'Unassigned';
+    let participantClass = 'faint';
+    let participantId = '';
 
-    if (user) {
-      userLabel = `${user.firstName} ${user.lastName && `${user.lastName[0]}.`}`;
-      userId = user.id;
-      userClass = '';
+    if (participant) {
+      participantLabel = participant.name;
+      participantId = participant.id;
+      participantClass = '';
     }
 
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, experience.id, roleName);
-    const userChoices = profileChoices
+      this.props.profiles, this.props.participants, experience.id, roleName);
+    const participantChoices = profileChoices
       .map(profile => (
-        _.find(this.props.users, { id: profile.userId })
+        _.find(this.props.participants, { id: profile.participantId })
       ))
       .filter(Boolean)
-      .filter(profileUser => !userIdsAlreadyChosen.includes(profileUser.id))
-      .map(profileUser => ({
-        value: profileUser.id,
-        label: `${profileUser.firstName} ${profileUser.lastName}`
+      .filter(profileParticipant => (
+        !participantIdsAlreadyChosen.includes(profileParticipant.id)
+      ))
+      .map(profileParticipant => ({
+        value: profileParticipant.id,
+        label: profileParticipant.name
       }));
-    if (userChoices.length === 0) {
+    if (participantChoices.length === 0) {
       return index === 0 ? <em>No users</em> : null;
     }
-    const userChoicesWithNone = [{ value: '', label: 'Unassigned' }]
-      .concat(userChoices);
-    const goToUser = user ? (
+    const participantChoicesWithNone = [{ value: '', label: 'Unassigned' }]
+      .concat(participantChoices);
+    const goToParticipant = participant ? (
       <Link
         className="ml-1"
-        to={`/${group.org.name}/${group.experience.name}/directory/user/${user.id}`}>
+        to={`/${group.org.name}/${group.experience.name}/directory/${participant.id}`}>
         <i className="fa fa-external-link-square text-dark faint" />
       </Link>
     ) : null;
 
     const canEdit = !group.isArchived && !trip.isArchived;
-    const userControl = canEdit ? (
+    const participantControl = canEdit ? (
       <PopoverControl
         title={role.title}
-        choices={userChoicesWithNone}
-        onConfirm={_.curry(this.handleAssignUser)(roleName, trip, player)}
-        value={userId}
-        label={userLabel}
-        labelClassName={userClass} />
-    ) : userLabel;
+        choices={participantChoicesWithNone}
+        onConfirm={_.curry(this.handleAssignParticipant)(roleName, trip, player)}
+        value={participantId}
+        label={participantLabel}
+        labelClassName={participantClass} />
+    ) : participantLabel;
 
     return (
       <div>
-        {userControl}
-        {goToUser}
+        {participantControl}
+        {goToParticipant}
       </div>
     );
   }
@@ -196,13 +197,13 @@ export default class GroupPlayers extends Component {
       return null;
     }
     return (script.content.roles || [])
-      .filter(role => RoleCore.canRoleHaveUser(script.content, role))
+      .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
       .map(role => this.renderRoleRow(trips, role));
   }
 
   render() {
     const query = new URLSearchParams(this.props.location.search);
-    const isCreatingUser = !!query.get('role');
+    const isCreatingParticipant = !!query.get('role');
 
     const trips = this.props.group.trips || [];
     const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
@@ -222,11 +223,11 @@ export default class GroupPlayers extends Component {
               {roleRows}
             </tbody>
           </table>
-          <UserModal
-            isOpen={isCreatingUser}
-            user={null}
-            onClose={this.handleUserModalClose}
-            onConfirm={this.handleCreateUser} />
+          <ParticipantModal
+            isOpen={isCreatingParticipant}
+            participant={null}
+            onClose={this.handleParticipantModalClose}
+            onConfirm={this.handleCreateParticipant} />
         </div>
       </div>
     );
@@ -235,7 +236,7 @@ export default class GroupPlayers extends Component {
 
 GroupPlayers.propTypes = {
   group: PropTypes.object.isRequired,
-  users: PropTypes.array.isRequired,
+  participants: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,
   createInstances: PropTypes.func.isRequired,

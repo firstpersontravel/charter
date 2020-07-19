@@ -58,6 +58,7 @@ app.use((req, res, next) => {
       name: 'request',
       method: req.method,
       path: req.originalUrl,
+      pattern: req.originalUrl.split('?')[0].replace(/\d+/g, 'xxx'),
       ip: req.ip,
       status: res.statusCode,
       duration: reqDurationMsec,
@@ -130,8 +131,6 @@ app.use('/build', express.static(path.join(root, 'build')));
 app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
 app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
 app.use('/favicon.ico', serveFile('static/images/favicon.png'));
-app.use('/apple-touch-icon-precomposed.png',
-  serveFile('static/images/apple-touch-icon-precomposed.png'));
 
 // Serve one-page travel app
 app.use('/travel', serveFile('apps/travel/dist/index.html'));

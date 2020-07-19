@@ -8,8 +8,8 @@ class ContextCore {
    * Gather context for a player.
    */
   static gatherPlayerEvalContext(env, trip, player) {
-    const user = player.user || {};
-    const profile = user.profile || {};
+    const participant = player.participant || {};
+    const profile = participant.profile || {};
     const role = _.find(_.get(trip, 'script.content.roles') || [],
       { name: player.roleName }) || {};
     const pageNamesByRole = trip.tripState.currentPageNamesByRole || {};
@@ -18,25 +18,22 @@ class ContextCore {
       { name: pageName }) || {};
     const link = (env.host || '') + '/s/' + player.id;
     const joinLink = (env.host || '') + '/entry/t/' + (trip.id || 0) + '/r/' + player.roleName;
-    const userName = user.lastName ?
-      (user.firstName + ' ' + user.lastName) :
-      user.firstName;
-    const contactName = role.title || userName || null;
+    const contactName = role.title || participant.name || null;
     return _.assign({}, profile.values, {
       link: link,
       join_link: joinLink,
-      email: profile.email || user.email || null,
+      email: profile.email || participant.email || null,
       contact_name: contactName,
-      user_name: userName,
+      participant_name: participant.name,
       photo: profile.photo || null,
       facetime: profile.facetimeUsername || null,
       skype: profile.skypeUsername || null,
-      phone_number: profile.phoneNumber || user.phoneNumber || null,
+      phone_number: profile.phoneNumber || participant.phoneNumber || null,
       directive: page && page.directive || null,
       headline: page && page.directive || null,
-      latitude: user.locationLatitude || null,
-      longitude: user.locationLongitude || null,
-      accuracy: user.locationAccuracy || null
+      latitude: participant.locationLatitude || null,
+      longitude: participant.locationLongitude || null,
+      accuracy: participant.locationAccuracy || null
     });
   }
 

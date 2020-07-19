@@ -1,10 +1,9 @@
 const assert = require('assert');
-const moment = require('moment');
 const sinon = require('sinon');
 
 const Kernel = require('fptcore/src/kernel/kernel');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');
 const KernelController = require('../../src/kernel/kernel');
 const KernelOpController = require('../../src/kernel/op');
@@ -39,14 +38,12 @@ describe('KernelController', () => {
     });
 
     it('schedules an action', async () => {
-      const now = moment.utc();
-      const inOneHour = now.clone().add(1, 'hours').toDate();
+      const inOneHour = mockNow.clone().add(1, 'hours').toDate();
       const scheduleAction = {
         name: 'set_value',
         params: { value_ref: 'ABC', new_value_ref: 'DEF' },
         scheduleAt: inOneHour
       };
-      sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'create').resolves();
       sandbox.stub(Kernel, 'resultForImmediateAction').returns({
         resultOps: [],
@@ -61,7 +58,7 @@ describe('KernelController', () => {
         playerId: NaN,
         type: 'action',
         appliedAt: null,
-        createdAt: now.toDate(),
+        createdAt: mockNow.toDate(),
         event: null,
         failedAt: null,
         name: 'set_value',

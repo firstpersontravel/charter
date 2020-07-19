@@ -1,15 +1,12 @@
 import { connect } from 'react-redux';
 
 import App from '../components/App';
+import { latestAuthData } from '../../datastore-utils';
 import { crash, fetchAuthInfo } from '../../actions';
 
 const mapStateToProps = state => ({
-  hasError: (
-    state.globalError !== null ||
-    Object
-      .keys(state.requestErrors)
-      .filter(key => !key.startsWith('auth.'))
-      .length > 0)
+  authInfo: latestAuthData(state),
+  globalError: state.globalError
 });
 
 const mapDispatchToProps = dispatch => ({

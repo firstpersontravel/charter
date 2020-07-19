@@ -20,7 +20,7 @@ const mapStateToProps = (state, ownProps) => ({
     filter: { name: ownProps.match.params.experienceName }
   }),
   group: lookupGroup(state, ownProps),
-  users: state.datastore.users,
+  participants: state.datastore.participants,
   profiles: state.datastore.profiles
 });
 

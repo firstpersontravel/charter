@@ -105,5 +105,5 @@ export default withLoader(Experience, ['org.id', 'experience.id'], (props) => {
   props.listCollection('trips', filters);
   props.listCollection('scripts', filters);
   props.listCollection('profiles', filters);
-  props.listCollection('users', filters);
+  props.listCollection('participants', filters);
 });

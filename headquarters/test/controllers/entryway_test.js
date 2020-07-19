@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const RoleCore = require('fptcore/src/cores/role');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 const EntrywayController = require('../../src/controllers/entryway');
@@ -38,8 +38,8 @@ const mockScript = {
 
 describe('EntrywayController', () => {
   describe('#assignActors', () => {
-    it('assigns users for actor roles only', async () => {
-      sandbox.stub(RoleCore, 'canRoleHaveUser')
+    it('assigns participants for actor roles only', async () => {
+      sandbox.stub(RoleCore, 'canRoleHaveParticipant')
         .callsFake((scriptContent, role) => (
           role.name === 'actor' || role.name === 'player'
         ));
@@ -55,12 +55,12 @@ describe('EntrywayController', () => {
   });
 
   describe('#assignActor', () => {
-    it('assigns first matching user', async () => {
-      const users = [
-        { userId: 4 },
-        { userId: 5 }
+    it('assigns first matching participant', async () => {
+      const profiles = [
+        { participantId: 4 },
+        { participantId: 5 }
       ];
-      sandbox.stub(models.Profile, 'findAll').resolves(users);
+      sandbox.stub(models.Profile, 'findAll').resolves(profiles);
       sandbox.stub(models.Player, 'update').resolves();
 
       await EntrywayController.assignActor(
@@ -77,11 +77,11 @@ describe('EntrywayController', () => {
       });
       // test update player called
       sinon.assert.calledWith(models.Player.update,
-        { userId: 4 },
+        { participantId: 4 },
         { where: { tripId: 100, roleName: 'role' } });
     });
 
-    it('does nothing if no matching user is found', async () => {
+    it('does nothing if no matching participant is found', async () => {
       sandbox.stub(models.Profile, 'findAll').resolves([]);
       sandbox.stub(models.Player, 'update').resolves();
 
@@ -102,14 +102,14 @@ describe('EntrywayController', () => {
   });
 
   describe('#createTripFromRelay', () => {
-    it('creates group and user when they don\'t exist', async () => {
+    it('creates group and participant when they don\'t exist', async () => {
       const mockGroup = { id: 1 };
-      const mockUser = { id: 2 };
+      const mockParticipant = { id: 2 };
       const mockProfile = { isActive: true };
 
       sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
       sandbox.stub(models.Group, 'findOrCreate').resolves([mockGroup]);
-      sandbox.stub(models.User, 'findOrCreate').resolves([mockUser]);
+      sandbox.stub(models.Participant, 'findOrCreate').resolves([mockParticipant]);
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
       sandbox.stub(TripsController, 'createTrip').resolves(mockTrip);
       sandbox.stub(models.Player, 'update').resolves();
@@ -130,14 +130,17 @@ describe('EntrywayController', () => {
           isArchived: false
         }
       });
-      sinon.assert.calledWith(models.User.findOrCreate, {
+      sinon.assert.calledWith(models.Participant.findOrCreate, {
         where: {
           orgId: 9,
           experienceId: 20,
           isActive: true,
           phoneNumber: '123'
         },
-        defaults: { firstName: 'Script Player' }
+        defaults: {
+          createdAt: mockNow,
+          name: 'Script Player'
+        }
       });
       sinon.assert.calledWith(models.Profile.findOrCreate, {
         where: {
@@ -145,10 +148,9 @@ describe('EntrywayController', () => {
           isArchived: false,
           roleName: 'Player',
           experienceId: 20,
-          userId: 2
+          participantId: 2
         },
         defaults: {
-          firstName: 'Script Player',
           isActive: true,
           isArchived: false
         }

@@ -50,33 +50,29 @@ class KernelOpController {
       fromRoleName: op.fields.fromRoleName,
       toRoleName: op.fields.toRoleName,
       createdAt: op.fields.createdAt.toDate(),
-      name: op.fields.name,
       medium: op.fields.medium,
       content: op.fields.content,
-      readAt: op.fields.readAt ? op.fields.readAt.toDate() : null,
       isReplyNeeded: op.fields.isReplyNeeded,
       isInGallery: op.fields.isInGallery
     };
     const message = await models.Message.create(fields);
     await MessageController.sendMessage(message);
-    if (!fields.readAt) {
-      await TripRelaysController.relayMessage(objs.trip, message,
-        op.suppressRelayId);
-    }
+    await TripRelaysController.relayMessage(objs.trip, message,
+      op.suppressRelayId);
     return message;
   }
 
   static async sendEmail(objs, op) {
     const toPlayers = objs.players
-      .filter(p => p.roleName === op.toRoleName && p.userId)
+      .filter(p => p.roleName === op.toRoleName && p.participantId)
       .filter((p) => {
-        const user = objs.users.find(u => u.id === p.userId);
-        return user && user.email;
+        const participant = objs.participants.find(u => u.id === p.participantId);
+        return participant && participant.email;
       });
     // Send email to each player matching role name.
     for (const toPlayer of toPlayers) {
-      const toUser = objs.users.find(u => u.id === toPlayer.userId);
-      await EmailController.sendEmail(op.fromEmail, toUser.email,
+      const toParticipant = objs.participants.find(u => u.id === toPlayer.participantId);
+      await EmailController.sendEmail(op.fromEmail, toParticipant.email,
         op.subject, op.bodyMarkdown);
     }
   }

@@ -13,6 +13,7 @@ function postAction($btn, data) {
     $.ajax({
       type: 'post',
       url: '/api/trips/' + data.trip_id + '/actions',
+      headers: { Authorization: 'Bearer {{authToken}}' },
       contentType: 'application/json',
       data: JSON.stringify(body),
       dataType: 'html',
@@ -40,6 +41,7 @@ function postEvent($btn, data) {
     $.ajax({
       type: 'post',
       url: '/api/trips/' + data.trip_id + '/events',
+      headers: { Authorization: 'Bearer {{authToken}}' },
       contentType: 'application/json',
       data: JSON.stringify(body),
       dataType: 'html',
@@ -105,13 +107,14 @@ function getLocation() {
 }
 
 function transmitLocation(fix) {
-  var userId = $("#data-user-id").html();
-  if (!userId) {
+  var participantId = $("#data-participant-id").html();
+  if (!participantId) {
     return;
   }
   $.ajax({
     type: 'put',
-    url: '/api/users/' + userId,
+    url: '/api/participants/' + participantId,
+    headers: { Authorization: 'Bearer {{authToken}}' },
     data: {
       locationLatitude: fix.coords.latitude,
       locationLongitude: fix.coords.longitude,
@@ -210,7 +213,7 @@ $(function() {
   </ul>
 </nav>
 
-<div style='display: none;' id='data-user-id'>{{userId}}</div>
+<div style='display: none;' id='data-participant-id'>{{participantId}}</div>
 
 <div id='container'>
   {{> actor}}

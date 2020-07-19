@@ -3,6 +3,7 @@ require('module-alias/register');
 /**
  * Named _init so mocha loads it first.
  */
+const chalk = require('chalk');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
@@ -69,11 +70,27 @@ beforeEach(() => {
   mocks.createTestMocks();
 });
 
+// Show errors if failed with sequelize validation error
+afterEach(function() {
+  const err = this.currentTest.ctx._runnable.err;
+  if (err && err instanceof Sequelize.ValidationError) {
+    const errs = err.errors
+      .map(errItem => (
+        `- ${errItem.instance.constructor.name}.${errItem.path}: ` +
+        `${errItem.message} (${errItem.type})`      
+      ))
+      .join('\n');
+    console.log(chalk.red(`
+------------------------------------------------
+Sequelize Validation Error:
+${errs}
+------------------------------------------------`));
+  }
+});
+
 afterEach(() => {
   // Destroy mocks
   mocks.teardownTestMocks();
   // reset DB
   return config.database.sync({ force: true });
 });
-
-

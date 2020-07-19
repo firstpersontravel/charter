@@ -76,11 +76,6 @@ describe('Trip', () => {
     await trip.validate();
   });
 
-  it('allows gallery name', async () => {
-    trip.galleryName = 'abc';
-    await trip.validate();
-  });
-
   it('prevents changing associations', async () => {
     const testTrip = await TestUtil.createDummyTrip();
     testTrip.experienceId = 2;

@@ -35,6 +35,10 @@ html, button, input, select, textarea, .pure-g [class *= "pure-u"] {
     font-family: Raleway;
 }
 
+input {
+    color: black !important;
+}
+
 p { margin: 0.5em 0; }
 
 .application-loading {
@@ -162,19 +166,6 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     background: white;
     .pure-button { padding: 0.5em; }
     .text-padded { padding: 0.5em 0.5em; }
-    .sync-status-offline { color: red; }
-    .sync-status-online { color: green; }
-}
-
-.sync-status {
-    background: rgba(255, 255, 255, 0.8);
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 3px;
-    border-bottom-left-radius: 3px;
-    &.sync-status-offline { color: red; }
-    &.sync-status-online { display: none; }
 }
 
 /**

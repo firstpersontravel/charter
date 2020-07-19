@@ -47,7 +47,7 @@ function NoOrgs() {
 }
 
 function getIsAuthenticating(state) {
-  return state.requests['auth.info'] !== 'fulfilled';
+  return false;
 }
 
 function getUserInfo(state) {

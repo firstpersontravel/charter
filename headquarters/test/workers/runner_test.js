@@ -1,7 +1,6 @@
-const moment = require('moment');
 const sinon = require('sinon');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');
 const RunnerWorker = require('../../src/workers/runner');
 const KernelController = require('../../src/kernel/kernel');
@@ -14,17 +13,15 @@ describe('RunnerWorker', () => {
 
   describe('#runScheduledActions', () => {
     it('runs successfully', async () => {
-      const now = moment.utc();
       const stubAction = {
         type: 'action',
         tripId: 123,
         name: 'name',
         params: { param: 1 },
         event: { context: 3 },
-        scheduledAt: now,
+        scheduledAt: mockNow,
         update: sandbox.stub().resolves()
       };
-      sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'findAll').resolves([stubAction]);
       sandbox.stub(KernelController, 'applyAction').resolves();
 
@@ -38,7 +35,7 @@ describe('RunnerWorker', () => {
           where: { isArchived: false }
         }]
       });
-      sinon.assert.calledWith(stubAction.update, { appliedAt: now });
+      sinon.assert.calledWith(stubAction.update, { appliedAt: mockNow });
       sinon.assert.calledWith(KernelController.applyAction,
         123, {
           name: 'name',
@@ -48,17 +45,15 @@ describe('RunnerWorker', () => {
     });
 
     it('catches errors if run in safe mode', async () => {
-      const now = moment.utc();
       const stubAction = {
         type: 'action',
         tripId: 123,
         name: 'name',
         params: { param: 1 },
         event: { context: 3 },
-        scheduledAt: now,
+        scheduledAt: mockNow,
         update: sandbox.stub().resolves()
       };
-      sandbox.stub(moment, 'utc').returns(now);
       sandbox.stub(models.Action, 'findAll').resolves([stubAction]);
       sandbox.stub(KernelController, 'applyAction')
         .rejects(new Error('failed action'));
@@ -73,7 +68,7 @@ describe('RunnerWorker', () => {
           where: { isArchived: false }
         }]
       });
-      sinon.assert.calledWith(stubAction.update, { failedAt: now });
+      sinon.assert.calledWith(stubAction.update, { failedAt: mockNow });
       sinon.assert.calledWith(KernelController.applyAction,
         123, {
           name: 'name',

@@ -18,5 +18,6 @@ const OrgRole = database.define('OrgRole', snakeCaseColumns({
 
 OrgRole.belongsTo(Org, belongsToField('org'));
 OrgRole.belongsTo(User, belongsToField('user'));
+User.hasMany(OrgRole, { as: 'orgRoles', foreignKey: 'user_id' });
 
 module.exports = OrgRole;

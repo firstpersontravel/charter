@@ -22,19 +22,19 @@ class TwilioCallOps {
     // Find the active player
     const dialPlayer = await models.Player.findOne({
       where: { tripId: tripId, roleName: twimlOp.toRoleName },
-      include: [{ model: models.User, as: 'user' }]
+      include: [{ model: models.Participant, as: 'participant' }]
     });
     if (!dialPlayer) {
       logger.warn(`Dial player ${twimlOp.toRoleName} not found.`);
       return TwilioCallUtil.hangup();
     }
-    if (!dialPlayer.user) {
-      logger.warn('Dial target user not found.');
+    if (!dialPlayer.participant) {
+      logger.warn('Dial target participant not found.');
       return TwilioCallUtil.hangup();
     }
-    if (!dialPlayer.user.phoneNumber) {
+    if (!dialPlayer.participant.phoneNumber) {
       logger.warn(
-        `Dial target user ${dialPlayer.userId} has no phone number.`
+        `Dial target participant ${dialPlayer.participantId} has no phone number.`
       );
       return TwilioCallUtil.hangup();
     }
@@ -42,7 +42,7 @@ class TwilioCallOps {
       callerId: `+1${dialRelay.relayPhoneNumber}`,
       timeout: 30
     });
-    dial.number(`+1${dialPlayer.user.phoneNumber}`);
+    dial.number(`+1${dialPlayer.participant.phoneNumber}`);
     twimlResponse.say('We\'re sorry, this number could not be reached.');
   }
 

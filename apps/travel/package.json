@@ -10,7 +10,7 @@
   "scripts": {
     "start": "./node_modules/.bin/ember server",
     "build": "./node_modules/.bin/ember build",
-    "test": "./node_modules/.bin/ember test"
+    "test": "jshint app"
   },
   "repository": "",
   "engines": {
@@ -44,8 +44,12 @@
     "ember-load-initializers": "^2.0.0",
     "ember-resolver": "^2.0.3",
     "faye": "^1.2.4",
-    "font-awesome": "4.4.0",
+    "featherlight": "^1.7.14",
+    "font-awesome": "^4.4.0",
     "loader.js": "^4.7.0",
+    "moment-timezone": "^0.5.31",
+    "polyline-encoded": "0.0.9",
+    "raven-js": "^3.27.2",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",

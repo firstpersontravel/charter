@@ -69,7 +69,7 @@ class Schedule extends Component {
         forRoleName: entryway.for,
         asRoleName: entryway.as || entryway.for,
         withRoleName: entryway.with,
-        userPhoneNumber: ''
+        participantPhoneNumber: ''
       });
       if (!relay) {
         hasUnallocated = true;
@@ -299,7 +299,7 @@ const withExp = withLoader(Schedule, ['experience.id'], (props) => {
     orgId: props.experience.orgId,
     experienceId: props.experience.id,
     stage: getStage(),
-    userPhoneNumber: ''
+    participantPhoneNumber: ''
   });
 });
 

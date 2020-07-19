@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { RoleCore, SceneCore } from 'fptcore';
 
 import GroupMap from '../partials/GroupMap';
-import { getUserIframeUrl, getPlayerIframeUrl } from '../../utils';
+import { getParticipantIframeUrl, getPlayerIframeUrl } from '../../utils';
 
 function getAllPlayers(trips) {
   return _(trips)
@@ -15,22 +15,22 @@ function getAllPlayers(trips) {
     .value();
 }
 
-function getTripPlayer(trip, roleName, user) {
+function getTripPlayer(trip, roleName, participant) {
   return trip.players.find(p => (
     p.roleName === roleName &&
-    p.userId === (user ? user.id : null)
+    p.participantId === (participant ? participant.id : null)
   ));
 }
 
-function getExternalUrl(group, trips, role, user) {
+function getExternalUrl(group, trips, role, participant) {
   if (!trips.length) {
     return null;
   }
-  if (trips.length > 1 && user) {
-    return getUserIframeUrl(group, user);
+  if (trips.length > 1 && participant) {
+    return getParticipantIframeUrl(group, participant);
   }
   const trip = trips[0];
-  const player = getTripPlayer(trip, role.name, user);
+  const player = getTripPlayer(trip, role.name, participant);
   if (player) {
     return getPlayerIframeUrl(trip, player);
   }
@@ -38,12 +38,12 @@ function getExternalUrl(group, trips, role, user) {
 }
 
 export default class GroupOverview extends Component {
-  renderAddUserIcon(player) {
+  renderAddParticipantIcon(player) {
     const script = this.props.group.script;
-    if (!RoleCore.canRoleHaveUser(script.content, player.role)) {
+    if (!RoleCore.canRoleHaveParticipant(script.content, player.role)) {
       return null;
     }
-    if (player.user) {
+    if (player.participant) {
       return null;
     }
     const group = this.props.group;
@@ -63,17 +63,17 @@ export default class GroupOverview extends Component {
     );
   }
 
-  renderRoleUser(role, user) {
+  renderRoleParticipant(role, participant) {
     const group = this.props.group;
-    const userId = user ? user.id : 0;
-    const userName = user ? user.firstName : 'No user';
+    const participantId = participant ? participant.id : 0;
+    const participantName = participant ? participant.name : 'No user';
     const trips = group.trips
-      .filter(trip => getTripPlayer(trip, role.name, user));
+      .filter(trip => getTripPlayer(trip, role.name, participant));
     if (!trips.length) {
       return null;
     }
     const tripTitles = trips.map(t => t.title).join(', ');
-    const externalUrl = getExternalUrl(group, trips, role, user);
+    const externalUrl = getExternalUrl(group, trips, role, participant);
     const externalLink = externalUrl ? (
       <a
         className="ml-1"
@@ -85,18 +85,18 @@ export default class GroupOverview extends Component {
     ) : null;
 
     return (
-      <div key={`${role.name}-${userId}`} className="constrain-text">
+      <div key={`${role.name}-${participantId}`} className="constrain-text">
         <Link
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${role.name}/${userId}`}>
-          <strong>{role.title}</strong> ({userName}, {tripTitles})
+          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${role.name}/${participantId}`}>
+          <strong>{role.title}</strong> ({participantName}, {tripTitles})
         </Link>
         {externalLink}
       </div>
     );
   }
 
-  renderRole(role, users) {
-    return users.map(user => this.renderRoleUser(role, user));
+  renderRole(role, participants) {
+    return participants.map(participant => this.renderRoleParticipant(role, participant));
   }
 
   renderTrip(trip) {
@@ -125,23 +125,23 @@ export default class GroupOverview extends Component {
       ));
 
     const roles = _(group.script.content.roles)
-      .filter(role => RoleCore.canRoleHaveUser(group.script.content, role))
+      .filter(role => RoleCore.canRoleHaveParticipant(group.script.content, role))
       .sort(SceneCore.sortResource)
       .value();
     const allPlayers = getAllPlayers(group.trips);
 
-    function usersForRole(role) {
+    function participantsForRole(role) {
       return _(allPlayers)
         .filter(player => !!player.role.interface)
         .filter({ roleName: role.name })
-        .map('user')
+        .map('participant')
         .uniq()
         .flatten()
         .value();
     }
 
     const renderedPlayers = roles.map(role => (
-      this.renderRole(role, usersForRole(role))
+      this.renderRole(role, participantsForRole(role))
     ));
 
     return (

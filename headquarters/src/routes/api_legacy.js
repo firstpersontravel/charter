@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 const models = require('../models');
+const { createTripToken } = require('./auth');
 
 function camelToDash(str) {
   return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
@@ -38,16 +39,16 @@ function jsonApiSerialize(instance) {
 /**
  * Legacy getter for THG app in JSONAPI format.
  */
-async function getUserRoute(req, res) {
-  const user = await models.User.findByPk(req.params.id);
-  const response = { data: jsonApiSerialize(user) };
+async function getParticipantRoute(req, res) {
+  const participant = await models.Participant.findByPk(req.params.id);
+  const response = { data: jsonApiSerialize(participant) };
   res.status(200);
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(response, null, 2));
 }
 
 /**
- * Legacy getter for THG app in JSONAPI format.
+ * Legacy getter for THG app in JSONAPI format. There is no security here.
  */
 async function getTripRoute(req, res) {
   const includeScript = !!req.query.script;
@@ -63,7 +64,7 @@ async function getTripRoute(req, res) {
     res.status(404).send('Not Found');
     return;
   }
-  const [assets, players, messages, actions, profiles, users] = (
+  const [assets, players, messages, actions, profiles, participants] = (
     await Promise.all([
       models.Asset.findAll({ where: { experienceId: trip.experienceId } }),
       models.Player.findAll({ where: { tripId: req.params.id } }),
@@ -80,12 +81,11 @@ async function getTripRoute(req, res) {
         }
       }),
       models.Profile.findAll({
-        where: {
-          isArchived: false,
-          experienceId: trip.experienceId
-        }
+        where: { isArchived: false, experienceId: trip.experienceId }
       }),
-      models.User.findAll({ where: { isArchived: false } })
+      models.Participant.findAll({
+        where: { isArchived: false, experienceId: trip.experienceId }
+      })
     ])
   );
 
@@ -95,12 +95,12 @@ async function getTripRoute(req, res) {
     .filter({ type: 'directions' })
     .map('data')
     .value();
-
+  
   const objs = players
     .concat(messages)
     .concat(actions)
     .concat(profiles)
-    .concat(users);
+    .concat(participants);
 
   if (includeScript) {
     objs.push(trip.script);
@@ -115,6 +115,9 @@ async function getTripRoute(req, res) {
     .map(message => ({ id: message.id, type: 'message' }));
   data.relationships.player = players
     .map(player => ({ id: player.id, type: 'player' }));
+  
+  // Sneak in a day-long auth token
+  data.attributes['auth-token'] = createTripToken(trip, 86400);
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };
@@ -124,6 +127,6 @@ async function getTripRoute(req, res) {
 }
 
 module.exports = {
-  getUserRoute,
+  getParticipantRoute,
   getTripRoute
 };

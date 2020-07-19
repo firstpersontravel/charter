@@ -31,12 +31,12 @@ export default Ember.Route.extend({
       },
       timestamp: timestamp
     });
-    var user = this.context.get('user');
-    if (!user) { return; }
-    var oldLatitude = this.get('user.locationLatitude');
-    var oldLongitude = this.get('user.locationLongitude');
-    var oldAccuracy = this.get('user.locationAccuracy');
-    user.setProperties({
+    var participant = this.context.get('participant');
+    if (!participant) { return; }
+    var oldLatitude = this.get('participant.locationLatitude');
+    var oldLongitude = this.get('participant.locationLongitude');
+    var oldAccuracy = this.get('participant.locationAccuracy');
+    participant.setProperties({
       locationLatitude: latitude,
       locationLongitude: longitude,
       locationAccuracy: accuracy,
@@ -116,19 +116,20 @@ export default Ember.Route.extend({
     },
 
     updateLocation: function(fix) {
-      var user = this.context.get('user');
-      if (!user) { return; }
-      var oldLatitude = user.get('locationLatitude');
-      var oldLongitude = user.get('locationLongitude');
-      var oldAccuracy = user.get('locationAccuracy');
-      user.setProperties({
+      var trip = this.context.get('trip');
+      var participant = this.context.get('participant');
+      if (!participant) { return; }
+      var oldLatitude = participant.get('locationLatitude');
+      var oldLongitude = participant.get('locationLongitude');
+      var oldAccuracy = participant.get('locationAccuracy');
+      participant.setProperties({
         locationLatitude: fix.coords.latitude,
         locationLongitude: fix.coords.longitude,
         locationAccuracy: fix.coords.accuracy,
         locationTimestamp: moment.utc(fix.timestamp)
       });
       this.get('api')
-        .updateLocation(user.id,
+        .updateLocation(trip.id, participant.id,
           fix.coords.latitude, fix.coords.longitude,
           fix.coords.accuracy, Math.floor(fix.timestamp / 1000))
         .then(function() {
@@ -205,10 +206,6 @@ export default Ember.Route.extend({
         role_name: player.get('roleName'),
         audio_name: player.get('values.audio.name')
       });
-    },
-
-    goToAdmin: function() {
-      this.transitionTo('player.admin');
     }
   }
 });

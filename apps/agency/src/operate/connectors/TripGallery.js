@@ -10,7 +10,6 @@ const mapStateToProps = (state, ownProps) => ({
   messages: _(state.datastore.messages)
     .filter({
       tripId: Number(ownProps.match.params.tripId),
-      name: '',
       medium: 'image'
     })
     .sortBy('createdAt')

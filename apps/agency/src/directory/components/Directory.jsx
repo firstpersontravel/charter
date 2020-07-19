@@ -1,9 +1,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NavLink, Link } from 'react-router-dom';
-
-import { RoleCore } from 'fptcore';
+import { Link } from 'react-router-dom';
 
 import Loader from '../../partials/Loader';
 
@@ -19,14 +17,13 @@ export default class Directory extends Component {
     const experience = this.props.experience;
     return (
       <div key={roleName} className="constrain-text">
-        &rsaquo; <NavLink
-          activeClassName="bold"
+        &rsaquo; <Link
           to={{
             pathname: `/${experience.org.name}/${experience.name}/directory`,
-            query: { role: roleName }
+            search: `?role=${roleName}`
           }}>
           {role.title}
-        </NavLink>
+        </Link>
          &nbsp;({roleProfiles.length})
       </div>
     );
@@ -36,7 +33,6 @@ export default class Directory extends Component {
     const script = this.props.experience.script;
     const profiles = this.props.profiles;
     const roleNames = _(script.content.roles)
-      .filter(RoleCore.canRoleHaveUser)
       .map('name')
       .value();
     return roleNames.map((roleName) => {
@@ -61,11 +57,10 @@ export default class Directory extends Component {
         </div>
         {this.renderRoles()}
         <div className="mt-2">
-          <NavLink
-            activeClassName="bold"
+          <Link
             to={`/${experience.org.name}/${experience.name}/directory?role=Archived`}>
             Archived
-          </NavLink>
+          </Link>
         </div>
       </div>
     );

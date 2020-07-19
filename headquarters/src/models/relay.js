@@ -26,7 +26,7 @@ const Relay = database.define('Relay', snakeCaseColumns({
   asRoleName: requiredStringField(32),
   withRoleName: requiredStringField(32),
   relayPhoneNumber: requiredStringField(10),
-  userPhoneNumber: optionalStringField(10),  // blank if for everyone
+  participantPhoneNumber: optionalStringField(10),  // blank if for everyone
   isActive: mutableModifier(booleanField(true))
 }));
 

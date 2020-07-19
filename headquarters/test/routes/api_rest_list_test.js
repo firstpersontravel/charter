@@ -76,14 +76,16 @@ describe('apiRestRoutes', () => {
     });
 
     it('calls authorizer', async () => {
-      req.query = { offset: 1, count: 5 };
+      req.query = { offset: 1, count: 5, title: 'search' };
       sandbox.stub(Model, 'findAll').resolves([sampleRecord1, sampleRecord2]);
 
       // Call the route
       await apiRestRoutes.listCollectionRoute(Model, dummyAuthz)(req, res);
 
       // Assert authz calls are made
-      sinon.assert.calledTwice(dummyAuthz.checkRecord);
+      sinon.assert.calledThrice(dummyAuthz.checkRecord);
+      sinon.assert.calledWith(dummyAuthz.checkRecord,
+        req, 'list', Model, { title: 'search' });
       sinon.assert.calledWith(dummyAuthz.checkRecord,
         req, 'retrieve', Model, sampleRecord1);
       sinon.assert.calledWith(dummyAuthz.checkRecord,

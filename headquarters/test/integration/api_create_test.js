@@ -6,32 +6,37 @@ const yaml = require('js-yaml');
 
 const ScriptCore = require('fptcore/src/cores/script');
 
+const { createUserToken } = require('../../src/routes/auth');
+const { mockNow } = require('../mocks');
 const app = require('../../src/app');
 const TestUtil = require('../util');
 
 describe('API create', () => {
-  describe('POST /api/users', () => {
+  describe('POST /api/participants', () => {
     let experience;
+    let user;
 
     beforeEach(async () => {
       experience = await TestUtil.createDummyExperience();
+      user = await TestUtil.createDummyUser(experience.orgId);
     });
 
-    it('creates user', () => {
+    it('creates participant', () => {
       return request(app)
-        .post('/api/users')
+        .post('/api/participants')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           experienceId: experience.id,
           orgId: experience.orgId,
-          firstName: 'Gabe',
-          lastName: 'Smedresman'
+          name: 'Gabe Smedresman'
         })
         .set('Accept', 'application/json')
         .expect(201)
         .then((res) => {
           assert.deepStrictEqual(res.body, {
             data: {
-              user: {
+              participant: {
+                createdAt: mockNow.toISOString(),
                 experienceId: experience.id,
                 orgId: experience.orgId,
                 deviceBattery: null,
@@ -40,11 +45,10 @@ describe('API create', () => {
                 devicePushToken: '',
                 deviceTimestamp: null,
                 email: '',
-                firstName: 'Gabe',
+                name: 'Gabe Smedresman',
                 id: 1,
                 isActive: true,
                 isArchived: false,
-                lastName: 'Smedresman',
                 locationAccuracy: null,
                 locationLatitude: null,
                 locationLongitude: null,
@@ -58,13 +62,13 @@ describe('API create', () => {
 
     it('fails with supplied id', () => {
       return request(app)
-        .post('/api/users')
+        .post('/api/participants')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           id: 123,
           experienceId: experience.id,
           orgId: experience.orgId,
-          firstName: 'Gabe',
-          lastName: 'Smedresman'
+          name: 'Gabe S',
         })
         .set('Accept', 'application/json')
         .expect(400)
@@ -78,39 +82,46 @@ describe('API create', () => {
 
     it('fails on invalid fields', () => {
       return request(app)
-        .post('/api/users')
+        .post('/api/participants')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           experienceId: experience.id,
           orgId: experience.orgId,
-          lastName: '123',
-          isActive: 2
+          name: '123',
+          isArchived: 'abc'
         })
         .set('Accept', 'application/json')
         .expect(422)
         .then((res) => {
           assert.deepStrictEqual(res.body.error, {
             type: 'ValidationError',
-            message: 'Invalid fields: isActive.',
+            message: 'Invalid fields: isArchived.',
             fields: [
-              { field: 'isActive', message: 'must be true or false' }
+              { field: 'isArchived', message: 'must be true or false' }
             ]
           });
         });
     });
 
     it('forbids creating forbidden models', () => {
-      const forbiddenModels = ['Action', 'Message', 'Relay'];
-      return Promise.all(forbiddenModels.map(modelName => {
+      const forbiddenModels = {
+        Action: { name: 'test' },
+        Message: { fromRoleName: 'test' },
+        Relay: { participantPhoneNumber: 'test' }
+      };
+      return Promise.all(Object.keys(forbiddenModels).map(modelName => {
         return request(app)
           .post('/api/' + modelName.toLowerCase() + 's')
-          .send({ fields: 'dont matter' })
+          .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
+          .send(forbiddenModels[modelName])
           .set('Accept', 'application/json')
           .expect(403)
           .then((res) => {
             assert.deepStrictEqual(res.body.error, {
               type: 'ForbiddenError',
-              message: 'Action "create" on new ' + modelName +
-                ' by user "default" denied.'
+              message:
+                `Action 'create' on record '${modelName.toLowerCase()}' ` +
+                'by \'test@test.com\' denied.'
             });
           });
       }));
@@ -124,14 +135,17 @@ describe('API create', () => {
     };
 
     let experience;
+    let user;
 
     beforeEach(async () => {
       experience = await TestUtil.createDummyExperience();
+      user = await TestUtil.createDummyUser(experience.orgId);
     });
 
     it('creates simple script', () => {
       return request(app)
         .post('/api/scripts')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: experience.orgId,
           experienceId: experience.id,
@@ -163,6 +177,7 @@ describe('API create', () => {
       it(`creates ${example} example`, () => {
         return request(app)
           .post('/api/scripts')
+          .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
           .send({
             orgId: experience.orgId,
             experienceId: experience.id,
@@ -181,6 +196,7 @@ describe('API create', () => {
     it('fails on missing meta', () => {
       return request(app)
         .post('/api/scripts')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: experience.orgId,
           experienceId: experience.id,
@@ -206,6 +222,7 @@ describe('API create', () => {
     it('fails on invalid script content', () => {
       return request(app)
         .post('/api/scripts')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: experience.orgId,
           experienceId: experience.id,
@@ -238,6 +255,7 @@ describe('API create', () => {
     it('fails on text json content', () => {
       return request(app)
         .post('/api/scripts')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: experience.orgId,
           experienceId: experience.id,
@@ -262,20 +280,22 @@ describe('API create', () => {
   describe('POST /api/trips', () => {
 
     let group;
+    let user;
 
     beforeEach(async () => {
       group = await TestUtil.createDummyGroup();
+      user = await TestUtil.createDummyUser(group.orgId);
     });
 
     it('creates trip', () => {
       return request(app)
         .post('/api/trips')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: group.orgId,
           experienceId: group.experienceId,
           scriptId: group.scriptId,
           groupId: group.id,
-          galleryName: 'Test',
           title: 'test',
           date: '2018-04-02',
           schedule: {},
@@ -294,12 +314,12 @@ describe('API create', () => {
     it('fails on invalid foreign key', () => {
       return request(app)
         .post('/api/trips')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: group.orgId,
           experienceId: group.experienceId,
           scriptId: group.scriptId,
           groupId: 1000,
-          galleryName: 'Test',
           title: 'test',
           date: '2018-04-02',
           schedule: {},
@@ -321,14 +341,17 @@ describe('API create', () => {
 
   describe('POST /api/groups/:id', () => {
     let trip;
+    let user;
 
     beforeEach(async () => {
       trip = await TestUtil.createDummyTrip();
+      user = await TestUtil.createDummyUser(trip.orgId);
     });
 
     it('creates group with date', () => {
       return request(app)
         .post('/api/groups')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: trip.orgId,
           experienceId: trip.experienceId,
@@ -345,6 +368,7 @@ describe('API create', () => {
     it('rejects badly formatted date', () => {
       return request(app)
         .post('/api/groups')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: trip.orgId,
           experienceId: trip.experienceId,
@@ -368,6 +392,7 @@ describe('API create', () => {
     it('rejects invalid date', () => {
       return request(app)
         .post('/api/groups')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: trip.orgId,
           experienceId: trip.experienceId,
@@ -391,6 +416,7 @@ describe('API create', () => {
     it('rejects date with time', () => {
       return request(app)
         .post('/api/groups')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: trip.orgId,
           experienceId: trip.experienceId,
@@ -414,6 +440,7 @@ describe('API create', () => {
     it('rejects null date', () => {
       return request(app)
         .post('/api/groups')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           orgId: trip.orgId,
           experienceId: trip.experienceId,

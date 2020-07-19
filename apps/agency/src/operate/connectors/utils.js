@@ -18,8 +18,8 @@ function getPlayerExperienceFromTrip(state, instance) {
   return instance.trip.experience;
 }
 
-function getPlayerUser(state, instance) {
-  return _.find(state.datastore.users, { id: instance.userId });
+function getPlayerParticipant(state, instance) {
+  return _.find(state.datastore.participants, { id: instance.participantId });
 }
 
 function getPlayerRole(state, instance) {
@@ -55,7 +55,7 @@ function getTripActionContext(state, instance) {
 }
 
 const playerIncludes = {
-  user: getPlayerUser,
+  participant: getPlayerParticipant,
   role: getPlayerRole
 };
 
@@ -117,13 +117,13 @@ export function lookupPlayer(state, ownProps) {
 }
 
 export function lookupPlayersByRole(state, ownProps) {
-  const userId = ownProps.match.params.userId !== '0' ?
-    Number(ownProps.match.params.userId) : null;
+  const participantId = ownProps.match.params.participantId !== '0' ?
+    Number(ownProps.match.params.participantId) : null;
   return instancesFromDatastore(state, {
     col: 'players',
     filter: {
       roleName: ownProps.match.params.roleName,
-      userId: userId,
+      participantId: participantId,
       trip: { groupId: Number(ownProps.match.params.groupId) }
     },
     include: playerIncludesWithTrip

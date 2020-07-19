@@ -5,6 +5,9 @@ export default DS.Model.extend({
   script: DS.belongsTo('script', {async: false}),
   experience: DS.belongsTo('experience', {async: false}),
 
+  // Auth token snuck in via legacy API.
+  authToken: DS.attr('string'),
+
   date: DS.attr('string'),
   templateName: DS.attr('string'),
   tripState: DS.attr('obj'),
@@ -38,16 +41,16 @@ export default DS.Model.extend({
     trip.players = this.get('players').map(((player) => {
       var p = player.toJSON();
       p.id = Number(player.id);
-      var user = player.get('user');
-      if (user) {
-        p.user = user.toJSON();
-        const profile = user.get('profiles').filter(profile => (
+      var participant = player.get('participant');
+      if (participant) {
+        p.participant = participant.toJSON();
+        const profile = participant.get('profiles').filter(profile => (
           profile.get('experience') === experience &&
           profile.get('roleName') === p.roleName
         ))[0];
         if (profile) {
-          p.user.profile = profile.toJSON();
-          p.user.profile.values = JSON.parse(p.user.profile.values);
+          p.participant.profile = profile.toJSON();
+          p.participant.profile.values = JSON.parse(p.participant.profile.values);
         }
       }
       return p;

@@ -5,7 +5,7 @@ import fptCore from 'fptcore';
 
 export default DS.Model.extend({
   trip: DS.belongsTo('trip', {async: false}),
-  user: DS.belongsTo('user', {async: false}),
+  participant: DS.belongsTo('participant', {async: false}),
   roleName: DS.attr('string'),
   acknowledgedPageName: DS.attr('string'),
   acknowledgedPageAt: DS.attr('moment'),
@@ -20,28 +20,28 @@ export default DS.Model.extend({
       this.get('roleName')];
   }.property('trip.tripState'),
 
-  userProfile: function() {
-    if (!this.get('user.profiles')) {
+  participantProfile: function() {
+    if (!this.get('participant.profiles')) {
       return null;
     }
-    var profiles = this.get('user.profiles')
+    var profiles = this.get('participant.profiles')
       .filter(profile => (
         profile.get('roleName') === this.get('roleName') &&
         profile.get('experience') === this.get('trip.experience')
       ));
     return profiles[0] || null;
-  }.property('user.profiles'),
+  }.property('participant.profiles'),
 
-  skype: Ember.computed.oneWay('userProfile.skype'),
-  facetime: Ember.computed.oneWay('userProfile.facetime'),
+  skype: Ember.computed.oneWay('participantProfile.skype'),
+  facetime: Ember.computed.oneWay('participantProfile.facetime'),
 
   photo: function() {
-    return this.get('userProfile.photo') || null;
-  }.property('userProfile'),
+    return this.get('participantProfile.photo') || null;
+  }.property('participantProfile'),
 
   contactName: function() {
     return this.get('role.title');
-  }.property('userProfile', 'user'),
+  }.property('participantProfile', 'participant'),
 
   firstName: function() {
     return this.get('contactName').split(' ')[0];

@@ -10,19 +10,19 @@ class TwilioUtil {
    * Get an existing trip id for a relay and a user number. If the relay is an
    * entryway, create a new trip if one isn't found. Otherwise, return null.
    */
-  static async lookupOrCreateTripId(relay, userPhoneNumber) {
+  static async lookupOrCreateTripId(relay, participantPhoneNumber) {
     // Get player or create trip.
-    const player = await RelayController.lookupPlayer(relay, userPhoneNumber);
+    const player = await RelayController.lookupPlayer(relay, participantPhoneNumber);
     if (player) {
       return player.tripId;
     }
-    if (relay.userPhoneNumber !== '') {
+    if (relay.participantPhoneNumber !== '') {
       logger.warn(`Relay ${relay.id} is not an entryway; can't create a new trip.`);
       return null;
     }
     // If no player, and it's an entryway, then we need to create a new trip.
     const trip = await EntrywayController.createTripFromRelay(relay, 
-      userPhoneNumber);
+      participantPhoneNumber);
 
     // If we created a trip, reset it to the start to initiate starting 
     // actions like start scene

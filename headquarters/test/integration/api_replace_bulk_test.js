@@ -2,14 +2,15 @@ const assert = require('assert');
 const request = require('supertest');
 
 const app = require('../../src/app');
+const { createUserToken } = require('../../src/routes/auth');
 const TestUtil = require('../util');
 
 describe('API replace bulk', () => {
-
   let script1;
   let trip1;
   let trip2;
   let trip3;
+  let user;
 
   beforeEach(async () => {
     script1 = await TestUtil.createDummyScript();
@@ -17,12 +18,14 @@ describe('API replace bulk', () => {
     trip1 = await TestUtil.createDummyTripForScript(script1);
     trip2 = await TestUtil.createDummyTripForScript(script1);
     trip3 = await TestUtil.createDummyTripForScript(script2);
+    user = await TestUtil.createDummyUser(script1.orgId);
   });
 
   describe('PUT /api/trips', () => {
     it('updates field in bulk', () => {
       return request(app)
         .put('/api/trips')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .query({
           orgId: script1.orgId,
           experienceId: script1.experienceId,
@@ -57,6 +60,7 @@ describe('API replace bulk', () => {
     it('requires org and experienceId', () => {
       return request(app)
         .put('/api/trips')
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .query({ orgId: script1.orgId })
         .send({
           isArchived: true,

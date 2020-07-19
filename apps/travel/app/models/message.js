@@ -8,7 +8,6 @@ export default DS.Model.extend({
   medium: DS.attr('string'),
   content: DS.attr('string'),
   createdAt: DS.attr('moment'),
-  readAt: DS.attr('moment'),
   isReplyNeeded: DS.attr('boolean'),
   replyReceivedAt: DS.attr('moment'),
   isArchived: DS.attr('boolean'),

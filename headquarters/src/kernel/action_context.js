@@ -14,23 +14,25 @@ class ActionContext {
    * Create player context with the user and profile objects.
    */
   static _assemblePlayerFields(objs, player) {
-    const userInstance = player.userId ?
-      _.find(objs.users, u => u.id === player.userId) :
+    const participantInstance = player.participantId ?
+      _.find(objs.participants, u => u.id === player.participantId) :
       null;
-    const user = userInstance ? userInstance.get({ plain: true }) : null;
-    if (user) {
-      const profileInstance = user ? _.find(objs.profiles, {
-        userId: player.userId,
+    const participant = participantInstance ?
+      participantInstance.get({ plain: true }) :
+      null;
+    if (participant) {
+      const profileInstance = participant ? _.find(objs.profiles, {
+        participantId: player.participantId,
         experienceId: objs.experience.id,
         roleName: player.roleName,
       }) : null;
       if (profileInstance) {
-        user.profile = profileInstance.get({ plain: true });
+        participant.profile = profileInstance.get({ plain: true });
       }
     }
 
     return Object.assign(player.get({ plain: true }), {
-      user: user
+      participant: participant
     });
   }
 
@@ -102,8 +104,8 @@ class ActionContext {
     const profiles = await models.Profile.findAll({
       where: { experienceId: trip.experienceId }
     });
-    const users = await models.User.findAll({
-      where: { id: _.map(players, 'dataValues.userId').filter(Boolean) }
+    const participants = await models.Participant.findAll({
+      where: { id: _.map(players, 'dataValues.participantId').filter(Boolean) }
     });
     return {
       experience: trip.experience,
@@ -111,7 +113,7 @@ class ActionContext {
       players: players,
       script: trip.script,
       profiles: profiles,
-      users: users
+      participants: participants
     };
   }
 

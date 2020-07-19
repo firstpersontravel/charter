@@ -32,7 +32,7 @@ function RolesRoutes({ match }) {
     <RoleConnector match={match}>
       <Switch>
         <Route
-          path={`${match.path}/:roleName/:userId`}
+          path={`${match.path}/:roleName/:participantId`}
           component={RoleRoutes} />
         <Route component={NotFound} />
       </Switch>

@@ -7,6 +7,7 @@ module.exports = {
   Message: require('./message'),
   Org: require('./org'),
   OrgRole: require('./org_role'),
+  Participant: require('./participant'),
   Player: require('./player'),
   Profile: require('./profile'),
   Relay: require('./relay'),

@@ -29,17 +29,6 @@ export default Ember.Controller.extend({
     updateEnvironment: function(newEnvironmentName) {
       this.get('environment').updateEnvironment(newEnvironmentName);
     },
-    updateCode: function(env) {
-      var host = this.get('environment').hostForEnvironment(env);
-      var zipUrl = `${host}/travel/dist/dist.zip`;
-      try {
-        window.webkit.messageHandlers.update_code.postMessage({
-          zip_url: zipUrl
-        });
-      } catch(err) {
-        // no messageHandlers, probably not native
-      }   
-    },
     signin: function(email) {
       if (!email) {
         email = this.get('emailInput');
@@ -48,25 +37,25 @@ export default Ember.Controller.extend({
       if (!email || email === '') { return; }
       swal('Logging in...');
       this.get('api')
-        .getData('/api/users', {email: email})
+        .getData('/api/participants', {email: email})
         .then(function(results) {
           if (results.data.length === 0) {
-            swal('no users for this login.');
+            swal('no participants for this login.');
             return;
           }
-          var userId = results.data.users[0].id;
-          return self.get('api').getData('/api/legacy/user/' + userId);
+          var participantId = results.data.participants[0].id;
+          return self.get('api').getData('/api/legacy/participant/' + participantId);
         })
         .then(function(results) {
           var serializer = Ember.getOwner(self).lookup('serializer:api');
           serializer.set('store', self.store);
           serializer.pushPayload(self.store, results);
 
-          var userId = results.data.id;
-          var user = self.store.peekRecord('user', userId);
-          localStorage.setItem('user_id', userId);
+          var participantId = results.data.id;
+          var participant = self.store.peekRecord('participant', participantId);
+          localStorage.setItem('participant_id', participantId);
           swal.close();
-          self.transitionToRoute('user', user);
+          self.transitionToRoute('participant', participant);
         })
         .catch(function(err) {
           console.error(err);

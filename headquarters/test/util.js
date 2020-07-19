@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const ScriptCore = require('fptcore/src/cores/script');
 
@@ -31,22 +31,38 @@ const dummyContent = {
 };
 
 const dummyScriptFields = {
-  createdAt: moment.utc(),
-  updatedAt: moment.utc(),
   revision: 1,
   isActive: true,
   isArchived: false
 };
 
+const dummyUserFields = {
+  email: 'test@test.com',
+  passwordHash: '123',
+  firstName: 'test'
+};
+
 async function createDummyOrg() {
-  return await models.Org.create(dummyOrgFields);
+  return await models.Org.create(Object.assign({
+    createdAt: moment.utc()
+  }, dummyOrgFields));
 }
 
 async function createDummyExperience() {
   const org = await createDummyOrg();
   return await models.Experience.create(Object.assign({
-    orgId: org.id
+    orgId: org.id,
+    createdAt: moment.utc()
   }, dummyExperienceFields));
+}
+
+async function createDummyUser(orgId) {
+  const user = await models.User.create(Object.assign({
+    createdAt: moment.utc()
+  }, dummyUserFields));
+  // Create role so user is authorized
+  await models.OrgRole.create({ userId: user.id, orgId: orgId });
+  return user;
 }
 
 async function createScriptWithContent(scriptContent) {
@@ -54,7 +70,9 @@ async function createScriptWithContent(scriptContent) {
   const scriptFields = Object.assign({}, dummyScriptFields, {
     orgId: experience.orgId,
     experienceId: experience.id,
-    content: scriptContent
+    content: scriptContent,
+    createdAt: moment.utc(),
+    updatedAt: moment.utc()  
   });
 
   const script = models.Script.build(scriptFields);
@@ -142,6 +160,7 @@ const TestUtil = {
   createDummyTrip,
   createDummyTripForScript,
   createDummyScript,
+  createDummyUser,
   createExample,
   createScriptWithContent
 };

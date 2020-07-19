@@ -136,7 +136,7 @@ export default Ember.Component.extend({
   }.property(),
 
   callUrl: function() {
-    var profile = this.get('withPlayer.userProfile');
+    var profile = this.get('withPlayer.participantProfile');
     if (!profile) {
       return;
     }

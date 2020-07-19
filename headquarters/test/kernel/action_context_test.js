@@ -54,7 +54,6 @@ describe('ActionContext', () => {
         tripState: objs.trip.tripState,
         customizations: {},
         date: '01-01-2015',
-        galleryName: '',
         history: objs.trip.history,
         id: null,
         isArchived: false,
@@ -62,7 +61,7 @@ describe('ActionContext', () => {
           acknowledgedPageName: '',
           id: 123,
           roleName: 'Role',
-          user: null
+          participant: null
         }],
         schedule: objs.trip.schedule,
         script: objs.script.get({ plain: true }),

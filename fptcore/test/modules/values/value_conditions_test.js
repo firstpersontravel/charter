@@ -46,15 +46,12 @@ describe('#value_equals', () => {
     assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '1'}, true);
     assertIfEq({ v: true }, {op: 'value_equals', ref1: 'v', ref2: 'true'}, true);
     assertIfEq({ v: null }, {op: 'value_equals', ref1: 'v', ref2: 'null'}, true);
-    assertIfEq({ v: '2' }, {op: 'value_equals', ref1: 'v', ref2: '"1"'}, false);
-    assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '"1"'}, false);
+    assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '"1"'}, true);
+    assertIfEq({ v: false }, {op: 'value_equals', ref1: 'v', ref2: 'null'}, true);
+    assertIfEq({ v: 'true' }, {op: 'value_equals', ref1: 'v', ref2: 'true'}, true);
     assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '0'}, false);
-    assertIfEq({ v: false }, {op: 'value_equals', ref1: 'v', ref2: 'true'},
-      false);
-    assertIfEq({ v: false }, {op: 'value_equals', ref1: 'v', ref2: 'null'},
-      false);
-    assertIfEq({ v: 'true' }, {op: 'value_equals', ref1: 'v', ref2: 'true'},
-      false);
+    assertIfEq({ v: '2' }, {op: 'value_equals', ref1: 'v', ref2: '"1"'}, false);
+    assertIfEq({ v: false }, {op: 'value_equals', ref1: 'v', ref2: 'true'}, false);
   });
 
   it('evaluates with var and var', () => {
@@ -63,8 +60,8 @@ describe('#value_equals', () => {
     assertIfEq({ a: false, b: false }, stmt, true);
     assertIfEq({ a: 1, b: 1 }, stmt, true);
     assertIfEq({ a: '1', b: '1' }, stmt, true);
+    assertIfEq({ a: '1', b: 1 }, stmt, true);
     assertIfEq({ a: 2, b: 1 }, stmt, false);
-    assertIfEq({ a: '1', b: 1 }, stmt, false);
     assertIfEq({ a: '1', b: '2' }, stmt, false);
   });
 

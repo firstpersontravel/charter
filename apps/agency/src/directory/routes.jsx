@@ -5,7 +5,7 @@ import { Route, Switch } from 'react-router';
 import NotFound from '../partials/NotFound';
 import DirectoryConnector from './connectors/Directory';
 import DirectoryIndexConnector from './connectors/DirectoryIndex';
-import DirectoryUserConnector from './connectors/DirectoryUser';
+import DirectoryParticipantConnector from './connectors/DirectoryParticipant';
 
 export default function DirectoryRoutes({ match, location }) {
   return (
@@ -13,8 +13,8 @@ export default function DirectoryRoutes({ match, location }) {
       <Switch>
         <Route path={match.path} exact component={DirectoryIndexConnector} />
         <Route
-          path={`${match.path}/user/:userId`}
-          component={DirectoryUserConnector} />
+          path={`${match.path}/:participantId`}
+          component={DirectoryParticipantConnector} />
         <Route component={NotFound} />
       </Switch>
     </DirectoryConnector>

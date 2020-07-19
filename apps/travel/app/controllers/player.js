@@ -83,7 +83,7 @@ export default Ember.Controller.extend({
     if (!lastFix || !lastFix.timestamp || !lastFix.coords) { return; }
     var player = this.get('model');
     var lastFixAt = moment.utc(lastFix.timestamp);
-    var currentFixAt = player.get('user.locationTimestamp');
+    var currentFixAt = player.get('participant.locationTimestamp');
     if (lastFixAt < currentFixAt) { return; }
     this.send('updateLocation', lastFix);
   }.observes('location.lastFix').on('init'),

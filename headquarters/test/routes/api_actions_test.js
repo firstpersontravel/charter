@@ -3,6 +3,8 @@ const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
+const authz = require('../../src/authorization/authz');
+const models = require('../../src/models');
 const apiActionsRoutes = require('../../src/routes/api_actions');
 const DeviceStateHandler = require('../../src/handlers/device_state');
 const KernelController = require('../../src/kernel/kernel');
@@ -17,6 +19,11 @@ describe('apiActionsRoutes', () => {
       });
       const res = httpMocks.createResponse();
 
+      // Stub authz check
+      const mockTrip = { id: 300 };
+      sandbox.stub(models.Trip, 'findByPk').resolves(mockTrip);
+      sandbox.stub(authz, 'checkRecord').returns(null);
+
       // Stub action response
       sandbox.stub(KernelController, 'applyAction').resolves();
       sandbox.stub(NotifyController, 'notifyAction').resolves();
@@ -27,6 +34,10 @@ describe('apiActionsRoutes', () => {
       const expected = { data: { ok: true } };
       assert.strictEqual(res.statusCode, 200);
       assert.deepStrictEqual(JSON.parse(res._getData()), expected);
+
+      // Check authz call
+      sinon.assert.calledWith(authz.checkRecord, req, 'action',
+        models.Trip, mockTrip);
 
       // Check apply called with correct args
       const action = { name: 'action_name', params: { param: true } };
@@ -50,6 +61,11 @@ describe('apiActionsRoutes', () => {
       });
       const res = httpMocks.createResponse();
 
+      // Stub authz check
+      const mockTrip = { id: 300 };
+      sandbox.stub(models.Trip, 'findByPk').resolves(mockTrip);
+      sandbox.stub(authz, 'checkRecord').returns(null);
+
       // Stub action response
       sandbox.stub(KernelController, 'applyEvent').resolves();
       sandbox.stub(NotifyController, 'notifyEvent').resolves();
@@ -60,6 +76,10 @@ describe('apiActionsRoutes', () => {
       const expected = { data: { ok: true } };
       assert.strictEqual(res.statusCode, 200);
       assert.deepStrictEqual(JSON.parse(res._getData()), expected);
+
+      // Check authz call
+      sinon.assert.calledWith(authz.checkRecord, req, 'event',
+        models.Trip, mockTrip);
 
       // Check apply called with correct args
       const event = { type: 'cue_signaled', cue_name: 'hi' };
@@ -78,7 +98,7 @@ describe('apiActionsRoutes', () => {
   describe('#updateDeviceStateRoute', () => {
     it('updates device state', async () => {
       const req = httpMocks.createRequest({
-        params: { userId: 100 },
+        params: { participantId: 100, tripId: 1 },
         body: {
           client_id: 123,
           location_latitude: '40.2',
@@ -91,6 +111,11 @@ describe('apiActionsRoutes', () => {
       });
       const res = httpMocks.createResponse();
 
+      // Stub authz check
+      const mockTrip = { id: 300 };
+      sandbox.stub(models.Trip, 'findByPk').resolves(mockTrip);
+      sandbox.stub(authz, 'checkRecord').returns(null);
+
       // Stub update response
       sandbox.stub(DeviceStateHandler, 'updateDeviceState').resolves();
 
@@ -100,6 +125,10 @@ describe('apiActionsRoutes', () => {
       const expected = { data: { ok: true } };
       assert.strictEqual(res.statusCode, 200);
       assert.deepStrictEqual(JSON.parse(res._getData()), expected);
+
+      // Check authz call
+      sinon.assert.calledWith(authz.checkRecord, req, 'deviceState',
+        models.Trip, mockTrip);
 
       // Check update called with correct args
       const params = {

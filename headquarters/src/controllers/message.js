@@ -30,17 +30,17 @@ class MessageController {
     const toPlayer = await models.Player.findOne({
       where: { roleName: message.toRoleName, tripId: message.tripId },
       include: [{
-        model: models.User,
-        as: 'user'
+        model: models.Participant,
+        as: 'participant'
       }]
     });
-    if (!toPlayer || !toPlayer.user || !toPlayer.user.devicePushToken) {
+    if (!toPlayer || !toPlayer.participant || !toPlayer.participant.devicePushToken) {
       return;
     }
     const pushBody = message.medium === 'text' ?
       message.content : 'New photo';
     const pushMsg = `${fromRole.title}: ${pushBody}`;
-    await this._sendPushNotification(pushMsg, toPlayer.user.devicePushToken);
+    await this._sendPushNotification(pushMsg, toPlayer.participant.devicePushToken);
   }
 
   /**

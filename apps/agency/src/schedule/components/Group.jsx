@@ -48,15 +48,17 @@ class Group extends Component {
 
   initialFieldsForRole(experience, script, role, variantNames) {
     const profiles = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.users, experience.id,
+      this.props.profiles, this.props.participants, experience.id,
       role.name);
-    const users = profiles.map(profile => (
-      _.find(this.props.users, { id: profile.userId })
+    const participants = profiles.map(profile => (
+      _.find(this.props.participants, { id: profile.participantId })
     ));
-    const userId = users.length === 1 ? users[0].id : null;
-    const fields = Object.assign(
-      { orgId: experience.orgId, userId: userId },
-      PlayerCore.getInitialFields(script.content, role.name, variantNames));
+    const participantId = participants.length === 1 ? participants[0].id : null;
+    const fields = Object.assign({
+      orgId: experience.orgId,
+      experienceId: experience.id,
+      participantId: participantId
+    }, PlayerCore.getInitialFields(script.content, role.name, variantNames));
     return fields;
   }
 
@@ -71,7 +73,6 @@ class Group extends Component {
       scriptId: group.scriptId,
       date: group.date,
       title: fields.title,
-      galleryName: _.kebabCase(fields.title),
       variantNames: fields.variantNames.join(','),
       tripState: { currentSceneName: '' }
     });
@@ -248,7 +249,7 @@ class Group extends Component {
 
 Group.propTypes = {
   group: PropTypes.object.isRequired,
-  users: PropTypes.array.isRequired,
+  participants: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   createTrip: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,

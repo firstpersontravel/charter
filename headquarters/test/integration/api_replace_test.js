@@ -4,22 +4,26 @@ const request = require('supertest');
 
 const app = require('../../src/app');
 const models = require('../../src/models');
+const { createUserToken } = require('../../src/routes/auth');
 const TestUtil = require('../util');
 
 describe('API replace', () => {
 
   let group;
   let trip;
+  let user;
 
   beforeEach(async () => {
     trip = await TestUtil.createDummyTrip();
     group = await trip.getGroup();
+    user = await TestUtil.createDummyUser(trip.orgId);
   });
 
   describe('PUT /api/groups/:id', () => {
     it('rejects change to date', () => {
       return request(app)
         .put(`/api/groups/${group.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({ date: '2017-01-03' })
         .set('Accept', 'application/json')
         .expect(422)
@@ -35,6 +39,7 @@ describe('API replace', () => {
     it('rejects change to missing field', () => {
       return request(app)
         .put(`/api/groups/${group.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({ unknown: '1234' })
         .set('Accept', 'application/json')
         .expect(422)
@@ -57,6 +62,7 @@ describe('API replace', () => {
     it('updates player with simple values', () => {
       return request(app)
         .put(`/api/players/${player.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
           acknowledgedPageName: 'newPage',
           acknowledgedPageAt: '2018-01-01T00:00:00Z'
@@ -70,11 +76,12 @@ describe('API replace', () => {
               player: {
                 id: player.id,
                 orgId: trip.orgId,
+                experienceId: trip.experienceId,
                 tripId: trip.id,
                 acknowledgedPageAt: '2018-01-01T00:00:00.000Z',
                 acknowledgedPageName: 'newPage',
                 roleName: 'Dummy',
-                userId: null
+                participantId: null
               }
             }
           });
@@ -84,6 +91,7 @@ describe('API replace', () => {
     it('rejects changes to immutable fields', () => {
       return request(app)
         .put(`/api/players/${player.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({ tripId: 100 })
         .set('Accept', 'application/json')
         .expect(422)
@@ -108,6 +116,7 @@ describe('API replace', () => {
     it('replaces values completely', () => {
       return request(app)
         .put(`/api/trips/${trip.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({ values: { outer: { inner: 'value' } } })
         .set('Accept', 'application/json')
         .expect(200)
@@ -127,6 +136,7 @@ describe('API replace', () => {
     it('rejects changes to immutable fields', () => {
       return request(app)
         .put(`/api/trips/${trip.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({ scriptId: 100, groupId: 200 })
         .set('Accept', 'application/json')
         .expect(422)
@@ -165,6 +175,7 @@ describe('API replace', () => {
     it('allows change to isArchived', () => {
       return request(app)
         .put(`/api/actions/${action.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({ isArchived: true })
         .set('Accept', 'application/json')
         .expect(200)
@@ -182,6 +193,7 @@ describe('API replace', () => {
       return Promise.all(forbiddenFields.map(fieldName => {
         return request(app)
           .put(`/api/actions/${action.id}`)
+          .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
           .send({ [fieldName]: 'does not matter' })
           .set('Accept', 'application/json')
           .expect(403)
@@ -189,8 +201,8 @@ describe('API replace', () => {
             assert.deepStrictEqual(res.body.error, {
               type: 'ForbiddenError',
               message:
-                `Action "update" on field "${fieldName}" of Action ` +
-                `#${action.id} by user "default" denied.`
+                `Action 'update' on field '${fieldName}' of record ` +
+                `'action #${action.id}' by 'test@test.com' denied.`
             });
           });
       }));

@@ -3,10 +3,8 @@ const _ = require('lodash');
 const models = require('../models');
 
 const galleryRoute = async (req, res) => {
-  const alias = req.params.alias;
-  const where = isNaN(Number(alias)) ? { galleryName: alias } : { id: alias };
   const trip = await models.Trip.findOne({
-    where: where,
+    where: { id: req.params.tripId },
     include: [{ model: models.Experience, as: 'experience' }]
   });
   if (!trip) {
@@ -18,7 +16,6 @@ const galleryRoute = async (req, res) => {
   const messages = await models.Message.findAll({
     where: {
       tripId: trip.id,
-      name: '',
       medium: 'image',
       isArchived: false,
       isInGallery: true
