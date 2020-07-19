@@ -38,7 +38,6 @@ class KernelOpController {
   }
 
   static async updatePlayerFields(objs, op) {
-    objs.players.forEach(player => console.log(player.id));
     const players = _.filter(objs.players, { id: op.playerId });
     return Promise.all(players.map(player => player.update(op.fields)));
   }
