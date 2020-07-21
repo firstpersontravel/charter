@@ -90,6 +90,7 @@
 
 ### Pull production DB for testing
 
+    export AWS_PROFILE=fpt
     DB_HOST=fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
     DB_NAME=agency
     DB_PW=`aws ssm get-parameter --name charter.production.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`

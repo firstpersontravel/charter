@@ -54,11 +54,9 @@ export default Ember.Route.extend({
 
   actions: {
     acknowledgePage: function(pageName) {
-      console.log('acknowledgePage ignored');
     },
 
     refresh: function() {
-      console.log('refreshing');
       this.refresh();
     },
 

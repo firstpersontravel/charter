@@ -1,3 +1,5 @@
+const moment = require('moment-timezone');
+
 const models = require('../models');
 
 const SceneCore = require('fptcore/src/cores/scene');
@@ -112,7 +114,11 @@ const joinSubmitRoute = async (req, res) => {
       isActive: true,
       phoneNumber: phoneNumber
     },
-    defaults: { name: name, email: email }
+    defaults: {
+      createdAt: moment.utc(),
+      name: name,
+      email: email
+    }
   });
   // Add firstName and email to participant
   await models.Participant.update(

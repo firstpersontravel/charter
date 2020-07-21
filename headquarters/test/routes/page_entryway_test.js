@@ -2,7 +2,7 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
-const { sandbox } = require('../mocks');
+const { mockNow, sandbox } = require('../mocks');
 const models = require('../../src/models');
 const pageEntrywayRoutes = require('../../src/routes/page_entryway');
 const ExperienceController = require('../../src/controllers/experience');
@@ -214,6 +214,7 @@ describe('pageEntrywayRoutes', () => {
             phoneNumber: participantData.phone
           },
           defaults: {
+            createdAt: mockNow,
             name: 'Test Participant',
             email: 'testparticipant@example.com'
           }

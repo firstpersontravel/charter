@@ -24,6 +24,7 @@ class ContextCore {
       join_link: joinLink,
       email: profile.email || participant.email || null,
       contact_name: contactName,
+      user_name: participant.name,
       participant_name: participant.name,
       photo: profile.photo || null,
       facetime: profile.facetimeUsername || null,

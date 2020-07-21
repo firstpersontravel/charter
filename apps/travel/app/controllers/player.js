@@ -24,7 +24,6 @@ function lumaForColor(col) {
   var b = (rgb >>  0) & 0xff;  // extract blue
   
   var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-  console.log('col', col, 'luma', luma);
   return luma;  
 }
 
@@ -44,7 +43,6 @@ export default Ember.Controller.extend({
     const interfaceName = this.get('model.role.interface');
     const iface = (script.get('content.interfaces') || [])
       .find(i => i.name === interfaceName);
-    console.log('interface', iface);
     return iface;
   }.property('model.role.interface'),
 
@@ -89,12 +87,10 @@ export default Ember.Controller.extend({
   }.observes('location.lastFix').on('init'),
 
   currentPageDidChange: function() {
-    console.log('currentPageDidChange', this.get('model.currentPageName'));
     if (this.get('application.noack')) {
       return;
     }
     Ember.run.next(() => {
-      console.log('acknowledging page', this.get('model.currentPageName'));
       this.send('acknowledgePage', this.get('model.currentPageName'));
     });
   }.observes('model.currentPageName'),

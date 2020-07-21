@@ -28,7 +28,6 @@ export default Ember.Route.extend({
 
   actions: {
     refresh: function() {
-      console.log('refresh ignored');
     },
     
     reload: function() {
