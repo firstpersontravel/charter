@@ -26,9 +26,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.observes('state').on('init'),
 
   tabs: function() {
-    var tabs = this.get('pageLayout.tabs');
+    var tabs = this.get('pageInterface.tabs');
     return tabs && tabs.length ? tabs : DEFAULT_TABS;
-  }.property('pageLayout'),
+  }.property('pageInterface'),
 
   visibleTabs: function() {
     return this.get('tabs').filter(tab => {
@@ -65,7 +65,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
       style: 'banner'
     }];
     return this.collectPanelPartials(headerPanels);
-  }.property('pageLayout', 'pagePanels'),
+  }.property('pageInterface', 'pagePanels'),
 
   collectPanelPartials: function(basePanels) {
     var collectedPanels = [];
