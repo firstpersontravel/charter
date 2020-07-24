@@ -13,10 +13,14 @@ module.exports = {
       type: 'media',
       medium: 'audio',
       help: 'The audio file to play.'
+    },
+    title: {
+      type: 'string',
+      help: 'The title to display.'
     }
   },
   getOps(params, actionContext) {
-    if (!params.path) {
+    if (!params.audio) {
       return [{
         operation: 'log',
         level: 'warn',
@@ -27,7 +31,8 @@ module.exports = {
       operation: 'updateTripValues',
       values: {
         audio_role: params.role_name,
-        audio_path: params.path,
+        audio_title: params.title,
+        audio_url: params.audio,
         audio_started_at: actionContext.evaluateAt.toISOString(),
         audio_started_time: 0,
         audio_paused_time: null,

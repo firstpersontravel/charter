@@ -1,18 +1,18 @@
 {{#if hasAudio}}
   <i class='fa fa-music'></i>
-  {{audioContent.title}} &bull;
+  {{audioTitle}} &bull;
   {{#if audioIsPlaying}}
     {{#if audioHasEnded}}
       Ended
       &bull;
-      <a {{action "restartAudio" on="touchStart"}}>Restart</a>
+      <a style="cursor: pointer;" {{action "restartAudio" on="touchStart"}} {{action "restartAudio"}}>Restart</a>
     {{else}}
       {{audioElapsed}}
       &bull;
       {{#if mute}}
-        <a {{action "mute" on="touchStart"}}>Unmute</a>
+        <a style="cursor: pointer;" {{action "mute" on="touchStart"}} {{action "mute"}}>Unmute</a>
       {{else}}
-        <a {{action "mute" on="touchStart"}}>Mute</a>
+        <a style="cursor: pointer;" {{action "mute" on="touchStart"}} {{action "mute"}}>Mute</a>
       {{/if}}
     {{/if}}
   {{else}}

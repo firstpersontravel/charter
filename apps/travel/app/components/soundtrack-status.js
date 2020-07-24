@@ -8,10 +8,16 @@ export default Ember.Component.extend({
 
   values: null,
   script: null,
+  duration: null,
+  durationForUrl: null,
 
   init: function() {
     this._super();
     this._interval = setInterval(this.updateTime.bind(this), 1000);
+  },
+
+  didInsertElement: function() {
+    this.audioUrlDidChange();
   },
 
   willDestroy: function() {
@@ -24,24 +30,44 @@ export default Ember.Component.extend({
   },
 
   hasAudio: function() {
-    return !!this.get('audioName');
-  }.property('audioName'),
+    return !!this.get('audioUrl');
+  }.property('audioUrl'),
 
   audioIsInProgress: function() {
-    var audioState = this.get('audioName');
-    if (!audioState) { return false; }
+    if (!this.get('audioUrl')) { return false; }
     return this.get('audioTime') <= this.get('audioDuration');
   }.property('values', 'audioTime'),
 
-  audioName: Ember.computed.oneWay('values.audio_name'),
+  audioUrl: Ember.computed.oneWay('values.audio_url'),
   audioIsPlaying: Ember.computed.bool('values.audio_is_playing'),
   audioIsPaused: Ember.computed.bool('values.audio_paused_time'),
 
+  audioTitle: function() {
+    return this.get('values.audio_title') || 'Soundtrack';
+  }.property('values.audio_title'),
+
+  audioUrlDidChange: function() {
+    if (!this.get('audioUrl')) {
+      this.set('duration', null);
+      this.set('durationForUrl', null);
+      return;
+    }
+    const audioUrl = this.get('audioUrl');
+    if (this.get('durationForUrl') !== audioUrl) {
+      const audioEl = new Audio();
+      audioEl.addEventListener('loadedmetadata', () => {
+        this.set('duration', audioEl.duration);
+        this.set('durationForUrl', audioUrl);
+      });
+      audioEl.src = audioUrl;
+    }
+  }.observes('audioUrl'),
+
   audioHasEnded: function() {
-    var audioState = this.get('audioName');
-    if (!audioState) { return false; }
+    if (!this.get('audioUrl')) { return false; }
+    if (!this.get('audioDuration')) { return false; }
     return this.get('audioTime') > this.get('audioDuration');
-  }.property('audioName', 'audioTime'),
+  }.property('audioTitle', 'audioTime'),
 
   audioElapsed: function() {
     var mins = Math.floor(this.get('audioTime') / 60);
@@ -57,7 +83,7 @@ export default Ember.Component.extend({
   }.property('audioTime'),
 
   audioTime: function() {
-    if (!this.get('audioName')) { return 0; }
+    if (!this.get('audioUrl')) { return 0; }
     if (!this.get('audioIsPlaying')) {
       return (this.get('values.audio_paused_time') || 0).toFixed(1);
     }
@@ -68,16 +94,7 @@ export default Ember.Component.extend({
     return currentTime;
   }.property('audio', 'currentTime'),
 
-  audioContent: function() {
-    var audioName = this.get('audioName');
-    if (!audioName) { return null; }
-    return this.get('script.content.audio').findBy('name', audioName);
-  }.property('audioName'),
-
-  audioDuration: function() {
-    if (!this.get('audioContent')) { return null; }
-    return this.get('audioContent').duration * 60;
-  }.property('audio'),
+  audioDuration: Ember.computed.oneWay('duration'),
 
   actions: {
     mute: function() {

@@ -96,27 +96,31 @@ export default Ember.Controller.extend({
   }.observes('model.currentPageName'),
 
   updateAudioState: function() {
-    var audioState = this.get('model.values.audio');
+    var audioUrl = this.get('model.trip.values.audio_url');
+    var audioIsPlaying = this.get('model.trip.values.audio_is_playing');
+    var startedAt = this.get('model.trip.values.audio_started_at');
+    var startedTime = this.get('model.trip.values.audio_started_time');
     var muted = this.get('application.mute');
 
     // Check if unchanged.
-    if (audioState === this._lastAudioState && muted === this._lastMuted) {
+    if (audioUrl === this._lastAudioUrl &&
+        audioIsPlaying === this._lastAudioIsPlaying &&
+        startedAt === this._lastStartedAt &&
+        muted === this._lastMuted) {
       return;
     }
-    this._lastAudioState = audioState;
+    this._lastAudioUrl = audioUrl;
+    this._lastAudioIsPlaying = audioIsPlaying;
+    this._lastStartedAt = startedAt;
     this._lastMuted = muted;
 
-    if (muted || !audioState || !audioState.is_playing || !audioState.path) {
+    if (muted || !audioUrl || !audioIsPlaying) {
       this.get('audio').fadeOut();
       return;
     }
-    var startedAt = audioState.started_at;
-    var startedTime = audioState.started_time;
     var elapsedMsec = moment.utc().diff(startedAt);
     var currentTime = startedTime + elapsedMsec / 1000.0;
-    var script = this.get('model.trip.script');
-    var path = script.urlForContentPath(audioState.path);
-    this.get('audio').play(path, currentTime);
+    this.get('audio').play(audioUrl, currentTime);
   },
 
   actions: {

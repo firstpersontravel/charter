@@ -49,6 +49,7 @@ export default Ember.Route.extend({
         serializer.set('store', self.store);
         serializer.pushPayload(self.store, data);
         self.controllerFor('trip').set('lastRefreshed', moment.utc());
+        self.controllerFor('player').updateAudioState();
       });
   },
 
