@@ -7,6 +7,7 @@ export default DS.Model.extend({
 
   // Auth token snuck in via legacy API.
   authToken: DS.attr('string'),
+  videoToken: DS.attr('string'),
 
   date: DS.attr('string'),
   templateName: DS.attr('string'),

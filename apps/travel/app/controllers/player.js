@@ -87,6 +87,7 @@ export default Ember.Controller.extend({
   }.observes('location.lastFix').on('init'),
 
   currentPageDidChange: function() {
+    // console.log('currentPageDidChange', this.get('model.currentPageName'));
     if (this.get('application.noack')) {
       return;
     }

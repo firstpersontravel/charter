@@ -92,6 +92,8 @@ apiRouter.get('/legacy/participant/:id',
   asyncRoute(apiLegacyRoutes.getParticipantRoute));
 apiRouter.get('/legacy/trip/:id',
   asyncRoute(apiLegacyRoutes.getTripRoute));
+apiRouter.get('/legacy/player/:id/video-token',
+  asyncRoute(apiLegacyRoutes.getPlayerVideoTokenRoute));
 
 // The error handler must be before any other error middleware
 apiRouter.use(Sentry.Handlers.errorHandler());

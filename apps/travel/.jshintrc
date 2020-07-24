@@ -9,7 +9,8 @@
     "swal",
     "Raven",
     "moment",
-    "Faye"
+    "Faye",
+    "Twilio"
   ],
   "esversion": 6,
   "browser": true,

@@ -222,6 +222,27 @@ panels.numberpad = {
   }
 };
 
+panels.room = {
+  icon: 'video',
+  help: 'A room for audio/video conferencing.',
+  properties: {
+    name: {
+      type: 'string',
+      help: 'Optionally specify a name for your room to differentiate it from other rooms. If no name is supplied, a room will be shared for each run of your experience.'
+    },
+    video: {
+      type: 'boolean',
+      default: true,
+      help: 'Send/recieve video as well as audio.'
+    },
+    transmit: {
+      type: 'boolean',
+      default: true,
+      help: 'If true, the viewer of this panel will broadcast to other members of the room.'
+    }
+  }
+};
+
 panels.text = {
   icon: 'sticky-note',
   help: 'A simple text.',
