@@ -10,7 +10,7 @@
 
     # set up n
     npm install -g n
-    n 12.5.0
+    n 12.16.2
     npm install -g bower
 
     # install webpack
