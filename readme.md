@@ -34,20 +34,8 @@
     # download secrets
     npm run download_secrets
 
-    # setup core
-    cd fptcore
-        npm install
-
-    # setup travel
-    cd apps/travel
-        npm install
-        bower -q install
-        rm -f ./node_modules/fptcore
-        ln -s `pwd`/../../fptcore ./node_modules
-
-    # setup agency
-    cd apps/agency
-        npm install
+    # install dependencies
+    npm run install_all
 
     # run tests
     npm test
