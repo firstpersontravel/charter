@@ -39,10 +39,13 @@ class SchedulerWorker {
       const intendedAt = this._getTriggerIntendedAt(trigger, actionContext);
       const scheduleAt = intendedAt.isAfter(actionContext.evaluateAt) ?
         intendedAt : actionContext.evaluateAt;
-      // Construct schdeduled action
+      // Construct scheduled action
       return {
+        // TL: can we put the trip directly in actionContext instead of accessing internal variables?
         orgId: actionContext._objs.trip.orgId,
         tripId: actionContext._objs.trip.id,
+        // TL: can we make action context require having an inciting player id?
+        playerId: actionContext.player ? actionContext.player.id : null,
         type: 'trigger',
         name: trigger.name,
         params: {},

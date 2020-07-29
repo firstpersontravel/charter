@@ -166,7 +166,7 @@ const playerShowRoute = async (req, res) => {
     res.redirect(`/actor/${req.params.orgName}`);
     return;
   }
-  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(), player.roleName);
+  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(), playerId);
   const trip = actionContext._objs.trip;
   const page = getPage(actionContext, player);
   const pages = page ? [Object.assign(page, { isFirst: true })] : [];
@@ -220,7 +220,7 @@ const participantShowRoute = async (req, res) => {
     .value();
 
   const actionContexts = await Promise.all(playersByTripTime.map(player => (
-    ActionContext.createForTripId(player.tripId, moment.utc(), player.roleName)
+    ActionContext.createForTripId(player.tripId, moment.utc(), player.id)
   )));
 
   const pages = _(players)

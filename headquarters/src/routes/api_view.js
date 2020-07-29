@@ -54,8 +54,7 @@ function exportInterface(actionContext) {
 async function getPlayerViewRoute(req, res) {
   const playerId = req.params.playerId;
   const player = await models.Player.findByPk(playerId);
-  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(),
-    player.roleName);
+  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(), playerId);
   const interface = exportInterface(actionContext);
   res.json({
     data: {

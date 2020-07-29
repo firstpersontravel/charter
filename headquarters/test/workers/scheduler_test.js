@@ -71,6 +71,7 @@ describe('SchedulerWorker', () => {
       assert.deepStrictEqual(res, [{
         orgId: mockTrip.orgId,
         tripId: mockTrip.id,
+        playerId: null,
         type: 'trigger',
         name: 't3',
         params: {},

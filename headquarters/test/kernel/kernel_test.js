@@ -55,7 +55,7 @@ describe('KernelController', () => {
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
         orgId: trip.orgId,
         tripId: trip.id,
-        playerId: NaN,
+        playerId: null,
         type: 'action',
         appliedAt: null,
         createdAt: mockNow.toDate(),
