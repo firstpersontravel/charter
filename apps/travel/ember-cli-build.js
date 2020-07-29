@@ -58,6 +58,8 @@ module.exports = function(defaults) {
     }]
   });
 
+  app.import('node_modules/twilio-video/dist/twilio-video.min.js');
+
   app.import('node_modules/featherlight/release/featherlight.min.css');
   app.import('node_modules/featherlight/release/featherlight.min.js');
 

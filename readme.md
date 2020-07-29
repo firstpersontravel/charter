@@ -10,7 +10,7 @@
 
     # set up n
     npm install -g n
-    n 12.5.0
+    n 12.16.2
     npm install -g bower
 
     # install webpack
@@ -34,18 +34,8 @@
     # download secrets
     npm run download_secrets
 
-    # setup core
-    cd fptcore && npm install && cd ..
-
-    # setup travel
-    cd apps/travel
-        npm install
-        bower -q install
-        rm -f ./node_modules/fptcore
-        ln -s `pwd`/../../fptcore ./node_modules
-
-    # setup agency
-    cd apps/agency && npm install && cd ../..
+    # install dependencies
+    npm run install_all
 
     # run tests
     npm test
@@ -91,6 +81,7 @@
 
 ### Pull production DB for testing
 
+    export AWS_PROFILE=fpt
     DB_HOST=fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
     DB_NAME=agency
     DB_PW=`aws ssm get-parameter --name charter.production.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
@@ -168,7 +159,4 @@
     - https://gojs.net/latest/index.html
     - https://github.com/projectstorm/react-diagrams
     - https://github.com/parcel-bundler/parcel
-    - https://thecode.pub/easy-deploy-your-docker-applications-to-aws-using-ecs-and-fargate-a988a1cc842f
-    - http://vilkeliskis.com/blog/2016/02/10/bootstrapping-docker-with-terraform.html
-    - https://rhasspy.readthedocs.io/en/latest/
     - swc instead of babel

@@ -37,3 +37,5 @@ secrets:
   HQ_SENDGRID_KEY: charter.global.sendgrid-key
   HQ_TWILIO_AUTHTOKEN: charter.global.twilio-token
   HQ_TWILIO_SID: charter.global.twilio-sid
+  HQ_TWILIO_VIDEO_SID: charter.global.twilio-video-sid
+  HQ_TWILIO_VIDEO_KEY: charter.global.twilio-video-key

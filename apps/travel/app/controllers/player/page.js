@@ -10,11 +10,10 @@ export default Ember.Controller.extend({
   queryParams: ['state'],
   state: null,
 
-  pageLayoutName: function() {
-    var page = this.get('pageModel');
+  pageInterfaceName: function() {
     var player = this.get('player.model');
-    var pageLayoutName = player.get('role').interface || null;
-    return pageLayoutName;
+    var pageInterfaceName = player.get('role').interface || null;
+    return pageInterfaceName;
   }.property('pageModel'),
 
   pageModel: function() {
@@ -25,17 +24,18 @@ export default Ember.Controller.extend({
       player.get('currentPageName') === 'null') {
       return null;
     }
-    return script.findPageByName(player.get('currentPageName'));
+    return (script.content.pages || [])
+      .find(p => p.name === player.get('currentPageName'));
   }.property('player.model.currentPageName'),
 
-  pageLayout: function() {
+  pageInterface: function() {
     var scriptContent = this.get('script.model.content');
-    var pageLayoutName = this.get('pageLayoutName');
-    if (!pageLayoutName) {
+    var pageInterfaceName = this.get('pageInterfaceName');
+    if (!pageInterfaceName) {
       return null;
     }
-    return scriptContent.interfaces.findBy('name', pageLayoutName);
-  }.property('pageLayoutName'),
+    return scriptContent.interfaces.findBy('name', pageInterfaceName);
+  }.property('pageInterfaceName'),
 
   filterPanels: function(panels) {
     if (!panels) {

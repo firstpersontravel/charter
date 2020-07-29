@@ -17,7 +17,11 @@
         <option value=''>Go to:</option>
         {{#each waypointOptions as |waypointOption|}}
         <option value='{{waypointOption.name}}'>
-          {{waypointOption.title}}
+          {{#if waypointOption.location.title}}
+            {{waypointOption.location.title}}
+          {{else}}
+            {{waypointOption.location.address}}
+          {{/if}}
         </option>
         {{/each}}
       </select>

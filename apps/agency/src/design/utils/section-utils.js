@@ -144,7 +144,8 @@ function getSceneFilters(scriptContent, sceneName) {
 
 export function getSliceFilters(scriptContent, sliceType, sliceName) {
   if (sliceType === 'scene') {
-    const scene = scriptContent.scenes.find(s => s.name === sliceName);
+    const scenes = scriptContent.scenes || [];
+    const scene = scenes.find(s => s.name === sliceName);
     if (scene && scene.global) {
       return getGlobalSceneFilters(scriptContent, sliceName);
     }

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "UNLICENSED",
   "scripts": {
+    "install_all": "cd fptcore && npm install && cd ../apps/travel && npm install && bower -q install && rm -f ./node_modules/fptcore && ln -s `pwd`/../../fptcore ./node_modules && cd ../../apps/agency && npm install",
     "test": "npm run test_core && npm run test_agency && npm run test_hq",
     "test_hq": "cd headquarters; npm test",
     "test_core": "cd fptcore; npm test",

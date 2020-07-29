@@ -199,12 +199,13 @@ export default Ember.Route.extend({
 
     restartAudio: function() {
       var player = this.context;
-      if (!player.get('values.audio.name')) {
+      if (!player.get('trip.values.audio_url')) {
         return;
       }
       this.makeAction('play_audio', {
         role_name: player.get('roleName'),
-        audio_name: player.get('values.audio.name')
+        audio: player.get('trip.values.audio_url'),
+        title: player.get('trip.values.audio_title')
       });
     }
   }

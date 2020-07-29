@@ -26,9 +26,8 @@ export default Ember.Component.extend({
 
   openLightbox: function() {
     var type = this.get('message.medium');
-    var content = this.get('message.content');
+    var url = this.get('message.content');
     if (type === 'image') {
-      var url = this.get('trip.script').urlForContentPath(content);
       $.featherlight(url, {closeOnClick: 'anywhere'});
     }    
   },
@@ -54,11 +53,10 @@ export default Ember.Component.extend({
     if (type === 'text') {
       return this.get('player').humanizeText(content);
     }
-    var url = this.get('trip.script').urlForContentPath(content);
     if (type === 'image') {
-      return `<img src='${url}'/>`;
+      return `<img src='${content}'/>`;
     } else if (type === 'audio') {
-      return `<audio src='${url}' controls></audio>`;
+      return `<audio src='${content}' controls></audio>`;
     } else {
       return "";
     }

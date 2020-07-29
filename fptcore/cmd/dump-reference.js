@@ -34,8 +34,6 @@ const intros = {
   fieldtypes: 'Fields are the underlying data elements of each object in your script. Each is validated in a different way.'
 };
 
-const HIDE_FIELDS = ['name', 'title'];
-
 function renderTypeTitle(spec) {
   if (spec.type === 'list') {
     if (spec.items.type === 'object') {
@@ -132,6 +130,8 @@ function renderField(sectionName, entryName, key, spec) {
   return renderItem(key, spec);
 }
 
+const HIDE_FIELDS = ['name', 'title'];
+
 function renderFields(sectionName, entryName, fields) {
   if (!fields) {
     return '';
@@ -139,7 +139,8 @@ function renderFields(sectionName, entryName, fields) {
 
   const keys = Object
     .keys(fields)
-    .filter(key => !HIDE_FIELDS.includes(key));
+    // Panels show all fields, others hide title and name
+    .filter(key => sectionName === 'panels' || !HIDE_FIELDS.includes(key));
 
   const renderedFields = keys
     .map(key => renderField(sectionName, entryName,

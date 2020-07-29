@@ -32,33 +32,35 @@ export default Ember.Route.extend({
   refreshTripData: function(tripId) {
     var isScriptAlreadyLoaded = !!this.store.peekAll('script').get('length');
     var shouldRefreshScript = !isScriptAlreadyLoaded;
-    var refreshUrl = (
-      `/api/legacy/trip/${tripId}` +
-      (shouldRefreshScript ? '?script=true' : '')
-    );
+    var params = {
+      script: shouldRefreshScript.toString(),
+      roleName: this.paramsFor('player').role_name
+    };
+    var query = Object.keys(params)
+      .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+      .join('&');
+    var refreshUrl = `/api/legacy/trip/${tripId}?${query}`;
     tripId = tripId || self.context.id;
-    var self = this;
     return this.get('api')
       .getData(refreshUrl)
-      .then(function(data) {
+      .then((data) => {
         // unload all data that could be duplicated
         // self.store.unloadAll('action');
         // self.store.unloadAll('message');
         // reload all data
-        var serializer = Ember.getOwner(self).lookup('serializer:api');
-        serializer.set('store', self.store);
-        serializer.pushPayload(self.store, data);
-        self.controllerFor('trip').set('lastRefreshed', moment.utc());
+        var serializer = Ember.getOwner(this).lookup('serializer:api');
+        serializer.set('store', this.store);
+        serializer.pushPayload(this.store, data);
+        this.controllerFor('trip').set('lastRefreshed', moment.utc());
+        this.controllerFor('player').updateAudioState();
       });
   },
 
   actions: {
     acknowledgePage: function(pageName) {
-      console.log('acknowledgePage ignored');
     },
 
     refresh: function() {
-      console.log('refreshing');
       this.refresh();
     },
 

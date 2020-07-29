@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import * as Sentry from '@sentry/browser';
 
-import config from './config';
 import { getStage } from './utils';
 
 function reset() {
@@ -184,7 +183,7 @@ function createQueryString(query) {
 export function listCollection(collectionName, query, opts) {
   return function (dispatch) {
     const queryString = createQueryString(query);
-    const url = `${config.serverUrl}/api/${collectionName}${queryString}`;
+    const url = `/api/${collectionName}${queryString}`;
     const params = { method: 'GET' };
     return request(collectionName, null, 'list', url, params, dispatch)
       .then((response) => {
@@ -308,8 +307,7 @@ export function makeAuthRequest(url, params, name) {
 }
 
 export function fetchAuthInfo() {
-  return makeAuthRequest(`${config.serverUrl}/auth/info`,
-    { method: 'GET' }, 'info');
+  return makeAuthRequest('/auth/info', { method: 'GET' }, 'info');
 }
 
 export function login(email, password) {
@@ -318,7 +316,7 @@ export function login(email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email, password: password })
   };
-  return makeAuthRequest(`${config.serverUrl}/auth/login`, params, 'login');
+  return makeAuthRequest('/auth/login', params, 'login');
 }
 
 export function signup(fullName, email, password, orgTitle) {
@@ -332,7 +330,7 @@ export function signup(fullName, email, password, orgTitle) {
       orgTitle: orgTitle
     })
   };
-  return makeAuthRequest(`${config.serverUrl}/auth/signup`, params, 'signup');
+  return makeAuthRequest('/auth/signup', params, 'signup');
 }
 
 export function logout() {
@@ -349,8 +347,7 @@ export function lostPassword(email) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email })
   };
-  return makeAuthRequest(`${config.serverUrl}/auth/lost-pw`, params,
-    'lostPassword');
+  return makeAuthRequest('/auth/lost-pw', params, 'lostPassword');
 }
 
 export function resetPassword(token, newPassword) {
@@ -359,8 +356,7 @@ export function resetPassword(token, newPassword) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token: token, newPassword: newPassword })
   };
-  return makeAuthRequest(`${config.serverUrl}/auth/reset-pw`, params,
-    'resetPassword');
+  return makeAuthRequest('/auth/reset-pw', params, 'resetPassword');
 }
 
 export function retrieveInstance(collectionName, instanceId) {
@@ -369,7 +365,7 @@ export function retrieveInstance(collectionName, instanceId) {
   }
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
-    const url = `${config.serverUrl}/api/${collectionName}/${instanceId}`;
+    const url = `/api/${collectionName}/${instanceId}`;
     const params = { method: 'GET' };
     return request(collectionName, instanceId, 'get', url, params, dispatch)
       .then((response) => {
@@ -382,7 +378,7 @@ export function retrieveInstance(collectionName, instanceId) {
 export function createInstance(collectionName, fields) {
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
-    const url = `${config.serverUrl}/api/${collectionName}`;
+    const url = `/api/${collectionName}`;
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -406,7 +402,7 @@ export function updateInstance(collectionName, instanceId, fields) {
     // First update instance in-place for fast responsiveness.
     dispatch(updateInstanceFields(collectionName, instanceId, fields));
     // Then dispatch the update request.
-    const url = `${config.serverUrl}/api/${collectionName}/${instanceId}`;
+    const url = `/api/${collectionName}/${instanceId}`;
     const params = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -425,7 +421,7 @@ export function bulkUpdate(collectionName, query, fields) {
   return function (dispatch) {
     // Then dispatch the update request.
     const queryString = createQueryString(query);
-    const url = `${config.serverUrl}/api/${collectionName}${queryString}`;
+    const url = `/api/${collectionName}${queryString}`;
     const params = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -478,7 +474,7 @@ export function postAction(orgId, experienceId, tripId, actionName,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: actionName, params: actionParams })
     };
-    const url = `${config.serverUrl}/api/trips/${tripId}/actions`;
+    const url = `/api/trips/${tripId}/actions`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(refreshLiveData(orgId, experienceId, [tripId]));
@@ -495,7 +491,7 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(actionParams || {})
     };
-    const url = `${config.serverUrl}/api/admin/trips/${tripId}/${actionName}`;
+    const url = `/api/admin/trips/${tripId}/${actionName}`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         if (shouldRefresh === true) {
@@ -513,7 +509,7 @@ export function postEvent(orgId, experienceId, tripId, event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(event)
     };
-    const url = `${config.serverUrl}/api/trips/${tripId}/events`;
+    const url = `/api/trips/${tripId}/events`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(refreshLiveData(orgId, experienceId, [tripId]));
@@ -525,7 +521,7 @@ export function postEvent(orgId, experienceId, tripId, event) {
 export function updateRelays(orgId, experienceId) {
   return function (dispatch) {
     const params = { method: 'POST' };
-    const url = `${config.serverUrl}/api/admin/experiences/${experienceId}/update_relays`;
+    const url = `/api/admin/experiences/${experienceId}/update_relays`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
         dispatch(listCollection('relays', {

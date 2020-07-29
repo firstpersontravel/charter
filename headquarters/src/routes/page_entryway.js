@@ -1,3 +1,5 @@
+const moment = require('moment-timezone');
+
 const models = require('../models');
 
 const SceneCore = require('fptcore/src/cores/scene');
@@ -112,7 +114,11 @@ const joinSubmitRoute = async (req, res) => {
       isActive: true,
       phoneNumber: phoneNumber
     },
-    defaults: { name: name, email: email }
+    defaults: {
+      createdAt: moment.utc(),
+      name: name,
+      email: email
+    }
   });
   // Add firstName and email to participant
   await models.Participant.update(
@@ -211,13 +217,18 @@ const entrywaySubmitRoute = async (req, res) => {
       interfaceTitleStub === TextUtil.dashVarForText(i.title)
     ))
     .sort(SceneCore.sortResource)[0];
+  
+  if (!interface) {
+    res.status(404).send('Entryway interface not found');
+    return;
+  }
 
   const playerRole = (script.content.roles || [])
     .filter(r => r.interface === interface.name)
     .sort(SceneCore.sortResource)[0];
 
   if (!playerRole) {
-    res.status(404).send('Entryway interface not found');
+    res.status(404).send('Role for entryway interface not found');
     return;
   }
 

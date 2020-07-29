@@ -25,23 +25,6 @@ export default DS.Model.extend({
   findPageByName: function(pageName) {
     return this.findResourceByName('page', pageName);
   },
-  
-  urlForContentPath: function(path) {
-    if (!path) { return ''; }
-    // Return live URL if it's a absolute url
-    if (path.slice(0, 7) === 'http://') {
-      if (window.location.protocol === 'https:') {
-        return path.replace('http:', 'https:');
-      }
-      return path;
-    }
-    if (path.slice(0, 8) === 'https://') { return path; }
-
-    var contentPath = this.get('environment.contentPath');
-    var orgName = this.get('org.name');
-    var scriptFolder = this.get('experience.name');
-    return `${contentPath}/${orgName}/${scriptFolder}/${path}`;
-  },
 
   getRoleNames: function() {
     return this.get('content.roles').mapBy('name');

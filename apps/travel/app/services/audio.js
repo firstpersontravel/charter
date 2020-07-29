@@ -22,17 +22,25 @@ export default Ember.Service.extend({
     this._audio = null;    
   },
 
-  play: function(path, time) {
-    this._play(path, time);
+  play: function(url, time) {
+    this._kickoff(url, time);
   },
 
   fadeOut: function() {
-    this._stop();
+    if (!this.get('isPlaying')) { 
+      return;
+    }
+    this._stopPlaying();
   },
 
-  _play: function(path, time) {    
-    if (path !== this._path) {
-      this._stop();
+  _kickoff: function(url, time) {
+    // If we're already playing, just need to change time.
+    if (url === this._url && this.get('isPlaying')) {
+      this._audio.currentTime = time;
+      return;
+    }
+    if (url !== this._url) {
+      this._stopPlaying();
     }
 
     // If native, play audio
@@ -43,23 +51,46 @@ export default Ember.Service.extend({
       // In the native app, only the headlands gamble media is already
       // loaded, and in just the /media bundle folder.
       window.webkit.messageHandlers.play_audio.postMessage({
-        path: path.replace('/media/theheadlandsgamble', '/media'),
+        path: url,
         time: time
       });
       return;
     }
 
     var startedAt = new Date();
-    if (this._hasAudioPermission) {
-      this._start(path, startedAt, time);
-    } else {
-      swal({
-        title: 'Please tap to continue'
-      }, function() {
-        this._hasAudioPermission = true;
-        this._start(path, startedAt, time);
-      }.bind(this));
+    this._load(url, startedAt, time);
+  },
+
+  _load: function(url, startedAt, time) {
+    this._startedAt = startedAt;
+    this._startAtTime = time; 
+    this._url = url;
+    this._audio.src = url;
+    this._audio.load();
+    // If already ready, play now
+    if (this._audio.readyState >= this._audio.HAVE_FUTURE_DATA) {
+      this._startOrAskPermission();
     }
+  },
+
+  _startOrAskPermission: function() {
+    // Once we can play, we should also have duration
+    var elapsedFromStart = new Date().getTime() - this._startedAt.getTime();
+    var dur = this._audio.duration;
+    var startAtTime = this._startAtTime + (elapsedFromStart / 1000.0);
+    if (startAtTime > dur) {
+      this._stopPlaying();
+      return;
+    }
+
+    if (this._hasAudioPermission) {
+      this._startPlaying(startAtTime);
+    } else {
+      swal({ title: 'Please tap to start audio' }, () => {
+        this._hasAudioPermission = true;
+        this._startPlaying(startAtTime);
+      });
+    }  
   },
 
   _startPlaying: function(time) {
@@ -70,21 +101,18 @@ export default Ember.Service.extend({
         return;
       }
     }
-    this._audio.play();
-    this.set('isPlaying', true);
+    this._audio.play().then(() => {
+      this.set('isPlaying', true);
+    }, err => {
+      console.error('err playing', err);
+    });
   },
 
-  _start: function(path, startedAt, time) {
-    this._startedAt = startedAt;
-    this._startAtTime = time; 
-    this._path = path;
-    this._audio.src = path;
-    this._audio.load();
-  },
-
-  _stop: function() {
+  _stopPlaying: function() {
+    if (!this.get('isPlaying')) {
+      return;
+    }
     this.set('isPlaying', false);
-
 
     // If native, play audio
     if (window.webkit && 
@@ -101,10 +129,12 @@ export default Ember.Service.extend({
 
   onAudioEnded: function() {
     this.set('isPlaying', false);
+    this._audio.src = ''; 
   },
 
   onAudioCanPlay: function() {
-    var elapsedFromStart = new Date().getTime() - this._startedAt.getTime();
-    this._startPlaying(this._startAtTime + (elapsedFromStart / 1000.0));
+    if (!this.get('isPlaying')) {
+      this._startOrAskPermission();
+    }
   }
 });
