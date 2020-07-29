@@ -1,3 +1,5 @@
+/*--Hello Style--*/
+
 $grid-gutter-width: 15px;
 
 @import "./fonts.scss";
@@ -199,11 +201,11 @@ body {
   }
   .generic-full-height {
     max-height: 100%;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
   .script-editor-full-height {
     max-height: calc(100% - 105px);
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
   .script-editor-container, .script-tester-container {
     height: calc(100% - 105px);
@@ -213,7 +215,7 @@ body {
   }
   .script-editor-col, .script-tester-col {
     max-height: 100%;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
 }
 
@@ -272,4 +274,3 @@ $cards-per-line: (
     }
   }
 }
-
