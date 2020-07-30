@@ -2,54 +2,50 @@
 
 ## Local Setup
 
-### Prerequisites
+### Install prerequisites
 
-    # install via brew
-    brew install node
-    brew install awscli
+    # Install basics with homebrew
+    brew install node awscli
 
-    # set up n
+    # Set up n
     npm install -g n
     n 12.16.2
-    npm install -g bower
 
-    # install webpack
-    npm install -g webpack
+    # Install global requirements
+    npm install -g bower webpack
 
-    # set up pre-commit hook
+### Set up environment
+
+    # Set up pre-commit hook
     cp precommit.sh ./.git/hooks/pre-commit
 
-    # create a local env
+    # Create a local env
     mkdir -p secrets
     cp deploy/example.env secrets/local.env
 
-### Local docker setup
-
-    # Rebuild if you add new modules
+    # Build docker container; rebuild if you add new modules
     docker build . -t fpt:latest
-    docker-compose up -d
 
-### Build js apps locally
-
-    # download secrets
-    npm run download_secrets
-
-    # install dependencies
+    # Install node dependencies
     npm run install_all
 
-    # run tests
+### Run locally!
+
+    # Run backend
+    docker-compose up -d
+
+    # Run migrations if needed
+    npm run migrate
+
+    # Run tests
     npm test
 
-    # watch all local apps in parallel to rebuild on changes
+    # Watch all local apps in parallel to rebuild on changes
     npm run watch
     open http://localhost:5001
 
-    # Run agency only
-    cd apps/agency
-    webpack-dev-server
-
-    # show logs in HQ tests
-    SHOW_TEST_LOGS=1 npm run test_hq
+    # Watch docker logs
+    docker-compose logs -f
 
 ### Migrations
 

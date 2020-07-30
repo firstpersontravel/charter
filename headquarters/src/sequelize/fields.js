@@ -206,7 +206,7 @@ function jsonField(db, modelName, fieldName, options) {
         instance.setDataValue(fieldName, {});
       }
     }
-    if (typeof db.models === 'object' && db.models.hasOwnProperty(modelName)) {
+    if (typeof db.models === 'object' && db.models[modelName]) {
       db.models[modelName].addHook('beforeUpdate', stringifyField);
       db.models[modelName].addHook('beforeCreate', stringifyField);
     }
