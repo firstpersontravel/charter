@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
-const Sequelize = require('sequelize');
 
 const config = require('../config');
 const models = require('../models');
