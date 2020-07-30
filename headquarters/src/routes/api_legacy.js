@@ -10,6 +10,9 @@ function camelToDash(str) {
 }
 
 function createVideoToken(identity) {
+  if (!config.env.HQ_TWILIO_SID || !config.env.HQ_TWILIO_VIDEO_SID) {
+    return null;
+  }
   const accessToken = new twilio.jwt.AccessToken(
     config.env.HQ_TWILIO_SID,
     config.env.HQ_TWILIO_VIDEO_SID,
