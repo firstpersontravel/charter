@@ -12,7 +12,21 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   videoError: null,
   room: null,
+  localTracks: [],
   participantsBySid: {},
+
+  hasVideo: Ember.computed.oneWay('params.video'),
+  shouldTransmit: Ember.computed.oneWay('params.transmit'),
+
+  getLocalTracks() {
+    if (!this.get('shouldTransmit')) {
+      return Promise.resolve([]);
+    }
+    return Twilio.Video.createLocalTracks({
+      audio: true,
+      video: this.get('hasVideo') ? { width: 640 } : false
+    });
+  },
 
   didInsertElement: function() {
     if (navigator.userAgent.match('CriOS')) {
@@ -28,19 +42,21 @@ export default Ember.Component.extend(WindowHeightMixin, {
     }
     const roomName = this.get('params.name') || 'default';
     const roomId = `${envName}-${tripId}-${roomName}`;
-    const opts = {
-      name: roomId,
-      audio: !!this.get('params.transmit'),
-      video: this.get('params.video') ? { width: 640 } : false
-    };
-
-    Twilio.Video.connect(videoToken, opts)
+    return this.getLocalTracks()
+      .then(localTracks => {
+        this.set('localTracks', localTracks);
+        return Twilio.Video.connect(videoToken, {
+          name: roomId,
+          tracks: localTracks
+        });
+      })        
       .then(
         room => this.handleRoomConnect(room),
         err => this.handleRoomConnectError(err)
       )
       .catch(err => {
         console.error(`Error initializing room: ${err.message}`);
+        console.error(err.stack);
       });
   },
 
@@ -54,8 +70,11 @@ export default Ember.Component.extend(WindowHeightMixin, {
         }
       }
       room.disconnect();
-      this.set('room', null);
     }
+    this.set('videoError', null);
+    this.set('room', null);
+    this.set('localTracks', null);
+    this.set('participantsBySid', null);
   },
 
   handleRoomConnectError(err) {
@@ -140,20 +159,17 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   handleParticipantUpdate() {
     const numParticipants = Object.keys(this.get('participantsBySid')).length;
-    console.log('numParticipants', numParticipants);
-    if (numParticipants === 0) {
-      Twilio.Video.createLocalVideoTrack()
-        .then(track => {
-          this._localTrack = track;
-          const localMediaEl = document.getElementsByClassName('room-self-preview')[0];
-          localMediaEl.appendChild(track.attach());
-        });
-    } else {
-      if (this._localTrack) {
-        this._localTrack.detach().forEach(element => element.remove());
-        this._localTrack = null;
+    // If we have video, show self preview when no participants.
+    if (this.get('hasSelfPreview')) {
+      const videoTrack = this.get('localTracks')[1];
+      if (numParticipants === 0) {
+        const localMediaEl = document.getElementsByClassName('room-self-preview')[0];
+        localMediaEl.appendChild(videoTrack.attach());
+      } else {
+        videoTrack.detach().forEach(element => element.remove());
       }
     }
+    // Otherwise message will be handled
   },
 
   handleTrackSubscribed(div, track) {
@@ -166,6 +182,12 @@ export default Ember.Component.extend(WindowHeightMixin, {
     track.detach().forEach(element => element.remove());
   },
 
+  hasSelfPreview: function() {
+    return this.get('hasVideo') &&
+      this.get('shouldTransmit') &&
+      this.get('localTracks.length') === 2;
+  }.property('hasVideo', 'shouldTransmit', 'localTracks'),
+
   numParticipants: function() {
     return Object.keys(this.get('participantsBySid')).length;
   }.property('participantsBySid'),
@@ -173,6 +195,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
   hasParticipants: function() {
     return !!this.get('numParticipants');
   }.property('numParticipants'),
+
+  roomIsEmpty: Ember.computed.not('hasParticipants'),
 
   roomParticipantsClassName: function() {
     const numParticipants = this.get('numParticipants');

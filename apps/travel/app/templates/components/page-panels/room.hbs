@@ -1,10 +1,28 @@
 {{#if videoError}}
-  <h1 style="text-align: center; padding: 2em;">{{videoError}}</h1>
+  <div class='room-message'>{{videoError}}</div>
 {{else}}
   <div class='room-container'>
     <div
       class='room-self-preview'
-      style='display: {{if hasParticipants "none" "block"}};' />
+      style='display: {{if hasParticipants "none" "block"}};'>
+      {{#unless room}}
+        <div class='room-message'>Loading...</div>
+      {{else}}
+        {{#unless hasSelfPreview}}
+          {{#if roomIsEmpty}}
+            {{#if hasVideo}}
+              {{#if shouldTransmit}}
+                <div class='room-message'>Cannot get video preview.</div>
+              {{else}}
+                <div class='room-message'>The room is empty.</div>
+              {{/if}}
+            {{else}}
+              <div class='room-message'>The room is empty.</div>
+            {{/if}}
+          {{/if}}
+        {{/unless}}
+      {{/unless}}
+    </div>
     <div
       class='room-participants {{roomParticipantsClassName}}'
       style='display: {{if hasParticipants "block" "none"}};' />
