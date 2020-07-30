@@ -240,12 +240,37 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 .page-panel-room {
     .room-container {
         width: 100%;
-        .room-participant {
+        video {
+            width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        .room-self-preview {
             video {
-                max-width: 100%;
-                margin: 0 auto;
                 padding: 1em;
-                display: block;
+            }
+        }
+        .room-participants.room-participants-solo {
+            .room-participant {
+                video {
+                    padding: 1em;
+                }
+            }
+        }
+        .room-participants.room-participants-grid-2 {
+            .room-participant {
+                video {
+                    // TODO: grid
+                    padding: 1em;
+                }
+            }
+        }
+        .room-participants.room-participants-grid-3 {
+            .room-participant {
+                video {
+                    // TODO: grid
+                    padding: 1em;
+                }
             }
         }
     }

@@ -1,5 +1,12 @@
 {{#if videoError}}
   <h1 style="text-align: center; padding: 2em;">{{videoError}}</h1>
 {{else}}
-  <div class='room-container'/>
+  <div class='room-container'>
+    <div
+      class='room-self-preview'
+      style='display: {{if hasParticipants "none" "block"}};' />
+    <div
+      class='room-participants {{roomParticipantsClassName}}'
+      style='display: {{if hasParticipants "block" "none"}};' />
+  </div>
 {{/if}}
