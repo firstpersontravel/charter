@@ -267,11 +267,7 @@ const resetPasswordRoute = async (req, res) => {
     }
   }
   const user = await models.User.findOne({
-    where: {
-      passwordResetToken: token,
-      experienceId: null,
-      passwordHash: { [Sequelize.Op.not]: '' }
-    }
+    where: { passwordResetToken: token }
   });
   if (!user) {
     res.status(403);
