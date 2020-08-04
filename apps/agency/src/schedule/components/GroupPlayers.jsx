@@ -8,6 +8,7 @@ import { PlayerCore, RoleCore } from 'fptcore';
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
 import ParticipantModal from '../../directory/partials/ParticipantModal';
+import { getPlayerIframeUrl } from '../../utils';
 
 export default class GroupPlayers extends Component {
   constructor(props) {
@@ -110,16 +111,34 @@ export default class GroupPlayers extends Component {
         value: profileParticipant.id,
         label: profileParticipant.name
       }));
+
+    const goToTravel = player ? (
+      <a
+        className="ml-2"
+        target="_blank"
+        rel="noreferrer noopener"
+        href={getPlayerIframeUrl(trip, player)}>
+        <i className="fa fa-external-link text-dark" />
+      </a>
+    ) : null;
+
     if (participantChoices.length === 0) {
-      return index === 0 ? <em>No users</em> : null;
+      const noUsersLabel = index === 0 ? <em>No participant</em> : null;
+      return (
+        <span>
+          {noUsersLabel}
+          {goToTravel}
+        </span>
+      );
     }
+
     const participantChoicesWithNone = [{ value: '', label: 'Unassigned' }]
       .concat(participantChoices);
     const goToParticipant = participant ? (
       <Link
         className="ml-1"
         to={`/${group.org.name}/${group.experience.name}/directory/${participant.id}`}>
-        <i className="fa fa-external-link-square text-dark faint" />
+        <i className="fa fa-user text-dark faint" />
       </Link>
     ) : null;
 
@@ -137,6 +156,7 @@ export default class GroupPlayers extends Component {
     return (
       <div>
         {participantControl}
+        {goToTravel}
         {goToParticipant}
       </div>
     );
