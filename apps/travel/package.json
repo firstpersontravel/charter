@@ -10,7 +10,8 @@
   "scripts": {
     "start": "./node_modules/.bin/ember server",
     "build": "./node_modules/.bin/ember build",
-    "test": "jshint app"
+    "test": "jshint app",
+    "postinstall": "bower -q install"
   },
   "repository": "",
   "engines": {
@@ -55,5 +56,8 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "twilio-video": "^2.7.0"
+  },
+  "devDependencies": {
+    "bower": "^1.8.8"
   }
 }
