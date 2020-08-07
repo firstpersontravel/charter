@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 import WindowHeightMixin from '../../mixins/panels/window-height';
 
+let hasReceivedInput = false;
+
 export default Ember.Component.extend(WindowHeightMixin, {
   classNames: ['page-panel-room'],
   contentEl: '.room-container',
@@ -18,6 +20,48 @@ export default Ember.Component.extend(WindowHeightMixin, {
   hasVideo: Ember.computed.oneWay('params.video'),
   shouldTransmit: Ember.computed.oneWay('params.transmit'),
 
+  hasReceivedInput: Ember.computed({
+    get(key) {
+      return hasReceivedInput;
+    },
+    set(key, value) {
+      hasReceivedInput = value;
+      return hasReceivedInput;
+    }
+  }),
+
+  enterDescription: function() {
+    const isTransmitting = this.get('shouldTransmit');
+    const hasVideo = this.get('hasVideo');
+    if (isTransmitting) {
+      return `You will start sharing and receiving ${hasVideo ? 'video' : 'audio'}.`;
+    }
+    return `You will start receiving ${hasVideo ? 'video' : 'audio'}, but will not be sharing.`;
+  }.property(),
+
+  isBrowserSupported: function() {
+    return Twilio.Video.isSupported;
+  }.property(),
+
+  browserMessage: function() {
+    if (navigator.userAgent.match('CriOS')) {
+      return 'Chrome on iOS is not supported. Please use Safari.';
+    }
+    if (!Twilio.Video.isSupported) {
+      return 'This browser is not supported.';
+    }
+    return null;
+  }.property(),
+
+  noVideoMessage: function() {
+    const isTransmitting = this.get('shouldTransmit');
+    const hasVideo = this.get('hasVideo');
+    if (isTransmitting) {
+      return `No video for other participants; you are sharing ${hasVideo ? 'video' : 'audio'}`;
+    }
+    return `No video for other participants; you are not sharing audio or video.`;
+  }.property('shouldTransmit', 'hasVideo'),
+
   getLocalTracks() {
     if (!this.get('shouldTransmit')) {
       return Promise.resolve([]);
@@ -29,10 +73,33 @@ export default Ember.Component.extend(WindowHeightMixin, {
   },
 
   didInsertElement: function() {
-    if (navigator.userAgent.match('CriOS')) {
-      this.set('videoError', 'Chrome on iOS is not supported. Please use Safari.');
-      return;
+    this._super();
+    if (this.get('hasReceivedInput')) {
+      this.enterRoom();
     }
+  },
+
+  willClearRender: function() {
+    console.log('Tearing down room');
+    const room = this.get('room');
+    if (room) {
+      for (const trackPublication of this.room.localParticipant.tracks) {
+        if (trackPublication.track) {
+          trackPublication.track.stop();
+        }
+      }
+      room.disconnect();
+    }
+    new Array(...document.getElementsByClassName('room-container')[0].querySelectorAll('*'))
+      .forEach(el => el.remove());
+    this.set('videoError', null);
+    this.set('room', null);
+    this.set('localTracks', null);
+    this.set('participantsBySid', null);
+    this._super();
+  },
+
+  enterRoom() {
     const envName = this.get('environment.environmentName');
     const tripId = this.get('trip.id');
     const videoToken = this.get('trip.videoToken');
@@ -58,23 +125,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
         console.error(`Error initializing room: ${err.message}`);
         console.error(err.stack);
       });
-  },
-
-  willDestroyElement: function() {
-    console.log('Tearing down room');
-    const room = this.get('room');
-    if (room) {
-      for (const trackPublication of this.room.localParticipant.tracks) {
-        if (trackPublication.track) {
-          trackPublication.track.stop();
-        }
-      }
-      room.disconnect();
-    }
-    this.set('videoError', null);
-    this.set('room', null);
-    this.set('localTracks', null);
-    this.set('participantsBySid', null);
   },
 
   handleRoomConnectError(err) {
@@ -123,23 +173,31 @@ export default Ember.Component.extend(WindowHeightMixin, {
     }));
 
     const div = document.createElement('div');
-    div.classList = ["room-participant"];
+    div.classList = ['room-participant'];
     div.id = participant.sid;
     // div.innerText = participant.identity;
   
     participant.on('trackSubscribed',
-      track => this.handleTrackSubscribed(div, track));
+      track => this.handleTrackSubscribed(div, participant, track));
     participant.on('trackUnsubscribed',
-      track => this.handleTrackUnsubscribed(track));
+      track => this.handleTrackUnsubscribed(div, participant, track));
   
+    let hasVideo = false;
     participant.tracks.forEach(publication => {
       if (publication.isSubscribed) {
         this.handleTrackSubscribed(div, publication.track);
+        if (publication.kind === 'video') {
+          hasVideo = true;
+        }
       }
     });
-  
-    const container = document.getElementsByClassName('room-participants')[0];
+
+    const container = document.getElementsByClassName('room-container')[0];
     container.appendChild(div);
+    if (!hasVideo) {
+      this.insertMessage(div, participant, this.get('noVideoMessage'));
+    }
+
     this.handleParticipantUpdate();
   },
 
@@ -163,23 +221,46 @@ export default Ember.Component.extend(WindowHeightMixin, {
     if (this.get('hasSelfPreview')) {
       const videoTrack = this.get('localTracks').find(t => t.kind === 'video');
       if (numParticipants === 0) {
-        const localMediaEl = document.getElementsByClassName('room-self-preview')[0];
-        localMediaEl.appendChild(videoTrack.attach());
+        // Clear old self
+        videoTrack.detach().forEach(el => el.remove());
+        document.getElementById('self') && document.getElementById('self').remove();
+        // Attach local preview
+        const div = document.createElement('div');
+        div.classList = 'room-participant room-self';
+        div.id = 'self';
+        div.appendChild(videoTrack.attach());
+        const container = document.getElementsByClassName('room-container')[0];
+        container.appendChild(div);
       } else {
-        videoTrack.detach().forEach(element => element.remove());
+        // Remove local preview
+        videoTrack.detach().forEach(el => el.remove());
+        document.getElementById('self') && document.getElementById('self').remove();
       }
     }
     // Otherwise message will be handled
   },
 
-  handleTrackSubscribed(div, track) {
+  handleTrackSubscribed(div, participant, track) {
     console.log(`A track subscribed: ${track}`, track);
     div.appendChild(track.attach());
+    if (track.kind === 'video') {
+      new Array(...div.querySelectorAll('.participant-message')).forEach(el => el.remove());
+    }
   },
   
-  handleTrackUnsubscribed(track) {
+  handleTrackUnsubscribed(div, participant, track) {
     console.log(`A track unsubscribed: ${track}`, track);
     track.detach().forEach(element => element.remove());
+    if (track.kind === 'video') {
+      this.insertMessage(div, participant, this.get('noVideoMessage'));
+    }
+  },
+
+  insertMessage(div, participant, message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList = 'participant-message';
+    messageDiv.innerText = message;
+    div.appendChild(messageDiv);    
   },
 
   hasSelfPreview: function() {
@@ -200,12 +281,22 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   roomParticipantsClassName: function() {
     const numParticipants = this.get('numParticipants');
-    if (numParticipants <= 1) {
-      return 'room-participants-solo';
+    if (!this.get('room') || numParticipants === 0) {
+      return 'room-self';
+    }
+    if (numParticipants === 1) {
+      return 'room-solo';
     }
     if (numParticipants <= 4) {
-      return 'room-participants-grid-2';
+      return 'room-grid-2';
     }
-    return 'room-participants-grid-3';
-  }.property('numParticipants')
+    return 'room-grid-3';
+  }.property('numParticipants'),
+
+  actions: {
+    enterRoom: function() {
+      this.set('hasReceivedInput', true);
+      this.enterRoom();
+    }
+  }
 });
