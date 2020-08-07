@@ -117,7 +117,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     if (!this.get('room')) {
       return;
     }
-    console.log(`A remote participant connected: ${participant}`);
+    console.log(`A remote participant connected: ${participant}`, participant);
     this.set('participantsBySid', Object.assign({}, this.get('participantsBySid'), {
       [participant.sid]: participant
     }));
@@ -161,7 +161,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     const numParticipants = Object.keys(this.get('participantsBySid')).length;
     // If we have video, show self preview when no participants.
     if (this.get('hasSelfPreview')) {
-      const videoTrack = this.get('localTracks')[1];
+      const videoTrack = this.get('localTracks').find(t => t.kind === 'video');
       if (numParticipants === 0) {
         const localMediaEl = document.getElementsByClassName('room-self-preview')[0];
         localMediaEl.appendChild(videoTrack.attach());
@@ -173,12 +173,12 @@ export default Ember.Component.extend(WindowHeightMixin, {
   },
 
   handleTrackSubscribed(div, track) {
-    console.log(`A track subscribed: ${track}`);
+    console.log(`A track subscribed: ${track}`, track);
     div.appendChild(track.attach());
   },
   
   handleTrackUnsubscribed(track) {
-    console.log(`A track unsubscribed: ${track}`);
+    console.log(`A track unsubscribed: ${track}`, track);
     track.detach().forEach(element => element.remove());
   },
 
