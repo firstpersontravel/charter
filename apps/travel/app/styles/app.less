@@ -238,44 +238,51 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 }
 
 .page-panel-room {
+    &.room-frame, .room-frame {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     .room-container {
         display: flex;
         &.room-solo, &.room-self {}
         &.room-grid-2 {}
         &.room-grid-3 {}
-        .room-button {
+        .room-participants {
             flex: 1;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2em;
         }
-        .room-message {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: black;
-            color: white;
-            font-size: 24px;
-            text-align: center;
-        }
-        .room-participant {
-            background: black;
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            video {
-                margin: 0 auto;
-                max-width: 100%;
-                max-height: 100%;
-            }
-            .participant-message {
-                color: white;
-                font-size: 24px;
-                text-align: center;
-            }
+    }
+    .room-button {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2em;
+    }
+    .room-message {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        text-align: center;
+    }
+    .room-participants {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .room-participant {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        video {
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 100%;
         }
     }
 }

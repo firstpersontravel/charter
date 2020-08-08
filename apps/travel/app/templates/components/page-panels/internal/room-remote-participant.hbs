@@ -1,0 +1,13 @@
+{{#if hasNoTracks}}
+  <div class='room-message'>
+    <i class="fa fa-user" />
+    {{label}}
+  </div>
+{{else}}
+  {{#if hasNoVideo}}
+    <div class='room-message'>
+      <i class="fa fa-volume-control-phone" />
+      {{label}}
+    </div>
+  {{/if}}
+{{/if}}
