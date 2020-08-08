@@ -92,3 +92,31 @@ describe('#value_contains', () => {
       { op: 'value_contains', string_ref: 'a', part_ref: '"car"'}, false);
   });
 });
+
+describe('#value_greater_than_or_equal_to', () => {
+  function assertIfEq(ctx, stmt, val) {
+    assert.strictEqual(
+      valueConditions.value_greater_than_or_equal_to.eval(stmt, { evalContext: ctx }), val);
+  }
+
+  const stmt = { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: 'b' };
+
+  it('returns false if any variables are missing', () => {
+    assertIfEq({}, stmt, false);
+    assertIfEq({ a: 1 }, stmt, false);
+    assertIfEq({ b: 1 }, stmt, false);
+  });
+
+  it('evaluates numbers correctly', () => {
+    assertIfEq({ a: 0, b: 2 }, stmt, false);
+    assertIfEq({ a: 2, b: 0 }, stmt, true);
+    assertIfEq({ a: 0, b: 0 }, stmt, true);
+  });
+
+  it('evaluates correctly against constants', () => {
+    assertIfEq({ a: 0 }, { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: '2' }, false);
+    assertIfEq({ a: 2 }, { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: '0' }, true);
+    assertIfEq({ b: 2 }, { op: 'value_greater_than_or_equal_to', ref1: '0', ref2: 'b' }, false);
+    assertIfEq({ b: 0 }, { op: 'value_greater_than_or_equal_to', ref1: '2', ref2: 'b' }, true);
+  });
+});

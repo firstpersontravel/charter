@@ -77,5 +77,33 @@ module.exports = {
         a.toLowerCase().indexOf(b.toLowerCase()) > -1
       );
     }
+  },
+  value_greater_than_or_equal_to: {
+    title: 'Variable is greater than or equal to',
+    help: 'A condition that passes if the first variable is greater than or equal to the second.',
+    properties: {
+      ref1: {
+        title: 'Variable name 1',
+        type: 'lookupable',
+        required: true,
+        help: 'A value to look up and compare against the second.'
+      },
+      ref2: {
+        type: 'lookupable',
+        title: 'Variable name 2',
+        required: true,
+        help: 'Another value to look up and compare against the first.'
+      }
+    },
+    eval: (params, actionContext) => {
+      const val1 = TemplateUtil.lookupRef(actionContext.evalContext,
+        params.ref1, actionContext.currentRoleName);
+      const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
+        params.ref2, actionContext.currentRoleName);
+      if (val1 == null || val2 == null) {
+        return false;
+      }
+      return (val1 >= val2);
+    }
   }
 };
