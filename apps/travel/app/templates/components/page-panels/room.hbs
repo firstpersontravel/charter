@@ -1,5 +1,38 @@
-{{#if videoError}}
-  <h1 style="text-align: center; padding: 2em;">{{videoError}}</h1>
-{{else}}
-  <div class='room-container'/>
-{{/if}}
+<div class='room-container {{roomParticipantsClassName}}'>
+  {{#unless isBrowserSupported}}
+    <div class='room-message'>{{browserMessage}}</div>
+  {{else}}
+    {{#unless hasReceivedInput}}
+      <div class='room-button'>
+        <button
+          class='pure-button pure-button-primary pure-button-block'
+          style='padding: 2em'
+          {{action "enterRoom"}}>
+          Enter room ({{enterDescription}})
+        </button>
+      </div>
+    {{else}}
+      {{#if videoError}}
+        <div class='room-message'>{{videoError}}</div>
+      {{else}}
+        {{#unless room}}
+          <div class='room-message'>Loading...</div>
+        {{else}}
+          {{#unless hasSelfPreview}}
+            {{#if roomIsEmpty}}
+              {{#if hasVideo}}
+                {{#if shouldTransmit}}
+                  <div class='room-message'>Cannot get video preview.</div>
+                {{else}}
+                  <div class='room-message'>The room is empty.</div>
+                {{/if}}
+              {{else}}
+                <div class='room-message'>The room is empty.</div>
+              {{/if}}
+            {{/if}}
+          {{/unless}}
+        {{/unless}}
+      {{/if}}
+    {{/unless}}
+  {{/unless}}
+</div>

@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
-const Sequelize = require('sequelize');
 
 const config = require('../config');
 const models = require('../models');
@@ -267,11 +266,7 @@ const resetPasswordRoute = async (req, res) => {
     }
   }
   const user = await models.User.findOne({
-    where: {
-      passwordResetToken: token,
-      experienceId: null,
-      passwordHash: { [Sequelize.Op.not]: '' }
-    }
+    where: { passwordResetToken: token }
   });
   if (!user) {
     res.status(403);

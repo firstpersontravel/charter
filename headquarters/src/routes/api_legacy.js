@@ -10,6 +10,9 @@ function camelToDash(str) {
 }
 
 function createVideoToken(identity) {
+  if (!config.env.HQ_TWILIO_SID || !config.env.HQ_TWILIO_VIDEO_SID) {
+    return null;
+  }
   const accessToken = new twilio.jwt.AccessToken(
     config.env.HQ_TWILIO_SID,
     config.env.HQ_TWILIO_VIDEO_SID,
@@ -134,7 +137,10 @@ async function getTripRoute(req, res) {
   
   // Sneak in a day-long auth token
   data.attributes['auth-token'] = createTripToken(trip, 86400);
-  data.attributes['video-token'] = createVideoToken(roleName);
+
+  // Create a video token by IP in case multiple users or devices share a role.
+  const identity = `${roleName}-${req.ip}`
+  data.attributes['video-token'] = createVideoToken(identity);
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };

@@ -2,161 +2,170 @@
 
 ## Local Setup
 
-### Prerequisites
+### Install prerequisites
 
-    # install via brew
-    brew install node
-    brew install awscli
+```sh
+# Install basics with homebrew
+brew install node awscli
 
-    # set up n
-    npm install -g n
-    n 12.16.2
-    npm install -g bower
+# Set up n
+npm install -g n
+n 12.16.2
+```
 
-    # install webpack
-    npm install -g webpack
+### Set up environment
 
-    # set up pre-commit hook
-    cp precommit.sh ./.git/hooks/pre-commit
+```sh
+# Set up pre-commit hook
+cp precommit.sh ./.git/hooks/pre-commit
 
-    # create a local env
-    mkdir -p secrets
-    cp deploy/example.env secrets/local.env
+# Create a local env
+mkdir -p secrets
+cp deploy/example.env secrets/local.env
 
-### Local docker setup
+# Build docker container; rebuild if you add new modules
+docker build . -t fpt:latest
 
-    # Rebuild if you add new modules
-    docker build . -t fpt:latest
-    docker-compose up -d
+# Install node dependencies
+npm run install_all
+```
 
-### Build js apps locally
+### Run locally!
 
-    # download secrets
-    npm run download_secrets
+```sh
+# Run backend
+docker-compose up -d
 
-    # install dependencies
-    npm run install_all
+# Run migrations if needed
+npm run migrate
 
-    # run tests
-    npm test
+# Run tests
+npm test
 
-    # watch all local apps in parallel to rebuild on changes
-    npm run watch
-    open http://localhost:5001
+# Watch all local apps in parallel to rebuild on changes
+npm run watch
+open http://localhost:5001
 
-    # Run agency only
-    cd apps/agency
-    webpack-dev-server
-
-    # show logs in HQ tests
-    SHOW_TEST_LOGS=1 npm run test_hq
+# Watch docker logs
+docker-compose logs -f
+```
 
 ### Migrations
 
-    # Run migrations
-    docker-compose exec server sequelize migrate:db
+```sh
+# Run migrations
+docker-compose exec server sequelize db:migrate
 
-    # Create a new migration
-    docker-compose exec server sequelize migration:generate --name add-some-fields
+# Create a new migration
+docker-compose exec server sequelize migration:generate --name add-some-fields
 
-    # Run script migrations
-    docker-compose run server npm run migrate:scripts
+# Run script migrations
+docker-compose run server npm run scripts:migrate
+```
 
 ### Random tips
 
-    # If the docker clock gets out of sync:
-    docker run --rm --privileged alpine hwclock -s
+```sh
+# If the docker clock gets out of sync:
+docker run --rm --privileged alpine hwclock -s
 
-    # Clear contaniers
-    docker kill $(docker ps -q)
-    docker rm $(docker ps -a -q)
-    docker rmi $(docker images -q) --force
-    docker volume ls -qf dangling=true | xargs docker volume rm
+# Clear contaniers
+docker kill $(docker ps -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -q) --force
+docker volume ls -qf dangling=true | xargs docker volume rm
 
-    # Clean non-tracked cruft
-    git clean -xdf
+# Clean non-tracked cruft
+git clean -xdf
+```
 
     # Fix bcrypt
     docker-compose exec server npm rebuild bcrypt --build-from-source
 
 ### Pull production DB for testing
 
-    export AWS_PROFILE=fpt
-    DB_HOST=fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
-    DB_NAME=agency
-    DB_PW=`aws ssm get-parameter --name charter.production.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
-    DB_USER=`aws ssm get-parameter --name charter.production.db-user --region us-west-2 --with-decryption | jq -r .Parameter.Value`
-    mysqldump --column-statistics=0 -h $DB_HOST -p$DB_PW -u $DB_USER $DB_NAME --result-file=/tmp/bak.sql
-    mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
-    docker-compose exec server npm run migrate
+```sh
+export AWS_PROFILE=fpt
+DB_HOST=fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
+DB_NAME=agency
+DB_PW=`aws ssm get-parameter --name charter.production.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+DB_USER=`aws ssm get-parameter --name charter.production.db-user --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+mysqldump --column-statistics=0 -h $DB_HOST -p$DB_PW -u $DB_USER $DB_NAME --result-file=/tmp/bak.sql
+mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
+docker-compose exec server npm run migrate
+```
 
 ## Build for production
 
 ### Building locally for production
 
-    npm run build
-    open "http://localhost:5001/travel"
+```sh
+npm run build
+open "http://localhost:5001/travel"
+```
 
 ### Deploying with terraform
 
-    export AWS_PROFILE=fpt
-    export GIT_HASH=`git rev-parse origin/master`
+```sh
+export AWS_PROFILE=fpt
+export GIT_HASH=`git rev-parse origin/master`
 
-    # Test
-    deploy/ecs/render_task.py test $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/test/containers.json
+# Test
+deploy/ecs/render_task.py test $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/test/containers.json
 
-    cd deploy/terraform/environments/test
-    terraform init
-    terraform plan
+cd deploy/terraform/environments/test
+terraform init
+terraform plan
 
-    # Staging
-    deploy/ecs/render_task.py staging $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
+# Staging
+deploy/ecs/render_task.py staging $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/staging/containers.json
 
-    cd deploy/terraform/environments/staging
-    terraform init
-    terraform plan
+cd deploy/terraform/environments/staging
+terraform init
+terraform plan
 
-    # Production
-    deploy/ecs/render_task.py production $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/production/containers.json
+# Production
+deploy/ecs/render_task.py production $GIT_HASH true | jq .containerDefinitions > deploy/terraform/environments/production/containers.json
 
-    cd deploy/terraform/environments/production
-    terraform init
-    terraform plan
+cd deploy/terraform/environments/production
+terraform init
+terraform plan
+```
 
 ## Native app
 
 ### Set up native app
 
-    cd native/ios/Traveler
-    pod install
+```sh
+cd native/ios/Traveler
+pod install
+```
 
 ### Build native app
 
-    # run local tunnel
-    ngrok http -subdomain=firstpersontravel 5001
+```
+# run local tunnel
+ngrok http -subdomain=firstpersontravel 5001
 
-    # build travel app in xcode
+# build travel app in xcode
+```
 
 ## Debugging
 
 ### Getting a nice console
 
-    # Node server
-    docker-compose exec server node --experimental-repl-await
+```sh
+# Node server
+docker-compose exec server node --experimental-repl-await
 
-    # MySQL console
-    docker-compose exec mysql mysql galaxy -ugalaxy -pgalaxypassword
-
-### Creating a user
-
-    docker-compose exec server node ./cmd/create-org.js <name> <title>
-    docker-compose exec server node ./cmd/create-user.js <org-name> <email> <pw>
+# MySQL console
+docker-compose exec mysql mysql galaxy -ugalaxy -pgalaxypassword
+```
 
 ## Todo later:
-    
-    - https://devexpress.github.io/testcafe/
-    - https://github.com/team-video/tragopan
-    - https://gojs.net/latest/index.html
-    - https://github.com/projectstorm/react-diagrams
-    - https://github.com/parcel-bundler/parcel
-    - swc instead of babel
+
+- https://wit.ai/docs/quickstart
+- https://www.cypress.io/
+- https://github.com/team-video/tragopan
+- https://gojs.net/latest/index.html
+- https://github.com/projectstorm/react-diagrams

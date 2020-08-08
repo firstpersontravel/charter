@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
-const Sequelize = require('sequelize');
 const jwt = require('jsonwebtoken');
 
 const { sandbox, mockNow } = require('../mocks');
@@ -396,11 +395,7 @@ Thank you!
       // Find user properly
       sinon.assert.calledOnce(models.User.findOne);
       sinon.assert.calledWith(models.User.findOne, {
-        where: {
-          passwordResetToken: '123',
-          experienceId: null,
-          passwordHash: { [Sequelize.Op.not]: '' }
-        }
+        where: { passwordResetToken: '123' }
       });      
 
       // Resets password

@@ -32,6 +32,10 @@ async function extractExample({ org, experience, name }) {
       as: 'org'
     }]
   });
+  if (!script) {
+    console.error('No script found.');
+    process.exit(1);
+  }
   const assets = await models.Asset.findAll({
     where: { isArchived: false },
     include: [{

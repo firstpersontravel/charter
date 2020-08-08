@@ -6,7 +6,9 @@
     "pretest": "eslint --ext .jsx --ext .js .",
     "test": "echo 'no tests.'",
     "prebuild": "npm run test",
-    "build": "webpack"
+    "build": "webpack --colors",
+    "watch": "webpack --watch",
+    "dev": "webpack-dev-server"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
@@ -61,10 +63,10 @@
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
-    "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   },
   "devDependencies": {
+    "webpack": "^4.44.1",
     "webpack-dev-server": "^3.2.1"
   }
 }

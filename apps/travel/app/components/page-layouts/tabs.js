@@ -31,12 +31,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.property('pageInterface'),
 
   visibleTabs: function() {
-    return this.get('tabs').filter(tab => {
-      if (tab.visible_if) {
-        return this.get('player').evaluateIf(tab.visible_if);
-      }
-      return true;
-    }, this);
+    return this.get('tabs').filter(tab => this.get('player').evaluateIf(tab.visible_if));
   }.property('tabs', 'player.evalContext'),
 
   showTabs: function() {

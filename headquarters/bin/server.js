@@ -1,17 +1,74 @@
 const http = require('http');
+const moment = require('moment-timezone');
 
 const app = require('../src/app');
 const config = require('../src/config');
+const models = require('../src/models');
 
-// Start listening
-const server = http.createServer(app);
-
-try {
-  server.listen(config.serverPort, function() {
-    const host = server.address().address;
-    const port = server.address().port;
-    config.logger.info({ name: 'server' }, `listening at ${host}:${port}`);
-  });
-} catch(err) {
-  config.logger.error(err.message);
+async function init() {
+  if (config.env.HQ_DATABASE_BOOTSTRAP && config.env.HQ_STAGE === 'development') {
+    await tryBootstrappingDb();
+  }
 }
+
+// try multiple times in dev if mysql is booting up
+async function tryBootstrappingDb() {
+  const numTries = 10;
+  for (let i = 0; i < numTries; i++) {
+    try {
+      return await bootstrapDb();
+    } catch (err) {
+      console.log(`Error bootstrapping DB; waiting and retrying: ${err.message}`);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+  }
+}
+
+// Create DB if doesn't exist.
+async function bootstrapDb() {
+  const queryInterface = config.database.getQueryInterface();
+  const result = await queryInterface.sequelize.query('SHOW TABLES LIKE \'Users\';',
+    { type: queryInterface.sequelize.QueryTypes.SELECT });
+  if (result.length > 0) {
+    // Db exists
+    return;
+  }
+  config.logger.warn('Bootstrapping database');
+  await config.database.sync({ force: true });
+  await createFixtures();
+}
+
+// Create fixture user
+async function createFixtures() {
+  // Create fixture user
+  const testOrg = await models.Org.create({
+    createdAt: moment.utc(),
+    name: 'test',
+    title: 'Test'
+  });
+  const testUser = await models.User.create({
+    createdAt: moment.utc(),
+    firstName: 'Test',
+    email: 'test@test.com',
+    passwordHash: '$2b$10$.C2EN6n3oZw5o81EUDL3Z.0uAMrnaPf0U.COPfCFcuBzhCijSZ1g.' // test
+  });
+  await models.OrgRole.create({ orgId: testOrg.id, userId: testUser.id });
+}
+
+init()
+  .then(() => {
+    // Start listening
+    const server = http.createServer(app);
+    server.listen(config.serverPort, err => {
+      if (err) {
+        throw err;
+      }
+      const host = server.address().address;
+      const port = server.address().port;
+      config.logger.info({ name: 'server' }, `listening at ${host}:${port}`);
+    });
+  })
+  .catch(err => {
+    config.logger.error(err.message);
+    process.exit(1);
+  });

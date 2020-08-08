@@ -14,11 +14,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
     var section = this.get('params.section');
     if (!scriptContent || !scriptContent.content_pages) { return []; }
     var sectionItems = scriptContent.content_pages
-      .filterBy('section', section);
-    return sectionItems.filter(item => {
-      if (!item.active_if) { return true; }
-      return this.get('player').evaluateIf(item.active_if);
-    });
+      .filterBy('section', section)
+      .sortBy('title');
+    return sectionItems.filter(item => this.get('player').evaluateIf(item.active_if));
   }.property('params.section', 'player.evalContext'),
 
   menu: function() {

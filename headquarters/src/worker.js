@@ -17,7 +17,13 @@ let isRunningActions = false;
 let isSchedulingActions = false;
 
 function handleWorkerError(err) {
+  // In case DB isn't booted or accessible
   if (err instanceof Sequelize.ConnectionError) {
+    console.warn(`${err.name} accessing database, will try again.`);
+    return;
+  }
+  // In case DB isn't migrated properly
+  if (err instanceof Sequelize.DatabaseError) {
     console.warn(`${err.name} accessing database, will try again.`);
     return;
   }
