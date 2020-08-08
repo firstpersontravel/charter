@@ -132,7 +132,7 @@ export default class GroupOverview extends Component {
 
     function participantsForRole(role) {
       return _(allPlayers)
-        .filter(player => !!player.role.interface)
+        .filter(player => player.role && player.role.interface)
         .filter({ roleName: role.name })
         .map('participant')
         .uniq()

@@ -96,7 +96,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
   function itemsForRole(role) {
     return _(allPlayers)
-      .filter(player => !!player.role.interface)
+      .filter(player => player.role && player.role.interface)
       .filter({ roleName: role.name })
       .map('participant')
       .uniq()
