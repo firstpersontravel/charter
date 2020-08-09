@@ -29,7 +29,7 @@
     "json-stable-stringify": "^1.0.1",
     "jsonschema": "^1.2.6",
     "jsonwebtoken": "^8.4.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "marked": "^0.6.1",
     "marked-plaintext": "^0.0.2",
     "module-alias": "^2.2.2",
