@@ -101,9 +101,9 @@ describe('#value_greater_than_or_equal_to', () => {
 
   const stmt = { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: 'b' };
 
-  it('returns false if any variables are missing', () => {
-    assertIfEq({}, stmt, false);
-    assertIfEq({ a: 1 }, stmt, false);
+  it('treats nulls as 0', () => {
+    assertIfEq({}, stmt, true);
+    assertIfEq({ a: 1 }, stmt, true);
     assertIfEq({ b: 1 }, stmt, false);
   });
 

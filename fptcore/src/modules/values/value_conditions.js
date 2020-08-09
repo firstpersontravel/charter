@@ -79,7 +79,7 @@ module.exports = {
     }
   },
   value_greater_than_or_equal_to: {
-    title: 'Variable is greater than or equal to',
+    title: 'Variable >=',
     help: 'A condition that passes if the first variable is greater than or equal to the second.',
     properties: {
       ref1: {
@@ -100,10 +100,7 @@ module.exports = {
         params.ref1, actionContext.currentRoleName);
       const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref2, actionContext.currentRoleName);
-      if (val1 == null || val2 == null) {
-        return false;
-      }
-      return (val1 >= val2);
+      return (Number(val1) >= Number(val2));
     }
   }
 };
