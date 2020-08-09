@@ -139,7 +139,7 @@ async function getTripRoute(req, res) {
   data.attributes['auth-token'] = createTripToken(trip, 86400);
 
   // Create a video token by IP in case multiple users or devices share a role.
-  const identity = `${roleName}-${req.ip}`
+  const identity = `${roleName}-${req.ip}`;
   data.attributes['video-token'] = createVideoToken(identity);
 
   const includedData = objs.map(jsonApiSerialize);
