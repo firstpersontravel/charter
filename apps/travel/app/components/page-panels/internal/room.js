@@ -3,7 +3,7 @@ import Ember from 'ember';
 import WindowHeightMixin from '../../../mixins/panels/window-height';
 
 export default Ember.Component.extend(WindowHeightMixin, {
-  classNames: ['room-frame'],
+  classNameBindings: [':room-frame', 'layoutClassName'],
   contentEl: '',
   footerEl: '.page-layout-tabs-menu',
 
@@ -15,6 +15,40 @@ export default Ember.Component.extend(WindowHeightMixin, {
   localTracks: null,
 
   isEmpty: Ember.computed.not('participants.length'),
+
+  // Don't show local if we have one remote participant -- since
+  // full screen is nice. But show otherwise - empty or gallery.
+  shouldShowLocal: function() {
+    return this.get('participants.length') !== 1;
+  }.property('participants.length'),
+
+  numSpacesUsed: function() {
+    return (
+      (this.get('shouldShowLocal') ? 1 : 0) +
+      this.get('participants.length'));
+  }.property('shouldShowLocal', 'participants.length'),
+
+  numSpacesTotal: function() {
+    const numUsed = this.get('numSpacesUsed');
+    console.log('numUsed', numUsed);
+    return numUsed <= 1 ? 1 : (numUsed <= 4 ? 4 : 9);
+  }.property('numSpacesUsed'),
+
+  numEmpties: function() {
+    return this.get('numSpacesTotal') - this.get('numSpacesUsed');
+  }.property('numSpacesUsed', 'numSpacesTotal'),
+      
+  layoutClassName: function() {
+    return `layout-${this.get('numSpacesTotal')}`;
+  }.property('numSpacesTotal'),
+
+  empties: function() {
+    const empties = [];
+    for (let i = 0; i < this.get('numEmpties'); i++) {
+      empties.push(i);
+    }
+    return empties;
+  }.property('numEmpties'),
 
   init: function() {
     this._super();
@@ -94,6 +128,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     room.on('participantDisconnected', p => this.onParticipantDisconnected(p));
     room.on('reconnecting', e => this.onRoomReconnecting(e));
     room.once('disconnected', () => this.onRoomDisconnected(room));
+    this.onResize();
   },
 
   onRoomConnectError(err) {
@@ -114,6 +149,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
   onParticipantConnected: function(participant) {
     console.log(`A remote participant connected: ${participant}`, participant);
     this.get('participants').addObject(participant);
+    this.onResize();
   },
 
   onParticipantDisconnected: function(participant) {

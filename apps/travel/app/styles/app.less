@@ -240,45 +240,37 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 .page-panel-room {
     &.room-frame, .room-frame {
         display: flex;
+        flex: 1;
         justify-content: center;
         align-items: center;
     }
-    .room-container {
+    .layout-1 {
+        .room-item { flex: 1; }
+    }
+    .layout-4 {
+        flex-flow: row wrap;
+        .room-item { width: 50%; height: 50%; }
+    }
+    .layout-9 {
+        flex-flow: row wrap;
+        .room-item { width: 33%; height: 33%; }
+    }
+    .room-item {
         display: flex;
-        &.room-solo, &.room-self {}
-        &.room-grid-2 {}
-        &.room-grid-3 {}
-        .room-participants {
-            flex: 1;
-            display: flex;
-        }
+        justify-content: center;
+        align-items: center;
     }
     .room-button {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         padding: 2em;
     }
     .room-message {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         font-size: 24px;
         text-align: center;
     }
-    .room-participants {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .room-empty {
+        background: #ddd;
     }
     .room-participant {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
         video {
             margin: 0 auto;
             max-width: 100%;

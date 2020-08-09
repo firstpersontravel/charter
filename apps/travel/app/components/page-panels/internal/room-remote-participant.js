@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames: ['room-participant'],
+  classNames: ['room-item', 'room-participant'],
 
   hasVideo: false,
   hasAudio: false,

@@ -1,8 +1,8 @@
 {{#unless isBrowserSupported}}
-  <div class='room-message'>{{browserMessage}}</div>
+  <div class='room-item room-message'>{{browserMessage}}</div>
 {{else}}
   {{#unless hasReceivedInput}}
-    <div class='room-button'>
+    <div class='room-item room-button'>
       <button
         class='pure-button pure-button-primary pure-button-block'
         style='padding: 2em'

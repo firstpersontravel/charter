@@ -1,7 +1,7 @@
 import Ember from 'ember';
 
 export default Ember.Component.extend({
-  classNames: ['room-participant'],
+  classNames: ['room-item', 'room-participant'],
 
   localVideo: function() {
     return this.get('localTracks').find(t => t.kind === 'video');
@@ -18,7 +18,7 @@ export default Ember.Component.extend({
 
   didInsertElement: function() {
     if (this.get('localVideo')) {
-      this.$('.room-participant').append(this.get('localVideo').attach());
+      this.$().append(this.get('localVideo').attach());
     }
   },
   willClearRender: function() {
