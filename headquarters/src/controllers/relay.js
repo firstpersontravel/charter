@@ -167,6 +167,10 @@ class RelayController {
     try {
       await config.getTwilioClient().messages.create(opts);
     } catch(err) {
+      if (err.code === 21614 ||  // Not a mobile number
+          err.code === 21610) {  // Unsubscribed
+        return;
+      }
       throw new Error(`Error sending twilio message: ${err.message}`);
     }
   }

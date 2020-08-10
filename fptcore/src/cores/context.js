@@ -43,7 +43,7 @@ class ContextCore {
    */
   static gatherEvalContext(env, trip) {
     // Gather schedule including var-ized time titles.
-    const scheduleByTitle = Object.fromEntries(
+    const scheduleByTitle = _.fromPairs(
       Object.keys(trip.schedule || {})
         .map(timeName => (
           (trip.script.content.times || []).find(t => t.name === timeName)
