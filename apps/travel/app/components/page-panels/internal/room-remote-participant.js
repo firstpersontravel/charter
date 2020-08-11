@@ -19,14 +19,6 @@ export default Ember.Component.extend({
     this._onTrackUnsubscribed = this.onTrackUnsubscribed.bind(this);
   },
 
-  label: function() {
-    const sharing = this.get('shouldTransmit') ?
-      (this.get('useVideo') ? 'video' : 'audio') :
-      'nothing';
-    const recieving = this.get('hasAudio') ? 'audio': 'nothing';
-    return `You are sharing ${sharing} and receiving ${recieving}`;
-  }.property('hasAudio', 'shouldTransmit', 'useVideo'),
-
   didInsertElement: function() {
     const participant = this.get('participant');
     participant.tracks.forEach(publication => {

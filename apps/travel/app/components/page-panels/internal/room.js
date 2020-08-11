@@ -140,7 +140,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     // No access to camera.
     if (err.code === err.NOT_FOUND_ERR) {
       console.log('noRoomConnectError', err);
-      this.set('error', 'Could not get access to camera.');
+      this.set('error', `Could not get access to camera: ${err.message}.`);
       return;
     }
     this.set('error', `Unable to connect to room: ${err.message}`);

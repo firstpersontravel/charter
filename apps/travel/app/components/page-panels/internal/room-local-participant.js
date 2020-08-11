@@ -10,10 +10,10 @@ export default Ember.Component.extend({
   label: function() {
     // No video preview for self.
     if (!this.get('useVideo') || !this.get('shouldTransmit')) {
-      return 'You are the only participant.';
+      return 'You are the only one here.';
     }
     // Otherwise we should have local video but don't, show error.
-    return 'Cannot get video preview.';
+    return 'Cannot show preview.';
   }.property('shouldTransmit', 'useVideo', 'localVideo'),
 
   didInsertElement: function() {

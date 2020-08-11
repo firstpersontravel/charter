@@ -30,9 +30,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
     const isTransmitting = this.get('shouldTransmit');
     const useVideo = this.get('useVideo');
     if (isTransmitting) {
-      return `You will start sharing and receiving ${useVideo ? 'video' : 'audio'}.`;
+      return `You will start sharing ${useVideo ? 'video' : 'audio'}.`;
     }
-    return `You will start receiving ${useVideo ? 'video' : 'audio'}, but will not be sharing.`;
+    return `You will not share audio or video.`;
   }.property(),
 
   isBrowserSupported: function() {
