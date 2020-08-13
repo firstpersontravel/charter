@@ -31,7 +31,7 @@ describe('TextConvoExample', () => {
   it('runs through polite conversation', async () => {
     // Test start on text to entryway
     const msgResult = await TwilioMessageHandler.handleIncomingMessage(
-      '5556667777', entryway.relayPhoneNumber, 'hi', []);
+      '+15556667777', entryway.relayPhoneNumber, 'hi', []);
 
     // Test message handled ok
     assert.strictEqual(msgResult, true);
@@ -63,7 +63,7 @@ describe('TextConvoExample', () => {
 
     // Response
     await TwilioMessageHandler.handleIncomingMessage(
-      '5556667777', entryway.relayPhoneNumber, 'Sam', []);
+      '+15556667777', entryway.relayPhoneNumber, 'Sam', []);
 
     // Test interpreted
     await trip.reload();
@@ -81,7 +81,7 @@ describe('TextConvoExample', () => {
   it('runs through rude conversation', async () => {
     // Test start on text to entryway
     await TwilioMessageHandler.handleIncomingMessage(
-      '5556667777', entryway.relayPhoneNumber, 'yo', []);
+      '+15556667777', entryway.relayPhoneNumber, 'yo', []);
 
     // Test trip was created
     const trip = await models.Trip.findOne({ where: { scriptId: script.id } });

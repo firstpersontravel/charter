@@ -8,7 +8,6 @@ const {
   booleanField,
   jsonField,
   mutableModifier,
-  optionalStringField,
   requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
@@ -19,11 +18,6 @@ const {
 const Profile = database.define('Profile', snakeCaseColumns({
   roleName: mutableModifier(requiredStringField(32)),
   isActive: mutableModifier(booleanField(true)),
-  photo: mutableModifier(optionalStringField(255)),
-  email: mutableModifier(optionalStringField(255)),
-  phoneNumber: mutableModifier(optionalStringField(10)),
-  skypeUsername: mutableModifier(optionalStringField(64)),
-  facetimeUsername: mutableModifier(optionalStringField(64)),
   values: mutableModifier(jsonField(database, 'Profile', 'values')),
   isArchived: mutableModifier(booleanField(false))
 }));

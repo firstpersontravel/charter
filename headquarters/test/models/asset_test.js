@@ -4,24 +4,7 @@ const moment = require('moment');
 const models = require('../../src/models');
 const { assertValidation } = require('./utils');
 
-function createMediaAsset(medium, path) {
-  return models.Asset.build({
-    orgId: 100,
-    experienceId: 2,
-    type: 'media',
-    name: 'test',
-    data: {
-      medium: medium,
-      path: path,
-      url: `https://aws.com/${path}`
-    },
-    createdAt: moment.utc(),
-    updatedAt: moment.utc()
-  });
-}
-
 describe('Asset', () => {
-
   it('prohibits invalid type', async () => {
     const invalidAsset = models.Asset.build({
       orgId: 100,
@@ -33,7 +16,7 @@ describe('Asset', () => {
       updatedAt: moment.utc()
     });
     await assertValidation(invalidAsset, {
-      type: 'must be one of directions, media'
+      type: 'must be one of directions'
     });
   });
 
@@ -109,41 +92,6 @@ describe('Asset', () => {
       directionsAsset.data = _.assign(directionsAsset.data, { steps: [] });
       await assertValidation(directionsAsset, {
         directions: 'data.steps does not meet minimum length of 1'
-      });
-    });
-  });
-
-  describe('media', () => {
-    it('validates with or without extension', async () => {
-      await createMediaAsset('audio', 'a/b/c.mp3').validate();
-      await createMediaAsset('audio', 'a/b/c').validate();
-      await createMediaAsset('video', 'a/b/c.MP4').validate();
-      await createMediaAsset('video', 'a/b/c.abc').validate();
-      await createMediaAsset('image', 'a/b/c.jpEg').validate();
-      await createMediaAsset('image', 'a/b/c.img').validate();
-    });
-
-    it('requires valid medium', async () => {
-      const mediaAsset = createMediaAsset('audio', 'a.mp3');
-      mediaAsset.data = { path: 'a.mp3', url: 'test', medium: 'argh' };
-      await assertValidation(mediaAsset, {
-        media: 'data.medium is not one of enum values: audio,video,image'
-      });      
-    });
-
-    it('requires path', async () => {
-      const mediaAsset = createMediaAsset('audio', 'a/b/c.mp3');
-      mediaAsset.data = { path: null, url: 'test', medium: 'audio' };
-      await assertValidation(mediaAsset, {
-        media: 'data.path is not of a type(s) string'
-      });
-    });
-
-    it('requires url', async () => {
-      const mediaAsset = createMediaAsset('video', 'a/b/c.mp4');
-      mediaAsset.data = { path: 'abc.mp4', url: null, medium: 'video' };
-      await assertValidation(mediaAsset, {
-        media: 'data.url is not of a type(s) string'
       });
     });
   });

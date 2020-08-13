@@ -56,23 +56,8 @@ const DIRECTIONS_SCHEMA = {
   additionalProperties: false
 };
 
-const MEDIUMS = ['audio', 'video', 'image'];
-
-// Schema for media assets
-const MEDIA_SCHEMA = {
-  type: 'object',
-  properties: {
-    medium: { enum: MEDIUMS },
-    path: STRING_SCHEMA,
-    url: STRING_SCHEMA
-  },
-  required: ['medium', 'path', 'url'],
-  additionalProperties: false
-};
-
 const ASSET_DATA_SCHEMAS = {
   directions: DIRECTIONS_SCHEMA,
-  media: MEDIA_SCHEMA
 };
 
 function assetValidator(type) {

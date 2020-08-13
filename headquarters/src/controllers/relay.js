@@ -6,10 +6,9 @@ const models = require('../models');
 const logger = config.logger.child({ name: 'controllers.relay' });
 
 const whitelistedNumbers = [
-  '9144844223',
-  '9178213078',
-  '5556667777', // for testing
-  // '4802440810'
+  '+19144844223',
+  '+19178213078',
+  '+15556667777' // for testing
 ];
 
 class RelayController {
@@ -109,8 +108,8 @@ class RelayController {
     }
     const twilioHost = config.env.HQ_TWILIO_HOST;
     const callOpts = {
-      to: `+1${toParticipant.phoneNumber}`,
-      from: `+1${relay.relayPhoneNumber}`,
+      to: toParticipant.phoneNumber,
+      from: relay.relayPhoneNumber,
       machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
       url: (
         `${twilioHost}/endpoints/twilio/calls/outgoing` +
@@ -159,7 +158,7 @@ class RelayController {
       return;
     }
     const opts = Object.assign(
-      { to: `+1${toPhoneNumber}`, from: `+1${relay.relayPhoneNumber}`},
+      { to: toPhoneNumber, from: relay.relayPhoneNumber },
       body ? { body: body } : null,
       mediaUrl ? { mediaUrl: mediaUrl } : null
     );

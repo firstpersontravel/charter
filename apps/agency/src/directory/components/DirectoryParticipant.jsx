@@ -2,8 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-
-import { TextUtil } from 'fptcore';
+import { formatPhoneNumberIntl } from 'react-phone-number-input';
 
 import Loader from '../../partials/Loader';
 import ParticipantModal from '../partials/ParticipantModal';
@@ -104,7 +103,7 @@ export default class DirectoryParticipant extends Component {
         <strong>Email:</strong> {this.props.participant.email}
         <br />
         <strong>Phone:</strong>
-        &nbsp;{TextUtil.formatPhone(this.props.participant.phoneNumber)}
+        &nbsp;{formatPhoneNumberIntl(this.props.participant.phoneNumber)}
         <br />
       </p>
     );
@@ -115,15 +114,6 @@ export default class DirectoryParticipant extends Component {
     const archivedProfiles = query.get('archived_profiles');
     const experience = this.props.experience;
     const script = experience.script;
-    const photo = profile.photo ? (<div>Photo: {profile.photo}</div>) : null;
-    const email = profile.email ?
-      (<div>Email: {profile.email}</div>) : null;
-    const phone = profile.phoneNumber ?
-      (<div>Phone: {profile.phoneNumber}</div>) : null;
-    const skype = profile.skypeUsername ?
-      (<div>Skype: {profile.skypeUsername}</div>) : null;
-    const facetime = profile.facetimeUsername ?
-      (<div>Facetime: {profile.facetimeUsername}</div>) : null;
 
     const role = _.find(script.content.roles, { name: profile.roleName });
     if (!role) {
@@ -168,11 +158,6 @@ export default class DirectoryParticipant extends Component {
             {profile.isArchived ? 'Unarchive' : 'Archive'}
           </button>
         </div>
-        {photo}
-        {email}
-        {phone}
-        {skype}
-        {facetime}
         {renderedValues}
       </div>
     );

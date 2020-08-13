@@ -34,13 +34,9 @@ describe('ContextCore', () => {
         contact_name: 'Vance Farraday',
         user_name: 'Troy McClure',
         participant_name: 'Troy McClure',
-        photo: null,
-        email: 'troy@example.com',
-        facetime: null,
         phone_number: null,
         headline: null,
         directive: null,
-        skype: null,
         latitude: null,
         longitude: null,
         accuracy: null
@@ -79,10 +75,7 @@ describe('ContextCore', () => {
         roleName: 'Dustin',
         participant: {
           phoneNumber: '1234567890',
-          profile: {
-            photo: 'dustin.jpg',
-            facetimeUsername: 'dustin'
-          },
+          profile: { values: { extraval: 'test' } },
           locationLatitude: 1,
           locationLongitude: 2,
           locationAccuracy: 3
@@ -95,8 +88,7 @@ describe('ContextCore', () => {
       const result = ContextCore.gatherPlayerEvalContext(env, trip,
         player);
       assert.equal(result.phone_number, '1234567890');
-      assert.equal(result.photo, 'dustin.jpg');
-      assert.equal(result.facetime, 'dustin');
+      assert.equal(result.extraval, 'test');
       assert.equal(result.latitude, 1);
       assert.equal(result.longitude, 2);
       assert.equal(result.accuracy, 3);

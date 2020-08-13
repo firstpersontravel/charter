@@ -32,7 +32,7 @@ class RelaysController {
       smsUrl: `${twilioHost}/endpoints/twilio/messages/incoming`
     });
     logger.warn(`Purchased ${updatedNumber.phoneNumber}.`);
-    return updatedNumber.phoneNumber.replace('+1', '');
+    return updatedNumber.phoneNumber;
   }
 
   /**
@@ -47,7 +47,7 @@ class RelaysController {
     const allExistingNumbers = await twilioClient.incomingPhoneNumbers.list();
     const envExistingNumbers = _(allExistingNumbers)
       .filter(num => num.smsUrl.indexOf(config.env.HQ_TWILIO_HOST) === 0)
-      .map(num => num.phoneNumber.replace('+1', ''))
+      .map(num => num.phoneNumber)
       .value();
     let overlaps;
     if (participantPhoneNumber === '') {
