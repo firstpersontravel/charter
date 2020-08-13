@@ -2,8 +2,8 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 
-const PHONE_REGEX = /^\d{10}$/;
 const EMAIL_REGEX = /^[\w._-]+@[\w.-]+$/;
 
 export default class ParticipantModal extends Component {
@@ -48,18 +48,14 @@ export default class ParticipantModal extends Component {
   }
 
   handleChangeField(fieldName, event) {
-    let value = event.target.value;
-    if (fieldName === 'phoneNumber') {
-      value = value.replace(/\D/g, '');
-    }
-    this.setState({ [fieldName]: value });
+    this.setState({ [fieldName]: event.target.value });
   }
 
   isValid() {
     if (this.state.name === '') {
       return false;
     }
-    if (this.state.phoneNumber && !PHONE_REGEX.test(this.state.phoneNumber)) {
+    if (this.state.phoneNumber && !isValidPhoneNumber(this.state.phoneNumber)) {
       return false;
     }
     if (this.state.email && !EMAIL_REGEX.test(this.state.email)) {
@@ -96,7 +92,7 @@ export default class ParticipantModal extends Component {
               </div>
             </div>
             <div className="row">
-              <div className="form-group col-sm-6">
+              <div className="form-group col-sm-12">
                 <label htmlFor="participant_email">Email</label>
                 <input
                   type="email"
@@ -106,15 +102,16 @@ export default class ParticipantModal extends Component {
                   onChange={_.curry(this.handleChangeField)('email')}
                   placeholder="Email" />
               </div>
-              <div className="form-group col-sm-6">
-                <label htmlFor="participant_last_name">Phone number</label>
-                <input
-                  type="text"
+            </div>
+            <div className="row">
+              <div className="form-group col-sm-12">
+                <label htmlFor="participant_phone_number">Phone number</label>
+                <PhoneInput
                   id="participant_phone_number"
-                  className="form-control"
+                  defaultCountry="US"
+                  placeholder="Enter phone number"
                   value={this.state.phoneNumber}
-                  onChange={_.curry(this.handleChangeField)('phoneNumber')}
-                  placeholder="Phone number" />
+                  onChange={val => this.setState({ phoneNumber: val || '' })} />
               </div>
             </div>
           </ModalBody>

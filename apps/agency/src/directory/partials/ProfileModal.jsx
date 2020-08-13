@@ -3,18 +3,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-const PHONE_REGEX = /^\d{10}$/;
-const EMAIL_REGEX = /^[\w._-]+@[\w.-]+$/;
-
 export default class ProfileModal extends Component {
   static getDefaultState(profile) {
     return {
       roleName: profile ? profile.roleName : '',
-      email: profile ? profile.email : '',
-      photo: profile ? profile.photo : '',
-      phoneNumber: profile ? profile.phoneNumber : '',
-      facetimeUsername: profile ? profile.facetimeUsername : '',
-      skypeUsername: profile ? profile.skypeUsername : '',
       values: profile ? profile.values : {}
     };
   }
@@ -52,11 +44,7 @@ export default class ProfileModal extends Component {
   }
 
   handleChangeField(fieldName, event) {
-    let value = event.target.value;
-    if (fieldName === 'phoneNumber') {
-      value = value.replace(/\D/g, '');
-    }
-    this.setState({ [fieldName]: value });
+    this.setState({ [fieldName]: event.target.value });
   }
 
   handleChangeValue(nestedAttribute, event) {
@@ -69,18 +57,6 @@ export default class ProfileModal extends Component {
 
   isValid() {
     if (!this.state.roleName) {
-      return false;
-    }
-    if (this.state.phoneNumber &&
-      !PHONE_REGEX.test(this.state.phoneNumber)) {
-      return false;
-    }
-    if (this.state.facetimeUsername &&
-      !EMAIL_REGEX.test(this.state.facetimeUsername)) {
-      return false;
-    }
-    if (this.state.email &&
-      !EMAIL_REGEX.test(this.state.email)) {
       return false;
     }
     return true;
@@ -130,7 +106,7 @@ export default class ProfileModal extends Component {
         <ModalBody>
           <form>
             <div className="row">
-              <div className="form-group col-sm-6">
+              <div className="form-group col-sm-12">
                 <label htmlFor="profile_role_name">Role</label>
                 <select
                   className="form-control"
@@ -140,61 +116,6 @@ export default class ProfileModal extends Component {
                   <option value="">--</option>
                   {roleOptions}
                 </select>
-              </div>
-              <div className="form-group col-sm-6">
-                <label htmlFor="profile_photo">Photo</label>
-                <input
-                  type="text"
-                  id="profile_photo"
-                  className="form-control"
-                  value={this.state.photo}
-                  ref={this.firstInputRef}
-                  onChange={_.curry(this.handleChangeField)('photo')}
-                  placeholder="Photo media path" />
-              </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-sm-6">
-                <label htmlFor="profile_email">Email</label>
-                <input
-                  type="email"
-                  id="profile_email"
-                  className="form-control"
-                  value={this.state.email}
-                  onChange={_.curry(this.handleChangeField)('email')}
-                  placeholder="Email" />
-              </div>
-              <div className="form-group col-sm-6">
-                <label htmlFor="profile_phone_number">Phone number</label>
-                <input
-                  type="text"
-                  id="profile_phone_number"
-                  className="form-control"
-                  value={this.state.phoneNumber}
-                  onChange={_.curry(this.handleChangeField)('phoneNumber')}
-                  placeholder="Phone number" />
-              </div>
-            </div>
-            <div className="row">
-              <div className="form-group col-sm-6">
-                <label htmlFor="profile_facetime_username">Facetime</label>
-                <input
-                  type="text"
-                  id="profile_facetime_username"
-                  className="form-control"
-                  value={this.state.facetimeUsername}
-                  onChange={_.curry(this.handleChangeField)('facetimeUsername')}
-                  placeholder="Facetime username" />
-              </div>
-              <div className="form-group col-sm-6">
-                <label htmlFor="profile_skype_username">Skype</label>
-                <input
-                  type="text"
-                  id="profile_skype_username"
-                  className="form-control"
-                  value={this.state.skypeUsername}
-                  onChange={_.curry(this.handleChangeField)('skypeUsername')}
-                  placeholder="Skype username" />
               </div>
             </div>
             {requiredValueRows}

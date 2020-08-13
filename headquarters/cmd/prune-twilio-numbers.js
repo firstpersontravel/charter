@@ -42,10 +42,6 @@ function truncate(s, len) {
   return s;
 }
 
-function formatNum(num) {
-  return `(${num.substr(0, 3)}) ${num.substr(3, 3)}-${num.substr(6, 6)}`;
-}
-
 async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
   limit }) {
   const cullThreshold = moment().subtract(cullThresholdSecs, 's');
@@ -63,16 +59,15 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
   const accountedRelayIds = new Set();
   for (const number of allNumbers) {
     let shouldCull = true;
-    const plainNum = number.phoneNumber.slice(2); // remove +1
     const host = url.parse(number.smsUrl).host;
     const stage = stagesByHost[host];
     if (!stage) {
-      console.log(`${formatNum(plainNum)}: unrecognized host "${host}".`);
+      console.log(`${number.phoneNumber}: unrecognized host "${host}".`);
       continue;
     }
     const shouldUpdateHost = host !== hostsByStage[stage];
     const relays = allRelays.filter(r => (
-      r.stage === stage && r.relayPhoneNumber === plainNum
+      r.stage === stage && r.relayPhoneNumber === number.phoneNumber
     ));
     const numEntryways = relays.filter(r => !r.participantPhoneNumber).length;
     const numDynamic = relays.filter(r => r.participantPhoneNumber).length;
@@ -108,7 +103,7 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
     }
 
     console.log(
-      `${formatNum(plainNum)} | ${stage.padEnd(11)} | ` +
+      `${number.phoneNumber} | ${stage.padEnd(11)} | ` +
       `${numEntryways} entry | ` +
       `${numDynamic.toString().padEnd(2)} dyn | ` +
       `${expText} | ${disposition}`);
@@ -127,7 +122,7 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
     }
     console.log(
       `Relay w/no number in ${relay.stage}: #${relay.id}: ` +
-      `${formatNum(relay.relayPhoneNumber)}`);
+      `${relay.relayPhoneNumber}`);
     relaysToCull.push(relay);
   }
 
@@ -158,8 +153,7 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
     if (deleteNumbers) {
       for (const numberToCull of numbersToCull.slice(0, opmax)) {
         await numberToCull.remove();
-        console.log(
-          `- Deleted ${formatNum(numberToCull.phoneNumber.slice(2))}`);
+        console.log(`- Deleted ${numberToCull.phoneNumber}`);
       }
     }
     if (updateHosts) {
@@ -171,9 +165,7 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
           statusCallback: `${host}/endpoints/twilio/calls/incoming_status`,
           smsUrl: `${host}/endpoints/twilio/messages/incoming`
         });
-        console.log(
-          `- Updated ${formatNum(numberToUpdate.phoneNumber.slice(2))} ` +
-          `to ${host}.`);
+        console.log(`- Updated ${numberToUpdate.phoneNumber} to ${host}.`);
       }
     }
   }

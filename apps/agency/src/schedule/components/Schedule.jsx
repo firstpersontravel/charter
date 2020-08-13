@@ -3,6 +3,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { formatPhoneNumberIntl } from 'react-phone-number-input';
 
 import { TextUtil } from 'fptcore';
 
@@ -79,7 +80,7 @@ class Schedule extends Component {
       return (
         <span key={entryway.name}>
           {forRole.title} {relay ?
-            `at ${TextUtil.formatPhone(relay.relayPhoneNumber)}` :
+            `at ${formatPhoneNumberIntl(relay.relayPhoneNumber)}` :
             '(not yet allocated)'}
         </span>
       );

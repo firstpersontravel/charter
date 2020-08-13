@@ -22,14 +22,10 @@ class ContextCore {
     return _.assign({}, profile.values, {
       link: link,
       join_link: joinLink,
-      email: profile.email || participant.email || null,
       contact_name: contactName,
       user_name: participant.name,
       participant_name: participant.name,
-      photo: profile.photo || null,
-      facetime: profile.facetimeUsername || null,
-      skype: profile.skypeUsername || null,
-      phone_number: profile.phoneNumber || participant.phoneNumber || null,
+      phone_number: participant.phoneNumber || null,
       directive: page && page.directive || null,
       headline: page && page.directive || null,
       latitude: participant.locationLatitude || null,
@@ -43,7 +39,7 @@ class ContextCore {
    */
   static gatherEvalContext(env, trip) {
     // Gather schedule including var-ized time titles.
-    const scheduleByTitle = Object.fromEntries(
+    const scheduleByTitle = _.fromPairs(
       Object.keys(trip.schedule || {})
         .map(timeName => (
           (trip.script.content.times || []).find(t => t.name === timeName)

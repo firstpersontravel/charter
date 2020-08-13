@@ -119,14 +119,14 @@ function renderBrand(org, experience) {
 }
 
 function renderMenu(org, experience, experiences, groups, groupId) {
-  const experienceLinks = experiences.map(exp => (
+  const experienceLinks = experiences.length > 0 ? experiences.map(exp => (
     <Link
       key={exp.id}
       className="btn btn-link dropdown-item"
       to={`/${org.name}/${exp.name}`}>
       {exp.title}
     </Link>
-  ));
+  )) : [];
 
   const experienceDropdown = experiences.length > 0 ? (
     <li className="nav-item dropdown">

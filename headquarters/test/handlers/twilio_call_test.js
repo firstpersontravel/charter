@@ -18,11 +18,11 @@ describe('TwilioCallHandler', () => {
 
     it('returns dial', async () => {
       const stubOppositeRelay = {
-        relayPhoneNumber: '8887776666'
+        relayPhoneNumber: '+18887776666'
       };
       const stubPlayer = {
         participantId: 9,
-        participant: { phoneNumber: '9995551212'}
+        participant: { phoneNumber: '+19995551212'}
       };
       // Stub searching for opposite relay
       sandbox

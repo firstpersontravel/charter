@@ -140,15 +140,7 @@ export default Ember.Component.extend({
     if (!profile) {
       return;
     }
-    if (profile.get('skypeUsername')) {
-      return 'skype:' + profile.get('skypeUsername');
-    }
-    if (profile.get('facetimeUsername')) {
-      return 'facetime-audio:' + profile.get('facetimeUsername');
-    }
-    if (profile.get('phoneNumber')) {
-      return 'facetime-audio:' + profile.get('phoneNumber');
-    }
+    // TODO - calculate based on relays
     return '';
   }.property('withPlayer'),
 

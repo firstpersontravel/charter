@@ -16,35 +16,21 @@ function handleTwimlResponse(res, twimlResponse) {
 }
 
 async function incomingCallRoute(req, res) {
-  if (!req.body.From.startsWith('+1')) {
-    logger.warn('Incoming call received from international number.');
-    res.status(200).end();
-    return;
-  }
-  const fromNumber = req.body.From.replace('+1', '');
-  const toNumber = req.body.To.replace('+1', '');
   const twimlResponse = await (
-    TwilioCallHandler.handleIncomingCall(fromNumber, toNumber)
+    TwilioCallHandler.handleIncomingCall(req.body.From, req.body.To)
   );
   handleTwimlResponse(res, twimlResponse);
 }
 
 async function incomingCallStatusRoute(req, res) {
-  if (!req.body.From.startsWith('+1')) {
-    logger.warn('Status received from international number.');
-    res.status(200).end();
-    return;
-  }
-  const fromNumber = req.body.From.replace('+1', '');
-  const toNumber = req.body.To.replace('+1', '');
-  const relay = await RelaysController.findByNumber(toNumber, fromNumber);
+  const relay = await RelaysController.findByNumber(req.body.To, req.body.From);
   if (!relay) {
     logger.warn('Status received without matching relay.');
     res.status(500).end();
     return;
   }
 
-  const player = await RelayController.lookupPlayer(relay, fromNumber);
+  const player = await RelayController.lookupPlayer(relay, req.body.From);
   if (!player) {
     logger.warn('Status received without matching player.');
     res.status(500).end();
@@ -108,13 +94,6 @@ async function callInterruptRoute(req, res) {
 }
 
 async function incomingMessageRoute(req, res) {
-  if (!req.body.From.startsWith('+1')) {
-    logger.warn('Incoming message received from international number.');
-    res.status(200).end();
-    return;
-  }
-  const fromNumber = req.body.From.replace('+1', '');
-  const toNumber = req.body.To.replace('+1', '');
   const body = req.body.Body;
   const media = _.range(Number(req.body.NumMedia))
     .map(i => ({
@@ -122,7 +101,7 @@ async function incomingMessageRoute(req, res) {
       contentType: req.body[`MediaContentType${i}`]
     }));
   await TwilioMessageHandler
-    .handleIncomingMessage(fromNumber, toNumber, body, media);
+    .handleIncomingMessage(req.body.From, req.body.To, body, media);
   const twimlResponse = new twilio.twiml.MessagingResponse();
   handleTwimlResponse(res, twimlResponse);
 }

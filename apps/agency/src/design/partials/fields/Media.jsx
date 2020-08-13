@@ -35,8 +35,12 @@ class MediaField extends Component {
     this.setState({ uploading: true, progress: percent, error: null });
   }
 
-  handleUploadError(message, file) {
-    Sentry.captureMessage(message, 'error');
+  handleUploadError(message, file, reqContext) {
+    let fullMessage = message;
+    if (reqContext && reqContext.response) {
+      fullMessage = `${message}: ${reqContext.response}`;
+    }
+    Sentry.captureMessage(fullMessage, 'error');
     this.setState({ uploading: false, progress: null, error: message });
   }
 

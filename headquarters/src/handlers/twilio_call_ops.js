@@ -39,10 +39,10 @@ class TwilioCallOps {
       return TwilioCallUtil.hangup();
     }
     const dial = twimlResponse.dial({
-      callerId: `+1${dialRelay.relayPhoneNumber}`,
+      callerId: dialRelay.relayPhoneNumber,
       timeout: 30
     });
-    dial.number(`+1${dialPlayer.participant.phoneNumber}`);
+    dial.number(dialPlayer.participant.phoneNumber);
     twimlResponse.say('We\'re sorry, this number could not be reached.');
   }
 

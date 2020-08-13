@@ -75,7 +75,7 @@ describe('RelayController', () => {
   describe('#lookupPlayer', () => {
     it('looks up player by relay and phone number', async () => {
       const stubPlayer = { id: 1 };
-      const phoneNumber = '1234567890';
+      const phoneNumber = '+11234567890';
       const relay = {
         forRoleName: 'ForRole',
         experienceId: 10
@@ -107,12 +107,10 @@ describe('RelayController', () => {
   });
 
   describe('#initiateCall', () => {
-
-    const stubRelay = { id: 3, relayPhoneNumber: '9999999999' };
-
+    const stubRelay = { id: 3, relayPhoneNumber: '+19999999999' };
     const stubPlayer = {
       tripId: 1,
-      getParticipant: async () => ({ phoneNumber: '1111111111' })
+      getParticipant: async () => ({ phoneNumber: '+11111111111' })
     };
 
     it('makes a call', async () => {
@@ -150,13 +148,12 @@ describe('RelayController', () => {
   });
 
   describe('#sendMessage', () => {
-
-    const whitelistedNumber = '9144844223';
+    const whitelistedNumber = '+19144844223';
     const stubTrip = { id: 1 };
     const stubPlayer = { participant: { phoneNumber: whitelistedNumber } };
     const stubRelay = {
       isActive: true,
-      relayPhoneNumber: '1111111111',
+      relayPhoneNumber: '+11111111111',
       forRoleName: 'For'
     };
 
@@ -168,8 +165,8 @@ describe('RelayController', () => {
       // Test twilio message sent
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
       sinon.assert.calledWith(config.getTwilioClient().messages.create, {
-        to: `+1${stubPlayer.participant.phoneNumber}`,
-        from: `+1${stubRelay.relayPhoneNumber}`,
+        to: stubPlayer.participant.phoneNumber,
+        from: stubRelay.relayPhoneNumber,
         body: 'msg'
       });
 
@@ -188,8 +185,8 @@ describe('RelayController', () => {
       // Test twilio message sent
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
       sinon.assert.calledWith(config.getTwilioClient().messages.create, {
-        to: `+1${stubPlayer.participant.phoneNumber}`,
-        from: `+1${stubRelay.relayPhoneNumber}`,
+        to: stubPlayer.participant.phoneNumber,
+        from: stubRelay.relayPhoneNumber,
         mediaUrl: 'url'
       });
     });

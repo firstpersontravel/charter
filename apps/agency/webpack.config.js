@@ -23,7 +23,8 @@ module.exports = {
   devtool: isProduction ? 'source-map' : 'cheap-source-map',
   entry: [
     './src/index.jsx',
-    './style/style.scss'
+    './style/style.scss',
+    './node_modules/react-phone-number-input/style.css'
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -66,7 +67,7 @@ module.exports = {
         // path.join(__dirname, 'node_modules/fptcore/src')
       ]
     }, {
-      test: /\.scss$/,
+      test: /\.s?css$/,
       loaders: ['style-loader', 'css-loader', 'sass-loader']
     }, {
     //   test: /\.json$/,

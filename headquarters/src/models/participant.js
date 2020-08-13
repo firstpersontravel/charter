@@ -21,7 +21,7 @@ const Participant = database.define('Participant', snakeCaseColumns({
   createdAt: datetimeField(),
   name: mutableModifier(optionalStringField(255)),
   email: mutableModifier(optionalStringField(255)),
-  phoneNumber: mutableModifier(optionalStringField(10)),
+  phoneNumber: mutableModifier(optionalStringField(15)),
   isActive: mutableModifier(booleanField(true)),
   deviceId: mutableModifier(optionalStringField(255)),
   devicePushToken: mutableModifier(optionalStringField(255)),

@@ -1,0 +1,23 @@
+{{#if error}}
+  <div class='room-item room-message'>{{error}}</div>
+{{else}}
+  {{#if isLoading}}
+    <div class='room-item room-message'>Loading...</div>
+  {{else}}
+    {{#if shouldShowLocal}}
+      {{page-panels/internal/room-local-participant
+        useVideo=useVideo
+        shouldTransmit=shouldTransmit
+        localTracks=localTracks}}
+    {{/if}}
+    {{#each participants as |participant|}}
+      {{page-panels/internal/room-remote-participant
+        useVideo=useVideo
+        shouldTransmit=shouldTransmit
+        participant=participant}}
+    {{/each}}
+    {{#each empties}}
+      <div class='room-item room-empty' />
+    {{/each}}
+  {{/if}}
+{{/if}}
