@@ -6,7 +6,7 @@ const models = require('../models');
 const logger = config.logger.child({ name: 'controllers.action' });
 
 class ActionController {
-  static async scheduleAction(trip, action, playerId) {
+  static async scheduleAction(trip, action, triggeringPlayer=null) {
     const now = moment.utc();
     const scheduleAt = action.scheduleAt || now;
     const scheduleAtLocal = moment(scheduleAt)
@@ -15,12 +15,11 @@ class ActionController {
       .tz('US/Pacific')
       .format('h:mm:ssa z');
     logger.info(action.params,
-      `Scheduling ${action.name} from player ${playerId} for ${scheduleAtLocal}.`);
-    // TODO: refactor various context used by action into a data blob (orgId, tripId, playerId, triggerName, event)
+      `Scheduling ${action.name} from player ${triggeringPlayer} for ${scheduleAtLocal}.`);
     const fields = {
       orgId: trip.orgId,
       tripId: trip.id,
-      playerId: playerId,
+      triggeringPlayerId: triggeringPlayer ? triggeringPlayer.id : null,
       type: 'action',
       name: action.name,
       params: action.params,

@@ -41,11 +41,9 @@ class SchedulerWorker {
         intendedAt : actionContext.evaluateAt;
       // Construct scheduled action
       return {
-        // TL: can we put the trip directly in actionContext instead of accessing internal variables?
         orgId: actionContext._objs.trip.orgId,
         tripId: actionContext._objs.trip.id,
-        // TL: can we make action context require having an inciting player id?
-        playerId: actionContext.player ? actionContext.player.id : null,
+        playerId: actionContext.triggeringPlayer ? actionContext.triggeringPlayer.id : null,
         type: 'trigger',
         name: trigger.name,
         params: {},

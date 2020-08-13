@@ -75,7 +75,6 @@ class TripResetHandler {
     });
 
     // Reset to starting scene
-    // TL: why does this take an actionContext? (can we refactor so that actionContext is just for actions, requires a playerId? or wrap into action itself?)
     const startingSceneName = SceneCore.getStartingSceneName(
       trip.script.content, actionContext);
 

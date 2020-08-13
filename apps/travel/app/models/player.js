@@ -51,7 +51,7 @@ export default DS.Model.extend({
   actionContext: function() {
     return {
       currentRoleName: this.get('roleName'),
-      currentPlayerId: this.id,
+      triggeringPlayerId: this.id,
       scriptContent: this.get('trip.script.content'),
       evalContext: this.get('evalContext')
     };

@@ -10,6 +10,7 @@ const {
   enumStringField,
   mutableModifier,
   requiredStringField,
+  optionalIntegerField,
   optionalStringField,
   jsonField,
   snakeCaseColumns
@@ -24,6 +25,7 @@ const Action = database.define('Action', snakeCaseColumns({
   type: enumStringField(10, ACTION_TYPES),
   name: requiredStringField(64),
   params: jsonField(database, 'Action', 'params'),
+  triggeringPlayerId: optionalIntegerField(),
   triggerName: optionalStringField(64),
   event: allowNullModifier(jsonField(database, 'Action', 'event')),
   createdAt: datetimeField(),

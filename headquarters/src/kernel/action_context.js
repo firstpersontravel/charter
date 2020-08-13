@@ -91,16 +91,16 @@ class ActionContext {
     };
   }
 
-  static async createForTripId(tripId, evaluateAt=null, playerId=null) {
-    const actionContext = new ActionContext(tripId, evaluateAt, playerId);
+  static async createForTripId(tripId, evaluateAt=null, triggeringPlayerId=null) {
+    const actionContext = new ActionContext(tripId, evaluateAt, triggeringPlayerId);
     await actionContext.init();
     return actionContext;
   }
 
-  constructor(tripId, evaluateAt=null, playerId=null) {
+  constructor(tripId, evaluateAt=null, triggeringPlayerId=null) {
     this._tripId = tripId;
     this._evaluateAt = evaluateAt || moment.utc();
-    this._playerId = playerId;
+    this._triggeringPlayerId = triggeringPlayerId;
   }
 
   async init() {
@@ -111,8 +111,8 @@ class ActionContext {
     this.timezone = this._objs.experience.timezone;
     this.evalContext = this.constructor._prepareEvalContext(this._objs);
     this.evaluateAt = this._evaluateAt;
-    this.player = this._objs.players.find(p => p.id === this._currentPlayerId);
-    this.currentRoleName = this.player ? this.player.roleName : null;
+    this.triggeringPlayer = this._objs.players.find(p => p.id === this._triggeringPlayerId);
+    this.currentRoleName = this.triggeringPlayer ? this.triggeringPlayer.roleName : null;
   }
 
   async findAssetData(assetType, assetName) {

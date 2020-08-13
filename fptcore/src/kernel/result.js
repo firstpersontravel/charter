@@ -1,5 +1,4 @@
 const resultOpTempUpdateFunctions = {
-  // TODO: figure out what this does/when it is called
   updatePlayerFields(resultOp, actionContext) {
     const oldPlayer = actionContext.evalContext[resultOp.playerId];
     return Object.assign({}, actionContext, {

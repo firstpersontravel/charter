@@ -54,6 +54,14 @@ function integerField() {
   };
 }
 
+function optionalIntegerField() {
+  return {
+    type: INTEGER,
+    allowNull: true,
+    readOnly: true
+  };
+}
+
 function requiredStringField(maxLength) {
   return stringField(maxLength, {
     notNull: { msg: 'must be present' }
@@ -252,6 +260,7 @@ module.exports = {
   integerField,
   jsonField,
   mutableModifier,
+  optionalIntegerField,
   optionalStringField,
   requiredStringField,
   snakeCaseColumns,

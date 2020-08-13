@@ -15,7 +15,6 @@ class KernelController {
   }
 
   static async _applyOps(objs, ops) {
-    // TODO: consider whether this should be using actionContext rather than _objs
     for (const op of ops) {
       await this._applyOp(objs, op);
     }
@@ -24,20 +23,18 @@ class KernelController {
   static async _applyResult(actionContext, result) {
     await this._applyOps(actionContext._objs, result.resultOps);
     for (const action of result.scheduledActions) {
-      // TL: eventually convert actionContext to always have a player
-      await ActionController.scheduleAction(actionContext._objs.trip, action, actionContext.player ? actionContext.player.id : null);
+      await ActionController.scheduleAction(actionContext._objs.trip, action, actionContext.triggeringPlayer);
     }
   }
 
   /**
    * Apply an action and gather the results.
    */
-  static async applyAction(tripId, action, applyAt) {
+  static async applyAction(tripId, action, applyAt=null) {
     logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
-    // TL: for scheduled actions, this seems to be in action.event.player_id; for immediate actions, in params (potentially a cleanup opportunity here -- ensure action has player_id)
-    const actingPlayerId = parseInt((action.params && action.params.player_id) || 
+    const triggeringPlayerId = parseInt((action.params && action.params.player_id) || 
         (action.event && action.event.player_id));
-    const actionContext = await ActionContext.createForTripId(tripId, applyAt, actingPlayerId);
+    const actionContext = await ActionContext.createForTripId(tripId, applyAt, triggeringPlayerId);
     const result = Kernel.resultForImmediateAction(action, actionContext);
     await this._applyResult(actionContext, result);
     return result;
@@ -46,10 +43,10 @@ class KernelController {
   /**
    * Apply an action and gather the results.
    */
-  static async applyEvent(tripId, event, applyAt) {
+  static async applyEvent(tripId, event, applyAt=null) {
     logger.info(event, `(Trip #${tripId}) Applying event: ${event.type}.`);
-    const actingPlayerId = parseInt(event.player_id);
-    const actionContext = await ActionContext.createForTripId(tripId, applyAt, actingPlayerId);
+    const triggeringPlayerId = parseInt(event.player_id);
+    const actionContext = await ActionContext.createForTripId(tripId, applyAt, triggeringPlayerId);
     const result = Kernel.resultForEvent(event, actionContext);
     await this._applyResult(actionContext, result);
     return result;
@@ -60,8 +57,8 @@ class KernelController {
    */
   static async applyTrigger(tripId, triggerName, event, applyAt) {
     logger.info(`(Trip #${tripId}) Applying trigger: ${triggerName}.`);
-    const actingPlayerId = parseInt(event.player_id);
-    const actionContext = await ActionContext.createForTripId(tripId, applyAt, actingPlayerId);
+    const triggeringPlayerId = parseInt(event.player_id);
+    const actionContext = await ActionContext.createForTripId(tripId, applyAt, triggeringPlayerId);
     const trigger = _.find(actionContext._objs.script.content.triggers || [], { name: triggerName });
     if (!trigger) {
       return null;
