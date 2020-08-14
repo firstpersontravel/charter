@@ -85,7 +85,7 @@ describe('KernelController', () => {
       const player = {
         'tripId': trip.id,
         'id': playerId,
-        'get': function(_config) {
+        'get': function() {
           return({'id': playerId});
         }
       };
