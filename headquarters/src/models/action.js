@@ -1,5 +1,6 @@
 const database = require('../config').database;
 const Org = require('./org');
+const Player = require('./player');
 const Trip = require('./trip');
 
 const {
@@ -10,7 +11,6 @@ const {
   enumStringField,
   mutableModifier,
   requiredStringField,
-  optionalIntegerField,
   optionalStringField,
   jsonField,
   snakeCaseColumns
@@ -25,7 +25,6 @@ const Action = database.define('Action', snakeCaseColumns({
   type: enumStringField(10, ACTION_TYPES),
   name: requiredStringField(64),
   params: jsonField(database, 'Action', 'params'),
-  triggeringPlayerId: optionalIntegerField(),
   triggerName: optionalStringField(64),
   event: allowNullModifier(jsonField(database, 'Action', 'event')),
   createdAt: datetimeField(),
@@ -37,5 +36,6 @@ const Action = database.define('Action', snakeCaseColumns({
 
 Action.belongsTo(Org, belongsToField('org'));
 Action.belongsTo(Trip, belongsToField('trip'));
+Action.belongsTo(Player, allowNullModifier(belongsToField('triggeringPlayer')));
 
 module.exports = Action;

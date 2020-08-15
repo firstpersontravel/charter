@@ -43,7 +43,7 @@ class SchedulerWorker {
       return {
         orgId: actionContext._objs.trip.orgId,
         tripId: actionContext._objs.trip.id,
-        playerId: actionContext.triggeringPlayer ? actionContext.triggeringPlayer.id : null,
+        triggeringPlayerId: actionContext.triggeringPlayer ? actionContext.triggeringPlayer.id : null,
         type: 'trigger',
         name: trigger.name,
         params: {},
