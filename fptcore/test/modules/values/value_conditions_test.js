@@ -119,4 +119,22 @@ describe('#value_greater_than_or_equal_to', () => {
     assertIfEq({ b: 2 }, { op: 'value_greater_than_or_equal_to', ref1: '0', ref2: 'b' }, false);
     assertIfEq({ b: 0 }, { op: 'value_greater_than_or_equal_to', ref1: '2', ref2: 'b' }, true);
   });
+
+  it('treats numberic strings as numbers', () => {
+    assertIfEq({ a: '0', b: '2' }, stmt, false);
+    assertIfEq({ a: '2', b: '0' }, stmt, true);
+    assertIfEq({ a: '10', b: NaN }, stmt, false);
+  });
+
+  it('treats strings without numbers as NaN', () => {
+    assertIfEq({ a: 'a', b: 'b' }, stmt, false);
+    assertIfEq({ a: 'a', b: NaN }, stmt, false);
+    assertIfEq({ a: 0, b: NaN }, stmt, false);
+  });
+
+  it('treats false/true as 0/1', () => {
+    assertIfEq({ a: true, b: false }, stmt, true);
+    assertIfEq({ a: false, b: true }, stmt, false);
+    assertIfEq({ a: true, b: NaN }, stmt, false);
+  });
 });
