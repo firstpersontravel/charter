@@ -1,5 +1,7 @@
 const TemplateUtil = require('../../utils/template');
 
+var COMPARISON_OPTIONS = ['equals', 'contains', '>=', '<=', '>', '<'];
+
 module.exports = {
   value_is_true: {
     title: 'Variable is present',
@@ -18,15 +20,22 @@ module.exports = {
         params.ref, actionContext.currentRoleName);
     }
   },
-  value_equals: {
-    title: 'Variables are equal',
-    help: 'A condition that passes if the first value matches the second value. If "Value 1" or "Value 2" are surrounded by double quotes, or are a number, or "true" or "false", then the value in the other reference will be matched to that simple value rather performing two lookups.',
+  value_compare: {
+    title: 'Value comparison',
+    help: 'A condition that passes if the first value compares to the second in the specified way (is equal, is greater than, includes, etc.). In cases of a specific string, surround it with double quotes.',
     properties: {
       ref1: {
         title: 'Variable name 1',
         type: 'lookupable',
         required: true,
         help: 'A value to look up and compare against the second.'
+      },
+      comparison_method: {
+        type: 'enum',
+        options: COMPARISON_OPTIONS,
+        default: 'equals',
+        help: 'The method used to compare the first value to the second.'
+
       },
       ref2: {
         type: 'lookupable',
@@ -40,67 +49,32 @@ module.exports = {
         params.ref1, actionContext.currentRoleName);
       const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref2, actionContext.currentRoleName);
-      if (!val1 && !val2) {
-        return true;
-      }
-      if (!val1 || !val2) {
+      switch(params.comparison_method) {
+      case 'equals':
+        if (!val1 && !val2) {
+          return true;
+        }
+        if (!val1 || !val2) {
+          return false;
+        }
+        return val1.toString().toLowerCase() === val2.toString().toLowerCase();
+      case 'contains':
+        return (
+          typeof val1 === 'string' &&
+          typeof val2 === 'string' &&
+          val1.toLowerCase().indexOf(val2.toLowerCase()) > -1
+        );
+      case '>=':
+        return (Number(val1) >= Number(val2));
+      case '<=':
+        return (Number(val1) <= Number(val2));
+      case '>':
+        return (Number(val1) > Number(val2));
+      case '<':
+        return (Number(val1) < Number(val2));
+      default:
         return false;
       }
-      return val1.toString().toLowerCase() === val2.toString().toLowerCase();
-    }
-  },
-  value_contains: {
-    title: 'Variable contains',
-    help: 'A condition that passes if the search variable value contains the part in the part variable. If \'string_ref\' or \'part_ref\' are surrounded by double quotes, or are a number, or "true" or "false", then the value in the other reference will be matched to that simple variable rather performing two lookups.',
-    properties: {
-      string_ref: {
-        title: 'Search variable name',
-        type: 'lookupable',
-        required: true,
-        help: 'A variable to look up, which should contain text. In cases of a specific string, surround it with double quotes.'
-      },
-      part_ref: {
-        type: 'lookupable',
-        title: 'Part variable name',
-        required: true,
-        help: 'A variable to look up which should contain the fragment to check for. In cases of a specific string, surround it with double quotes.'
-      }
-    },
-    eval: (params, actionContext) => {
-      const a = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.string_ref, actionContext.currentRoleName);
-      const b = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.part_ref, actionContext.currentRoleName);
-      return (
-        typeof a === 'string' &&
-        typeof b === 'string' &&
-        a.toLowerCase().indexOf(b.toLowerCase()) > -1
-      );
-    }
-  },
-  value_greater_than_or_equal_to: {
-    title: 'Variable >=',
-    help: 'A condition that passes if the first variable is greater than or equal to the second.',
-    properties: {
-      ref1: {
-        title: 'Variable name 1',
-        type: 'lookupable',
-        required: true,
-        help: 'A value to look up and compare against the second.'
-      },
-      ref2: {
-        type: 'lookupable',
-        title: 'Variable name 2',
-        required: true,
-        help: 'Another value to look up and compare against the first.'
-      }
-    },
-    eval: (params, actionContext) => {
-      const val1 = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref1, actionContext.currentRoleName);
-      const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref2, actionContext.currentRoleName);
-      return (Number(val1) >= Number(val2));
     }
   }
 };

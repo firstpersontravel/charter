@@ -52,9 +52,10 @@ describe('Integration - Message Triggers', () => {
           name: 'trigger1',
           event: { type: 'text_received' },
           if: {
-            op: 'value_contains',
-            string_ref: 'event.content',
-            part_ref: '"1234"'
+            op: 'value_compare',
+            comparison_method: 'contains',
+            ref1: 'event.content',
+            ref2: '"1234"'
           },
           actions: [{
             name: 'set_value',
@@ -84,9 +85,10 @@ describe('Integration - Message Triggers', () => {
           name: 'trigger1',
           event: { type: 'text_received' },
           if: {
-            op: 'value_contains',
-            string_ref: 'event.content',
-            part_ref: '"1234"'
+            op: 'value_compare',
+            comparison_method: 'contains',
+            ref1: 'event.content',
+            ref2: '"1234"'
           },
           actions: [{
             name: 'set_value',

@@ -29,33 +29,33 @@ describe('#value_is_true', () => {
 describe('#value_equals', () => {
   function assertIfEq(ctx, stmt, val) {
     assert.strictEqual(
-      valueConditions.value_equals.eval(stmt, { evalContext: ctx }), val);
+      valueConditions.value_compare.eval(stmt, { evalContext: ctx }), val);
   }
 
   it('evaluates with constants', () => {
-    assertIfEq({}, {op: 'value_equals', ref1: '"2"', ref2: '"2"'}, true);
-    assertIfEq({}, {op: 'value_equals', ref1: '1', ref2: '1'}, true);
-    assertIfEq({}, {op: 'value_equals', ref1: 'true', ref2: 'true'}, true);
-    assertIfEq({}, {op: 'value_equals', ref1: '"2"', ref2: '"1"'}, false);
-    assertIfEq({}, {op: 'value_equals', ref1: '1', ref2: '0'}, false);
-    assertIfEq({}, {op: 'value_equals', ref1: '5', ref2: 'true'}, false);
+    assertIfEq({}, {op: 'value_compare', comparison_method: 'equals', ref1: '"2"', ref2: '"2"'}, true);
+    assertIfEq({}, {op: 'value_compare', comparison_method: 'equals', ref1: '1', ref2: '1'}, true);
+    assertIfEq({}, {op: 'value_compare', comparison_method: 'equals', ref1: 'true', ref2: 'true'}, true);
+    assertIfEq({}, {op: 'value_compare', comparison_method: 'equals', ref1: '"2"', ref2: '"1"'}, false);
+    assertIfEq({}, {op: 'value_compare', comparison_method: 'equals', ref1: '1', ref2: '0'}, false);
+    assertIfEq({}, {op: 'value_compare', comparison_method: 'equals', ref1: '5', ref2: 'true'}, false);
   });
 
   it('evaluates with constant and var', () => {
-    assertIfEq({ v: '2' }, {op: 'value_equals', ref1: 'v', ref2: '"2"'}, true);
-    assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '1'}, true);
-    assertIfEq({ v: true }, {op: 'value_equals', ref1: 'v', ref2: 'true'}, true);
-    assertIfEq({ v: null }, {op: 'value_equals', ref1: 'v', ref2: 'null'}, true);
-    assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '"1"'}, true);
-    assertIfEq({ v: false }, {op: 'value_equals', ref1: 'v', ref2: 'null'}, true);
-    assertIfEq({ v: 'true' }, {op: 'value_equals', ref1: 'v', ref2: 'true'}, true);
-    assertIfEq({ v: 1 }, {op: 'value_equals', ref1: 'v', ref2: '0'}, false);
-    assertIfEq({ v: '2' }, {op: 'value_equals', ref1: 'v', ref2: '"1"'}, false);
-    assertIfEq({ v: false }, {op: 'value_equals', ref1: 'v', ref2: 'true'}, false);
+    assertIfEq({ v: '2' }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: '"2"'}, true);
+    assertIfEq({ v: 1 }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: '1'}, true);
+    assertIfEq({ v: true }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: 'true'}, true);
+    assertIfEq({ v: null }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: 'null'}, true);
+    assertIfEq({ v: 1 }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: '"1"'}, true);
+    assertIfEq({ v: false }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: 'null'}, true);
+    assertIfEq({ v: 'true' }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: 'true'}, true);
+    assertIfEq({ v: 1 }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: '0'}, false);
+    assertIfEq({ v: '2' }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: '"1"'}, false);
+    assertIfEq({ v: false }, {op: 'value_compare', comparison_method: 'equals', ref1: 'v', ref2: 'true'}, false);
   });
 
   it('evaluates with var and var', () => {
-    const stmt = { op: 'value_equals', ref1: 'a', ref2: 'b' };
+    const stmt = { op: 'value_compare', comparison_method: 'equals', ref1: 'a', ref2: 'b' };
     assertIfEq({ a: true, b: true }, stmt, true);
     assertIfEq({ a: false, b: false }, stmt, true);
     assertIfEq({ a: 1, b: 1 }, stmt, true);
@@ -66,9 +66,9 @@ describe('#value_equals', () => {
   });
 
   it('evaluates nested objects', () => {
-    assertIfEq({ a: { b: '2' } }, {op: 'value_equals', ref1: 'a.b', ref2: '"2"'},
+    assertIfEq({ a: { b: '2' } }, {op: 'value_compare', comparison_method: 'equals', ref1: 'a.b', ref2: '"2"'},
       true);
-    assertIfEq({ a: { b: '2' } }, {op: 'value_equals', ref1: '"2"', ref2: 'a.b'},
+    assertIfEq({ a: { b: '2' } }, {op: 'value_compare', comparison_method: 'equals', ref1: '"2"', ref2: 'a.b'},
       true);
   });
 });
@@ -76,30 +76,30 @@ describe('#value_equals', () => {
 describe('#value_contains', () => {
   function assertIfEq(ctx, stmt, val) {
     assert.strictEqual(
-      valueConditions.value_contains.eval(stmt, { evalContext: ctx }), val);
+      valueConditions.value_compare.eval(stmt, { evalContext: ctx }), val);
   }
 
   it('evaluates', () => {
     assertIfEq({ a: 'A sIMPle THING', b: 'simple' },
-      { op: 'value_contains', string_ref: 'a', part_ref: 'b'}, true);
+      { op: 'value_compare', comparison_method: 'contains', ref1: 'a', ref2: 'b'}, true);
     assertIfEq({ a: 'a simple man', b: 'simple' },
-      { op: 'value_contains', string_ref: 'a', part_ref: 'b'}, true);
+      { op: 'value_compare', comparison_method: 'contains', ref1: 'a', ref2: 'b'}, true);
     assertIfEq({ a: 'a simple man', b: 'car' },
-      { op: 'value_contains', string_ref: 'a', part_ref: 'b'}, false);
+      { op: 'value_compare', comparison_method: 'contains', ref1: 'a', ref2: 'b'}, false);
     assertIfEq({ b: 'house' },
-      { op: 'value_contains', string_ref: '"my house"', part_ref: 'b'}, true);
+      { op: 'value_compare', comparison_method: 'contains', ref1: '"my house"', ref2: 'b'}, true);
     assertIfEq({ a: 'a simple man'},
-      { op: 'value_contains', string_ref: 'a', part_ref: '"car"'}, false);
+      { op: 'value_compare', comparison_method: 'contains', ref1: 'a', ref2: '"car"'}, false);
   });
 });
 
 describe('#value_greater_than_or_equal_to', () => {
   function assertIfEq(ctx, stmt, val) {
     assert.strictEqual(
-      valueConditions.value_greater_than_or_equal_to.eval(stmt, { evalContext: ctx }), val);
+      valueConditions.value_compare.eval(stmt, { evalContext: ctx }), val);
   }
 
-  const stmt = { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: 'b' };
+  const stmt = { op: 'value_compare', comparison_method: '>=', ref1: 'a', ref2: 'b' };
 
   it('treats nulls as 0', () => {
     assertIfEq({}, stmt, true);
@@ -114,10 +114,10 @@ describe('#value_greater_than_or_equal_to', () => {
   });
 
   it('evaluates correctly against constants', () => {
-    assertIfEq({ a: 0 }, { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: '2' }, false);
-    assertIfEq({ a: 2 }, { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: '0' }, true);
-    assertIfEq({ b: 2 }, { op: 'value_greater_than_or_equal_to', ref1: '0', ref2: 'b' }, false);
-    assertIfEq({ b: 0 }, { op: 'value_greater_than_or_equal_to', ref1: '2', ref2: 'b' }, true);
+    assertIfEq({ a: 0 }, { op: 'value_compare', comparison_method: '>=', ref1: 'a', ref2: '2' }, false);
+    assertIfEq({ a: 2 }, { op: 'value_compare', comparison_method: '>=', ref1: 'a', ref2: '0' }, true);
+    assertIfEq({ b: 2 }, { op: 'value_compare', comparison_method: '>=', ref1: '0', ref2: 'b' }, false);
+    assertIfEq({ b: 0 }, { op: 'value_compare', comparison_method: '>=', ref1: '2', ref2: 'b' }, true);
   });
 
   it('treats numberic strings as numbers', () => {
@@ -135,6 +135,144 @@ describe('#value_greater_than_or_equal_to', () => {
   it('treats false/true as 0/1', () => {
     assertIfEq({ a: true, b: false }, stmt, true);
     assertIfEq({ a: false, b: true }, stmt, false);
+    assertIfEq({ a: true, b: NaN }, stmt, false);
+  });
+});
+
+describe('#value_less_than_or_equal_to', () => {
+  function assertIfEq(ctx, stmt, val) {
+    assert.strictEqual(
+      valueConditions.value_compare.eval(stmt, { evalContext: ctx }), val);
+  }
+
+  const stmt = { op: 'value_compare', comparison_method: '<=', ref1: 'a', ref2: 'b' };
+
+  it('treats nulls as 0', () => {
+    assertIfEq({}, stmt, true);
+    assertIfEq({ a: 1 }, stmt, false);
+    assertIfEq({ b: 1 }, stmt, true);
+  });
+
+  it('evaluates numbers correctly', () => {
+    assertIfEq({ a: 0, b: 2 }, stmt, true);
+    assertIfEq({ a: 2, b: 0 }, stmt, false);
+    assertIfEq({ a: 0, b: 0 }, stmt, true);
+  });
+
+  it('evaluates correctly against constants', () => {
+    assertIfEq({ a: 0 }, { op: 'value_compare', comparison_method: '<=', ref1: 'a', ref2: '2' }, true);
+    assertIfEq({ a: 2 }, { op: 'value_compare', comparison_method: '<=', ref1: 'a', ref2: '0' }, false);
+    assertIfEq({ b: 2 }, { op: 'value_compare', comparison_method: '<=', ref1: '0', ref2: 'b' }, true);
+    assertIfEq({ b: 0 }, { op: 'value_compare', comparison_method: '<=', ref1: '2', ref2: 'b' }, false);
+  });
+
+  it('treats numberic strings as numbers', () => {
+    assertIfEq({ a: '0', b: '2' }, stmt, true);
+    assertIfEq({ a: '2', b: '0' }, stmt, false);
+    assertIfEq({ a: '10', b: NaN }, stmt, false);
+  });
+
+  it('treats strings without numbers as NaN', () => {
+    assertIfEq({ a: 'a', b: 'b' }, stmt, false);
+    assertIfEq({ a: 'a', b: NaN }, stmt, false);
+    assertIfEq({ a: 0, b: NaN }, stmt, false);
+  });
+
+  it('treats false/true as 0/1', () => {
+    assertIfEq({ a: true, b: false }, stmt, false);
+    assertIfEq({ a: false, b: true }, stmt, true);
+    assertIfEq({ a: true, b: NaN }, stmt, false);
+  });
+});
+
+describe('#value_greater_than', () => {
+  function assertIfEq(ctx, stmt, val) {
+    assert.strictEqual(
+      valueConditions.value_compare.eval(stmt, { evalContext: ctx }), val);
+  }
+
+  const stmt = { op: 'value_compare', comparison_method: '>', ref1: 'a', ref2: 'b' };
+
+  it('treats nulls as 0', () => {
+    assertIfEq({}, stmt, false);
+    assertIfEq({ a: 1 }, stmt, true);
+    assertIfEq({ b: 1 }, stmt, false);
+  });
+
+  it('evaluates numbers correctly', () => {
+    assertIfEq({ a: 0, b: 2 }, stmt, false);
+    assertIfEq({ a: 2, b: 0 }, stmt, true);
+    assertIfEq({ a: 0, b: 0 }, stmt, false);
+  });
+
+  it('evaluates correctly against constants', () => {
+    assertIfEq({ a: 0 }, { op: 'value_compare', comparison_method: '>', ref1: 'a', ref2: '2' }, false);
+    assertIfEq({ a: 2 }, { op: 'value_compare', comparison_method: '>', ref1: 'a', ref2: '0' }, true);
+    assertIfEq({ b: 2 }, { op: 'value_compare', comparison_method: '>', ref1: '0', ref2: 'b' }, false);
+    assertIfEq({ b: 0 }, { op: 'value_compare', comparison_method: '>', ref1: '2', ref2: 'b' }, true);
+  });
+
+  it('treats numberic strings as numbers', () => {
+    assertIfEq({ a: '0', b: '2' }, stmt, false);
+    assertIfEq({ a: '2', b: '0' }, stmt, true);
+    assertIfEq({ a: '10', b: NaN }, stmt, false);
+  });
+
+  it('treats strings without numbers as NaN', () => {
+    assertIfEq({ a: 'a', b: 'b' }, stmt, false);
+    assertIfEq({ a: 'a', b: NaN }, stmt, false);
+    assertIfEq({ a: 0, b: NaN }, stmt, false);
+  });
+
+  it('treats false/true as 0/1', () => {
+    assertIfEq({ a: true, b: false }, stmt, true);
+    assertIfEq({ a: false, b: true }, stmt, false);
+    assertIfEq({ a: true, b: NaN }, stmt, false);
+  });
+});
+
+describe('#value_less_than', () => {
+  function assertIfEq(ctx, stmt, val) {
+    assert.strictEqual(
+      valueConditions.value_compare.eval(stmt, { evalContext: ctx }), val);
+  }
+
+  const stmt = { op: 'value_compare', comparison_method: '<', ref1: 'a', ref2: 'b' };
+
+  it('treats nulls as 0', () => {
+    assertIfEq({}, stmt, false);
+    assertIfEq({ a: 1 }, stmt, false);
+    assertIfEq({ b: 1 }, stmt, true);
+  });
+
+  it('evaluates numbers correctly', () => {
+    assertIfEq({ a: 0, b: 2 }, stmt, true);
+    assertIfEq({ a: 2, b: 0 }, stmt, false);
+    assertIfEq({ a: 0, b: 0 }, stmt, false);
+  });
+
+  it('evaluates correctly against constants', () => {
+    assertIfEq({ a: 0 }, { op: 'value_compare', comparison_method: '<', ref1: 'a', ref2: '2' }, true);
+    assertIfEq({ a: 2 }, { op: 'value_compare', comparison_method: '<', ref1: 'a', ref2: '0' }, false);
+    assertIfEq({ b: 2 }, { op: 'value_compare', comparison_method: '<', ref1: '0', ref2: 'b' }, true);
+    assertIfEq({ b: 0 }, { op: 'value_compare', comparison_method: '<', ref1: '2', ref2: 'b' }, false);
+  });
+
+  it('treats numberic strings as numbers', () => {
+    assertIfEq({ a: '0', b: '2' }, stmt, true);
+    assertIfEq({ a: '2', b: '0' }, stmt, false);
+    assertIfEq({ a: '10', b: NaN }, stmt, false);
+  });
+
+  it('treats strings without numbers as NaN', () => {
+    assertIfEq({ a: 'a', b: 'b' }, stmt, false);
+    assertIfEq({ a: 'a', b: NaN }, stmt, false);
+    assertIfEq({ a: 0, b: NaN }, stmt, false);
+  });
+
+  it('treats false/true as 0/1', () => {
+    assertIfEq({ a: true, b: false }, stmt, false);
+    assertIfEq({ a: false, b: true }, stmt, true);
     assertIfEq({ a: true, b: NaN }, stmt, false);
   });
 });
