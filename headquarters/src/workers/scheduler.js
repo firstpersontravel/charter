@@ -113,7 +113,7 @@ class SchedulerWorker {
    */
   static async _updateTripNextScheduleAt(tripId) {
     const now = moment.utc();
-    const actionContext = await ActionContext.createForTripId(tripId, now);
+    const actionContext = await ActionContext.createForTripId(tripId, null, now);
     const [nextTrigger, nextTime] = this.getNextTriggerAndTime(actionContext);
     const trip = actionContext._objs.trip;
     await trip.update({

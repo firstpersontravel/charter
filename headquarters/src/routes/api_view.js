@@ -21,7 +21,7 @@ function exportPanel(panel, actionContext) {
 
 function exportTab(tab, actionContext) {
   const trip = actionContext._objs.trip;
-  const roleName = actionContext.currentRoleName;
+  const roleName = actionContext.triggeringRoleName;
   const currentPageName = trip.tripState.currentPageNamesByRole[roleName];
   const currentPage = actionContext.scriptContent.pages
     .find(p => p.name === currentPageName);
@@ -37,7 +37,7 @@ function exportTab(tab, actionContext) {
 }
 
 function exportInterface(actionContext) {
-  const roleName = actionContext.currentRoleName;
+  const roleName = actionContext.triggeringRoleName;
   const role = actionContext.scriptContent.roles.find(r => r.name === roleName);
   const interface = role.interface ?
     actionContext.scriptContent.interfaces.find(l => l.name === role.interface) :
@@ -54,7 +54,7 @@ function exportInterface(actionContext) {
 async function getPlayerViewRoute(req, res) {
   const playerId = req.params.playerId;
   const player = await models.Player.findByPk(playerId);
-  const actionContext = await ActionContext.createForTripId(player.tripId, moment.utc(), playerId);
+  const actionContext = await ActionContext.createForTripId(player.tripId, playerId, moment.utc());
   const interface = exportInterface(actionContext);
   res.json({
     data: {

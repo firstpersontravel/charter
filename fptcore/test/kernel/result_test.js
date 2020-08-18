@@ -61,21 +61,5 @@ describe('KernelResult', () => {
         assert.deepStrictEqual(res.evalContext, { history: { newField: 123 } });
       });
     });
-
-    describe('#updatePlayerFields', () => {
-      it('updates player fields', () => {
-        const actionContext = { evalContext: { 'testPlayerId': {} } };
-        const ops = [{
-          operation: 'updatePlayerFields',
-          playerId: 'testPlayerId',
-          fields: { otherField: '456' }
-        }];
-        
-        const res = KernelResult.tempUpdateContext(ops, actionContext);
-
-        assert.deepStrictEqual(res.evalContext,
-          { 'testPlayerId': { otherField: '456' } });
-      });
-    });
   });
 });

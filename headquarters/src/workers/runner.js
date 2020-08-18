@@ -19,19 +19,15 @@ class RunnerWorker {
     const applyAt = scheduledAt.isSameOrBefore(now) ? scheduledAt : now;
     const tripId = action.tripId;
     if (action.type === 'action') {
-      const scheduledAction = _.pick(action, ['name', 'params', 'event', 'playerId']);
-      await KernelController.applyAction(tripId, scheduledAction, applyAt);
+      const scheduledAction = _.pick(action, ['name', 'params', 'event']);
+      await KernelController.applyAction(tripId, scheduledAction, action.triggeringPlayerId, applyAt);
       await NotifyController.notifyAction(tripId, action, null);
     } else if (action.type === 'trigger') {
-      let event = action.event;
-      event.playerId = action.playerId;
-      await KernelController.applyTrigger(tripId, action.name, event,
-        applyAt);
+      await KernelController.applyTrigger(tripId, action.name, action.event, action.triggeringPlayerId, applyAt);
       await NotifyController.notifyTrigger(tripId, action.name, null);
     } else if (action.type === 'event') {
-      let event = Object.assign({ type: action.name }, action.params);
-      event.playerId = action.playerId;
-      await KernelController.applyEvent(tripId, event, applyAt);
+      const event = Object.assign({ type: action.name }, action.params);
+      await KernelController.applyEvent(tripId, event, action.triggeringPlayerId, applyAt);
       await NotifyController.notifyEvent(tripId, event, null);
     }
   }

@@ -1,12 +1,4 @@
 const resultOpTempUpdateFunctions = {
-  updatePlayerFields(resultOp, actionContext) {
-    const oldPlayer = actionContext.evalContext[resultOp.playerId];
-    return Object.assign({}, actionContext, {
-      evalContext: Object.assign({}, actionContext.evalContext, {
-        [resultOp.playerId]: Object.assign({}, oldPlayer, resultOp.fields)
-      })
-    });
-  },
   updateTripFields(resultOp, actionContext) {
     return Object.assign({}, actionContext, {
       evalContext: Object.assign({}, actionContext.evalContext,

@@ -68,7 +68,7 @@ describe('KernelController', () => {
       });
     });
 
-    it('includes the player id, if provided', async () => {
+    it('includes the triggering playerId in scheduled actions', async () => {
       const inOneHour = mockNow.clone().add(1, 'hours').toDate();
       const scheduleAction = {
         name: 'set_value',
@@ -82,16 +82,8 @@ describe('KernelController', () => {
       });
 
       const playerId = 7;
-      const player = {
-        'tripId': trip.id,
-        'id': playerId,
-        'get': function() {
-          return({'id': playerId});
-        }
-      };
-      sandbox.stub(models.Player, 'findAll').returns([player]);
-      const action = { name: 'signal_cue', params: {'player_id': playerId} };
-      await KernelController.applyAction(trip.id, action);
+      const action = { name: 'signal_cue' };
+      await KernelController.applyAction(trip.id, action, playerId);
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
         orgId: trip.orgId,
         tripId: trip.id,

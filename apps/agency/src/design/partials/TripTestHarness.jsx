@@ -195,10 +195,10 @@ export default class TripTestHarness extends Component {
       evalContext: this.getEvalContext(),
       evaluateAt: moment.utc(),
       timezone: this.props.script.experience.timezone,
-      // Role name not filled in for evaluating text inerstions
-      currentRoleName: null,
+      // Role name not filled in for evaluating text insertions
+      triggeringRoleName: null,
       // Player id not filled in
-      currentPlayerId: null
+      triggeringPlayerId: null
     };
   }
 

@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import DS from 'ember-data';
+import moment from 'moment-timezone';
 
 import fptCore from 'fptcore';
 
@@ -50,10 +51,12 @@ export default DS.Model.extend({
   // must be invoked on the current player object
   actionContext: function() {
     return {
-      currentRoleName: this.get('roleName'),
-      triggeringPlayerId: this.id,
       scriptContent: this.get('trip.script.content'),
-      evalContext: this.get('evalContext')
+      evalContext: this.get('evalContext'),
+      evaluateAt: moment.utc(),
+      timezone: this.get('trip.experience.timezone'),
+      triggeringPlayerId: this.id,
+      triggeringRoleName: this.get('roleName')
     };
   }.property('evalContext'),
 
