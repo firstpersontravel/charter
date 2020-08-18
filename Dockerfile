@@ -36,11 +36,11 @@ RUN cd /var/app/apps/travel && ember build --env production
 ##########################
 FROM node:12-alpine as agency-builder
 
+# Install requirements for node-sass
+RUN apk add gcc
+
 # Install app build tools
 RUN npm install -q -g webpack webpack-cli
-
-# Install requirements for node-sass
-RUN apk add gcc g++
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
@@ -70,15 +70,15 @@ RUN apk upgrade
 RUN apk add bash mysql mysql-client
 
 # Install requirements for node-gyp
-RUN apk add make python
-
-# Install server node requirements
-COPY headquarters/package.json headquarters/package-lock.json /var/app/headquarters/
-RUN cd /var/app/headquarters && npm -q install
+RUN apk add make python g++
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
 RUN cd /var/app/fptcore && npm -q install
+
+# Install server node requirements
+COPY headquarters/package.json headquarters/package-lock.json /var/app/headquarters/
+RUN cd /var/app/headquarters && npm -q install
 
 # Install static directory, server and common code
 COPY static /var/app/static
