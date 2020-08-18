@@ -179,8 +179,7 @@ export default class TripTestHarness extends Component {
 
   getTripObject() {
     const trip = this.getBaseTripObject();
-    trip.evalContext = this.getEvalContext();
-    trip.actionContext = { evalContext: trip.evalContext };
+    trip.actionContext = this.getActionContext();
     return trip;
   }
 
