@@ -1,11 +1,7 @@
-import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { formatPhoneNumberIntl } from 'react-phone-number-input';
-
-import { TextUtil } from 'fptcore';
 
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
@@ -49,108 +45,6 @@ class Schedule extends Component {
     this.handleCreateGroupToggle();
     const oldMax = Math.max(...this.props.groups.map(g => g.id));
     this.setState({ redirectToNext: oldMax });
-  }
-
-  renderEntrywayRelay() {
-    const activeScript = _.find(this.props.scripts, { isActive: true });
-    const entrywaySpecs = _.filter(_.get(activeScript, 'content.relays'), {
-      entryway: true
-    });
-    if (!entrywaySpecs.length) {
-      return (
-        <div>
-          { /* eslint-disable-next-line max-len */ }
-          <i className="fa fa-phone" /> Project cannot be entered by text message. To enable, create an &apos;entryway&apos; relay.
-        </div>
-      );
-    }
-    let hasUnallocated = false;
-    const renderedEntryways = entrywaySpecs.map((entryway) => {
-      const relay = _.find(this.props.experience.relays, {
-        forRoleName: entryway.for,
-        asRoleName: entryway.as || entryway.for,
-        withRoleName: entryway.with,
-        participantPhoneNumber: ''
-      });
-      if (!relay) {
-        hasUnallocated = true;
-      }
-      const forRole = _.find(activeScript.content.roles,
-        { name: entryway.for });
-      return (
-        <span key={entryway.name}>
-          {forRole.title} {relay ?
-            `at ${formatPhoneNumberIntl(relay.relayPhoneNumber)}` :
-            '(not yet allocated)'}
-        </span>
-      );
-    });
-
-    const allocateRelaysBtn = hasUnallocated ? (
-      <button
-        disabled={this.props.systemActionRequestState === 'pending'}
-        className="btn btn-sm btn-primary ml-3"
-        onClick={() => this.props.updateRelays(
-          this.props.org.id, this.props.experience.id)}>
-        Allocate phone numbers
-      </button>
-    ) : null;
-
-    return (
-      <div>
-        <i className="fa fa-phone" /> Project can be entered through calls or texts: {renderedEntryways}
-        {allocateRelaysBtn}
-      </div>
-    );
-  }
-
-  renderEntrywayWebpage() {
-    const activeScript = _.find(this.props.scripts, { isActive: true });
-    const entrywayInterfaces = _.filter(activeScript.content.interfaces,
-      { entryway: true });
-    if (!entrywayInterfaces.length) {
-      return (
-        <div>
-          <i className="fa fa-file mr-1" />
-          Project cannot be entered over the web. To enable, add an &apos;entryway&apos; interface.
-        </div>
-      );
-    }
-    const baseUrl =
-      `${window.location.origin}/entry/${this.props.org.name}/` +
-      `${this.props.experience.name}`;
-    const multipleInterfaces = entrywayInterfaces.length > 1;
-    return entrywayInterfaces.map((i) => {
-      const url = multipleInterfaces ?
-        `${baseUrl}/${TextUtil.dashVarForText(i.title)}` :
-        baseUrl;
-      return (
-        <div key={i.name}>
-          <i className="fa fa-file mr-1" />
-          Project can be entered at
-          <a
-            className="ml-1"
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer">
-            {url}
-          </a>
-        </div>
-      );
-    });
-  }
-
-  renderEntrywayNote() {
-    const activeScript = _.find(this.props.scripts, { isActive: true });
-    if (!activeScript) {
-      return null;
-    }
-    return (
-      <div className="alert alert-info">
-        {this.renderEntrywayRelay()}
-        {this.renderEntrywayWebpage()}
-      </div>
-    );
   }
 
   renderMonth() {
@@ -251,7 +145,6 @@ class Schedule extends Component {
       <Link to={{ search: '?archived=true' }}>Show archived</Link>;
     return (
       <div className="container-fluid">
-        {this.renderEntrywayNote()}
         <div className="row">
           <div className="col-sm-4">
             {this.renderMonth()}
@@ -283,8 +176,6 @@ Schedule.propTypes = {
   groups: PropTypes.array.isRequired,
   scripts: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,
-  updateRelays: PropTypes.func.isRequired,
-  systemActionRequestState: PropTypes.string,
   trackEvent: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired
 };
