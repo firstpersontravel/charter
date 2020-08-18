@@ -92,6 +92,27 @@ mysql -u galaxy -pgalaxypassword -h 127.0.0.1 -P 4310 galaxy < /tmp/bak.sql
 docker-compose exec server npm run migrate
 ```
 
+### Reset staging / test DB
+
+After pulling production db:
+
+```sh
+export AWS_PROFILE=fpt
+DB_HOST=fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
+
+# Restore test
+TEST_DB_NAME=agency_test
+TEST_DB_PW=`aws ssm get-parameter --name charter.test.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+TEST_DB_USER=`aws ssm get-parameter --name charter.test.db-user --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+mysql -u $TEST_DB_USER -p$TEST_DB_PW -h $DB_HOST $TEST_DB_NAME < /tmp/bak.sql
+
+# Restore staging
+STAGING_DB_NAME=agency_staging
+STAGING_DB_PW=`aws ssm get-parameter --name charter.staging.db-password --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+STAGING_DB_USER=`aws ssm get-parameter --name charter.staging.db-user --region us-west-2 --with-decryption | jq -r .Parameter.Value`
+mysql -u $STAGING_DB_USER -p$STAGING_DB_PW -h $DB_HOST $STAGING_DB_NAME < /tmp/bak.sql
+```
+
 ## Build for production
 
 ### Building locally for production
