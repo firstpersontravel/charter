@@ -39,8 +39,8 @@ FROM node:12-alpine as agency-builder
 # Install app build tools
 RUN npm install -q -g webpack webpack-cli
 
-# Install requirements for node-sass :{
-RUN apk add --update python make gcc g++
+# Install requirements for node-sass
+RUN apk add gcc g++
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
@@ -66,11 +66,13 @@ FROM node:12-alpine
 RUN apk update
 RUN apk upgrade
  
-# Install essential tools
-RUN apk add bash mysql mysql-client git curl wget
+# Install tools
+RUN apk add bash mysql mysql-client
 
-# Install server node requirements into separate folder so bcrypt can
-# have native dependencies
+# Install requirements for node-gyp
+RUN apk add make python
+
+# Install server node requirements
 COPY headquarters/package.json headquarters/package-lock.json /var/app/headquarters/
 RUN cd /var/app/headquarters && npm -q install
 
@@ -78,10 +80,9 @@ RUN cd /var/app/headquarters && npm -q install
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
 RUN cd /var/app/fptcore && npm -q install
 
-# Install apps directory and static dir
+# Install static directory, server and common code
 COPY static /var/app/static
 COPY fptcore /var/app/fptcore
-COPY apps /var/app/apps
 COPY headquarters /var/app/headquarters
 
 # Copy build applications
