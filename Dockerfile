@@ -3,8 +3,8 @@
 ##########################
 FROM node:12-alpine as travel-builder
  
-# Install essential tools
-RUN apk add bash git curl wget
+# Git is needed for bower
+RUN apk add git
 
 # Install travel build tools
 RUN npm install -q -g ember-cli@2.16.0 bower
@@ -35,9 +35,6 @@ RUN cd /var/app/apps/travel && ember build --env production
 ##### Agency builder #####
 ##########################
 FROM node:12-alpine as agency-builder
-
-# Install essential tools
-RUN apk add bash git curl wget
 
 # Install app build tools
 RUN npm install -q -g webpack webpack-cli
