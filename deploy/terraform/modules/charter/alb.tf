@@ -39,14 +39,16 @@ resource "aws_lb_target_group" "charter_server_web" {
   vpc_id      = data.aws_vpc.charter.id
   target_type = "ip"
 
+  deregistration_delay = "30"
+
   health_check {
     path                = "/health"
     protocol            = "HTTP"
     matcher             = "200"
-    interval            = 15
+    interval            = 5
     timeout             = 3
     healthy_threshold   = 2
-    unhealthy_threshold = 2
+    unhealthy_threshold = 3
   }
 }
 
@@ -57,14 +59,16 @@ resource "aws_lb_target_group" "charter_server_pubsub" {
   vpc_id      = data.aws_vpc.charter.id
   target_type = "ip"
 
+  deregistration_delay = "30"
+
   health_check {
     path                = "/health"
     protocol            = "HTTP"
     matcher             = "200"
-    interval            = 15
+    interval            = 5
     timeout             = 3
     healthy_threshold   = 2
-    unhealthy_threshold = 2
+    unhealthy_threshold = 3
   }
 }
 
