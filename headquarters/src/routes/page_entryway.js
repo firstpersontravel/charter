@@ -44,7 +44,7 @@ const joinRoute = async (req, res) => {
     if (player) {
       res.redirect(
         `/travel/u/${player.participantId || 0}` +
-        `/p/${player.tripId}` +
+        `/r/${player.tripId}` +
         `/p/${player.id}`);
       return;
     }
@@ -131,7 +131,7 @@ const joinSubmitRoute = async (req, res) => {
   res.cookie(`exp-${experience.id}`, player.id);
   res.redirect(
     `/travel/u/${player.participantId || 0}` +
-    `/p/${player.tripId}` +
+    `/r/${player.tripId}` +
     `/p/${player.id}`
   );
 };
@@ -169,7 +169,7 @@ const entrywayRoute = async (req, res) => {
     if (player) {
       res.redirect(
         `/travel/u/${player.participantId || 0}` +
-        `/p/${player.tripId}` +
+        `/r/${player.tripId}` +
         `/p/${player.id}`);
       return;
     }
@@ -248,7 +248,7 @@ const entrywaySubmitRoute = async (req, res) => {
   res.cookie(`exp-${experience.id}`, player.id);
   res.redirect(
     `/travel/u/${player.participantId || 0}` +
-    `/p/${player.tripId}`+
+    `/r/${player.tripId}`+
     `/p/${player.id}`);
 };
 

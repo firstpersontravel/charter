@@ -13,7 +13,7 @@ const playerShortcutRoute = async (req, res) => {
   res.cookie(`exp-${player.trip.experienceId}`, player.id);
   res.redirect(
     `/travel/u/${player.participantId || 0}` +
-    `/p/${player.tripId}` +
+    `/r/${player.tripId}` +
     `/p/${player.id}`
   );
 };

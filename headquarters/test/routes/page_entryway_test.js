@@ -127,7 +127,7 @@ describe('pageEntrywayRoutes', () => {
       // Test rendered redirect
       assert.strictEqual(res.statusCode, 302);
       const redirect_uri = `/travel/u/${existingPlayer.participantId || 0}` +
-                           `/p/${existingPlayer.tripId}` +
+                           `/r/${existingPlayer.tripId}` +
                            `/p/${existingPlayer.id}`;
       assert.strictEqual(res._getRedirectUrl(), redirect_uri);
     });
@@ -192,7 +192,7 @@ describe('pageEntrywayRoutes', () => {
         // Test rendered redirect
         assert.strictEqual(res.statusCode, 302);
         const redirect_uri = `/travel/u/${player.participantId || 0}` +
-                             `/p/${player.tripId}` +
+                             `/r/${player.tripId}` +
                              `/p/${player.id}`;
         assert.strictEqual(res._getRedirectUrl(), redirect_uri);
       });
