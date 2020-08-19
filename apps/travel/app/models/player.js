@@ -75,7 +75,8 @@ export default DS.Model.extend({
     const context = fptCore.ContextCore.gatherEvalContext(env, trip);
     return context;
   }.property(
-    'values',
+    'trip.tripState',
+    'trip.values',
     'trip.players.@each.currentPageName',
     'trip.players.@each.values'),
 
