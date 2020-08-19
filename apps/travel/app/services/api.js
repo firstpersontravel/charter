@@ -68,10 +68,10 @@ export default Ember.Service.extend({
     });
   },
 
-  postAction: function(tripId, name, params) {
+  postAction: function(tripId, playerId, name, params) {
     return this.sendData(
       `/api/trips/${tripId}/actions`, 'post',
-      { client_id: this._clientId, name: name, params: params }
+      { client_id: this._clientId, player_id: playerId, name: name, params: params }
     );
   },
 
@@ -80,7 +80,7 @@ export default Ember.Service.extend({
       `/api/trips/${tripId}/events`, 'post',
       Object.assign({}, {
         client_id: this._clientId,
-        player_id: playerId,
+        player_id: Number(playerId),
       }, params)
     );
   }

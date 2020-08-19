@@ -20,15 +20,14 @@ class RunnerWorker {
     const tripId = action.tripId;
     if (action.type === 'action') {
       const scheduledAction = _.pick(action, ['name', 'params', 'event']);
-      await KernelController.applyAction(tripId, scheduledAction, applyAt);
+      await KernelController.applyAction(tripId, scheduledAction, action.triggeringPlayerId, applyAt);
       await NotifyController.notifyAction(tripId, action, null);
     } else if (action.type === 'trigger') {
-      await KernelController.applyTrigger(tripId, action.name, action.event,
-        applyAt);
+      await KernelController.applyTrigger(tripId, action.name, action.event, action.triggeringPlayerId, applyAt);
       await NotifyController.notifyTrigger(tripId, action.name, null);
     } else if (action.type === 'event') {
       const event = Object.assign({ type: action.name }, action.params);
-      await KernelController.applyEvent(tripId, event, applyAt);
+      await KernelController.applyEvent(tripId, event, action.triggeringPlayerId, applyAt);
       await NotifyController.notifyEvent(tripId, event, null);
     }
   }

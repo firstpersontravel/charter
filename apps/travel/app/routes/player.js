@@ -9,7 +9,7 @@ export default Ember.Route.extend({
   model: function(params) {
     var trip = this.modelFor('trip');
     var players = trip.get('players');
-    return players.findBy('roleName', params.role_name);
+    return players.findBy('id', params.player_id);
   },
 
   setupController: function(controller, context) {
@@ -79,10 +79,11 @@ export default Ember.Route.extend({
 
   makeAction: function(name, params) {
     var trip = this.context.get('trip');
+    var playerId = this.context.id;
     
     var api = this.get('api');
     this.get('sync').add(function() {
-      return api.postAction(trip.id, name, params)
+      return api.postAction(trip.id, playerId, name, params)
         .catch(function(err) {
           if (err.readyState !== 4) {
             // network error -- re-raise exception because it might

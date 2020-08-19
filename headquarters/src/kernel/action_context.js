@@ -91,16 +91,16 @@ class ActionContext {
     };
   }
 
-  static async createForTripId(tripId, evaluateAt=null, roleName=null) {
-    const actionContext = new ActionContext(tripId, evaluateAt, roleName);
+  static async createForTripId(tripId, triggeringPlayerId=null, evaluateAt=null) {
+    const actionContext = new ActionContext(tripId, triggeringPlayerId, evaluateAt);
     await actionContext.init();
     return actionContext;
   }
 
-  constructor(tripId, evaluateAt=null, roleName=null) {
+  constructor(tripId, triggeringPlayerId=null, evaluateAt=null) {
     this._tripId = tripId;
     this._evaluateAt = evaluateAt || moment.utc();
-    this._currentRoleName = roleName;
+    this._triggeringPlayerId = triggeringPlayerId;
   }
 
   async init() {
@@ -111,7 +111,11 @@ class ActionContext {
     this.timezone = this._objs.experience.timezone;
     this.evalContext = this.constructor._prepareEvalContext(this._objs);
     this.evaluateAt = this._evaluateAt;
-    this.currentRoleName = this._currentRoleName;
+    this.triggeringPlayerId = this._triggeringPlayerId;
+    this.triggeringPlayer = this._triggeringPlayerId ?
+      this._objs.players.find(p => p.id === this._triggeringPlayerId) :
+      null;
+    this.triggeringRoleName = this.triggeringPlayer ? this.triggeringPlayer.roleName : null;
   }
 
   async findAssetData(assetType, assetName) {
@@ -127,7 +131,8 @@ class ActionContext {
   }
 
   templateText(text) {
-    return TemplateUtil.templateText(this.evalContext, text, this.timezone, this.currentRoleName);
+    return TemplateUtil.templateText(this.evalContext, text, this.timezone,
+      this.triggeringRoleName);
   }
 
   if(ifStatement) {

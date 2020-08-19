@@ -20,5 +20,5 @@ export function getParticipantIframeUrl(group, participant) {
 
 export function getPlayerIframeUrl(trip, player) {
   const participantId = player.participant ? player.participant.id : 0;
-  return `/travel/u/${participantId}/p/${trip.id}/role/${player.roleName}?nogps=true&mute=true&noack=true`;
+  return `/travel/u/${participantId}/r/${trip.id}/p/${player.id}?nogps=true&mute=true&noack=true`;
 }

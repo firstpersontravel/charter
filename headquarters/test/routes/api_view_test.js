@@ -43,7 +43,7 @@ describe('apiViewRoutes', () => {
       const mockPlayer = models.Player.build({ tripId: 200, roleName: 'P' });
       const mockActionContext = {
         scriptContent: mockScriptContent,
-        currentRoleName: 'P',
+        triggeringRoleName: 'P',
         _objs: {
           script: models.Script.build({ content: mockScriptContent }),
           experience: models.Experience.build({ timezone: 'US/Pacific' }),

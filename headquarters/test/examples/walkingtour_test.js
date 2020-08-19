@@ -115,7 +115,7 @@ describe('WalkingTourExample', () => {
         to_role_name: 'Guide',
         image: 'another_url'
       }
-    }, now);
+    }, player.id, now);
 
     // Test response message is scheduled in 10 sec
     const scheduledAction = await models.Action.findOne({
@@ -130,6 +130,7 @@ describe('WalkingTourExample', () => {
       to_role_name: 'Player',
       content: 'Try the trout sandwich.'
     });
+    assert.strictEqual(scheduledAction.triggeringPlayerId, player.id);
     const tenSecFromNow = now.clone().add(10, 'seconds');
     assert(moment.utc(scheduledAction.scheduledAt).isSame(tenSecFromNow));
   });

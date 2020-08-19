@@ -1,5 +1,6 @@
 const database = require('../config').database;
 const Org = require('./org');
+const Player = require('./player');
 const Trip = require('./trip');
 
 const {
@@ -35,5 +36,6 @@ const Action = database.define('Action', snakeCaseColumns({
 
 Action.belongsTo(Org, belongsToField('org'));
 Action.belongsTo(Trip, belongsToField('trip'));
+Action.belongsTo(Player, allowNullModifier(belongsToField('triggeringPlayer')));
 
 module.exports = Action;

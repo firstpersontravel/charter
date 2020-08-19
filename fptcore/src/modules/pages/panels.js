@@ -257,7 +257,7 @@ panels.text = {
   export(panel, actionContext) {
     return {
       text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
-        actionContext.timezone, actionContext.currentRoleName)
+        actionContext.timezone, actionContext.triggeringRoleName)
     };
   }
 };

@@ -39,10 +39,11 @@ class SchedulerWorker {
       const intendedAt = this._getTriggerIntendedAt(trigger, actionContext);
       const scheduleAt = intendedAt.isAfter(actionContext.evaluateAt) ?
         intendedAt : actionContext.evaluateAt;
-      // Construct schdeduled action
+      // Construct scheduled action
       return {
         orgId: actionContext._objs.trip.orgId,
         tripId: actionContext._objs.trip.id,
+        triggeringPlayerId: actionContext.triggeringPlayer ? actionContext.triggeringPlayer.id : null,
         type: 'trigger',
         name: trigger.name,
         params: {},
@@ -112,7 +113,7 @@ class SchedulerWorker {
    */
   static async _updateTripNextScheduleAt(tripId) {
     const now = moment.utc();
-    const actionContext = await ActionContext.createForTripId(tripId, now);
+    const actionContext = await ActionContext.createForTripId(tripId, null, now);
     const [nextTrigger, nextTime] = this.getNextTriggerAndTime(actionContext);
     const trip = actionContext._objs.trip;
     await trip.update({

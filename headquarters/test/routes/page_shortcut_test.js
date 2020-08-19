@@ -9,11 +9,13 @@ const pageShortcutRoutes = require('../../src/routes/page_shortcut');
 describe('pageShortcutRoutes', () => {
   describe('#playerShortcutRoute', () => {
     it('redirects', async () => {
-      const req = httpMocks.createRequest({ params: { playerId: 1 } });
+      const playerId = 1;
+      const req = httpMocks.createRequest({ params: { playerId: playerId } });
       const res = httpMocks.createResponse();
 
       // Stub response
       const mockPlayer = {
+        id: playerId,
         participantId: 10,
         tripId: 2,
         trip: { experienceId: 3 },
@@ -25,12 +27,12 @@ describe('pageShortcutRoutes', () => {
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 302);
-      assert.strictEqual(res._getRedirectUrl(), '/travel/u/10/p/2/role/Phone');
+      assert.strictEqual(res._getRedirectUrl(), '/travel/u/10/r/2/p/1');
 
       // Test call made correctly
       sinon.assert.calledOnce(models.Player.findOne);
       assert.deepEqual(models.Player.findOne.firstCall.args, [{
-        where: { id: 1 },
+        where: { id: playerId },
         include: [{ model: models.Trip, as: 'trip' }]
       }]);
     });

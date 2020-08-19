@@ -55,6 +55,7 @@ describe('KernelController', () => {
       assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
         orgId: trip.orgId,
         tripId: trip.id,
+        triggeringPlayerId: null,
         type: 'action',
         appliedAt: null,
         createdAt: mockNow.toDate(),
@@ -66,5 +67,38 @@ describe('KernelController', () => {
         triggerName: ''
       });
     });
+
+    it('includes the triggering playerId in scheduled actions', async () => {
+      const inOneHour = mockNow.clone().add(1, 'hours').toDate();
+      const scheduleAction = {
+        name: 'set_value',
+        params: { value_ref: 'ABC', new_value_ref: 'DEF' },
+        scheduleAt: inOneHour
+      };
+      sandbox.stub(models.Action, 'create').resolves();
+      sandbox.stub(Kernel, 'resultForImmediateAction').returns({
+        resultOps: [],
+        scheduledActions: [scheduleAction]
+      });
+
+      const playerId = 7;
+      const action = { name: 'signal_cue' };
+      await KernelController.applyAction(trip.id, action, playerId);
+      assert.deepStrictEqual(models.Action.create.firstCall.args[0], {
+        orgId: trip.orgId,
+        tripId: trip.id,
+        triggeringPlayerId: playerId,
+        type: 'action',
+        appliedAt: null,
+        createdAt: mockNow.toDate(),
+        event: null,
+        failedAt: null,
+        name: 'set_value',
+        params: scheduleAction.params,
+        scheduledAt: inOneHour,
+        triggerName: ''
+      });
+    });
+
   });
 });

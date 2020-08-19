@@ -79,6 +79,9 @@ docker volume ls -qf dangling=true | xargs docker volume rm
 git clean -xdf
 ```
 
+    # Fix bcrypt
+    docker-compose exec server npm rebuild bcrypt --build-from-source
+
 ### Pull production DB for testing
 
 ```sh

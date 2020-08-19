@@ -15,7 +15,7 @@ module.exports = {
     },
     eval: (params, actionContext) => {
       return !!TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref, actionContext.currentRoleName);
+        params.ref, actionContext.triggeringRoleName);
     }
   },
   value_equals: {
@@ -37,9 +37,9 @@ module.exports = {
     },
     eval: (params, actionContext) => {
       const val1 = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref1, actionContext.currentRoleName);
+        params.ref1, actionContext.triggeringRoleName);
       const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref2, actionContext.currentRoleName);
+        params.ref2, actionContext.triggeringRoleName);
       if (!val1 && !val2) {
         return true;
       }
@@ -68,9 +68,9 @@ module.exports = {
     },
     eval: (params, actionContext) => {
       const a = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.string_ref, actionContext.currentRoleName);
+        params.string_ref, actionContext.triggeringRoleName);
       const b = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.part_ref, actionContext.currentRoleName);
+        params.part_ref, actionContext.triggeringRoleName);
       return (
         typeof a === 'string' &&
         typeof b === 'string' &&
