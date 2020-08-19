@@ -28,7 +28,7 @@ function handleWorkerError(err) {
     return;
   }
   Sentry.captureException(err);
-  console.error(`Uncaught exception running scheduler: ${err.message}`);
+  console.error(`Uncaught exception: ${err.message}`);
   console.error(err.stack);
   process.exit(1);
 }
@@ -44,11 +44,10 @@ async function scheduleActions() {
 
     // Schedule actions up to now
     await SchedulerWorker.scheduleActions(moment.utc());
-
-    isSchedulingActions = false;
   } catch (err) {
     handleWorkerError(err);
   }
+  isSchedulingActions = false;
 }
 
 async function runActions() {
@@ -58,10 +57,10 @@ async function runActions() {
   isRunningActions = true;
   try {
     await RunnerWorker.runScheduledActions(moment.utc(), null, true);
-    isRunningActions = false;
   } catch (err) {
     handleWorkerError(err);
   }
+  isRunningActions = false;
 }
 
 function start() {
