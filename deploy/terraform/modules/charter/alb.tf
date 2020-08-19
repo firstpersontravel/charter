@@ -17,13 +17,6 @@ resource "aws_security_group" "charter_ingress" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 5002
-    to_port     = 5002
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -35,26 +28,6 @@ resource "aws_security_group" "charter_ingress" {
 resource "aws_lb_target_group" "charter_server_web" {
   name        = "charter-${var.environment_name}-web"
   port        = 80
-  protocol    = "HTTP"
-  vpc_id      = data.aws_vpc.charter.id
-  target_type = "ip"
-
-  deregistration_delay = "30"
-
-  health_check {
-    path                = "/health"
-    protocol            = "HTTP"
-    matcher             = "200"
-    interval            = 5
-    timeout             = 3
-    healthy_threshold   = 2
-    unhealthy_threshold = 3
-  }
-}
-
-resource "aws_lb_target_group" "charter_server_pubsub" {
-  name        = "charter-${var.environment_name}-pubsub"
-  port        = 5002
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.charter.id
   target_type = "ip"
@@ -101,18 +74,5 @@ resource "aws_lb_listener" "charter_web_http" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.charter_server_web.arn
-  }
-}
-
-resource "aws_lb_listener" "charter_web_pubsub" {
-  load_balancer_arn = aws_lb.charter.arn
-  port              = "5002"
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = "arn:aws:acm:us-west-2:875382849197:certificate/b58bb07e-a772-42e1-9f3f-a56a9d7dc4e9"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.charter_server_pubsub.arn
   }
 }

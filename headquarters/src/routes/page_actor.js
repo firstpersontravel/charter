@@ -173,7 +173,6 @@ const playerShowRoute = async (req, res) => {
   const role = (actionContext._objs.script.content.roles || [])
     .find(role => role.name === player.roleName);
   const params = {
-    pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
     participantId: '',
     participantName: role ? role.title : 'Unknown role',
     orgName: req.params.orgName,
@@ -231,7 +230,6 @@ const participantShowRoute = async (req, res) => {
     .value();
 
   const params = {
-    pubsubUrl: config.env.FRONTEND_PUBSUB_URL,
     participantId: req.params.participantId,
     orgName: req.params.orgName,
     orgTitle: participant.org.title,

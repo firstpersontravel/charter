@@ -59,7 +59,7 @@ function postEvent($btn, data) {
 }
 
 function subscribeToFaye() {
-  var client = new Faye.Client('{{pubsubUrl}}/pubsub');
+  var client = new Faye.Client('/pubsub');
   var tripIds = "{{tripIds}}".split(',');
   tripIds.forEach(function(tripId) {
     var channel = '/trip_' + tripId;

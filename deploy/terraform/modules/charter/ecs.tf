@@ -22,13 +22,6 @@ resource "aws_security_group" "charter_task" {
     security_groups = [aws_security_group.charter_ingress.id]
   }
 
-  ingress {
-    from_port       = 5002
-    to_port         = 5002
-    protocol        = "tcp"
-    security_groups = [aws_security_group.charter_ingress.id]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -69,12 +62,6 @@ resource "aws_ecs_service" "charter" {
     target_group_arn = aws_lb_target_group.charter_server_web.arn
     container_name   = "server"
     container_port   = 5001
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.charter_server_pubsub.arn
-    container_name   = "pubsub"
-    container_port   = 5002
   }
 
   # Track the latest ACTIVE revision
