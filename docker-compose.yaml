@@ -18,8 +18,6 @@ services:
       - NODE_PATH=/var/app/headquarters/node_modules
     working_dir: /var/app/hqdev
     command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/server.js
-    links: [mysql]
-    depends_on: [mysql]
     ports: ["5001:5001"]
 
   worker:
@@ -34,8 +32,6 @@ services:
       - NODE_PATH=/var/app/headquarters/node_modules
     working_dir: /var/app/hqdev
     command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/worker.js
-    links: [mysql]
-    depends_on: [mysql]
 
   mysql:
     image: mysql:5.7

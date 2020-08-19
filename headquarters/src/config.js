@@ -46,7 +46,11 @@ Sentry.init({
   release: env.GIT_HASH
 });
 
+// Port to serve on
 const serverPort = process.env.HQ_SERVER_PORT || 8000;
+
+// Url to get server by -- this is used by the worker instance
+const serverUrl = process.env.HQ_SERVER_URL || `http://localhost:${serverPort}`;
 
 // Pretty print logs locally
 const pinoConfig = {
@@ -106,8 +110,8 @@ let sendgridClient = require('@sendgrid/mail');
 sendgridClient.setApiKey(env.HQ_SENDGRID_KEY);
 
 // Configure faye
-const fayePath = `http://localhost:${serverPort}/pubsub`;
-const fayeClient = new faye.Client(fayePath);
+const fayePath = `${serverUrl}/pubsub`;
+const fayeClient = new faye.Client(fayePath, { timeout: 5 });
 
 module.exports = {
   getApnProvider: () => apnProvider,
