@@ -32,7 +32,9 @@ class KernelController {
    * Apply an action and gather the results.
    */
   static async applyAction(tripId, action, triggeringPlayerId=null, applyAt=null) {
-    logger.info(action.params, `(Trip #${tripId}) Applying action: ${action.name}.`);
+    logger.info(action.params, 
+      `(Trip #${tripId})${triggeringPlayerId ? ` (Player #${triggeringPlayerId})` : ''} ` +
+      `Applying action: ${action.name}.`);
     const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
     const result = Kernel.resultForImmediateAction(action, actionContext);
     await this._applyResult(actionContext, result);
@@ -43,7 +45,9 @@ class KernelController {
    * Apply an action and gather the results.
    */
   static async applyEvent(tripId, event, triggeringPlayerId=null, applyAt=null) {
-    logger.info(event, `(Trip #${tripId}) Applying event: ${event.type}.`);
+    logger.info(event,
+      `(Trip #${tripId})${triggeringPlayerId ? ` (Player #${triggeringPlayerId})` : ''}  ` +
+      `Applying event: ${event.type}.`);
     const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
     const result = Kernel.resultForEvent(event, actionContext);
     await this._applyResult(actionContext, result);

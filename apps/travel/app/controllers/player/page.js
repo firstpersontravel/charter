@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
     const player = this.get('player.model');
     const pageInterfaceName = player.get('role').interface || null;
     return pageInterfaceName;
-  }.property('pageModel'),
+  }.property('player.model.roleName', 'pageModel'),
 
   pageModel: function() {
     const roleName = this.get('player.model.roleName');
@@ -21,7 +21,9 @@ export default Ember.Controller.extend({
     const pageName = trip.get('tripState.currentPageNamesByRole')[roleName];
     const pages = trip.get('script.content.pages') || [];
     return pages.find(p => p.name === pageName);
-  }.property('player.model.roleName', 'trip.model.tripState.currentPageNamesByRole'),
+  }.property(
+    'player.model.roleName',
+    'trip.model.tripState.currentPageNamesByRole'),
 
   pageInterface: function() {
     const scriptContent = this.get('script.model.content');

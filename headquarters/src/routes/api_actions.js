@@ -11,7 +11,8 @@ const DeviceStateHandler = require('../handlers/device_state');
  * of the new action.
  */
 const createActionRoute = async (req, res) => {
-  const tripId = req.params.tripId;
+  const tripId = Number(req.params.tripId);
+  const playerId = req.body.player_id;
   const clientId = req.body.client_id;
   if (!req.body.name) {
     res.status(400);
@@ -21,7 +22,7 @@ const createActionRoute = async (req, res) => {
   const trip = await models.Trip.findByPk(tripId);
   authz.checkRecord(req, 'action', models.Trip, trip);
   const action = { name: req.body.name, params: req.body.params || {} };
-  await KernelController.applyAction(tripId, action);
+  await KernelController.applyAction(tripId, action, playerId);
   await NotifyController.notifyAction(tripId, action, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
@@ -32,12 +33,13 @@ const createActionRoute = async (req, res) => {
  * a notification to all clients listening of the new event.
  */
 const createEventRoute = async (req, res) => {
-  const tripId = req.params.tripId;
+  const tripId = Number(req.params.tripId);
+  const playerId = req.body.player_id;
   const clientId = req.body.client_id;
-  const event = _.omit(req.body, ['client_id']);
+  const event = _.omit(req.body, ['client_id', 'player_id']);
   const trip = await models.Trip.findByPk(tripId);
   authz.checkRecord(req, 'event', models.Trip, trip);
-  await KernelController.applyEvent(tripId, event);
+  await KernelController.applyEvent(tripId, event, playerId);
   await NotifyController.notifyEvent(tripId, event, clientId);
   res.status(200);
   res.json({ data: { ok: true } });

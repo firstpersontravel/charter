@@ -1,6 +1,5 @@
 import Ember from 'ember';
 import DS from 'ember-data';
-import moment from 'moment-timezone';
 
 import fptCore from 'fptcore';
 
@@ -14,12 +13,11 @@ export default DS.Model.extend({
 
   role: function() {
     return this.get('trip.script').getRole(this.get('roleName'));
-  }.property('trip'),
+  }.property('trip', 'roleName'),
 
   currentPageName: function() {
-    return this.get('trip.tripState.currentPageNamesByRole')[
-      this.get('roleName')];
-  }.property('trip.tripState'),
+    return this.get('trip.tripState.currentPageNamesByRole')[this.get('roleName')];
+  }.property('trip.tripState', 'roleName'),
 
   participantProfile: function() {
     if (!this.get('participant.profiles')) {
@@ -31,7 +29,7 @@ export default DS.Model.extend({
         profile.get('experience') === this.get('trip.experience')
       ));
     return profiles[0] || null;
-  }.property('participant.profiles'),
+  }.property('participant.profiles', 'roleName'),
 
   skype: Ember.computed.oneWay('participantProfile.skype'),
   facetime: Ember.computed.oneWay('participantProfile.facetime'),
@@ -58,7 +56,7 @@ export default DS.Model.extend({
       triggeringPlayerId: this.id,
       triggeringRoleName: this.get('roleName')
     };
-  }.property('evalContext'),
+  }.property('roleName', 'evalContext'),
 
   humanizeText: function(text) {
     return fptCore.TemplateUtil.templateText(

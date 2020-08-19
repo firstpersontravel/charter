@@ -15,7 +15,7 @@ describe('apiActionsRoutes', () => {
     it('applies and notifies on an action', async () => {
       const req = httpMocks.createRequest({
         params: { tripId: 100 },
-        body: { name: 'action_name', params: { param: true }, client_id: 123 }
+        body: { name: 'action_name', player_id: 123, params: { param: true }, client_id: 123 }
       });
       const res = httpMocks.createResponse();
 
@@ -43,7 +43,7 @@ describe('apiActionsRoutes', () => {
       const action = { name: 'action_name', params: { param: true } };
       sinon.assert.calledOnce(KernelController.applyAction);
       assert.deepStrictEqual(
-        KernelController.applyAction.firstCall.args, [100, action]);
+        KernelController.applyAction.firstCall.args, [100, action, 123]);
 
       // Check notify called with correct args
       sinon.assert.calledOnce(NotifyController.notifyAction);
@@ -57,7 +57,7 @@ describe('apiActionsRoutes', () => {
     it('applies and notifies on an event', async () => {
       const req = httpMocks.createRequest({
         params: { tripId: 100 },
-        body: { type: 'cue_signaled', cue_name: 'hi', client_id: 123 }
+        body: { player_id: 345, type: 'cue_signaled', cue_name: 'hi', client_id: 123 }
       });
       const res = httpMocks.createResponse();
 
@@ -85,7 +85,7 @@ describe('apiActionsRoutes', () => {
       const event = { type: 'cue_signaled', cue_name: 'hi' };
       sinon.assert.calledOnce(KernelController.applyEvent);
       assert.deepStrictEqual(
-        KernelController.applyEvent.firstCall.args, [100, event]);
+        KernelController.applyEvent.firstCall.args, [100, event, 345]);
 
       // Check notify called with correct args
       sinon.assert.calledOnce(NotifyController.notifyEvent);
