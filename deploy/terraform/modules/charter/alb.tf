@@ -40,7 +40,7 @@ resource "aws_lb_target_group" "charter_server_web" {
     matcher             = "200"
     interval            = 5
     timeout             = 3
-    healthy_threshold   = 1
+    healthy_threshold   = 2
     unhealthy_threshold = 3
   }
 }
