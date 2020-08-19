@@ -5,7 +5,6 @@ resources:
 environment:
   FRONTEND_ANALYTICS_ENABLED: 'true'
   FRONTEND_CONTENT_BUCKET: fpt-agency-content
-  FRONTEND_PUBSUB_URL: https://charter.firstperson.travel:5002
   FRONTEND_SENTRY_DSN: https://2cf7ae92e52142358afa2003761aa8ad@sentry.io/1390590
   FRONTEND_SENTRY_ENVIRONMENT: production
   FRONTEND_SERVER_URL: https://charter.firstperson.travel
@@ -16,8 +15,6 @@ environment:
   HQ_DATABASE_HOST: fpt-agency.cg6fwudtz4v9.us-west-2.rds.amazonaws.com
   HQ_DATABASE_NAME: agency
   HQ_PUBLIC_URL: https://charter.firstperson.travel
-  HQ_PUBSUB_PORT: '5002'
-  HQ_PUBSUB_URL: http://localhost:5002
   HQ_SENTRY_DSN: https://150dc48f146b499190850da19315fa8a@sentry.io/103090
   HQ_SENTRY_ENVIRONMENT: production
   HQ_SERVER_PORT: '5001'

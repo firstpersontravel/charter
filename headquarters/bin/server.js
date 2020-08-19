@@ -1,5 +1,6 @@
 const http = require('http');
 const moment = require('moment-timezone');
+const faye = require('faye');
 
 const app = require('../src/app');
 const config = require('../src/config');
@@ -57,8 +58,19 @@ async function createFixtures() {
 
 init()
   .then(() => {
-    // Start listening
+    // Create server
     const server = http.createServer(app);
+
+    // Create pubsub and attach to server
+    const bayeux = new faye.NodeAdapter({ mount: '/pubsub' });
+    bayeux.attach(server);
+
+    // Log on bayeux handshake
+    bayeux.on('handshake', function(clientId) {
+      config.logger.info({ name: 'pubsub' }, `client connected: ${clientId}`);
+    });
+
+    // Start listening
     server.listen(config.serverPort, err => {
       if (err) {
         throw err;

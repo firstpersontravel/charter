@@ -47,7 +47,6 @@ Sentry.init({
 });
 
 const serverPort = process.env.HQ_SERVER_PORT || 8000;
-const pubsubHost = process.env.HQ_PUBSUB_URL || 'http://localhost';
 
 // Pretty print logs locally
 const pinoConfig = {
@@ -107,7 +106,7 @@ let sendgridClient = require('@sendgrid/mail');
 sendgridClient.setApiKey(env.HQ_SENDGRID_KEY);
 
 // Configure faye
-const fayePath = `${pubsubHost}/pubsub`;
+const fayePath = `http://localhost:${serverPort}/pubsub`;
 const fayeClient = new faye.Client(fayePath);
 
 module.exports = {

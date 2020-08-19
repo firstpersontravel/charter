@@ -23,7 +23,7 @@ const FayeLogger = {
 export default class Group extends Component {
   constructor(props) {
     super(props);
-    this.fayeClient = new Faye.Client(`${config.pubsubUrl}/pubsub`);
+    this.fayeClient = new Faye.Client(`${config.serverUrl}/pubsub`);
     this.fayeClient.addExtension(FayeLogger);
     this.fayeSubscriptions = {};
     this.refreshInterval = null;

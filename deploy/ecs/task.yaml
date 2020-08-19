@@ -27,20 +27,6 @@ containerDefinitions:
         awslogs-group: charter-__ENVIRONMENT__
         awslogs-region: us-west-2
         awslogs-stream-prefix: charter-__ENVIRONMENT__
-  - name: pubsub
-    image: __IMAGE__
-    workingDirectory: /var/app/headquarters
-    command: ['node', 'bin/pubsub.js']
-    essential: true
-    logConfiguration:
-      logDriver: awslogs
-      options:
-        awslogs-group: charter-__ENVIRONMENT__
-        awslogs-region: us-west-2
-        awslogs-stream-prefix: charter-__ENVIRONMENT__
-    portMappings:
-      - containerPort: 5002
-        protocol: tcp
   - name: migrate
     image: __IMAGE__
     workingDirectory: /var/app/headquarters
