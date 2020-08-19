@@ -39,6 +39,9 @@ class KernelOpController {
 
   static async updatePlayerFields(objs, op) {
     const player = _.find(objs.players, { id: op.playerId });
+    if (!player) {
+      return;
+    }
     return await player.update(op.fields);
   }
 

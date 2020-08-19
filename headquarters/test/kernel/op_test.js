@@ -65,9 +65,7 @@ describe('KernelOpController', () => {
   describe('#updatePlayerFields', () => {
     it('applies a deep value change to a player', async () => {
       const playerId = 7;
-      const objs = {
-        players: [{ id: playerId, update: sandbox.stub().resolves() }]
-      };
+      const objs = { players: [{ id: playerId, update: sandbox.stub().resolves() }] };
       const op = {
         operation: 'updatePlayerFields',
         playerId: playerId,
@@ -77,6 +75,20 @@ describe('KernelOpController', () => {
       await KernelOpController.applyOp(objs, op);
 
       sinon.assert.calledWith(objs.players[0].update, { field: true });
+    });
+
+    it('ignores if player is missing', async () => {
+      const playerId = 8;
+      const objs = { players: [{ id: 4, update: sandbox.stub().resolves() }] };
+      const op = {
+        operation: 'updatePlayerFields',
+        playerId: playerId,
+        fields: { field: true }
+      };
+
+      await KernelOpController.applyOp(objs, op);
+
+      sinon.assert.notCalled(objs.players[0].update);
     });
   });
 
