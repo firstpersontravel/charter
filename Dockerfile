@@ -3,11 +3,8 @@
 ##########################
 FROM node:12-alpine as travel-builder
  
-# Git is needed for bower
-RUN apk add git
-
-# Install travel build tools
-RUN npm install -q -g ember-cli@2.16.0 bower
+# Git is needed for bower; install travel build tools
+RUN apk add git && npm install -q -g ember-cli@2.16.0 bower
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
@@ -21,26 +18,21 @@ RUN cd /var/app/apps/travel && bower install -q --allow-root
 COPY apps/travel/package.json apps/travel/package-lock.json /var/app/apps/travel/
 RUN cd /var/app/apps/travel && npm -q install
 
-# Install travel app
+# Install core and travel app
 COPY fptcore /var/app/fptcore
 COPY apps/travel /var/app/apps/travel
 
-# Link core with symlink
-RUN ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore
-
-# Build travel app
-RUN cd /var/app/apps/travel && ember build --env production
+# Link core with symlink and build travel app
+RUN ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore && \
+    cd /var/app/apps/travel && ember build --env production
 
 ##########################
 ##### Agency builder #####
 ##########################
 FROM node:12-alpine as agency-builder
 
-# Install requirements for node-sass
-RUN apk add gcc
-
-# Install app build tools
-RUN npm install -q -g webpack webpack-cli
+# Install requirements for node-sass and app build tools
+RUN apk add gcc && npm install -q -g webpack webpack-cli
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
@@ -62,15 +54,8 @@ RUN cd /var/app/apps/agency && NODE_ENV=production webpack
 ######################
 FROM node:12-alpine
  
-# Update OS
-RUN apk update
-RUN apk upgrade
- 
-# Install tools
-RUN apk add bash mysql mysql-client
-
-# Install requirements for node-gyp
-RUN apk add make python g++
+# Update OS, install tools, install requirements for node-gyp
+RUN apk update && apk upgrade && apk add bash mysql mysql-client make python g++
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
