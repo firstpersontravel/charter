@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const crypto = require('crypto');
 const twilio = require('twilio');
 
 const config = require('../config');
@@ -69,7 +70,7 @@ async function getParticipantRoute(req, res) {
  * Legacy getter for THG app in JSONAPI format. There is no security here.
  */
 async function getTripRoute(req, res) {
-  const roleName = req.query.roleName;
+  const playerId = req.query.playerId;
   const includeScript = !!req.query.script;
   const trip = await models.Trip.findOne({
     where: { id: req.params.id },
@@ -139,7 +140,8 @@ async function getTripRoute(req, res) {
   data.attributes['auth-token'] = createTripToken(trip, 86400);
 
   // Create a video token by IP in case multiple users or devices share a role.
-  const identity = `${roleName}-${req.ip}`;
+  const userAgentHash = crypto.createHash('md5').update(req.get('User-Agent')).digest('hex');
+  const identity = `${playerId}-${userAgentHash}`;
   data.attributes['video-token'] = createVideoToken(identity);
 
   const includedData = objs.map(jsonApiSerialize);

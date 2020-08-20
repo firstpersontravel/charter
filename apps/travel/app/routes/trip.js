@@ -34,7 +34,7 @@ export default Ember.Route.extend({
     var shouldRefreshScript = !isScriptAlreadyLoaded;
     var params = {
       script: shouldRefreshScript.toString(),
-      roleName: this.paramsFor('player').role_name
+      playerId: this.paramsFor('player').player_id
     };
     var query = Object.keys(params)
       .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
