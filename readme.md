@@ -185,6 +185,7 @@ docker-compose exec mysql mysql galaxy -ugalaxy -pgalaxypassword
 
 ## Todo later:
 
+- https://expo.io/
 - https://wit.ai/docs/quickstart
 - https://www.cypress.io/
 - https://github.com/team-video/tragopan
