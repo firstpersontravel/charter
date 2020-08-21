@@ -11,12 +11,12 @@ registry = '875382849197.dkr.ecr.us-west-2.amazonaws.com'
 ssm = 'arn:aws:ssm:us-west-2:875382849197:parameter'
 
 def construct_env(env):
-    return [{ 'name': k, 'value': env[k] } for k in sorted(env.iterkeys())]
+    return [{ 'name': k, 'value': env[k] } for k in sorted(env.keys())]
 
 def construct_secrets(secrets):
     return [
         { 'name': k, 'valueFrom': '{}/{}'.format(ssm, secrets[k]) }
-        for k in sorted(secrets.iterkeys())]
+        for k in sorted(secrets.keys())]
 
 def main(env_name, git_hash, integer_resources):
     # Load core info
