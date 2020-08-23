@@ -135,7 +135,7 @@ function renderItemMenu(script, resource, spec, value, name, path, opts,
   const menuContents = dropdownOpen ? (
     renderItemMenuContents(script, resource, spec, value, name, path, opts,
       item, index, onPropUpdate, toggleDropdown)
-  ) : null;
+  ) : '';
 
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>

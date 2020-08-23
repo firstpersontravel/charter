@@ -5,6 +5,7 @@ class Registry {
     this.modules = {};
     this.resources = {};
     this.components = components;
+    this._cache = {}; // Cache constructed component classes for performance
 
     for (const componentType of Object.keys(components)) {
       this[componentType] = {};
@@ -46,6 +47,10 @@ class Registry {
    * Get resource class of a component property, merging common and variety.
    */
   getComponentClassByType(componentType, variety) {
+    const cacheKey = `${componentType}-${variety}`;
+    if (this._cache[cacheKey]) {
+      return this._cache[cacheKey];
+    }
     const componentDef = this.components[componentType];
     if (!componentDef) {
       throw new Error(`Invalid component type "${componentType}".`);
@@ -74,7 +79,7 @@ class Registry {
     const varietyClass = Object.assign({
       properties: componentsRegistry[variety][componentDef.propertiesKey]
     }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
-    const componentClass = _.merge({}, typeClass, commonClass, varietyClass);
+    const componentClass = this._cache[cacheKey] = _.merge({}, typeClass, commonClass, varietyClass);
     return componentClass;
   }
 
