@@ -11,7 +11,7 @@ describe('Authorizer', () => {
 
       const subject = authz.subjectForReq(req);
 
-      assert.deepStrictEqual(subject, { name: 'anonymous' });
+      assert.deepStrictEqual(subject, { isAnonymous: true, name: 'anonymous' });
     });
 
     it('returns authenticated user', () => {

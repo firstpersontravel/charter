@@ -109,11 +109,8 @@ function renderDupeBtn(value, path, itemSpec, item, index, onPropUpdate) {
   );
 }
 
-function renderItemMenu(script, resource, spec, value, name, path, opts,
-  item, index, onPropUpdate) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
-
+function renderItemMenuContents(script, resource, spec, value, name, path, opts,
+  item, index, onPropUpdate, toggleDropdown) {
   const itemSpec = spec.items;
   const newItemBtn = renderNewItemBtn(value, path, itemSpec, item, index,
     onPropUpdate, toggleDropdown);
@@ -121,6 +118,24 @@ function renderItemMenu(script, resource, spec, value, name, path, opts,
     onPropUpdate);
   const dupeBtn = renderDupeBtn(value, path, itemSpec, item, index,
     onPropUpdate);
+  return (
+    <>
+      {newItemBtn}
+      {dupeBtn}
+      {removeBtn}
+    </>
+  );
+}
+
+function renderItemMenu(script, resource, spec, value, name, path, opts,
+  item, index, onPropUpdate) {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+
+  const menuContents = dropdownOpen ? (
+    renderItemMenuContents(script, resource, spec, value, name, path, opts,
+      item, index, onPropUpdate, toggleDropdown)
+  ) : null;
 
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
@@ -130,9 +145,7 @@ function renderItemMenu(script, resource, spec, value, name, path, opts,
         <i className="fa fa-circle" />
       </DropdownToggle>
       <DropdownMenu>
-        {newItemBtn}
-        {dupeBtn}
-        {removeBtn}
+        {menuContents}
       </DropdownMenu>
     </Dropdown>
   );

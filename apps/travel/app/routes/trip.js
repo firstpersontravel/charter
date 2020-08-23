@@ -40,13 +40,13 @@ export default Ember.Route.extend({
       .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
       .join('&');
     var refreshUrl = `/api/legacy/trip/${tripId}?${query}`;
-    tripId = tripId || self.context.id;
+    tripId = tripId || this.context.id;
     return this.get('api')
       .getData(refreshUrl)
       .then((data) => {
         // unload all data that could be duplicated
-        // self.store.unloadAll('action');
-        // self.store.unloadAll('message');
+        // this.store.unloadAll('action');
+        // this.store.unloadAll('message');
         // reload all data
         var serializer = Ember.getOwner(this).lookup('serializer:api');
         serializer.set('store', this.store);

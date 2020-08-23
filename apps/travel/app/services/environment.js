@@ -34,18 +34,6 @@ export default Ember.Service.extend({
     this.set('environmentName', local_environment_name || config.environment);
   },
 
-  updateEnvironment: function(newName) {
-    if (!HOSTS[newName]) {
-      throw new Error('invalid environment name ' + newName);
-    }
-    localStorage.setItem('environment_name', newName);
-    this.set('environmentName', newName);
-  },
-
-  environmentOptions: function() {
-    return Object.keys(HOSTS);
-  }.property(),
-
   hostForEnvironment: function(env) {
     return HOSTS[env];
   },

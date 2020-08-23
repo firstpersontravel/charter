@@ -248,6 +248,10 @@ function whereValueFromQuery(model, fieldName, operator, value) {
 
 function whereFromQuery(model, whereQuery, opts) {
   _.each(opts.requireFilters, (filter) => {
+    if (_.isFunction(filter)) {
+      filter(whereQuery);
+      return;
+    }
     if (_.isUndefined(whereQuery[filter])) {
       throw errors.badRequestError(`Missing required filter: "${filter}".`);
     }

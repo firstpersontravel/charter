@@ -1,66 +1,40 @@
 import Ember from 'ember';
 
 export default Ember.Controller.extend({
-
-  environment: Ember.inject.service(),
   api: Ember.inject.service(),
 
-  buildTimestamp: 'loading',
-  emailInput: '',
-
-  init: function() {
-    this._super();
-    Ember.$.get('/travel/dist/build_timestamp.txt')
-      .done((res) => {
-        this.set('buildTimestamp', res);
-      })
-      .fail(() => {
-        this.set('buildTimestamp', 'error');
-      });
-  },
-
-  environmentOptions: function() {
-    var curEnv = this.get('environment.environmentName');
-    return this.get('environment.environmentOptions')
-      .map((opt) => ({ name: opt, isSelected: curEnv === opt }));
-  }.property('environment.environmentName'),
+  participantIdInput: '',
 
   actions: {
-    updateEnvironment: function(newEnvironmentName) {
-      this.get('environment').updateEnvironment(newEnvironmentName);
-    },
-    signin: function(email) {
-      if (!email) {
-        email = this.get('emailInput');
+    signin: function(participantId) {
+      if (!participantId) {
+        participantId = this.get('participantIdInput');
       }
-      var self = this;
-      if (!email || email === '') { return; }
+      if (!participantId || participantId === '') { return; }
       swal('Logging in...');
       this.get('api')
-        .getData('/api/participants', {email: email})
-        .then(function(results) {
-          if (results.data.length === 0) {
-            swal('no participants for this login.');
-            return;
-          }
-          var participantId = results.data.participants[0].id;
-          return self.get('api').getData('/api/legacy/participant/' + participantId);
-        })
-        .then(function(results) {
-          var serializer = Ember.getOwner(self).lookup('serializer:api');
-          serializer.set('store', self.store);
-          serializer.pushPayload(self.store, results);
+        .getData('/api/legacy/participant/' + participantId)
+        .then((results) => {
+          console.log('results', results);
+          const serializer = Ember.getOwner(this).lookup('serializer:api');
+          serializer.set('store', this.store);
+          serializer.pushPayload(this.store, results);
 
-          var participantId = results.data.id;
-          var participant = self.store.peekRecord('participant', participantId);
+          const participantId = results.data.id;
+          const participant = this.store.peekRecord('participant', participantId);
           localStorage.setItem('participant_id', participantId);
           swal.close();
-          self.transitionToRoute('participant', participant);
+          this.transitionToRoute('participant', participant);
         })
-        .catch(function(err) {
-          console.error(err);
+        .catch((err) => {
+          if (err.status === 404) {
+            swal('That participant ID was not found.');
+            this.set('participantIdInput', '');
+            return;
+          }
+          console.error('Error logging in', err);
           swal('Error logging in.');
-          self.set('emailInput', '');
+          this.set('participantIdInput', '');
         });
     }
   }

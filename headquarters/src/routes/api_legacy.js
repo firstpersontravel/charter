@@ -59,8 +59,24 @@ function jsonApiSerialize(instance) {
  * Legacy getter for THG app in JSONAPI format.
  */
 async function getParticipantRoute(req, res) {
-  const participant = await models.Participant.findByPk(req.params.id);
-  const response = { data: jsonApiSerialize(participant) };
+  const participant = await models.Participant.findOne({
+    where: { id: req.params.id },
+    include: [
+      { model: models.Experience, as: 'experience' },
+      { model: models.Org, as: 'org' }
+    ]
+  });
+  if (!participant) {
+    res.status(404).json({ error: 'notfound' });
+    return;
+  }
+  const response = {
+    data: jsonApiSerialize(participant),
+    included: [
+      jsonApiSerialize(participant.org),
+      jsonApiSerialize(participant.experience)
+    ]
+  };
   res.status(200);
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(response, null, 2));

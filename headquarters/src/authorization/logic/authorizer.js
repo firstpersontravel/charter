@@ -41,7 +41,10 @@ class Authorizer {
       };
     }
     // Then anonymous
-    return { name: 'anonymous' };
+    return {
+      isAnonymous: true,
+      name: 'anonymous'
+    };
   }
 
   /**

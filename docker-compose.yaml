@@ -17,7 +17,7 @@ services:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
       - NODE_PATH=/var/app/headquarters/node_modules
     working_dir: /var/app/hqdev
-    command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/server.js
+    command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev --inspect bin/server.js
     ports: ["5001:5001"]
 
   worker:

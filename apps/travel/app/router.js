@@ -8,6 +8,7 @@ var Router = Ember.Router.extend({
 Router.map(function() {
   this.route('index', {path: '/'});
   this.route('login', {path: '/login'});
+  this.route('logout', {path: '/logout'});
   this.route('participant', {path: '/u/:id', resetNamespace: true}, function() {
     this.route('trip', {path: '/r/:trip_id', resetNamespace: true}, function() {  
       this.route('page', {path: '/'});

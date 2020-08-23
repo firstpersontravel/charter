@@ -9,6 +9,7 @@ const apiViewRoutes = require('../routes/api_view');
 const authz = require('../authorization/authz');
 const { authMiddleware } = require('../middleware/auth');
 const config = require('../config');
+const errors = require('../errors');
 const models = require('../models');
 const { asyncRoute } = require('./utils');
 
@@ -59,9 +60,16 @@ apiRouter.use('/trips', createModelRouter(models.Trip, expRecordOpts));
 const tripRecordOpts = { requireFilters: ['orgId', 'tripId'] };
 apiRouter.use('/actions', createModelRouter(models.Action, tripRecordOpts));
 apiRouter.use('/messages', createModelRouter(models.Message, tripRecordOpts));
-apiRouter.use('/players', createModelRouter(models.Player, tripRecordOpts));
-apiRouter.use('/log-entries', createModelRouter(models.LogEntry,
-  tripRecordOpts));
+apiRouter.use('/log-entries', createModelRouter(models.LogEntry, tripRecordOpts));
+
+const playerTripOrParticipantFilter = (whereQuery) => {
+  if (!whereQuery.tripId && !whereQuery.participantId) {
+    throw errors.badRequestError('Missing required filter: "tripId" or "participantId".');
+  }
+};
+
+const playerOpts = { requireFilters: ['orgId', playerTripOrParticipantFilter] };
+apiRouter.use('/players', createModelRouter(models.Player, playerOpts));
 
 // Action routes
 apiRouter.post('/trips/:tripId/actions',
