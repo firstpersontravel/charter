@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const Sentry = require('@sentry/node');
 
 const config = require('../config');
 const models = require('../models');
@@ -175,7 +176,8 @@ class RelayController {
         logger.warn(opts, err.message);
         return;
       }
-      throw new Error(`Error sending twilio message: ${err.message}`);
+      // Capture exception and continue
+      Sentry.captureException(err);
     }
   }
 }
