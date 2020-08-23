@@ -170,6 +170,11 @@ class RelayController {
           err.code === 21610) {  // Unsubscribed
         return;
       }
+      // Unreachable -- maybe trying to message a US number from an international number
+      if (err.code === 21612) {
+        logger.warn(opts, err.message);
+        return;
+      }
       throw new Error(`Error sending twilio message: ${err.message}`);
     }
   }
