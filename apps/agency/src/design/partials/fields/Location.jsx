@@ -83,7 +83,8 @@ class LocationField extends Component {
         <StaticMapImg
           markers={[this.props.value.coords]}
           size="750x150"
-          className="img-fluid" />
+          className="my-2"
+          style={{ display: 'block', width: '100%', height: 'auto' }} />
       );
     }
     return null;

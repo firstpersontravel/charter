@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 module.exports = {
   help: 'Occurs when a player enters a geofenced region.',
   specParams: {
@@ -20,5 +22,10 @@ module.exports = {
       spec.geofence === event.geofence &&
       spec.role === event.role
     );
+  },
+  getTitle: function(scriptContent, resource, registry) {
+    const geofence = _.find(scriptContent.geofences, { name: resource.geofence });
+    const waypoint = geofence ? _.find(scriptContent.waypoints, { name: geofence.center }) : null;
+    return `entered "${waypoint ? waypoint.title : 'unknown'}"`;
   }
 };

@@ -10,6 +10,7 @@ export default Ember.Controller.extend({
   
   application: Ember.inject.controller(),
   trip: Ember.inject.controller(),
+  player: Ember.inject.controller(),
 
   addressInput: '',
   isGeocoding: false,
@@ -17,6 +18,10 @@ export default Ember.Controller.extend({
   localTime: function() {
     return this.get('time.currentTime').clone().local().format('h:mm:ssa');
   }.property('time.currentTime'),
+
+  isSetLocationDisabled: function() {
+    return !this.get('player.model.participant');
+  }.property('player.model.participant'),
 
   lastRefreshedLocal: function() {
     var lastRefreshed = this.get('trip.lastRefreshed');

@@ -13,7 +13,10 @@
   </div>
   <div class='pure-u-1-5'>
     <form class='pure-form pure-g'>
-      <select class='pure-input-1' onchange={{action "goToWaypoint" value="target.value"}}>
+      <select
+        disabled={{isSetLocationDisabled}}
+        class='pure-input-1'
+        onchange={{action "goToWaypoint" value="target.value"}}>
         <option value=''>Go to:</option>
         {{#each waypointOptions as |waypointOption|}}
         <option value='{{waypointOption.name}}'>

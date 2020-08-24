@@ -7,9 +7,7 @@ class WaypointCore {
    */
   static getAllWaypointOptions(scriptContent) {
     return _(scriptContent.waypoints || [])
-      .map(function(waypoint) {
-        return waypoint.options ? waypoint.options : [waypoint];
-      })
+      .map(waypoint => waypoint.options || [])
       .flatten()
       .value();
   }
@@ -21,7 +19,7 @@ class WaypointCore {
     var waypoint = _.find(scriptContent.waypoints || [], {
       name: waypointName
     });
-    return waypoint.options ? waypoint.options : [waypoint];
+    return waypoint.options;
   }
 
   /**

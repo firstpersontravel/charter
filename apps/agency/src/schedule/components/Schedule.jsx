@@ -1,13 +1,117 @@
+import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { formatPhoneNumberIntl } from 'react-phone-number-input';
+
+import { TextUtil } from 'fptcore';
 
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
 import GroupModal from '../partials/GroupModal';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 import { getStage } from '../../utils';
+
+function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState) {
+  const activeScript = _.find(scripts, { isActive: true });
+  const entrywaySpecs = _.filter(_.get(activeScript, 'content.relays'), {
+    entryway: true
+  });
+  if (!entrywaySpecs.length) {
+    return (
+      <div>
+        <i className="fa fa-phone mr-1" />
+        Runs cannot be created by text or call because no entryway phone lines exist.
+      </div>
+    );
+  }
+  let hasUnallocated = false;
+  const renderedEntryways = entrywaySpecs.map((entryway) => {
+    const relay = _.find(experience.relays, {
+      forRoleName: entryway.for,
+      asRoleName: entryway.as || entryway.for,
+      withRoleName: entryway.with,
+      participantPhoneNumber: ''
+    });
+    if (!relay) {
+      hasUnallocated = true;
+    }
+    const forRole = _.find(activeScript.content.roles,
+      { name: entryway.for });
+    return (
+      <span key={entryway.name}>
+        {forRole.title} {relay ? `at ${formatPhoneNumberIntl(relay.relayPhoneNumber)}` : ''}
+      </span>
+    );
+  });
+
+  const allocateRelaysBtn = hasUnallocated ? (
+    <button
+      disabled={systemActionRequestState === 'pending'}
+      className="btn btn-sm btn-primary ml-2"
+      onClick={() => updateRelays(
+        org.id, experience.id)}>
+      Assign number
+    </button>
+  ) : null;
+
+  return (
+    <div>
+      <i className="fa fa-phone" /> Runs can be created by call or texts: {renderedEntryways}
+      {allocateRelaysBtn}
+    </div>
+  );
+}
+
+function renderEntrywayWebpage(org, experience, scripts) {
+  const activeScript = _.find(scripts, { isActive: true });
+  const entrywayInterfaces = _.filter(activeScript.content.interfaces,
+    { entryway: true });
+  if (!entrywayInterfaces.length) {
+    return (
+      <div>
+        <i className="fa fa-file mr-1" />
+        Runs cannot be created over the web because no entryway interfaces exist.
+      </div>
+    );
+  }
+  const baseUrl =
+    `${window.location.origin}/entry/${org.name}/` +
+    `${experience.name}`;
+  const multipleInterfaces = entrywayInterfaces.length > 1;
+  return entrywayInterfaces.map((i) => {
+    const url = multipleInterfaces ?
+      `${baseUrl}/${TextUtil.dashVarForText(i.title)}` :
+      baseUrl;
+    return (
+      <div key={i.name}>
+        <i className="fa fa-file mr-1" />
+        Runs can be created at
+        <a
+          className="ml-1"
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer">
+          {url}
+        </a>
+      </div>
+    );
+  });
+}
+
+function renderEntrywayNote(org, experience, scripts, updateRelays, systemActionRequestState) {
+  const activeScript = _.find(scripts, { isActive: true });
+  if (!activeScript) {
+    return null;
+  }
+  return (
+    <div className="alert alert-secondary">
+      {renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState)}
+      {renderEntrywayWebpage(org, experience, scripts)}
+    </div>
+  );
+}
 
 class Schedule extends Component {
   constructor(props) {
@@ -154,6 +258,8 @@ class Schedule extends Component {
             </div>
           </div>
           <div className="col-sm-8">
+            {renderEntrywayNote(this.props.org, this.props.experience, this.props.scripts,
+              this.props.updateRelays, this.props.systemActionRequestState)}
             {this.props.children}
           </div>
         </div>
@@ -177,6 +283,8 @@ Schedule.propTypes = {
   scripts: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,
   trackEvent: PropTypes.func.isRequired,
+  updateRelays: PropTypes.func.isRequired,
+  systemActionRequestState: PropTypes.string,
   children: PropTypes.node.isRequired
 };
 
