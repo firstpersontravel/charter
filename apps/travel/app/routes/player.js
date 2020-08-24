@@ -12,36 +12,8 @@ export default Ember.Route.extend({
     return players.findBy('id', params.player_id);
   },
 
-  setupController: function(controller, context) {
-    this._super(controller, context);
-    window.nativeLocationUpdate = this.nativeLocationUpdate.bind(this);
-  },
-
   serialize: function(model) {
     return {role_name: model.get('roleName')};
-  },
-
-  nativeLocationUpdate: function(latitude, longitude, accuracy, timestamp) {
-    if (!this.context) { return; }
-    this.get('location').set('lastFixPrivate', {
-      coords: {
-        latitude: latitude,
-        longitude: longitude,
-        accuracy: accuracy
-      },
-      timestamp: timestamp
-    });
-    var participant = this.context.get('participant');
-    if (!participant) { return; }
-    var oldLatitude = this.get('participant.locationLatitude');
-    var oldLongitude = this.get('participant.locationLongitude');
-    var oldAccuracy = this.get('participant.locationAccuracy');
-    participant.setProperties({
-      locationLatitude: latitude,
-      locationLongitude: longitude,
-      locationAccuracy: accuracy,
-      locationTimestamp: moment.utc(timestamp)
-    });
   },
 
   makeEvent: function(params) {

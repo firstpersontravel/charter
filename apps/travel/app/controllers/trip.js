@@ -95,18 +95,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
       });
     },
 
-    updateCode: function() {
-      var host = this.get('environment.host');
-      var zipUrl = `${host}/travel/dist/dist.zip`;
-      try {
-        window.webkit.messageHandlers.update_code.postMessage({
-          zip_url: zipUrl
-        });
-      } catch(err) {
-        // no messageHandlers, probably not native
-      }
-    },
-
     refresh: function() {
       this.send('refresh');
     },

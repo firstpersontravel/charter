@@ -6,4 +6,3 @@ env
 **/dist
 **/.terraform
 build
-native

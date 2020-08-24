@@ -43,20 +43,6 @@ export default Ember.Service.extend({
       this._stopPlaying();
     }
 
-    // If native, play audio
-    if (window.webkit && 
-        window.webkit.messageHandlers &&
-        window.webkit.messageHandlers.play_audio &&
-        window.webkit.messageHandlers.play_audio.postMessage) {
-      // In the native app, only the headlands gamble media is already
-      // loaded, and in just the /media bundle folder.
-      window.webkit.messageHandlers.play_audio.postMessage({
-        path: url,
-        time: time
-      });
-      return;
-    }
-
     var startedAt = new Date();
     this._load(url, startedAt, time);
   },
@@ -113,16 +99,6 @@ export default Ember.Service.extend({
       return;
     }
     this.set('isPlaying', false);
-
-    // If native, play audio
-    if (window.webkit && 
-        window.webkit.messageHandlers &&
-        window.webkit.messageHandlers.stop_audio &&
-        window.webkit.messageHandlers.stop_audio.postMessage) {
-      window.webkit.messageHandlers.stop_audio.postMessage({});
-      return;
-    }
-
     this._audio.pause();
     this._audio.src = ''; 
   },

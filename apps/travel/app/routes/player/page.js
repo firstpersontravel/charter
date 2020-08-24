@@ -16,10 +16,6 @@ export default Ember.Route.extend({
       if (this.controllerFor('application').get('nogps')) {
         shouldWatchGps = false;
       }
-      // Don't watch GPS if we're a native build.
-      if (this.get('environment.isNative')) {
-        shouldWatchGps = false;
-      }
       if (shouldWatchGps) {
         var locationService = this.get('location');
         if (!locationService.get('isWatching')) {

@@ -5,14 +5,14 @@
     {{#if audioHasEnded}}
       Ended
       &bull;
-      <a style="cursor: pointer;" {{action "restartAudio" on="touchStart"}} {{action "restartAudio"}}>Restart</a>
+      <a style="cursor: pointer;" {{action "restartAudio"}}>Restart</a>
     {{else}}
       {{audioElapsed}}
       &bull;
       {{#if mute}}
-        <a style="cursor: pointer;" {{action "mute" on="touchStart"}} {{action "mute"}}>Unmute</a>
+        <a style="cursor: pointer;" {{action "mute"}}>Unmute</a>
       {{else}}
-        <a style="cursor: pointer;" {{action "mute" on="touchStart"}} {{action "mute"}}>Mute</a>
+        <a style="cursor: pointer;" {{action "mute"}}>Mute</a>
       {{/if}}
     {{/if}}
   {{else}}

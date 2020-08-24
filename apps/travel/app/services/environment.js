@@ -6,22 +6,11 @@ const WEB_HOSTS = {
   production: 'https://charter.firstperson.travel'
 };
 
-const NATIVE_HOSTS = {
-  development: 'https://firstpersontravel.ngrok.io',
-  staging: 'https://beta.firstperson.travel',
-  production: 'https://charter.firstperson.travel'
-};
-
 const BUCKETS = {
   development: 'fpt-agency-content-local',
   staging: 'fpt-agency-content-staging',
   production: 'fpt-agency-content'
 };
-
-// Served from port 8080 on native WKWebView
-const IS_NATIVE = window.location.host.indexOf(':8080') > -1;
-const NATIVE_CONTENT_PATH = '/media';
-const HOSTS = IS_NATIVE ? NATIVE_HOSTS : WEB_HOSTS;
 
 export default Ember.Service.extend({
 
@@ -35,17 +24,12 @@ export default Ember.Service.extend({
   },
 
   hostForEnvironment: function(env) {
-    return HOSTS[env];
+    return WEB_HOSTS[env];
   },
-
-  isNative: function() {
-    return IS_NATIVE;
-  }.property(),
 
   contentPath: function() {
     const bucketName = BUCKETS[this.get('environmentName')];
-    const webContentPath = `https://${bucketName}.s3.amazonaws.com`;
-    return IS_NATIVE ? NATIVE_CONTENT_PATH : webContentPath;
+    return `https://${bucketName}.s3.amazonaws.com`;
   }.property(),
 
   pubsubEnvironment: function() {
@@ -53,12 +37,12 @@ export default Ember.Service.extend({
   }.property('environmentName'),
 
   apiHost: function() {
-    return IS_NATIVE ? HOSTS[this.get('environmentName')] : '';
+    return WEB_HOSTS[this.get('environmentName')];
   }.property('environmentName'),
 
   pubsubHost: Ember.computed.oneWay('apiHost'),
 
   host: function() {
-    return HOSTS[this.get('environmentName')];
+    return WEB_HOSTS[this.get('environmentName')];
   }.property('environmentName')
 });

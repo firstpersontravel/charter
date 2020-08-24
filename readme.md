@@ -153,25 +153,14 @@ terraform init
 terraform plan
 ```
 
-## Native app
+## Debugging
 
-### Set up native app
+### Test local environment from a device
 
 ```sh
-cd native/ios/Traveler
-pod install
-```
-
-### Build native app
-
-```
 # run local tunnel
 ngrok http -subdomain=firstpersontravel 5001
-
-# build travel app in xcode
 ```
-
-## Debugging
 
 ### Getting a nice console
 

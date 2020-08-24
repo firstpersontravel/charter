@@ -10,6 +10,10 @@ import ScheduleUtils from '../utils';
 import ParticipantModal from '../../directory/partials/ParticipantModal';
 import { getPlayerIframeUrl } from '../../utils';
 
+function truncate(msg, len) {
+  return msg.length > len ? `${msg.slice(0, len)}...` : msg;
+}
+
 export default class GroupPlayers extends Component {
   constructor(props) {
     super(props);
@@ -92,9 +96,9 @@ export default class GroupPlayers extends Component {
     let participantId = '';
 
     if (participant) {
-      participantLabel = participant.name;
+      participantLabel = truncate(participant.name, 10);
       participantId = participant.id;
-      participantClass = '';
+      participantClass = 'constrain-text';
     }
 
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
