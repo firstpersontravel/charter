@@ -1,5 +1,7 @@
 const TemplateUtil = require('../../utils/template');
 
+var COMPARISON_OPTIONS = ['<', '<=', '==', '>=', '>'];
+
 module.exports = {
   value_is_true: {
     title: 'Variable is present',
@@ -43,9 +45,6 @@ module.exports = {
       if (!val1 && !val2) {
         return true;
       }
-      if (!val1 || !val2) {
-        return false;
-      }
       return val1.toString().toLowerCase() === val2.toString().toLowerCase();
     }
   },
@@ -78,29 +77,49 @@ module.exports = {
       );
     }
   },
-  value_greater_than_or_equal_to: {
-    title: 'Variable >=',
-    help: 'A condition that passes if the first variable is greater than or equal to the second.',
+
+  value_compare: {
+    title: 'Value comparison',
+    help: 'A condition that passes if the first value numerically compares to the second in the specified way.',
     properties: {
       ref1: {
-        title: 'Variable name 1',
+        title: 'Variable name or number 1',
         type: 'lookupable',
         required: true,
-        help: 'A value to look up and compare against the second.'
+        help: 'A numeric value to look up and compare against the second.'
+      },
+      comparison_method: {
+        type: 'enum',
+        options: COMPARISON_OPTIONS,
+        default: '>=',
+        help: 'The method used to compare the first value to the second.'
       },
       ref2: {
         type: 'lookupable',
-        title: 'Variable name 2',
+        title: 'Variable name or number 2',
         required: true,
-        help: 'Another value to look up and compare against the first.'
+        help: 'Another numeric value to look up and compare against the first.'
       }
     },
     eval: (params, actionContext) => {
-      const val1 = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref1, actionContext.currentRoleName);
-      const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
-        params.ref2, actionContext.currentRoleName);
-      return (Number(val1) >= Number(val2));
+      console.log(params);
+      const num1 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
+        params.ref1, actionContext.currentRoleName));
+      const num2 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
+        params.ref2, actionContext.currentRoleName));
+
+      const comparisonFunction = {
+        '<': function(a, b) { return a < b; },
+        '<=': function(a, b) { return a <= b; },
+        '==': function(a, b) { return a == b; },
+        '>=': function(a, b) { return a >= b; },
+        '>': function(a, b) { return a > b; }
+      };
+
+      const ref1AsNumber = Number.isNaN(num1) ? 0: num1;
+      const ref2AsNumber = Number.isNaN(num2) ? 0: num2;
+
+      return(comparisonFunction[params.comparison_method](ref1AsNumber, ref2AsNumber));
     }
   }
 };

@@ -1,7 +1,6 @@
 const assert = require('assert');
 
 const valueConditions = require('../../../src/modules/values/value_conditions');
-
 describe('#value_is_true', () => {
   function assertIfEq(ctx, stmt, val) {
     assert.strictEqual(
@@ -93,48 +92,85 @@ describe('#value_contains', () => {
   });
 });
 
-describe('#value_greater_than_or_equal_to', () => {
-  function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(
-      valueConditions.value_greater_than_or_equal_to.eval(stmt, { evalContext: ctx }), val);
+describe('#value_compare', () => {
+  function assertComparisonOutcome(firstValue, secondValue, comparisonMethod, expectedOutcome) {
+    const actualOutcome = valueConditions.value_compare.eval({
+      op: 'value_compare',
+      ref1: 'a',
+      comparison_method: comparisonMethod,
+      ref2: 'b'
+    }, {
+      evalContext: {
+        'a': firstValue,
+        'b': secondValue
+      }
+    });
+    assert.strictEqual(actualOutcome, expectedOutcome);
   }
 
-  const stmt = { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: 'b' };
-
-  it('treats nulls as 0', () => {
-    assertIfEq({}, stmt, true);
-    assertIfEq({ a: 1 }, stmt, true);
-    assertIfEq({ b: 1 }, stmt, false);
+  it('treats non-numeric strings as 0', () => {
+    const truthTable = [
+      ['a', 0, '==', true],
+      ['a', 1, '==', false]
+    ];
+    truthTable.forEach((params) => {
+      assertComparisonOutcome.apply(null, params);
+    });
   });
 
-  it('evaluates numbers correctly', () => {
-    assertIfEq({ a: 0, b: 2 }, stmt, false);
-    assertIfEq({ a: 2, b: 0 }, stmt, true);
-    assertIfEq({ a: 0, b: 0 }, stmt, true);
+  it('treats booleans as numbers', () => {
+    const truthTable = [
+      [false, 0, '==', true],
+      [true, 1, '==', true],
+      [true, 0, '==', false],
+      [false, 1, '==', false]
+    ];
+    truthTable.forEach((params) => {
+      assertComparisonOutcome.apply(null, params);
+    });
   });
 
-  it('evaluates correctly against constants', () => {
-    assertIfEq({ a: 0 }, { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: '2' }, false);
-    assertIfEq({ a: 2 }, { op: 'value_greater_than_or_equal_to', ref1: 'a', ref2: '0' }, true);
-    assertIfEq({ b: 2 }, { op: 'value_greater_than_or_equal_to', ref1: '0', ref2: 'b' }, false);
-    assertIfEq({ b: 0 }, { op: 'value_greater_than_or_equal_to', ref1: '2', ref2: 'b' }, true);
+  it('treats undefined variables as 0', () => {
+    const truthTable = [
+      [undefined, 0, '==', true],
+      [undefined, 1, '==', false]
+    ];
+    truthTable.forEach((params) => {
+      assertComparisonOutcome.apply(null, params);
+    });
+    const actualMissingOutcome = valueConditions.value_compare.eval({
+      op: 'value_compare',
+      ref1: 'a',
+      comparison_method: '==',
+      ref2: 'b'
+    }, {
+      evalContext: {
+        'a': 0
+      }
+    });
+    assert.strictEqual(actualMissingOutcome, true);
   });
 
-  it('treats numberic strings as numbers', () => {
-    assertIfEq({ a: '0', b: '2' }, stmt, false);
-    assertIfEq({ a: '2', b: '0' }, stmt, true);
-    assertIfEq({ a: '10', b: NaN }, stmt, false);
-  });
-
-  it('treats strings without numbers as NaN', () => {
-    assertIfEq({ a: 'a', b: 'b' }, stmt, false);
-    assertIfEq({ a: 'a', b: NaN }, stmt, false);
-    assertIfEq({ a: 0, b: NaN }, stmt, false);
-  });
-
-  it('treats false/true as 0/1', () => {
-    assertIfEq({ a: true, b: false }, stmt, true);
-    assertIfEq({ a: false, b: true }, stmt, false);
-    assertIfEq({ a: true, b: NaN }, stmt, false);
+  it('returns the appropriate numeric comparison of numbers', () => {
+    const truthTable = [
+      [10, 20, '<', true],
+      [10, 20, '<=', true],
+      [10, 20, '==', false],
+      [10, 20, '>=', false],
+      [10, 20, '>', false],
+      [20, 10, '<', false],
+      [20, 10, '<=', false],
+      [20, 10, '==', false],
+      [20, 10, '>=', true],
+      [20, 10, '>', true],
+      [10, 10, '<', false],
+      [10, 10, '<=', true],
+      [10, 10, '==', true],
+      [10, 10, '>=', true],
+      [10, 10, '>', false]
+    ];
+    truthTable.forEach((params) => {
+      assertComparisonOutcome.apply(null, params);
+    });
   });
 });
