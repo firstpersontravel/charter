@@ -94,7 +94,7 @@ describe('ContextCore', () => {
       assert.equal(result.location_latitude, 1);
       assert.equal(result.location_longitude, 2);
       assert.equal(result.location_accuracy, 3);
-      assert.equal(result.location_timestamp, '5:00:00pm');
+      assert.equal(result.location_timestamp, '2020-05-05T00:00:00.000Z');
     });
   });
 

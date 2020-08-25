@@ -32,7 +32,7 @@ class ContextCore {
       location_longitude: participant.locationLongitude || null,
       location_accuracy: participant.locationAccuracy || null,
       location_timestamp: participant.locationTimestamp ?
-        moment.utc(participant.locationTimestamp).local().format('h:mm:ssa') :
+        moment.utc(participant.locationTimestamp).toISOString() :
         null,
     });
   }
