@@ -83,7 +83,6 @@ export default Ember.Route.extend({
   },
 
   actions: {
-
     acknowledgePage: function(pageName) {
       this.get('api').acknowledgePage(this.context.id, pageName);
     },
@@ -92,9 +91,6 @@ export default Ember.Route.extend({
       var trip = this.context.get('trip');
       var participant = this.context.get('participant');
       if (!participant) { return; }
-      var oldLatitude = participant.get('locationLatitude');
-      var oldLongitude = participant.get('locationLongitude');
-      var oldAccuracy = participant.get('locationAccuracy');
       participant.setProperties({
         locationLatitude: fix.coords.latitude,
         locationLongitude: fix.coords.longitude,

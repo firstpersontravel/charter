@@ -1,6 +1,9 @@
 import Ember from 'ember';
 import RealtimeMixin from '../mixins/controllers/realtime';
 
+// Refresh every minute
+const FORCE_REFRESH_SECS = 60;
+
 export default Ember.Controller.extend(RealtimeMixin, {
   channelFormat: '/trip_@id',
 
@@ -29,9 +32,20 @@ export default Ember.Controller.extend(RealtimeMixin, {
   }.property('script.model.name'),
 
   timeDidChange: function() {
-    this.get('time');
+    this.get('time.currentTime');
+
+    // Set refresh if needed
+    var now = moment.utc();
+    var secsSinceRefresh = now.diff(this.get('lastRefreshed'), 'seconds');
+    if (secsSinceRefresh > FORCE_REFRESH_SECS) {
+      if (!this.get('awaitingRefreshAt') || now.isBefore(this.get('awaitingRefreshAt'))) {
+        this.set('awaitingRefreshAt', now);
+      }
+    }
+
+    // Refresh if time has arrived
     if (this.get('awaitingRefreshAt') &&
-        moment.utc().isAfter(this.get('awaitingRefreshAt')) &&
+        now.isAfter(this.get('awaitingRefreshAt')) &&
         this.get('api.apiRequestsInProgress') === 0 &&
         this.get('sync.online') &&
         !this.get('sync.inprogress') &&
@@ -39,23 +53,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
       this.set('awaitingRefreshAt', null);
       this.send('refresh');
     }
-  }.observes('time.currentTime'),
-
-  /**
-   * If we come from offline to online, auto-refresh to server
-   */
-  syncOnlineDidChange: function() {
-    if (!this.get('sync.online') ||
-      !this.get('lastRefreshed') ||
-      this.get('awaitingRefreshAt')) {
-      return;
-    }
-    var now = moment.utc();
-    var secsSinceRefresh = now.diff(this.get('lastRefreshed'), 'seconds');
-    if (secsSinceRefresh > 15) {
-      this.get('awaitingRefreshAt', moment.utc());
-    }
-  }.observes('sync.online'),
+  }.observes('time.currentTime').on('init'),
 
   realtimeEvents: {
     action: function(content) {
@@ -88,10 +86,10 @@ export default Ember.Controller.extend(RealtimeMixin, {
       }
       // console.log('participant state updated');
       participant.setProperties({
-        locationLatitude: content.device_state.location_latitude,
-        locationLongitude: content.device_state.location_longitude,
-        locationAccuracy: content.device_state.location_accuracy,
-        locationTimestamp: moment.utc(content.device_state.location_timestamp)
+        locationLatitude: content.location_latitude,
+        locationLongitude: content.location_longitude,
+        locationAccuracy: content.location_accuracy,
+        locationTimestamp: moment.utc(content.location_timestamp)
       });
     },
 

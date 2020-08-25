@@ -15,7 +15,6 @@ config.isTesting = true;
 config.env.HQ_STAGE = 'test';
 config.env.HQ_PUBLIC_URL = 'http://test';
 config.env.HQ_TWILIO_HOST = 'http://twilio.test';
-config.env.HQ_TWILIO_MEDIA_HOST = 'http://twilio.media';
 config.env.HQ_JWT_SECRET = 'test_secret';
 config.env.HQ_CONTENT_BUCKET = 'test_bucket';
 

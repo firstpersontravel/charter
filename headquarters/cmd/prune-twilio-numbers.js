@@ -23,14 +23,15 @@ const stagesByHost = {
   'charter.firstperson.travel': 'production',
   'beta.firstperson.travel': 'staging',
   'staging.firstperson.travel': 'staging',
-  'firstpersontravel.ngrok.io': 'development'
+  'firstpersontravel.ngrok.io': 'development',
+  'fpt.ngrok.io': 'development'
 };
 
 // Primary host by stage
 const hostsByStage = {
   production: 'charter.firstperson.travel',
   staging: 'beta.firstperson.travel',
-  development: 'firstpersontravel.ngrok.io'
+  development: 'fpt.ngrok.io'
 };
 
 const cullThresholdSecs = 86400 * 30; // one month in secs

@@ -28,9 +28,9 @@ module.exports = {
       }
       // If any player with this role is inside the geofence, return true.
       for (const roleState of roleStates) {
-        const latitude = roleState.latitude;
-        const longitude = roleState.longitude;
-        const accuracy = roleState.accuracy;
+        const latitude = roleState.location_latitude;
+        const longitude = roleState.location_longitude;
+        const accuracy = roleState.location_accuracy;
         if (!latitude || !longitude || !accuracy) {
           continue;
         }

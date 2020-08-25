@@ -77,8 +77,7 @@ export default DS.Model.extend({
   }.property(
     'trip.tripState',
     'trip.values',
-    'trip.players.@each.currentPageName',
-    'trip.players.@each.values'),
+    'participant.locationTimestamp'),
 
   lookupRef: function(ref) {
     var context = this.get('evalContext');

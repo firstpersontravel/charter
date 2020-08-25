@@ -37,9 +37,10 @@ describe('ContextCore', () => {
         phone_number: null,
         headline: null,
         directive: null,
-        latitude: null,
-        longitude: null,
-        accuracy: null
+        location_latitude: null,
+        location_longitude: null,
+        location_accuracy: null,
+        location_timestamp: null
       };
       const result = ContextCore.gatherPlayerEvalContext(
         env, trip, player);
@@ -78,7 +79,8 @@ describe('ContextCore', () => {
           profile: { values: { extraval: 'test' } },
           locationLatitude: 1,
           locationLongitude: 2,
-          locationAccuracy: 3
+          locationAccuracy: 3,
+          locationTimestamp: '2020-05-05T00:00:00'
         }
       };
       const trip = {
@@ -89,9 +91,10 @@ describe('ContextCore', () => {
         player);
       assert.equal(result.phone_number, '1234567890');
       assert.equal(result.extraval, 'test');
-      assert.equal(result.latitude, 1);
-      assert.equal(result.longitude, 2);
-      assert.equal(result.accuracy, 3);
+      assert.equal(result.location_latitude, 1);
+      assert.equal(result.location_longitude, 2);
+      assert.equal(result.location_accuracy, 3);
+      assert.equal(result.location_timestamp, '5:00:00pm');
     });
   });
 

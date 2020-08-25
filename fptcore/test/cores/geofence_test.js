@@ -13,6 +13,7 @@ describe('GeofenceCore', () => {
       waypoints: [
         { name: 'cottage', options: [{ location: { coords: [37.758273, -122.411681] } }] },
         { name: 'atlas', options: [{ location: { coords: [37.759010, -122.411497] } }] },
+        { name: 'bonnene', options: [{ location: { coords: [37.757575, -122.411651] } }] },
         {
           name: 'dinner',
           options: [
@@ -35,10 +36,10 @@ describe('GeofenceCore', () => {
       assert.strictEqual(atAtlasResult[0].name, 'atlas');
     });
 
-    it('is generous for low accuracy', () => {
+    it('is not generous for low accuracy', () => {
       const atCottageResult = GeofenceCore.geofencesInArea(scriptContent,
-        37.759010, -122.411497, 100, null);
-      assert.strictEqual(atCottageResult.length, 2);
+        37.758273, -122.411681, 100, null);
+      assert.strictEqual(atCottageResult.length, 1);
     });
 
     it('returns option based on waypoint options', () => {

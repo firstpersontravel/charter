@@ -33,9 +33,9 @@ describe('#role_in_geofence', () => {
       roleStates: {
         gabe: [
           // One in SF
-          { latitude: 37.77604, longitude: -122.427428, accuracy: 30 },
+          { location_latitude: 37.77604, location_longitude: -122.427428, location_accuracy: 30 },
           // One super far away
-          { latitude: 23.77604, longitude: -112.427428, accuracy: 30 }
+          { location_latitude: 23.77604, location_longitude: -112.427428, location_accuracy: 30 }
         ]
       },
       waypointOptions: { w1: 'sf' }
@@ -48,7 +48,11 @@ describe('#role_in_geofence', () => {
     // Loc in SF but waypoint in Petaluma
     const context = {
       roleStates: {
-        gabe: [{ latitude: 37.77604, longitude: -122.427428, accuracy: 30 }]
+        gabe: [{
+          location_latitude: 37.77604,
+          location_longitude: -122.427428,
+          location_accuracy: 30
+        }]
       },
       waypointOptions: { w1: 'petaluma' }
     };
@@ -58,7 +62,13 @@ describe('#role_in_geofence', () => {
   it('returns false if no loc for role', () => {
     const stmt = { op: 'role_in_geofence', role: 'gabe', geofence: 'g1' };
     const context = {
-      roleStates: { gabe: [{ latitude: null, longitude: null, accuracy: 0 }] }
+      roleStates: {
+        gabe: [{
+          location_latitude: null,
+          location_longitude: null,
+          location_accuracy: 0
+        }]
+      }
     };
     assertIfEq(context, stmt, false);
   });

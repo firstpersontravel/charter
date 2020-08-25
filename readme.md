@@ -77,10 +77,10 @@ docker volume ls -qf dangling=true | xargs docker volume rm
 
 # Clean non-tracked cruft
 git clean -xdf
-```
 
-    # Fix bcrypt
-    docker-compose exec server npm rebuild bcrypt --build-from-source
+# Fix bcrypt
+docker-compose exec server npm rebuild bcrypt --build-from-source
+```
 
 ### Pull production DB for testing
 
@@ -159,7 +159,7 @@ terraform plan
 
 ```sh
 # run local tunnel
-ngrok http -subdomain=firstpersontravel 5001
+ngrok http -subdomain=fpt 5001
 ```
 
 ### Getting a nice console
