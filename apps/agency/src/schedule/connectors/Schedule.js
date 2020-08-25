@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
+import { instancesIncluder, instanceFromDatastore } from '../../datastore-utils';
 import {
   createInstance,
   updateInstance,
@@ -14,7 +15,11 @@ import Schedule from '../components/Schedule';
 const mapStateToProps = (state, ownProps) => ({
   systemActionRequestState: state.requests['system.action'],
   org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName }),
-  experience: _.find(state.datastore.experiences, { name: ownProps.match.params.experienceName }),
+  experience: instanceFromDatastore(state, {
+    col: 'experiences',
+    filter: { name: ownProps.match.params.experienceName },
+    include: { relays: instancesIncluder('relays', 'experienceId', 'id') }
+  }),
   scripts: lookupScripts(state, ownProps),
   groups: lookupGroups(state, ownProps)
 });
