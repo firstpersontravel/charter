@@ -1,4 +1,39 @@
 @font-face {
+  font-family: Aribau;
+  font-weight: 400;
+  font-style: normal;
+  src: url('/static/fonts/AribauGrotesk-Rg.woff2') format('woff2'),
+    url('/static/fonts/AribauGrotesk-Rg.woff') format('woff');
+}
+
+@font-face {
+  font-family: Aribau;
+  font-weight: 500;
+  font-style: normal;
+  src: url('/static/fonts/AribauGrotesk-Md.woff2') format('woff2'),
+    url('/static/fonts/AribauGrotesk-Md.woff') format('woff');
+}
+
+@font-face {
+  font-family: Aribau;
+  font-weight: 700;
+  font-style: normal;
+  src: url('/static/fonts/AribauGrotesk-Bd.woff2') format('woff2'),
+    url('/static/fonts/AribauGrotesk-Bd.woff') format('woff');
+}
+
+@font-face {
+  font-family: GTSectraDisplay;
+  font-weight: 700;
+  font-style: normal;
+  src: url('/static/fonts/GT-Sectra-Display-Bold.eot');
+  src: url('/static/fonts/GT-Sectra-Display-Bold.woff2') format('woff2'),
+    url('/static/fonts/GT-Sectra-Display-Bold.woff') format('woff'),
+    url('/static/fonts/GT-Sectra-Display-Bold.ttf') format('truetype');
+}
+
+//Old Fonts
+@font-face {
   font-family: FFMarkPro;
   font-weight: 400;
   font-style: normal;
@@ -19,7 +54,7 @@
     url('/static/fonts/3A6E9C_3_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_3_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: FFMarkPro;
   font-weight: 100 300;
@@ -30,7 +65,7 @@
     url('/static/fonts/3A6E9C_1_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_1_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: FFMarkPro;
   font-weight: 100 300;
@@ -41,7 +76,7 @@
     url('/static/fonts/3A6E9C_2_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_2_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: FFMarkPro;
   font-weight: 500;
@@ -52,7 +87,7 @@
     url('/static/fonts/3A6E9C_4_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_4_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: FFMarkPro;
   font-weight: 500;
@@ -63,7 +98,7 @@
     url('/static/fonts/3A6E9C_5_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_5_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: FFMarkPro;
   font-weight: 700;
@@ -74,7 +109,7 @@
     url('/static/fonts/3A6E9C_6_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_6_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: FFMarkPro;
   font-weight: 700;
@@ -85,7 +120,7 @@
     url('/static/fonts/3A6E9C_7_0.woff') format('woff'),
     url('/static/fonts/3A6E9C_7_0.ttf') format('truetype');
 }
-  
+
 @font-face {
   font-family: 'RecoletaAlt-SemiBold';
   src: url('/static/fonts/3A6E9C_8_0.eot');
