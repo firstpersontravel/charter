@@ -32,7 +32,7 @@ export default class PublicLogin extends Component {
     if (this.props.loginRequest === 'rejected') {
       return (
         <div className="alert alert-danger" role="alert">
-          There was an error while trying to log in.
+          Hmm, there was an error while logging in
         </div>
       );
     }
@@ -42,27 +42,28 @@ export default class PublicLogin extends Component {
   renderLoginFailedAlert() {
     if (this.props.loginRequest === 'fulfilled' && !this.props.authInfo) {
       return (
-        <div className="alert alert-warning" role="alert">
-          That email and password was incorrect.
+        <div className="alert alert-warning text-center" role="alert">
+          That email and password are incorrect
         </div>
       );
     }
     return null;
   }
 
+//Login Styling
+
   render() {
     return (
-      <div className="container-fluid">
-        <div className="col-md-6 offset-md-3">
-          <h1>Welcome to Charter!</h1>
-          <p>
-            If you have an account, please sign in here. Otherwise you can <Link to="/signup">create an account.</Link>
+      <div className="container d-flex h-100 justify-content-center">
+        <div className="col-md-5 flex align-self-center">
+          <h1 className="text-center">Welcome to Charter</h1>
+          <p className="text-center">
+            Don't have an account? <Link to="/signup">Sign up</Link>
           </p>
           {this.renderLoginErrorAlert()}
           {this.renderLoginFailedAlert()}
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Email address</label>
               <input
                 type="email"
                 name="email"
@@ -71,10 +72,9 @@ export default class PublicLogin extends Component {
                 id="email"
                 value={this.state.email}
                 onChange={e => this.setState({ email: e.target.value })}
-                placeholder="Enter email" />
+                placeholder="Email" />
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 name="password"
@@ -90,23 +90,16 @@ export default class PublicLogin extends Component {
                 type="submit"
                 disabled={!this.canSubmit()}
                 onClick={this.handleSubmit}
-                className="btn btn-primary">
+                className="btn btn-primary w-100">
                 {this.isLoggingIn() ? 'Logging in...' : 'Log in'}
               </button>
-              <Link
-                className="ml-2"
-                to="/lost-pw">Forgot your password?
-              </Link>
+              <div className="d-flex justify-content-center pt-3">
+                <Link
+                  to="/lost-pw">Forgot your password?
+                </Link>
+              </div>
             </div>
           </form>
-          <p>
-            {
-              // eslint-disable-next-line max-len
-            }Please remember that this is an experimental toolkit and very much a work-in-progress. We&apos;re delighted that you&apos;re interested in trying out these tools and we&apos;d love your help making them better!
-          </p>
-          <p>
-            This tool is provided for free for art projects, experiments, and other revenue-free experiences. It costs us money to run the servers and telephone relays, so if you are charging fees for experiences built using this platform, be in touch at <a href="mailto:agency@firstperson.travel">agency@firstperson.travel</a> and we&apos;ll work out a fair and reasonable pricing structure.
-          </p>
         </div>
       </div>
     );

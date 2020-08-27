@@ -1,9 +1,15 @@
-$grid-gutter-width: 15px;
+//----------------Overrides----------------//
 
+// Colors
+$primary: #ED4C1B;
+$brand-primary:#ED4C1B;
+$secondary: #ED4C1B;
+
+// Fonts
 @import "./fonts.scss";
 
-$font-family-sans-serif: FFMarkPro;
-$font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
+$font-family-sans-serif: Aribau, Helvetica, Arial, sans-serif ;
+$font-family-serif:      GTSectraDisplay, Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 $font-family-base:       $font-family-sans-serif !default;
 
@@ -13,25 +19,27 @@ $font-weight-normal:          400;
 $font-weight-bold:            500;
 $font-weight-bolder:          700;
 $font-weight-base:            $font-weight-normal;
+$headings-font-weight:        700;
 
-@import "../node_modules/bootstrap/scss/bootstrap";
-@import "../node_modules/react-datepicker/dist/react-datepicker";
-
-@import "../node_modules/leaflet/dist/leaflet.css";
-
+//Update to latest free Font Awesome
 $fa-font-path: "~font-awesome/fonts";
 @import "../node_modules/font-awesome/scss/font-awesome";
 
-h1, .h1, h2, .h2 {
-  font-family: RecoletaAlt-SemiBold;
+// Spacing between cards
+$grid-gutter-width: 24px;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/react-datepicker/dist/react-datepicker";
+@import "../node_modules/leaflet/dist/leaflet.css";
+
+//Buttons
+.btn {
+  border-radius: 30px;
+  padding: 0.625rem 2rem;
 }
 
-body {
-  height: 100%;
-}
-
-.sentry-error-embed-wrapper {
-  z-index: 4000 !important;
+.btn.btn-primary[disabled] {
+  opacity: 1;
 }
 
 .btn-group-xs > .btn, .btn-xs {
@@ -41,9 +49,87 @@ body {
   border-radius: .2rem;
 }
 
+.btn-unstyled {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    text-align: left;
+    display: inline;
+}
+
+.clear-btn {
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.form-control {
+  border-radius: 12px;
+  height: 3rem;
+  background-color: #F1F1F1;
+  border: none;
+}
+
+// Type
+h1, .h1, h2, .h2 {
+  font-family: GTSectraDisplay;
+}
+
+h5, .h5 {
+  font-weight: 700;
+}
+
+body {
+  height: 100%;
+}
+
+// Navbar
+.nav-tabs {
+  margin-bottom: 0.5em;
+}
+
+.navbar {
+  background: #fff;
+  &.navbar-development {
+    background: #fff;
+    border-left: 10px solid #bfb;
+  }
+  &.navbar-staging {
+    background: #ffb;
+  }
+}
+
+// Project cards
+.card {
+  border-radius: 24px;
+  border: 1px #eee solid;
+  padding: 1.5rem;
+}
+
+.card-header, .card-footer {
+  border: none;
+  background: transparent;
+  padding: 0px;
+}
+
+.card-header {
+  padding-top: 1.25rem;
+}
+
+.card-body {
+  padding: 1.25rem 0;
+}
+
+//What is this?
+.sentry-error-embed-wrapper {
+  z-index: 4000 !important;
+}
+
+//Text
 .bold { font-weight: bold; }
+
 .strikethrough { text-decoration: line-through; }
-.react-datepicker__input-container { display: block }
 
 .constrain-text {
   white-space: nowrap;
@@ -55,13 +141,10 @@ body {
 }
 
 .faint { opacity: 0.5; }
-.btn-unstyled {
-    padding: 0;
-    border: 0;
-    background-color: transparent;
-    text-align: left;
-    display: inline;
-}
+
+//Buttons and Inputs
+
+.react-datepicker__input-container { display: block }
 
 .popover-control .btn-unstyled {
   // max-width: 85%;
@@ -71,31 +154,10 @@ body {
   }
 }
 
-.clear-btn {
-  cursor: pointer;
-  &:hover {
-    opacity: 1;
-  }
-}
-
 .popover {
   max-width: 400px;
   textarea {
     height: 10em;
-  }
-}
-
-.nav-tabs {
-  margin-bottom: 0.5em;
-}
-
-.navbar {
-  background: #ccc;
-  &.navbar-development {
-    background: #bfb;
-  }
-  &.navbar-staging {
-    background: #ffb;
   }
 }
 
@@ -189,6 +251,9 @@ body {
   }
 }
 
+//----------------Responsive----------------//
+
+
 @media(max-width: 575px) {
   .row { display: block; }
 }
@@ -199,11 +264,11 @@ body {
   }
   .generic-full-height {
     max-height: 100%;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
   .script-editor-full-height {
     max-height: calc(100% - 105px);
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
   .script-editor-container, .script-tester-container {
     height: calc(100% - 105px);
@@ -213,7 +278,7 @@ body {
   }
   .script-editor-col, .script-tester-col {
     max-height: 100%;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
 }
 
@@ -260,7 +325,7 @@ $cards-per-line: (
   sm: 2,
   md: 3,
   lg: 4,
-  xl: 5
+  xl: 4
 );
 
 @each $name, $breakpoint in $grid-breakpoints {
@@ -272,4 +337,3 @@ $cards-per-line: (
     }
   }
 }
-
