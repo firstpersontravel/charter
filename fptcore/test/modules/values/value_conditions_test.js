@@ -97,7 +97,7 @@ describe('#value_compare', () => {
     const actualOutcome = valueConditions.value_compare.eval({
       op: 'value_compare',
       ref1: 'a',
-      comparison_method: comparisonMethod,
+      comparator: comparisonMethod,
       ref2: 'b'
     }, {
       evalContext: {
@@ -109,39 +109,39 @@ describe('#value_compare', () => {
   }
 
   it('treats non-numeric strings as 0', () => {
-    const truthTable = [
+    const truthTableParams = [
       ['a', 0, '==', true],
       ['a', 1, '==', false]
     ];
-    truthTable.forEach((params) => {
-      assertComparisonOutcome.apply(null, params);
-    });
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
   });
 
   it('treats booleans as numbers', () => {
-    const truthTable = [
+    const truthTableParams = [
       [false, 0, '==', true],
       [true, 1, '==', true],
       [true, 0, '==', false],
       [false, 1, '==', false]
     ];
-    truthTable.forEach((params) => {
-      assertComparisonOutcome.apply(null, params);
-    });
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
   });
 
   it('treats undefined variables as 0', () => {
-    const truthTable = [
+    const truthTableParams = [
       [undefined, 0, '==', true],
       [undefined, 1, '==', false]
     ];
-    truthTable.forEach((params) => {
-      assertComparisonOutcome.apply(null, params);
-    });
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
     const actualMissingOutcome = valueConditions.value_compare.eval({
       op: 'value_compare',
       ref1: 'a',
-      comparison_method: '==',
+      comparator: '==',
       ref2: 'b'
     }, {
       evalContext: {
@@ -152,7 +152,7 @@ describe('#value_compare', () => {
   });
 
   it('returns the appropriate numeric comparison of numbers', () => {
-    const truthTable = [
+    const truthTableParams = [
       [10, 20, '<', true],
       [10, 20, '<=', true],
       [10, 20, '==', false],
@@ -169,8 +169,8 @@ describe('#value_compare', () => {
       [10, 10, '>=', true],
       [10, 10, '>', false]
     ];
-    truthTable.forEach((params) => {
-      assertComparisonOutcome.apply(null, params);
-    });
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
   });
 });

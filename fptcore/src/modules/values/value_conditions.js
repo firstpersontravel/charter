@@ -1,6 +1,12 @@
 const TemplateUtil = require('../../utils/template');
 
-var COMPARISON_OPTIONS = ['<', '<=', '==', '>=', '>'];
+const COMPARISON_FUNCTIONS = {
+  '<': function(a, b) { return a < b; },
+  '<=': function(a, b) { return a <= b; },
+  '==': function(a, b) { return a == b; },
+  '>=': function(a, b) { return a >= b; },
+  '>': function(a, b) { return a > b; }
+};
 
 module.exports = {
   value_is_true: {
@@ -88,9 +94,9 @@ module.exports = {
         required: true,
         help: 'A numeric value to look up and compare against the second.'
       },
-      comparison_method: {
+      comparator: {
         type: 'enum',
-        options: COMPARISON_OPTIONS,
+        options: Object.keys(COMPARISON_FUNCTIONS),
         default: '>=',
         help: 'The method used to compare the first value to the second.'
       },
@@ -102,24 +108,15 @@ module.exports = {
       }
     },
     eval: (params, actionContext) => {
-      console.log(params);
       const num1 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref1, actionContext.currentRoleName));
       const num2 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref2, actionContext.currentRoleName));
 
-      const comparisonFunction = {
-        '<': function(a, b) { return a < b; },
-        '<=': function(a, b) { return a <= b; },
-        '==': function(a, b) { return a == b; },
-        '>=': function(a, b) { return a >= b; },
-        '>': function(a, b) { return a > b; }
-      };
-
       const ref1AsNumber = Number.isNaN(num1) ? 0: num1;
       const ref2AsNumber = Number.isNaN(num2) ? 0: num2;
 
-      return(comparisonFunction[params.comparison_method](ref1AsNumber, ref2AsNumber));
+      return(COMPARISON_FUNCTIONS[params.comparator](ref1AsNumber, ref2AsNumber));
     }
   }
 };
