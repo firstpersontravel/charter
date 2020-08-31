@@ -19,8 +19,9 @@ $font-weight-base:            $font-weight-normal;
 
 @import "../node_modules/leaflet/dist/leaflet.css";
 
-$fa-font-path: "~font-awesome/fonts";
-@import "../node_modules/font-awesome/scss/font-awesome";
+$fa-font-path: "/static/agency/webfonts";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/solid";
 
 h1, .h1, h2, .h2 {
   font-family: RecoletaAlt-SemiBold;

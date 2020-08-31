@@ -126,7 +126,7 @@ export default class ResourceView extends Component {
       <button
         className={deleteBtnClass}
         onClick={(this.handleDelete)}>
-        <i className="fa fa-trash-o" />&nbsp;
+        <i className="fa fa-trash" />&nbsp;
         {canDelete ? 'Delete' : 'Can\'t delete'}
       </button>
     );
@@ -135,7 +135,7 @@ export default class ResourceView extends Component {
       <button
         className="btn btn-sm btn-outline-secondary mr-1"
         onClick={this.props.onDelete}>
-        <i className="fa fa-trash-o" />&nbsp;
+        <i className="fa fa-trash" />&nbsp;
         Cancel
       </button>
     );

@@ -15,7 +15,7 @@ const INTERFACE_TYPEFACE_OPTIONS = [
 ];
 
 module.exports = {
-  icon: 'mobile-phone',
+  icon: 'mobile',
   help: 'A combination of panels that create a user interface for a tablet, phone, or device.',
   properties: {
     name: { type: 'name', required: true },

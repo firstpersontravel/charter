@@ -1,12 +1,7 @@
 module.exports = {
   icon: role => {
-    if (role) {
-      if (role.max_players && role.max_players > 1) {
-        return 'group';
-      }
-      if (!role.interface) {
-        return 'user-o';
-      }
+    if (role && role.max_players && role.max_players > 1) {
+      return 'group';
     }
     return 'user';
   },

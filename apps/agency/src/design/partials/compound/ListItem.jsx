@@ -32,7 +32,7 @@ function renderRemoveBtn(script, value, path, itemSpec, item, index, onPropUpdat
         onPropUpdate(path, updated);
       }}
       className={`dropdown-item btn btn-link ${removable ? '' : 'disabled'}`}>
-      <i className="fa fa-trash-o" /> {removable ? 'Remove' : 'Can\'t remove'}
+      <i className="fa fa-trash" /> {removable ? 'Remove' : 'Can\'t remove'}
     </DropdownItem>
   );
 }
