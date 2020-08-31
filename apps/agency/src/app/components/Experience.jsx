@@ -3,26 +3,10 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import Alert from '../../partials/Alert';
-import Nav from '../../partials/Nav';
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
 
 class Experience extends Component {
-  renderNav() {
-    const path = this.props.history.location.pathname;
-    const match = path.match(/operate\/(\d+)/);
-    const groupId = match ? match[1] : null;
-    return (
-      <Nav
-        authInfo={this.props.authInfo}
-        org={this.props.org}
-        experience={this.props.experience}
-        experiences={this.props.experiences}
-        groups={this.props.groups}
-        groupId={groupId} />
-    );
-  }
-
   renderMsg() {
     if (!this.props.experience && this.props.experienceRequest === 'pending') {
       return <Loader />;
@@ -48,34 +32,21 @@ class Experience extends Component {
     const msg = this.renderMsg();
     if (msg) {
       return (
-        <div>
-          {this.renderNav()}
-          <div className="container-fluid">
-            {msg}
-          </div>
+        <div className="container-fluid">
+          {msg}
         </div>
       );
     }
     // Render normal state
-    return (
-      <div>
-        {this.renderNav()}
-        {this.props.children}
-      </div>
-    );
+    return this.props.children;
   }
 }
 
 Experience.propTypes = {
-  authInfo: PropTypes.object,
   children: PropTypes.node.isRequired,
   experienceRequest: PropTypes.string,
   experience: PropTypes.object,
-  experiences: PropTypes.array.isRequired,
-  groups: PropTypes.array.isRequired,
-  org: PropTypes.object,
-  match: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired
 };
 
 Experience.defaultProps = {

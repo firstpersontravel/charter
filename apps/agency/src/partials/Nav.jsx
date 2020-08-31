@@ -163,7 +163,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     ));
 
   const activeGroup = window.location.pathname.indexOf('operate') > 0 &&
-    _.find(groups, { id: Number(groupId) });
+    _.find(groups, { id: groupId });
 
   const opsTitle = activeGroup ?
     `Operate: ${moment.utc(activeGroup.date).format('MMM D')}` :
@@ -219,8 +219,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
   );
 }
 
-export default function Nav({ authInfo, org, experience, experiences, groups,
-  groupId }) {
+export default function Nav({ authInfo, org, experience, experiences, groups, groupId }) {
   const orgTitle = org ? org.title : globalTitle;
   document.title = `${orgTitle}`;
   const stage = getStage();
@@ -249,7 +248,7 @@ Nav.propTypes = {
   experience: PropTypes.object,
   experiences: PropTypes.array,
   groups: PropTypes.array,
-  groupId: PropTypes.string
+  groupId: PropTypes.number
 };
 
 Nav.defaultProps = {

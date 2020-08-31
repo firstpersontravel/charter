@@ -1,19 +1,10 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
-import Nav from '../../partials/Nav';
-
-export default function Public({ authInfo, children }) {
-  return (
-    <div>
-      <Nav authInfo={authInfo} />
-      {children}
-    </div>
-  );
+export default function Public({ children }) {
+  return children;
 }
 
 Public.propTypes = {
-  authInfo: PropTypes.object,
   children: PropTypes.node.isRequired
 };
 

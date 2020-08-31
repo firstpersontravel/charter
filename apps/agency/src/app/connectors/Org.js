@@ -4,13 +4,9 @@ import { connect } from 'react-redux';
 import Org from '../components/Org';
 
 import { logout, listCollection } from '../../actions';
-import { lookupExperiences } from './utils';
 
 const mapStateToProps = (state, ownProps) => ({
-  authInfo: _.get(_.find(state.datastore.auth, { id: 'latest' }),
-    'data'),
-  org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName }),
-  experiences: lookupExperiences(state, ownProps)
+  org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName })
 });
 
 const mapDispatchToProps = dispatch => ({
