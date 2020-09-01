@@ -8,22 +8,29 @@ import { getStage } from '../utils';
 
 const globalTitle = 'Charter';
 
-const menuLinks = (
-  <div className="nav">
-    <a className="nav-link active" target="_blank"
-    href="#">Projects</a>
-    <a className="nav-link" target="_blank"
-    href="https://charter-docs.firstperson.travel/docs/reference/resources">Reference Docs &#8599;</a>
-    <a className="nav-link" target="_blank"
-    href="https://charter-docs.firstperson.travel/docs/tutorials/starter">Tutorials &#8599;</a>
-  </div>
-);
-
 function titleForOrg(org) {
   return org.isPersonal ? 'Home' : org.title;
 }
 
 function userInfo(authInfo) {
+  const menuLinks = (
+    <div className="nav">
+      <NavLink
+        className="nav-link active"
+        to="/">Projects</NavLink>
+      <a
+        className="nav-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://charter-docs.firstperson.travel/docs/reference/resources">Reference Docs &#8599;</a>
+      <a
+        className="nav-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://charter-docs.firstperson.travel/docs/tutorials/starter">Tutorials &#8599;</a>
+    </div>
+  );
+
   if (!authInfo || !authInfo.user) {
     return (
       <div className="navbar-nav">
@@ -41,7 +48,7 @@ function userInfo(authInfo) {
     </Link>
   ));
 
-  //User info CSS
+  // User info CSS
   return (
     <div className="navbar-nav d-flex flex-column">
       {menuLinks}
@@ -144,7 +151,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     ));
 
   const activeGroup = window.location.pathname.indexOf('operate') > 0 &&
-    _.find(groups, { id: Number(groupId) });
+    _.find(groups, { id: groupId });
 
   const opsTitle = activeGroup ?
     `Operate: ${moment.utc(activeGroup.date).format('MMM D')}` :
@@ -200,24 +207,23 @@ function renderMenu(org, experience, experiences, groups, groupId) {
   );
 }
 
-export default function Nav({ authInfo, org, experience, experiences, groups,
-  groupId }) {
+export default function Nav({ authInfo, org, experience, experiences, groups, groupId }) {
   const orgTitle = org ? org.title : globalTitle;
   document.title = `${orgTitle}`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
 
-  //Navbar CSS
+  // Navbar CSS
   const navClass = `navbar navbar-expand-md navbar-light position-fixed flex-column h-100 ${navStageClass}`;
   const navStyle = {
     bottom: '0',
     width: '232px',
     zIndex: '1000',
     padding: '24px',
-    alignItems: 'flex-start',
+    alignItems: 'flex-start'
   };
 
-// Menu Items CSS
+  // Menu Items CSS
   return (
     <nav className={navClass} style={navStyle}>
       {renderBrand(org, experience)}
@@ -240,7 +246,7 @@ Nav.propTypes = {
   experience: PropTypes.object,
   experiences: PropTypes.array,
   groups: PropTypes.array,
-  groupId: PropTypes.string
+  groupId: PropTypes.number
 };
 
 Nav.defaultProps = {

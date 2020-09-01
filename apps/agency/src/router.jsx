@@ -11,11 +11,11 @@ import { logout as logoutAction } from './actions';
 
 import AppConnector from './app/connectors/App';
 import ExperienceConnector from './app/connectors/Experience';
+import FrameConnector from './app/connectors/Frame';
 import OrgConnector from './app/connectors/Org';
 import OrgIndexConnector from './app/connectors/OrgIndex';
 
 import Alert from './partials/Alert';
-import Nav from './partials/Nav';
 import Loader from './partials/Loader';
 import NotFound from './partials/NotFound';
 import DesignRoutes from './design/routes';
@@ -28,7 +28,6 @@ import DirectoryRoutes from './directory/routes';
 function LoaderWithNav() {
   return (
     <div>
-      <Nav />
       <Loader />
     </div>
   );
@@ -220,10 +219,22 @@ const appRoutesMapper = (state, ownProps) => ({
 
 const AppRoutesConnector = connect(appRoutesMapper)(AppRoutes);
 
+function FrameRoute({ history }) {
+  return (
+    <FrameConnector history={history}>
+      <AppRoutesConnector />
+    </FrameConnector>
+  );
+}
+
+FrameRoute.propTypes = {
+  history: PropTypes.object.isRequired
+};
+
 export default (
   <BrowserRouter>
     <AppConnector>
-      <AppRoutesConnector />
+      <Route component={FrameRoute} />
     </AppConnector>
   </BrowserRouter>
 );

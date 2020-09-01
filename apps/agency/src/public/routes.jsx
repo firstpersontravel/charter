@@ -1,6 +1,5 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router';
-import PropTypes from 'prop-types';
 
 import NotFound from '../partials/NotFound';
 import PublicConnector from './connectors/Public';
@@ -10,9 +9,9 @@ import PublicSignupConnector from './connectors/PublicSignup';
 import PublicLostPasswordConnector from './connectors/PublicLostPassword';
 import PublicResetPasswordConnector from './connectors/PublicResetPassword';
 
-export default function PublicRoutes({ match }) {
+export default function PublicRoutes() {
   return (
-    <PublicConnector match={match}>
+    <PublicConnector>
       <Switch>
         <Redirect from="/" exact to="/login" />
         <Route path="/login" component={PublicLoginConnector} />
@@ -25,7 +24,3 @@ export default function PublicRoutes({ match }) {
     </PublicConnector>
   );
 }
-
-PublicRoutes.propTypes = {
-  match: PropTypes.object.isRequired
-};

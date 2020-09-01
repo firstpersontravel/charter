@@ -2,23 +2,17 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 
 import Experience from '../components/Experience';
-import { lookupExperiences, lookupGroups } from './utils';
 import { listCollection } from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
-  const orgName = ownProps.match.params.orgName;
-  const authInfo = _.get(_.find(state.datastore.auth, { id: 'latest' }),
-    'data');
+  const authInfo = _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data');
   const experienceRequest = state.requests['experiences.list'];
   const experienceName = ownProps.match.params.experienceName;
   return {
-    authInfo: authInfo,
+    org: _.find(authInfo.orgs, { name: ownProps.match.params.orgName }),
     experienceName: experienceName,
     experienceRequest: experienceRequest,
-    experience: _.find(state.datastore.experiences, { name: experienceName }),
-    experiences: lookupExperiences(state, ownProps),
-    org: _.find(authInfo.orgs, { name: orgName }),
-    groups: lookupGroups(state, ownProps)
+    experience: _.find(state.datastore.experiences, { name: experienceName })
   };
 };
 

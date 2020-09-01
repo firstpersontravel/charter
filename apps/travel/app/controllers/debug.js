@@ -23,6 +23,14 @@ export default Ember.Controller.extend({
     return !this.get('player.model.participant');
   }.property('player.model.participant'),
 
+  lastFixTimestampLocal: function() {
+    const lastFix = this.get('location.lastFix');
+    if (!lastFix) {
+      return 'none';
+    }
+    return moment.utc(lastFix.timestamp).local().format('h:mm:ssa');
+  }.property('location.lastFix'),
+
   lastRefreshedLocal: function() {
     var lastRefreshed = this.get('trip.lastRefreshed');
     if (!lastRefreshed) { return null; }
@@ -30,14 +38,18 @@ export default Ember.Controller.extend({
   }.property('trip.lastRefreshed'),
 
   waypointOptions: function() {
-    return fptCore.WaypointCore.getAllWaypointOptions(
-      this.get('trip.model.script.content'));
+    const scriptContent = this.get('trip.model.script.content');
+    return (scriptContent.waypoints || [])
+      .map(waypoint => waypoint.options.map(opt => ({
+        name: opt.name,
+        title: waypoint.title,
+        location: opt.location
+      })))
+      .flat();
   }.property('trip.model'),
 
   setLocationToCoords: function(latitude, longitude) {
-    if (this.get('location.isWatching')) {
-      this.get('location').stopWatching();
-    }
+    this.get('location').stopWatching();
     this.get('location').handleFix({
       timestamp: moment.utc().valueOf(),
       coords: {

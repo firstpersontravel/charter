@@ -53,7 +53,7 @@ export default class PublicSignup extends Component {
     if (this.props.signupRequest === 'fulfilled' && !this.props.authInfo) {
       return (
         <div className="alert alert-warning text-center" role="alert">
-        That email and password are incorrect
+          That email and password are incorrect
         </div>
       );
     }
@@ -124,13 +124,15 @@ export default class PublicSignup extends Component {
               {this.isSigningUp() ? 'Signing up...' : 'Sign up'}
             </button>
           </form>
-          <p class="">
-          Charter is a beta toolkit and we’d love your help making it better.
+          <p className="">
+            Charter is a beta toolkit and we’d love your help making it better.
           </p>
           <p>
-          Right now we’re free for art projects, experiments, and other no-revenue experiences. It costs us money to maintain our servers so if you are charging fees for experiences built using it, please get in touch with us at {' '}
-          <a href="mailto:agency@firstperson.travel">agency@firstperson.travel </a>
-           and we'll work out a fair and reasonable pricing structure.
+            Right now we&apos;re free for art projects, experiments, and other no-revenue
+            experiences. It costs us money to maintain our servers so if you are charging fees
+            for experiences built using it, please get in touch with us at
+            <a href="mailto:agency@firstperson.travel">agency@firstperson.travel </a>
+            and we&apos;ll work out a fair and reasonable pricing structure.
           </p>
         </div>
       </div>

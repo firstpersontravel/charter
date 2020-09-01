@@ -33,21 +33,21 @@ class DeviceStateHandler {
   /**
    * Send notifications and enter geofences if needed.
    */
-  static async _notifyNewDeviceState(participant, trip, player, oldState,
-    clientId) {
+  static async _notifyNewDeviceState(participant, trip, player, oldState, clientId) {
     const script = await models.Script.findByPk(trip.scriptId);
-    // Calculate new geofences
+
+    // Calculate old and new geofences
     const oldGeofences = GeofenceCore.geofencesInArea(
       script.content, oldState.latitude, oldState.longitude,
       oldState.accuracy, trip.waypointOptions);
+    const oldGeofenceNames = _.map(oldGeofences, 'name');
     const newGeofences = GeofenceCore.geofencesInArea(
       script.content, participant.locationLatitude, participant.locationLongitude,
       participant.locationAccuracy, trip.waypointOptions);
-    const enteredGeofenceNames = _.difference(
-      _.map(newGeofences, 'name'),
-      _.map(oldGeofences, 'name')
-    );
-    // And run actions for entering new geofences
+    const newGeofenceNames = _.map(newGeofences, 'name');
+    
+    // Run actions for entering geofences
+    const enteredGeofenceNames = _.difference(newGeofenceNames, oldGeofenceNames);
     for (let geofenceName of enteredGeofenceNames) {
       const event = {
         type: 'geofence_entered',
@@ -57,6 +57,19 @@ class DeviceStateHandler {
       await KernelController.applyEvent(player.tripId, event);
       await NotifyController.notifyEvent(trip.id, event, clientId);
     }
+    
+    // Run actions for exiting geofences
+    const exitedGeofenceNames = _.difference(oldGeofenceNames, newGeofenceNames);
+    for (let geofenceName of exitedGeofenceNames) {
+      const event = {
+        type: 'geofence_exited',
+        role: player.roleName,
+        geofence: geofenceName
+      };
+      await KernelController.applyEvent(player.tripId, event);
+      await NotifyController.notifyEvent(trip.id, event, clientId);
+    }
+
     // Notify new device state
     await NotifyController.notifyParticipantDeviceState(trip.id, participant, clientId);
   }
@@ -71,9 +84,9 @@ class DeviceStateHandler {
     });
     // Save old state
     const oldState = {
-      latitude: participant.latitude,
-      longitude: participant.longitude,
-      accuracy: participant.accuracy
+      latitude: participant.locationLatitude,
+      longitude: participant.locationLongitude,
+      accuracy: participant.locationAccuracy
     };
     await this._updateParticipantDeviceState(participant, fields);
     for (let trip of trips) {

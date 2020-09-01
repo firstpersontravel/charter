@@ -50,7 +50,7 @@ export default class PublicLogin extends Component {
     return null;
   }
 
-//Login Styling
+  // Login Styling
 
   render() {
     return (
@@ -58,7 +58,7 @@ export default class PublicLogin extends Component {
         <div className="col-md-5 flex align-self-center">
           <h1 className="text-center">Welcome to Charter</h1>
           <p className="text-center">
-            Don't have an account? <Link to="/signup">Sign up</Link>
+            Don&apos;t have an account? <Link to="/signup">Sign up</Link>
           </p>
           {this.renderLoginErrorAlert()}
           {this.renderLoginFailedAlert()}

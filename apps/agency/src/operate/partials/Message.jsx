@@ -41,11 +41,11 @@ function renderMessageIcon(message) {
     textClass = 'text-danger';
     icon = 'fa-exclamation-circle';
   } else if (message.name) {
-    icon = 'fa-clock-o';
+    icon = 'fa-clock';
   } else if (message.isReplyNeeded) {
     icon = 'fa-user';
   } else {
-    icon = 'fa-user-o';
+    icon = 'fa-user';
   }
   return (
     <span className={textClass}>
@@ -67,7 +67,7 @@ function renderActions(message, updateInstance) {
           isArchived: !message.isArchived
         })
       )}>
-      <i className="fa fa-trash-o" />
+      <i className="fa fa-trash" />
     </span>
   );
   const isReplyNeeded = message.isReplyNeeded && !message.replyReceivedAt;

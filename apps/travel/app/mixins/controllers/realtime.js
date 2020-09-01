@@ -26,14 +26,13 @@ export default Ember.Mixin.create({
   },
 
   onMessage: function(message) {
-    console.log('onMessage', message);
     // ignore realtime messages from same client
     // if(message.source_id === self.api._clientId) { return; }
     
     // ignore realtime messages with no events
     if(!message.type) { return; }
     var channel = this.get('subscribedChannel');
-    Ember.Logger.info(`${channel}: ${message.type}`);
+    Ember.Logger.info(`${channel}: ${message.type}`, message.content);
     var eventName = Ember.String.camelize(message.type);
     var handler = Ember.get(this, 'realtimeEvents.' + eventName);
     if(handler) {

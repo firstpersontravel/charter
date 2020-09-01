@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-//Instead of this should just take you back to login screen - Linda
+// Instead of this should just take you back to login screen - Linda
 export default function PublicLoggedOut() {
   return (
     <div className="container d-flex h-100 justify-content-center">

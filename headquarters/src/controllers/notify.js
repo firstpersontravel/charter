@@ -31,12 +31,10 @@ class NotifyController {
     return await this.notify(tripId, 'device_state', {
       client_id: clientId,
       participant_id: participant.id,
-      device_state: {
-        location_latitude: participant.locationLatitude,
-        location_longitude: participant.locationLongitude,
-        location_accuracy: participant.locationAccuracy,
-        location_timestamp: participant.locationTimestamp
-      }
+      location_latitude: participant.locationLatitude,
+      location_longitude: participant.locationLongitude,
+      location_accuracy: participant.locationAccuracy,
+      location_timestamp: participant.locationTimestamp
     });
   }
 
@@ -59,28 +57,10 @@ class NotifyController {
   static async notifyAction(tripId, action, clientId=null) {
     return await this.notify(tripId, 'action', {
       client_id: clientId,
-      action: {
-        id: Math.floor(Math.random() * 10000000),
-        type: 'action',
-        attributes: {
-          name: action.name,
-          params: action.params,
-          event: action.event,
-          'created-at': moment.utc().toISOString(),
-          'synced-at': moment.utc().toISOString(),
-          'scheduled-at': (action.scheduleAt || moment.utc()).toISOString(),
-          'applied-at': null,
-          'failed-at': null
-        },
-        relationships: {
-          trip: {
-            data: {
-              type: 'trip',
-              id: tripId
-            }
-          }
-        }
-      }
+      name: action.name,
+      params: action.params,
+      event: action.event,
+      sent_at: moment.utc().toISOString()
     });
   }
 }

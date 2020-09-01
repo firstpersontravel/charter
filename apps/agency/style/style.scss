@@ -21,9 +21,9 @@ $font-weight-bolder:          700;
 $font-weight-base:            $font-weight-normal;
 $headings-font-weight:        700;
 
-//Update to latest free Font Awesome
-$fa-font-path: "~font-awesome/fonts";
-@import "../node_modules/font-awesome/scss/font-awesome";
+$fa-font-path: "/static/agency/webfonts";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/solid";
 
 // Spacing between cards
 $grid-gutter-width: 24px;

@@ -89,7 +89,7 @@ export default class OrgIndex extends Component {
     this.props.createInstances('experiences', expFields, insertions);
   }
 
-//Template Card Styling
+  // Template Card Styling
   renderExample(example) {
     return (
       <div key={example.name} className="card mb-4">
@@ -109,7 +109,7 @@ export default class OrgIndex extends Component {
     );
   }
 
-//Project Card Styling
+  // Project Card Styling
   renderExperience(experience) {
     return (
       <div key={experience.id} className="card mb-4">
@@ -145,7 +145,7 @@ export default class OrgIndex extends Component {
     );
   }
 
-//Whole Deck
+  // Whole Deck
   renderExamples() {
     const renderedExperiences = this.props.experiences.map(experience => (
       this.renderExperience(experience)
@@ -161,13 +161,13 @@ export default class OrgIndex extends Component {
     );
   }
 
-//Page Styling
+  // Page Styling
   render() {
     const example = this.getCreatingExample();
     return (
       <div className="container">
         <h1>Projects</h1>
-        <hr></hr>
+        <hr />
         {this.renderExamples()}
 
         <ExperienceModal

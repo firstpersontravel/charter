@@ -87,7 +87,7 @@ export default class PublicLostPassword extends Component {
       <div className="container d-flex h-100 justify-content-center">
         <div className="col-md-5 align-self-center">
           <h1 className="text-center">Lost your password?</h1>
-          <p className="text-center">Enter your email and we'll send you a link to reset your password</p>
+          <p className="text-center">Enter your email and we&apos;ll send you a link to reset your password</p>
           {this.renderRecoveryErrorAlert()}
           {this.renderRecoveryFailedAlert()}
           {this.renderForm()}

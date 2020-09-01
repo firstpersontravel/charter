@@ -22,7 +22,6 @@ environment:
   HQ_STAGE: production
   HQ_TWILIO_ENABLED: 'true'
   HQ_TWILIO_HOST: https://charter.firstperson.travel
-  HQ_TWILIO_MEDIA_HOST: https://fpt-agency-content.s3.amazonaws.com
   NODE_ENV: production
 secrets:
   FRONTEND_GOOGLE_API_KEY: charter.global.google-api-key

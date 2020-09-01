@@ -28,9 +28,12 @@ class ContextCore {
       phone_number: participant.phoneNumber || null,
       directive: page && page.directive || null,
       headline: page && page.directive || null,
-      latitude: participant.locationLatitude || null,
-      longitude: participant.locationLongitude || null,
-      accuracy: participant.locationAccuracy || null
+      location_latitude: participant.locationLatitude || null,
+      location_longitude: participant.locationLongitude || null,
+      location_accuracy: participant.locationAccuracy || null,
+      location_timestamp: participant.locationTimestamp ?
+        moment.utc(participant.locationTimestamp).toISOString() :
+        null,
     });
   }
 

@@ -95,13 +95,6 @@ describe('TwilioCallHandler', () => {
     });
 
     it('returns play', async () => {
-      // Stubs script for media lookups
-      const stubScript = {
-        org: { name: 'test_org' },
-        experience: { name: 'test_script' },
-        content: {}
-      };
-      sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       // Apply event returns a play operation
       sandbox
         .stub(KernelController, 'applyEvent')
@@ -109,7 +102,7 @@ describe('TwilioCallHandler', () => {
           resultOps: [{
             operation: 'twiml',
             clause: 'play',
-            media: 'audio.mp3'
+            media: 'http://twilio.media/test_org/test_script/audio.mp3'
           }]
         });
 
@@ -117,10 +110,6 @@ describe('TwilioCallHandler', () => {
         TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
 
-      // Assert found script by role
-      sinon.assert.calledOnce(RelayController.scriptForRelay);
-      assert.deepStrictEqual(
-        RelayController.scriptForRelay.firstCall.args, [stubRelay]);
       // Assert response
       assert.strictEqual(
         twiml.toString(),
@@ -131,13 +120,6 @@ describe('TwilioCallHandler', () => {
     });
 
     it('returns gather', async () => {
-      // Stubs script for media lookups
-      const stubScript = {
-        org: { name: 'test_org' },
-        experience: { name: 'test_script' },
-        content: {}
-      };
-      sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       // Apply event returns a play operation
       sandbox
         .stub(KernelController, 'applyEvent')
@@ -148,7 +130,7 @@ describe('TwilioCallHandler', () => {
             clipName: 'CLIP-123',
             subclause: {
               clause: 'play',
-              media: 'audio.mp3'
+              media: 'http://twilio.media/test_org/test_script/audio.mp3'
             }
           }]
         });
@@ -157,10 +139,6 @@ describe('TwilioCallHandler', () => {
         TwilioCallHandler._triggerEventAndGatherTwiml(1, stubRelay, stubEvent)
       );
 
-      // Assert found script by role
-      sinon.assert.calledOnce(RelayController.scriptForRelay);
-      assert.deepStrictEqual(
-        RelayController.scriptForRelay.firstCall.args, [stubRelay]);
       // Assert response
       assert.strictEqual(
         twiml.toString(),

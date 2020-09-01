@@ -1,14 +1,22 @@
 <div class='application-debug-console pure-g'>
   <div class='pure-u-4-5' style="padding: 0.5em;">
-    {{#if lastRefreshedLocal}}
-      <span class='text-padded'>
+    <span class='text-padded'>
+      {{#if lastRefreshedLocal}}
+        <i class="fa fa-cloud-download" />
         {{#if trip.awaitingRefreshAt}}
-          Awaiting refresh
+          Awaiting
         {{else}}
-          Refreshed {{lastRefreshedLocal}}
+          {{lastRefreshedLocal}}
         {{/if}}
-      </span>
-    {{/if}}
+      {{/if}}
+      
+      <i class="fa fa-location-arrow" />
+      {{#if location.lastErrorTitle}}
+        {{location.lastErrorTitle}}
+      {{else}}
+        {{lastFixTimestampLocal}}
+      {{/if}}
+    </span>
 
   </div>
   <div class='pure-u-1-5'>
@@ -20,11 +28,7 @@
         <option value=''>Go to:</option>
         {{#each waypointOptions as |waypointOption|}}
         <option value='{{waypointOption.name}}'>
-          {{#if waypointOption.location.title}}
-            {{waypointOption.location.title}}
-          {{else}}
-            {{waypointOption.location.address}}
-          {{/if}}
+          {{waypointOption.title}}
         </option>
         {{/each}}
       </select>

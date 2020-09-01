@@ -17,10 +17,7 @@ export default Ember.Route.extend({
         shouldWatchGps = false;
       }
       if (shouldWatchGps) {
-        var locationService = this.get('location');
-        if (!locationService.get('isWatching')) {
-          locationService.startWatching();
-        }
+        this.get('location').startWatching();
       }
       // Start playing audio -- after application state has been initialized.
       this.controllerFor('player').updateAudioState();

@@ -9,5 +9,8 @@
     "apps/travel/tmp": true,
     "build": true,
     "**/*.bak": true
-  }
+  },
+  "editor.rulers": [
+    100
+  ]
 }
