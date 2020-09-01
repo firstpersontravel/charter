@@ -256,7 +256,7 @@ class Script extends Component {
       <button
         onClick={this.handleNewDraft}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-pencil" />&nbsp;
+        <i className="fa fa-pencil-alt" />&nbsp;
         New draft
       </button>
     );
@@ -299,7 +299,7 @@ class Script extends Component {
         disabled={numRedosAvail <= 0}
         onClick={this.handleRedo}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-rotate-right" />&nbsp;
+        <i className="fa fa-redo" />&nbsp;
         Redo
       </button>
     );
