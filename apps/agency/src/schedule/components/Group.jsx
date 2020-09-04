@@ -50,9 +50,13 @@ class Group extends Component {
     const profiles = ScheduleUtils.filterAssignableProfiles(
       this.props.profiles, this.props.participants, experience.id,
       role.name);
-    const participants = profiles.map(profile => (
-      _.find(this.props.participants, { id: profile.participantId })
-    ));
+
+    const participants = profiles
+      .filter(profile => !!profile.participantId)
+      .map(profile => _.find(this.props.participants, { id: profile.participantId }))
+      .filter(Boolean);
+
+    console.log('participants', participants);
     const participantId = participants.length === 1 ? participants[0].id : null;
     const fields = Object.assign({
       orgId: experience.orgId,
