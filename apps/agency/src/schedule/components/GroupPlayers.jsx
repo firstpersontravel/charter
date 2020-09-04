@@ -48,6 +48,15 @@ export default class GroupPlayers extends Component {
   handleCreateParticipant(fields) {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
+    if (!roleName) {
+      return;
+    }
+
+    const trips = (this.props.group.trips || []).filter(trip => !trip.isArchived);
+    const firstUnassignedPlayerForEachTrip = trips
+      .map(t => t.players.find(p => p.roleName === roleName && !p.participantId))
+      .filter(Boolean);
+
     const participantFields = {
       orgId: this.props.group.orgId,
       experienceId: this.props.group.experienceId,
@@ -55,18 +64,27 @@ export default class GroupPlayers extends Component {
       phoneNumber: fields.phoneNumber,
       email: fields.email
     };
-    const profilesToCreate = roleName ? [{
+
+    // Create a profile for this new participant
+    const nextItems = [{
       collection: 'profiles',
       fields: {
         orgId: this.props.group.orgId,
         experienceId: this.props.group.experienceId,
         roleName: roleName
       },
-      insertions: {
-        participantId: 'id'
-      }
-    }] : null;
-    this.props.createInstances('participants', participantFields, profilesToCreate);
+      insertions: { participantId: 'id' }
+    }];
+
+    // And assign up to one unassigned player with a matching role for each trip to this new
+    // participant.
+    nextItems.push(...firstUnassignedPlayerForEachTrip.map(player => ({
+      collection: 'players',
+      id: player.id,
+      insertions: { participantId: 'id' }
+    })));
+
+    this.props.createInstances('participants', participantFields, nextItems);
     this.handleParticipantModalClose();
   }
 

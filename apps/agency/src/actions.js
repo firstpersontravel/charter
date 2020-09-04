@@ -543,12 +543,15 @@ export function createInstances(collection, fields, nextItems) {
         firstCreatedItem = createdItem;
         return Promise
           .all(nextItemsArray, nextItemsArray.map((next) => {
-            const insertions = _.mapValues(next.insertions, (val, key) => (
-              createdItem[val]
-            ));
+            const insertions = _.mapValues(next.insertions, val => createdItem[val]);
             const nextFields = Object.assign({}, next.fields, insertions);
-            return createInstances(next.collection, nextFields,
-              next.nextItems)(dispatch);
+            // We are updating an existing object
+            if (next.id) {
+              return updateInstance(next.collection, next.id, nextFields)(dispatch);
+            }
+            // We are creating a new object, and potentially recursing through additional
+            // next items.
+            return createInstances(next.collection, nextFields, next.nextItems)(dispatch);
           }));
       })
       .then(() => firstCreatedItem)
