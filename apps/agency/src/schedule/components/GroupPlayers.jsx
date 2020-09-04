@@ -31,7 +31,7 @@ export default class GroupPlayers extends Component {
         orgId: trip.orgId,
         experienceId: trip.experienceId,
         tripId: trip.id,
-        participantId: participantId
+        participantId: Number(participantId)
       }, initialFields);
       this.props.createInstance('players', fields);
       return;
@@ -145,10 +145,9 @@ export default class GroupPlayers extends Component {
     ) : null;
 
     if (participantChoices.length === 0) {
-      const noUsersLabel = index === 0 ? <em>No participant</em> : null;
       return (
         <span>
-          {noUsersLabel}
+          <em className="faint">No participants</em>
           {goToTravel}
         </span>
       );

@@ -2,6 +2,7 @@ import DS from 'ember-data';
 
 export default DS.Model.extend({
 
+  group: DS.belongsTo('group', {async: false}),
   script: DS.belongsTo('script', {async: false}),
   experience: DS.belongsTo('experience', {async: false}),
 

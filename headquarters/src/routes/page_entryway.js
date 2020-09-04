@@ -212,6 +212,7 @@ const entrywaySubmitRoute = async (req, res) => {
 
   const script = await ExperienceController.findActiveScript(experience.id);
   const interface = (script.content.interfaces || [])
+    .filter(i => i.entryway)
     .filter(i => (
       interfaceTitleStub === null ||
       interfaceTitleStub === TextUtil.dashVarForText(i.title)

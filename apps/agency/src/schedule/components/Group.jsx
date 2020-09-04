@@ -56,7 +56,6 @@ class Group extends Component {
       .map(profile => _.find(this.props.participants, { id: profile.participantId }))
       .filter(Boolean);
 
-    console.log('participants', participants);
     const participantId = participants.length === 1 ? participants[0].id : null;
     const fields = Object.assign({
       orgId: experience.orgId,
@@ -217,6 +216,18 @@ class Group extends Component {
     );
   }
 
+  renderTripsDetail() {
+    if (!this.props.group.trips || !this.props.group.trips.length) {
+      return null;
+    }
+    return (
+      <div>
+        {this.renderTabs()}
+        {this.props.children}
+      </div>
+    );
+  }
+
   render() {
     if (!this.props.group.isLoading && (this.props.group.isError || this.props.group.isNull)) {
       return <Alert color="danger" content="Error loading group." />;
@@ -238,8 +249,7 @@ class Group extends Component {
       <div>
         {this.renderHeader()}
         {this.renderTrips()}
-        {this.renderTabs()}
-        {this.props.children}
+        {this.renderTripsDetail()}
         <TripModal
           isOpen={isEditingTrip}
           group={this.props.group}

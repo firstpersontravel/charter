@@ -91,6 +91,7 @@ async function getTripRoute(req, res) {
   const trip = await models.Trip.findOne({
     where: { id: req.params.id },
     include: [
+      { model: models.Group, as: 'group' },
       { model: models.Script, as: 'script' },
       { model: models.Experience, as: 'experience' },
       { model: models.Org, as: 'org' }
@@ -139,6 +140,7 @@ async function getTripRoute(req, res) {
     .concat(participants);
 
   if (includeScript) {
+    objs.push(trip.group);
     objs.push(trip.script);
     objs.push(trip.experience);
     objs.push(trip.org);

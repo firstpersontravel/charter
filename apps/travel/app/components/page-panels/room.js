@@ -61,9 +61,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   roomId: function() {
     const envName = this.get('environment.environmentName');
-    const tripId = this.get('trip.id');
+    const groupId = this.get('trip.group.id');
     const roomName = this.get('params.name') || 'default';
-    return `${envName}-${tripId}-${roomName}`;
+    return `${envName}-${groupId}-${roomName}`;
   }.property('params'),
 
   actions: {

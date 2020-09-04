@@ -112,7 +112,7 @@ function renderEntrywayNote(org, experience, scripts, updateRelays, systemAction
       {renderEntrywayWebpage(org, experience, scripts)}
       <div>
         <i className="fa fa-theater-masks mr-1" />
-        Performer URL: <a href={actorUrl}>{actorUrl}</a>
+        Performer URL: <a target="_blank" rel="noopener noreferrer" href={actorUrl}>{actorUrl}</a>
       </div>
     </div>
   );
