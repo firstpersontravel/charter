@@ -85,6 +85,8 @@ function getPage(actionContext, player) {
   return {
     experienceTitle: actionContext._objs.experience.title,
     tripId: trip.id,
+    playerId: player.id,
+    participantId: player.participantId || 0,
     tripTitle: trip.title,
     player: player,
     roleTitle: role.title,
