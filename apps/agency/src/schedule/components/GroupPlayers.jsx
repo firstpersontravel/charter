@@ -142,7 +142,7 @@ export default class GroupPlayers extends Component {
       <Link
         className="ml-1"
         to={`/${group.org.name}/${group.experience.name}/directory/${participant.id}`}>
-        <i className="fa fa-user text-dark faint" />
+        <i className="fa fa-user text-dark" />
       </Link>
     ) : null;
 
@@ -206,7 +206,7 @@ export default class GroupPlayers extends Component {
         {tripRoleCells}
         <td>
           <Link
-            className="ml-1 text-dark"
+            className="p-1 text-dark"
             to={{ search: `?role=${role.name}` }}>
             <i className="fa fa-user-plus" />
           </Link>
