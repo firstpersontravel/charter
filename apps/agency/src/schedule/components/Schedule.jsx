@@ -105,10 +105,15 @@ function renderEntrywayNote(org, experience, scripts, updateRelays, systemAction
   if (!activeScript) {
     return null;
   }
+  const actorUrl = `${window.location.origin}/actor/${org.name}`;
   return (
     <div className="alert alert-secondary">
       {renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState)}
       {renderEntrywayWebpage(org, experience, scripts)}
+      <div>
+        <i className="fa fa-theater-masks mr-1" />
+        Performer URL: <a href={actorUrl}>{actorUrl}</a>
+      </div>
     </div>
   );
 }

@@ -143,7 +143,8 @@ const actorsListRoute = async (req, res) => {
         .trip.experience.title,
       roleTitles: players
         .filter(p => p.participant.id === participant.id)
-        .map(p => p.trip.script.content.roles.find(r => r.name === p.roleName).title)
+        .map(p => _.get(p.trip.script.content.roles.find(r => r.name === p.roleName), 'title'))
+        .filter(Boolean)
         .join(', ')
     }))
   });
