@@ -43,7 +43,7 @@ function renderMessage(trip, message, updateInstance) {
         </label>
         &nbsp;
         <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
-          <i className="fa fa-external-link" />
+          <i className="fa fa-external-link-alt" />
         </a>
       </div>
     </div>

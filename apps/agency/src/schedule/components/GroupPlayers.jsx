@@ -122,7 +122,7 @@ export default class GroupPlayers extends Component {
         target="_blank"
         rel="noreferrer noopener"
         href={getPlayerIframeUrl(trip, player)}>
-        <i className="fa fa-external-link text-dark" />
+        <i className="fa fa-external-link-alt text-dark" />
       </a>
     ) : null;
 

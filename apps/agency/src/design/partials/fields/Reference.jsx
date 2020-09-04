@@ -96,7 +96,7 @@ function ReferenceField({ script, resource, spec, value, name, path, opts, onPro
     <Link
       className="text-dark ml-1"
       to={urlForResource(script, spec.collection, value)}>
-      <i className="faint fa fa-external-link-square" />
+      <i className="faint fa fa-external-link-alt-square" />
     </Link>
   ) : null;
   return (

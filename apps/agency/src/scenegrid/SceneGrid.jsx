@@ -110,7 +110,7 @@ export default class SceneGrid extends Component {
         className="ml-1 text-dark"
         rel="noopener noreferrer"
         href={getPlayerIframeUrl(trip, player)}>
-        <i className="fa fa-external-link" />
+        <i className="fa fa-external-link-alt" />
       </a>
     ) : null;
     return (

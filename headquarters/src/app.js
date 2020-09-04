@@ -38,6 +38,18 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add a handler to inspect the req.secure flag (see 
+// http://expressjs.com/api#req.secure). This allows us 
+// to know whether the request was via http or https.
+app.use((req, res, next) => {
+  if (!req.secure && process.env.NODE_ENV === 'production') {
+    res.redirect(`https://${req.headers.host}${req.url}`);
+    return;
+  }
+  // request was via https, so do no special handling
+  next();
+});
+
 // Log requests
 const ignorePrefixes = ['/static', '/build', '/travel/dist', '/health'];
 app.use((req, res, next) => {

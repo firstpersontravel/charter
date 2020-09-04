@@ -17,7 +17,7 @@ function BaseClear({ spec, value, path, onPropUpdate }) {
       style={{ verticalAlign: 'top' }}
       className="btn-unstyled clear-btn faint m-1"
       onClick={() => onPropUpdate(path, '___DELETE')}>
-      <i className="fa fa-close" />
+      <i className="fa fa-times" />
     </button>
   );
 }

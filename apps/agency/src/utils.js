@@ -15,10 +15,12 @@ export function isProduction() {
 }
 
 export function getParticipantIframeUrl(group, participant) {
-  return `/actor/${group.org.name}/participant/${participant.id}?nogps=1&noack=1`;
+  const url = `${window.location.origin}/actor/${group.org.name}/participant/${participant.id}`;
+  return `${url}?nogps=1&noack=1`;
 }
 
 export function getPlayerIframeUrl(trip, player) {
   const participantId = player.participant ? player.participant.id : 0;
-  return `/travel/u/${participantId}/r/${trip.id}/p/${player.id}?nogps=true&mute=true&noack=true`;
+  const url = `${window.location.origin}/travel/u/${participantId}/r/${trip.id}/p/${player.id}`;
+  return `${url}?nogps=true&mute=true&noack=true`;
 }

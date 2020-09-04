@@ -74,7 +74,7 @@ function ComponentReferenceField({ script, resource, spec, value, name, path,
     <Link
       className="text-dark ml-1"
       to={urlForResource(script, referringTo[0], referringTo[1].name)}>
-      <i className="faint fa fa-external-link-square" />
+      <i className="faint fa fa-external-link-alt-square" />
     </Link>
   ) : null;
 

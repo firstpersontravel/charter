@@ -173,7 +173,7 @@ export default class PopoverControl extends Component {
                 <i className="fa fa-check" />
               </button>
               <button className="btn btn-secondary" onClick={this.handleClose}>
-                <i className="fa fa-close" />
+                <i className="fa fa-times" />
               </button>
             </form>
           </PopoverBody>

@@ -352,7 +352,7 @@ export default class ResourceShow extends Component {
       <Link
         to={{ search: '' }}
         className="btn btn-sm btn-outline-secondary mr-1">
-        <i className="fa fa-close mr-1" />
+        <i className="fa fa-times mr-1" />
         Close
       </Link>
     );
