@@ -80,7 +80,7 @@ export default class GroupOverview extends Component {
         target="_blank"
         rel="noopener noreferrer"
         href={externalUrl}>
-        <i className="fa fa-external-link" />
+        <i className="fa fa-external-link-alt" />
       </a>
     ) : null;
 

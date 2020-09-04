@@ -35,6 +35,7 @@ export default class SceneGrid extends Component {
   getPlayersForScene(scene) {
     const trip = this.props.trip;
     return _(trip.players)
+      .filter(player => player.role && player.role.interface)
       .filter(player => (
         _.find(trip.script.content.pages, {
           interface: player.role.interface,
@@ -110,7 +111,7 @@ export default class SceneGrid extends Component {
         className="ml-1 text-dark"
         rel="noopener noreferrer"
         href={getPlayerIframeUrl(trip, player)}>
-        <i className="fa fa-external-link" />
+        <i className="fa fa-external-link-alt" />
       </a>
     ) : null;
     return (

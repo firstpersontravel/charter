@@ -64,7 +64,7 @@ function renderPlayerCell(player, isFirst) {
       <br />
       <strong>Join:</strong>&nbsp;
       <a href={joinUrl} target="_blank" rel="noopener noreferrer">
-        <i className="fa fa-external-link" />
+        <i className="fa fa-external-link-alt" />
       </a>
     </>
   );
@@ -88,7 +88,7 @@ function renderPlayerCell(player, isFirst) {
           <br />
           <strong>Interface:</strong>&nbsp;
           <a href={getPlayerIframeUrl(trip, player)} target="_blank" rel="noopener noreferrer">
-            <i className="fa fa-external-link" />
+            <i className="fa fa-external-link-alt" />
           </a>
           {joinLink}
         </p>
