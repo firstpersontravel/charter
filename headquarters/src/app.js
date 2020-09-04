@@ -38,6 +38,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health check - before HTTPS redirect
+app.get('/health', (req, res) => {
+  res.send('ok');
+});
+
 // Add a handler to inspect the req.secure flag (see 
 // http://expressjs.com/api#req.secure). This allows us 
 // to know whether the request was via http or https.
@@ -112,11 +117,6 @@ if (config.env.HQ_STAGE === 'staging') {
   s3Opts.region = 'us-east-1';
 }
 app.use('/s3', s3Router(s3Opts));
-
-// Health check
-app.get('/health', (req, res) => {
-  res.send('ok');
-});
 
 const hostRedirects = {
   'app.firstperson.travel': 'charter.firstperson.travel',
