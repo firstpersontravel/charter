@@ -1,5 +1,13 @@
 const TemplateUtil = require('../../utils/template');
 
+const COMPARISON_FUNCTIONS = {
+  '<': function(a, b) { return a < b; },
+  '<=': function(a, b) { return a <= b; },
+  '==': function(a, b) { return a == b; },
+  '>=': function(a, b) { return a >= b; },
+  '>': function(a, b) { return a > b; }
+};
+
 module.exports = {
   value_is_true: {
     title: 'Variable is present',
@@ -43,9 +51,6 @@ module.exports = {
       if (!val1 && !val2) {
         return true;
       }
-      if (!val1 || !val2) {
-        return false;
-      }
       return val1.toString().toLowerCase() === val2.toString().toLowerCase();
     }
   },
@@ -76,6 +81,42 @@ module.exports = {
         typeof b === 'string' &&
         a.toLowerCase().indexOf(b.toLowerCase()) > -1
       );
+    }
+  },
+
+  value_compare: {
+    title: 'Value comparison',
+    help: 'A condition that passes if the first value numerically compares to the second in the specified way.',
+    properties: {
+      ref1: {
+        title: 'Variable name or number 1',
+        type: 'lookupable',
+        required: true,
+        help: 'A numeric value to look up and compare against the second.'
+      },
+      comparator: {
+        type: 'enum',
+        options: Object.keys(COMPARISON_FUNCTIONS),
+        default: '>=',
+        help: 'The method used to compare the first value to the second.'
+      },
+      ref2: {
+        type: 'lookupable',
+        title: 'Variable name or number 2',
+        required: true,
+        help: 'Another numeric value to look up and compare against the first.'
+      }
+    },
+    eval: (params, actionContext) => {
+      const num1 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
+        params.ref1, actionContext.currentRoleName));
+      const num2 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
+        params.ref2, actionContext.currentRoleName));
+
+      const ref1AsNumber = Number.isNaN(num1) ? 0: num1;
+      const ref2AsNumber = Number.isNaN(num2) ? 0: num2;
+
+      return(COMPARISON_FUNCTIONS[params.comparator](ref1AsNumber, ref2AsNumber));
     }
   }
 };

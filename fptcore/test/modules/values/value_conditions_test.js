@@ -1,7 +1,6 @@
 const assert = require('assert');
 
 const valueConditions = require('../../../src/modules/values/value_conditions');
-
 describe('#value_is_true', () => {
   function assertIfEq(ctx, stmt, val) {
     assert.strictEqual(
@@ -90,5 +89,88 @@ describe('#value_contains', () => {
       { op: 'value_contains', string_ref: '"my house"', part_ref: 'b'}, true);
     assertIfEq({ a: 'a simple man'},
       { op: 'value_contains', string_ref: 'a', part_ref: '"car"'}, false);
+  });
+});
+
+describe('#value_compare', () => {
+  function assertComparisonOutcome(firstValue, secondValue, comparisonMethod, expectedOutcome) {
+    const actualOutcome = valueConditions.value_compare.eval({
+      op: 'value_compare',
+      ref1: 'a',
+      comparator: comparisonMethod,
+      ref2: 'b'
+    }, {
+      evalContext: {
+        'a': firstValue,
+        'b': secondValue
+      }
+    });
+    assert.strictEqual(actualOutcome, expectedOutcome);
+  }
+
+  it('treats non-numeric strings as 0', () => {
+    const truthTableParams = [
+      ['a', 0, '==', true],
+      ['a', 1, '==', false]
+    ];
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
+  });
+
+  it('treats booleans as numbers', () => {
+    const truthTableParams = [
+      [false, 0, '==', true],
+      [true, 1, '==', true],
+      [true, 0, '==', false],
+      [false, 1, '==', false]
+    ];
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
+  });
+
+  it('treats undefined variables as 0', () => {
+    const truthTableParams = [
+      [undefined, 0, '==', true],
+      [undefined, 1, '==', false]
+    ];
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
+    const actualMissingOutcome = valueConditions.value_compare.eval({
+      op: 'value_compare',
+      ref1: 'a',
+      comparator: '==',
+      ref2: 'b'
+    }, {
+      evalContext: {
+        'a': 0
+      }
+    });
+    assert.strictEqual(actualMissingOutcome, true);
+  });
+
+  it('returns the appropriate numeric comparison of numbers', () => {
+    const truthTableParams = [
+      [10, 20, '<', true],
+      [10, 20, '<=', true],
+      [10, 20, '==', false],
+      [10, 20, '>=', false],
+      [10, 20, '>', false],
+      [20, 10, '<', false],
+      [20, 10, '<=', false],
+      [20, 10, '==', false],
+      [20, 10, '>=', true],
+      [20, 10, '>', true],
+      [10, 10, '<', false],
+      [10, 10, '<=', true],
+      [10, 10, '==', true],
+      [10, 10, '>=', true],
+      [10, 10, '>', false]
+    ];
+    for (const testParams of truthTableParams) {
+      assertComparisonOutcome.apply(null, testParams);
+    }
   });
 });
