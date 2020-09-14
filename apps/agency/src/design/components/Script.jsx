@@ -324,7 +324,7 @@ class Script extends Component {
     const expOpts = (
       <div className="dropdown ml-2 d-inline" style={{ cursor: 'pointer' }}>
         <span id="expDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i className="fa fa-gear" />
+          <i className="fa fa-cog" />
         </span>
         <div className="dropdown-menu dropdown-menu-right" aria-labelledby="expDropdown">
           <Link
