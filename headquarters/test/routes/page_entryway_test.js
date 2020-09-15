@@ -147,7 +147,7 @@ describe('pageEntrywayRoutes', () => {
         orgId: orgId,
         experienceId: experienceId,
         isActive: true,
-        phoneNumber: participantData.phone
+        phoneNumber: `+1${participantData.phone}`
       };
 
       beforeEach(() => {
@@ -211,7 +211,7 @@ describe('pageEntrywayRoutes', () => {
             orgId: script.orgId,
             experienceId: script.experienceId,
             isActive: true,
-            phoneNumber: participantData.phone
+            phoneNumber: `+1${participantData.phone}`
           },
           defaults: {
             createdAt: mockNow,

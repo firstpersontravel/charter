@@ -25,6 +25,11 @@ module.exports = {
       default: false,
       help: 'If set to true, new participants can enter your experience via a webform into this interface.'
     },
+    performer: {
+      type: 'boolean',
+      default: false,
+      help: 'If set to true, performers can access this interface from the performer page.'
+    },
     tabs: {
       type: 'list',
       help: 'A list of tabs. If there is only one tab visible, the tabs bar will not be displayed.',

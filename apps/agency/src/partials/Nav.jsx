@@ -119,6 +119,10 @@ function renderBrand(org, experience) {
 }
 
 function renderMenu(org, experience, experiences, groups, groupId) {
+  if (!org) {
+    return null;
+  }
+
   const experienceLinks = experiences.length > 0 ? experiences.map(exp => (
     <Link
       key={exp.id}
@@ -143,7 +147,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     </li>
   ) : null;
 
-  if (!org || !experience) {
+  if (!experience) {
     return (
       <ul className="navbar-nav mr-auto">
         {experienceDropdown}

@@ -46,6 +46,42 @@ const participantCanRetrieveTripRecords = {
   }
 };
 
+const participantCanUpdateSelf = {
+  name: 'participantCanUpdateSelf',
+  test: (subject, action, resource) => {
+    // If not a participant, policy does not apply
+    if (!subject.isParticipant) {
+      return;
+    }
+    // If resource is not a participant, does not apply
+    if (resource.modelName !== 'Participant') {
+      return;
+    }
+    // If resource is not one of the participants authorized, does not apply
+    if (!subject.participantIds.includes(resource.record.id)) {
+      return;
+    }
+    const allowedActions = ['update'];
+    const allowedFieldNames = [
+      'locationLatitude',
+      'locationLongitude',
+      'locationAccuracy',
+      'locationTimestamp'
+    ];
+    if (_.includes(allowedActions, action)) {
+      // Must allow action on the generic record (w/o a field name) to get to
+      // the checks on each field name.
+      if (resource.fieldName === null) {
+        return { allowed: true, reason: 'Participants can update self.' };
+      }
+      // Allow specific fields only.
+      if (_.includes(allowedFieldNames, resource.fieldName)) {
+        return { allowed: true, reason: 'Participants can update self.' };
+      }
+    }
+  }
+};
+
 const participantCanUpdateTrip = {
   name: 'participantCanUpdateTrip',
   test: (subject, action, resource) => {
@@ -109,6 +145,7 @@ const participantCanTriggerTripActions = {
 module.exports = [
   participantCanRetrieveExperienceRecords,
   participantCanRetrieveTripRecords,
+  participantCanUpdateSelf,
   participantCanUpdateTrip,
   participantCanTriggerTripActions
 ];

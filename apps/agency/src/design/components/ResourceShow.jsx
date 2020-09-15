@@ -458,7 +458,7 @@ export default class ResourceShow extends Component {
     }
     const mainResource = this.getMainResource();
     const childCollectionNames = this.getChildCollectionNames();
-    const childrenByCollection = childCollectionNames
+    const childrenByCollection = _(childCollectionNames)
       .map((childCollectionName) => {
         const children = getChildren(this.props.script.content,
           mainResource, childCollectionName);
@@ -467,7 +467,8 @@ export default class ResourceShow extends Component {
         ));
         return renderedChildren;
       })
-      .flat();
+      .flatten()
+      .value();
 
     return (
       <div className="mb-2 ml-4">

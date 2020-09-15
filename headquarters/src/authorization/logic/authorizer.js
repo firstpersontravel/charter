@@ -27,6 +27,7 @@ class Authorizer {
         name: req.auth.participant.name,
         orgId: req.auth.participant.orgId,
         experienceId: req.auth.participant.experienceId,
+        participantIds: [req.auth.participant.id],
         tripIds: req.auth.players.map(player => player.tripId)
       };
     }
@@ -37,6 +38,7 @@ class Authorizer {
         name: req.auth.trip.title,
         orgId: req.auth.trip.orgId,
         experienceId: req.auth.trip.experienceId,
+        participantIds: req.auth.players.map(p => p.participantId).filter(Boolean),
         tripIds: [req.auth.trip.id]
       };
     }

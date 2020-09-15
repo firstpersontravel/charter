@@ -38,6 +38,7 @@ describe('Authorizer', () => {
       const req = httpMocks.createRequest();
       req.auth = {
         participant: {
+          id: 4,
           name: 'test',
           orgId: 1,
           experienceId: 2
@@ -52,6 +53,7 @@ describe('Authorizer', () => {
         name: 'test',
         orgId: 1,
         experienceId: 2,
+        participantIds: [4],
         tripIds: [3]
       });
     });
@@ -65,7 +67,10 @@ describe('Authorizer', () => {
           id: 1,
           orgId: 2,
           experienceId: 3
-        }
+        },
+        players: [{
+          participantId: 4
+        }]
       };
 
       const subject = authz.subjectForReq(req);
@@ -75,6 +80,7 @@ describe('Authorizer', () => {
         name: 'Ted\'s trip',
         orgId: 2,
         experienceId: 3,
+        participantIds: [4],
         tripIds: [1]
       });
     });

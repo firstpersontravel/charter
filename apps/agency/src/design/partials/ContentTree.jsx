@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
@@ -52,9 +53,10 @@ export default class ContentTree extends Component {
 
   renderItem(collectionName, item) {
     const rootItem = this.renderResource(collectionName, item.resource, false);
-    const nestedItems = (item.nested || [])
+    const nestedItems = _(item.nested)
       .map(i => this.renderNestedCollection(i))
-      .flat();
+      .flatten()
+      .value();
     return [rootItem].concat(nestedItems);
   }
 
@@ -109,12 +111,13 @@ export default class ContentTree extends Component {
       text: title,
       disabled: true
     };
-    const items = (contentSection.items || [])
+    const items = _(contentSection.items)
       .sort((a, b) => SceneCore.sortResource(a.resource, b.resource))
       .map(item => (
         this.renderItem(contentSection.collection, item)
       ))
-      .flat();
+      .flatten()
+      .value();
 
     const newItem = this.renderNewItem(contentSection);
     if (!items.length) {
@@ -128,9 +131,10 @@ export default class ContentTree extends Component {
 
   render() {
     const contentList = this.props.contentList;
-    const allItems = contentList
+    const allItems = _(contentList)
       .map(item => this.renderContentSection(item))
-      .flat();
+      .flatten()
+      .value();
 
     return (
       <ResponsiveListGroup items={allItems} history={this.props.history} />

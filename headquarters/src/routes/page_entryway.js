@@ -112,7 +112,7 @@ const joinSubmitRoute = async (req, res) => {
       orgId: script.orgId,
       experienceId: script.experienceId,
       isActive: true,
-      phoneNumber: phoneNumber
+      phoneNumber: `+1${phoneNumber}`
     },
     defaults: {
       createdAt: moment.utc(),
@@ -234,7 +234,7 @@ const entrywaySubmitRoute = async (req, res) => {
   }
 
   const trip = await EntrywayController.createTrip(script, playerRole.name, 
-    phoneNumber);
+    `+1${phoneNumber}`);
 
   // Reset it to the start to initiate starting actions like start scene.
   await TripResetHandler.resetToStart(trip.id);

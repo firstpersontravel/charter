@@ -252,7 +252,7 @@ export default class SceneGrid extends Component {
 
   render() {
     const trip = this.props.trip;
-    const scenes = trip.script.content.scenes || [];
+    const scenes = _.get(trip, 'script.content.scenes') || [];
     const sortedScenes = scenes.sort(SceneCore.sortResource);
     const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;

@@ -113,7 +113,8 @@ export default class App extends Component {
     if (!err) {
       return this.renderUnknownError();
     }
-    if (err.message === 'Failed to fetch') {
+    if (err.message === 'Failed to fetch' ||
+        err.message.indexOf('NetworkError') > -1) {
       return this.renderNetworkError();
     }
     if (err.status) {

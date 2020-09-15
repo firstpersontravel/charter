@@ -22,9 +22,20 @@ describe('pageActorRoutes', () => {
         participant: { id: 10, name: 'g s' },
         trip: {
           script: {
-            content: { roles: [{ name: 'Gabe', title: 'Chief Gabe' }] }
+            content: {
+              roles: [
+                { name: 'Bob', title: 'Staff Bob' },
+                { name: 'Gabe', title: 'Actor Gabe', interface: 'g' },
+                { name: 'Ted', title: 'Player Ted', interface: 't' }
+              ],
+              interfaces: [
+                { name: 'g', performer: true },
+                { name: 't', performer: false }
+              ]
+            }
           },
-          experience: { title: 'Amazing Adventure' }
+          experience: { title: 'Amazing Adventure' },
+          group: { date: '2020-03-03', }
         }
       }]);
 
@@ -40,7 +51,8 @@ describe('pageActorRoutes', () => {
           where: { isArchived: false },
           include: [
             { model: models.Script, as: 'script' },
-            { model: models.Experience, as: 'experience' }
+            { model: models.Experience, as: 'experience' },
+            { model: models.Group, as: 'group' }
           ]
         }, {
           model: models.Participant,
@@ -59,11 +71,15 @@ describe('pageActorRoutes', () => {
         layout: 'actor',
         orgName: 'org',
         orgTitle: 'Org',
-        participants: [{
-          id: 10,
-          name: 'g s',
+        groups: [{
+          groupDate: 'Mar 03',
           experienceTitle: 'Amazing Adventure',
-          roleTitles: 'Chief Gabe'
+          groupParticipants: [{
+            id: 10,
+            name: 'g s',
+            experienceTitle: 'Amazing Adventure',
+            roleTitles: 'Actor Gabe'  
+          }]
         }]
       });
     });

@@ -56,17 +56,18 @@ async function authMiddleware(req, res, next) {
   // Check participant
   if (subType === 'participant') {
     const participant = await models.Participant.findByPk(Number(subId));
-    const players = await models.Player.findAll({
-      where: { participantId: participant.id },
-      include: [{
-        model: models.Trip,
-        where: { isArchived: false }
-      }]
-    });
     if (!participant) {
       next(authenticationError('Invalid participant'));
       return;
     }
+    const players = await models.Player.findAll({
+      where: { participantId: participant.id },
+      include: [{
+        model: models.Trip,
+        as: 'trip',
+        where: { isArchived: false }
+      }]
+    });
     req.auth = { participant: participant, players: players };
     next();
     return;
@@ -79,7 +80,10 @@ async function authMiddleware(req, res, next) {
       next(authenticationError('Invalid trip'));
       return;
     }
-    req.auth = { trip: trip };
+    const players = await models.Player.findAll({
+      where: { tripId: trip.id }
+    });
+    req.auth = { trip: trip, players: players };
     next();
     return;
   }

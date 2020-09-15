@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const Sequelize = require('sequelize');
 
 const Evaluator = require('fptcore/src/utils/evaluator');
@@ -69,14 +69,12 @@ function getPage(actionContext, player) {
   const evalContext = actionContext.evalContext;
   const timezone = actionContext._objs.experience.timezone;
   const pageInfo = PlayerCore.getPageInfo(script, evalContext, trip, player);
-  if (!pageInfo) {
-    return null;
-  }
   const sort = PlayerCore.getSceneSort(script, evalContext, trip, player);
-  const page = pageInfo.page;
-  const directiveText = TemplateUtil.templateText(evalContext,
-    page.directive, timezone);
-  const panels = _(page.panels || [])
+  const page = pageInfo && pageInfo.page;
+  const directiveText = page ? 
+    TemplateUtil.templateText(evalContext, page.directive, timezone) :
+    'No active page';
+  const panels = _(page && page.panels || [])
     .filter(panel => evaluator.if(actionContext, panel.visible_if))
     .map(panel => getPanel(trip, player, evalContext, timezone, pageInfo,
       panel))
@@ -90,9 +88,8 @@ function getPage(actionContext, player) {
     tripTitle: trip.title,
     player: player,
     roleTitle: role.title,
-    pageName: page.name,
+    pageName: page ? page.name : 'No page',
     panels: panels,
-    pageInfo: pageInfo,
     sort: sort,
     directiveText: directiveText
   };
@@ -121,6 +118,9 @@ const actorsListRoute = async (req, res) => {
       }, {
         model: models.Experience,
         as: 'experience'
+      }, {
+        model: models.Group,
+        as: 'group'
       }]
     }, {
       model: models.Participant,
@@ -132,23 +132,46 @@ const actorsListRoute = async (req, res) => {
     }]
   });
   // Just show all participants for now. How to filter for actors; figure out later.
-  const participants = _.uniqBy(_.map(players, 'participant'), 'id');
+  const groups = _(players)
+    .map('trip.group')
+    .uniqBy('id')
+    .sortBy('date')
+    .map(group => {
+      const groupPlayers = players.filter(player => player.trip.groupId === group.id);
+      const groupParticipants = _(players)
+        .filter(player => {
+          const role = _.find(player.trip.script.content.roles, { name: player.roleName });
+          if (!role) {
+            return false;
+          }
+          const interface = _.find(player.trip.script.content.interfaces, { name: role.interface });
+          return interface && interface.performer;
+        })
+        .map('participant')
+        .uniqBy('id')
+        .value();
+      return {
+        experienceTitle: groupPlayers[0].trip.experience.title,
+        groupDate: moment(group.date).format('MMM DD'),
+        groupParticipants: groupParticipants.map(participant => ({
+          id: participant.id,
+          name: participant.name,
+          experienceTitle: groupPlayers[0].trip.experience.title,
+          roleTitles: players
+            .filter(p => p.participant.id === participant.id)
+            .map(p => _.get(p.trip.script.content.roles.find(r => r.name === p.roleName), 'title'))
+            .filter(Boolean)
+            .join(', ')
+        }))
+      };
+    })
+    .filter(group => group.groupParticipants.length > 0)
+    .value();
   res.render('actor/actors', {
     layout: 'actor',
     orgName: org.name,
     orgTitle: org.title,
-    participants: participants.map(participant => ({
-      id: participant.id,
-      name: participant.name,
-      experienceTitle: players
-        .find(p => p.participant.id === participant.id)
-        .trip.experience.title,
-      roleTitles: players
-        .filter(p => p.participant.id === participant.id)
-        .map(p => _.get(p.trip.script.content.roles.find(r => r.name === p.roleName), 'title'))
-        .filter(Boolean)
-        .join(', ')
-    }))
+    groups: groups
   });
 };
 
