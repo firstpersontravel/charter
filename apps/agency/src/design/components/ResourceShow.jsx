@@ -462,9 +462,12 @@ export default class ResourceShow extends Component {
       .map((childCollectionName) => {
         const children = getChildren(this.props.script.content,
           mainResource, childCollectionName);
-        const renderedChildren = children.map(childResource => (
-          this.renderChild(reverseRefGraph, childCollectionName, childResource)
-        ));
+        const renderedChildren = _(children)
+          .sortBy('title', 'name')
+          .value()
+          .map(childResource => (
+            this.renderChild(reverseRefGraph, childCollectionName, childResource)
+          ));
         return renderedChildren;
       })
       .flatten()

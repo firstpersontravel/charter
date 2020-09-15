@@ -6,7 +6,7 @@ export default Ember.Controller.extend({
   trip: Ember.inject.controller(),
   messages: Ember.inject.controller(),
 
-  queryParams: ['state'],
+  queryParams: ['state', 'substate'],
   state: null,
 
   pageInterfaceName: function() {

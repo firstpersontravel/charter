@@ -163,7 +163,7 @@ function ListItem({ script, resource, spec, value, name, path, opts,
       <div style={{ float: 'left' }}>
         {itemMenu}
       </div>
-      <div style={{ marginLeft: '2em', verticalAlign: 'top' }}>
+      <div style={{ marginLeft: '2.25em', verticalAlign: 'top' }}>
         <AnyField
           script={script}
           resource={resource}

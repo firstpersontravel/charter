@@ -7,7 +7,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   contentEl: '.page-panel-content-browse, .content-detail',
   footerEl: '.page-layout-tabs-menu',
-  selectedItemName: null,
+
+  selectedItemName: Ember.computed.alias('substate'),
 
   visibleItems: function() {
     var scriptContent = this.get('trip.script.content');
