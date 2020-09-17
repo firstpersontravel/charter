@@ -50,10 +50,10 @@ export default Ember.Component.extend(WindowHeightMixin, {
   }.property('hasEntered', 'audio.hasPlayPermission', 'shouldTransmit'),
 
   // Reset on changing panel
-  didChangePanel: function() {
-    console.log('didChangePanel');
-    this.set('hasEntered', false);
-  }.observes('panelId'),
+  // didChangePanel: function() {
+  //   console.log('didChangePanel');
+  //   this.set('hasEntered', false);
+  // }.observes('panelId'),
 
   enterDescription: function() {
     const isTransmitting = this.get('shouldTransmit');
