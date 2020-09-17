@@ -1,7 +1,7 @@
 {{#unless isBrowserSupported}}
   <div class='room-item room-message'>{{browserMessage}}</div>
 {{else}}
-  {{#unless hasReceivedInput}}
+  {{#if shouldShowEntryway}}
     <div class='room-item room-button'>
       <button
         class='pure-button pure-button-primary pure-button-block'
@@ -17,5 +17,5 @@
       shouldTransmit=shouldTransmit
       token=trip.videoToken
       roomId=roomId}}
-  {{/unless}}
+  {{/if}}
 {{/unless}}

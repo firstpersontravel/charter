@@ -55,7 +55,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
-    "twilio-video": "^2.7.0"
+    "twilio-video": "^2.7.2"
   },
   "devDependencies": {
     "bower": "^1.8.8"

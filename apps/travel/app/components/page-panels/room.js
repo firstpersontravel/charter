@@ -2,29 +2,42 @@ import Ember from 'ember';
 
 import WindowHeightMixin from '../../mixins/panels/window-height';
 
-let hasReceivedInput = false;
-
 export default Ember.Component.extend(WindowHeightMixin, {
   classNames: ['page-panel-room', 'room-frame'],
   contentEl: '',
   footerEl: '.page-layout-tabs-menu',
 
   api: Ember.inject.service(),
+  audio: Ember.inject.service(),
   environment: Ember.inject.service(),
 
   panelId: Ember.computed.oneWay('params.id'),
   useVideo: Ember.computed.oneWay('params.video'),
   shouldTransmit: Ember.computed.oneWay('params.transmit'),
 
-  hasReceivedInput: Ember.computed({
-    get(key) {
-      return hasReceivedInput;
-    },
-    set(key, value) {
-      hasReceivedInput = value;
-      return hasReceivedInput;
+  hasEntered: false,
+
+  shouldShowEntryway: function() {
+    // If we've entered already, jump right in
+    if (this.get('hasEntered')) {
+      return true;
     }
-  }),
+    // If we are transmitting, always show permission
+    if (this.get('shouldTransmit')) {
+      return true;
+    }
+    // If we don't have permission, show
+    if (!this.get('audio.hasPlayPermission')) {
+      return true;
+    }
+    // Otherwise jump right in.
+    return false;
+  }.property('hasEntered', 'audio.hasPlayPermission', 'shouldTransmit'),
+
+  // Reset on changing panel
+  didChangePanel: function() {
+    this.set('hasEntered', false);
+  }.observes('panelId'),
 
   enterDescription: function() {
     const isTransmitting = this.get('shouldTransmit');
@@ -49,16 +62,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
     return null;
   }.property(),
 
-  getLocalTracks() {
-    if (!this.get('shouldTransmit')) {
-      return Promise.resolve([]);
-    }
-    return Twilio.Video.createLocalTracks({
-      audio: true,
-      video: this.get('useVideo') ? { width: 640 } : false
-    });
-  },
-
   roomId: function() {
     const envName = this.get('environment.environmentName');
     const groupId = this.get('trip.group.id');
@@ -68,7 +71,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   actions: {
     enterRoom: function() {
-      this.set('hasReceivedInput', true);
+      this.set('hasEntered', true);
+      this.set('audio.hasPlayPermission', true);
     }
   }
 });

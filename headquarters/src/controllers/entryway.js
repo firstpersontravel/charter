@@ -62,7 +62,7 @@ class EntrywayController {
   /**
    * Create a new trip with properties.
    */
-  static async createTrip(script, participantRoleName, participantNumber) {
+  static async createTrip(script, participantRoleName, participantNumber, participantName=null) {
     const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {
@@ -73,7 +73,7 @@ class EntrywayController {
         isArchived: false
       }
     });
-    const title = localTime.format('h:mm a z');
+    const title = participantName || localTime.format('h:mm a z');
     const defaultVariantNames = (script.content.variants || [])
       .filter(v => v.default)
       .map(v => v.name);
@@ -90,7 +90,7 @@ class EntrywayController {
       },
       defaults: {
         createdAt: moment.utc(),
-        name: `${script.experience.title} Player`
+        name: participantName || `${script.experience.title} Player`
       }
     });
 

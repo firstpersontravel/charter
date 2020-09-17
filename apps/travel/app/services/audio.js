@@ -1,10 +1,10 @@
 import Ember from 'ember';
 
 export default Ember.Service.extend({
-  _hasAudioPermission: false,
   _audio: null,
   _path: null,
-
+  
+  hasPlayPermission: false,
   isPlaying: false,
 
   init: function() {
@@ -69,11 +69,11 @@ export default Ember.Service.extend({
       return;
     }
 
-    if (this._hasAudioPermission) {
+    if (this.get('hasPlayPermission')) {
       this._startPlaying(startAtTime);
     } else {
       swal({ title: 'Please tap to start audio' }, () => {
-        this._hasAudioPermission = true;
+        this.set('hasPlayPermission', true);
         this._startPlaying(startAtTime);
       });
     }  
