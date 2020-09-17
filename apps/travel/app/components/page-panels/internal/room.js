@@ -30,7 +30,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   numSpacesTotal: function() {
     const numUsed = this.get('numSpacesUsed');
-    console.log('numUsed', numUsed);
     return numUsed <= 1 ? 1 : (numUsed <= 4 ? 4 : 9);
   }.property('numSpacesUsed'),
 
@@ -68,11 +67,18 @@ export default Ember.Component.extend(WindowHeightMixin, {
   didInsertElement: function() {
     this._super();
     this.setupRoom();
+    console.log('room-internal.didInsertElement');
   },
 
   willDestroyElement: function() {
     this.teardownRoom();
     this._super();
+    console.log('room-internal.willDestroyElement');
+  },
+
+  willClearRender: function() {
+    this._super();
+    console.log('room-internal.willClearRender');
   },
 
   panelIdDidChange: function() {

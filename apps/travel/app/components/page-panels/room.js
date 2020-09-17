@@ -17,10 +17,25 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   hasEntered: false,
 
+  didInsertElement: function() {
+    this._super();
+    console.log('room-panel.didInsertElement');
+  },
+
+  willClearRender: function() {
+    this._super();
+    console.log('room-panel.willClearRender');
+  },
+
+  willDestroyElement: function() {
+    this._super();
+    console.log('room-panel.willDestroyElement');
+  },
+  
   shouldShowEntryway: function() {
     // If we've entered already, jump right in
     if (this.get('hasEntered')) {
-      return true;
+      return false;
     }
     // If we are transmitting, always show permission
     if (this.get('shouldTransmit')) {
@@ -36,6 +51,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   // Reset on changing panel
   didChangePanel: function() {
+    console.log('didChangePanel');
     this.set('hasEntered', false);
   }.observes('panelId'),
 

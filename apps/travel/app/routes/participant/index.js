@@ -24,6 +24,7 @@ export default Ember.Route.extend({
           alert('Participant has no active trips.');
           return;
         }
+        console.log('participant.afterModel -> transitionTo');
         this.transitionTo('player.page', playerData.tripId, playerData.id);
       });
   }

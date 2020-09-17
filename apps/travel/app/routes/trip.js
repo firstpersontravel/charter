@@ -7,11 +7,7 @@ export default Ember.Route.extend({
 
   model: function(params) {
     return this.refreshTripData(params.trip_id)
-      .then(() => {
-        const trip = this.store.peekRecord('trip', params.trip_id);
-        this.get('api').set('authToken', trip.get('authToken'));
-        return trip;
-      });
+      .then(() => this.store.peekRecord('trip', params.trip_id));
   },
 
   setupController: function(controller, context) {
@@ -30,6 +26,7 @@ export default Ember.Route.extend({
   },
 
   refreshTripData: function(tripId) {
+    console.log('refreshTripData');
     var isScriptAlreadyLoaded = !!this.store.peekAll('script').get('length');
     var shouldRefreshScript = !isScriptAlreadyLoaded;
     var params = {
@@ -53,6 +50,8 @@ export default Ember.Route.extend({
         serializer.pushPayload(this.store, data);
         this.controllerFor('trip').set('lastRefreshed', moment.utc());
         this.controllerFor('player').updateAudioState();
+        this.get('api').set('authToken', data.data.attributes.authToken);
+        console.log('refreshed');
       });
   },
 
@@ -61,7 +60,8 @@ export default Ember.Route.extend({
     },
 
     refresh: function() {
-      this.refresh();
+      console.log('routes.trip -> refresh');
+      this.refreshTripData(this.context.id);
     },
 
     reload: function() {

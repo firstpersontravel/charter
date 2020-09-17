@@ -51,20 +51,24 @@ export default Ember.Controller.extend(RealtimeMixin, {
         !this.get('sync.inprogress') &&
         !this.get('sync.hasPending')) {
       this.set('awaitingRefreshAt', null);
+      console.log('awaitingRefreshAt -> refresh');
       this.send('refresh');
     }
   }.observes('time.currentTime').on('init'),
 
   realtimeEvents: {
     action: function(content) {
+      console.log('realtime action -> refresh');
       this.send('refresh');
     },
 
     event: function(content) {
+      console.log('realtime event -> refresh');
       this.send('refresh');
     },
 
     trigger: function(content) {
+      console.log('realtime trigger -> refresh');
       this.send('refresh');
     },
 
@@ -94,6 +98,7 @@ export default Ember.Controller.extend(RealtimeMixin, {
     },
 
     refresh: function() {
+      console.log('trip.controller.refresh -> refresh');
       this.send('refresh');
     },
 

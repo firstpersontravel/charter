@@ -24,6 +24,7 @@ export default Ember.Controller.extend({
           const participant = this.store.peekRecord('participant', participantId);
           localStorage.setItem('participant_id', participantId);
           swal.close();
+          console.log('login.signin -> transitionTo');
           this.transitionToRoute('participant', participant);
         })
         .catch((err) => {
