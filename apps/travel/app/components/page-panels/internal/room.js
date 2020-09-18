@@ -67,21 +67,14 @@ export default Ember.Component.extend(WindowHeightMixin, {
   didInsertElement: function() {
     this._super();
     this.setupRoom();
-    console.log('room-internal.didInsertElement');
   },
 
   willDestroyElement: function() {
     this.teardownRoom();
     this._super();
-    console.log('room-internal.willDestroyElement');
   },
 
-  willClearRender: function() {
-    this._super();
-    console.log('room-internal.willClearRender');
-  },
-
-  panelIdDidChange: function() {
+  panelIdDidChange: function(sender, key, value, rev) {
     this.teardownRoom();
     this.setupRoom();
   }.observes('panelId'),

@@ -28,7 +28,6 @@ export default Ember.Route.extend({
     }
     return self.refreshParticipant(participantId)
       .then(function(participant) {
-        console.log('index.beforeModel -> transitionTo');
         return self.transitionTo('participant', participant);
       });
   }

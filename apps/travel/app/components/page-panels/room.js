@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 import WindowHeightMixin from '../../mixins/panels/window-height';
 
+let hasReceivedInput = false;
+
 export default Ember.Component.extend(WindowHeightMixin, {
   classNames: ['page-panel-room', 'room-frame'],
   contentEl: '',
@@ -15,26 +17,19 @@ export default Ember.Component.extend(WindowHeightMixin, {
   useVideo: Ember.computed.oneWay('params.video'),
   shouldTransmit: Ember.computed.oneWay('params.transmit'),
 
-  hasEntered: false,
-
-  didInsertElement: function() {
-    this._super();
-    console.log('room-panel.didInsertElement');
-  },
-
-  willClearRender: function() {
-    this._super();
-    console.log('room-panel.willClearRender');
-  },
-
-  willDestroyElement: function() {
-    this._super();
-    console.log('room-panel.willDestroyElement');
-  },
+  hasReceivedInput: Ember.computed({
+    get(key) {
+      return hasReceivedInput;
+    },
+    set(key, value) {
+      hasReceivedInput = value;
+      return hasReceivedInput;
+    }
+  }),
   
   shouldShowEntryway: function() {
     // If we've entered already, jump right in
-    if (this.get('hasEntered')) {
+    if (this.get('hasReceivedInput')) {
       return false;
     }
     // If we are transmitting, always show permission
@@ -47,13 +42,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     }
     // Otherwise jump right in.
     return false;
-  }.property('hasEntered', 'audio.hasPlayPermission', 'shouldTransmit'),
-
-  // Reset on changing panel
-  // didChangePanel: function() {
-  //   console.log('didChangePanel');
-  //   this.set('hasEntered', false);
-  // }.observes('panelId'),
+  }.property('hasReceivedInput', 'audio.hasPlayPermission', 'shouldTransmit'),
 
   enterDescription: function() {
     const isTransmitting = this.get('shouldTransmit');
@@ -87,7 +76,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
 
   actions: {
     enterRoom: function() {
-      this.set('hasEntered', true);
+      this.set('hasReceivedInput', true);
       this.set('audio.hasPlayPermission', true);
     }
   }

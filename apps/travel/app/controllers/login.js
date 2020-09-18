@@ -15,7 +15,6 @@ export default Ember.Controller.extend({
       this.get('api')
         .getData('/api/legacy/participant/' + participantId)
         .then((results) => {
-          console.log('results', results);
           const serializer = Ember.getOwner(this).lookup('serializer:api');
           serializer.set('store', this.store);
           serializer.pushPayload(this.store, results);
@@ -24,7 +23,6 @@ export default Ember.Controller.extend({
           const participant = this.store.peekRecord('participant', participantId);
           localStorage.setItem('participant_id', participantId);
           swal.close();
-          console.log('login.signin -> transitionTo');
           this.transitionToRoute('participant', participant);
         })
         .catch((err) => {

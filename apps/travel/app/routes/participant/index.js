@@ -6,7 +6,6 @@ export default Ember.Route.extend({
 
   afterModel: function() {
     const participant = this.modelFor('participant');
-    console.log('participant', participant, participant);
     if (!participant) {
       throw new Error('User not found.');
     }
@@ -24,7 +23,6 @@ export default Ember.Route.extend({
           alert('Participant has no active trips.');
           return;
         }
-        console.log('participant.afterModel -> transitionTo');
         this.transitionTo('player.page', playerData.tripId, playerData.id);
       });
   }
