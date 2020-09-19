@@ -159,7 +159,7 @@ async function getTripRoute(req, res) {
 
   // Create a video token by IP in case multiple users or devices share a role.
   const userAgentHash = crypto.createHash('md5').update(req.get('User-Agent')).digest('hex');
-  const identity = `${playerId}-${userAgentHash}`;
+  const identity = `${playerId}-${userAgentHash}-${req.ip}`;
   data.attributes['video-token'] = createVideoToken(identity);
 
   const includedData = objs.map(jsonApiSerialize);
