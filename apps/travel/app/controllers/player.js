@@ -99,7 +99,7 @@ export default Ember.Controller.extend({
   updateAudioState: function() {
     // Make sure audio is for this role.
     var audioRole = this.get('model.trip.values.audio_role');
-    if (!audioRole || audioRole !== this.get('model.roleName')) {
+    if (audioRole && audioRole !== this.get('model.roleName')) {
       return;
     }
 

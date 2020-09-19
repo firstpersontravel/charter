@@ -5,8 +5,8 @@ export default Ember.Service.extend({
   lastFix: null,
   lastError: null,
 
-  // throttle out updates more frequent than every 10 secs.
-  minFixFrequency: 10000,
+  // throttle out updates more frequent than every 30 secs.
+  minFixFrequency: 30000,
 
   isWatching: Ember.computed.bool('watchId'),
 

@@ -10,7 +10,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
   footerEl: '.page-layout-tabs-menu',
 
   api: Ember.inject.service(),
-  audio: Ember.inject.service(),
   environment: Ember.inject.service(),
 
   panelId: Ember.computed.oneWay('params.id'),
@@ -37,12 +36,12 @@ export default Ember.Component.extend(WindowHeightMixin, {
       return true;
     }
     // If we don't have permission, show
-    if (!this.get('audio.hasPlayPermission')) {
+    if (!this.get('hasReceivedInput')) {
       return true;
     }
     // Otherwise jump right in.
     return false;
-  }.property('hasReceivedInput', 'audio.hasPlayPermission', 'shouldTransmit'),
+  }.property('hasReceivedInput', 'hasReceivedInput', 'shouldTransmit'),
 
   enterDescription: function() {
     const isTransmitting = this.get('shouldTransmit');
@@ -77,7 +76,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
   actions: {
     enterRoom: function() {
       this.set('hasReceivedInput', true);
-      this.set('audio.hasPlayPermission', true);
     }
   }
 });
