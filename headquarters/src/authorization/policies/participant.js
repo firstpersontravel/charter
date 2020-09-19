@@ -142,10 +142,33 @@ const participantCanTriggerTripActions = {
   }
 };
 
+const participantCanTriggerGroupActions = {
+  name: 'participantCanTriggerGroupActions',
+  test: (subject, action, resource) => {
+    // If not a participant, policy does not apply.
+    if (!subject.isParticipant) {
+      return;
+    }
+    // If record is not a trip, polict does not apply.
+    if (resource.modelName !== 'Group') {
+      return;
+    }
+    // If trip is not one of the participant's trips, policy does not apply.
+    if (!subject.groupIds.includes(resource.record.id)) {
+      return;
+    }
+    const allowedActions = ['action', 'event', 'deviceState'];
+    if (allowedActions.includes(action)) {
+      return { allowed: true, reason: 'Players can trigger actions in own group.' };
+    }
+  }
+};
+
 module.exports = [
   participantCanRetrieveExperienceRecords,
   participantCanRetrieveTripRecords,
   participantCanUpdateSelf,
   participantCanUpdateTrip,
-  participantCanTriggerTripActions
+  participantCanTriggerTripActions,
+  participantCanTriggerGroupActions
 ];

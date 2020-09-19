@@ -6,11 +6,14 @@ const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 const DeviceStateHandler = require('../handlers/device_state');
 
-/**
- * Create a new action. Also send out a notification to all clients listening
- * of the new action.
- */
-const createActionRoute = async (req, res) => {
+async function applyAction(req, trips, action, playerId, clientId) {
+  for (const trip of trips) {
+    await KernelController.applyAction(trip.id, action, playerId);
+    await NotifyController.notifyAction(trip.id, action, clientId);
+  }
+}
+
+async function createTripActionRoute(req, res) {
   const tripId = Number(req.params.tripId);
   const playerId = req.body.player_id;
   const clientId = req.body.client_id;
@@ -20,35 +23,74 @@ const createActionRoute = async (req, res) => {
     return;
   }
   const trip = await models.Trip.findByPk(tripId);
-  authz.checkRecord(req, 'action', models.Trip, trip);
   const action = { name: req.body.name, params: req.body.params || {} };
-  await KernelController.applyAction(tripId, action, playerId);
-  await NotifyController.notifyAction(tripId, action, clientId);
+  authz.checkRecord(req, 'action', models.Trip, trip);
+  await applyAction(req, [trip], action, playerId, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
-};
+}
 
-/**
- * Create a new event and trigger any actions caused by it. Also send out
- * a notification to all clients listening of the new event.
- */
-const createEventRoute = async (req, res) => {
+async function createGroupActionRoute(req, res) {
+  const groupId = Number(req.params.groupId);
+  const playerId = req.body.player_id;
+  const clientId = req.body.client_id;
+  if (!req.body.name) {
+    res.status(400);
+    res.json({ error: 'Name required.' });
+    return;
+  }
+  const group = await models.Group.findByPk(groupId);
+  authz.checkRecord(req, 'action', models.Group, group);
+
+  const trips = await models.Trip.findAll({
+    where: { groupId: groupId, isArchived: false }
+  });
+  const action = { name: req.body.name, params: req.body.params || {} };
+  await applyAction(req, trips, action, playerId, clientId);
+  res.status(200);
+  res.json({ data: { ok: true } });
+}
+
+async function applyEvent(req, trips, event, playerId, clientId) {
+  for (const trip of trips) {
+    await KernelController.applyEvent(trip.id, event, playerId);
+    await NotifyController.notifyEvent(trip.id, event, clientId);
+  }
+}
+
+async function createTripEventRoute(req, res) {
   const tripId = Number(req.params.tripId);
   const playerId = req.body.player_id;
   const clientId = req.body.client_id;
-  const event = _.omit(req.body, ['client_id', 'player_id']);
   const trip = await models.Trip.findByPk(tripId);
+  const event = _.omit(req.body, ['client_id', 'player_id']);
   authz.checkRecord(req, 'event', models.Trip, trip);
-  await KernelController.applyEvent(tripId, event, playerId);
-  await NotifyController.notifyEvent(tripId, event, clientId);
+  await applyEvent(req, [trip], event, playerId, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
-};
+}
+
+async function createGroupEventRoute(req, res) {
+  const groupId = Number(req.params.groupId);
+  const playerId = req.body.player_id;
+  const clientId = req.body.client_id;
+  
+  const group = await models.Group.findByPk(groupId);
+  authz.checkRecord(req, 'event', models.Group, group);
+
+  const trips = await models.Trip.findAll({
+    where: { groupId: groupId, isArchived: false }
+  });
+  const event = _.omit(req.body, ['client_id', 'player_id']);
+  await applyEvent(req, trips, event, playerId, clientId);
+  res.status(200);
+  res.json({ data: { ok: true } });
+}
 
 /**
  * Update the device state.
  */
-const updateDeviceStateRoute = async (req, res) => {
+async function updateDeviceStateRoute(req, res) {
   const participantId = req.params.participantId;
   const tripId = req.params.tripId;
   const clientId = req.body.client_id;
@@ -68,10 +110,12 @@ const updateDeviceStateRoute = async (req, res) => {
   await DeviceStateHandler.updateDeviceState(participantId, params, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
-};
+}
 
 module.exports = {
-  createActionRoute,
-  createEventRoute,
+  createGroupActionRoute,
+  createGroupEventRoute,
+  createTripActionRoute,
+  createTripEventRoute,
   updateDeviceStateRoute
 };

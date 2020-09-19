@@ -35,7 +35,8 @@ describe('pageActorRoutes', () => {
             }
           },
           experience: { title: 'Amazing Adventure' },
-          group: { date: '2020-03-03', }
+          groupId: 5,
+          group: { id: 5, date: '2020-03-03', }
         }
       }]);
 
@@ -72,9 +73,10 @@ describe('pageActorRoutes', () => {
         orgName: 'org',
         orgTitle: 'Org',
         groups: [{
-          groupDate: 'Mar 03',
           experienceTitle: 'Amazing Adventure',
+          groupDate: 'Mar 03',
           groupParticipants: [{
+            groupId: 5, 
             id: 10,
             name: 'g s',
             experienceTitle: 'Amazing Adventure',
@@ -83,11 +85,6 @@ describe('pageActorRoutes', () => {
         }]
       });
     });
-  });
-
-  describe('#playerShowRoute', () => {
-    it.skip('returns 200', () => {});
-    it.skip('returns 404 if does not exist', () => {});
   });
 
   describe('#participantShowRoute', () => {

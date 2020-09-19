@@ -1,2 +1,9 @@
-.btn { white-space: initial; }
-.card { margin-bottom: 1em; }
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+iframe {
+  flex-grow: 1;
+  border: 0;
+}

@@ -11,7 +11,7 @@ const KernelController = require('../../src/kernel/kernel');
 const NotifyController = require('../../src/controllers/notify');
 
 describe('apiActionsRoutes', () => {
-  describe('#createActionRoute', () => {
+  describe('#createTripActionRoute', () => {
     it('applies and notifies on an action', async () => {
       const req = httpMocks.createRequest({
         params: { tripId: 100 },
@@ -20,7 +20,7 @@ describe('apiActionsRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub authz check
-      const mockTrip = { id: 300 };
+      const mockTrip = { id: 100 };
       sandbox.stub(models.Trip, 'findByPk').resolves(mockTrip);
       sandbox.stub(authz, 'checkRecord').returns(null);
 
@@ -28,7 +28,7 @@ describe('apiActionsRoutes', () => {
       sandbox.stub(KernelController, 'applyAction').resolves();
       sandbox.stub(NotifyController, 'notifyAction').resolves();
 
-      await apiActionsRoutes.createActionRoute(req, res);
+      await apiActionsRoutes.createTripActionRoute(req, res);
 
       // Check response
       const expected = { data: { ok: true } };
@@ -53,7 +53,7 @@ describe('apiActionsRoutes', () => {
     });
   });
 
-  describe('#createEventRoute', () => {
+  describe('#createTripEventRoute', () => {
     it('applies and notifies on an event', async () => {
       const req = httpMocks.createRequest({
         params: { tripId: 100 },
@@ -62,7 +62,7 @@ describe('apiActionsRoutes', () => {
       const res = httpMocks.createResponse();
 
       // Stub authz check
-      const mockTrip = { id: 300 };
+      const mockTrip = { id: 100 };
       sandbox.stub(models.Trip, 'findByPk').resolves(mockTrip);
       sandbox.stub(authz, 'checkRecord').returns(null);
 
@@ -70,7 +70,7 @@ describe('apiActionsRoutes', () => {
       sandbox.stub(KernelController, 'applyEvent').resolves();
       sandbox.stub(NotifyController, 'notifyEvent').resolves();
 
-      await apiActionsRoutes.createEventRoute(req, res);
+      await apiActionsRoutes.createTripEventRoute(req, res);
 
       // check response
       const expected = { data: { ok: true } };

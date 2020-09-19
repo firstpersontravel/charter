@@ -73,11 +73,16 @@ apiRouter.use('/players', createModelRouter(models.Player, playerOpts));
 
 // Action routes
 apiRouter.post('/trips/:tripId/actions',
-  asyncRoute(apiActionsRoutes.createActionRoute));
+  asyncRoute(apiActionsRoutes.createTripActionRoute));
 apiRouter.post('/trips/:tripId/events',
-  asyncRoute(apiActionsRoutes.createEventRoute));
+  asyncRoute(apiActionsRoutes.createTripEventRoute));
 apiRouter.post('/trips/:tripId/device_state/:participantId',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
+
+apiRouter.post('/groups/:groupId/actions',
+  asyncRoute(apiActionsRoutes.createGroupActionRoute));
+apiRouter.post('/groups/:groupId/events',
+  asyncRoute(apiActionsRoutes.createGroupEventRoute));
 
 // Experience admin routes
 apiRouter.post('/admin/experiences/:experienceId/update_relays',

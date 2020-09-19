@@ -1,220 +1,39 @@
-<script type='text/javascript'>
-var clientId = Math.floor(Math.random() * 100000);
+<div class="wrapper">
+  <nav class="navbar navbar-expand-lg navbar-light bg-faded">
+    <a class="navbar-brand" href="/actor/{{orgName}}">
+      {{orgTitle}} Performers
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="">
+          {{participantName}} &bull; {{groupDate}}
+        </a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{currentRunSelector}}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a
+            class='dropdown-item'
+            href='/actor/{{orgName}}/{{groupId}}/{{participantId}}'>All runs
+          </a>
+          {{#each trips}}
+            <a
+              class="dropdown-item"
+              href="/actor/{{@root/orgName}}/{{@root/groupId}}/{{@root/participantId}}?trip={{tripId}}">
+              {{tripTitle}}
+            </a>
+          {{/each}}
+        </div>
+      </li>
+    </ul>
+    </div>
+  </nav>
 
-function postAction($btn, data) {
-  $btn && $btn.text('Sending...');
-  $('button, a').addClass('disabled');
-  if (data.name) {
-    var body = {
-      name: data.name,
-      params: data.params,
-      client_id: clientId
-    };
-    $.ajax({
-      type: 'post',
-      url: '/api/trips/' + data.trip_id + '/actions',
-      headers: { Authorization: 'Bearer {{authToken}}' },
-      contentType: 'application/json',
-      data: JSON.stringify(body),
-      dataType: 'html',
-      success: function(response) {
-        loadNewPage();
-      },
-      error: function() {
-        $('button, a').removeClass('disabled');
-        $btn && $btn.text('Error, try again?');
-      }
-    });
-  } else {
-    loadNewPage();
-  }
-}
-
-function postEvent($btn, data) {
-  $btn && $btn.text('Sending...');
-  $('button, a').addClass('disabled');
-  if (data.type) {
-    var body = Object.assign({
-      client_id: clientId,
-      type: data.type
-    }, data.params);
-    $.ajax({
-      type: 'post',
-      url: '/api/trips/' + data.trip_id + '/events',
-      headers: { Authorization: 'Bearer {{authToken}}' },
-      contentType: 'application/json',
-      data: JSON.stringify(body),
-      dataType: 'html',
-      success: function(response) {
-        loadNewPage();
-      },
-      error: function() {
-        $('button, a').removeClass('disabled');
-        $btn && $btn.text('Error, try again?');
-      }
-    });
-  } else {
-    loadNewPage();
-  }
-}
-
-function subscribeToFaye() {
-  var client = new Faye.Client('/pubsub');
-  var tripIds = "{{tripIds}}".split(',');
-  tripIds.forEach(function(tripId) {
-    var channel = '/trip_' + tripId;
-    var subscription = client.subscribe(channel, function(message) {
-      console.log('msg for ' + tripId + ': ', message);
-      if (!message) {
-        return;
-      }
-      if (message.content && message.content.client_id === clientId) {
-        console.log('self-generated message ignored');
-        return;
-      }
-      if (message.type === 'device_state') {
-        return;
-      }
-      refresh();
-    });
-  });
-}
-
-function loadNewPage() {
-  $.ajax({
-    type: 'get',
-    url: window.location.pathname + '?is_partial=true',
-    dataType: 'html',
-    success: function(response) {
-      $('#container').html(response);
-    },
-    error: function() {
-      $('button, a').removeClass('disabled');
-    }
-  });
-}
-
-function getLocation() {
-  if (window.location.search.indexOf('nogps') > -1) {
-    return;
-  }
-  if (!navigator.geolocation) {
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(function(fix) {
-    transmitLocation(fix);
-  });
-}
-
-function transmitLocation(fix) {
-  var participantId = $("#data-participant-id").html();
-  if (!participantId) {
-    return;
-  }
-  $.ajax({
-    type: 'put',
-    url: '/api/participants/' + participantId,
-    headers: { Authorization: 'Bearer {{authToken}}' },
-    data: {
-      locationLatitude: fix.coords.latitude,
-      locationLongitude: fix.coords.longitude,
-      locationAccuracy: fix.coords.accuracy,
-      locationTimestamp: new Date(fix.timestamp).toISOString()
-    },
-    success: function(response) {
-      console.log('location updated');
-    },
-    error: function() {
-    }
-  });
-}
-
-var lastRefresh = new Date().getTime();
-var refreshInterval = 60000;
-
-function refresh() {
-  postAction(null, {});
-  getLocation();
-  lastRefresh = new Date().getTime();
-}
-
-function checkRefresh() {
-  var now = new Date().getTime();
-  // console.log(Math.ceil((refreshInterval - (now - lastRefresh)) / 1000) +
-  //   ' seconds til refresh');
-  if (now - lastRefresh > refreshInterval) {
-    postAction(null, {});
-    lastRefresh = now;
-  }
-}
-
-$(function() {
-
-  setInterval(checkRefresh, 5000);
-  getLocation();
-  subscribeToFaye();
-
-  $('#container').on('click', '#refresh', function(e) {
-    e.preventDefault();
-    // window.location.reload();
-    refresh();
-  });
-
-  $('#container').on('click', 'a[data-action]', function(e) {
-    e.preventDefault();
-    var $btn = $(this);
-    var tripId = $btn.attr('data-trip-id');
-    var actionName = $btn.attr('data-action');
-    var actionParams = JSON.parse($btn.attr('data-params'));
-    postAction($btn, {
-      trip_id: tripId,
-      name: actionName,
-      params: actionParams
-    });
-  });
-
-  $('#container').on('click', 'a[data-event]', function(e) {
-    e.preventDefault();
-    var $btn = $(this);
-    var tripId = $btn.attr('data-trip-id');
-    var eventType = $btn.attr('data-event');
-    var eventParams = JSON.parse($btn.attr('data-params'));
-    postEvent($btn, {
-      trip_id: tripId,
-      type: eventType,
-      params: eventParams
-    });
-  });
-
-  $('#container').on('click', 'a[data-ui]', function(e) {
-    e.preventDefault();
-    var $btn = $(this);
-    var tripId = $btn.attr('data-trip-id');
-    var actionName = $btn.attr('data-ui');
-    if (actionName === 'show-appearance') {
-      var pageName = $btn.attr('data-page-name');
-      $('div[data-trip-id=' + tripId + '][data-page-name=' + pageName + ']').slideDown();
-    }
-    $btn.hide();
-  });
-});
-</script>
-
-<nav class="navbar navbar-light bg-faded">
-  <a class="navbar-brand" href="/actor/{{orgName}}">
-    {{orgTitle}} Performer Interface
-  </a>
-  <ul class="navbar-nav mr-auto">
-    <li class="nav-item active">
-      <a class="nav-link" href="">
-        {{userName}}
-      </a>
-    </li>
-  </ul>
-</nav>
-
-<div style='display: none;' id='data-participant-id'>{{participantId}}</div>
-
-<div id='container'>
-  {{> actor}}
+  <iframe src="/travel/u/{{participantId}}/r/{{tripId}}/p/{{playerId}}{{iframeQuery}}"></iframe>
 </div>

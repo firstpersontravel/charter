@@ -1,9 +1,0 @@
-<p class="card-text">
-  {{text}}
-
-  {{#each choices}}
-    <a href="#" data-action='set_value' data-params='{"value_ref": "{{data.value_ref}}", "new_value_ref": "\"{{value}}\""}' data-trip-id='{{tripId}}' class="btn {{#if isChosen}}btn-primary{{else}}btn-secondary{{/if}}">
-      {{choice.text}}
-    </a>
-  {{/each}}
-</p>

@@ -30,14 +30,17 @@ export default Ember.Component.extend({
   },
 
   hasAudio: function() {
-    return !!this.get('audioUrl');
+    return this.get('audioRole') &&
+      this.get('audioRole') === this.get('roleName') &&
+      this.get('audioUrl');
   }.property('audioUrl'),
 
   audioIsInProgress: function() {
-    if (!this.get('audioUrl')) { return false; }
+    if (!this.get('hasAudio')) { return false; }
     return this.get('audioTime') <= this.get('audioDuration');
   }.property('values', 'audioTime'),
 
+  audioRole: Ember.computed.oneWay('values.audio_role'),
   audioUrl: Ember.computed.oneWay('values.audio_url'),
   audioIsPlaying: Ember.computed.bool('values.audio_is_playing'),
   audioIsPaused: Ember.computed.bool('values.audio_paused_time'),
@@ -47,7 +50,7 @@ export default Ember.Component.extend({
   }.property('values.audio_title'),
 
   audioUrlDidChange: function() {
-    if (!this.get('audioUrl')) {
+    if (!this.get('hasAudio')) {
       this.set('duration', null);
       this.set('durationForUrl', null);
       return;
@@ -64,7 +67,7 @@ export default Ember.Component.extend({
   }.observes('audioUrl'),
 
   audioHasEnded: function() {
-    if (!this.get('audioUrl')) { return false; }
+    if (!this.get('hasAudio')) { return false; }
     if (!this.get('audioDuration')) { return false; }
     return this.get('audioTime') > this.get('audioDuration');
   }.property('audioTitle', 'audioTime'),
@@ -83,7 +86,7 @@ export default Ember.Component.extend({
   }.property('audioTime'),
 
   audioTime: function() {
-    if (!this.get('audioUrl')) { return 0; }
+    if (!this.get('hasAudio')) { return 0; }
     if (!this.get('audioIsPlaying')) {
       return (this.get('values.audio_paused_time') || 0).toFixed(1);
     }

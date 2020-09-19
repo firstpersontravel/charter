@@ -15,7 +15,7 @@ export function isProduction() {
 }
 
 export function getParticipantIframeUrl(group, participant) {
-  const url = `${window.location.origin}/actor/${group.org.name}/participant/${participant.id}`;
+  const url = `${window.location.origin}/actor/${group.org.name}/${participant.id}`;
   return `${url}?nogps=1&noack=1`;
 }
 

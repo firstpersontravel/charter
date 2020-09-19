@@ -1,16 +1,16 @@
 <nav class="navbar navbar-light bg-faded">
   <a class="navbar-brand" href="/actor/{{orgName}}">
-    {{orgTitle}} Performer Interface
+    {{orgTitle}} Performers
   </a>
 </nav>
 <div class="container-fluid">
   <br/>
   {{#each groups}}
-    <h3>{{experienceTitle}} - {{groupDate}}</h3>
+    <h3>{{experienceTitle}} &bull; {{groupDate}}</h3>
     {{#each groupParticipants}}
       <a
         class='btn btn-block btn-outline-secondary'
-        href='/actor/{{@root/orgName}}/participant/{{id}}'>
+        href='/actor/{{@root/orgName}}/{{groupId}}/{{id}}'>
         {{name}} ({{roleTitles}})
       </a>
     {{else}}

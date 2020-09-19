@@ -97,6 +97,12 @@ export default Ember.Controller.extend({
   }.observes('model.currentPageName'),
 
   updateAudioState: function() {
+    // Make sure audio is for this role.
+    var audioRole = this.get('model.trip.values.audio_role');
+    if (!audioRole || audioRole !== this.get('model.roleName')) {
+      return;
+    }
+
     var audioUrl = this.get('model.trip.values.audio_url');
     var audioIsPlaying = this.get('model.trip.values.audio_is_playing');
     var startedAt = this.get('model.trip.values.audio_started_at');

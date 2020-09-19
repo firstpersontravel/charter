@@ -43,7 +43,7 @@ describe('Authorizer', () => {
           orgId: 1,
           experienceId: 2
         },
-        players: [{ tripId: 3 }]
+        players: [{ tripId: 3, trip: { groupId: 5 } }]
       };
 
       const subject = authz.subjectForReq(req);
@@ -54,7 +54,8 @@ describe('Authorizer', () => {
         orgId: 1,
         experienceId: 2,
         participantIds: [4],
-        tripIds: [3]
+        tripIds: [3],
+        groupIds: [5]
       });
     });
 
@@ -66,7 +67,8 @@ describe('Authorizer', () => {
           title: 'Ted\'s trip',
           id: 1,
           orgId: 2,
-          experienceId: 3
+          experienceId: 3,
+          groupId: 5
         },
         players: [{
           participantId: 4
@@ -81,7 +83,8 @@ describe('Authorizer', () => {
         orgId: 2,
         experienceId: 3,
         participantIds: [4],
-        tripIds: [1]
+        tripIds: [1],
+        groupIds: [5]
       });
     });
   });

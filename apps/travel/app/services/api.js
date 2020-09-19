@@ -8,6 +8,7 @@ export default Ember.Service.extend({
   authToken: null, // should be filled in once obtained
   apiRequestsInProgress: 0,
   timeout: 60000,
+  sendToGroupId: null,
 
   init: function() {
     this._super();
@@ -69,16 +70,20 @@ export default Ember.Service.extend({
   },
 
   postAction: function(tripId, playerId, name, params) {
+    const url = this.get('sendToGroupId') ?
+      `/api/groups/${this.get('sendToGroupId')}/actions` :
+      `/api/trips/${tripId}/actions`;
     return this.sendData(
-      `/api/trips/${tripId}/actions`, 'post',
+      url, 'post',
       { client_id: this._clientId, player_id: playerId, name: name, params: params }
     );
   },
 
   postEvent: function(tripId, playerId, params) {
-    return this.sendData(
-      `/api/trips/${tripId}/events`, 'post',
-      Object.assign({}, {
+    const url = this.get('sendToGroupId') ?
+      `/api/groups/${this.get('sendToGroupId')}/events` :
+      `/api/trips/${tripId}/events`;
+    return this.sendData(url, 'post', Object.assign({}, {
         client_id: this._clientId,
         player_id: Number(playerId),
       }, params)
