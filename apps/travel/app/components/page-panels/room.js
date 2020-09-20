@@ -49,7 +49,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
     if (isTransmitting) {
       return `You will start sharing ${useVideo ? 'video' : 'audio'}.`;
     }
-    return `You will not share audio or video.`;
+    return `Microphone permission will be requested but audio or video will not be shared.`;
   }.property(),
 
   isBrowserSupported: function() {

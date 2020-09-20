@@ -55,13 +55,23 @@ export default Ember.Component.extend(WindowHeightMixin, {
   },
 
   getLocalTracks: function() {
-    if (!this.get('shouldTransmit')) {
-      return Promise.resolve([]);
-    }
-    return Twilio.Video.createLocalTracks({
-      audio: true,
-      video: this.get('useVideo') ? { width: 640 } : false
-    });
+    // if (!this.get('shouldTransmit')) {
+    //   return Promise.resolve([]);
+    // }
+    return Twilio.Video
+      .createLocalTracks({
+        audio: true,
+        video: this.get('useVideo') ? { width: 640 } : false
+      })
+      .then(localTracks => {
+        // Mute local audio track if we're not supposed to be transmitting. This is to work
+        // around an iOS issue where when not transmitting, sound wasn't playing.
+        const audioTrack = localTracks.find(t => t.kind === 'audio');
+        if (audioTrack && !this.get('shouldTransmit')) {
+          audioTrack.disable();
+        }
+        return localTracks
+      })
   },
 
   didInsertElement: function() {
