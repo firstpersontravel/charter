@@ -61,6 +61,13 @@ init()
     // Create server
     const server = http.createServer(app);
 
+    // Ensure all inactive connections are terminated by the ALB, by setting this a few seconds
+    // higher than the ALB idle timeout
+    server.keepAliveTimeout = 65000;
+    // Ensure the headersTimeout is set higher than the keepAliveTimeout due to this nodejs
+    // regression bug: https://github.com/nodejs/node/issues/27363
+    server.headersTimeout = 66000;
+
     // Create pubsub and attach to server
     const bayeux = new faye.NodeAdapter({ mount: '/pubsub' });
     bayeux.attach(server);
