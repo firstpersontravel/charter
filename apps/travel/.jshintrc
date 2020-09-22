@@ -7,7 +7,7 @@
     "$",
     "L",
     "swal",
-    "Raven",
+    "Sentry",
     "moment",
     "Faye",
     "Twilio"

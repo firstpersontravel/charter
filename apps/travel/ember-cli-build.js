@@ -85,8 +85,8 @@ module.exports = function(defaults) {
   app.import('vendor/mapbox.standalone.js');
   app.import('vendor/mapbox.standalone.css');
 
-  // Raven
-  app.import('node_modules/raven-js/dist/raven.js');
+  // Sentry
+  app.import('node_modules/@sentry/browser/build/bundle.min.js');
 
   return new MergeTrees([app.toTree(), cssFiles, fontFiles]);
 };

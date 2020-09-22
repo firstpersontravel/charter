@@ -16,7 +16,7 @@ App = Ember.Application.extend({
 loadInitializers(App, config.modulePrefix);
 
 if (config.sentryDSN) {
-  Raven.config(config.sentryDSN).install();
+  Sentry.init({ dsn: config.sentryDSN });
 }
 
 export default App;
