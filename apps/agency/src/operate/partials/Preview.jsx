@@ -43,7 +43,7 @@ function renderText(trip, player, page, panel) {
 }
 
 function renderImage(trip, player, page, panel) {
-  const url = fullMediaUrl(trip.org, trip.experience, panel.path);
+  const url = fullMediaUrl(trip.org, trip.experience, panel.image);
   return (
     <img
       alt={page.title}
