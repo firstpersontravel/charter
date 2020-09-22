@@ -58,20 +58,24 @@ export default Ember.Component.extend(WindowHeightMixin, {
     // if (!this.get('shouldTransmit')) {
     //   return Promise.resolve([]);
     // }
-    return Twilio.Video
-      .createLocalTracks({
-        audio: true,
-        video: this.get('useVideo') ? { width: 640 } : false
-      })
-      .then(localTracks => {
-        // Mute local audio track if we're not supposed to be transmitting. This is to work
-        // around an iOS issue where when not transmitting, sound wasn't playing.
-        const audioTrack = localTracks.find(t => t.kind === 'audio');
-        if (audioTrack && !this.get('shouldTransmit')) {
-          audioTrack.disable();
-        }
-        return localTracks
-      })
+    try {
+      return Twilio.Video
+        .createLocalTracks({
+          audio: true,
+          video: this.get('useVideo') ? { width: 640 } : false
+        })
+        .then(localTracks => {
+          // Mute local audio track if we're not supposed to be transmitting. This is to work
+          // around an iOS issue where when not transmitting, sound wasn't playing.
+          const audioTrack = localTracks.find(t => t.kind === 'audio');
+          if (audioTrack && !this.get('shouldTransmit')) {
+            audioTrack.disable();
+          }
+          return localTracks
+        });
+    } catch (err) {
+      return Promise.reject(err);
+    }
   },
 
   didInsertElement: function() {
@@ -109,6 +113,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
       .catch(err => {
         console.error(`Error initializing room: ${err.message}`);
         console.error(err.stack);
+        this.set('error', `Error initializing room: ${err.message}`);
+        Sentry.captureException(err);
       });    
   },
 
