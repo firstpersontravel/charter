@@ -17,13 +17,15 @@ export default Ember.Component.extend({
   }.property('shouldTransmit', 'useVideo', 'localVideo'),
 
   didInsertElement: function() {
-    if (this.get('localVideo')) {
-      this.$().append(this.get('localVideo').attach());
+    if (!this.get('localVideo')) {
+      return;
     }
+    this.$().append(this.get('localVideo').attach());
   },
   willClearRender: function() {
-    if (this.get('localVideo')) {
-      this.get('localVideo').detach().forEach(el => el.remove());
-    }    
+    if (!this.get('localVideo')) {
+      return;
+    }
+    this.get('localVideo').detach().forEach(el => el.remove());
   }
 });

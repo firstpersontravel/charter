@@ -87,6 +87,7 @@ module.exports = function(defaults) {
 
   // Sentry
   app.import('node_modules/@sentry/browser/build/bundle.min.js');
+  app.import('node_modules/@sentry/integrations/build/ember.min.js');
 
   return new MergeTrees([app.toTree(), cssFiles, fontFiles]);
 };

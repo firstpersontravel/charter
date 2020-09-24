@@ -30,14 +30,19 @@ export default Ember.Component.extend({
     participant.on('trackUnsubscribed', this._onTrackUnsubscribed);
   },
 
-  // willClearRender: function() { 
-  //   const participant = this.get('participant');
-  //   participant.off('trackSubscribed', this._onTrackSubscribed);
-  //   participant.off('trackUnsubscribed', this._onTrackUnsubscribed);
-  // },
+  willDestroyElement: function() { 
+    const participant = this.get('participant');
+    participant.off('trackSubscribed', this._onTrackSubscribed);
+    participant.off('trackUnsubscribed', this._onTrackUnsubscribed);
+  },
 
   onTrackSubscribed: function(track) {
-    this.$().append(track.attach());
+    const $el = this.$();
+    if (!$el) {
+      console.error('Called onTrackSubscribed on unmounted component');
+      return;
+    }
+    $el.append(track.attach());
     if (track.kind === 'video') {
       this.set('hasVideo', true);
     }

@@ -16,7 +16,10 @@ App = Ember.Application.extend({
 loadInitializers(App, config.modulePrefix);
 
 if (config.sentryDSN) {
-  Sentry.init({ dsn: config.sentryDSN });
+  Sentry.init({
+    dsn: config.sentryDSN,
+    integrations: [new Sentry.Integrations.Ember()]
+  });
 }
 
 export default App;
