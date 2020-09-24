@@ -21,6 +21,9 @@ export default Ember.Component.extend({
 
   didInsertElement: function() {
     const participant = this.get('participant');
+    if (!participant) {
+      return;
+    }
     participant.tracks.forEach(publication => {
       if (publication.isSubscribed) {
         this.onTrackSubscribed(publication.track);
@@ -32,6 +35,9 @@ export default Ember.Component.extend({
 
   willDestroyElement: function() { 
     const participant = this.get('participant');
+    if (!participant) {
+      return;
+    }
     participant.off('trackSubscribed', this._onTrackSubscribed);
     participant.off('trackUnsubscribed', this._onTrackUnsubscribed);
   },
