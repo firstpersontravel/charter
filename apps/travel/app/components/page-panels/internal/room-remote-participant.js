@@ -38,8 +38,9 @@ export default Ember.Component.extend({
     if (!participant) {
       return;
     }
-    participant.off('trackSubscribed', this._onTrackSubscribed);
-    participant.off('trackUnsubscribed', this._onTrackUnsubscribed);
+    // .off is not valid
+    // participant.off('trackSubscribed', this._onTrackSubscribed);
+    // participant.off('trackUnsubscribed', this._onTrackUnsubscribed);
   },
 
   onTrackSubscribed: function(track) {
