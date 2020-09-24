@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactS3Uploader from 'react-s3-uploader';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 
 import config from '../../../config';
 

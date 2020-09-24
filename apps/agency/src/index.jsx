@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 // import createLogger from 'redux-logger';
 
 import config from './config';

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 
 import { getStage } from './utils';
 

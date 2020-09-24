@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 
 import Examples from '../examples';
 import ExperienceModal from '../partials/ExperienceModal';

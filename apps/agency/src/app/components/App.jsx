@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import PropTypes from 'prop-types';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/react';
 
 const TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000; // Refresh every hour
 
