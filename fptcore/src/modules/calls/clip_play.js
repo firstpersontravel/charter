@@ -39,7 +39,7 @@ module.exports = {
     } else {
       return [{
         operation: 'log',
-        level: 'warning',
+        level: 'warn',
         message: 'No transcript or audio for clip.'
       }];
     }
