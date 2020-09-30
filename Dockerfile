@@ -2,7 +2,9 @@
 ##### Travel builder #####
 ##########################
 FROM node:12-alpine as travel-builder
- 
+
+ARG GIT_HASH
+
 # Git is needed for bower; install travel build tools
 RUN apk add git && npm install -q -g ember-cli@2.16.0 bower
 

@@ -83,7 +83,7 @@ jobs:
         registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
         image_name: charter
         image_tag: ${{ github.sha }}
-        build_extra_args: ''
+        build_extra_args: '--build-arg=GIT_HASH=${{ github.sha }}'
 
   deploy_test:
     name: Deploy to test

@@ -21,7 +21,8 @@ module.exports = function(defaults) {
       enabled: isProduction
     },
     sourcemaps: {
-      enabled: true
+      enabled: true,
+      extensions: ['js']
     }
   });
 

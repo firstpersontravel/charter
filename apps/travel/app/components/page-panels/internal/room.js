@@ -98,24 +98,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
     this.set('isLoading', true);
     const token = this.get('token');
     const roomId = this.get('roomId');
-    return this.getLocalTracks()
-      .then(localTracks => {
-        this.set('localTracks', localTracks);
-        return Twilio.Video.connect(token, {
-          name: roomId,
-          tracks: localTracks
-        });
-      })        
-      .then(
-        room => this.onRoomConnected(room),
-        err => this.onRoomConnectError(err)
-      )
-      .catch(err => {
-        console.error(`Error initializing room: ${err.message}`);
-        console.error(err.stack);
-        this.set('error', `Error initializing room: ${err.message}`);
-        Sentry.captureException(err);
-      });    
+    return this.getLocalTracks().then(
+      localTracks => this.onLocalTracksSuccess(localTracks),
+      err => this.onLocalTracksError(err));
   },
 
   teardownRoom: function() {
@@ -129,6 +114,23 @@ export default Ember.Component.extend(WindowHeightMixin, {
     }
     this._room.disconnect();
     this._room = null;
+  },
+
+  onLocalTracksSuccess(localTracks) {
+    this.set('localTracks', localTracks);
+    return Twilio.Video
+      .connect(token, { name: roomId, tracks: localTracks })
+      .then(
+        room => this.onRoomConnected(room),
+        err => this.onRoomConnectError(err));
+  },
+
+  onLocalTracksError(err) {
+    if (this.isDestroyed) {
+      return;
+    }
+    this.set('error', `Error initializing room: ${err.message}`);
+    this.set('isLoading', false);
   },
 
   onRoomConnected(room) {
@@ -154,7 +156,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
     this.set('isLoading', false);
     // No access to camera.
     if (err.code === err.NOT_FOUND_ERR) {
-      console.log('noRoomConnectError', err);
       this.set('error', `Could not get access to camera: ${err.message}.`);
       return;
     }
