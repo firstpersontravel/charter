@@ -29,10 +29,8 @@ jobs:
     - name: Install dependencies
       run: |
         cd apps/travel
-        npm -q install
         npm -q -g install bower
-        bower -q install
-        ln -s `pwd`/../../fptcore ./node_modules
+        npm -q install
     - name: Build
       run: cd apps/travel && CI=true npm run build
 
