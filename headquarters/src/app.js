@@ -109,7 +109,8 @@ app.use('/endpoints/twilio', twilioRouter);
 const s3Opts = {
   bucket: config.env.HQ_CONTENT_BUCKET,
   ACL: 'public-read',
-  uniquePrefix: false
+  uniquePrefix: false,
+  signatureExpires: 600 // signature is valid for 10 minutes
 };
 if (config.env.HQ_STAGE === 'staging') {
   // special case: staging bucket is in us-east-1 -- other buckets are us-west-2
