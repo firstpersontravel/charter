@@ -108,8 +108,38 @@ function throwRequestError(url, params, response) {
     .then((data) => { responseData = data; })
     .catch(() => { responseData = '<invalid json>'; })
     .then(() => {
+      if (response.status === 401) {
+        throw new RequestError(
+          `Authentication error on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData);
+      }
+      if (response.status === 403) {
+        throw new RequestError(
+          `Forbidden error on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData);
+      }
+      if (response.status === 400) {
+        throw new RequestError(
+          `Bad request error on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData);
+      }
+      if (response.status === 422) {
+        throw new RequestError(
+          `Validation error on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData);
+      }
+      if (response.status === 500) {
+        throw new RequestError(
+          `Internal error on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData);
+      }
+      if (response.status === 502 || response.status === 503) {
+        throw new RequestError(
+          `Gateway error on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData);
+      }
       throw new RequestError(
-        `Failed ${params.method} to ${url}: ${response.status}.`,
+        `Unknown error on ${params.method} to ${url}: ${response.status}.`,
         url, params, response.status, responseData);
     });
 }
