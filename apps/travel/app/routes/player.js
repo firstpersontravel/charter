@@ -91,6 +91,7 @@ export default Ember.Route.extend({
       var trip = this.context.get('trip');
       var participant = this.context.get('participant');
       if (!participant) { return; }
+      if (participant.get('isEmpty')) { return; }
       participant.setProperties({
         locationLatitude: fix.coords.latitude,
         locationLongitude: fix.coords.longitude,

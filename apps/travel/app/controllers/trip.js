@@ -84,6 +84,9 @@ export default Ember.Controller.extend(RealtimeMixin, {
       if (!participant) {
         return;
       }
+      if (participant.get('isEmpty')) {
+        return;
+      }
       // console.log('participant state updated');
       participant.setProperties({
         locationLatitude: content.location_latitude,
