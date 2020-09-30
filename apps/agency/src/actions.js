@@ -72,19 +72,6 @@ function processError(err) {
   });
 }
 
-function getRequestErrorInfo(err) {
-  return {
-    data: err.data || null,
-    status: err.status || null,
-    message: err.message || null
-  };
-}
-
-function handleRequestError(err, dispatch) {
-  dispatch(setGlobalError(getRequestErrorInfo(err)));
-  processError(err);
-}
-
 class RequestError extends Error {
   constructor(message, url, params, status, response) {
     super(message);
@@ -95,6 +82,23 @@ class RequestError extends Error {
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, RequestError);
     }
+  }
+}
+
+function getRequestErrorInfo(err) {
+  return {
+    data: err.data || null,
+    status: err.status || null,
+    message: err.message || null
+  };
+}
+
+function handleRequestError(err, dispatch) {
+  const errInfo = getRequestErrorInfo(err);
+  dispatch(setGlobalError(errInfo));
+  // Don't process network errors
+  if (errInfo.status !== -1) {
+    processError(err);
   }
 }
 
@@ -129,6 +133,11 @@ function addAuthHeader(params) {
 
 function fetchJsonAssuringSuccess(url, params) {
   return fetch(url, addAuthHeader(params))
+    .catch((err) => {
+      // Capture network errors and rethrow them with a -1 status code so
+      // we know not to send them to sentry.
+      throw new RequestError(err.message, url, params, -1, err.message);
+    })
     .then((response) => {
       if (response.status >= 400) {
         return throwRequestError(url, params, response);
