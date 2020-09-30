@@ -118,10 +118,10 @@ async function getTripRoute(req, res) {
         }
       }),
       models.Profile.findAll({
-        where: { isArchived: false, experienceId: trip.experienceId }
+        where: { experienceId: trip.experienceId }
       }),
       models.Participant.findAll({
-        where: { isArchived: false, experienceId: trip.experienceId }
+        where: { experienceId: trip.experienceId }
       })
     ])
   );
@@ -154,7 +154,7 @@ async function getTripRoute(req, res) {
   data.relationships.player = players
     .map(player => ({ id: player.id, type: 'player' }));
   
-  // Sneak in a day-long auth token
+  // Sneak in a day long auth token
   data.attributes['auth-token'] = createTripToken(trip, 86400);
 
   // Create a video token by IP in case multiple users or devices share a role.

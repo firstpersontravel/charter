@@ -11,7 +11,7 @@ export default Ember.Component.extend({
 
   // Cache panels by ID so as not to re-render views each time they're re-fetched.
   cachedPanels: function() {
-    return this.get('panels').map(panel => {
+    return (this.get('panels') || []).map(panel => {
       if (!this._cachedPanelsById[panel.id]) {
         this._cachedPanelsById[panel.id] = panel;
       }

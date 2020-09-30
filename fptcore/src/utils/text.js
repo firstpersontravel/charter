@@ -27,6 +27,9 @@ class TextUtil {
   }
 
   static titleForKey(key) {
+    if (!key) {
+      return '';
+    }
     return key[0].toUpperCase() +
       key.toLowerCase().replace(/[_-]/g, ' ').substring(1);
   }

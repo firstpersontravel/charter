@@ -50,6 +50,14 @@ export default Ember.Route.extend({
         this.controllerFor('trip').set('lastRefreshed', moment.utc());
         this.controllerFor('player').updateAudioState();
         this.get('api').set('authToken', data.data.attributes.authToken);
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          // Our token expired!
+          window.location.reload();
+          return;
+        }
+        throw err;
       });
   },
 
