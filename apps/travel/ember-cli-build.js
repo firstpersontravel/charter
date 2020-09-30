@@ -13,6 +13,11 @@ module.exports = function(defaults) {
   var PRODUCTION_ENVS = ['production', 'staging'];
   var isProduction = PRODUCTION_ENVS.indexOf(process.env.EMBER_ENV) >= 0;
 
+  var buildVars = `
+  <script>
+    window.GIT_HASH="${process.env.GIT_HASH || ''}";
+  </script>`;
+
   var app = new EmberApp(defaults, {
     minifyCSS: {
       enabled: isProduction
@@ -23,6 +28,9 @@ module.exports = function(defaults) {
     sourcemaps: {
       enabled: true,
       extensions: ['js']
+    },
+    inlineContent: {
+      buildVars: { content: buildVars }
     }
   });
 

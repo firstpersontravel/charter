@@ -18,6 +18,7 @@ loadInitializers(App, config.modulePrefix);
 if (config.sentryDSN) {
   Sentry.init({
     dsn: config.sentryDSN,
+    release: window.GIT_HASH || undefined,
     integrations: [new Sentry.Integrations.Ember()]
   });
 }
