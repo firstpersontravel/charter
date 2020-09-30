@@ -38,7 +38,7 @@ class Kernel {
   /**
    * Apply an action, including any triggers started by a resulting events.
    */
-  static resultForImmediateAction(action, actionContext) {
+  static resultForImmediateAction(action, actionContext, triggerHistory=null) {
     // Apply simple action
     const actionOps = this.opsForImmediateAction(action, actionContext);
     let latestResult = KernelResult.resultForOps(actionOps, actionContext);
@@ -47,7 +47,7 @@ class Kernel {
     const evts = latestResult.resultOps.filter(op => op.operation === 'event');
     for (const eventOp of evts) {
       const event = eventOp.event;
-      const eventResult = this.resultForEvent(event, latestResult.nextContext);
+      const eventResult = this.resultForEvent(event, latestResult.nextContext, triggerHistory);
       latestResult = KernelResult.concatResult(latestResult, eventResult);
     }
     return latestResult;
@@ -56,7 +56,7 @@ class Kernel {
   /**
    * Trigger any triggers applied by an event.
    */
-  static resultForEvent(event, actionContext) {
+  static resultForEvent(event, actionContext, triggerHistory=null) {
     // Get blank result.
     let latestResult = KernelResult.initialResult(actionContext);
     
@@ -70,8 +70,13 @@ class Kernel {
 
     // Apply each trigger with original context
     for (const trigger of nextTriggers) {
+      // Only call each trigger at most once
+      if (triggerHistory && triggerHistory.includes(trigger.name)) {
+        continue;
+      }
+      // If not already called, then call and get results
       const triggerResult = this.resultForTrigger(trigger, event,
-        latestResult.nextContext, actionContext);
+        latestResult.nextContext, actionContext, triggerHistory);
       latestResult = KernelResult.concatResult(latestResult, triggerResult);
     }
     // Return concatenated results.
@@ -82,7 +87,7 @@ class Kernel {
    * Apply a trigger, including subsequent actions.
    */
   static resultForTrigger(trigger, event, actionContext,
-    actionContextWhenTriggered) {
+    actionContextWhenTriggered, triggerHistory=null) {
     // History op to update history in db. This is required because some
     // scripts check the history.
     const historyOps = [{
@@ -92,13 +97,12 @@ class Kernel {
     // Create an initial result with this history update, so that subsequent
     // events can register that this was triggered.
     let latestResult = KernelResult.resultForOps(historyOps, actionContext);
+    const latestTriggerHistory = (triggerHistory || []).concat([trigger.name]);
 
     // Add event to context for consideration for if logic. Figure out which
     // actions should be called, either now or later.
-    const contextWithEvent = this.addEventToContext(event,
-      actionContextWhenTriggered);
-    const nextActions = KernelActions.actionsForTrigger(trigger, 
-      contextWithEvent);
+    const contextWithEvent = this.addEventToContext(event, actionContextWhenTriggered);
+    const nextActions = KernelActions.actionsForTrigger(trigger, contextWithEvent);
 
     // Either call or schedule each action.
     let waitingUntil = actionContext.evaluateAt;
@@ -108,7 +112,7 @@ class Kernel {
       const unpackedAction = { name: name, params: params, event: event };
       // Get results immediately -- to test if this is a wait or not.
       const actionResult = this.resultForImmediateAction(unpackedAction,
-        latestResult.nextContext);
+        latestResult.nextContext, latestTriggerHistory);
 
       // If we have waits, increment the waitingUntil counter.
       const waits = actionResult.resultOps.filter(o => o.operation === 'wait');

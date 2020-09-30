@@ -1,7 +1,3 @@
-data "aws_ecs_task_definition" "charter" {
-  task_definition = aws_ecs_task_definition.charter_bootstrap.family
-}
-
 data "aws_ecs_cluster" "charter" {
   cluster_name = "charter"
 }
@@ -39,12 +35,17 @@ resource "aws_ecs_task_definition" "charter_bootstrap" {
   memory                   = 4096
   container_definitions    = var.container_definitions
   requires_compatibilities = ["FARGATE"]
+
+  lifecycle {
+    ignore_changes = [container_definitions]
+  }
 }
 
 resource "aws_ecs_service" "charter" {
-  name          = "charter-${var.environment_name}"
-  cluster       = data.aws_ecs_cluster.charter.id
-  desired_count = 1
+  name            = "charter-${var.environment_name}"
+  cluster         = data.aws_ecs_cluster.charter.id
+  task_definition = aws_ecs_task_definition.charter_bootstrap.family
+  desired_count   = 1
 
   network_configuration {
     subnets          = data.aws_subnet_ids.charter.ids
@@ -64,6 +65,7 @@ resource "aws_ecs_service" "charter" {
     container_port   = 5001
   }
 
-  # Track the latest ACTIVE revision
-  task_definition = "${aws_ecs_task_definition.charter_bootstrap.family}:${max("${aws_ecs_task_definition.charter_bootstrap.revision}", "${data.aws_ecs_task_definition.charter.revision}")}"
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 }
