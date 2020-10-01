@@ -1,5 +1,6 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
+const Sequelize = require('sequelize');
 
 const apiActionsRoutes = require('../routes/api_actions');
 const apiAdminRoutes = require('../routes/api_admin');
@@ -111,6 +112,23 @@ apiRouter.get('/legacy/player/:id/video-token',
 // The error handler must be before any other error middleware
 apiRouter.use(Sentry.Handlers.errorHandler());
 
+function getErrorResponse(err) {
+  // Validation error by default doesn't include field names
+  if (err instanceof Sequelize.ValidationError) {
+    return {
+      type: 'InternalError',
+      message: `Unexpected validation error: ${err.errors
+        .map(item => `${item.instance.constructor.name} ${item.path} ${item.message}`)
+        .join(', ')}`
+    };
+  }
+  // Normal response
+  return Object.assign({
+    type: err.type,
+    message: err.message
+  }, err.data);
+}
+
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars
 apiRouter.use(function(err, req, res, next) {
@@ -118,13 +136,8 @@ apiRouter.use(function(err, req, res, next) {
   if (!err.status || err.status >= 500) {
     config.logger.error({ name: 'error' }, err.stack);
   }
-  const errorStatus = err.status || 500;
-  const errorResponse = Object.assign({
-    type: err.type,
-    message: err.message
-  }, err.data);
-  res.status(errorStatus);
-  res.json({ error: errorResponse });
+  res.status(err.status || 500);
+  res.json({ error: getErrorResponse(err) });
 });
 
 module.exports = apiRouter;
