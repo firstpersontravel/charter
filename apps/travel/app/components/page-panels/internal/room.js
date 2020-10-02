@@ -96,8 +96,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
   setupRoom: function() {
     console.log('Entering room');
     this.set('isLoading', true);
-    const token = this.get('token');
-    const roomId = this.get('roomId');
     return this.getLocalTracks().then(
       localTracks => this.onLocalTracksSuccess(localTracks),
       err => this.onLocalTracksError(err));
@@ -117,6 +115,8 @@ export default Ember.Component.extend(WindowHeightMixin, {
   },
 
   onLocalTracksSuccess(localTracks) {
+    const token = this.get('token');
+    const roomId = this.get('roomId');
     this.set('localTracks', localTracks);
     return Twilio.Video
       .connect(token, { name: roomId, tracks: localTracks })
