@@ -30,6 +30,8 @@ const actorsListRoute = async (req, res) => {
       }, {
         model: models.Group,
         as: 'group'
+        // TODO - uncomment this. currently causes crash in node on tests
+        // where: { isArchived: false }
       }]
     }, {
       model: models.Participant,
@@ -43,6 +45,8 @@ const actorsListRoute = async (req, res) => {
   // Just show all participants for now. How to filter for actors; figure out later.
   const groups = _(players)
     .map('trip.group')
+    // TODO - remove this filter once we can put it in the DB query.
+    .filter(group => !group.isArchived)
     .uniqBy('id')
     .sortBy('date')
     .map(group => {
@@ -64,7 +68,7 @@ const actorsListRoute = async (req, res) => {
         groupDate: moment(group.date).format('MMM DD'),
         groupParticipants: groupParticipants.map(participant => ({
           groupId: group.id,
-          id: participant.id,
+          participantId: participant.id,
           name: participant.name,
           experienceTitle: groupPlayers[0].trip.experience.title,
           roleTitles: _(players)

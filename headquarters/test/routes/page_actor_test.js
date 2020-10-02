@@ -77,7 +77,7 @@ describe('pageActorRoutes', () => {
           groupDate: 'Mar 03',
           groupParticipants: [{
             groupId: 5, 
-            id: 10,
+            participantId: 10,
             name: 'g s',
             experienceTitle: 'Amazing Adventure',
             roleTitles: 'Actor Gabe'  
