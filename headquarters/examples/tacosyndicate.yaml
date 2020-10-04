@@ -1,15 +1,9 @@
 content:
   content_pages: []
   cues:
-    - name: CUE-1-INITIATE-CALL
-      scene: SCENE-1
-      title: Initiate Call
     - name: CUE-2-JESSIE-REMINDER
       scene: SCENE-2
       title: Jessie Reminder
-    - name: CUE-7-INITIATE-CALL
-      scene: SCENE-7
-      title: Initiate Call
     - name: CUE-8-PHIL-FOLLOWUP
       scene: SCENE-8
       title: Phil Followup
@@ -474,34 +468,26 @@ content:
       name: TRIGGER-SCENE-0-TIME-OCCURRED
       scene: SCENE-0
     - actions:
-        - id: 100007
-          name: conditional
-          if:
-            item:
-              op: value_is_true
-              ref: sent_reminder_email
-            op: not
-          actions:
-            - body: >
-                Greetings, Jessie here from Taco Syndicate dispatch.
+        - body: >
+            Greetings, Jessie here from Taco Syndicate dispatch.
 
 
-                Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
-                tour of the Taco Syndicate Lounge, at 34 Page Street, on
-                {{date}}. Make sure to get there on time!
+            Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
+            tour of the Taco Syndicate Lounge, at 34 Page Street, on
+            {{date}}. Make sure to get there on time!
 
 
-                If you need to reschedule or cancel, please let me know with at
-                least a day's notice if possible.
-              from: Jessie
-              name: send_email
-              subject: 'Your Taco Syndicate tour on {{date}}.'
-              to: Inductee
-              id: 57
-            - name: set_value
-              new_value_ref: 'true'
-              value_ref: sent_reminder_email
-              id: 58
+            If you need to reschedule or cancel, please let me know with at
+            least a day's notice if possible.
+          from: Jessie
+          name: send_email
+          subject: 'Your Taco Syndicate tour on {{date}}.'
+          to: Inductee
+          id: 57
+        - name: set_value
+          new_value_ref: 'true'
+          value_ref: sent_reminder_email
+          id: 58
       event:
         type: button_pressed
         button: 25
@@ -518,15 +504,6 @@ content:
       name: TRIGGER-SCENE-0-TIME-OCCURRED-2
       scene: SCENE-0
     - actions:
-        - name: send_to_page
-          page_name: PAGE-1-JESSIE
-          role_name: Jessie
-          id: 60
-      event:
-        type: scene_started
-      name: TRIGGER-SCENE-1-SCENE-STARTED
-      scene: SCENE-1
-    - actions:
         - name: set_value
           new_value_ref: 'true'
           value_ref: started_call_1
@@ -535,46 +512,6 @@ content:
         type: button_pressed
         button: 30
       name: TRIGGER-SCENE-1-CUE-1-START-CALL
-      scene: SCENE-1
-    - actions:
-        - as_role_name: Inductee
-          name: initiate_call
-          to_role_name: Jessie
-          id: 62
-      event:
-        cue: CUE-1-INITIATE-CALL
-        type: cue_signaled
-      name: TRIGGER-SCENE-1-CUE-1-INITIATE-CALL
-      scene: SCENE-1
-    - actions:
-        - name: add_to_call
-          role_name: Inductee
-          id: 63
-      event:
-        from: Inductee
-        to: Jessie
-        type: call_answered
-      name: TRIGGER-SCENE-1-CALL-ANSWERED
-      scene: SCENE-1
-    - actions:
-        - name: add_to_call
-          role_name: Inductee
-          id: 64
-      event:
-        from: Jessie
-        to: Inductee
-        type: call_received
-      name: TRIGGER-SCENE-1-CALL-RECEIVED
-      scene: SCENE-1
-    - actions:
-        - name: add_to_call
-          role_name: Jessie
-          id: 65
-      event:
-        from: Inductee
-        to: Jessie
-        type: call_received
-      name: TRIGGER-SCENE-1-CALL-RECEIVED-2
       scene: SCENE-1
     - actions:
         - name: start_scene
@@ -586,20 +523,6 @@ content:
       name: TRIGGER-SCENE-1-CUE-1-NEXT-SCENE
       scene: SCENE-1
     - actions:
-        - name: send_to_page
-          page_name: PAGE-2-JESSIE
-          role_name: Jessie
-          id: 67
-        - duration: 3s
-          name: wait
-          id: 68
-        - name: send_to_page
-          page_name: PAGE-2-TO-COFFEE
-          role_name: Inductee
-          id: 69
-        - duration: 3s
-          name: wait
-          id: 70
         - content: >-
             OK you’re all set to head out - turn right leaving Big Rock from the
             front, and right onto Gough, and head north 2 blocks to Oak St.
@@ -709,9 +632,6 @@ content:
       name: TRIGGER-SCENE-2-MESSAGE-INDUCTEE-TO-JESSIE
       scene: SCENE-2
     - actions:
-        - duration: 3s
-          name: wait
-          id: 86
         - name: send_to_page
           page_name: PAGE-3-TO-RT
           role_name: Inductee
@@ -1042,46 +962,6 @@ content:
       name: TRIGGER-SCENE-7-CUE-7-START-CALL
       scene: SCENE-7
     - actions:
-        - as_role_name: Inductee
-          name: initiate_call
-          to_role_name: Jessie
-          id: 131
-      event:
-        cue: CUE-7-INITIATE-CALL
-        type: cue_signaled
-      name: TRIGGER-SCENE-7-CUE-7-INITIATE-CALL
-      scene: SCENE-7
-    - actions:
-        - name: add_to_call
-          role_name: Jessie
-          id: 132
-      event:
-        from: Jessie
-        to: Inductee
-        type: call_answered
-      name: TRIGGER-SCENE-7-CALL-ANSWERED
-      scene: SCENE-7
-    - actions:
-        - name: add_to_call
-          role_name: Inductee
-          id: 133
-      event:
-        from: Jessie
-        to: Inductee
-        type: call_received
-      name: TRIGGER-SCENE-7-CALL-RECEIVED
-      scene: SCENE-7
-    - actions:
-        - name: add_to_call
-          role_name: Jessie
-          id: 134
-      event:
-        from: Inductee
-        to: Jessie
-        type: call_received
-      name: TRIGGER-SCENE-7-CALL-RECEIVED-2
-      scene: SCENE-7
-    - actions:
         - name: start_scene
           scene_name: SCENE-8
           id: 135
@@ -1166,28 +1046,20 @@ content:
       name: TRIGGER-SCENE-8-CUE-8-PHIL-FOLLOWUP
       scene: SCENE-8
     - actions:
-        - id: 100017
-          name: conditional
-          if:
-            item:
-              op: value_is_true
-              ref: sent_reminder_text
-            op: not
-          actions:
-            - content: >-
-                Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
-                tour of the Taco Syndicate Lounge, at 34 Page Street. I'll give
-                you a call at that time -- you should be at the lounge. Let me
-                know if you're still going to make it, or if you need any help
-                getting there.
-              from_role_name: Jessie
-              name: send_text
-              to_role_name: Inductee
-              id: 144
-            - name: set_value
-              new_value_ref: 'true'
-              value_ref: sent_reminder_text
-              id: 145
+        - content: >-
+            Remember, you're scheduled for a {{schedule.TIME-DEPARTURE}}
+            tour of the Taco Syndicate Lounge, at 34 Page Street. I'll give
+            you a call at that time -- you should be at the lounge. Let me
+            know if you're still going to make it, or if you need any help
+            getting there.
+          from_role_name: Jessie
+          name: send_text
+          to_role_name: Inductee
+          id: 144
+        - name: set_value
+          new_value_ref: 'true'
+          value_ref: sent_reminder_text
+          id: 145
       event:
         type: button_pressed
         button: 24
