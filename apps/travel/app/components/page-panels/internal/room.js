@@ -96,9 +96,9 @@ export default Ember.Component.extend(WindowHeightMixin, {
   setupRoom: function() {
     console.log('Entering room');
     this.set('isLoading', true);
-    return this.getLocalTracks().then(
-      localTracks => this.onLocalTracksSuccess(localTracks),
-      err => this.onLocalTracksError(err));
+    return this.getLocalTracks()
+      .then(localTracks => this.onLocalTracksSuccess(localTracks))
+      .catch(err => this.onLocalTracksError(err));
   },
 
   teardownRoom: function() {
@@ -117,12 +117,16 @@ export default Ember.Component.extend(WindowHeightMixin, {
   onLocalTracksSuccess(localTracks) {
     const token = this.get('token');
     const roomId = this.get('roomId');
+    const connectionParams = {
+      name: roomId,
+      tracks: localTracks,
+      _useTwilioConnection: true
+    };
     this.set('localTracks', localTracks);
     return Twilio.Video
-      .connect(token, { name: roomId, tracks: localTracks })
-      .then(
-        room => this.onRoomConnected(room),
-        err => this.onRoomConnectError(err));
+      .connect(token, connectionParams)
+      .then(room => this.onRoomConnected(room))
+      .catch(err => this.onRoomConnectError(err));
   },
 
   onLocalTracksError(err) {
@@ -152,7 +156,6 @@ export default Ember.Component.extend(WindowHeightMixin, {
     if (this.isDestroyed) {
       return;
     }
-    console.log('onRoomConnectError');
     this.set('isLoading', false);
     // No access to camera.
     if (err.code === err.NOT_FOUND_ERR) {
@@ -182,9 +185,10 @@ export default Ember.Component.extend(WindowHeightMixin, {
   },
 
   onRoomDisconnected: function(room) {
+    if (this.isDestroyed) {
+      return;
+    }
     console.log('Room disconnected.');
-    room.participants.forEach(p => {
-      this.handleParticipantDisconnected && this.handleParticipantDisconnected(p);
-    });
+    room.participants.forEach(p => this.onParticipantDisconnected(p));
   }
 });

@@ -169,7 +169,7 @@ function fetchJsonAssuringSuccess(url, params) {
       throw new RequestError(err.message, url, params, -1, err.message);
     })
     .then((response) => {
-      if (response.status >= 400) {
+      if (!response.ok) {
         return throwRequestError(url, params, response);
       }
       return response.json();
@@ -326,7 +326,7 @@ export function makeAuthRequest(url, params, name) {
             });
         }
         // Other network error
-        if (!response.status || response.status !== 200) {
+        if (!response.ok) {
           dispatch(saveRequest(reqName, 'rejected', 'Network error'));
           return null;
         }
@@ -338,9 +338,7 @@ export function makeAuthRequest(url, params, name) {
           });
       })
       .catch((err) => {
-        console.error('Unknown error', err);
-        dispatch(saveRequest(reqName, 'rejected', 'Unknown error'));
-        handleRequestError(err, dispatch);
+        dispatch(saveRequest(reqName, 'rejected', `Network error: ${err.message}`));
       });
   };
 }
