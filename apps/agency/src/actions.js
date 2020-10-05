@@ -3,6 +3,10 @@ import * as Sentry from '@sentry/react';
 
 import { getStage } from './utils';
 
+function getCollectionPath(collectionName) {
+  return _.snakeCase(collectionName);
+}
+
 function reset() {
   return { type: 'reset' };
 }
@@ -222,7 +226,7 @@ function createQueryString(query) {
 export function listCollection(collectionName, query, opts) {
   return function (dispatch) {
     const queryString = createQueryString(query);
-    const url = `/api/${collectionName}${queryString}`;
+    const url = `/api/${getCollectionPath(collectionName)}${queryString}`;
     const params = { method: 'GET' };
     return request(collectionName, null, 'list', url, params, dispatch)
       .then((response) => {
@@ -404,7 +408,7 @@ export function retrieveInstance(collectionName, instanceId) {
   }
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
-    const url = `/api/${collectionName}/${instanceId}`;
+    const url = `/api/${getCollectionPath(collectionName)}/${instanceId}`;
     const params = { method: 'GET' };
     return request(collectionName, instanceId, 'get', url, params, dispatch)
       .then((response) => {
@@ -417,7 +421,7 @@ export function retrieveInstance(collectionName, instanceId) {
 export function createInstance(collectionName, fields) {
   const modelName = modelNameForCollectionName(collectionName);
   return function (dispatch) {
-    const url = `/api/${collectionName}`;
+    const url = `/api/${getCollectionPath(collectionName)}`;
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -441,7 +445,7 @@ export function updateInstance(collectionName, instanceId, fields) {
     // First update instance in-place for fast responsiveness.
     dispatch(updateInstanceFields(collectionName, instanceId, fields));
     // Then dispatch the update request.
-    const url = `/api/${collectionName}/${instanceId}`;
+    const url = `/api/${getCollectionPath(collectionName)}/${instanceId}`;
     const params = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -460,7 +464,7 @@ export function bulkUpdate(collectionName, query, fields) {
   return function (dispatch) {
     // Then dispatch the update request.
     const queryString = createQueryString(query);
-    const url = `/api/${collectionName}${queryString}`;
+    const url = `/api/${getCollectionPath(collectionName)}${queryString}`;
     const params = {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -497,6 +501,12 @@ export function refreshLiveData(orgId, experienceId, tripIds) {
       appliedAt: 'null'
     }, { clear: true }));
     dispatch(listCollection('messages', {
+      orgId: orgId,
+      tripId: tripIds,
+      sort: '-id',
+      count: 100
+    }));
+    dispatch(listCollection('logEntries', {
       orgId: orgId,
       tripId: tripIds,
       sort: '-id',

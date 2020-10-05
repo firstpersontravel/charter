@@ -188,6 +188,17 @@ export function lookupMessages(state, ownProps, limit = null, filters = null) {
   });
 }
 
+export function lookupLogEntries(state, ownProps) {
+  const groupId = Number(ownProps.match.params.groupId);
+  const tripIds = state.datastore.trips.filter(t => t.groupId === groupId).map(t => t.id);
+  return instancesFromDatastore(state, {
+    col: 'logEntries',
+    filter: { self: logEntry => tripIds.includes(logEntry.tripId) },
+    sort: msg => -msg.id,
+    limit: 10
+  });
+}
+
 export function lookupDirections(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'assets',

@@ -61,16 +61,20 @@ function mergeFields(record, fields) {
   });
 }
 
+function keyForModelName(modelName) {
+  return _.camelCase(modelName);
+}
+
 function respondWithRecord(res, model, record, opts, status = 200) {
   const item = serializeRecord(model, record, opts);
-  const data = { [model.name.toLowerCase()]: item };
+  const data = { [keyForModelName(model.name)]: item };
   res.status(status);
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify({ data: data }, null, 2));
 }
 
 function respondWithRecords(res, model, records, opts) {
-  const modelNamePlural = inflection.pluralize(model.name.toLowerCase());
+  const modelNamePlural = inflection.pluralize(keyForModelName(model.name));
   const items = records.map(record => serializeRecord(model, record, opts));
   const data = { [modelNamePlural]: items };
   res.set('Content-Type', 'application/json');

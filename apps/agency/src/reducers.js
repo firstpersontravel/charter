@@ -7,19 +7,20 @@ export const initialState = {
   requestErrors: {},
   revisionHistory: {},
   datastore: {
-    auth: [],
-    orgs: [],
+    actions: [],
     assets: [],
+    auth: [],
     experiences: [],
-    scripts: [],
     groups: [],
-    profiles: [],
-    trips: [],
+    logEntries: [],
+    messages: [],
+    orgs: [],
     participants: [],
     players: [],
-    messages: [],
+    profiles: [],
     relays: [],
-    actions: []
+    scripts: [],
+    trips: []
   }
 };
 

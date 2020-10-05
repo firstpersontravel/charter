@@ -61,7 +61,7 @@ apiRouter.use('/trips', createModelRouter(models.Trip, expRecordOpts));
 const tripRecordOpts = { requireFilters: ['orgId', 'tripId'] };
 apiRouter.use('/actions', createModelRouter(models.Action, tripRecordOpts));
 apiRouter.use('/messages', createModelRouter(models.Message, tripRecordOpts));
-apiRouter.use('/log-entries', createModelRouter(models.LogEntry, tripRecordOpts));
+apiRouter.use('/log_entries', createModelRouter(models.LogEntry, tripRecordOpts));
 
 const playerTripOrParticipantFilter = (whereQuery) => {
   if (!whereQuery.tripId && !whereQuery.participantId) {
