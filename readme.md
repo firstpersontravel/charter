@@ -174,10 +174,10 @@ docker-compose exec mysql mysql galaxy -ugalaxy -pgalaxypassword
 
 ## Todo later:
 
+- https://awslabs.github.io/diagram-maker/
 - https://expo.io/
 - https://github.com/luizperes/simdjson_nodejs
 - https://wit.ai/docs/quickstart
 - https://www.cypress.io/
-- https://github.com/team-video/tragopan
 - https://gojs.net/latest/index.html
 - https://github.com/projectstorm/react-diagrams

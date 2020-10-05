@@ -3,6 +3,7 @@ const Sentry = require('@sentry/node');
 
 const config = require('../config');
 const models = require('../models');
+const LogEntryController = require('./log_entry');
 
 const logger = config.logger.child({ name: 'controllers.relay' });
 
@@ -171,12 +172,22 @@ class RelayController {
           err.code === 21610) {  // Unsubscribed
         return;
       }
+      // Region geo permissions not activated to send SMS messages
+      if (err.code === 21408) {
+        await LogEntryController
+          .log(trip, 'warn', `Could not send SMS to ${toPhoneNumber}; that region is not enabled.`);
+        return;
+      }
       // Unreachable -- maybe trying to message a US number from an international number
       if (err.code === 21612) {
+        await LogEntryController
+          .log(trip, 'warn', `Could not send SMS to ${toPhoneNumber}; that number is unreachable.`);
         logger.warn(opts, err.message);
         return;
       }
       // Capture exception and continue
+      await LogEntryController
+        .log(trip, 'error', `Could not send SMS to ${toPhoneNumber}: ${err.message}`);
       Sentry.captureException(err);
     }
   }

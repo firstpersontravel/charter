@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
@@ -149,7 +149,7 @@ describe('RelayController', () => {
 
   describe('#sendMessage', () => {
     const whitelistedNumber = '+19144844223';
-    const stubTrip = { id: 1 };
+    const stubTrip = { id: 1, orgId: 1 };
     const stubPlayer = { participant: { phoneNumber: whitelistedNumber } };
     const stubRelay = {
       isActive: true,
@@ -218,6 +218,64 @@ describe('RelayController', () => {
 
       // Test player was fetched with right args
       sinon.assert.notCalled(models.Player.findOne);
+    });
+
+    it('logs a warning on twilio permission error', async () => {
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
+      sandbox.stub(models.LogEntry, 'create').resolves();
+
+      config.getTwilioClient().messages.create = sandbox.stub().rejects({
+        message: 'geo permissions not enabled',
+        code: 21408
+      });
+
+      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+
+      // Test twilio message attempted to be created
+      sinon.assert.calledOnce(config.getTwilioClient().messages.create);
+      sinon.assert.calledWith(config.getTwilioClient().messages.create, {
+        to: stubPlayer.participant.phoneNumber,
+        from: stubRelay.relayPhoneNumber,
+        body: 'msg'
+      });
+
+      // Test log entry was created
+      sinon.assert.calledWith(models.LogEntry.create, {
+        createdAt: mockNow,
+        level: 20,
+        message: 'Could not send SMS to +19144844223; that region is not enabled.',
+        orgId: 1,
+        tripId: 1
+      });
+    });
+
+    it('logs an error on unexpected twilio error', async () => {
+      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
+      sandbox.stub(models.LogEntry, 'create').resolves();
+
+      config.getTwilioClient().messages.create = sandbox.stub().rejects({
+        message: 'unknown error',
+        code: 123456
+      });
+
+      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+
+      // Test twilio message attempted to be created
+      sinon.assert.calledOnce(config.getTwilioClient().messages.create);
+      sinon.assert.calledWith(config.getTwilioClient().messages.create, {
+        to: stubPlayer.participant.phoneNumber,
+        from: stubRelay.relayPhoneNumber,
+        body: 'msg'
+      });
+
+      // Test log entry was created
+      sinon.assert.calledWith(models.LogEntry.create, {
+        createdAt: mockNow,
+        level: 30,
+        message: 'Could not send SMS to +19144844223: unknown error',
+        orgId: 1,
+        tripId: 1
+      });
     });
   });
 });
