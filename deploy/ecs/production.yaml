@@ -1,7 +1,7 @@
 role: arn:aws:iam::875382849197:role/charter-production-task
 resources:
   cpu: '4096'
-  memory: '4096'
+  memory: '8192'
 environment:
   FRONTEND_ANALYTICS_ENABLED: 'true'
   FRONTEND_CONTENT_BUCKET: fpt-agency-content
