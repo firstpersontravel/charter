@@ -6,7 +6,6 @@ const path = require('path');
 const pino = require('pino');
 const pinoPretty = require('pino-pretty');
 const faye = require('faye');
-const Sentry = require('@sentry/node');
 const Sequelize = require('sequelize');
 const twilio = require('twilio');
 
@@ -38,13 +37,6 @@ for (const k in process.env) {
     env[k] = process.env[k];
   }
 }
-
-// Configure raven
-Sentry.init({
-  dsn: env.HQ_SENTRY_DSN,
-  environment: env.HQ_SENTRY_ENVIRONMENT,
-  release: env.GIT_HASH
-});
 
 // Port to serve on
 const serverPort = process.env.HQ_SERVER_PORT || 8000;

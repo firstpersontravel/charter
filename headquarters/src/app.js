@@ -8,6 +8,7 @@ const expressHandlebars  = require('express-handlebars');
 const path = require('path');
 const Sentry = require('@sentry/node');
 const s3Router = require('react-s3-uploader/s3router');
+const Tracing = require('@sentry/tracing');
 
 const config = require('./config');
 
@@ -22,10 +23,27 @@ const {
   shortcutRouter
 } = require('./routers/page');
 
-// Initialize server
+// Create app
 const app = express();
+
+// Configure Sentry
+Sentry.init({
+  dsn: config.env.HQ_SENTRY_DSN,
+  environment: config.env.HQ_SENTRY_ENVIRONMENT,
+  release: config.env.GIT_HASH,
+  integrations: [
+    new Sentry.Integrations.Http({ tracing: true }),
+    new Tracing.Integrations.Express({ app }),
+  ],
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0
+});
+
+// Initialize server
 app.enable('trust proxy');
 app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
