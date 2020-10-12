@@ -32,7 +32,7 @@ function traceMiddleware() {
     // TODO: At this point `req.route.path` (which we use in `extractTransaction`) is not available
     // but `req.path` or `req.url` should do the job as well. We could unify this here.
     const reqMethod = (req.method || '').toUpperCase();
-    const reqUrl = req.url && stripUrlQueryAndFragment(req.url);
+    const reqUrl = req.originalUrl && stripUrlQueryAndFragment(req.originalUrl);
     const reqPattern = reqUrl.replace(/\d+/g, '#');
 
     const transaction = startTransaction({
