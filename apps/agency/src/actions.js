@@ -2,6 +2,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import * as Sentry from '@sentry/react';
 
+import config from './config';
 import { getStage } from './utils';
 
 function reset() {
@@ -190,11 +191,12 @@ function request(collectionName, instanceId, operationName, url, params,
         return data;
       },
       (err) => {
-        console.error(`Error with ${params.method} to ${url}.`);
+        // Log errors -- this includes network errors liked failed to fetch.
+        console.error(`Error with ${params.method} to ${url}: ${err.message}`);
         if (err.response) {
-          console.error(JSON.stringify(err.response, null, 2));
+          console.error(`Response: ${JSON.stringify(err.response, null, 2)}`);
         } else if (err.stack) {
-          console.error(err.stack);
+          console.error(`Stack: ${err.stack}`);
         }
         dispatch(saveRequest(requestName, 'rejected', getRequestErrorInfo(err)));
         // Rethrow to be caught by handleRequestError after
@@ -610,6 +612,23 @@ export function createTrip(fields, nextItems) {
 
 export function saveRevision(recordName, oldContent, newContent) {
   return updateRevisionHistory(recordName, oldContent, newContent);
+}
+
+export function checkVersion() {
+  return function (dispatch) {
+    request('system', null, 'version', '/version', {}, dispatch)
+      .then((response) => {
+        if (response.version !== config.gitHash) {
+          console.log('New version available; reloading.');
+          dispatch(setGlobalError({
+            data: null,
+            status: -2,
+            message: 'A new version is available'
+          }));
+        }
+      })
+      .catch(err => handleRequestError(err, dispatch));
+  };
 }
 
 export function crash(err, errInfo) {

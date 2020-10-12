@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import App from '../components/App';
 import { latestAuthData } from '../../datastore-utils';
-import { crash, fetchAuthInfo } from '../../actions';
+import { checkVersion, crash, fetchAuthInfo } from '../../actions';
 
 const mapStateToProps = state => ({
   authInfo: latestAuthData(state),
@@ -10,6 +10,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  checkVersion: (...args) => dispatch(checkVersion(...args)),
   crash: (...args) => dispatch(crash(...args)),
   fetchAuthInfo: (...args) => dispatch(fetchAuthInfo(...args))
 });

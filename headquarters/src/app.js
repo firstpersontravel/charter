@@ -61,6 +61,11 @@ app.get('/health', (req, res) => {
   res.send('ok');
 });
 
+// Health check - before HTTPS redirect
+app.get('/version', (req, res) => {
+  res.json({ version: config.env.GIT_HASH || '' });
+});
+
 // Add a handler to inspect the req.secure flag (see 
 // http://expressjs.com/api#req.secure). This allows us 
 // to know whether the request was via http or https.
@@ -178,7 +183,7 @@ app.use('', (req, res) => {
       FRONTEND_SENTRY_DSN: config.env.FRONTEND_SENTRY_DSN,
       FRONTEND_SENTRY_ENVIRONMENT: config.env.FRONTEND_SENTRY_ENVIRONMENT,
       FRONTEND_SERVER_URL: config.env.FRONTEND_SERVER_URL,
-      GIT_HASH: config.env.GIT_HASH
+      GIT_HASH: config.env.GIT_HASH || ''
     })
   });
 });

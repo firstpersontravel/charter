@@ -10,12 +10,13 @@ export default class App extends Component {
     super(props);
     this.state = { hasError: false };
     this.refreshToken = this.refreshToken.bind(this);
+    this.handleFocus = this.handleFocus.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchAuthInfo();
-    this.refreshTokenInterval = setInterval(this.refreshToken,
-      TOKEN_REFRESH_INTERVAL);
+    this.refreshTokenInterval = setInterval(this.refreshToken, TOKEN_REFRESH_INTERVAL);
+    window.addEventListener('focus', this.handleFocus);
   }
 
   componentDidCatch(error, errorInfo) {
@@ -36,6 +37,11 @@ export default class App extends Component {
     if (this.props.authInfo) {
       this.props.fetchAuthInfo();
     }
+  }
+
+  handleFocus() {
+    console.log('checking version');
+    this.props.checkVersion();
   }
 
   renderErrorModal(icon, header, body, feedback) {
@@ -72,6 +78,14 @@ export default class App extends Component {
       'We\'ve been notified and we\'ll fix this right away. ' +
       'In the meantime, you can reload the page and try what you were doing again.',
       true);
+  }
+
+  renderUpgradeAvailable() {
+    return this.renderErrorModal(
+      'shipping-fast',
+      'An upgrade is available!',
+      'Please reload the page to get the newest version of Charter.',
+      false);
   }
 
   renderNetworkError() {
@@ -114,6 +128,9 @@ export default class App extends Component {
       return this.renderUnknownError();
     }
     if (err.status) {
+      if (err.status === -2) {
+        return this.renderUpgradeAvailable();
+      }
       if (err.status === -1) {
         return this.renderNetworkError();
       }
@@ -143,7 +160,8 @@ App.propTypes = {
   children: PropTypes.node.isRequired,
   globalError: PropTypes.object,
   crash: PropTypes.func.isRequired,
-  fetchAuthInfo: PropTypes.func.isRequired
+  fetchAuthInfo: PropTypes.func.isRequired,
+  checkVersion: PropTypes.func.isRequired
 };
 
 App.defaultProps = {
