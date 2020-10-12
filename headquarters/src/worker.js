@@ -4,11 +4,19 @@ const moment = require('moment');
 const Sentry = require('@sentry/node');
 const Sequelize = require('sequelize');
 
-// Import for configuration
-require('./config');
-
+const config = require('./config');
 const RunnerWorker = require('./workers/runner');
 const SchedulerWorker = require('./workers/scheduler');
+
+// Configure Sentry
+Sentry.init({
+  dsn: config.env.HQ_SENTRY_DSN,
+  environment: config.env.HQ_SENTRY_ENVIRONMENT,
+  release: config.env.GIT_HASH,
+  // We recommend adjusting this value in production, or using tracesSampler
+  // for finer control
+  tracesSampleRate: 1.0
+});
 
 const SCHEDULE_INTERVAL = 10000;
 const RUN_INTERVAL = 1000;

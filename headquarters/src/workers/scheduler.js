@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 const Sequelize = require('sequelize');
+const Sentry = require('@sentry/node');
 
 const coreRegistry = require('fptcore/src/core-registry');
 const KernelTriggers = require('fptcore/src/kernel/triggers');
@@ -165,19 +166,33 @@ class SchedulerWorker {
    * Schedule actions for a trip.
    */
   static async _scheduleTripActions(tripId, threshold) {
-    const actionContext = await ActionContext.createForTripId(tripId);
+    const transaction = Sentry.startTransaction({
+      name: 'SCHEDULE',
+      op: 'worker.scheduler'
+    });
 
-    // Get actions based on occurance of time.
-    const actions = this._getTimeOccuranceActions(actionContext, threshold);
-    // logger.info(
-    //   `Found ${actions.length} actions for ${trip.experience.title} ` +
-    //   `"${trip.title}" up to ${fmtLocal(threshold)}`);
+    // We put the transaction on the scope so users can attach children to it
+    Sentry.getCurrentHub().configureScope(scope => {
+      scope.setSpan(transaction);
+    });
 
-    for (let action of actions) {
-      logger.info({ action: action },
-        `Scheduling ${action.type} ${action.name} at ` +
-        `${fmtLocal(action.scheduledAt)}.`);
-      await models.Action.create(action);
+    try {
+      const actionContext = await ActionContext.createForTripId(tripId);
+
+      // Get actions based on occurance of time.
+      const actions = this._getTimeOccuranceActions(actionContext, threshold);
+      // logger.info(
+      //   `Found ${actions.length} actions for ${trip.experience.title} ` +
+      //   `"${trip.title}" up to ${fmtLocal(threshold)}`);
+
+      for (let action of actions) {
+        logger.info({ action: action },
+          `Scheduling ${action.type} ${action.name} at ` +
+          `${fmtLocal(action.scheduledAt)}.`);
+        await models.Action.create(action);
+      }
+    } finally {
+      transaction.finish();
     }
   }
 }

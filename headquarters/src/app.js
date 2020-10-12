@@ -14,6 +14,7 @@ const config = require('./config');
 
 const apiRouter = require('./routers/api');
 const authRouter = require('./routers/auth');
+const traceMiddleware = require('./middleware/trace');
 const twilioRouter = require('./routers/twilio');
 const {
   actorRouter,
@@ -43,7 +44,7 @@ Sentry.init({
 // Initialize server
 app.enable('trust proxy');
 app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
+app.use(traceMiddleware());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -79,7 +80,7 @@ app.use((req, res, next) => {
 });
 
 // Log requests
-const ignorePrefixes = ['/static', '/build', '/travel/dist', '/health'];
+const ignorePrefixes = ['/static', '/build', '/travel', '/health', '/version'];
 app.use((req, res, next) => {
   // Don't log static file requests.
   for (const ignorePrefix of ignorePrefixes) {
@@ -127,6 +128,7 @@ app.use('/entry', entrywayRouter);
 app.use('/gallery', galleryRouter);
 app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
+
 
 // S3 signing url
 const s3Opts = {
