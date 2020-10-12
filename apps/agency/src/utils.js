@@ -20,7 +20,6 @@ export function getParticipantIframeUrl(group, participant) {
 }
 
 export function getPlayerIframeUrl(trip, player) {
-  const participantId = player.participant ? player.participant.id : 0;
-  const url = `${window.location.origin}/travel/u/${participantId}/r/${trip.id}/p/${player.id}`;
+  const url = `${window.location.origin}/travel/${trip.id}/${player.id}`;
   return `${url}?nogps=true&mute=true&noack=true`;
 }

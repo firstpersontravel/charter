@@ -211,7 +211,7 @@ export function lookupUpcomingActions(state, ownProps) {
   const oneHourAgo = moment.utc().subtract(1, 'hours');
   const actions = _(state.datastore.actions)
     .filter(action => _.includes(tripIds, action.tripId))
-    .filter({ appliedAt: null, failedAt: null })
+    .filter(action => action.appliedAt === null && action.failedAt === null)
     .filter(action => moment.utc(action.scheduledAt).isAfter(oneHourAgo))
     .sortBy('scheduledAt')
     .value();

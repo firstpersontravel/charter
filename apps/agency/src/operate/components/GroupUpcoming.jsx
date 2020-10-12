@@ -88,7 +88,7 @@ export default class GroupUpcoming extends Component {
 
     const archiveIfAction = action.type === 'action' ? archiveButton : null;
 
-    const applyNowButton = (
+    const applyNowButton = action.isArchived ? null : (
       <button
         className="btn btn-sm btn-outline-secondary"
         onClick={() => {

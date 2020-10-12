@@ -3,6 +3,17 @@ import Resolver from 'ember-resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
 
+const environments = {
+  'charter.firstperson.travel': 'production',
+  'app.firstperson.travel': 'production',
+  'beta.firstperson.travel': 'staging',
+  'preview.firstperson.travel': 'staging',
+};
+
+const environment = environments[window.location.hostname] || 'development';
+const initSentry = true;
+// const initSentry = environment !== 'development';
+
 var App;
 
 Ember.MODEL_FACTORY_INJECTIONS = true;
@@ -15,9 +26,10 @@ App = Ember.Application.extend({
 
 loadInitializers(App, config.modulePrefix);
 
-if (config.sentryDSN) {
+if (initSentry) {
   Sentry.init({
     dsn: config.sentryDSN,
+    environment: environment,
     release: window.GIT_HASH || undefined,
     integrations: [new Sentry.Integrations.Ember()]
   });

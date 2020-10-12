@@ -1,16 +1,11 @@
 /* jshint node: true */
 
 module.exports = function(environment) {
-
-  var SENTRY_DSNS = {
-    production: 'https://7e43c1af484e4baa92bb0083119ca264@sentry.io/103093'
-  };
-
   var ENV = {
     modulePrefix: 'traveller',
     environment: environment,
     baseURL: '/travel/',
-    sentryDSN: SENTRY_DSNS[environment],
+    sentryDSN: 'https://7e43c1af484e4baa92bb0083119ca264@sentry.io/103093',
     locationType: 'auto',
     s3UploadParams: {
       policy: {

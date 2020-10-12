@@ -5,6 +5,7 @@ const twilio = require('twilio');
 const config = require('../config');
 const models = require('../models');
 const { createTripToken } = require('./auth');
+const { Sequelize } = require('sequelize');
 
 function camelToDash(str) {
   return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
@@ -58,23 +59,24 @@ function jsonApiSerialize(instance) {
 /**
  * Legacy getter for THG app in JSONAPI format.
  */
-async function getParticipantRoute(req, res) {
-  const participant = await models.Participant.findOne({
+async function getPlayerRoute(req, res) {
+  const player = await models.Player.findOne({
     where: { id: req.params.id },
     include: [
+      { model: models.Org, as: 'org' },
       { model: models.Experience, as: 'experience' },
-      { model: models.Org, as: 'org' }
+      { model: models.Trip, as: 'trip' }
     ]
   });
-  if (!participant) {
+  if (!player) {
     res.status(404).json({ error: 'notfound' });
     return;
   }
   const response = {
-    data: jsonApiSerialize(participant),
+    data: jsonApiSerialize(player),
     included: [
-      jsonApiSerialize(participant.org),
-      jsonApiSerialize(participant.experience)
+      jsonApiSerialize(player.org),
+      jsonApiSerialize(player.experience)
     ]
   };
   res.status(200);
@@ -101,41 +103,33 @@ async function getTripRoute(req, res) {
     res.status(404).send('Not Found');
     return;
   }
-  const [assets, players, messages, actions, profiles, participants] = (
-    await Promise.all([
-      models.Asset.findAll({ where: { experienceId: trip.experienceId } }),
-      models.Player.findAll({ where: { tripId: req.params.id } }),
-      models.Message.findAll({
-        where: { tripId: req.params.id, isArchived: false }
-      }),
-      models.Action.findAll({
-        where: {
-          tripId: req.params.id,
-          type: 'action',
-          isArchived: false,
-          appliedAt: null,
-          failedAt: null
-        }
-      }),
-      models.Profile.findAll({
-        where: { experienceId: trip.experienceId }
-      }),
-      models.Participant.findAll({
-        where: { experienceId: trip.experienceId }
-      })
-    ])
-  );
+
+  const [assets, players, messages] = await Promise.all([
+    models.Asset.findAll({
+      where: { experienceId: trip.experienceId, type: 'directions' }
+    }),
+    models.Player.findAll({ where: { tripId: req.params.id } }),
+    models.Message.findAll({
+      where: { tripId: req.params.id, isArchived: false }
+    })
+  ]);
+
+  const participantIds = players.map(p => p.participantId).filter(Boolean);
+  const [profiles, participants] = await Promise.all([
+    models.Profile.findAll({
+      where: { participantId: { [Sequelize.Op.in]: participantIds } }
+    }),
+    models.Participant.findAll({
+      where: { id: { [Sequelize.Op.in]: participantIds } }
+    })
+  ]);
 
   // Hack for now -- sub in the directions assets data into the script before
   // sending over.
-  trip.script.content.directions = _(assets)
-    .filter({ type: 'directions' })
-    .map('data')
-    .value();
+  trip.script.content.directions = assets.map(a => a.data);
   
   const objs = players
     .concat(messages)
-    .concat(actions)
     .concat(profiles)
     .concat(participants);
 
@@ -147,8 +141,6 @@ async function getTripRoute(req, res) {
   }
 
   const data = jsonApiSerialize(trip);
-  data.relationships.action = actions
-    .map(action => ({ id: action.id, type: 'action' }));
   data.relationships.message = messages
     .map(message => ({ id: message.id, type: 'message' }));
   data.relationships.player = players
@@ -171,5 +163,5 @@ async function getTripRoute(req, res) {
 
 module.exports = {
   getTripRoute,
-  getParticipantRoute
+  getPlayerRoute
 };

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import * as Sentry from '@sentry/react';
 
 import { getStage } from './utils';
@@ -492,8 +493,8 @@ export function refreshLiveData(orgId, experienceId, tripIds) {
     dispatch(listCollection('actions', {
       orgId: orgId,
       tripId: tripIds,
-      appliedAt: 'null'
-    }, { clear: true }));
+      scheduledAt__gte: moment.utc().subtract(1, 'hours').toISOString()
+    }));
     dispatch(listCollection('messages', {
       orgId: orgId,
       tripId: tripIds,

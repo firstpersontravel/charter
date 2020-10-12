@@ -1,8 +1,23 @@
 import Ember from 'ember';
-import $ from 'jquery';
+
+// https://stackoverflow.com/questions/46946380/fetch-api-request-timeout
+const fetchWithTimeout = (url, ms, options) => {
+  const controller = new AbortController();
+  const promise = fetch(url, { signal: controller.signal, ...options });
+  const timeout = setTimeout(() => controller.abort(), ms);
+  return promise.finally(() => clearTimeout(timeout));
+};
+
+function ApiRequestError(status, message) {
+  this.name = 'ApiRequestError';
+  this.status = status;
+  this.message = message;
+  this.stack = (new Error()).stack;
+}
+
+ApiRequestError.prototype = new Error();
 
 export default Ember.Service.extend({
-
   environment: Ember.inject.service(),
 
   authToken: null, // should be filled in once obtained
@@ -17,40 +32,50 @@ export default Ember.Service.extend({
 
   clientId: function() { return this._clientId; }.property(),
 
-  ajax: function(url, method, data, contentType) {
-    var self = this;
+  ajax: function(url, method, data) {
     this.incrementProperty('apiRequestsInProgress');
-    var basePath = this.get('environment.apiHost') || '';
-    const headers = this.get('authToken') ?
-      { Authorization: `Bearer ${self.get('authToken')}` } :
-      {};
-    return new Ember.RSVP.Promise(function(resolve, reject) {
-      $.ajax({
-        url: basePath + url,
-        method: method,
-        contentType: contentType,
-        headers: headers,
-        data: data,
-        dataType: 'json',
-        timeout: self.get('timeout'),
-        success: (res) => {
-          self.decrementProperty('apiRequestsInProgress');
-          resolve(res);
-        },
-        error: (err) => {
-          self.decrementProperty('apiRequestsInProgress');
-          reject(err);
+    const authToken = this.get('authToken') || localStorage.getItem('authToken');
+    const basePath = this.get('environment.apiHost') || '';
+    const baseHeaders = data ? { 'Content-Type': 'application/json' } : {};
+    const headers = Object.assign(baseHeaders, authToken ?
+      { Authorization: `Bearer ${authToken}` } : {});
+    const opts = {
+      method: method,
+      headers: headers,
+      body: data ? JSON.stringify(data) : null
+    };
+    return fetchWithTimeout(basePath + url, this.get('timeout'), opts)
+      .catch(err => {
+        throw new ApiRequestError(-1, `Client error fetching ${url}: ${err.message}`)
+      })
+      .then(resp => {
+        if (!resp.ok) {
+          if (resp.status === 401) {
+            localStorage.removeItem('authToken');
+            throw new ApiRequestError(resp.status, `Authentication error fetching ${url}`);
+          }
+          if (resp.status === 403) {
+            throw new ApiRequestError(resp.status, `Forbidden error fetching ${url}`);
+          }
+          if (resp.status === 500) {
+            throw new ApiRequestError(resp.status, `Internal error fetching ${url}`);
+          }
+          if (resp.status > 500) {
+            throw new ApiRequestError(resp.status, `Network error ${resp.status} fetching ${url}`);
+          }
+          throw new ApiRequestError(resp.status, `${resp.status} error fetching ${url}`);
         }
-      });  
-    }); 
+        return resp.json()
+      })
+      .finally(() => this.decrementProperty('apiRequestsInProgress'));
   },
 
-  getData: function(url, data) {
-    return this.ajax(url, 'get', data);
+  getData: function(url) {
+    return this.ajax(url, 'get');
   },
 
   sendData: function(url, method, data) {
-    return this.ajax(url, method, JSON.stringify(data), 'application/json');
+    return this.ajax(url, method, data);
   },
 
   updateLocation: function(tripId, participantId, latitude, longitude, accuracy, timestamp) {
@@ -63,7 +88,7 @@ export default Ember.Service.extend({
   },
 
   acknowledgePage: function(playerId, pageName) {
-    this.sendData(`/api/players/${playerId}`, 'put', {
+    return this.sendData(`/api/players/${playerId}`, 'put', {
       acknowledgedPageName: pageName,
       acknowledgedPageAt: moment.utc().toISOString()
     });

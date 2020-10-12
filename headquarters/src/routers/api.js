@@ -102,10 +102,8 @@ apiRouter.get('/view/player/:playerId',
   asyncRoute(apiViewRoutes.getPlayerViewRoute));
 
 // Legacy
-apiRouter.get('/legacy/participant/:id',
-  asyncRoute(apiLegacyRoutes.getParticipantRoute));
-apiRouter.get('/legacy/trip/:id',
-  asyncRoute(apiLegacyRoutes.getTripRoute));
+apiRouter.get('/legacy/player/:id', asyncRoute(apiLegacyRoutes.getPlayerRoute));
+apiRouter.get('/legacy/trip/:id', asyncRoute(apiLegacyRoutes.getTripRoute));
 apiRouter.get('/legacy/player/:id/video-token',
   asyncRoute(apiLegacyRoutes.getPlayerVideoTokenRoute));
 

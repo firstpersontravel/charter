@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+const MAX_FAILS = 5;
+
 export default Ember.Service.extend({
 
   pubsub: Ember.inject.service(),
@@ -8,6 +10,7 @@ export default Ember.Service.extend({
 
   queue: null,
   inprogress: null,
+  retriesByTask: null,
 
   errorDelay: 15000,
 
@@ -15,6 +18,7 @@ export default Ember.Service.extend({
     this._super();
     this.set('queue', []);
     this.set('online', window.navigator.onLine);
+    this.set('retriesByTask', new Map());
 
     var self = this;
 
@@ -42,27 +46,54 @@ export default Ember.Service.extend({
     return !!this.get('queue.length');
   }.property('queue.length'),
 
+  fail() {
+    if (!this.get('hasFailed')) {
+      return;
+    }
+    this.set('hasFailed', true);
+    swal({
+      title: 'Error',
+      text: 'We\'re sorry, there was an error syncing your action. Please press OK to refresh.',
+    }, function() {
+      window.location.reload();
+    });
+  },
+
   runNext: function() {
     if (!this.get('online')) { return; }
     if (!this.get('queue.length')) { return; }
-    var self = this;
-    var task = this.get('queue').shift();
+    const task = this.get('queue').shift();
     this.set('inprogress', task);
     this.notifyPropertyChange('queue');
     task()
-      .then(function() {
+      .then(() => {
         // Re-insert remove task
-        self.set('inprogress', null);
-        self.runNext();
+        this.get('retriesByTask').delete(task);
+        this.set('inprogress', null);
+        this.runNext();
       })
-      .catch(function(err) {
+      .catch(err => {
+        if (err.status === 401) {
+          // Our token expired!
+          localStorage.removeItem('authToken');
+          window.location.reload();
+          return;
+        }
         // Re-insert task on failure
-        console.error(err);
-        self.set('inprogress', null);
-        self.get('queue').insertAt(0, task);
-        self.notifyPropertyChange('queue');
+        const numFailures = (this.get('retriesByTask').get(task) || 0) + 1;
+        if (numFailures > MAX_FAILS) {
+          Sentry.captureException(new Error(
+            `Network error failed > ${MAX_FAILS} times: ${err.status} ${err.message}`
+          ));
+          this.fail();
+          return;
+        }
+        this.get('retriesByTask').set(task, numFailures);
+        this.set('inprogress', null);
+        this.get('queue').insertAt(0, task);
+        this.notifyPropertyChange('queue');
         // Run next in a second.
-        Ember.run.later(self, self.runNext, self.errorDelay);
+        Ember.run.later(this, this.runNext, this.errorDelay);
       });
   }
 });

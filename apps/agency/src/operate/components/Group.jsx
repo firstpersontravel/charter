@@ -7,6 +7,10 @@ import PropTypes from 'prop-types';
 import Loader from '../../partials/Loader';
 import config from '../../config';
 
+// Throttle message based updates to once every 5 secs.
+const THROTTLE_FREQUENCY = 5000;
+
+// Auto refresh every 60 secs
 const REFRESH_FREQUENCY = 60000;
 
 const FayeLogger = {
@@ -27,11 +31,14 @@ export default class Group extends Component {
     this.fayeClient.addExtension(FayeLogger);
     this.fayeSubscriptions = {};
     this.refreshInterval = null;
+    this.throttleInterval = null;
     this.refreshTimeout = null;
     this.refreshedForActionIds = {};
     this.nextActionAt = null;
     this.handleRefresh = this.handleRefresh.bind(this);
     this.autoRefresh = this.autoRefresh.bind(this);
+    this.autoThrottle = this.autoThrottle.bind(this);
+    this.state = { throttledTripIds: new Set() };
   }
 
   componentWillMount() {
@@ -41,6 +48,7 @@ export default class Group extends Component {
     const tripIds = _.map(group.trips, 'id');
     this.loadData(this.props.org, group, tripIds);
     this.refreshInterval = setInterval(this.autoRefresh, REFRESH_FREQUENCY);
+    this.throttleInterval = setInterval(this.autoThrottle, THROTTLE_FREQUENCY);
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
   }
 
@@ -56,6 +64,7 @@ export default class Group extends Component {
 
   componentWillUnmount() {
     clearInterval(this.refreshInterval);
+    clearInterval(this.throttleInterval);
     if (this.refreshTimeout) {
       clearTimeout(this.refreshTimeout);
     }
@@ -112,6 +121,15 @@ export default class Group extends Component {
 
   autoRefresh() {
     this.handleRefresh();
+  }
+
+  autoThrottle() {
+    // If we've throttled messages for trips, load them now, then clear
+    if (this.state.throttledTripIds.size > 0) {
+      this.props.refreshLiveData(this.props.org.id, this.props.group.experienceId,
+        [...this.state.throttledTripIds]);
+      this.setState({ throttledTripIds: new Set() });
+    }
   }
 
   loadData(org, group, tripIds) {
@@ -174,15 +192,38 @@ export default class Group extends Component {
     if (message.medium === 'device_state') {
       return;
     }
-    // Reload in a second
-    setTimeout(() => {
-      console.log('Reloading due to incoming realtime event.');
-      this.props.refreshLiveData(
-        this.props.org.id,
-        this.props.group.experienceId,
-        [tripId]
-      );
-    }, 1000);
+
+    // If we have refreshed on msg more recently than 10 secs, skip -- it'll be covered
+    // by the auto-refresh.
+    if (Date.now() - (this.lastRefreshMsec || 0) < THROTTLE_FREQUENCY) {
+      console.log('Throttling, will refresh in <5secs');
+      if (!this.state.throttledTripIds.has(tripId)) {
+        this.setState({
+          throttledTripIds: new Set(tripId, ...this.state.throttledTripIds)
+        });
+      }
+      return;
+    }
+
+    console.log('Refreshing due to incoming realtime event.');
+    this.lastRefreshMsec = Date.now();
+    this.props.refreshLiveData(
+      this.props.org.id,
+      this.props.group.experienceId,
+      [tripId]
+    );
+  }
+
+  renderRefresh() {
+    if (this.props.areRequestsPending) {
+      return (<span><i className="fa fa-spin fa-sync" /> Refreshing</span>);
+    }
+    if (this.state.throttledTripIds.size > 0) {
+      return (<span><i className="fa fa-clock" /> Pending</span>);
+    }
+    return (
+      <span><i className="fa fa-sync" /> Refresh</span>
+    );
   }
 
   render() {
@@ -199,9 +240,6 @@ export default class Group extends Component {
     if (group.trips.length === 0) {
       return <div className="container-fluid">No trips</div>;
     }
-    const refreshTitle = this.props.areRequestsPending ?
-      (<span><i className="fa fa-spin fa-refresh" /> Refreshing</span>) :
-      (<span><i className="fa fa-refresh" /> Refresh</span>);
 
     return (
       <div className="container-fluid" style={{ position: 'relative' }}>
@@ -209,7 +247,7 @@ export default class Group extends Component {
           <button
             className="btn btn-outline-secondary btn-sm"
             onClick={this.handleRefresh}>
-            {refreshTitle}
+            {this.renderRefresh()}
           </button>
         </div>
         {this.props.children}

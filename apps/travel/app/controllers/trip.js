@@ -68,12 +68,6 @@ export default Ember.Controller.extend(RealtimeMixin, {
       this.send('refresh');
     },
 
-    requestAck: function(content) {
-      var player = this.get('player.model');
-      var currentPageName = player.get('currentPageName');
-      this.get('api').acknowledgePage(player.id, currentPageName);
-    },
-
     deviceState: function(content) {
       if (content.client_id === this.get('api').get('clientId')) {
         // console.log('self-originated remote participant state update ignored:',

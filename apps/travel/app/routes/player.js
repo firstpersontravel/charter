@@ -9,7 +9,7 @@ export default Ember.Route.extend({
   model: function(params) {
     var trip = this.modelFor('trip');
     var players = trip.get('players');
-    return players.findBy('id', params.player_id);
+    return players.findBy('id', this.paramsFor('trip').player_id);
   },
 
   serialize: function(model) {
@@ -19,72 +19,28 @@ export default Ember.Route.extend({
   makeEvent: function(params) {
     var trip = this.context.get('trip');
     var playerId = this.context.id;
-    
     var api = this.get('api');
-    this.get('sync').add(function() {
-      return api.postEvent(trip.id, playerId, params)
-        .catch(function(err) {
-          if (err.readyState !== 4) {
-            // network error -- re-raise exception because it might
-            // work the second time.
-            console.warn('Network error for event ' + params.type);
-            throw err;
-          } else if (err.status === 502) {
-            // gateway error -- nginx can't reach node. worth retrying
-            console.warn('Gateway error for event ' + params.type);
-            throw err;
-          } else {
-            // status code error -- like a bad response from the server
-            // etc. This will likely not be resolved by retrying, so there
-            // isn't much we can do. skip it.
-            console.error(`Server error for event ${params.type}: ${err.status}.`);
-            swal({
-              title: 'Error',
-              text: 'We\'re sorry, there was an error. Press OK to refresh.',
-            }, function() {
-              window.location.reload();
-            });
-          }
-        });
-    });
+    this.get('sync').add(() => api.postEvent(trip.id, playerId, params));
   },
 
   makeAction: function(name, params) {
     var trip = this.context.get('trip');
-    var playerId = this.context.id;
-    
+    var playerId = this.context.id;    
     var api = this.get('api');
-    this.get('sync').add(function() {
-      return api.postAction(trip.id, playerId, name, params)
-        .catch(function(err) {
-          if (err.readyState !== 4) {
-            // network error -- re-raise exception because it might
-            // work the second time.
-            console.warn('Network error for action ' + name);
-            throw err;
-          } else if (err.status === 502) {
-            // gateway error -- nginx can't reach node. worth retrying
-            console.warn('Gateway error for action ' + name);
-            throw err;
-          } else {
-            // status code error -- like a bad response from the server
-            // etc. This will likely not be resolved by retrying, so there
-            // isn't much we can do. skip it.
-            console.error(`Server error for action ${name}: ${err.status}.`);
-            swal({
-              title: 'Error',
-              text: 'We\'re sorry, there was an error. Press OK to refresh.',
-            }, function() {
-              window.location.reload();
-            });
-          }
-        });
-    });
+    this.get('sync').add(() => api.postAction(trip.id, playerId, name, params));
   },
 
   actions: {
     acknowledgePage: function(pageName) {
-      this.get('api').acknowledgePage(this.context.id, pageName);
+      this.get('api')
+        .acknowledgePage(this.context.id, pageName)
+        .catch(err => {
+          console.error('Error acknowledging page', err);
+          Sentry.withScope(function(scope) {
+            scope.setLevel('warning');
+            Sentry.captureException(err);
+          });
+        });
     },
 
     updateLocation: function(fix) {
@@ -102,10 +58,12 @@ export default Ember.Route.extend({
         .updateLocation(trip.id, participant.id,
           fix.coords.latitude, fix.coords.longitude,
           fix.coords.accuracy, Math.floor(fix.timestamp / 1000))
-        .then(function() {
-          // success
-        }, function(err) {
-          console.error('Error updating location.');
+        .catch(err => {
+          console.error('Error updating location', err);
+          Sentry.withScope(function(scope) {
+            scope.setLevel('warning');
+            Sentry.captureException(err);
+          });
         });
     },
 

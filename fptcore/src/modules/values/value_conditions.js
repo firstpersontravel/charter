@@ -51,7 +51,7 @@ module.exports = {
       if (!val1 && !val2) {
         return true;
       }
-      return val1.toString().toLowerCase() === val2.toString().toLowerCase();
+      return (val1 || '').toString().toLowerCase() === (val2 || '').toString().toLowerCase();
     }
   },
   value_contains: {
