@@ -1,16 +1,32 @@
 const { getCurrentHub, startTransaction } = require('@sentry/core');
 const { stripUrlQueryAndFragment } = require('@sentry/utils');
 
-const ignorePrefixes = ['/static', '/build', '/travel', '/health', '/version'];
+// Only trace main endpoints
+const tracePrefixes = [
+  '/actor',
+  '/api',
+  '/auth',
+  '/content',
+  '/entry',
+  '/gallery',
+  '/s',
+  '/endpoints/twilio'
+];
+
+function isTraceable(url) {
+  for (const tracePrefix of tracePrefixes) {
+    if (url.startsWith(tracePrefix)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 function traceMiddleware() {
   return function sentryTracingMiddleware(req, res, next) {
-    // Don't trace static file requests.
-    for (const ignorePrefix of ignorePrefixes) {
-      if (req.originalUrl.startsWith(ignorePrefix)) {
-        next();
-        return;
-      }
+    if (!isTraceable(req.originalUrl)) {
+      next();
+      return;
     }
 
     // TODO: At this point `req.route.path` (which we use in `extractTransaction`) is not available
