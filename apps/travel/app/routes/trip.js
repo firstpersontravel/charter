@@ -88,9 +88,22 @@ export default Ember.Route.extend({
           window.location.reload();
           return;
         }
+        if (isScriptAlreadyLoaded) {
+          // Not connected - ignore
+          if (err.status === -1) {
+            console.log('Client error refreshing; script already loaded so ignoring.');
+            return;
+          }
+          console.log('Failed to refresh; script already loaded so ignoring.');
+          return;
+        }
+        // If script is not already loaded, we have a real problem.
         console.error(err);
         Sentry.captureException(err);
-        throw new Error(`Failed to load trip data`);
+        swal({
+          title: 'Error',
+          text: 'We\'re sorry, there was an error loading your trip. Please press OK to refresh.',
+        }, () => window.location.reload());
       });
   },
 

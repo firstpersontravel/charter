@@ -61,7 +61,7 @@ app.get('/health', (req, res) => {
   res.send('ok');
 });
 
-// Health check - before HTTPS redirect
+// Version for frontend
 app.get('/version', (req, res) => {
   res.json({ version: config.env.GIT_HASH || '' });
 });

@@ -36,6 +36,9 @@ export default Ember.Route.extend({
         .acknowledgePage(this.context.id, pageName)
         .catch(err => {
           console.error('Error acknowledging page', err);
+          // Don't log client errors
+          if (err.status === -1) { return; }
+          // Send all other errors to sentry
           Sentry.withScope(function(scope) {
             scope.setLevel('warning');
             Sentry.captureException(err);
@@ -60,6 +63,9 @@ export default Ember.Route.extend({
           fix.coords.accuracy, Math.floor(fix.timestamp / 1000))
         .catch(err => {
           console.error('Error updating location', err);
+          // Don't log client errors
+          if (err.status === -1) { return; }
+          // Send all other errors to sentry
           Sentry.withScope(function(scope) {
             scope.setLevel('warning');
             Sentry.captureException(err);

@@ -12,7 +12,7 @@ export default Ember.Service.extend({
   inprogress: null,
   retriesByTask: null,
 
-  errorDelay: 15000,
+  errorDelay: 5000,
 
   init: function() {
     this._super();
@@ -79,16 +79,19 @@ export default Ember.Service.extend({
           window.location.reload();
           return;
         }
-        // Re-insert task on failure
-        const numFailures = (this.get('retriesByTask').get(task) || 0) + 1;
-        if (numFailures > MAX_FAILS) {
-          Sentry.captureException(new Error(
-            `Network error failed > ${MAX_FAILS} times: ${err.status} ${err.message}`
-          ));
-          this.fail();
-          return;
+        // Re-insert task on failure only if it's not a client error -- always re-insert
+        // client errors and retry indefinitely.
+        if (err.status !== -1) {
+          const numFailures = (this.get('retriesByTask').get(task) || 0) + 1;
+          if (numFailures > MAX_FAILS) {
+            Sentry.captureException(new Error(
+              `Network error failed > ${MAX_FAILS} times: ${err.status} ${err.message}`
+            ));
+            this.fail();
+            return;
+          }
+          this.get('retriesByTask').set(task, numFailures);
         }
-        this.get('retriesByTask').set(task, numFailures);
         this.set('inprogress', null);
         this.get('queue').insertAt(0, task);
         this.notifyPropertyChange('queue');
