@@ -1,7 +1,34 @@
 const Sentry = require('@sentry/node');
 
 const config = require('./config');
-const models = require('./models');
+
+function instrument(op, desc, fn) {
+  const transaction = Sentry.getCurrentHub().getScope().getTransaction();
+  const span = transaction && transaction.startChild({ op: op, description: desc });
+  try {
+    return fn();
+  } catch (err) {
+    span && span.setHttpStatus(500);
+    throw err;
+  } finally {
+    span && span.setHttpStatus(200);
+    span && span.finish();
+  }
+}
+
+async function instrumentAsync(op, desc, fn) {
+  const transaction = Sentry.getCurrentHub().getScope().getTransaction();
+  const span = transaction && transaction.startChild({ op: op, description: desc });
+  try {
+    return await fn();
+  } catch (err) {
+    span && span.setHttpStatus(500);
+    throw err;
+  } finally {
+    span && span.setHttpStatus(200);
+    span && span.finish();
+  }
+}
 
 // Instrument query functions
 const modelFunctions = [
@@ -24,20 +51,7 @@ async function patchedTxn(obj, txn, txnName, args) {
   if (!transaction) {
     return await txn.call(obj, ...args);
   }
-  // Otherwise call with trace
-  const span = transaction.startChild({
-    op: 'sequelize',
-    description: txnName,
-  });
-  try {
-    return await txn.call(obj, ...args);
-  } catch (err) {
-    span.setHttpStatus(500);
-    throw err;
-  } finally {
-    span.setHttpStatus(200);
-    span.finish();
-  }
+  return await instrumentAsync('sequelize', txnName, () => txn.call(obj, ...args));
 }
 
 function modelTxn(model, txn, txnName) {
@@ -63,7 +77,7 @@ function patchModel(model) {
   }
 }
 
-function initTracing() {
+function initTracing(models) {
   if (config.env.HQ_STAGE === 'test') {
     return;
   }
@@ -72,6 +86,9 @@ function initTracing() {
   }
 }
 
+
 module.exports = {
-  initTracing: initTracing
+  initTracing: initTracing,
+  instrument: instrument,
+  instrumentAsync: instrumentAsync
 };

@@ -10,6 +10,7 @@ const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
 
 const config = require('./config');
+const models = require('./models');
 const { initTracing } = require('./sentry');
 
 const apiRouter = require('./routers/api');
@@ -45,7 +46,7 @@ Sentry.init({
   tracesSampleRate: 1.0
 });
 
-initTracing();
+initTracing(models);
 
 // Initialize server
 app.enable('trust proxy');

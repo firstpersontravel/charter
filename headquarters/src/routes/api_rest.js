@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 
 const config = require('../config');
 const errors = require('../errors');
+const { respondWithJson } = require('./utils');
 
 const logger = config.logger.child({ name: 'routes.api_rest' });
 
@@ -65,16 +66,14 @@ function respondWithRecord(res, model, record, opts, status = 200) {
   const item = serializeRecord(model, record, opts);
   const data = { [model.name.toLowerCase()]: item };
   res.status(status);
-  res.set('Content-Type', 'application/json');
-  res.send(JSON.stringify({ data: data }, null, 2));
+  respondWithJson(res, { data: data });
 }
 
 function respondWithRecords(res, model, records, opts) {
   const modelNamePlural = inflection.pluralize(model.name.toLowerCase());
   const items = records.map(record => serializeRecord(model, record, opts));
   const data = { [modelNamePlural]: items };
-  res.set('Content-Type', 'application/json');
-  res.send(JSON.stringify({ data: data }, null, 2));
+  respondWithJson(res, { data: data });
 }
 
 /**

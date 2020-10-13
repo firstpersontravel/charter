@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const Sentry = require('@sentry/node');
 const { ValidationError } = require('sequelize');
 
 const Errors = require('fptcore/src/errors');
 const ScriptCore = require('fptcore/src/cores/script');
 
+const { instrument } = require('../sentry');
 const Experience = require('./experience');
 const Org = require('./org');
 const database = require('../config').database;
@@ -29,29 +29,20 @@ const Script = database.define('Script', snakeCaseColumns({
   content: mutableModifier(jsonField(database, 'Script', 'content', {
     extraValidate: {
       resources: (value) => {
-        const transaction = Sentry.getCurrentHub().getScope().getTransaction();
         if (_.isString(value)) {
-          const span = transaction && transaction.startChild({
-            op: 'sequelize',
-            description: 'Script#parse'
-          });
           try {
             // We're parsing JSON twice this means. *shrug*
-            value = JSON.parse(value);
+            value = instrument('sequelize', 'Script#parse', () => JSON.parse(value));
           } catch (err) {
             // Pass, since the error will be caught elsewhere.
           }
-          span && span.finish();
         }
-        const span2 = transaction && transaction.startChild({
-          op: 'sequelize',
-          description: 'Script#validate'
-        });
         // Don't check if it's not an object cos that overlaps with the string
         // case where you get a string.
         if (_.isObject(value)) {
           try {
-            ScriptCore.validateScriptContent(value);
+            instrument('sequelize', 'Script#validate', () =>
+              ScriptCore.validateScriptContent(value));
           } catch (err) {
             if (err instanceof Errors.ScriptValidationError) {
               throw new ValidationError(err.message, err.fieldErrors);
@@ -60,7 +51,6 @@ const Script = database.define('Script', snakeCaseColumns({
             }
           }
         }
-        span2 && span2.finish();
       }
     }
   })),

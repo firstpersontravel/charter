@@ -4,8 +4,10 @@ const twilio = require('twilio');
 
 const config = require('../config');
 const models = require('../models');
+const { instrument } = require('../sentry');
 const { createTripToken } = require('./auth');
 const { Sequelize } = require('sequelize');
+const { respondWithJson } = require('./utils');
 
 function camelToDash(str) {
   return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
@@ -23,7 +25,6 @@ function createVideoToken(identity) {
   accessToken.identity = identity;
   const grant = new twilio.jwt.AccessToken.VideoGrant();
   accessToken.addGrant(grant);
-
   return accessToken.toJwt();
 }
 
@@ -81,8 +82,7 @@ async function getPlayerRoute(req, res) {
   };
   res.loggingOrgId = player.orgId;
   res.status(200);
-  res.set('Content-Type', 'application/json');
-  res.send(JSON.stringify(response, null, 2));
+  respondWithJson(res, response);
 }
 
 /**
@@ -153,14 +153,14 @@ async function getTripRoute(req, res) {
   // Create a video token by IP in case multiple users or devices share a role.
   const userAgentHash = crypto.createHash('md5').update(req.get('User-Agent')).digest('hex');
   const identity = `${playerId}-${userAgentHash}-${req.ip}`;
-  data.attributes['video-token'] = createVideoToken(identity);
+  data.attributes['video-token'] = instrument('twilio', 'createVideoToken', 
+    () => createVideoToken(identity));
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };
   res.loggingOrgId = trip.orgId;
   res.status(200);
-  res.set('Content-Type', 'application/json');
-  res.send(JSON.stringify(response, null, 2));
+  respondWithJson(res, response);
 }
 
 module.exports = {

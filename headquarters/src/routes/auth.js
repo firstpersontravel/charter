@@ -5,6 +5,7 @@ const moment = require('moment-timezone');
 
 const config = require('../config');
 const models = require('../models');
+const { instrument } = require('../sentry');
 const authMiddleware = require('../middleware/auth');
 const EmailController = require('../controllers/email');
 
@@ -29,7 +30,8 @@ function createToken(subType, subId, durationSecs) {
     exp: moment.utc().add(durationSecs, 'seconds').unix()
   };
   const opts = { algorithm: 'HS256' };
-  const token = jwt.sign(payload, config.env.HQ_JWT_SECRET, opts);
+  const token = instrument('jwt', 'sign', () =>
+    jwt.sign(payload, config.env.HQ_JWT_SECRET, opts));
   return token;
 }
 

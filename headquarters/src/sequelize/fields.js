@@ -1,8 +1,9 @@
 const _ = require('lodash');
-const Sentry = require('@sentry/node');
 const moment = require('moment');
 const { INTEGER, DOUBLE, FLOAT, STRING, BOOLEAN, DATE, DATEONLY, TEXT } = require('sequelize');
 const stringify = require('json-stable-stringify');
+
+const { instrument } = require('../sentry');
 
 function snakeCaseColumns(fieldValues) {
   return _.mapValues(fieldValues, function(value, key) {
@@ -201,13 +202,9 @@ function jsonField(db, modelName, fieldName, options) {
   process.nextTick(function() {
     function stringifyField(instance) {
       if (typeof instance.dataValues[fieldName] !== 'string' && instance.dataValues[fieldName]) {
-        const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-        const span = transaction && transaction.startChild({
-          op: 'sequelize',
-          description: `${modelName}#${fieldName}#stringify`
+        instrument('sequelize', `${modelName}#${fieldName}#stringify`, () => {
+          instance.setDataValue(fieldName, JSON.stringify(instance.getDataValue(fieldName)));
         });
-        instance.setDataValue(fieldName, JSON.stringify(instance.getDataValue(fieldName)));
-        span && span.finish();
         return self;
       } else if (instance.dataValues[fieldName] === 'null' || !instance.dataValues[fieldName]) {
         instance.setDataValue(fieldName, {});
@@ -229,13 +226,9 @@ function jsonField(db, modelName, fieldName, options) {
       if (currentValue === null || currentValue === '') {
         this.dataValues[fieldName] = {};
       } else if (typeof currentValue == 'string') {
-        const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-        const span = transaction && transaction.startChild({
-          op: 'sequelize',
-          description: `${modelName}#${fieldName}#parse`
+        instrument('sequelize', `${modelName}#${fieldName}#parse`, () => {
+          this.dataValues[fieldName] = JSON.parse(currentValue);
         });
-        this.dataValues[fieldName] = JSON.parse(currentValue);
-        span && span.finish();
       }
       return this.dataValues[fieldName];
     },
@@ -244,13 +237,9 @@ function jsonField(db, modelName, fieldName, options) {
       if (value === null || value === undefined || value === '') {
         str = '{}';
       } else {
-        const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-        const span = transaction && transaction.startChild({
-          op: 'sequelize',
-          description: `${modelName}#${fieldName}#stringify`
+        instrument('sequelize', `${modelName}#${fieldName}#stringify`, () => {
+          str = stringify(value, { space: 2 });
         });
-        str = stringify(value, { space: 2 });
-        span && span.finish();
       }
       this.setDataValue(fieldName, str);
     },

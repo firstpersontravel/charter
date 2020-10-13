@@ -1,6 +1,8 @@
 const Sentry = require('@sentry/node');
 const { stripUrlQueryAndFragment } = require('@sentry/utils');
 
+const { instrument } = require('../sentry');
+
 // Only trace main endpoints
 const tracePrefixes = [
   '/actor/',
@@ -50,6 +52,13 @@ function traceMiddleware() {
     // spans to it later.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     res.__sentry_transaction = transaction;
+
+    // Instrument json stringification in response
+    res.oldJson = res.json;
+    res.json = data => instrument('express', 'json', () => {
+      console.log('express');
+      res.oldJson.call(res, data);
+    });
 
     res.once('finish', () => {
       transaction.setHttpStatus(res.statusCode);
