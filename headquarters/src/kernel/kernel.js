@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const Kernel = require('fptcore/src/kernel/kernel');
 
+const { instrumentAsync } = require('../sentry');
 const config = require('../config');
 const ActionController = require('../controllers/action');
 const KernelOpController = require('./op');
@@ -35,10 +36,12 @@ class KernelController {
     logger.info(action.params, 
       `(Trip #${tripId})${triggeringPlayerId ? ` (Player #${triggeringPlayerId})` : ''} ` +
       `Applying action: ${action.name}.`);
-    const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
-    const result = Kernel.resultForImmediateAction(action, actionContext);
-    await this._applyResult(actionContext, result);
-    return result;
+    return await instrumentAsync('kernel', 'action', async () => {
+      const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
+      const result = Kernel.resultForImmediateAction(action, actionContext);
+      await this._applyResult(actionContext, result);
+      return result;
+    });
   }
 
   /**
@@ -48,10 +51,12 @@ class KernelController {
     logger.info(event,
       `(Trip #${tripId})${triggeringPlayerId ? ` (Player #${triggeringPlayerId})` : ''}  ` +
       `Applying event: ${event.type}.`);
-    const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
-    const result = Kernel.resultForEvent(event, actionContext);
-    await this._applyResult(actionContext, result);
-    return result;
+    return await instrumentAsync('kernel', 'event', async () => {
+      const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
+      const result = Kernel.resultForEvent(event, actionContext);
+      await this._applyResult(actionContext, result);
+      return result;
+    });
   }
 
   /**
@@ -59,14 +64,16 @@ class KernelController {
    */
   static async applyTrigger(tripId, triggerName, event, triggeringPlayerId=null, applyAt=null) {
     logger.info(`(Trip #${tripId}) Applying trigger: ${triggerName}.`);
-    const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
-    const trigger = _.find(actionContext._objs.script.content.triggers || [], { name: triggerName });
-    if (!trigger) {
-      return null;
-    }
-    const result = Kernel.resultForTrigger(trigger, event, actionContext, actionContext);
-    await this._applyResult(actionContext, result);
-    return result;
+    return await instrumentAsync('kernel', 'trigger', async () => {
+      const actionContext = await ActionContext.createForTripId(tripId, triggeringPlayerId, applyAt);
+      const trigger = _.find(actionContext._objs.script.content.triggers || [], { name: triggerName });
+      if (!trigger) {
+        return null;
+      }
+      const result = Kernel.resultForTrigger(trigger, event, actionContext, actionContext);
+      await this._applyResult(actionContext, result);
+      return result;
+    });
   }
 }
 

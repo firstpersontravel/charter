@@ -1,6 +1,7 @@
 const moment = require('moment');
 
 const config = require('../config');
+const { instrumentAsync } = require('../sentry');
 
 const logger = config.logger.child({ name: 'controllers.notify' });
 
@@ -24,7 +25,7 @@ class NotifyController {
   static async notify(tripId, type, content=null) {
     const channel = `trip_${tripId}`;
     const message = { type: type, content: content };
-    await this._notifyFaye(`/${channel}`, message);
+    await instrumentAsync('notify', type, () => this._notifyFaye(`/${channel}`, message));
   }
 
   static async notifyParticipantDeviceState(tripId, participant, clientId=null) {
