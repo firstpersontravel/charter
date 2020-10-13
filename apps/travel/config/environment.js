@@ -9,7 +9,7 @@ module.exports = function(environment) {
     locationType: 'auto',
     s3UploadParams: {
       policy: {
-        expiration: '2020-08-13T03:52:42.000Z',
+        expiration: '2030-01-01T00:00:00.000Z',
         conditions: [
           {bucket: 'fpt-traveler-uploads'},
           {acl: 'private'},
@@ -17,11 +17,11 @@ module.exports = function(environment) {
           ['starts-with', '$key', ''],
           ['starts-with', '$Content-Type', 'image/'],
           ['eq', '$Cache-Control', 'max-age=31536000'],
-          ['content-length-range', 0, 20 * 1024 * 1024]
+          ['content-length-range', 0, 20971520]
         ]
       },
-      signature: 'pe/XpifezoQIPQza9wzH3wlHbnw=',
-      awsAccessKeyId: 'AKIAJZTEBLUXLG4I3NDQ',
+      signature: 'koLIpdoU9n77p0SD2yZs5OCY6QQ=',
+      awsAccessKeyId: 'AKIA4XUHCH2W5ZKEJBVN',
       bucket: 'fpt-traveler-uploads',
     },
     moment: {
