@@ -79,6 +79,7 @@ async function getPlayerRoute(req, res) {
       jsonApiSerialize(player.experience)
     ]
   };
+  res.loggingOrgId = player.orgId;
   res.status(200);
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(response, null, 2));
@@ -156,6 +157,7 @@ async function getTripRoute(req, res) {
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };
+  res.loggingOrgId = trip.orgId;
   res.status(200);
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(response, null, 2));

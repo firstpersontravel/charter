@@ -35,7 +35,7 @@ describe('authMiddleware', () => {
       await authMiddleware.authMiddleware(req, res, next);
 
       // Test user set.
-      assert.deepStrictEqual(req.auth, { user: mockUser });
+      assert.deepStrictEqual(req.auth, { type: 'user', user: mockUser });
 
       // Next should be called with no error.
       sinon.assert.calledOnce(next);

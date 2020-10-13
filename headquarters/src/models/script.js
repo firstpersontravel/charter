@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const Sentry = require('@sentry/node');
 const { ValidationError } = require('sequelize');
 
 const Errors = require('fptcore/src/errors');
@@ -28,6 +29,11 @@ const Script = database.define('Script', snakeCaseColumns({
   content: mutableModifier(jsonField(database, 'Script', 'content', {
     extraValidate: {
       resources: (value) => {
+        const transaction = Sentry.getCurrentHub().getScope().getTransaction();
+        const span = transaction && transaction.startChild({
+          op: 'sequelize',
+          description: 'Script#validate'
+        });
         if (_.isString(value)) {
           try {
             // We're parsing JSON twice this means. *shrug*
@@ -48,6 +54,9 @@ const Script = database.define('Script', snakeCaseColumns({
               throw err;
             }
           }
+        }
+        if (span) {
+          span.finish();
         }
       }
     }

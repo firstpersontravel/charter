@@ -1,4 +1,4 @@
-const { getCurrentHub, startTransaction } = require('@sentry/core');
+const Sentry = require('@sentry/node');
 const { stripUrlQueryAndFragment } = require('@sentry/utils');
 
 // Only trace main endpoints
@@ -7,10 +7,11 @@ const tracePrefixes = [
   '/api/',
   '/auth/',
   '/content/',
+  '/endpoints/',
   '/entry/',
   '/gallery/',
   '/s/',
-  '/endpoints/'
+  '/s3/'
 ];
 
 function isTraceable(url) {
@@ -35,13 +36,13 @@ function traceMiddleware() {
     const reqUrl = req.originalUrl && stripUrlQueryAndFragment(req.originalUrl);
     const reqPattern = reqUrl.replace(/\d+/g, '#');
 
-    const transaction = startTransaction({
+    const transaction = Sentry.startTransaction({
       name: `${reqMethod} ${reqPattern}`,
       op: 'http.server'
     });
 
     // We put the transaction on the scope so users can attach children to it
-    getCurrentHub().configureScope(scope => {
+    Sentry.getCurrentHub().configureScope(scope => {
       scope.setSpan(transaction);
     });
 

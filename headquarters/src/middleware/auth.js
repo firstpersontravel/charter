@@ -48,7 +48,10 @@ async function authMiddleware(req, res, next) {
       next(authenticationError('Invalid user'));
       return;
     }
-    req.auth = { user: user };
+    req.auth = {
+      type: 'user',
+      user: user
+    };
     next();
     return;
   }
@@ -68,7 +71,11 @@ async function authMiddleware(req, res, next) {
         where: { isArchived: false }
       }]
     });
-    req.auth = { participant: participant, players: players };
+    req.auth = {
+      type: 'participant',
+      participant: participant,
+      players: players
+    };
     next();
     return;
   }
@@ -83,7 +90,11 @@ async function authMiddleware(req, res, next) {
     const players = await models.Player.findAll({
       where: { tripId: trip.id }
     });
-    req.auth = { trip: trip, players: players };
+    req.auth = {
+      type: 'trip',
+      trip: trip,
+      players: players
+    };
     next();
     return;
   }

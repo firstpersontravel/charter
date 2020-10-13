@@ -15,8 +15,9 @@ const models = require('../models');
 const { asyncRoute } = require('./utils');
 
 const apiRouter = express.Router();
+
+// Populate authentication request parameters.
 apiRouter.use(asyncRoute(authMiddleware));
-apiRouter.use(Sentry.Handlers.requestHandler());
 
 /**
  * Utility function to create a REST collection router

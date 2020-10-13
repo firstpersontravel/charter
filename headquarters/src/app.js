@@ -7,14 +7,17 @@ const express = require('express');
 const expressHandlebars  = require('express-handlebars');
 const path = require('path');
 const Sentry = require('@sentry/node');
-const s3Router = require('react-s3-uploader/s3router');
 const Tracing = require('@sentry/tracing');
 
 const config = require('./config');
-const { initSentry } = require('./sentry');
+const { initTracing } = require('./sentry');
 
 const apiRouter = require('./routers/api');
 const authRouter = require('./routers/auth');
+const logMiddleware = require('./middleware/log');
+const hostMiddleware = require('./middleware/host');
+const httpsMiddleware = require('./middleware/https');
+const s3Router = require('./routers/s3');
 const traceMiddleware = require('./middleware/trace');
 const twilioRouter = require('./routers/twilio');
 const {
@@ -42,7 +45,7 @@ Sentry.init({
   tracesSampleRate: 1.0
 });
 
-initSentry();
+initTracing();
 
 // Initialize server
 app.enable('trust proxy');
@@ -61,62 +64,11 @@ app.use((req, res, next) => {
 });
 
 // Health check - before HTTPS redirect
-app.get('/health', (req, res) => {
-  res.send('ok');
-});
+app.get('/health', (req, res) => res.send('ok'));
 
-// Version for frontend
-app.get('/version', (req, res) => {
-  res.json({ version: config.env.GIT_HASH || '' });
-});
-
-// Add a handler to inspect the req.secure flag (see 
-// http://expressjs.com/api#req.secure). This allows us 
-// to know whether the request was via http or https.
-app.use((req, res, next) => {
-  if (!req.secure && process.env.NODE_ENV === 'production') {
-    res.redirect(`https://${req.headers.host}${req.url}`);
-    return;
-  }
-  // request was via https, so do no special handling
-  next();
-});
-
-// Log requests
-const ignorePrefixes = ['/static', '/build', '/travel', '/health', '/version'];
-app.use((req, res, next) => {
-  // Don't log static file requests.
-  for (const ignorePrefix of ignorePrefixes) {
-    if (req.originalUrl.startsWith(ignorePrefix)) {
-      next();
-      return;
-    }
-  }
-  const startedAt = new Date().valueOf();
-  // config.logger.info({ name: 'request' },
-  //   `${req.method} ${req.originalUrl} ...`);
-  res.on('finish', () => {
-    const reqDurationMsec = new Date().valueOf() - startedAt;
-    const devInfo = { name: 'request' };
-    const reqInfo = {
-      name: 'request',
-      method: req.method,
-      path: req.originalUrl,
-      pattern: req.originalUrl.split('?')[0].replace(/\d+/g, 'xxx'),
-      ip: req.ip,
-      status: res.statusCode,
-      duration: reqDurationMsec,
-      size: parseInt(res.get('Content-Length') || 0)
-    };
-    config.logger.info(
-      config.env.HQ_STAGE === 'development' ? devInfo : reqInfo,
-      `${req.method} ${req.originalUrl} - ` +
-      `${res.statusCode} ${res.statusMessage} - ` +
-      `${reqDurationMsec}ms - ` +
-      `${res.get('Content-Length') || 0}b sent`);
-  });
-  next();
-});
+app.use(httpsMiddleware);
+app.use(hostMiddleware);
+app.use(logMiddleware);
 
 // Set up template engine for actor view
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'public' }));
@@ -132,37 +84,11 @@ app.use('/gallery', galleryRouter);
 app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
 
-
 // S3 signing url
-const s3Opts = {
-  bucket: config.env.HQ_CONTENT_BUCKET,
-  ACL: 'public-read',
-  uniquePrefix: false,
-  signatureExpires: 600 // signature is valid for 10 minutes
-};
-if (config.env.HQ_STAGE === 'staging') {
-  // special case: staging bucket is in us-east-1 -- other buckets are us-west-2
-  // like our ECS cluster.
-  s3Opts.region = 'us-east-1';
-}
-app.use('/s3', s3Router(s3Opts));
+app.use('/s3', s3Router);
 
-const hostRedirects = {
-  'app.firstperson.travel': 'charter.firstperson.travel',
-  'staging.firstperson.travel': 'beta.firstperson.travel',
-};
-
-// Host redirects after API endpoints but before static content -- so that
-// twilio numbers connected to old hosts still work. If the old domain is
-// ever deprecated, twilio numbers will need to be ported over.
-app.use((req, res, next) => {
-  if (hostRedirects[req.hostname]) {
-    const newHost = hostRedirects[req.hostname];
-    res.redirect(`${req.protocol}://${newHost}${req.originalUrl}`);
-    return;
-  }
-  next();
-});
+// Version for frontend
+app.get('/version', (req, res) => res.json({ version: config.env.GIT_HASH || '' }));
 
 // Serve static content for built travel app and agency app
 const root = path.dirname(path.dirname(path.resolve(__dirname)));
