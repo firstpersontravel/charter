@@ -3,14 +3,14 @@ const { stripUrlQueryAndFragment } = require('@sentry/utils');
 
 // Only trace main endpoints
 const tracePrefixes = [
-  '/actor',
-  '/api',
-  '/auth',
-  '/content',
-  '/entry',
-  '/gallery',
-  '/s',
-  '/endpoints/twilio'
+  '/actor/',
+  '/api/',
+  '/auth/',
+  '/content/',
+  '/entry/',
+  '/gallery/',
+  '/s/',
+  '/endpoints/'
 ];
 
 function isTraceable(url) {
