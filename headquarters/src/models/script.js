@@ -30,18 +30,23 @@ const Script = database.define('Script', snakeCaseColumns({
     extraValidate: {
       resources: (value) => {
         const transaction = Sentry.getCurrentHub().getScope().getTransaction();
-        const span = transaction && transaction.startChild({
-          op: 'sequelize',
-          description: 'Script#validate'
-        });
         if (_.isString(value)) {
+          const span = transaction && transaction.startChild({
+            op: 'sequelize',
+            description: 'Script#parse'
+          });
           try {
             // We're parsing JSON twice this means. *shrug*
             value = JSON.parse(value);
           } catch (err) {
             // Pass, since the error will be caught elsewhere.
           }
+          span && span.finish();
         }
+        const span2 = transaction && transaction.startChild({
+          op: 'sequelize',
+          description: 'Script#validate'
+        });
         // Don't check if it's not an object cos that overlaps with the string
         // case where you get a string.
         if (_.isObject(value)) {
@@ -55,9 +60,7 @@ const Script = database.define('Script', snakeCaseColumns({
             }
           }
         }
-        if (span) {
-          span.finish();
-        }
+        span2 && span2.finish();
       }
     }
   })),
