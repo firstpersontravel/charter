@@ -11,6 +11,7 @@ const s3Router = require('react-s3-uploader/s3router');
 const Tracing = require('@sentry/tracing');
 
 const config = require('./config');
+const { initSentry } = require('./sentry');
 
 const apiRouter = require('./routers/api');
 const authRouter = require('./routers/auth');
@@ -40,6 +41,8 @@ Sentry.init({
   // for finer control
   tracesSampleRate: 1.0
 });
+
+initSentry();
 
 // Initialize server
 app.enable('trust proxy');

@@ -5,6 +5,7 @@ const Sentry = require('@sentry/node');
 const Sequelize = require('sequelize');
 
 const config = require('./config');
+const { initSentry } = require('./sentry');
 const RunnerWorker = require('./workers/runner');
 const SchedulerWorker = require('./workers/scheduler');
 
@@ -17,6 +18,8 @@ Sentry.init({
   // for finer control
   tracesSampleRate: 1.0
 });
+
+initSentry();
 
 const SCHEDULE_INTERVAL = 10000;
 const RUN_INTERVAL = 1000;
