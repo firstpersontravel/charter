@@ -57,7 +57,7 @@ app.use(cookieParser());
 app.use(cors());
 
 // CORS Headers
-app.use((req, res, next) => {
+app.use(function corsHeadersMiddleware(req, res, next) {
   res.set('Access-Control-Allow-Origin', '*');
   res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   next();
@@ -124,7 +124,7 @@ app.use(Sentry.Handlers.errorHandler());
 
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars
-app.use(function(err, req, res, next) {
+app.use(function errorHandler(err, req, res, next) {
   config.logger.error({ name: 'error' }, err.stack);
   const errorResponse = { message: err.message };
   res.status(500);
