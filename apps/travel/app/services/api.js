@@ -2,10 +2,14 @@ import Ember from 'ember';
 
 // https://stackoverflow.com/questions/46946380/fetch-api-request-timeout
 const fetchWithTimeout = (url, ms, options) => {
-  const controller = new AbortController();
-  const promise = fetch(url, { signal: controller.signal, ...options });
-  const timeout = setTimeout(() => controller.abort(), ms);
-  return promise.finally(() => clearTimeout(timeout));
+  if (typeof AbortController === 'function') {
+    const controller = new AbortController();
+    const promise = fetch(url, { signal: controller.signal, ...options });
+    const timeout = setTimeout(() => controller.abort(), ms);
+    return promise.finally(() => clearTimeout(timeout));
+  } else {
+    return fetch(url, options);
+  }
 };
 
 function ApiRequestError(status, message) {
