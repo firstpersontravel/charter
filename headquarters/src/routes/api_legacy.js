@@ -57,6 +57,26 @@ function jsonApiSerialize(instance) {
   };
 }
 
+// Only include collections needed for the interface.
+const includedCollections = [
+  'geofences',
+  'interfaces',
+  'pages',
+  'waypoints',
+  'roles',
+  'routes',
+  'scenes',
+  'content_pages',
+  'variants'
+];
+
+function filterScriptContent(scriptContent) {
+  return Object.fromEntries(Object
+    .keys(scriptContent)
+    .filter(key => includedCollections.includes(key))
+    .map(key => [key, scriptContent[key]]));
+}
+
 /**
  * Legacy getter for THG app in JSONAPI format.
  */
@@ -124,10 +144,6 @@ async function getTripRoute(req, res) {
       where: { id: { [Sequelize.Op.in]: participantIds } }
     })
   ]);
-
-  // Hack for now -- sub in the directions assets data into the script before
-  // sending over.
-  trip.script.content.directions = assets.map(a => a.data);
   
   const objs = players
     .concat(messages)
@@ -135,6 +151,10 @@ async function getTripRoute(req, res) {
     .concat(participants);
 
   if (includeScript) {
+    // Include only collections needed
+    trip.script.content = filterScriptContent(trip.script.content);
+    // Sub in the directions assets data into the script as a resource
+    trip.script.content.directions = assets.map(a => a.data);
     objs.push(trip.group);
     objs.push(trip.script);
     objs.push(trip.experience);
