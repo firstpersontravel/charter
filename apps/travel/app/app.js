@@ -11,8 +11,8 @@ const environments = {
 };
 
 const environment = environments[window.location.hostname] || 'development';
-const initSentry = true;
-// const initSentry = environment !== 'development';
+const initSentry = environment !== 'development';
+// const initSentry = true;
 
 var App;
 
