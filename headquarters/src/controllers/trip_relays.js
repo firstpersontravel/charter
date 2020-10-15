@@ -122,29 +122,9 @@ class TripRelaysController {
   }
 
   /**
-   * Format a media url.
-   */
-  static async _getMediaUrl(trip, url) {
-    if (_.startsWith(url, 'http')) {
-      return url;
-    }
-    const asset = await models.Asset.findOne({
-      where: {
-        experienceId: trip.experienceId,
-        type: 'media',
-        name: url
-      }
-    });
-    if (!asset) {
-      return null;
-    }
-    return asset.data.url;
-  }
-
-  /**
    * Split a message into body and media for a given relay.
    */
-  static async _partsForRelayMessage(script, trip, relay, message) {
+  static _partsForRelayMessage(script, trip, relay, message) {
     if (message.medium === 'text') {
       // TODO: include meta if this participant is signed up for multiple active trips
       const includeMeta = false;
@@ -156,12 +136,7 @@ class TripRelaysController {
     if (message.medium === 'image' ||
         message.medium === 'audio' ||
         message.medium === 'video') {
-      const ext = message.content.split('.').reverse()[0].toLowerCase();
-      const isAllowedMediaExtension = _.includes(ALLOWED_MEDIA_EXTENSIONS, ext);
-      if (isAllowedMediaExtension) {
-        const mediaUrl = await this._getMediaUrl(trip, message.content);
-        return [null, mediaUrl];
-      }
+      return [null, message.content];
     }
 
     return [null, null];
@@ -181,9 +156,7 @@ class TripRelaysController {
       if (relay.id === suppressRelayId) {
         continue;
       }
-      const [body, mediaUrl] = await (
-        this._partsForRelayMessage(script, trip, relay, message)
-      );
+      const [body, mediaUrl] = this._partsForRelayMessage(script, trip, relay, message);
       await RelayController.sendMessage(relay, trip, body, mediaUrl);
     }
 
@@ -203,8 +176,7 @@ class TripRelaysController {
       if (relay.forRoleName === message.fromRoleName) {
         continue;
       }
-      const [body, mediaUrl] = await this._partsForRelayMessage(script, trip, 
-        relay, message);
+      const [body, mediaUrl] = this._partsForRelayMessage(script, trip, relay, message);
       await RelayController.sendMessage(relay, trip, body, mediaUrl);
     }
   }

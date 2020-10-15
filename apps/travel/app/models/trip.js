@@ -6,9 +6,10 @@ export default DS.Model.extend({
   script: DS.belongsTo('script', {async: false}),
   experience: DS.belongsTo('experience', {async: false}),
 
-  // Auth token snuck in via legacy API.
+  // Extra fields inserted by the legacy API
   authToken: DS.attr('string'),
   videoToken: DS.attr('string'),
+  preloadUrls: DS.attr('obj'),
 
   date: DS.attr('string'),
   templateName: DS.attr('string'),

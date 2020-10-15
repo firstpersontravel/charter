@@ -66,6 +66,8 @@ export default Ember.Component.extend({
     }
   }.observes('audioUrl'),
 
+  audioIsLoading: Ember.computed.not('duration'),
+
   audioHasEnded: function() {
     if (!this.get('hasAudio')) { return false; }
     if (!this.get('audioDuration')) { return false; }

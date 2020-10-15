@@ -2,6 +2,8 @@ const _ = require('lodash');
 const crypto = require('crypto');
 const twilio = require('twilio');
 
+const coreWalker = require('fptcore/src/core-walker');
+
 const config = require('../config');
 const models = require('../models');
 const { instrument } = require('../sentry');
@@ -150,6 +152,14 @@ async function getTripRoute(req, res) {
     .concat(profiles)
     .concat(participants);
 
+  // Find all audio media to preload
+  const preloadUrls = [];
+  coreWalker.walkAllFields(trip.script.content, 'media', (_, __, obj, paramSpec) => {
+    if (paramSpec.medium === 'audio' && obj) {
+      preloadUrls.push(obj);
+    }
+  });
+
   if (includeScript) {
     // Include only collections needed
     trip.script.content = filterScriptContent(trip.script.content);
@@ -167,6 +177,9 @@ async function getTripRoute(req, res) {
   data.relationships.player = players
     .map(player => ({ id: player.id, type: 'player' }));
   
+  // Add URLs to preload
+  data.attributes['preload-urls'] = preloadUrls;
+
   // Sneak in a day long auth token
   data.attributes['auth-token'] = createTripToken(trip, 86400);
 
