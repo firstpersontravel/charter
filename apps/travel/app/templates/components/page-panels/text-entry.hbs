@@ -1,0 +1,11 @@
+<form class="pure-form">
+  <fieldset class="pure-group">
+    {{input
+      type='text'
+      value=textInput
+      class="pure-input-1"
+      placeholder=params.placeholder}}
+    <button class='pure-button pure-button-primary pure-input-1'
+      {{action "press"}}>{{submitText}}</button>
+  </fieldset>
+</form>

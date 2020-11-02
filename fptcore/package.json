@@ -1,0 +1,24 @@
+{
+  "name": "fptcore",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "watch-docs": "nodemon cmd/dump-reference.js",
+    "build-docs": "node cmd/dump-reference.js",
+    "pretest": "eslint . || echo 'Lint failed.'",
+    "test": "mocha --recursive test"
+  },
+  "main": "./src/index.js",
+  "dependencies": {
+    "jsonschema": "^1.2.4",
+    "lodash": "^4.17.3",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25"
+  },
+  "devDependencies": {
+    "eslint": "^5.1.0",
+    "mocha": "^4.1.0",
+    "nodemon": "^2.0.3",
+    "sinon": "^4.1.5"
+  }
+}

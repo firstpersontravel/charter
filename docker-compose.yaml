@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+  server:
+    image: fpt:latest
+    volumes:
+      # Code
+      - ./fptcore:/var/app/fptcore
+      - ./headquarters:/var/app/hqdev
+      - /var/app/hqdev/node_modules # hide host node modules
+      # Static assets
+      - ./static:/var/app/static
+      - ./build:/var/app/build
+      - ./apps/agency/static:/var/app/apps/agency/static
+      - ./apps/travel/dist:/var/app/apps/travel/dist
+    env_file: [./local.env]
+    environment:
+      - PATH=/var/app/headquarters/node_modules/.bin:$PATH
+      - NODE_PATH=/var/app/headquarters/node_modules
+    working_dir: /var/app/hqdev
+    command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev --inspect=0.0.0.0:9229 bin/server.js
+    ports:
+      - 5001:5001  # web server
+      - 9229:9229  # chrome devtools
+
+  worker:
+    image: fpt:latest
+    volumes:
+      - ./fptcore:/var/app/fptcore
+      - ./headquarters:/var/app/hqdev
+      - /var/app/hqdev/node_modules # hide host node modules
+    env_file: [./local.env]
+    environment:
+      - PATH=/var/app/headquarters/node_modules/.bin:$PATH
+      - NODE_PATH=/var/app/headquarters/node_modules
+    working_dir: /var/app/hqdev
+    command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/worker.js
+
+  mysql:
+    image: mysql:5.7
+    environment: [MYSQL_ROOT_PASSWORD=root]
+    volumes: ["./docker/mysql:/docker-entrypoint-initdb.d"]
+    ports: ["4310:3306"]

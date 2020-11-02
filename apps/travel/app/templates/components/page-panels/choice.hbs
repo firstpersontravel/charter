@@ -1,0 +1,8 @@
+{{humanizedText}}<br/>
+
+{{#each items as |item|}}
+  <button class='pure-button {{if item.isSelected "pure-button-selected"}}'
+    {{action "select" item.valueRef}}>
+    {{{item.text}}}
+  </button>
+{{/each}}

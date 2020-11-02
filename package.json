@@ -1,0 +1,28 @@
+{
+  "name": "my-project-name",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "install_all": "cd fptcore && npm install && cd ../headquarters && npm install && cd ../apps/travel && npm install && cd ../../apps/agency && npm install",
+    "test": "npm run test_core && npm run test_agency && npm run test_hq",
+    "test_hq": "cd headquarters; npm test",
+    "test_core": "cd fptcore; npm test",
+    "test_agency": "cd apps/agency; npm test",
+    "build-docs": "cd fptcore; npm run build-docs",
+    "build_travel": "cd apps/travel && ember build --env production",
+    "build_agency": "cd apps/agency; export NODE_ENV=production; npm run build",
+    "build": "npm run build_travel && npm run build_agency",
+    "watch_travel": "cd apps/travel; ./node_modules/.bin/ember build --watch --env development",
+    "watch_agency": "export $(cat ./secrets/local.env | xargs); cd apps/agency; npm run watch",
+    "watch_agency_devserver": "export $(cat ./secrets/local.env | xargs); cd apps/agency; npm run dev",
+    "watch": "npm run watch_travel & npm run watch_agency & npm run watch_agency_devserver",
+    "upload_secrets": "aws s3 sync secrets s3://fpt-tech/secrets --exclude '*.DS_Store'",
+    "download_secrets": "aws s3 sync s3://fpt-tech/secrets secrets",
+    "migrate": "npm run migrate:db && npm run migrate:scripts",
+    "migrate:db": "docker-compose exec server sequelize db:migrate",
+    "migrate:undo": "docker-compose exec server sequelize db:migrate:undo",
+    "migrate:scripts": "docker-compose exec server npm run migrate:scripts",
+    "migrate:examples": "docker-compose exec server npm run migrate:examples",
+    "deploy": "git fetch; git branch -f production `git rev-parse origin/master`; git push -f origin production"
+  }
+}

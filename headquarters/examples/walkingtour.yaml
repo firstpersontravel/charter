@@ -1,0 +1,141 @@
+content:
+  interfaces:
+    - name: tablet
+      title: Tablet
+      tabs:
+        - title: Navigation
+          panels:
+            - type: current_page
+              id: 156
+        - title: Messages
+          panels:
+            - type: messages_browse
+              id: 157
+  content_pages: []
+  roles:
+    - name: Player
+      title: Player
+      interface: tablet
+    - name: Guide
+      title: Guide
+  scenes:
+    - name: SCENE-MAIN
+      title: Main
+  pages:
+    - name: PAGE-START
+      title: Start at house
+      interface: tablet
+      scene: SCENE-MAIN
+      directive: Walk to Atlas
+      panels:
+        - type: directions
+          geofence: GEOFENCE-ATLAS
+          waypoint: WAYPOINT-ATLAS
+          id: 158
+    - name: PAGE-ATLAS
+      title: At Atlas Cafe
+      interface: tablet
+      scene: SCENE-MAIN
+      directive: Enjoy Atlas Cafe!
+      waypoint: WAYPOINT-ATLAS
+  waypoints:
+    - name: WAYPOINT-COTTAGE
+      title: Cottage
+      options:
+        - name: cottage
+          location:
+            title: Cottage
+            address: '828 Alabama St, SF CA'
+            coords:
+              - 37.758273
+              - -122.411681
+    - name: WAYPOINT-ATLAS
+      title: Atlas Cafe
+      options:
+        - name: atlas
+          location:
+            title: Atlas Cafe
+            address: 'Atlas Cafe, SF CA'
+            coords:
+              - 37.75901
+              - -122.411497
+    - name: WAYPOINT-BON-NENE
+      title: Bon Nene
+      options:
+        - name: bonnene
+          location:
+            title: Bon Nene
+            address: 'Bon Nene, SF CA'
+            coords:
+              - 37.757528
+              - -122.411499
+  geofences:
+    - name: GEOFENCE-ATLAS
+      center: WAYPOINT-ATLAS
+      distance: 50
+    - name: GEOFENCE-BON-NENE
+      center: WAYPOINT-BON-NENE
+      distance: 20
+  cues: []
+  triggers:
+    - name: atlas
+      event:
+        type: directions_arrived
+        directions: 158
+      scene: SCENE-MAIN
+      actions:
+        - name: send_text
+          content: >-
+            Welcome to Atlas Cafe! Send me an picture and i'll give you a
+            sandwich recommendation.
+          from_role_name: Guide
+          to_role_name: Player
+          id: 159
+        - name: send_to_page
+          role_name: Player
+          page_name: PAGE-ATLAS
+          id: 160
+    - name: msg
+      event:
+        type: image_received
+        from: Player
+        to: Guide
+      scene: SCENE-MAIN
+      actions:
+        - id: 110003
+          name: conditional
+          if:
+            op: role_in_geofence
+            role: Player
+            geofence: GEOFENCE-ATLAS
+          actions:
+            - name: wait
+              duration: 10s
+              id: 161
+            - name: send_text
+              from_role_name: Guide
+              to_role_name: Player
+              content: Try the trout sandwich.
+              id: 162
+            - name: increment_value
+              value_ref: points
+              delta: 5
+              id: 163
+    - name: geofence
+      event:
+        type: geofence_entered
+        role: Player
+        geofence: GEOFENCE-BON-NENE
+      scene: SCENE-MAIN
+      actions:
+        - name: send_text
+          from_role_name: Guide
+          to_role_name: Player
+          content: The mushroom spaghetti bowl is amazing.
+          id: 164
+        - name: increment_value
+          value_ref: points
+          delta: 10
+          id: 165
+  meta:
+    version: 42

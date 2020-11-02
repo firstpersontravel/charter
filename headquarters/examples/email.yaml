@@ -1,0 +1,37 @@
+content:
+  roles:
+    - name: player
+      title: Player
+    - name: system
+      title: System
+  inboxes:
+    - name: inbox
+      role: system
+      address: charter@firstperson.travel
+  scenes:
+    - name: scene
+      title: First scene
+  cues:
+    - name: start
+      scene: scene
+      title: start
+  triggers:
+    - name: start
+      scene: scene
+      event:
+        type: cue_signaled
+        cue: start
+      actions:
+        - name: send_email
+          from: inbox
+          to: player
+          subject: test
+          body: |
+            # Hello there!
+
+            Greetings from the System
+
+            Sincerely yours
+          id: 1
+  meta:
+    version: 42

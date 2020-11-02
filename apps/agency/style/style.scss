@@ -1,0 +1,276 @@
+$grid-gutter-width: 15px;
+
+@import "./fonts.scss";
+
+$font-family-sans-serif: FFMarkPro;
+$font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
+$font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base:       $font-family-sans-serif !default;
+
+$font-weight-lighter:         100;
+$font-weight-light:           300;
+$font-weight-normal:          400;
+$font-weight-bold:            500;
+$font-weight-bolder:          700;
+$font-weight-base:            $font-weight-normal;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/react-datepicker/dist/react-datepicker";
+
+@import "../node_modules/leaflet/dist/leaflet.css";
+
+$fa-font-path: "/static/agency/webfonts";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+@import "../node_modules/@fortawesome/fontawesome-free/scss/solid";
+
+h1, .h1, h2, .h2 {
+  font-family: RecoletaAlt-SemiBold;
+}
+
+body {
+  height: 100%;
+}
+
+.sentry-error-embed-wrapper {
+  z-index: 4000 !important;
+}
+
+.btn-group-xs > .btn, .btn-xs {
+  padding: .25rem .4rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: .2rem;
+}
+
+.bold { font-weight: bold; }
+.strikethrough { text-decoration: line-through; }
+.react-datepicker__input-container { display: block }
+
+.constrain-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wrap-text {
+  white-space: pre-wrap;
+}
+
+.faint { opacity: 0.5; }
+.btn-unstyled {
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    text-align: left;
+    display: inline;
+}
+
+.popover-control .btn-unstyled {
+  // max-width: 85%;
+  display: inline-block;
+  &:hover {
+    background: #eee;
+  }
+}
+
+.clear-btn {
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.popover {
+  max-width: 400px;
+  textarea {
+    height: 10em;
+  }
+}
+
+.nav-tabs {
+  margin-bottom: 0.5em;
+}
+
+.navbar {
+  background: #ccc;
+  &.navbar-development {
+    background: #bfb;
+  }
+  &.navbar-staging {
+    background: #ffb;
+  }
+}
+
+.marker-grayscale {
+  filter: grayscale(100%);
+}
+
+.fixed-corner {
+  background: white;
+  z-index: 1000;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0.5em;
+}
+
+.message {
+  margin-bottom: 0.25em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  &.message-archived {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+}
+
+.upcoming-archived { opacity: 0.5; text-decoration: line-through; }
+.upcoming-unarchived {}
+
+.container-fluid {
+  margin-top: 0.5em;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.row-scene {
+  position: relative;
+  border-top: 5px solid gray;
+  margin-top: 2.2em;
+  padding-top: 0.5em;
+  margin-bottom: 0.5em;
+
+  .player-column {
+    border-left: 3px solid transparentize(black, 0.9);
+  }
+
+  .scene-header {
+    position: absolute;
+    top: -2.2em;
+    left: 0px;
+    background: gray;
+    color: white;
+    a { color: white; }
+    padding: 5px 10px;
+  }
+
+  &.row-current-scene {
+    padding: 1em 0;
+    border-top: 5px solid $primary;
+    background: transparentize($primary, 0.9) !important;
+
+    .scene-header {
+      background: $primary;
+    }
+  }
+}
+
+.cell-page {
+  a { color: inherit; }
+  &.cell-current-page, &.cell-current-page a {
+    background: #666 !important;
+    color: white;
+  }
+}
+
+.leaflet-container {
+  height: 400px;
+}
+.leaflet-control-attribution {
+  display: none;
+}
+
+.script-editor-container {
+  .script-editor-nav .list-group-item {
+    padding: 0.25rem 0.5rem;
+  }
+  .script-editor-tree .list-group-item {
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media(max-width: 575px) {
+  .row { display: block; }
+}
+
+@media(min-width: 576px) {
+  .generic-container {
+    height: calc(100% - 85px);
+  }
+  .generic-full-height {
+    max-height: 100%;
+    overflow-y: scroll; 
+  }
+  .script-editor-full-height {
+    max-height: calc(100% - 105px);
+    overflow-y: scroll; 
+  }
+  .script-editor-container, .script-tester-container {
+    height: calc(100% - 105px);
+  }
+  .script-editor-container, .script-tester-inner-container {
+    height: 100%;
+  }
+  .script-editor-col, .script-tester-col {
+    max-height: 100%;
+    overflow-y: scroll; 
+  }
+}
+
+@media(min-width: 576px) {
+  .tab-right-float {
+    float: right;
+    margin-top: 0.5em;
+  }
+  .align-right-sm {
+    text-align: right;
+  }
+}
+
+@media(max-width: 575px) {
+  .leaflet-container {
+    height: 200px;
+  }
+  .breadcrumb {
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .nav-tabs .nav-link {
+    padding: 0.25rem;
+    font-size: 10pt;
+  }
+  .nav-tabs .nav-trip-item {
+    overflow: hidden;
+    max-width: 4em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .inline-xs-down {
+    display: inline;
+  }
+  .tab-right-float {
+    text-align: right;
+    margin-bottom: 0.5em;
+  }
+}
+
+// number of cards per line for each breakpoint
+$cards-per-line: (
+  xs: 1,
+  sm: 2,
+  md: 3,
+  lg: 4,
+  xl: 5
+);
+
+@each $name, $breakpoint in $grid-breakpoints {
+  @if $name != xs {
+    @media (min-width: $breakpoint) {
+      .card-deck .card {
+        flex: 0 0 calc(#{100/map-get($cards-per-line, $name)}% - #{$grid-gutter-width});
+      }
+    }
+  }
+}
+

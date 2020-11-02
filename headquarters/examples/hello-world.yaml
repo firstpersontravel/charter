@@ -1,0 +1,34 @@
+content:
+  interfaces:
+    - name: player
+      title: Player
+  meta:
+    version: 42
+  pages:
+    - directive: Hello from Charter!
+      interface: player
+      name: first_page
+      panels:
+        - id: 2
+          text: This is your first page.
+          type: text
+      scene: first
+      title: First page
+  roles:
+    - interface: player
+      name: player
+      title: Player
+  scenes:
+    - name: first
+      title: First scene
+  triggers:
+    - actions: []
+      event:
+        type: scene_started
+      name: first
+      scene: first
+  variants:
+    - default: true
+      name: default
+      title: Defaults
+assets: []

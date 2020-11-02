@@ -1,0 +1,8 @@
+.git
+env
+**/tmp
+**/node_modules
+**/bower_components
+**/dist
+**/.terraform
+build

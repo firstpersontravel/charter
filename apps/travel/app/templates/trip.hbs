@@ -1,0 +1,13 @@
+{{#if debug}}
+  {{render "debug"}}
+{{/if}}
+
+<div class='trip-container {{environmentClassName}} {{scriptClassName}}'>
+  <div class='ios-padding'></div>
+
+  {{outlet}}
+</div>
+
+{{#each model.preloadUrls as |preloadUrl|}}
+  <audio src={{preloadUrl}} preload="autio" style="display: none;" />
+{{/each}}

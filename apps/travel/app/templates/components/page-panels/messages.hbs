@@ -1,0 +1,75 @@
+<h1>You &amp; {{withName}}</h1>
+
+{{#if numEarlierMessages}}
+  <p class='earlier-messages'>
+    <button class='pure-button' {{action "showEarlier"}}>
+      Show {{numEarlierMessages}} earlier messages
+    </button>
+  </p>
+{{/if}}
+
+{{#each recentMessages as |message|}}
+  {{component
+    "page-panels/messages-item"
+    message=message
+    asPlayer=asPlayer
+    trip=trip
+    player=player}}
+{{/each}}
+
+{{#if isSendingMessage}}
+  <div class='messages-item messages-item-outgoing messages-item-text'>
+    <div class='msg'>Sending...</div>
+  </div>
+{{/if}}
+
+{{#if canSend}}
+  <div class='message-send'>
+    <div class='image-upload-container'></div>
+    <form enctype="multipart/form-data" class="pure-g">
+      {{#if canInitiateCalls}}
+        <a
+          class="pure-button pure-button-primary pure-u-1-12"
+          style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
+          href="{{callUrl}}">
+          <i class='fa fa-phone'></i>
+        </a>
+      {{else}}
+        <a
+          class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled'
+          style="border-top-right-radius: 0; border-bottom-right-radius: 0;"
+          disabled>
+          <i class='fa fa-phone'></i>
+        </a>
+      {{/if}}
+      {{#if canSendImages}}
+        <label
+          for="image-upload"
+          style="border-radius: 0;"
+          class="pure-button pure-button-primary pure-u-1-12">
+          <i class='fa fa-camera'></i>
+        </label>
+      {{else}}
+        <a
+          class='pure-button pure-button-primary pure-u-1-12 pure-button-disabled'
+          style="border-radius: 0;"
+          disabled>
+          <i class='fa fa-camera'></i>
+        </a>
+      {{/if}}
+      {{input
+        class="pure-u-2-3 message-input"
+        value=messageInput
+        enter="sendText"
+        placeholder=placeholder
+        disabled=(if canSendTexts false true)}}
+      <button
+          style="border-top-left-radius: 0; border-bottom-left-radius: 0;"
+          class="pure-button pure-button-primary pure-u-1-6"
+          {{action "sendText"}}
+          disabled={{isSendTextDisabled}}>
+        Send
+      </button>
+    </form>
+  </div>
+{{/if}}

@@ -1,0 +1,59 @@
+{{soundtrack-status
+  roleName=model.roleName
+  values=model.trip.values
+  mute=application.mute
+  script=model.trip.script}}
+
+<style>
+html, button, input, select, textarea, .pure-g [class *= "pure-u"] {
+  font-family: {{fontFamily}};
+}
+body {
+  background-color: {{colors.header}};
+  background-image: linear-gradient(to bottom, {{ colors.bg }} 0%, {{ colors.bg }} 100%);
+  color: {{colors.bgText}};
+}
+
+.application-loading, .application-error, .trip-container { background: {{colors.bg}}; }
+
+.trip-soundtrack, .trip-soundtrack a, .page-panel-text.page-panel-text-banner, .application-debug-console {
+  background: {{colors.header}};
+  color: {{colors.headerText}};
+}
+.pure-menu { background: {{colors.header}}; }
+.pure-menu .pure-menu-link { color: {{colors.headerText}}; }
+.pure-menu .pure-menu-link:focus, .pure-menu .pure-menu-link:hover { background: {{ colors.headerDark}}; }
+.pure-menu .pure-menu-selected .pure-menu-link {
+  background: {{colors.accent}};
+  color: {{colors.accentText}};
+}
+label.pure-button, button.pure-button, a.pure-button {
+  background: {{colors.bgDarker}};
+  color: {{colors.bgText}};
+}
+label.pure-button-primary, button.pure-button-primary, a.pure-button-primary {
+  background: {{colors.primary}};
+  color: {{colors.primaryText}};
+}
+label.pure-button-selected, button.pure-button-selected, a.pure-button-selected {
+  background: {{colors.accentDarker}};
+  color: {{colors.accentText}};
+}
+
+.pure-table { border: 0; }
+.pure-table td { border: 0; }
+.pure-table-striped tr:nth-child(2n-1) td {
+  background: {{colors.bgDark}};
+}
+
+.page-panel-messages .messages-item-incoming .msg { background: {{colors.bgDarker}}; }
+.page-panel-messages .messages-item-outgoing .msg {
+  background: {{colors.primary}};
+  color: {{colors.primaryText}};
+  opacity: 0.8;
+}
+
+{{customCss}}
+</style>
+
+{{outlet}}

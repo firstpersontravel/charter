@@ -1,0 +1,180 @@
+on: [push, workflow_dispatch]
+name: Test & Deploy
+jobs:
+  lint_agency:
+    name: Lint agency
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: cd apps/agency && npm -q install
+    - name: Run lint
+      run: cd apps/agency && CI=true npm run test
+
+  build_travel:
+    name: Build travel
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: |
+        cd apps/travel
+        npm -q -g install bower
+        npm -q install
+    - name: Build
+      run: cd apps/travel && CI=true npm run build
+
+  test_core:
+    name: Test core
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: cd fptcore && npm -q install
+    - name: Run tests
+      run: cd fptcore && CI=true npm run test
+
+  test_hq:
+    name: Test hq
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install dependencies
+      run: |
+        (cd fptcore && npm -q install)
+        (cd headquarters && npm -q install)
+    - name: Run tests
+      run: cd headquarters && CI=true npm run test
+
+  # See: https://github.com/marketplace/actions/build-docker-images-using-cache
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build Image
+      uses: whoan/docker-build-with-cache-action@v5
+      with:
+        username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
+        image_name: charter
+        image_tag: ${{ github.sha }}
+        build_extra_args: '--build-arg=GIT_HASH=${{ github.sha }}'
+
+  deploy_test:
+    name: Deploy to test
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/production'
+    runs-on: ubuntu-latest
+    needs: [build, test_core, test_hq, lint_agency, build_travel]
+    steps:
+    - name: Checkout infra
+      uses: actions/checkout@v2
+      with:
+        repository: firstpersontravel/charter-infra
+        path: deploy
+        ssh-key: "${{ secrets.INFRA_DEPLOY_KEY }}"
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+    - name: Render Task Definition
+      run: |
+        pip install pyyaml
+        deploy/ecs/render_task.py test ${{ github.sha }} > /tmp/test-${{ github.sha }}.json
+        cat 
+    - name: Deploy ECS Task Definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: /tmp/test-${{ github.sha }}.json
+        service: charter-test
+        cluster: charter
+        wait-for-service-stability: true
+        wait-for-minutes: 10
+
+  deploy_staging:
+    name: Deploy to staging
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [build, test_core, test_hq, lint_agency, build_travel]
+    steps:
+    - name: Checkout infra
+      uses: actions/checkout@v2
+      with:
+        repository: firstpersontravel/charter-infra
+        path: deploy
+        ssh-key: "${{ secrets.INFRA_DEPLOY_KEY }}"
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+    - name: Render Task Definition
+      run: |
+        pip install pyyaml
+        deploy/ecs/render_task.py staging ${{ github.sha }} > /tmp/staging-${{ github.sha }}.json
+        cat 
+    - name: Deploy ECS Task Definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: /tmp/staging-${{ github.sha }}.json
+        service: charter-staging
+        cluster: charter
+        wait-for-service-stability: true
+        wait-for-minutes: 10
+
+  deploy_prod:
+    name: Deploy to production
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+    needs: [build, test_core, test_hq, lint_agency, build_travel]
+    steps:
+    - name: Checkout infra
+      uses: actions/checkout@v2
+      with:
+        repository: firstpersontravel/charter-infra
+        path: deploy
+        ssh-key: "${{ secrets.INFRA_DEPLOY_KEY }}"
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+    - name: Render Task Definition
+      run: |
+        pip install pyyaml
+        deploy/ecs/render_task.py production ${{ github.sha }} > /tmp/prod-${{ github.sha }}.json
+        cat 
+    - name: Deploy ECS Task Definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: /tmp/prod-${{ github.sha }}.json
+        service: charter-production
+        cluster: charter
+        wait-for-service-stability: true
+        wait-for-minutes: 10

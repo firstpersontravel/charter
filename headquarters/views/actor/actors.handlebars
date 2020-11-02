@@ -1,0 +1,22 @@
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand" href="/actor/{{orgName}}">
+    {{orgTitle}} Performers
+  </a>
+</nav>
+<div class="container-fluid">
+  <br/>
+  {{#each groups}}
+    <h3>{{experienceTitle}} &bull; {{groupDate}}</h3>
+    {{#each groupParticipants}}
+      <a
+        class='btn btn-block btn-outline-secondary'
+        href='/actor/{{@root/orgName}}/{{groupId}}/{{participantId}}'>
+        {{name}} ({{roleTitles}})
+      </a>
+    {{else}}
+      <p>No performers are active in this run group.</p>
+    {{/each}}
+  {{else}}
+    <p>No run groups with performers are active.</p>
+  {{/each}}
+</div>

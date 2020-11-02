@@ -1,0 +1,7 @@
+content:
+  meta:
+    version: 42
+  variants:
+    - default: true
+      name: default
+      title: Defaults
