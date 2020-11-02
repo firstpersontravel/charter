@@ -27,8 +27,8 @@ loadInitializers(App, config.modulePrefix);
 
 if (initSentry) {
   Sentry.init({
-    dsn: config.sentryDSN,
-    environment: environment,
+    dsn: window.TRAVEL_SENTRY_DSN || null,
+    environment: window.TRAVEL_SENTRY_ENVIRONMENT || 'development',
     release: window.GIT_HASH || undefined,
     integrations: [new Sentry.Integrations.Ember()]
   });

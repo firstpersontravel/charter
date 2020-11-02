@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
+const fs = require('fs');
 const path = require('path');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
@@ -118,8 +119,22 @@ app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
 app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
 app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 
-// Serve one-page travel app
-app.use('/travel', serveFile('apps/travel/dist/index.html'));
+// Serve one-page travel app with secret insertions from server environment.
+app.use('/travel', (req, res) => {
+  const index = fs.readFileSync(path.join(root, 'apps/travel/dist/index.html'), 'utf-8');
+  const insertion = `
+  <script>
+  window.TRAVEL_SENTRY_DSN = "${config.env.TRAVEL_SENTRY_DSN}";
+  window.TRAVEL_SENTRY_ENVIRONMENT = "${config.env.TRAVEL_SENTRY_ENVIRONMENT}";
+  window.TRAVEL_UPLOAD_ACCESS_KEY = "${config.env.TRAVEL_UPLOAD_ACCESS_KEY}";
+  window.TRAVEL_UPLOAD_BUCKET = "${config.env.TRAVEL_UPLOAD_BUCKET}";
+  window.TRAVEL_UPLOAD_POLICY_BASE64 = "${config.env.TRAVEL_UPLOAD_POLICY_BASE64}";
+  window.TRAVEL_UPLOAD_SIGNATURE = "${config.env.TRAVEL_UPLOAD_SIGNATURE}";
+  </script>
+  `;
+  const indexWithRuntimeVars = index.replace('<body>', `<body>${insertion}`);
+  res.status(200).set('Content-Type', 'text/html').send(indexWithRuntimeVars);
+});
 
 // Serve one-page agency app
 app.use('', (req, res) => {
