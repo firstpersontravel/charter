@@ -90,7 +90,7 @@ jobs:
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
     - name: Checkout infra
-      repo: firstpersontravel/charter-infra
+      repository: firstpersontravel/charter-infra
       path: deploy
       uses: actions/checkout@v2
     - name: Configure AWS credentials
@@ -120,7 +120,7 @@ jobs:
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
     - name: Checkout infra
-      repo: firstpersontravel/charter-infra
+      repository: firstpersontravel/charter-infra
       path: deploy
       uses: actions/checkout@v2
     - name: Configure AWS credentials
@@ -150,7 +150,7 @@ jobs:
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
     - name: Checkout infra
-      repo: firstpersontravel/charter-infra
+      repository: firstpersontravel/charter-infra
       path: deploy
       uses: actions/checkout@v2
     - name: Configure AWS credentials
