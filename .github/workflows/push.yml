@@ -90,9 +90,10 @@ jobs:
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
     - name: Checkout infra
-      repository: firstpersontravel/charter-infra
-      path: deploy
       uses: actions/checkout@v2
+      with:
+        repository: firstpersontravel/charter-infra
+        path: deploy
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -120,9 +121,10 @@ jobs:
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
     - name: Checkout infra
-      repository: firstpersontravel/charter-infra
-      path: deploy
       uses: actions/checkout@v2
+      with:
+        repository: firstpersontravel/charter-infra
+        path: deploy
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -150,9 +152,10 @@ jobs:
     needs: [build, test_core, test_hq, lint_agency, build_travel]
     steps:
     - name: Checkout infra
-      repository: firstpersontravel/charter-infra
-      path: deploy
       uses: actions/checkout@v2
+      with:
+        repository: firstpersontravel/charter-infra
+        path: deploy
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
