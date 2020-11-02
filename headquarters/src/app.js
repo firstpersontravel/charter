@@ -54,6 +54,24 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(traceMiddleware());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Catch errors thrown in body parsing
+app.use(function (err, req, res, next) {
+  // Thrown on invalid JSON
+  if (err instanceof SyntaxError) {
+    res.status(400);
+    res.json({ error: { message: 'Invalid JSON'} });
+    return;
+  }
+  // See https://github.com/expressjs/body-parser/blob/master/README.md#request-aborted
+  if (err.type === 'request.aborted') {
+    res.status(400);
+    res.json({ error: { message: 'Aborted request'} });
+    return;
+  }
+  next();
+});
+
 app.use(cookieParser());
 app.use(cors());
 
