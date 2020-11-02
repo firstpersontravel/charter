@@ -94,7 +94,7 @@ jobs:
       with:
         repository: firstpersontravel/charter-infra
         path: deploy
-        ssh-key: {{ secrets.INFRA_DEPLOY_KEY }}
+        ssh-key: "{{ secrets.INFRA_DEPLOY_KEY }}"
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -126,7 +126,7 @@ jobs:
       with:
         repository: firstpersontravel/charter-infra
         path: deploy
-        ssh-key: {{ secrets.INFRA_DEPLOY_KEY }}
+        ssh-key: "{{ secrets.INFRA_DEPLOY_KEY }}"
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -158,7 +158,7 @@ jobs:
       with:
         repository: firstpersontravel/charter-infra
         path: deploy
-        ssh-key: {{ secrets.INFRA_DEPLOY_KEY }}
+        ssh-key: "{{ secrets.INFRA_DEPLOY_KEY }}"
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
