@@ -4,3 +4,4 @@ deploy/env*
 npm-debug.log
 build/
 local.env
+secrets/
