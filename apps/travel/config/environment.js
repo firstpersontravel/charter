@@ -5,13 +5,12 @@ module.exports = function(environment) {
     modulePrefix: 'traveller',
     environment: environment,
     baseURL: '/travel/',
-    sentryDSN: 'https://7e43c1af484e4baa92bb0083119ca264@sentry.io/103093',
     locationType: 'auto',
     s3UploadParams: {
       policy: {
         expiration: '2030-01-01T00:00:00.000Z',
         conditions: [
-          {bucket: 'fpt-traveler-uploads'},
+          {bucket: window.TRAVEL_UPLOAD_BUCKET},
           {acl: 'private'},
           {success_action_status: '201'},
           ['starts-with', '$key', ''],
@@ -20,9 +19,9 @@ module.exports = function(environment) {
           ['content-length-range', 0, 20971520]
         ]
       },
-      signature: 'koLIpdoU9n77p0SD2yZs5OCY6QQ=',
-      awsAccessKeyId: 'AKIA4XUHCH2W5ZKEJBVN',
-      bucket: 'fpt-traveler-uploads',
+      signature: window.TRAVEL_UPLOAD_SIGNATURE,
+      awsAccessKeyId: window.TRAVEL_UPLOAD_ACCESS_KEY,
+      bucket: window.TRAVEL_UPLOAD_BUCKET,
     },
     moment: {
       includeTimezone: '2012-2022'
