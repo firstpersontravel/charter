@@ -89,9 +89,10 @@ export default class OrgIndex extends Component {
     this.props.createInstances('experiences', expFields, insertions);
   }
 
+//Template Card Styling
   renderExample(example) {
     return (
-      <div key={example.name} className="card mb-3">
+      <div key={example.name} className="card mb-4">
         <h5 className="card-header d-none d-sm-block">{example.title}</h5>
         <div className="card-body d-none d-sm-block">
           <p className="card-text">{example.desc}</p>
@@ -99,19 +100,19 @@ export default class OrgIndex extends Component {
         </div>
         <div className="card-footer">
           <Link
-            className="btn btn-block btn-secondary"
+            className="btn btn-secondary"
             to={`/${this.props.org.name}?creating=${example.name}`}>
-            <i className="fa fa-plus" />&nbsp;
-            Create {example.title.toLowerCase()}
+            Select
           </Link>
         </div>
       </div>
     );
   }
 
+//Project Card Styling
   renderExperience(experience) {
     return (
-      <div key={experience.id} className="card mb-3">
+      <div key={experience.id} className="card mb-4">
         <h5 className="card-header d-none d-sm-block">{experience.title}</h5>
         <div className="card-body d-none d-sm-block">
           <p className="card-text">
@@ -144,6 +145,7 @@ export default class OrgIndex extends Component {
     );
   }
 
+//Whole Deck
   renderExamples() {
     const renderedExperiences = this.props.experiences.map(experience => (
       this.renderExperience(experience)
@@ -159,14 +161,13 @@ export default class OrgIndex extends Component {
     );
   }
 
+//Page Styling
   render() {
     const example = this.getCreatingExample();
     return (
-      <div className="container-fluid">
-        <h1>Home</h1>
-        <p>
-          To get started, you can try out one of the below examples.
-        </p>
+      <div className="container">
+        <h1>Projects</h1>
+        <hr></hr>
         {this.renderExamples()}
 
         <ExperienceModal
