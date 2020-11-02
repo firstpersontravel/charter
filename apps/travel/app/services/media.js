@@ -3,16 +3,13 @@ import config from '../config/environment';
 
 export default Ember.Service.extend({
   upload: function(file, key) {
-    const params = config.s3UploadParams;
-    const url = `https://${params.bucket}.s3.amazonaws.com/`;
-    const policyBase64 = btoa(JSON.stringify(params.policy));
-
+    const url = `https://${window.TRAVEL_UPLOAD_BUCKET}.s3.amazonaws.com/`;
     const form = new FormData();
     form.append('key', key);
     form.append('acl', 'private');
-    form.append('AWSAccessKeyId', params.awsAccessKeyId);
-    form.append('policy', policyBase64);
-    form.append('signature', params.signature);
+    form.append('AWSAccessKeyId', window.TRAVEL_UPLOAD_ACCESS_KEY);
+    form.append('policy', window.TRAVEL_UPLOAD_POLICY_BASE64);
+    form.append('signature', window.TRAVEL_UPLOAD_SIGNATURE);
     form.append('success_action_status', '201');
     form.append('Content-Type', file.type);
     form.append('Cache-Control', 'max-age=31536000');

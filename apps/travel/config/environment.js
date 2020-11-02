@@ -6,23 +6,6 @@ module.exports = function(environment) {
     environment: environment,
     baseURL: '/travel/',
     locationType: 'auto',
-    s3UploadParams: {
-      policy: {
-        expiration: '2030-01-01T00:00:00.000Z',
-        conditions: [
-          {bucket: window.TRAVEL_UPLOAD_BUCKET},
-          {acl: 'private'},
-          {success_action_status: '201'},
-          ['starts-with', '$key', ''],
-          ['starts-with', '$Content-Type', 'image/'],
-          ['eq', '$Cache-Control', 'max-age=31536000'],
-          ['content-length-range', 0, 20971520]
-        ]
-      },
-      signature: window.TRAVEL_UPLOAD_SIGNATURE,
-      awsAccessKeyId: window.TRAVEL_UPLOAD_ACCESS_KEY,
-      bucket: window.TRAVEL_UPLOAD_BUCKET,
-    },
     moment: {
       includeTimezone: '2012-2022'
     },

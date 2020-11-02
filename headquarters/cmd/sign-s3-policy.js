@@ -27,7 +27,7 @@ function createS3Policy() {
     .createHmac('sha1', program.secretKeyId)
     .update(Buffer.from(policyBase64, 'utf-8'))
     .digest('base64');
-
+  console.log(`Policy JSON:\n${policyJson}`);
   console.log(`Policy Base64:\n${policyBase64}`);
   console.log(`Policy Signature:\n${policySignature}`);
 }

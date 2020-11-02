@@ -215,7 +215,7 @@ export default Ember.Component.extend({
   },
 
   uploadImage: function(file, key) {
-    var bucket = config.s3UploadParams.bucket;
+    var bucket = window.TRAVEL_UPLOAD_BUCKET;
     var url = `https://${bucket}.s3.amazonaws.com/${key}`;
     var self = this;
     var asRoleName = this.get('asPlayer.roleName');

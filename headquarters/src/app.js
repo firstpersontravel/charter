@@ -128,6 +128,7 @@ app.use('/travel', (req, res) => {
   window.TRAVEL_SENTRY_ENVIRONMENT = "${config.env.TRAVEL_SENTRY_ENVIRONMENT}";
   window.TRAVEL_UPLOAD_ACCESS_KEY = "${config.env.TRAVEL_UPLOAD_ACCESS_KEY}";
   window.TRAVEL_UPLOAD_BUCKET = "${config.env.TRAVEL_UPLOAD_BUCKET}";
+  window.TRAVEL_UPLOAD_POLICY_BASE64 = "${config.env.TRAVEL_UPLOAD_POLICY_BASE64}";
   window.TRAVEL_UPLOAD_SIGNATURE = "${config.env.TRAVEL_UPLOAD_SIGNATURE}";
   </script>
   `;
