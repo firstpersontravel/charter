@@ -121,7 +121,7 @@ app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 
 // Serve one-page travel app with secret insertions from server environment.
 app.use('/travel', (req, res) => {
-  const index = fs.readFileSync('apps/travel/dist/index.html');
+  const index = fs.readFileSync(path.join(root, 'apps/travel/dist/index.html'));
   const insertion = `
   <script>
   window.TRAVEL_SENTRY_DSN = "${config.env.TRAVEL_SENTRY_DSN}";
