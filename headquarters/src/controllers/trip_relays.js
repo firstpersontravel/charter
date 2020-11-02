@@ -7,8 +7,6 @@ const RelaysController = require('./relays');
 
 const logger = config.logger.child({ name: 'controllers.trip_relays' });
 
-const ALLOWED_MEDIA_EXTENSIONS = ['jpg', 'jpeg', 'png', 'mp3', 'mp4'];
-
 class TripRelaysController {
   /**
    * Get the participant phone number for a relay spec -- either blank if its a
