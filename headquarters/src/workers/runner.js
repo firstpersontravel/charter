@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const moment = require('moment-timezone');
 const Sequelize = require('sequelize');
-const Sentry = require('@sentry/node');
 
 const config = require('../config');
 const models = require('../models');
@@ -9,19 +8,6 @@ const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 
 const logger = config.logger.child({ name: 'workers.runner' });
-
-function getTaskLabel(action) {
-  if (action.type === 'action') {
-    return `Action: ${action.name}`;
-  }
-  if (action.type === 'trigger') {
-    return 'Trigger';
-  }
-  if (action.type === 'event') {
-    return `Event: ${action.name}`;
-  }
-  return '';
-}
 
 class RunnerWorker {
   /**
@@ -50,23 +36,12 @@ class RunnerWorker {
    * Run a single scheduled action and update the database object.
    */
   static async _runScheduledAction(action, safe=false) {
-    const transaction = Sentry.startTransaction({
-      name: `TASK ${getTaskLabel(action)}`,
-      op: 'worker.runner'
-    });
-
-    // We put the transaction on the scope so users can attach children to it
-    Sentry.getCurrentHub().configureScope(scope => {
-      scope.setSpan(transaction);
-    });
-
     logger.info(action.params,
       `Running scheduled ${action.type} ${action.name} #${action.id}`);
     const now = moment.utc();
     try {
       await this._unsafeRunScheduledAction(action);
       await action.update({ appliedAt: now }, { fields: ['appliedAt'] });
-      transaction.setHttpStatus(200);
     } catch(err) {
       if (!safe) {
         throw err;
@@ -74,9 +49,6 @@ class RunnerWorker {
       // Otherwise log failure and continue.
       logger.error(`Error processing ${action.type} ${action.name} #${action.id}:\n\n` + err.stack);
       await action.update({ failedAt: now }, { fields: ['failedAt'] });
-      transaction.setHttpStatus(500);
-    } finally {
-      transaction.finish();
     }
   }
 

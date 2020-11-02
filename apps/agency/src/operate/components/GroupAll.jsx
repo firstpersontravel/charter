@@ -85,9 +85,9 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   if (pathRoleName && pathParticipantId) {
     const role = _.find(group.script.content.roles, { name: pathRoleName });
     const participantName = pathParticipantId !== '0' ?
-      _.get(_.find(allParticipants, { id: Number(pathParticipantId) }), 'name') : '';
-    const participantSuffix = participantName ? ` (${participantName})` : '';
-    roleTitle = `Participant: ${role.title}${participantSuffix}`;
+      _.get(_.find(allParticipants, { id: Number(pathParticipantId) }), 'name') :
+      'No user';
+    roleTitle = `Participant: ${role.title} (${participantName})`;
   }
 
   const pathTripMatch = path.match(/\/trip\/(\d+)/);

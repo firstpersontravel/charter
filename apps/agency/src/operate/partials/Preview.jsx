@@ -249,10 +249,9 @@ function renderHeader(trip, player, page, onAction) {
   if (!page) {
     return 'No page';
   }
-  const headerText = truncateMsg(_.trim(page.directive ?
+  const headerText = page.directive ?
     TemplateUtil.templateText(trip.evalContext, page.directive,
-      trip.experience.timezone, player.roleName) : ''), 100);
-  const header = headerText ? (<span className="ml-1">{headerText}</span>) : null;
+      trip.experience.timezone, player.roleName) : '';
 
   const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
   const curPageName = currentPageNamesByRole[player.roleName];
@@ -265,7 +264,7 @@ function renderHeader(trip, player, page, onAction) {
     <Link
       className={`ml-1 ${textClass}`}
       to={urlForResource(trip.script, 'pages', page.name)}>
-      <i className="fa fa-pencil-alt" />
+      <i className="fa fa-pencil" />
     </Link>
   ) : null;
 
@@ -296,8 +295,8 @@ function renderHeader(trip, player, page, onAction) {
 
   return (
     <span>
-      <strong>{page.title}</strong>
-      {header}
+      <strong className="mr-1">{page.title}</strong>
+      {truncateMsg(headerText, 100)}
       {designLink}
       {isAckedIcon}
       {goToPageButton}
@@ -319,7 +318,7 @@ function renderPage(trip, player, page, onEvent, onAction) {
     );
   }
   return visiblePanels.map(panel => (
-    <div key={`${page.name}-${panel.id}`}>
+    <div key={`${page.name}-${panel.type}-${panel.text || ''}`}>
       {renderPanel(trip, player, page, panel, onEvent, onAction)}
     </div>
   ));

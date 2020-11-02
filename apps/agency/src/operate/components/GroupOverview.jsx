@@ -158,18 +158,45 @@ export default class GroupOverview extends Component {
     );
   }
 
+  renderLogEntry(logEntry) {
+    return (
+      <div key={logEntry.id}>
+        {logEntry.message}
+      </div>
+    );
+  }
+
+  renderLogs() {
+    const logEntries = this.props.logEntries.map(logEntry => this.renderLogEntry(logEntry));
+    const noneMessage = logEntries.length > 0 ? null : (
+      <div>
+        No log entries yet!
+      </div>
+    );
+    return (
+      <div>
+        <h5>Recent events</h5>
+        {logEntries}
+        {noneMessage}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
         <div className="row">
-          <div className="col-md-7">
+          <div className="col-md-6">
             <GroupMap
               group={this.props.group}
               directions={this.props.directions}
               trips={this.props.group.trips} />
           </div>
-          <div className="col-md-5">
+          <div className="col-md-3">
             {this.renderAllPlayers()}
+          </div>
+          <div className="col-md-3">
+            {this.renderLogs()}
           </div>
         </div>
       </div>
@@ -179,5 +206,6 @@ export default class GroupOverview extends Component {
 
 GroupOverview.propTypes = {
   group: PropTypes.object.isRequired,
+  logEntries: PropTypes.array.isRequired,
   directions: PropTypes.array.isRequired
 };

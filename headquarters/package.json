@@ -14,8 +14,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",
-    "@sentry/node": "^5.25.0",
-    "@sentry/tracing": "^5.26.0",
+    "@sentry/node": "^5.15.4",
     "apn": "^2.2.0",
     "axios": "^0.17.1",
     "bcrypt": "^3.0.3",

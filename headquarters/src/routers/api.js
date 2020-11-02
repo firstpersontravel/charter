@@ -15,9 +15,8 @@ const models = require('../models');
 const { asyncRoute } = require('./utils');
 
 const apiRouter = express.Router();
-
-// Populate authentication request parameters.
 apiRouter.use(asyncRoute(authMiddleware));
+apiRouter.use(Sentry.Handlers.requestHandler());
 
 /**
  * Utility function to create a REST collection router
@@ -62,7 +61,7 @@ apiRouter.use('/trips', createModelRouter(models.Trip, expRecordOpts));
 const tripRecordOpts = { requireFilters: ['orgId', 'tripId'] };
 apiRouter.use('/actions', createModelRouter(models.Action, tripRecordOpts));
 apiRouter.use('/messages', createModelRouter(models.Message, tripRecordOpts));
-apiRouter.use('/log-entries', createModelRouter(models.LogEntry, tripRecordOpts));
+apiRouter.use('/log_entries', createModelRouter(models.LogEntry, tripRecordOpts));
 
 const playerTripOrParticipantFilter = (whereQuery) => {
   if (!whereQuery.tripId && !whereQuery.participantId) {
@@ -103,8 +102,10 @@ apiRouter.get('/view/player/:playerId',
   asyncRoute(apiViewRoutes.getPlayerViewRoute));
 
 // Legacy
-apiRouter.get('/legacy/player/:id', asyncRoute(apiLegacyRoutes.getPlayerRoute));
-apiRouter.get('/legacy/trip/:id', asyncRoute(apiLegacyRoutes.getTripRoute));
+apiRouter.get('/legacy/participant/:id',
+  asyncRoute(apiLegacyRoutes.getParticipantRoute));
+apiRouter.get('/legacy/trip/:id',
+  asyncRoute(apiLegacyRoutes.getTripRoute));
 apiRouter.get('/legacy/player/:id/video-token',
   asyncRoute(apiLegacyRoutes.getPlayerVideoTokenRoute));
 

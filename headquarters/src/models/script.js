@@ -4,7 +4,6 @@ const { ValidationError } = require('sequelize');
 const Errors = require('fptcore/src/errors');
 const ScriptCore = require('fptcore/src/cores/script');
 
-const { instrument } = require('../sentry');
 const Experience = require('./experience');
 const Org = require('./org');
 const database = require('../config').database;
@@ -32,7 +31,7 @@ const Script = database.define('Script', snakeCaseColumns({
         if (_.isString(value)) {
           try {
             // We're parsing JSON twice this means. *shrug*
-            value = instrument('sequelize', 'Script#parse', () => JSON.parse(value));
+            value = JSON.parse(value);
           } catch (err) {
             // Pass, since the error will be caught elsewhere.
           }
@@ -41,8 +40,7 @@ const Script = database.define('Script', snakeCaseColumns({
         // case where you get a string.
         if (_.isObject(value)) {
           try {
-            instrument('sequelize', 'Script#validate', () =>
-              ScriptCore.validateScriptContent(value));
+            ScriptCore.validateScriptContent(value);
           } catch (err) {
             if (err instanceof Errors.ScriptValidationError) {
               throw new ValidationError(err.message, err.fieldErrors);

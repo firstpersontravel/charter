@@ -188,6 +188,17 @@ export function lookupMessages(state, ownProps, limit = null, filters = null) {
   });
 }
 
+export function lookupLogEntries(state, ownProps) {
+  const groupId = Number(ownProps.match.params.groupId);
+  const tripIds = state.datastore.trips.filter(t => t.groupId === groupId).map(t => t.id);
+  return instancesFromDatastore(state, {
+    col: 'logEntries',
+    filter: { self: logEntry => tripIds.includes(logEntry.tripId) },
+    sort: msg => -msg.id,
+    limit: 10
+  });
+}
+
 export function lookupDirections(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'assets',
@@ -211,7 +222,7 @@ export function lookupUpcomingActions(state, ownProps) {
   const oneHourAgo = moment.utc().subtract(1, 'hours');
   const actions = _(state.datastore.actions)
     .filter(action => _.includes(tripIds, action.tripId))
-    .filter(action => action.appliedAt === null && action.failedAt === null)
+    .filter({ appliedAt: null, failedAt: null })
     .filter(action => moment.utc(action.scheduledAt).isAfter(oneHourAgo))
     .sortBy('scheduledAt')
     .value();

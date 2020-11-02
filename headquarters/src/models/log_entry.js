@@ -8,6 +8,7 @@ const {
   datetimeField,
   integerField,
   requiredStringField,
+  jsonField,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -17,7 +18,9 @@ const {
 const LogEntry = database.define('LogEntry', snakeCaseColumns({
   createdAt: datetimeField(),
   level: integerField(),
+  entryType: requiredStringField(64),
   message: requiredStringField(255),
+  params: jsonField(database, 'LogEntry', 'params')
 }), {
   tableName: 'LogEntries'
 });

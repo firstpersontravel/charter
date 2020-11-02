@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
 
-const { instrumentAsync } = require('../sentry');
 const config = require('../config');
 const models = require('../models');
 const { authenticationError } = require('../errors');
@@ -14,11 +13,10 @@ const tokenForReq = req => {
 };
 
 async function verifyToken(tokenString) {
-  return await instrumentAsync('jwt', 'verify', () =>
-    jwt.verify(tokenString, config.env.HQ_JWT_SECRET, {
-      algorithm: 'HS256',
-      clockTimestamp: moment.utc().unix()
-    }));
+  return await jwt.verify(tokenString, config.env.HQ_JWT_SECRET, {
+    algorithm: 'HS256',
+    clockTimestamp: moment.utc().unix()
+  });
 }
 
 async function authMiddleware(req, res, next) {
@@ -50,10 +48,7 @@ async function authMiddleware(req, res, next) {
       next(authenticationError('Invalid user'));
       return;
     }
-    req.auth = {
-      type: 'user',
-      user: user
-    };
+    req.auth = { user: user };
     next();
     return;
   }
@@ -73,11 +68,7 @@ async function authMiddleware(req, res, next) {
         where: { isArchived: false }
       }]
     });
-    req.auth = {
-      type: 'participant',
-      participant: participant,
-      players: players
-    };
+    req.auth = { participant: participant, players: players };
     next();
     return;
   }
@@ -92,11 +83,7 @@ async function authMiddleware(req, res, next) {
     const players = await models.Player.findAll({
       where: { tripId: trip.id }
     });
-    req.auth = {
-      type: 'trip',
-      trip: trip,
-      players: players
-    };
+    req.auth = { trip: trip, players: players };
     next();
     return;
   }

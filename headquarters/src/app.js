@@ -5,22 +5,14 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
-const fs = require('fs');
 const path = require('path');
 const Sentry = require('@sentry/node');
-const Tracing = require('@sentry/tracing');
+const s3Router = require('react-s3-uploader/s3router');
 
 const config = require('./config');
-const models = require('./models');
-const { initTracing } = require('./sentry');
 
 const apiRouter = require('./routers/api');
 const authRouter = require('./routers/auth');
-const logMiddleware = require('./middleware/log');
-const hostMiddleware = require('./middleware/host');
-const httpsMiddleware = require('./middleware/https');
-const s3Router = require('./routers/s3');
-const traceMiddleware = require('./middleware/trace');
 const twilioRouter = require('./routers/twilio');
 const {
   actorRouter,
@@ -30,65 +22,74 @@ const {
   shortcutRouter
 } = require('./routers/page');
 
-// Create app
-const app = express();
-
-// Configure Sentry
-Sentry.init({
-  dsn: config.env.HQ_SENTRY_DSN,
-  environment: config.env.HQ_SENTRY_ENVIRONMENT,
-  release: config.env.GIT_HASH,
-  integrations: [
-    new Sentry.Integrations.Http({ tracing: true }),
-    new Tracing.Integrations.Express({ app }),
-  ],
-  // We recommend adjusting this value in production, or using tracesSampler
-  // for finer control
-  tracesSampleRate: 1.0
-});
-
-initTracing(models);
-
 // Initialize server
+const app = express();
 app.enable('trust proxy');
 app.use(Sentry.Handlers.requestHandler());
-app.use(traceMiddleware());
 app.use(bodyParser.json({ limit: '1024kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
-
-// Catch errors thrown in body parsing
-app.use(function (err, req, res, next) {
-  // Thrown on invalid JSON
-  if (err instanceof SyntaxError) {
-    res.status(400);
-    res.json({ error: { message: 'Invalid JSON'} });
-    return;
-  }
-  // See https://github.com/expressjs/body-parser/blob/master/README.md#request-aborted
-  if (err.type === 'request.aborted') {
-    res.status(400);
-    res.json({ error: { message: 'Aborted request'} });
-    return;
-  }
-  next();
-});
-
 app.use(cookieParser());
 app.use(cors());
 
 // CORS Headers
-app.use(function corsHeadersMiddleware(req, res, next) {
+app.use((req, res, next) => {
   res.set('Access-Control-Allow-Origin', '*');
   res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   next();
 });
 
 // Health check - before HTTPS redirect
-app.get('/health', (req, res) => res.send('ok'));
+app.get('/health', (req, res) => {
+  res.send('ok');
+});
 
-app.use(httpsMiddleware);
-app.use(hostMiddleware);
-app.use(logMiddleware);
+// Add a handler to inspect the req.secure flag (see 
+// http://expressjs.com/api#req.secure). This allows us 
+// to know whether the request was via http or https.
+app.use((req, res, next) => {
+  if (!req.secure && process.env.NODE_ENV === 'production') {
+    res.redirect(`https://${req.headers.host}${req.url}`);
+    return;
+  }
+  // request was via https, so do no special handling
+  next();
+});
+
+// Log requests
+const ignorePrefixes = ['/static', '/build', '/travel/dist', '/health'];
+app.use((req, res, next) => {
+  // Don't log static file requests.
+  for (const ignorePrefix of ignorePrefixes) {
+    if (req.originalUrl.startsWith(ignorePrefix)) {
+      next();
+      return;
+    }
+  }
+  const startedAt = new Date().valueOf();
+  // config.logger.info({ name: 'request' },
+  //   `${req.method} ${req.originalUrl} ...`);
+  res.on('finish', () => {
+    const reqDurationMsec = new Date().valueOf() - startedAt;
+    const devInfo = { name: 'request' };
+    const reqInfo = {
+      name: 'request',
+      method: req.method,
+      path: req.originalUrl,
+      pattern: req.originalUrl.split('?')[0].replace(/\d+/g, 'xxx'),
+      ip: req.ip,
+      status: res.statusCode,
+      duration: reqDurationMsec,
+      size: parseInt(res.get('Content-Length') || 0)
+    };
+    config.logger.info(
+      config.env.HQ_STAGE === 'development' ? devInfo : reqInfo,
+      `${req.method} ${req.originalUrl} - ` +
+      `${res.statusCode} ${res.statusMessage} - ` +
+      `${reqDurationMsec}ms - ` +
+      `${res.get('Content-Length') || 0}b sent`);
+  });
+  next();
+});
 
 // Set up template engine for actor view
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'public' }));
@@ -105,10 +106,35 @@ app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
 
 // S3 signing url
-app.use('/s3', s3Router);
+const s3Opts = {
+  bucket: config.env.HQ_CONTENT_BUCKET,
+  ACL: 'public-read',
+  uniquePrefix: false,
+  signatureExpires: 600 // signature is valid for 10 minutes
+};
+if (config.env.HQ_STAGE === 'staging') {
+  // special case: staging bucket is in us-east-1 -- other buckets are us-west-2
+  // like our ECS cluster.
+  s3Opts.region = 'us-east-1';
+}
+app.use('/s3', s3Router(s3Opts));
 
-// Version for frontend
-app.get('/version', (req, res) => res.json({ version: config.env.GIT_HASH || '' }));
+const hostRedirects = {
+  'app.firstperson.travel': 'charter.firstperson.travel',
+  'staging.firstperson.travel': 'beta.firstperson.travel',
+};
+
+// Host redirects after API endpoints but before static content -- so that
+// twilio numbers connected to old hosts still work. If the old domain is
+// ever deprecated, twilio numbers will need to be ported over.
+app.use((req, res, next) => {
+  if (hostRedirects[req.hostname]) {
+    const newHost = hostRedirects[req.hostname];
+    res.redirect(`${req.protocol}://${newHost}${req.originalUrl}`);
+    return;
+  }
+  next();
+});
 
 // Serve static content for built travel app and agency app
 const root = path.dirname(path.dirname(path.resolve(__dirname)));
@@ -119,22 +145,8 @@ app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
 app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
 app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 
-// Serve one-page travel app with secret insertions from server environment.
-app.use('/travel', (req, res) => {
-  const index = fs.readFileSync(path.join(root, 'apps/travel/dist/index.html'), 'utf-8');
-  const insertion = `
-  <script>
-  window.TRAVEL_SENTRY_DSN = "${config.env.TRAVEL_SENTRY_DSN}";
-  window.TRAVEL_SENTRY_ENVIRONMENT = "${config.env.TRAVEL_SENTRY_ENVIRONMENT}";
-  window.TRAVEL_UPLOAD_ACCESS_KEY = "${config.env.TRAVEL_UPLOAD_ACCESS_KEY}";
-  window.TRAVEL_UPLOAD_BUCKET = "${config.env.TRAVEL_UPLOAD_BUCKET}";
-  window.TRAVEL_UPLOAD_POLICY_BASE64 = "${config.env.TRAVEL_UPLOAD_POLICY_BASE64}";
-  window.TRAVEL_UPLOAD_SIGNATURE = "${config.env.TRAVEL_UPLOAD_SIGNATURE}";
-  </script>
-  `;
-  const indexWithRuntimeVars = index.replace('<body>', `<body>${insertion}`);
-  res.status(200).set('Content-Type', 'text/html').send(indexWithRuntimeVars);
-});
+// Serve one-page travel app
+app.use('/travel', serveFile('apps/travel/dist/index.html'));
 
 // Serve one-page agency app
 app.use('', (req, res) => {
@@ -148,7 +160,7 @@ app.use('', (req, res) => {
       FRONTEND_SENTRY_DSN: config.env.FRONTEND_SENTRY_DSN,
       FRONTEND_SENTRY_ENVIRONMENT: config.env.FRONTEND_SENTRY_ENVIRONMENT,
       FRONTEND_SERVER_URL: config.env.FRONTEND_SERVER_URL,
-      GIT_HASH: config.env.GIT_HASH || ''
+      GIT_HASH: config.env.GIT_HASH
     })
   });
 });
@@ -158,7 +170,7 @@ app.use(Sentry.Handlers.errorHandler());
 
 // Fallthrough error handler
 // eslint-disable-next-line no-unused-vars
-app.use(function errorHandler(err, req, res, next) {
+app.use(function(err, req, res, next) {
   config.logger.error({ name: 'error' }, err.stack);
   const errorResponse = { message: err.message };
   res.status(500);

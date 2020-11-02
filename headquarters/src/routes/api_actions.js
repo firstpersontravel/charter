@@ -23,7 +23,6 @@ async function createTripActionRoute(req, res) {
     return;
   }
   const trip = await models.Trip.findByPk(tripId);
-  res.loggingOrgId = trip.orgId;
   const action = { name: req.body.name, params: req.body.params || {} };
   authz.checkRecord(req, 'action', models.Trip, trip);
   await applyAction(req, [trip], action, playerId, clientId);
@@ -41,7 +40,6 @@ async function createGroupActionRoute(req, res) {
     return;
   }
   const group = await models.Group.findByPk(groupId);
-  res.loggingOrgId = group.orgId;
   authz.checkRecord(req, 'action', models.Group, group);
 
   const trips = await models.Trip.findAll({
@@ -65,7 +63,6 @@ async function createTripEventRoute(req, res) {
   const playerId = req.body.player_id;
   const clientId = req.body.client_id;
   const trip = await models.Trip.findByPk(tripId);
-  res.loggingOrgId = trip.orgId;
   const event = _.omit(req.body, ['client_id', 'player_id']);
   authz.checkRecord(req, 'event', models.Trip, trip);
   await applyEvent(req, [trip], event, playerId, clientId);
@@ -79,7 +76,6 @@ async function createGroupEventRoute(req, res) {
   const clientId = req.body.client_id;
   
   const group = await models.Group.findByPk(groupId);
-  res.loggingOrgId = group.orgId;
   authz.checkRecord(req, 'event', models.Group, group);
 
   const trips = await models.Trip.findAll({
@@ -100,7 +96,6 @@ async function updateDeviceStateRoute(req, res) {
   const clientId = req.body.client_id;
   // Include trip id just for auth checking
   const trip = await models.Trip.findByPk(tripId);
-  res.loggingOrgId = trip.orgId;
   authz.checkRecord(req, 'deviceState', models.Trip, trip);
   const params = {
     locationLatitude: Number(req.body.location_latitude),

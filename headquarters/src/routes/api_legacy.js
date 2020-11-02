@@ -2,14 +2,9 @@ const _ = require('lodash');
 const crypto = require('crypto');
 const twilio = require('twilio');
 
-const coreWalker = require('fptcore/src/core-walker');
-
 const config = require('../config');
 const models = require('../models');
-const { instrument } = require('../sentry');
 const { createTripToken } = require('./auth');
-const { Sequelize } = require('sequelize');
-const { respondWithJson } = require('./utils');
 
 function camelToDash(str) {
   return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
@@ -27,6 +22,7 @@ function createVideoToken(identity) {
   accessToken.identity = identity;
   const grant = new twilio.jwt.AccessToken.VideoGrant();
   accessToken.addGrant(grant);
+
   return accessToken.toJwt();
 }
 
@@ -59,52 +55,31 @@ function jsonApiSerialize(instance) {
   };
 }
 
-// Only include collections needed for the interface.
-const includedCollections = [
-  'geofences',
-  'interfaces',
-  'pages',
-  'waypoints',
-  'roles',
-  'routes',
-  'scenes',
-  'content_pages',
-  'variants'
-];
-
-function filterScriptContent(scriptContent) {
-  return Object.fromEntries(Object
-    .keys(scriptContent)
-    .filter(key => includedCollections.includes(key))
-    .map(key => [key, scriptContent[key]]));
-}
-
 /**
  * Legacy getter for THG app in JSONAPI format.
  */
-async function getPlayerRoute(req, res) {
-  const player = await models.Player.findOne({
+async function getParticipantRoute(req, res) {
+  const participant = await models.Participant.findOne({
     where: { id: req.params.id },
     include: [
-      { model: models.Org, as: 'org' },
       { model: models.Experience, as: 'experience' },
-      { model: models.Trip, as: 'trip' }
+      { model: models.Org, as: 'org' }
     ]
   });
-  if (!player) {
+  if (!participant) {
     res.status(404).json({ error: 'notfound' });
     return;
   }
   const response = {
-    data: jsonApiSerialize(player),
+    data: jsonApiSerialize(participant),
     included: [
-      jsonApiSerialize(player.org),
-      jsonApiSerialize(player.experience)
+      jsonApiSerialize(participant.org),
+      jsonApiSerialize(participant.experience)
     ]
   };
-  res.loggingOrgId = player.orgId;
   res.status(200);
-  respondWithJson(res, response);
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(response, null, 2));
 }
 
 /**
@@ -126,45 +101,45 @@ async function getTripRoute(req, res) {
     res.status(404).send('Not Found');
     return;
   }
+  const [assets, players, messages, actions, profiles, participants] = (
+    await Promise.all([
+      models.Asset.findAll({ where: { experienceId: trip.experienceId } }),
+      models.Player.findAll({ where: { tripId: req.params.id } }),
+      models.Message.findAll({
+        where: { tripId: req.params.id, isArchived: false }
+      }),
+      models.Action.findAll({
+        where: {
+          tripId: req.params.id,
+          type: 'action',
+          isArchived: false,
+          appliedAt: null,
+          failedAt: null
+        }
+      }),
+      models.Profile.findAll({
+        where: { experienceId: trip.experienceId }
+      }),
+      models.Participant.findAll({
+        where: { experienceId: trip.experienceId }
+      })
+    ])
+  );
 
-  const [assets, players, messages] = await Promise.all([
-    models.Asset.findAll({
-      where: { experienceId: trip.experienceId, type: 'directions' }
-    }),
-    models.Player.findAll({ where: { tripId: req.params.id } }),
-    models.Message.findAll({
-      where: { tripId: req.params.id, isArchived: false }
-    })
-  ]);
-
-  const participantIds = players.map(p => p.participantId).filter(Boolean);
-  const [profiles, participants] = await Promise.all([
-    models.Profile.findAll({
-      where: { participantId: { [Sequelize.Op.in]: participantIds } }
-    }),
-    models.Participant.findAll({
-      where: { id: { [Sequelize.Op.in]: participantIds } }
-    })
-  ]);
+  // Hack for now -- sub in the directions assets data into the script before
+  // sending over.
+  trip.script.content.directions = _(assets)
+    .filter({ type: 'directions' })
+    .map('data')
+    .value();
   
   const objs = players
     .concat(messages)
+    .concat(actions)
     .concat(profiles)
     .concat(participants);
 
-  // Find all audio media to preload
-  const preloadUrls = [];
-  coreWalker.walkAllFields(trip.script.content, 'media', (_, __, obj, paramSpec) => {
-    if (paramSpec.medium === 'audio' && obj) {
-      preloadUrls.push(obj);
-    }
-  });
-
   if (includeScript) {
-    // Include only collections needed
-    trip.script.content = filterScriptContent(trip.script.content);
-    // Sub in the directions assets data into the script as a resource
-    trip.script.content.directions = assets.map(a => a.data);
     objs.push(trip.group);
     objs.push(trip.script);
     objs.push(trip.experience);
@@ -172,31 +147,29 @@ async function getTripRoute(req, res) {
   }
 
   const data = jsonApiSerialize(trip);
+  data.relationships.action = actions
+    .map(action => ({ id: action.id, type: 'action' }));
   data.relationships.message = messages
     .map(message => ({ id: message.id, type: 'message' }));
   data.relationships.player = players
     .map(player => ({ id: player.id, type: 'player' }));
   
-  // Add URLs to preload
-  data.attributes['preload-urls'] = preloadUrls;
-
   // Sneak in a day long auth token
   data.attributes['auth-token'] = createTripToken(trip, 86400);
 
   // Create a video token by IP in case multiple users or devices share a role.
   const userAgentHash = crypto.createHash('md5').update(req.get('User-Agent')).digest('hex');
   const identity = `${playerId}-${userAgentHash}-${req.ip}`;
-  data.attributes['video-token'] = instrument('twilio', 'createVideoToken', 
-    () => createVideoToken(identity));
+  data.attributes['video-token'] = createVideoToken(identity);
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };
-  res.loggingOrgId = trip.orgId;
   res.status(200);
-  respondWithJson(res, response);
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(response, null, 2));
 }
 
 module.exports = {
   getTripRoute,
-  getPlayerRoute
+  getParticipantRoute
 };

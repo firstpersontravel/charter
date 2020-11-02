@@ -5,7 +5,6 @@ const Sequelize = require('sequelize');
 
 const config = require('../config');
 const errors = require('../errors');
-const { respondWithJson } = require('./utils');
 
 const logger = config.logger.child({ name: 'routes.api_rest' });
 
@@ -62,18 +61,24 @@ function mergeFields(record, fields) {
   });
 }
 
+function keyForModelName(modelName) {
+  return _.camelCase(modelName);
+}
+
 function respondWithRecord(res, model, record, opts, status = 200) {
   const item = serializeRecord(model, record, opts);
-  const data = { [model.name.toLowerCase()]: item };
+  const data = { [keyForModelName(model.name)]: item };
   res.status(status);
-  respondWithJson(res, { data: data });
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify({ data: data }, null, 2));
 }
 
 function respondWithRecords(res, model, records, opts) {
-  const modelNamePlural = inflection.pluralize(model.name.toLowerCase());
+  const modelNamePlural = inflection.pluralize(keyForModelName(model.name));
   const items = records.map(record => serializeRecord(model, record, opts));
   const data = { [modelNamePlural]: items };
-  respondWithJson(res, { data: data });
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify({ data: data }, null, 2));
 }
 
 /**
@@ -275,7 +280,6 @@ function whereFromQuery(model, whereQuery, opts) {
 
 function listCollectionRoute(model, authz, opts={}) {
   return async (req, res) => {
-    res.loggingOrgId = req.query.orgId ? Number(req.query.orgId) : null;
     const offset = Number(req.query.offset || 0);
     const count = Number(req.query.count || LIST_COUNT_DEFAULT);
     const order = orderFromParam(model, req.query.sort);
@@ -302,7 +306,6 @@ function createRecordRoute(model, authz, opts={}) {
       throw errors.badRequestError('Id is not allowed on create.');
     }
     const record = model.build(fields);
-    res.loggingOrgId = record.orgId ? Number(record.orgId) : null;
     authz.checkRecord(req, 'create', model, record);
     authz.checkFields(req, 'create', model, record, req.body);
     await updateRecord(model, record, fields);
@@ -314,7 +317,6 @@ function retrieveRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
-    res.loggingOrgId = record.orgId ? Number(record.orgId) : null;
     authz.checkRecord(req, 'retrieve', model, record);
     respondWithRecord(res, model, record, opts);
   };
@@ -324,7 +326,6 @@ function replaceRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
-    res.loggingOrgId = record.orgId ? Number(record.orgId) : null;
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
     const fields = deserializeFields(model, req.body, opts);
@@ -335,7 +336,6 @@ function replaceRecordRoute(model, authz, opts={}) {
 
 function replaceRecordsRoute(model, authz, opts={}) {
   return async (req, res) => {
-    res.loggingOrgId = req.query.orgId ? Number(req.query.orgId) : null;
     const where = whereFromQuery(model, req.query, opts);
     const records = await model.findAll({ where: where });
     const fields = deserializeFields(model, req.body, opts);
@@ -352,7 +352,6 @@ function updateRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
-    res.loggingOrgId = record.orgId ? Number(record.orgId) : null;
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
     const fields = deserializeFields(model, req.body, opts);
@@ -364,7 +363,6 @@ function updateRecordRoute(model, authz, opts={}) {
 
 function updateRecordsRoute(model, authz, opts={}) {
   return async (req, res) => {
-    res.loggingOrgId = req.query.orgId ? Number(req.query.orgId) : null;
     const where = whereFromQuery(model, req.query, opts);
     const records = await model.findAll({ where: where });
     const fields = deserializeFields(model, req.body, opts);

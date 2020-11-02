@@ -33,15 +33,17 @@ class DeviceStateHandler {
   /**
    * Send notifications and enter geofences if needed.
    */
-  static async _notifyNewDeviceState(participant, player, oldState, clientId) {
+  static async _notifyNewDeviceState(participant, trip, player, oldState, clientId) {
+    const script = await models.Script.findByPk(trip.scriptId);
+
     // Calculate old and new geofences
     const oldGeofences = GeofenceCore.geofencesInArea(
-      player.trip.script.content, oldState.latitude, oldState.longitude,
-      oldState.accuracy, player.trip.waypointOptions);
+      script.content, oldState.latitude, oldState.longitude,
+      oldState.accuracy, trip.waypointOptions);
     const oldGeofenceNames = _.map(oldGeofences, 'name');
     const newGeofences = GeofenceCore.geofencesInArea(
-      player.trip.script.content, participant.locationLatitude, participant.locationLongitude,
-      participant.locationAccuracy, player.trip.waypointOptions);
+      script.content, participant.locationLatitude, participant.locationLongitude,
+      participant.locationAccuracy, trip.waypointOptions);
     const newGeofenceNames = _.map(newGeofences, 'name');
     
     // Run actions for entering geofences
@@ -53,7 +55,7 @@ class DeviceStateHandler {
         geofence: geofenceName
       };
       await KernelController.applyEvent(player.tripId, event);
-      await NotifyController.notifyEvent(player.tripId, event, clientId);
+      await NotifyController.notifyEvent(trip.id, event, clientId);
     }
     
     // Run actions for exiting geofences
@@ -65,11 +67,11 @@ class DeviceStateHandler {
         geofence: geofenceName
       };
       await KernelController.applyEvent(player.tripId, event);
-      await NotifyController.notifyEvent(player.tripId, event, clientId);
+      await NotifyController.notifyEvent(trip.id, event, clientId);
     }
 
     // Notify new device state
-    await NotifyController.notifyParticipantDeviceState(player.tripId, participant, clientId);
+    await NotifyController.notifyParticipantDeviceState(trip.id, participant, clientId);
   }
 
   /**
@@ -77,23 +79,8 @@ class DeviceStateHandler {
    */
   static async updateDeviceState(participantId, fields, clientId=null) {
     const participant = await models.Participant.findByPk(participantId);
-    const players = await models.Player.findAll({
-      where: {
-        participantId: participantId
-      },
-      include: [{
-        model: models.Trip,
-        as: 'trip',
-        where: { isArchived: false },
-        include: [{
-          model: models.Group,
-          as: 'group',
-          where: { isArchived: false }
-        }, {
-          model: models.Script,
-          as: 'script'
-        }]
-      }]
+    const trips = await models.Trip.findAll({
+      where: { isArchived: false }
     });
     // Save old state
     const oldState = {
@@ -102,8 +89,14 @@ class DeviceStateHandler {
       accuracy: participant.locationAccuracy
     };
     await this._updateParticipantDeviceState(participant, fields);
-    for (const player of players) {
-      await this._notifyNewDeviceState(participant, player, oldState, clientId);
+    for (let trip of trips) {
+      const player = await models.Player.findOne({
+        where: { participantId: participant.id, tripId: trip.id }
+      });
+      if (!player) {
+        continue;
+      }
+      await this._notifyNewDeviceState(participant, trip, player, oldState, clientId);
     }
   }
 }

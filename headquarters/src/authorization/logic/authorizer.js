@@ -1,4 +1,3 @@
-const config = require('../../config');
 const errors = require('../../errors');
 
 /**
@@ -56,9 +55,6 @@ class Authorizer {
    * Check permission for a single authz resource.
    */
   checkPermission(subject, action, authzResource) {
-    if (config.env.HQ_UNSAFE_SKIP_AUTHORIZATION) {
-      return;
-    }
     const result = this.policy.hasPermission(subject, action, authzResource);
     if (!result.allowed) {
       throw errors.forbiddenError(result.message);
