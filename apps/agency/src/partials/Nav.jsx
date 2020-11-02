@@ -8,47 +8,27 @@ import { getStage } from '../utils';
 
 const globalTitle = 'Charter';
 
-const helpItem = (
-  <li className="nav-item">
-    <div className="dropdown">
-      <button className="btn btn-link p-2 mr-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i className="fa fa-question-circle" />
-      </button>
-      <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-        <a
-          className="btn btn-link dropdown-item"
-          rel="noopener noreferrer"
-          target="_blank"
-          href="https://charter-docs.firstperson.travel/docs/tutorials/starter">
-          Tutorials
-        </a>
-        <a
-          className="btn btn-link dropdown-item"
-          rel="noopener noreferrer"
-          target="_blank"
-          href="https://charter-docs.firstperson.travel/docs/reference/resources">
-          Reference
-        </a>
-      </div>
-    </div>
-  </li>
+const menuLinks = (
+  <div className="nav">
+    <a className="nav-link active" target="_blank"
+    href="#">Projects</a>
+    <a className="nav-link" target="_blank"
+    href="https://charter-docs.firstperson.travel/docs/reference/resources">Reference Docs &#8599;</a>
+    <a className="nav-link" target="_blank"
+    href="https://charter-docs.firstperson.travel/docs/tutorials/starter">Tutorials &#8599;</a>
+  </div>
 );
 
 function titleForOrg(org) {
   return org.isPersonal ? 'Home' : org.title;
 }
 
-function renderRight(authInfo) {
+function userInfo(authInfo) {
   if (!authInfo || !authInfo.user) {
     return (
-      <ul className="navbar-nav ml-auto">
-        {helpItem}
-        <li className="nav-item">
-          <Link className="btn btn-primary" to="/login">
-            Login
-          </Link>
-        </li>
-      </ul>
+      <div className="navbar-nav">
+        {menuLinks}
+      </div>
     );
   }
 
@@ -61,11 +41,12 @@ function renderRight(authInfo) {
     </Link>
   ));
 
+  //User info CSS
   return (
-    <ul className="navbar-nav ml-auto">
-      {helpItem}
-      <li className="nav-item">
-        <div className="dropdown">
+    <div className="navbar-nav d-flex flex-column">
+      {menuLinks}
+      <div className="nav-item">
+        <div className="dropup">
           <button className="btn btn-link p-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i className="fa fa-user" />
           </button>
@@ -76,32 +57,32 @@ function renderRight(authInfo) {
             </Link>
           </div>
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
   );
 }
 
 function renderBrand(org, experience) {
-  const inkwellStyle = {
-    height: '1.2em',
-    top: '-.3em',
+  const logoStyle = {
+    height: '40px',
+    top: '0',
     position: 'relative',
-    marginRight: '.2em'
+    marginRight: '16px'
   };
-  const inkwell = (
+  const logo = (
     <img
-      style={inkwellStyle}
-      alt="First Person Travel logo"
-      src="/static/images/logo-03.png" />
+      style={logoStyle}
+      alt="Charter logo"
+      src="/static/images/charter-logo.png" />
   );
   if (!org) {
     return (
       <NavLink
         key="main"
         activeClassName="active"
-        className="navbar-brand mr-1"
+        className="navbar-brand"
         to="/">
-        {inkwell}
+        {logo}
         {globalTitle.toUpperCase()}
       </NavLink>
     );
@@ -110,9 +91,9 @@ function renderBrand(org, experience) {
     <NavLink
       key="org"
       activeClassName="active"
-      className="navbar-brand mr-1"
+      className="navbar-brand"
       to={`/${org.name}`}>
-      {inkwell}
+      {logo}
       {titleForOrg(org).toUpperCase()}
     </NavLink>
   );
@@ -228,10 +209,20 @@ export default function Nav({ authInfo, org, experience, experiences, groups, gr
   document.title = `${orgTitle}`;
   const stage = getStage();
   const navStageClass = `navbar-${stage}`;
-  const navClass = `navbar navbar-expand-sm navbar-light navbar-faded ${navStageClass}`;
 
+  //Navbar CSS
+  const navClass = `navbar navbar-expand-md navbar-light position-fixed flex-column h-100 ${navStageClass}`;
+  const navStyle = {
+    bottom: '0',
+    width: '232px',
+    zIndex: '1000',
+    padding: '24px',
+    alignItems: 'flex-start',
+  };
+
+// Menu Items CSS
   return (
-    <nav className={navClass}>
+    <nav className={navClass} style={navStyle}>
       {renderBrand(org, experience)}
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span className="navbar-toggler-icon" />
@@ -239,8 +230,8 @@ export default function Nav({ authInfo, org, experience, experiences, groups, gr
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         {renderMenu(org, experience, experiences, groups, groupId)}
       </div>
-      <div className="navbar-collapse collapse w-100 order-3">
-        {renderRight(authInfo)}
+      <div className="navbar-collapse collapse flex-grow-0 align-items-start">
+        {userInfo(authInfo)}
       </div>
     </nav>
   );
