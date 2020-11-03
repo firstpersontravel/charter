@@ -69,14 +69,28 @@ const includedCollections = [
   'routes',
   'scenes',
   'content_pages',
-  'variants'
+  'variants',
+  'triggers' // needed for 'arrival' triggers in directions
 ];
+
+function filterCollection(collectionName, items) {
+  // Filter triggers to only return the event -- the frontend only needs to know about the
+  // presence or absence of triggers, not their behavior.
+  if (collectionName === 'triggers') {
+    return (items || []).map(item => ({
+      name: item.name,
+      event: item.event
+    }));
+  }
+  // Return all for everything else
+  return items;
+}
 
 function filterScriptContent(scriptContent) {
   return Object.fromEntries(Object
     .keys(scriptContent)
     .filter(key => includedCollections.includes(key))
-    .map(key => [key, scriptContent[key]]));
+    .map(key => [key, filterCollection(key, scriptContent[key])]));
 }
 
 /**
