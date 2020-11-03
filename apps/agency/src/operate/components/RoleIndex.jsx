@@ -36,10 +36,7 @@ function renderParticipant(player, participant) {
   );
 }
 
-function renderPlayerCell(player, isFirst) {
-  const trip = player.trip;
-  const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
-  const page = _.find(player.trip.script.content.pages, { name: pageName });
+function renderPlayerPage(trip, player, page) {
   if (!page) {
     return (
       <div key={player.id} className="alert alert-warning">
@@ -47,7 +44,16 @@ function renderPlayerCell(player, isFirst) {
       </div>
     );
   }
-  const pageTitle = page ? page.title : pageName;
+  return (
+    <Preview trip={trip} player={player} page={page} />
+  );
+}
+
+function renderPlayerCell(player, isFirst) {
+  const trip = player.trip;
+  const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
+  const page = _.find(player.trip.script.content.pages, { name: pageName });
+  const pageTitle = page ? page.title : 'None';
   const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
@@ -60,28 +66,28 @@ function renderPlayerCell(player, isFirst) {
 
   const joinUrl = `/entry/t/${trip.id}/r/${player.roleName}`;
   const joinLink = player.participant ? null : (
-    <>
+    <React.Fragment>
       <br />
       <strong>Join:</strong>&nbsp;
       <a href={joinUrl} target="_blank" rel="noopener noreferrer">
         <i className="fa fa-external-link-alt" />
       </a>
-    </>
+    </React.Fragment>
   );
 
   return (
     <div className="row" key={player.id}>
       <div className="col-sm-6">
-        <Preview trip={trip} player={player} page={page} />
+        {renderPlayerPage(trip, player, page)}
       </div>
       <div className="col-sm-6">
         {renderedMap}
         {renderedParticipant}
         <p>
-          <strong>Player:</strong>
+          <strong>Trip:</strong>
           {' '}
           <NavLink to={tripRoleUrl} activeClassName="bold">
-            {trip.title} {pageTitle}
+            {trip.title}
           </NavLink>
           <br />
           <strong>Page:</strong> {pageTitle}

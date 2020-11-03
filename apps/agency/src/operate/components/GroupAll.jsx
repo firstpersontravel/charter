@@ -26,7 +26,7 @@ function renderTripItem(group, trip, isToplevel) {
     ),
     text: `${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
     label: (
-      <span>
+      <span className={trip.isArchived ? 'faint' : ''}>
         {isToplevel ? 'Run: ' : ''}
         {trip.title} {trip.isArchived ? archivedIcon : null}
       </span>
@@ -48,7 +48,9 @@ function renderTripsItem(group, currentTripId) {
     if (trip) {
       tripTitle = `Run: ${trip.title}`;
       tripLabel = (
-        <span>{tripTitle}{trip.isArchived ? archivedIcon : null}</span>
+        <span>
+          {tripTitle}{trip.isArchived ? archivedIcon : null}
+        </span>
       );
     }
   }
@@ -57,6 +59,7 @@ function renderTripsItem(group, currentTripId) {
     label: tripLabel,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
     subItems: _(group.trips)
+      .sortBy(trip => [trip.isArchived, trip.title])
       .map(trip => renderTripItem(group, trip))
       .value()
   };
@@ -75,7 +78,14 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const allPlayers = getAllPlayers(group.trips);
   const allParticipants = _(allPlayers).map('participant').uniq().value();
 
+  function isParticipantArchived(participant) {
+    const players = allPlayers.filter(p => p.participantId === participant.id);
+    const trips = players.map(p => group.trips.find(t => p.tripId === t.id));
+    return _.every(trips, t => t.isArchived);
+  }
+
   let roleTitle = 'Participants';
+  let roleLabel = roleTitle;
 
   const path = history.location.pathname;
   const pathRoleMatch = path.match(/\/role\/([\w_-]+)\/(\d+)/);
@@ -84,10 +94,15 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
   if (pathRoleName && pathParticipantId) {
     const role = _.find(group.script.content.roles, { name: pathRoleName });
-    const participantName = pathParticipantId !== '0' ?
-      _.get(_.find(allParticipants, { id: Number(pathParticipantId) }), 'name') : '';
+    const pathParticipant = pathParticipantId !== '0' ?
+      _.find(allParticipants, { id: Number(pathParticipantId) }) : null;
+    const participantName = pathParticipant ? pathParticipant.name : '';
     const participantSuffix = participantName ? ` (${participantName})` : '';
+    const isArchived = pathParticipant && isParticipantArchived(pathParticipant);
     roleTitle = `Participant: ${role.title}${participantSuffix}`;
+    roleLabel = (
+      <span>{roleTitle}{isArchived ? archivedIcon : null}</span>
+    );
   }
 
   const pathTripMatch = path.match(/\/trip\/(\d+)/);
@@ -95,19 +110,32 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const tripsItem = renderTripsItem(group, pathTripId);
 
   function itemsForRole(role) {
-    return _(allPlayers)
+    const participants = _(allPlayers)
       .filter(player => player.role && player.role.interface)
       .filter({ roleName: role.name })
       .map('participant')
       .uniq()
-      .map(participant => ({
-        url: (
-          `/${group.org.name}/${group.experience.name}` +
-          `/operate/${group.id}` +
-          `/role/${role.name}/${participant ? participant.id : 0}`
-        ),
-        text: `${role.title} (${participant ? participant.name : 'No user'})`
-      }))
+      .value();
+
+    return _(participants)
+      .sortBy(p => [isParticipantArchived(p), p.name])
+      .map((participant) => {
+        const isArchived = isParticipantArchived(participant);
+        const title = `${role.title} (${participant ? participant.name : 'No user'})`;
+        return {
+          url: (
+            `/${group.org.name}/${group.experience.name}` +
+            `/operate/${group.id}` +
+            `/role/${role.name}/${participant ? participant.id : 0}`
+          ),
+          label: (
+            <span className={isArchived ? 'faint' : ''}>
+              {title}{isArchived ? archivedIcon : null}
+            </span>
+          ),
+          text: `${title} ${isArchived ? ' (archived)' : ''}`
+        };
+      })
       .flatten()
       .value();
   }
@@ -123,6 +151,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}`
   }, {
     text: roleTitle,
+    label: roleLabel,
     url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/role`,
     subItems: roleItems
   }, tripsItem];

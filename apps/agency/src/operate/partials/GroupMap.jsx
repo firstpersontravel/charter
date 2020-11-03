@@ -7,7 +7,7 @@ import { Circle, Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
 
-import { TextUtil, WaypointCore } from 'fptcore';
+import { WaypointCore } from 'fptcore';
 
 import Constants from '../../constants';
 import RouterForwarder from './RouterForwarder';
@@ -68,7 +68,9 @@ function renderGeofenceOptions(script, geofence) {
       fill={false}
       fillOpacity={0}>
       <Popup>
-        <div>{TextUtil.titleForTypedKey(geofence.name)}</div>
+        <div>
+          {geofence.distance}m around {waypoint.title}
+        </div>
       </Popup>
     </Circle>
   ));
@@ -173,14 +175,13 @@ export default class GroupMap extends Component {
     return _(activePlayers)
       .map((player) => {
         const trip = _.find(this.props.trips, { id: player.tripId });
+        const role = (script.content.roles || []).find(r => r.name === player.roleName);
         const playerLink = (
           <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.roleName}/${player.participantId || 0}`}>
-            {trip.title}{' '}
-            {player.roleName}
+            {trip.title}: {role.title}
           </Link>
         );
-        const pageName = trip.tripState
-          .currentPageNamesByRole[player.roleName];
+        const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
         const page = _.find(script.content.pages, { name: pageName });
         if (!page) {
           return null;
@@ -273,14 +274,15 @@ export default class GroupMap extends Component {
   renderMarkerPlayerSection(player) {
     const group = this.props.group;
     const trip = _.find(this.props.trips, { id: player.tripId });
+    const role = (trip.script.content.roles || []).find(r => r.name === player.roleName);
     const timezone = this.props.trips[0].experience.timezone;
     return (
       <div key={player.id}>
         <div>
           <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/role/${player.roleName}/${player.participantId || 0}`}>
             {trip.title}{' '}
-            {player.roleName}{' '}
-            ({player.participant.firstName})
+            {role.title}{' '}
+            ({player.participant.name})
           </Link>
         </div>
         <div className="mb-1">
