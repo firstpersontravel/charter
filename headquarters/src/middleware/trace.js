@@ -56,7 +56,6 @@ function traceMiddleware() {
     // Instrument json stringification in response
     res.oldJson = res.json;
     res.json = data => instrument('express', 'json', () => {
-      console.log('express');
       res.oldJson.call(res, data);
     });
 
