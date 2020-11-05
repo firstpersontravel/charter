@@ -35,4 +35,34 @@ describe('#play_audio', () => {
       }
     ]);
   });
+
+  it('plays for current role if supplied', () => {
+    const params = {
+      role_name: 'current',
+      audio: 'https://server/audio/audio.mp3',
+      title: 'My soundtrack'
+    };
+    const actionContext = {
+      scriptContent: {},
+      evalContext: { event: { role_name: 'CurrentRole' }, audio_is_playing: false },
+      evaluateAt: now
+    };
+    const res = play_audio.getOps(params, actionContext);
+    assert.deepEqual(res, [
+      {
+        operation: 'updateTripValues',
+        values: {
+          audio_role: 'CurrentRole',
+          audio_title: 'My soundtrack',
+          audio_url: 'https://server/audio/audio.mp3',
+          audio_started_at: now.toISOString(),
+          audio_started_time: 0,
+          audio_paused_time: null,
+          audio_is_playing: true
+        }
+      }, {
+        operation: 'updateAudio'
+      }
+    ]);
+  });
 });

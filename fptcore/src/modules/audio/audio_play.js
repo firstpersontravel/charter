@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 module.exports = {
   title: 'Play background audio',
   help: 'Start playing audio for a certain role.',
@@ -7,6 +9,7 @@ module.exports = {
       type: 'reference',
       collection: 'roles',
       display: { label: false },
+      specialValues: [{ value: 'current', label: 'Current' }],
       help: 'The role to play the audio for.'
     },
     audio: {
@@ -20,6 +23,18 @@ module.exports = {
     }
   },
   getOps(params, actionContext) {
+    let roleName = params.role_name;
+    if (roleName === 'current') {
+      const curRoleName = _.get(actionContext.evalContext, 'event.role_name');
+      if (!curRoleName) {
+        return [{
+          operation: 'log',
+          level: 'error',
+          message: 'No current role in event when expected.'
+        }];
+      }
+      roleName = curRoleName;
+    }
     if (!params.audio) {
       return [{
         operation: 'log',
@@ -30,7 +45,7 @@ module.exports = {
     return [{
       operation: 'updateTripValues',
       values: {
-        audio_role: params.role_name,
+        audio_role: roleName,
         audio_title: params.title,
         audio_url: params.audio,
         audio_started_at: actionContext.evaluateAt.toISOString(),
