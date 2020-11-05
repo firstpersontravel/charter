@@ -21,6 +21,6 @@
     "migrate:undo": "docker-compose exec server sequelize db:migrate:undo",
     "migrate:scripts": "docker-compose exec server npm run migrate:scripts",
     "migrate:examples": "docker-compose exec server npm run migrate:examples",
-    "deploy": "git fetch; git branch -f production `git rev-parse origin/master`; git push -f origin production"
+    "deploy": "git fetch; git branch -f production `git rev-parse origin/main`; git push -f origin production"
   }
 }
