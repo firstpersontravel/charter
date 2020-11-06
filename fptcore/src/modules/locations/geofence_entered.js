@@ -24,8 +24,9 @@ module.exports = {
     );
   },
   getTitle: function(scriptContent, resource, registry) {
+    const role = _.find(scriptContent.roles, { name: resource.role });
     const geofence = _.find(scriptContent.geofences, { name: resource.geofence });
     const waypoint = geofence ? _.find(scriptContent.waypoints, { name: geofence.center }) : null;
-    return `entered "${waypoint ? waypoint.title : 'unknown'}"`;
+    return `${role ? role.title : 'unknown' } entered "${waypoint ? waypoint.title : 'unknown'}"`;
   }
 };
