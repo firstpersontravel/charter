@@ -121,7 +121,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
       .value();
 
     return _(participants)
-      .sortBy(p => [isParticipantArchived(p), p.name])
+      .sortBy(p => [isParticipantArchived(p), p && p.name])
       .map((participant) => {
         const isArchived = isParticipantArchived(participant);
         const title = `${role.title} (${participant ? participant.name : 'No user'})`;
