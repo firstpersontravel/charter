@@ -14,8 +14,8 @@ export function isProduction() {
   return getStage() === 'production';
 }
 
-export function getParticipantIframeUrl(group, participant) {
-  const url = `${window.location.origin}/actor/${group.org.name}/${participant.id}`;
+export function getActorIframeUrl(group, participant) {
+  const url = `${window.location.origin}/actor/${group.org.name}/${group.id}/${participant.id}`;
   return `${url}?nogps=1&noack=1`;
 }
 

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { RoleCore, SceneCore } from 'fptcore';
 
 import GroupMap from '../partials/GroupMap';
-import { getParticipantIframeUrl, getPlayerIframeUrl } from '../../utils';
+import { getActorIframeUrl, getPlayerIframeUrl } from '../../utils';
 
 function getAllPlayers(trips) {
   return _(trips)
@@ -27,7 +27,7 @@ function getExternalUrl(group, trips, role, participant) {
     return null;
   }
   if (trips.length > 1 && participant) {
-    return getParticipantIframeUrl(group, participant);
+    return getActorIframeUrl(group, participant);
   }
   const trip = trips[0];
   const player = getTripPlayer(trip, role.name, participant);
