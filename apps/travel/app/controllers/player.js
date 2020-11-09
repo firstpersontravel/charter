@@ -86,6 +86,11 @@ export default Ember.Controller.extend({
     this.send('updateLocation', lastFix);
   }.observes('location.lastFix').on('init'),
 
+  audioState: function() {
+    const audioStates = this.get('model.trip.tripState.audioStateByRole') || {};
+    return audioStates[this.get('model.roleName')];
+  }.property('model.trip.tripState', 'model.roleName'),
+
   currentPageDidChange: function() {
     // console.log('currentPageDidChange', this.get('model.currentPageName'));
     if (this.get('application.noack')) {
@@ -97,17 +102,12 @@ export default Ember.Controller.extend({
   }.observes('model.currentPageName'),
 
   updateAudioState: function() {
-    // Make sure audio is for this role.
-    var audioRole = this.get('model.trip.values.audio_role');
-    if (audioRole && audioRole !== this.get('model.roleName')) {
-      return;
-    }
-
-    var audioUrl = this.get('model.trip.values.audio_url');
-    var audioIsPlaying = this.get('model.trip.values.audio_is_playing');
-    var startedAt = this.get('model.trip.values.audio_started_at');
-    var startedTime = this.get('model.trip.values.audio_started_time');
-    var muted = this.get('application.mute');
+    const audioState = this.get('audioState') || {};
+    const audioUrl = audioState.url;
+    const audioIsPlaying = audioState.isPlaying;
+    const startedAt = audioState.startedAt;
+    const startedTime = audioState.startedTime;
+    const muted = this.get('application.mute');
 
     // Check if unchanged.
     if (audioUrl === this._lastAudioUrl &&
@@ -125,8 +125,8 @@ export default Ember.Controller.extend({
       this.get('audio').fadeOut();
       return;
     }
-    var elapsedMsec = moment.utc().diff(startedAt);
-    var currentTime = startedTime + elapsedMsec / 1000.0;
+    const elapsedMsec = moment.utc().diff(startedAt);
+    const currentTime = startedTime + elapsedMsec / 1000.0;
     this.get('audio').play(audioUrl, currentTime);
   },
 

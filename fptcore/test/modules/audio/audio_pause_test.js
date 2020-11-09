@@ -5,9 +5,8 @@ const pause_audio = require('../../../src/modules/audio/audio_pause');
 
 describe('#pause_audio', () => {
   it('logs info if no audio', () => {
-    const actionContext = { evalContext: {} };
-    const res = pause_audio.getOps(
-      { role_name: 'Tablet' }, actionContext);
+    const actionContext = { evalContext: { tripState: {} } };
+    const res = pause_audio.getOps({ role_name: 'Tablet' }, actionContext);
     assert.deepStrictEqual(res, [{
       operation: 'log',
       level: 'info',
@@ -16,9 +15,10 @@ describe('#pause_audio', () => {
   });
 
   it('logs info if audio is paused', () => {
-    const context = { evalContext: { audio_is_playing: false } };
-    const res = pause_audio.getOps(
-      {}, context, { role_name: 'Tablet' }, null);
+    const context = {
+      evalContext: { tripState: { audioStateByRole: { Tablet: { isPlaying: false } } } }
+    };
+    const res = pause_audio.getOps({}, context, { role_name: 'Tablet' }, null);
     assert.deepStrictEqual(res, [{
       operation: 'log',
       level: 'info',
@@ -29,21 +29,31 @@ describe('#pause_audio', () => {
   it('pauses and updates value', () => {
     // Audio started a minute ago
     const now = moment.utc();
+    const oneMinuteAgo = now.clone().subtract(1, 'minutes').toISOString();
     const actionContext = {
       evalContext: {
-        audio_is_playing: true,
-        audio_started_at: now.clone().subtract(1, 'minutes').toISOString(),
-        audio_started_time: 10
+        tripState: {
+          audioStateByRole: {
+            Tablet: { isPlaying: true, startedAt: oneMinuteAgo, startedTime: 10 }
+          }
+        }
       },
       evaluateAt: now
     };
-    const res = pause_audio.getOps({ role_name: 'Tablet' }, 
-      actionContext);
-    assert.deepEqual(res, [{
-      operation: 'updateTripValues',
-      values: {
-        audio_is_playing: false,
-        audio_paused_time: 70
+    const res = pause_audio.getOps({ role_name: 'Tablet' }, actionContext);
+    assert.deepStrictEqual(res, [{
+      operation: 'updateTripFields',
+      fields: {
+        tripState: {
+          audioStateByRole: {
+            Tablet: {
+              isPlaying: false,
+              pausedTime: 70,
+              startedAt: oneMinuteAgo,
+              startedTime: 10
+            }
+          }
+        }
       }
     }, {
       operation: 'updateAudio'

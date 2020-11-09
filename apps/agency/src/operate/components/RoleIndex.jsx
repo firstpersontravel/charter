@@ -66,14 +66,25 @@ function renderPlayerCell(player, isFirst) {
 
   const joinUrl = `/entry/t/${trip.id}/r/${player.roleName}`;
   const joinLink = player.participant ? null : (
-    <React.Fragment>
-      <br />
+    <div>
       <strong>Join:</strong>&nbsp;
       <a href={joinUrl} target="_blank" rel="noopener noreferrer">
         <i className="fa fa-external-link-alt" />
       </a>
-    </React.Fragment>
+    </div>
   );
+
+  let audioStateTitle = 'None';
+  const audioStates = trip.tripState.audioStateByRole || {};
+  const audioState = audioStates[player.roleName] || {};
+  if (audioState.url) {
+    const audioPrefix = audioState.title ? `${audioState.title}: ` : '';
+    if (audioState.isPlaying) {
+      audioStateTitle = `${audioPrefix}Playing (or ended)`;
+    } else {
+      audioStateTitle = `${audioPrefix}Paused`;
+    }
+  }
 
   return (
     <div className="row" key={player.id}>
@@ -83,21 +94,26 @@ function renderPlayerCell(player, isFirst) {
       <div className="col-sm-6">
         {renderedMap}
         {renderedParticipant}
-        <p>
+        <div>
           <strong>Trip:</strong>
           {' '}
           <NavLink to={tripRoleUrl} activeClassName="bold">
             {trip.title}
           </NavLink>
-          <br />
+        </div>
+        <div>
           <strong>Page:</strong> {pageTitle}
-          <br />
+        </div>
+        <div>
+          <strong>Audio:</strong> {audioStateTitle}
+        </div>
+        <div>
           <strong>Interface:</strong>&nbsp;
           <a href={getPlayerIframeUrl(trip, player)} target="_blank" rel="noopener noreferrer">
             <i className="fa fa-external-link-alt" />
           </a>
           {joinLink}
-        </p>
+        </div>
       </div>
     </div>
   );

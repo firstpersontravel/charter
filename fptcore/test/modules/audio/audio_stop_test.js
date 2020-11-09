@@ -8,20 +8,27 @@ describe('#stop_audio', () => {
     const params = { role_name: 'Tablet' };
     const actionContext = {
       scriptContent: {},
-      evalContext: { audio_is_playing: false, audio_paused_time: 10 },
+      evalContext: {
+        tripState: {
+          audioStateByRole: {
+            existing: { isPlaying: true },
+            Tablet: { isPlaying: false, pausedTime: 10 }
+          }
+        }
+      },
       evaluateAt: moment.utc()
     };
     const res = stop_audio.getOps(params, actionContext);
-    assert.deepEqual(res, [
+    assert.deepStrictEqual(res, [
       {
-        operation: 'updateTripValues',
-        values: {
-          audio_role: null,
-          audio_url: null,
-          audio_started_at: null,
-          audio_started_time: null,
-          audio_paused_time: null,
-          audio_is_playing: false
+        operation: 'updateTripFields',
+        fields: {
+          tripState: {
+            audioStateByRole: {
+              existing: { isPlaying: true },
+              Tablet: null
+            }
+          }
         }
       }, {
         operation: 'updateAudio'

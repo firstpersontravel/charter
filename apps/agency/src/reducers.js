@@ -72,11 +72,12 @@ function updateInstanceFieldsHandler(state, action) {
       `with id ${action.instanceId}`);
     return state;
   }
-  const collectionUpdate = {
-    [index]: _.mapValues(action.fields, field => ({
-      $set: field
-    }))
-  };
+  const instance = collection[index];
+  const instanceUpdate = _.mapValues(action.fields, (field, key) => ({
+    // Merge object, everything else gets set directly.
+    $set: (typeof field === 'object' ? Object.assign({}, instance[key], field) : field)
+  }));
+  const collectionUpdate = { [index]: instanceUpdate };
   return update(state, {
     datastore: { [action.collectionName]: collectionUpdate }
   });

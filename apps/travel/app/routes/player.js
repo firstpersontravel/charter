@@ -126,14 +126,18 @@ export default Ember.Route.extend({
     },
 
     restartAudio: function() {
-      var player = this.context;
-      if (!player.get('trip.values.audio_url')) {
+      const player = this.context;
+      const roleName = player.get('roleName');
+      const audioStates = player.get('trip.tripState.audioStateByRole') || {};
+      const audioState = audioStates[roleName];
+      console.log('audioStates', audioStates);
+      if (!audioState) {
         return;
       }
       this.makeAction('play_audio', {
-        role_name: player.get('roleName'),
-        audio: player.get('trip.values.audio_url'),
-        title: player.get('trip.values.audio_title')
+        role_name: roleName,
+        audio: audioState.url,
+        title: audioState.title
       });
     }
   }

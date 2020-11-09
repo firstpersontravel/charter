@@ -17,14 +17,14 @@ describe('#resume_audio', () => {
     const params = { role_name: 'Tablet' };
     const actionContext = {
       scriptContent: scriptContent,
-      evalContext: {},
+      evalContext: { tripState: {} },
       evaluateAt: now
     };
     const res = resume_audio.getOps(params, actionContext);
     assert.deepStrictEqual(res, [{
       operation: 'log',
       level: 'error',
-      message: 'Tried to resume audio when no pause time was available.'
+      message: 'Tried to resume audio when none was started.'
     }]);
   });
 
@@ -32,7 +32,7 @@ describe('#resume_audio', () => {
     const params = { role_name: 'Tablet' };
     const actionContext = {
       scriptContent: scriptContent,
-      evalContext: { audio_is_playing: true },
+      evalContext: { tripState: { audioStateByRole: { Tablet: { isPlaying: true } } } },
       evaluateAt: now
     };
     const res = resume_audio.getOps(params, actionContext);
@@ -47,18 +47,26 @@ describe('#resume_audio', () => {
     const params = { role_name: 'Tablet' };
     const actionContext = {
       scriptContent: scriptContent,
-      evalContext: { audio_is_playing: false, audio_paused_time: 10 },
+      evalContext: {
+        tripState: { audioStateByRole: { Tablet: { isPlaying: false, pausedTime: 10 } } }
+      },
       evaluateAt: now
     };
     const res = resume_audio.getOps(params, actionContext);
-    assert.deepEqual(res, [
+    assert.deepStrictEqual(res, [
       {
-        operation: 'updateTripValues',
-        values: {
-          audio_is_playing: true,
-          audio_started_at: now.toISOString(),
-          audio_started_time: 10,
-          audio_paused_time: null
+        operation: 'updateTripFields',
+        fields: {
+          tripState: {
+            audioStateByRole: {
+              Tablet: {
+                isPlaying: true,
+                startedAt: now.toISOString(),
+                startedTime: 10,
+                pausedTime: null
+              }
+            }
+          }
         }
       }, {
         operation: 'updateAudio'

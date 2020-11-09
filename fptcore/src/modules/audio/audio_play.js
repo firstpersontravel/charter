@@ -21,6 +21,13 @@ module.exports = {
     }
   },
   getOps(params, actionContext) {
+    if (!params.audio) {
+      return [{
+        operation: 'log',
+        level: 'warn',
+        message: 'Tried to play audio with no media.'       
+      }];
+    }
     let roleName = params.role_name;
     if (roleName === 'current') {
       const curRoleName = actionContext.triggeringRoleName;
@@ -33,24 +40,26 @@ module.exports = {
       }
       roleName = curRoleName;
     }
-    if (!params.audio) {
-      return [{
-        operation: 'log',
-        level: 'warn',
-        message: 'Tried to play audio with no media.'       
-      }];
-    }
+    const newAudioState = {
+      title: params.title,
+      url: params.audio,
+      startedAt: actionContext.evaluateAt.toISOString(),
+      startedTime: 0,
+      pausedTime: null,
+      isPlaying: true
+    };
+    const newAudioStates = Object.assign({},
+      actionContext.evalContext.tripState.audioStateByRole, {
+        [roleName]: newAudioState
+      });
+    const newTripState = Object.assign({},
+      actionContext.evalContext.tripState, {
+        audioStateByRole: newAudioStates
+      });
+
     return [{
-      operation: 'updateTripValues',
-      values: {
-        audio_role: roleName,
-        audio_title: params.title,
-        audio_url: params.audio,
-        audio_started_at: actionContext.evaluateAt.toISOString(),
-        audio_started_time: 0,
-        audio_paused_time: null,
-        audio_is_playing: true
-      }
+      operation: 'updateTripFields',
+      fields: { tripState: newTripState }
     }, {
       operation: 'updateAudio'
     }];

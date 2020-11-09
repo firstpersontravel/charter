@@ -9,11 +9,27 @@ module.exports = {
       type: 'reference',
       collection: 'roles',
       display: { label: false },
+      specialValues: [{ value: 'current', label: 'Current' }],
       help: 'The role to pause the audio for.'
     }
   },
   getOps(params, actionContext) {
-    if (!actionContext.evalContext.audio_is_playing) {
+    let roleName = params.role_name;
+    if (roleName === 'current') {
+      const curRoleName = actionContext.triggeringRoleName;
+      if (!curRoleName) {
+        return [{
+          operation: 'log',
+          level: 'error',
+          message: 'No current role in event when expected.'
+        }];
+      }
+      roleName = curRoleName;
+    }
+
+    const currentAudioStates = actionContext.evalContext.tripState.audioStateByRole || {};
+    const currentAudioState = currentAudioStates[roleName];
+    if (!currentAudioState || !currentAudioState.isPlaying) {
       return [{
         operation: 'log',
         level: 'info',
@@ -21,16 +37,26 @@ module.exports = {
       }];
     }
 
-    var startedTime = actionContext.evalContext.audio_started_time;
-    var startedAt = moment.utc(actionContext.evalContext.audio_started_at);
-    var secSinceStarted = actionContext.evaluateAt.unix() - startedAt.unix();
+    const startedTime = currentAudioState.startedTime;
+    const startedAt = moment.utc(currentAudioState.startedAt);
+    const secSinceStarted = actionContext.evaluateAt.unix() - startedAt.unix();
+
+    const newAudioState = Object.assign({}, currentAudioState, {
+      isPlaying: false,
+      pausedTime: startedTime + secSinceStarted
+    });
+    const newAudioStates = Object.assign({},
+      actionContext.evalContext.tripState.audioStateByRole, {
+        [roleName]: newAudioState
+      });
+    const newTripState = Object.assign({},
+      actionContext.evalContext.tripState, {
+        audioStateByRole: newAudioStates
+      });
 
     return [{
-      operation: 'updateTripValues',
-      values: {
-        audio_is_playing: false,
-        audio_paused_time: startedTime + secSinceStarted
-      }
+      operation: 'updateTripFields',
+      fields: { tripState: newTripState }
     }, {
       operation: 'updateAudio'
     }];

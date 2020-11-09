@@ -10,6 +10,7 @@ export default class TripValues extends Component {
   constructor(props) {
     super(props);
     this.handleFlagUpdate = this.handleFlagUpdate.bind(this);
+    this.handleValueUpdate = this.handleValueUpdate.bind(this);
     this.handleCustomizationUpdate = this.handleCustomizationUpdate.bind(this);
     this.handleWaypointUpdate = this.handleWaypointUpdate.bind(this);
   }
@@ -18,6 +19,15 @@ export default class TripValues extends Component {
     const trip = this.props.trip;
     this.props.updateInstance('trips', this.props.trip.id, {
       customizations: { [key]: newValue }
+    });
+    this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
+      'notify', { notify_type: 'refresh' }, false);
+  }
+
+  handleValueUpdate(key, newValue) {
+    const trip = this.props.trip;
+    this.props.updateInstance('trips', this.props.trip.id, {
+      values: { [key]: newValue }
     });
     this.props.postAdminAction(trip.orgId, trip.experienceId, trip.id,
       'notify', { notify_type: 'refresh' }, false);
@@ -57,10 +67,6 @@ export default class TripValues extends Component {
 
   renderTextCustomization(item) {
     const title = TextUtil.titleForKey(item.key);
-    const isText = _.includes(['string', 'number'], typeof item.value);
-    if (!isText) {
-      return JSON.stringify(item.value, null, 2);
-    }
     return (
       <PopoverControl
         title={title}
@@ -80,13 +86,74 @@ export default class TripValues extends Component {
     );
   }
 
+  renderValue(key, value) {
+    if (value === null || value === undefined) {
+      return (<em className="faint">No value</em>);
+    }
+    // Boolean
+    if (value === true || value === false) {
+      return (
+        <PopoverControl
+          title={`Yes/no variable: ${key}`}
+          choices={['Yes', 'No']}
+          onConfirm={newValue => this.handleValueUpdate(key, newValue === 'Yes')}
+          value={value ? 'Yes' : 'No'} />
+      );
+    }
+    // Number
+    if (typeof value === 'number') {
+      return (
+        <PopoverControl
+          title={`Number variable: ${key}`}
+          onConfirm={newValue => this.handleValueUpdate(key, Number(newValue))}
+          value={value.toString()} />
+      );
+    }
+    // String
+    return (
+      <PopoverControl
+        title={`Text variable: ${key}`}
+        onConfirm={newValue => this.handleValueUpdate(key, newValue)}
+        value={value.toString()} />
+    );
+  }
+
+  renderValueRow(key, value) {
+    return (
+      <tr key={key}>
+        <td>{key}</td>
+        <td>{this.renderValue(key, value)}</td>
+      </tr>
+    );
+  }
+
+  renderValues() {
+    const keys = Object.keys(this.props.trip.values);
+    if (!keys.length) {
+      return (
+        <em>
+          No variables have been set yet. Values can be set with the &quot;Set Variable&quot;
+          action, or defaults can be set in the &quot;Defaults&quot; area of the editor.
+        </em>
+      );
+    }
+    const valueRows = keys.map(k => this.renderValueRow(k, this.props.trip.values[k]));
+    return (
+      <table className="table table-striped table-sm">
+        <tbody>
+          {valueRows}
+        </tbody>
+      </table>
+    );
+  }
+
   renderWaypointRow(waypoint) {
     const waypointOptions = this.props.trip.waypointOptions;
     const currentValue = _.get(waypointOptions, waypoint.name);
     const currentOrDefault = currentValue || waypoint.options[0].name;
     const options = waypoint.options.map(option => (
       <option key={option.name} value={option.name}>
-        {option.title}
+        {option.location.title || option.location.address}
       </option>
     ));
     return (
@@ -104,9 +171,57 @@ export default class TripValues extends Component {
   }
 
   renderWaypointRows() {
-    return (this.props.trip.script.content.waypoints || [])
-      .filter(w => w.options && w.options.length > 1)
-      .map(w => this.renderWaypointRow(w));
+    const waysWithOpts = (this.props.trip.script.content.waypoints || [])
+      .filter(w => w.options && w.options.length > 1);
+    if (!waysWithOpts.length) {
+      return (
+        <em>
+          No places have multiple locations.
+          If you add multiple locations to a place in your script, you can choose one here.
+        </em>
+      );
+    }
+    return waysWithOpts.map(w => this.renderWaypointRow(w));
+  }
+
+  renderNonflags(nonflags) {
+    const nonflagRows = nonflags.map(value => (
+      this.renderCustomizationRow(value)
+    ));
+    if (!nonflagRows.length) {
+      return (
+        <em>
+          Your project does not have any text customizations.
+          These can be set in the defaults area of the editor and then customized for each run.
+        </em>
+      );
+    }
+    return (
+      <table className="table table-striped table-sm">
+        <tbody>
+          {nonflagRows}
+        </tbody>
+      </table>
+    );
+  }
+
+  renderFlags(flags) {
+    const flagRows = flags.map(flag => this.renderFlagRow(flag));
+    if (!flagRows.length) {
+      return (
+        <em>
+          Yor project does not have any yes/no customizations.
+          Thee can be set in the defaults area of the editor and then customized for each run.
+        </em>
+      );
+    }
+    return (
+      <table className="table table-striped table-sm">
+        <tbody>
+          {flagRows}
+        </tbody>
+      </table>
+    );
   }
 
   render() {
@@ -114,38 +229,21 @@ export default class TripValues extends Component {
     const customizations = _(trip.customizations)
       .map((v, k) => ({ key: k, value: v }))
       .value();
-    const flags = _.filter(customizations,
-      i => i.key.substring(0, 5) === 'flag_');
-    const nonflags = _.filter(customizations,
-      i => i.key.substring(0, 5) !== 'flag_');
-    const flagRows = flags.map(flag => (
-      this.renderFlagRow(flag)
-    ));
-    const nonflagRows = nonflags.map(value => (
-      this.renderCustomizationRow(value)
-    ));
-    const waypointRows = this.renderWaypointRows();
+    const flags = _.filter(customizations, i => i.value === true || i.value === false);
+    const nonflags = _.filter(customizations, i => i.value !== true && i.value !== false);
     return (
       <div className="row">
         <div className="col-sm-8">
-          <h3>Customizations</h3>
-          <table className="table table-striped table-sm">
-            <tbody>
-              {nonflagRows}
-            </tbody>
-          </table>
+          <h3>Text customizations</h3>
+          {this.renderNonflags(nonflags)}
+          <h3>Variables</h3>
+          {this.renderValues()}
         </div>
         <div className="col-sm-4">
-          <h4>Flags</h4>
-          <table className="table table-striped table-sm">
-            <tbody>
-              {flagRows}
-            </tbody>
-          </table>
-          <h4>Waypoints</h4>
-          <div>
-            {waypointRows}
-          </div>
+          <h4>Yes/no customizations</h4>
+          {this.renderFlags(flags)}
+          <h4>Places</h4>
+          {this.renderWaypointRows()}
         </div>
       </div>
     );

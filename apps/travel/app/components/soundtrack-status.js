@@ -6,7 +6,7 @@ export default Ember.Component.extend({
     'hasAudio:active:inactive'
   ],
 
-  values: null,
+  audioState: null,
   script: null,
   duration: null,
   durationForUrl: null,
@@ -30,24 +30,21 @@ export default Ember.Component.extend({
   },
 
   hasAudio: function() {
-    return this.get('audioRole') &&
-      this.get('audioRole') === this.get('roleName') &&
-      this.get('audioUrl');
+    return !!this.get('audioUrl');
   }.property('audioUrl'),
 
   audioIsInProgress: function() {
     if (!this.get('hasAudio')) { return false; }
     return this.get('audioTime') <= this.get('audioDuration');
-  }.property('values', 'audioTime'),
+  }.property('audioState', 'audioTime'),
 
-  audioRole: Ember.computed.oneWay('values.audio_role'),
-  audioUrl: Ember.computed.oneWay('values.audio_url'),
-  audioIsPlaying: Ember.computed.bool('values.audio_is_playing'),
-  audioIsPaused: Ember.computed.bool('values.audio_paused_time'),
+  audioUrl: Ember.computed.oneWay('audioState.url'),
+  audioIsPlaying: Ember.computed.bool('audioState.isPlaying'),
+  audioIsPaused: Ember.computed.bool('audioState.pausedTime'),
 
   audioTitle: function() {
-    return this.get('values.audio_title') || 'Soundtrack';
-  }.property('values.audio_title'),
+    return this.get('audioState.title') || 'Soundtrack';
+  }.property('audioState.title'),
 
   audioUrlDidChange: function() {
     if (!this.get('hasAudio')) {
@@ -90,10 +87,10 @@ export default Ember.Component.extend({
   audioTime: function() {
     if (!this.get('hasAudio')) { return 0; }
     if (!this.get('audioIsPlaying')) {
-      return (this.get('values.audio_paused_time') || 0).toFixed(1);
+      return (this.get('audioState.pausedTime') || 0).toFixed(1);
     }
-    var startedAt = this.get('values.audio_started_at');
-    var startedTime = this.get('values.audio_started_time');
+    var startedAt = this.get('audioState.startedAt');
+    var startedTime = this.get('audioState.startedTime');
     var elapsedMsec = moment.utc().diff(startedAt);
     var currentTime = startedTime + elapsedMsec / 1000.0;
     return currentTime;

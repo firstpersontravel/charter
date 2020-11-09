@@ -14,21 +14,26 @@ describe('#play_audio', () => {
     };
     const actionContext = {
       scriptContent: {},
-      evalContext: { audio_is_playing: false },
+      evalContext: { tripState: { audioStateByRole: { Tablet: { isPlaying: false } } } },
       evaluateAt: now
     };
     const res = play_audio.getOps(params, actionContext);
-    assert.deepEqual(res, [
+    assert.deepStrictEqual(res, [
       {
-        operation: 'updateTripValues',
-        values: {
-          audio_role: 'Tablet',
-          audio_title: 'My soundtrack',
-          audio_url: 'https://server/audio/audio.mp3',
-          audio_started_at: now.toISOString(),
-          audio_started_time: 0,
-          audio_paused_time: null,
-          audio_is_playing: true
+        operation: 'updateTripFields',
+        fields: {
+          tripState: {
+            audioStateByRole: {
+              Tablet: {
+                title: 'My soundtrack',
+                url: 'https://server/audio/audio.mp3',
+                startedAt: now.toISOString(),
+                startedTime: 0,
+                pausedTime: null,
+                isPlaying: true
+              }
+            }
+          }
         }
       }, {
         operation: 'updateAudio'
@@ -44,22 +49,27 @@ describe('#play_audio', () => {
     };
     const actionContext = {
       scriptContent: {},
-      evalContext: { audio_is_playing: false },
+      evalContext: { tripState: {} },
       triggeringRoleName: 'CurrentRole',
       evaluateAt: now
     };
     const res = play_audio.getOps(params, actionContext);
-    assert.deepEqual(res, [
+    assert.deepStrictEqual(res, [
       {
-        operation: 'updateTripValues',
-        values: {
-          audio_role: 'CurrentRole',
-          audio_title: 'My soundtrack',
-          audio_url: 'https://server/audio/audio.mp3',
-          audio_started_at: now.toISOString(),
-          audio_started_time: 0,
-          audio_paused_time: null,
-          audio_is_playing: true
+        operation: 'updateTripFields',
+        fields: {
+          tripState: {
+            audioStateByRole: {
+              CurrentRole: {
+                title: 'My soundtrack',
+                url: 'https://server/audio/audio.mp3',
+                startedAt: now.toISOString(),
+                startedTime: 0,
+                pausedTime: null,
+                isPlaying: true
+              }
+            }
+          }
         }
       }, {
         operation: 'updateAudio'
