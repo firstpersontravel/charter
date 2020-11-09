@@ -507,12 +507,12 @@ export function refreshLiveData(orgId, experienceId, tripIds) {
 }
 
 export function postAction(orgId, experienceId, tripId, actionName,
-  actionParams) {
+  actionParams, playerId = null) {
   return function (dispatch) {
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: actionName, params: actionParams })
+      body: JSON.stringify({ name: actionName, params: actionParams, player_id: playerId })
     };
     const url = `/api/trips/${tripId}/actions`;
     request('system', null, 'action', url, params, dispatch)
@@ -542,12 +542,12 @@ export function postAdminAction(orgId, experienceId, tripId, actionName,
   };
 }
 
-export function postEvent(orgId, experienceId, tripId, event) {
+export function postEvent(orgId, experienceId, tripId, event, playerId = null) {
   return function (dispatch) {
     const params = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event)
+      body: JSON.stringify(Object.assign({ player_id: playerId }, event))
     };
     const url = `/api/trips/${tripId}/events`;
     request('system', null, 'action', url, params, dispatch)

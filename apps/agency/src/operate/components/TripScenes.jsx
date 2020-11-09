@@ -22,19 +22,18 @@ export default class TripScenes extends Component {
   handleAdminAction(name, params) {
     const trip = this.props.trip;
     this.props.postAdminAction(
-      trip.orgId, trip.experienceId, trip.id,
-      name, params);
+      trip.orgId, trip.experienceId, trip.id, name, params);
   }
 
-  handleAction(actionName, actionParams) {
+  handleAction(actionName, actionParams, playerId) {
     const trip = this.props.trip;
     this.props.postAction(trip.orgId, trip.experienceId, trip.id, actionName,
-      actionParams);
+      actionParams, playerId);
   }
 
-  handleEvent(event) {
+  handleEvent(event, playerId) {
     const trip = this.props.trip;
-    this.props.postEvent(trip.orgId, trip.experienceId, trip.id, event);
+    this.props.postEvent(trip.orgId, trip.experienceId, trip.id, event, playerId);
   }
 
   render() {

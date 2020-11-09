@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 module.exports = {
   current_role_is: {
     help: 'A condition that passes if the current player has a specific role.',
@@ -13,10 +11,7 @@ module.exports = {
       }
     },
     eval: (params, actionContext) => {
-      // Hard-coded dependency that all events with the current role name
-      // will include `role_name`.
-      return _.get(actionContext.evalContext, 'event.role_name') ===
-        params.role_name;
+      return actionContext.triggeringRoleName === params.role_name;
     }
   },
   role_page_is: {

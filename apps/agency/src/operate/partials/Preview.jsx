@@ -57,15 +57,11 @@ function renderButton(trip, player, page, panel, onEvent) {
   const panelText = TemplateUtil.templateText(trip.evalContext,
     panel.text || panel.placeholder, trip.experience.timezone,
     player.roleName);
-  const btnEvent = {
-    type: 'button_pressed',
-    role_name: player.roleName,
-    button_id: panel.id
-  };
+  const btnEvent = { type: 'button_pressed', button_id: panel.id };
   return (
     <button
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
-      onClick={() => onEvent && onEvent(btnEvent)}
+      onClick={() => onEvent && onEvent(btnEvent, player.id)}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
     </button>
@@ -106,7 +102,7 @@ function renderDirections(trip, player, page, panel, onEvent) {
   return (
     <button
       className="btn btn-block constrain-text btn-outline-secondary mb-2"
-      onClick={() => onEvent && onEvent(btnEvent)}
+      onClick={() => onEvent && onEvent(btnEvent, player.id)}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
     </button>
@@ -133,10 +129,9 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
         }
         onEvent({
           type: 'numberpad_submitted',
-          role_name: player.roleName,
           numberpad_id: panel.id,
           submission: submission
-        });
+        }, player.id);
       }}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panel.placeholder || 'Enter text'}
@@ -164,10 +159,9 @@ function renderTextEntry(trip, player, page, panel, onEvent) {
         }
         onEvent({
           type: 'text_entry_submitted',
-          role_name: player.roleName,
           text_entry_id: panel.id,
           submission: submission
-        });
+        }, player.id);
       }}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panel.placeholder || 'Enter number'}
@@ -190,7 +184,7 @@ function renderChoice(trip, player, page, panel, onEvent, onAction) {
         onAction('set_value', {
           value_ref: panel.value_ref,
           new_value_ref: `"${e.target.value}"`
-        });
+        }, player.id);
       }}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       <option value="">{panel.text}</option>
@@ -212,7 +206,7 @@ function renderYesno(trip, player, page, panel, onEvent, onAction) {
         onAction('set_value', {
           value_ref: panel.value_ref,
           new_value_ref: e.target.value
-        });
+        }, player.id);
       }}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       <option value="">{panel.text}</option>
@@ -288,7 +282,7 @@ function renderHeader(trip, player, page, onAction) {
       onClick={() => onAction('send_to_page', {
         role_name: player.roleName,
         page_name: page.name
-      })}
+      }, player.id)}
       className="ml-1">
       <i className="fa fa-arrow-circle-right" />
     </a>

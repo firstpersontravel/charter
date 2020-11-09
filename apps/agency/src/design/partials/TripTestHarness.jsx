@@ -189,16 +189,16 @@ export default class TripTestHarness extends Component {
     return ContextCore.gatherEvalContext(env, trip);
   }
 
-  getActionContext() {
+  getActionContext(playerId) {
+    const player = playerId ? this.state.trip.players.find(p => p.id === playerId) : null;
     return {
       scriptContent: this.props.script.content,
       evalContext: this.getEvalContext(),
       evaluateAt: moment.utc(),
       timezone: this.props.script.experience.timezone,
       // Role name not filled in for evaluating text insertions
-      triggeringRoleName: null,
-      // Player id not filled in
-      triggeringPlayerId: null
+      triggeringRoleName: player ? player.roleName : null,
+      triggeringPlayerId: player ? player.id : null
     };
   }
 
@@ -255,20 +255,20 @@ export default class TripTestHarness extends Component {
     this.trackPreviewEvent('reset');
   }
 
-  handleAction(name, params) {
+  handleAction(name, params, playerId) {
     const script = this.props.script;
     const actionResourceClass = coreRegistry.actions[name];
     const actionInfo = renderParams(script, actionResourceClass.params,
       params);
     this.log('info', `Action: ${name}`, actionInfo);
     const action = { name: name, params: params };
-    const actionContext = this.getActionContext();
+    const actionContext = this.getActionContext(playerId);
     const result = Kernel.resultForImmediateAction(action, actionContext);
     this.processResult(result);
     this.trackPreviewEvent(name);
   }
 
-  handleEvent(event) {
+  handleEvent(event, playerId) {
     const script = this.props.script;
     const eventResourceClass = coreRegistry.events[event.type];
     if (eventResourceClass.eventParams) {
@@ -276,16 +276,16 @@ export default class TripTestHarness extends Component {
         event);
       this.log('info', `Event: ${event.type}`, eventInfo);
     }
-    const actionContext = this.getActionContext();
+    const actionContext = this.getActionContext(playerId);
     const result = Kernel.resultForEvent(event, actionContext);
     this.processResult(result);
     this.trackPreviewEvent(event.type);
   }
 
-  handleTrigger(name, event) {
+  handleTrigger(name, event, playerId) {
     // this.log('info', `Trigger: ${name}`);
     const trigger = _.find(this.props.script.content.triggers, { name: name });
-    const actionContext = this.getActionContext();
+    const actionContext = this.getActionContext(playerId);
     const result = Kernel.resultForTrigger(trigger, event, actionContext,
       actionContext);
     this.processResult(result);

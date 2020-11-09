@@ -51,11 +51,8 @@ describe('#send_to_page', () => {
   it('sends current role to page if supplied', () => {
     const params = { role_name: 'current', page_name: 'PAGE-ONE' };
     const actionContextWithEvent = Object.assign({}, actionContext, {
-      evalContext: Object.assign({}, actionContext.evalContext, {
-        event: { role_name: 'CurrentRole' }
-      })
+      triggeringRoleName: 'CurrentRole'
     });
-
     const res = send_to_page.getOps(params, actionContextWithEvent);
 
     assert.deepEqual(res, [{

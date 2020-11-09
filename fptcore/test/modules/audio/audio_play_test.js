@@ -44,7 +44,8 @@ describe('#play_audio', () => {
     };
     const actionContext = {
       scriptContent: {},
-      evalContext: { event: { role_name: 'CurrentRole' }, audio_is_playing: false },
+      evalContext: { audio_is_playing: false },
+      triggeringRoleName: 'CurrentRole',
       evaluateAt: now
     };
     const res = play_audio.getOps(params, actionContext);

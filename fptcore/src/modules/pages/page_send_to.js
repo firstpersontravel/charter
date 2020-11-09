@@ -22,7 +22,7 @@ module.exports = {
   getOps(params, actionContext) {
     let roleName = params.role_name;
     if (roleName === 'current') {
-      const curRoleName = _.get(actionContext.evalContext, 'event.role_name');
+      const curRoleName = actionContext.triggeringRoleName;
       if (!curRoleName) {
         return [{
           operation: 'log',

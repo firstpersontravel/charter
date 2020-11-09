@@ -4,32 +4,25 @@ const roleConditions = require('../../../src/modules/roles/role_conditions');
 
 describe('#current_role_is', () => {
   function assertIfEq(ctx, stmt, val) {
-    assert.strictEqual(roleConditions.current_role_is.eval(
-      stmt, { evalContext: ctx }), val);
+    assert.strictEqual(roleConditions.current_role_is.eval(stmt, ctx), val);
   }
 
-  it('returns true if event role matches condition', () => {
+  it('returns true if context role matches condition', () => {
     const stmt = { op: 'current_role_is', role_name: 'gabe' };
-    const context = { event: { role_name: 'gabe' } };
+    const context = { triggeringRoleName: 'gabe' };
     assertIfEq(context, stmt, true);
   });
 
-  it('returns false if event role does not match condition', () => {
+  it('returns false if context role does not match condition', () => {
     const stmt = { op: 'current_role_is', role_name: 'phil' };
-    const context = { event: { role_name: 'gabe' } };
+    const context = { triggeringRoleName: 'gabe' };
     assertIfEq(context, stmt, false);
   });
 
-  it('returns false if event has no role', () => {
+  it('returns false if context has no role', () => {
     const stmt = { op: 'current_role_is', role_name: 'gabe' };
-    const context = { event: { other: 'abc' } };
+    const context = { triggeringRoleName: null };
     assertIfEq(context, stmt, false);   
-  });
-
-  it('returns false if no event', () => {
-    const stmt = { op: 'current_role_is', role_name: 'gabe' };
-    const context = { other: 'abc' };
-    assertIfEq(context, stmt, false);  
   });
 });
 

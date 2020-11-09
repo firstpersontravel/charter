@@ -13,11 +13,6 @@ module.exports = {
     }
   },
   eventParams: {
-    role_name: {
-      required: true,
-      type: 'reference',
-      collection: 'roles'
-    },
     text_entry_id: {
       required: true,
       type: 'componentReference',

@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 module.exports = {
   title: 'Play background audio',
   help: 'Start playing audio for a certain role.',
@@ -25,7 +23,7 @@ module.exports = {
   getOps(params, actionContext) {
     let roleName = params.role_name;
     if (roleName === 'current') {
-      const curRoleName = _.get(actionContext.evalContext, 'event.role_name');
+      const curRoleName = actionContext.triggeringRoleName;
       if (!curRoleName) {
         return [{
           operation: 'log',
