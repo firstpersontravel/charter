@@ -3,5 +3,6 @@ export default {
   contentBucket: window.config.FRONTEND_CONTENT_BUCKET,
   gitHash: window.config.GIT_HASH,
   googleApiKey: window.config.FRONTEND_GOOGLE_API_KEY,
-  serverUrl: window.config.FRONTEND_SERVER_URL
+  serverUrl: window.config.FRONTEND_SERVER_URL,
+  stage: window.config.FRONTEND_STAGE
 };

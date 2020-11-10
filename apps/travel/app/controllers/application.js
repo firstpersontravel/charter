@@ -1,11 +1,17 @@
 import Ember from 'ember';
 
+function hasLoggedIntoCreationTool() {
+  return !!localStorage.getItem('auth_latest');
+}
+
 export default Ember.Controller.extend({
   queryParams: ['mute', 'debug', 'nogps', 'noack', 'groupactions'],
-  mute: false,
-  debug: false,
-  nogps: false,
-  noack: false,
+
+  mute: hasLoggedIntoCreationTool(),
+  debug: hasLoggedIntoCreationTool(),
+  nogps: hasLoggedIntoCreationTool(),
+  noack: hasLoggedIntoCreationTool(),
+
   groupactions: null,
 
   audio: Ember.inject.service(),

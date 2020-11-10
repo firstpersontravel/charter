@@ -124,6 +124,7 @@ app.use('/travel', (req, res) => {
   const index = fs.readFileSync(path.join(root, 'apps/travel/dist/index.html'), 'utf-8');
   const insertion = `
   <script>
+  window.TRAVEL_STAGE = "${config.env.HQ_STAGE}";
   window.TRAVEL_SENTRY_DSN = "${config.env.TRAVEL_SENTRY_DSN}";
   window.TRAVEL_SENTRY_ENVIRONMENT = "${config.env.TRAVEL_SENTRY_ENVIRONMENT}";
   window.TRAVEL_UPLOAD_ACCESS_KEY = "${config.env.TRAVEL_UPLOAD_ACCESS_KEY}";
@@ -148,6 +149,7 @@ app.use('', (req, res) => {
       FRONTEND_SENTRY_DSN: config.env.FRONTEND_SENTRY_DSN,
       FRONTEND_SENTRY_ENVIRONMENT: config.env.FRONTEND_SENTRY_ENVIRONMENT,
       FRONTEND_SERVER_URL: config.env.FRONTEND_SERVER_URL,
+      FRONTEND_STAGE: config.env.HQ_STAGE || '',
       GIT_HASH: config.env.GIT_HASH || ''
     })
   });
