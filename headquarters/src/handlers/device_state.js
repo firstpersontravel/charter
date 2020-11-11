@@ -52,7 +52,7 @@ class DeviceStateHandler {
         role: player.roleName,
         geofence: geofenceName
       };
-      await KernelController.applyEvent(player.tripId, event);
+      await KernelController.applyEvent(player.tripId, event, player.id);
       await NotifyController.notifyEvent(player.tripId, event, clientId);
     }
     
@@ -64,7 +64,7 @@ class DeviceStateHandler {
         role: player.roleName,
         geofence: geofenceName
       };
-      await KernelController.applyEvent(player.tripId, event);
+      await KernelController.applyEvent(player.tripId, event, player.id);
       await NotifyController.notifyEvent(player.tripId, event, clientId);
     }
 
