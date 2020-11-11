@@ -15,7 +15,7 @@ entrywayRouter.post('/t/:tripId/r/:roleName',
   asyncRoute(entrywayRoutes.joinSubmitRoute));
 entrywayRouter.get('/:orgName/:experienceName/:roleTitleStub',
   asyncRoute(entrywayRoutes.entrywayRoute));
-entrywayRouter.post('/:orgName/:experienceName',
+entrywayRouter.post('/:orgName/:experienceName/:roleTitleStub',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));
 entrywayRouter.post('/:orgName/:experienceName/:interfaceTitleStub',
   asyncRoute(entrywayRoutes.entrywaySubmitRoute));

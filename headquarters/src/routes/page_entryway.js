@@ -95,7 +95,7 @@ const entrywayRoute = async (req, res) => {
   const playerRole = (script.content.roles || [])
     .find(r => roleTitleStub === TextUtil.dashVarForText(r.title));
   if (!playerRole) {
-    res.status(404).send('Role for entryway interface not found');
+    res.status(404).send(`Role ${roleTitleStub} not found`);
     return;
   }
 
@@ -133,7 +133,7 @@ const entrywaySubmitRoute = async (req, res) => {
     .find(r => roleTitleStub === TextUtil.dashVarForText(r.title));
 
   if (!playerRole) {
-    res.status(404).send('Role for entryway interface not found');
+    res.status(404).send(`Role ${roleTitleStub} not found`);
     return;
   }
 
