@@ -188,9 +188,10 @@ class Group extends Component {
       );
     }
     const group = this.props.group;
-    const tripRows = this.props.group.trips.map(trip => (
-      this.renderTripRow(group, trip)
-    ));
+    const tripRows = _(this.props.group.trips)
+      .sortBy(trip => [trip.isArchived, trip.title])
+      .map(trip => this.renderTripRow(group, trip))
+      .value();
     return (
       <table className="table table-striped">
         <tbody>

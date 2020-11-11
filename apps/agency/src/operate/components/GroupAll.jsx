@@ -78,11 +78,12 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const allPlayers = getAllPlayers(group.trips);
   const allParticipants = _(allPlayers).map('participant').uniq().value();
 
-  function isParticipantArchived(participant) {
-    if (!participant) {
-      return false;
-    }
-    const players = allPlayers.filter(p => p.participantId === participant.id);
+  function isParticipantArchived(participant, roleName) {
+    const participantId = participant ? participant.id : null;
+    const players = allPlayers.filter(p => (
+      p.roleName === roleName &&
+      p.participantId === participantId
+    ));
     const trips = players.map(p => group.trips.find(t => p.tripId === t.id));
     return _.every(trips, t => t.isArchived);
   }
@@ -101,7 +102,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
       _.find(allParticipants, { id: Number(pathParticipantId) }) : null;
     const participantName = pathParticipant ? pathParticipant.name : '';
     const participantSuffix = participantName ? ` (${participantName})` : '';
-    const isArchived = pathParticipant && isParticipantArchived(pathParticipant);
+    const isArchived = isParticipantArchived(pathParticipant, pathRoleName);
     roleTitle = `Participant: ${role.title}${participantSuffix}`;
     roleLabel = (
       <span>{roleTitle}{isArchived ? archivedIcon : null}</span>
@@ -121,9 +122,9 @@ export default function GroupAll({ children, group, nextUnappliedAction,
       .value();
 
     return _(participants)
-      .sortBy(p => [isParticipantArchived(p), p && p.name])
+      .sortBy(p => [isParticipantArchived(p, role.name), p && p.name])
       .map((participant) => {
-        const isArchived = isParticipantArchived(participant);
+        const isArchived = isParticipantArchived(participant, role.name);
         const title = `${role.title} (${participant ? participant.name : 'No user'})`;
         return {
           url: (
