@@ -30,7 +30,7 @@ function getMessageActions(relay, body, media) {
         params: {
           from_role_name: relay.asRoleName,
           to_role_name: relay.withRoleName,
-          content: mediaItem.url,
+          image: mediaItem.url,
           from_relay_id: relay.id,
           reply_needed: true
         }

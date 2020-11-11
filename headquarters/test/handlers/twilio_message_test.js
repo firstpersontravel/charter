@@ -69,7 +69,7 @@ describe('TwilioMessageHandler', () => {
           name: 'send_image',
           params: {
             from_role_name: 'From',
-            content: 'http://test/image.jpg',
+            image: 'http://test/image.jpg',
             from_relay_id: 2,
             to_role_name: 'To',
             reply_needed: true
