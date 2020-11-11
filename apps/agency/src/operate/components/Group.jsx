@@ -196,7 +196,6 @@ export default class Group extends Component {
     // If we have refreshed on msg more recently than 10 secs, skip -- it'll be covered
     // by the auto-refresh.
     if (Date.now() - (this.lastRefreshMsec || 0) < THROTTLE_FREQUENCY) {
-      console.log('Throttling, will refresh in <5secs');
       if (!this.state.throttledTripIds.has(tripId)) {
         this.setState({
           throttledTripIds: new Set(tripId, ...this.state.throttledTripIds)

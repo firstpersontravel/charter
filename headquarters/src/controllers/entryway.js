@@ -81,17 +81,24 @@ class EntrywayController {
       defaultVariantNames);
 
     // Look for a participant, or create if doesn't exist.
+    const participantWhere = {
+      orgId: script.orgId,
+      experienceId: script.experienceId,
+      isArchived: false,
+    };
+    const participantDefaults = {
+      createdAt: moment.utc(),
+      name: participantName || `${script.experience.title} Player`
+    };
+    if (participantNumber) {
+      participantWhere.phoneNumber = participantNumber;
+    } else {
+      participantWhere.phoneNumber = 'IMPOSSIBLE';
+      participantDefaults.phoneNumber = participantNumber;
+    }
     const [entrywayParticipant, ] = await models.Participant.findOrCreate({
-      where: {
-        orgId: script.orgId,
-        experienceId: script.experienceId,
-        isArchived: false,
-        phoneNumber: participantNumber
-      },
-      defaults: {
-        createdAt: moment.utc(),
-        name: participantName || `${script.experience.title} Player`
-      }
+      where: participantWhere,
+      defaults: participantDefaults
     });
 
     // Create profile if not already exists

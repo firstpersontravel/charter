@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { RoleCore, SceneCore } from 'fptcore';
 
 import GroupMap from '../partials/GroupMap';
-import { getActorIframeUrl, getPlayerIframeUrl } from '../../utils';
+import { renderActorLink, renderJoinLink, renderPlayLink } from '../../partials/links';
 
 function getAllPlayers(trips) {
   return _(trips)
@@ -22,17 +22,22 @@ function getTripPlayer(trip, roleName, participant) {
   ));
 }
 
-function getExternalUrl(group, trips, role, participant) {
+function renderExternalLink(group, trips, role, participant) {
   if (!trips.length) {
     return null;
   }
   if (trips.length > 1 && participant) {
-    return getActorIframeUrl(group, participant);
+    return renderActorLink(group, participant);
   }
   const trip = trips[0];
   const player = getTripPlayer(trip, role.name, participant);
   if (player) {
-    return getPlayerIframeUrl(trip, player);
+    const playerLink = renderPlayLink(trip, player);
+    return player.participantId ? playerLink : (
+      <React.Fragment>
+        {playerLink} {renderJoinLink(trip, player)}
+      </React.Fragment>
+    );
   }
   return null;
 }
@@ -73,24 +78,13 @@ export default class GroupOverview extends Component {
       return null;
     }
     const tripTitles = trips.map(t => t.title).join(', ');
-    const externalUrl = getExternalUrl(group, trips, role, participant);
-    const externalLink = externalUrl ? (
-      <a
-        className="ml-1"
-        target="_blank"
-        rel="noopener noreferrer"
-        href={externalUrl}>
-        <i className="fa fa-external-link-alt" />
-      </a>
-    ) : null;
-
+    const externalLink = renderExternalLink(group, trips, role, participant);
     return (
       <div key={`${role.name}-${participantId}`} className="constrain-text">
         <Link
           to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${role.name}/${participantId}`}>
           <strong>{role.title}</strong> ({participantName}, {tripTitles})
-        </Link>
-        {externalLink}
+        </Link> {externalLink}
       </div>
     );
   }

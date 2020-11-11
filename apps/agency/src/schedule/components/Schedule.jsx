@@ -66,8 +66,7 @@ function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActio
 
 function renderEntrywayWebpage(org, experience, scripts) {
   const activeScript = _.find(scripts, { isActive: true });
-  const entrywayInterfaces = _.filter(activeScript.content.interfaces,
-    { entryway: true });
+  const entrywayInterfaces = _.filter(activeScript.content.interfaces, { entryway: true });
   if (!entrywayInterfaces.length) {
     return (
       <div>
@@ -76,27 +75,27 @@ function renderEntrywayWebpage(org, experience, scripts) {
       </div>
     );
   }
-  const baseUrl =
-    `${window.location.origin}/entry/${org.name}/` +
-    `${experience.name}`;
-  const multipleInterfaces = entrywayInterfaces.length > 1;
+
   return entrywayInterfaces.map((i) => {
-    const url = multipleInterfaces ?
-      `${baseUrl}/${TextUtil.dashVarForText(i.title)}` :
-      baseUrl;
-    return (
-      <div key={i.name}>
-        <i className="fa fa-file mr-1" />
-        Runs can be created at
-        <a
-          className="ml-1"
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer">
-          {url}
-        </a>
-      </div>
-    );
+    const roles = _.filter(activeScript.content.roles, { interface: i.name });
+    return roles.map((role) => {
+      const roleUrl =
+        `${window.location.origin}/entry/${org.name}/` +
+        `${experience.name}/${TextUtil.dashVarForText(role.title)}`;
+      return (
+        <div className="constrain-text" key={`${i.name}-${role.name}`}>
+          <i className="fa fa-file mr-1" />
+          Runs for {role.title} can be created at
+          <a
+            className="ml-1"
+            href={roleUrl}
+            target="_blank"
+            rel="noopener noreferrer">
+            {roleUrl}
+          </a>
+        </div>
+      );
+    });
   });
 }
 

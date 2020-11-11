@@ -15,3 +15,7 @@ export function getActorIframeUrl(group, participant) {
 export function getPlayerIframeUrl(trip, player) {
   return `${window.location.origin}/travel/${trip.id}/${player.id}`;
 }
+
+export function getPlayerJoinUrl(trip, player) {
+  return `${window.location.origin}/entry/t/${trip.id}/r/${player.roleName}`;
+}

@@ -6,7 +6,7 @@ import { NavLink, Link } from 'react-router-dom';
 
 import Preview from '../partials/Preview';
 import GroupMap from '../partials/GroupMap';
-import { getPlayerIframeUrl } from '../../utils';
+import { renderJoinLink, renderPlayLink } from '../../partials/links';
 
 function renderMap(trip, participant) {
   if (!participant || !participant.locationLatitude) {
@@ -64,13 +64,10 @@ function renderPlayerCell(player, isFirst) {
     </div>
   ) : null;
 
-  const joinUrl = `/entry/t/${trip.id}/r/${player.roleName}`;
   const joinLink = player.participant ? null : (
     <div>
-      <strong>Join:</strong>&nbsp;
-      <a href={joinUrl} target="_blank" rel="noopener noreferrer">
-        <i className="fa fa-external-link-alt" />
-      </a>
+      <strong>Join: </strong>
+      {renderJoinLink(trip, player)}
     </div>
   );
 
@@ -109,11 +106,9 @@ function renderPlayerCell(player, isFirst) {
         </div>
         <div>
           <strong>Interface:</strong>&nbsp;
-          <a href={getPlayerIframeUrl(trip, player)} target="_blank" rel="noopener noreferrer">
-            <i className="fa fa-external-link-alt" />
-          </a>
-          {joinLink}
+          {renderPlayLink(trip, player)}
         </div>
+        {joinLink}
       </div>
     </div>
   );

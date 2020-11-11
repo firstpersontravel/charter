@@ -1,11 +1,22 @@
 <script>
+const askForEmail = {{#if askForEmail}}true{{else}}false{{/if}};
+const askForPhone = {{#if askForPhone}}true{{else}}false{{/if}};
 const phoneRegex = /^[0-9]{3}-?[0-9]{3}-?[0-9]{4}$/;
 
 function isValid() {
   const name = $("#name").val();
   const email = $("#email").val();
   const phone = $("#phone").val();
-  return !!name && !!email && phoneRegex.test(phone);
+  if (!name) {
+    return false;
+  }
+  if (!email && askForEmail) {
+    return false;
+  }
+  if (!phoneRegex.test(phone) && askForPhone) {
+    return false;
+  }
+  return true;
 }
 
 function validate() {
@@ -21,9 +32,14 @@ $(function() {
 });
 
 </script>
+
+<style>
+  {{style}}
+</style>
+
 <nav class="navbar navbar-light bg-faded">
   <a class="navbar-brand" href="">
-    {{experienceTitle}}
+    {{experienceTitle}}: {{actionTitle}}
   </a>
 </nav>
 
@@ -33,14 +49,18 @@ $(function() {
       <label for="email">Name</label>
       <input type="text" class="form-control" name="name" id="name" aria-describedby="emailHelp" placeholder="Your name" />
     </div>
+    {{#if askForEmail}}
     <div class="form-group">
       <label for="email">Email address</label>
       <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" placeholder="your@email.com" />
     </div>
+    {{/if}}
+    {{#if askForPhone}}
     <div class="form-group">
       <label for="phone">U.S. Phone Number</label>
       <input type="tel" class="form-control" name="phone" id="phone" placeholder="415-555-1212" pattern="[0-9]{3}-?[0-9]{3}-?[0-9]{4}" />
     </div>
+    {{/if}}
     <button type="submit" class="btn btn-primary btn-block" id="submit">
       Begin!
     </button>

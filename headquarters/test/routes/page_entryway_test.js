@@ -18,12 +18,13 @@ describe('pageEntrywayRoutes', () => {
   const tripId = 5;
   const trip = {
     id: tripId,
-    org_id: orgId,
-    experience: experience
+    orgId: orgId,
+    experience: experience,
+    experienceId: experienceId
   };
   const roleName = 'role-aabbcc';
   const script = {
-    content: { roles: [{ name: roleName }] },
+    content: { roles: [{ name: roleName, title: 'Audience' }] },
     details: 'script details',
     experience: experience,
     experienceId: experienceId,
@@ -55,18 +56,8 @@ describe('pageEntrywayRoutes', () => {
       // Test found trip with correct arguments
       sinon.assert.calledOnce(models.Trip.findOne);
       assert.deepStrictEqual(models.Trip.findOne.firstCall.args, [{
-        where: {
-          id: tripId,
-          isArchived: false
-        },
-        include: [{
-          model: models.Experience,
-          as: 'experience',
-          include: [{
-            model: models.Org,
-            as: 'org'
-          }]
-        }]
+        where: { id: tripId, isArchived: false },
+        include: [{ model: models.Experience, as: 'experience' }]
       }]);
 
       sinon.assert.calledOnce(ExperienceController.findActiveScript);
@@ -78,7 +69,10 @@ describe('pageEntrywayRoutes', () => {
       assert.deepStrictEqual(res._getRenderData(), {
         layout: 'entryway',
         experienceTitle: experience.title,
-        script: script
+        actionTitle: 'Join as Audience',
+        askForEmail: false,
+        askForPhone: false,
+        style: ''
       });
     });
 
@@ -93,36 +87,21 @@ describe('pageEntrywayRoutes', () => {
         id: existingPlayerId,
         roleName: existingRoleName,
         participantId: existingParticipantId,
-        trip: {
-          id: tripId
-        }
+        trip: { id: tripId }
       };
 
       sandbox.stub(models.Player, 'findOne').resolves(existingPlayer);
+      sandbox.stub(ExperienceController, 'findActiveScript').resolves({
+        content: { roles: [{ name: existingRoleName }] }
+      });
 
-      var cookies = {
-        ['exp-' + experience.id]: existingPlayer.id
-      };
       const res = httpMocks.createResponse();
       const req = httpMocks.createRequest({
-        params: {
-          tripId: tripId,
-          roleName: roleName,
-        },
-        cookies: cookies
+        params: { tripId: tripId, roleName: existingRoleName },
+        cookies: { ['exp-' + experience.id]: existingPlayer.id }
       });
-      await pageEntrywayRoutes.joinRoute(req, res);
 
-      // Test found player with correct arguments
-      sinon.assert.calledOnce(models.Player.findOne);
-      assert.deepStrictEqual(models.Player.findOne.firstCall.args, [{
-        where: { id: existingPlayer.id },
-        include: [{
-          model: models.Trip,
-          as: 'trip',
-          where: { isArchived: false }
-        }]
-      }]);
+      await pageEntrywayRoutes.joinRoute(req, res);
 
       // Test rendered redirect
       assert.strictEqual(res.statusCode, 302);
@@ -147,19 +126,24 @@ describe('pageEntrywayRoutes', () => {
         isActive: true,
         phoneNumber: `+1${participantData.phone}`
       };
+      const profile = { isActive: true };
 
       beforeEach(() => {
         // stub db response
-        sandbox.stub(models.Trip, 'findOne').resolves(trip);
+        sandbox.stub(models.Trip, 'findByPk').resolves(trip);
         // stub experience script
         sandbox.stub(ExperienceController, 'findActiveScript').resolves(script);
-        // stub player for role in trip
-        sandbox.stub(models.Player, 'findOne').resolves(player);
-
+        
         // stub participant and player updates
         sandbox.stub(models.Participant, 'findOrCreate').resolves([participant]);
         sandbox.stub(models.Participant, 'update').resolves(null);
+        
+        // stub player for role in trip
+        sandbox.stub(models.Player, 'findOrCreate').resolves([player]);
         sandbox.stub(models.Player, 'update').resolves(null);
+
+        sandbox.stub(models.Profile, 'findOrCreate').resolves([profile]);
+        sandbox.stub(models.Profile, 'update').resolves(null);
       });
 
       it('finds the trip and redirects to the player interface', async () => {
@@ -171,18 +155,8 @@ describe('pageEntrywayRoutes', () => {
         await pageEntrywayRoutes.joinSubmitRoute(req, res);
 
         // Test found trip with correct arguments
-        sinon.assert.calledOnce(models.Trip.findOne);
-        assert.deepStrictEqual(models.Trip.findOne.firstCall.args, [{
-          where: { id: tripId, isArchived: false },
-          include: [{
-            model: models.Experience,
-            as: 'experience',
-            include: [{ model: models.Org, as: 'org' }]
-          }]
-        }]);
-
-        sinon.assert.calledOnce(ExperienceController.findActiveScript);
-        assert.deepStrictEqual(ExperienceController.findActiveScript.firstCall.args, [experience.id]);
+        sinon.assert.calledOnce(models.Trip.findByPk);
+        assert.deepStrictEqual(models.Trip.findByPk.firstCall.args, [tripId]);
 
         // Test the cookie was set properly
         assert.deepStrictEqual(res.cookies[`exp-${experience.id}`].value, player.id);
@@ -212,7 +186,8 @@ describe('pageEntrywayRoutes', () => {
           defaults: {
             createdAt: mockNow,
             name: 'Test Participant',
-            email: 'testparticipant@example.com'
+            email: 'testparticipant@example.com',
+            phoneNumber: '+15555555555'
           }
         }]);
       });

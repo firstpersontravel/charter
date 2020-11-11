@@ -8,7 +8,7 @@ import { PlayerCore, RoleCore } from 'fptcore';
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
 import ParticipantModal from '../../directory/partials/ParticipantModal';
-import { getPlayerIframeUrl } from '../../utils';
+import { renderPlayLink, renderJoinLink } from '../../partials/links';
 
 function truncate(msg, len) {
   return msg.length > len ? `${msg.slice(0, len)}...` : msg;
@@ -134,21 +134,13 @@ export default class GroupPlayers extends Component {
         label: profileParticipant.name
       }));
 
-    const goToTravel = player ? (
-      <a
-        className="ml-2"
-        target="_blank"
-        rel="noreferrer noopener"
-        href={getPlayerIframeUrl(trip, player)}>
-        <i className="fa fa-external-link-alt text-dark" />
-      </a>
-    ) : null;
+    const playLink = renderPlayLink(trip, player);
+    const joinLink = renderJoinLink(trip, player);
 
     if (participantChoices.length === 0) {
       return (
         <span>
-          <em className="faint">No participants</em>
-          {goToTravel}
+          {playLink} <em className="faint">No participants</em> {joinLink}
         </span>
       );
     }
@@ -176,9 +168,8 @@ export default class GroupPlayers extends Component {
 
     return (
       <div>
-        {participantControl}
-        {goToTravel}
-        {goToParticipant}
+        {playLink} {participantControl}
+        {goToParticipant} {participant ? null : joinLink}
       </div>
     );
   }
