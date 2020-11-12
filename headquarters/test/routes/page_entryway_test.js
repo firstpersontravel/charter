@@ -76,6 +76,53 @@ describe('pageEntrywayRoutes', () => {
       });
     });
 
+    it('returns interface style', async () => {
+      const scriptWithInterface = Object.assign({}, script, {
+        content: {
+          roles: [{ name: roleName, title: 'Audience', interface: 'i' }],
+          interfaces: [{
+            name: 'i',
+            font_family: 'Test',
+            header_color: '#ff0000'
+          }]
+        }
+      });
+      sandbox.stub(models.Trip, 'findOne').resolves(trip);
+      sandbox.stub(ExperienceController, 'findActiveScript').resolves(scriptWithInterface);
+
+      const res = httpMocks.createResponse();
+      const req = httpMocks.createRequest({
+        params: {
+          tripId: tripId,
+          roleName: roleName
+        }
+      });
+      await pageEntrywayRoutes.joinRoute(req, res);
+
+      // Test rendered ok
+      assert.strictEqual(res.statusCode, 200);
+      assert.strictEqual(res._getRenderView(), 'entryway/entryway');
+      assert.strictEqual(res._getRenderData().style, `
+body {
+  font-family: Test;
+  background-color: #ffffff;
+  color: #000000;
+}
+h1, .navbar-brand {
+  font-family: Test;
+}
+nav {
+  background-color: #ff0000;
+  color: #ffffff;
+}
+.btn.btn-primary {
+  background-color: #aa0000;
+  border-color: #aa0000;
+  color: #ffffff;
+}
+`);
+    });
+
     it('redirects to their player page if they are already in the experience', async () => {
       // stub db response
       sandbox.stub(models.Trip, 'findOne').resolves(trip);
