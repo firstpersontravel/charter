@@ -48,24 +48,31 @@ function renderStyle(script, interfaceName) {
   if (!interfaceName) {
     return '';
   }
-  const interface = (script.content.interfaces || []).find(i => i.name === interfaceName);
+  const iface = (script.content.interfaces || []).find(i => i.name === interfaceName);
+  if (!iface) {
+    return '';
+  }
+  const fontFamily = iface.font_family || 'Raleway';
+  const bgColor = iface.background_color || '#ffffff';
+  const headerColor = iface.header_color || '#aaaaaa';
+  const primaryColor = iface.primary_color || '#aa0000';
   return `
 body {
-  font-family: ${interface.font_family};
-  background-color: ${interface.background_color};
-  color: ${chooseTextColor(interface.background_color)};
+  font-family: ${fontFamily};
+  background-color: ${bgColor};
+  color: ${chooseTextColor(bgColor)};
 }
 h1, .navbar-brand {
-  font-family: ${interface.font_family};
+  font-family: ${fontFamily};
 }
 nav {
-  background-color: ${interface.header_color};
-  color: ${chooseTextColor(interface.header_color)};
+  background-color: ${headerColor};
+  color: ${chooseTextColor(headerColor)};
 }
 .btn.btn-primary {
-  background-color: ${interface.primary_color};
-  border-color: ${interface.primary_color};
-  color: ${chooseTextColor(interface.primary_color)};
+  background-color: ${primaryColor};
+  border-color: ${primaryColor};
+  color: ${chooseTextColor(primaryColor)};
 }
 `;
 }
