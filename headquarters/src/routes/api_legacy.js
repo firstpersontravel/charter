@@ -169,7 +169,7 @@ async function getTripRoute(req, res) {
   // Find all audio media to preload
   const preloadUrls = [];
   coreWalker.walkAllFields(trip.script.content, 'media', (_, __, obj, paramSpec) => {
-    if (paramSpec.medium === 'audio' && obj) {
+    if (paramSpec.medium === 'audio' && obj && !preloadUrls.includes(obj)) {
       preloadUrls.push(obj);
     }
   });

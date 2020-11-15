@@ -5,7 +5,8 @@ export default DS.Model.extend({
   group: DS.belongsTo('group', {async: false}),
   script: DS.belongsTo('script', {async: false}),
   experience: DS.belongsTo('experience', {async: false}),
-
+  org: DS.belongsTo('org', {async: false}),
+  
   // Extra fields inserted by the legacy API
   authToken: DS.attr('string'),
   videoToken: DS.attr('string'),

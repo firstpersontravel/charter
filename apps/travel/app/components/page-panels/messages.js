@@ -24,16 +24,13 @@ export default Ember.Component.extend({
   }.observes('params'),
 
   asPlayer: function() {
-    var roleName = this.get('params.as') ||
-      this.get('player.model.roleName');
-    return this.get('trip.players')
-      .findBy('roleName', roleName);
+    var roleName = this.get('params.as') || this.get('player.roleName');
+    return this.get('trip.players').findBy('roleName', roleName);
   }.property('params', 'player.roleName'),
 
   withPlayer: function() {
     var roleName = this.get('params.with');
-    var withPlayer = this.get('trip.players')
-      .findBy('roleName', roleName);
+    var withPlayer = this.get('trip.players').findBy('roleName', roleName);
     if (!withPlayer) {
       return null;
     }
