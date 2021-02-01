@@ -1,0 +1,7 @@
+# Docker compose file for running scripts against the prod DB.
+version: '3.7'
+services:
+  server:
+    image: fpt:latest
+    env_file: [./prod.env]
+    command: node bin/server.js

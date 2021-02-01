@@ -3,5 +3,5 @@ node_modules/
 deploy/env*
 npm-debug.log
 build/
-local.env
+*.env
 secrets/
