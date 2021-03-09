@@ -21,6 +21,7 @@ describe('apiViewRoutes', () => {
         roles: [{ name: 'P', interface: 'I' }],
         pages: [{
           name: 'page1',
+          directive: 'Page 1',
           panels: [{
             type: 'button',
             text: 'Press this {{color}} button'
@@ -68,6 +69,14 @@ describe('apiViewRoutes', () => {
       const expected = {
         data: {
           interface: {
+            headline: 'Page 1',
+            style: {
+              accent_color: '#666666',
+              background_color: '#ffffff',
+              custom_css: '',
+              font_family: 'Raleway',
+              primary_color: '#aa0000'
+            },
             tabs: [{
               title: 'Main',
               panels: [{ type: 'button', data: '__button__exported__' }]
