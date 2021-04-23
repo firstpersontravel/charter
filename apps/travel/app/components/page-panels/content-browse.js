@@ -36,6 +36,11 @@ export default Ember.Component.extend(WindowHeightMixin, {
     return item;
   }.property('visibleItems', 'selectedItemName'),
 
+  selectedPanels: function() {
+    var panels = this.get('selectedItem.panels') || [];
+    return panels.filter(panel => this.get('player').evaluateIf(panel.visible_if));
+  }.property('selectedItem'),
+
   init: function() {
     this._super();
     this.checkItemIsVisible();
