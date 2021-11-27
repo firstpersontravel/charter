@@ -57,7 +57,7 @@ RUN cd /var/app/apps/agency && NODE_ENV=production webpack
 FROM node:12-alpine
  
 # Update OS, install tools, install requirements for node-gyp
-RUN apk update && apk upgrade && apk add bash mysql mysql-client make python g++
+RUN apk update && apk upgrade && apk add bash mysql mysql-client make python3 g++
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/

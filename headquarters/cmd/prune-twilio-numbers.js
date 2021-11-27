@@ -15,6 +15,7 @@ program
   .option('--delete-relays', 'Delete the relays to be culled.')
   .option('--delete-numbers', 'Delete the twilio numbers to be culled.')
   .option('--update-hosts', 'Update any numbers with outdated hosts.')
+  .option('--cull-threshold [days]', 'Days of inactivity after which to cull.')
   .option('--limit [limit]', 'Limit number of updates')
   .parse(process.argv);
 
@@ -34,8 +35,6 @@ const hostsByStage = {
   development: 'fpt.ngrok.io'
 };
 
-const cullThresholdSecs = 86400 * 30; // one month in secs
-
 function truncate(s, len) {
   if (s.length > len) {
     return s.slice(0, len - 2) + '..';
@@ -44,8 +43,10 @@ function truncate(s, len) {
 }
 
 async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
-  limit }) {
-  const cullThreshold = moment().subtract(cullThresholdSecs, 's');
+  limit, cullThreshold }) {
+  const cullThresholdDays = cullThreshold ? Number(cullThreshold) : 14;
+  const cullThresholdSecs = cullThresholdDays * 86400;
+  const cullThresholdTime = moment().subtract(cullThresholdSecs, 's');
   const allNumbers = await twilioClient.incomingPhoneNumbers.list();
   const allRelays = await models.Relay.findAll({
     include: [
@@ -90,7 +91,7 @@ async function pruneNumbers({ deleteRelays, deleteNumbers, updateHosts,
         if (lastTrip) {
           const updatedAt = moment(lastTrip.updatedAt);
           expText += ` | ${updatedAt.fromNow().padEnd(20)}`;
-          if (updatedAt.isAfter(cullThreshold)) {
+          if (updatedAt.isAfter(cullThresholdTime)) {
             shouldCull = false;
           }
         }
