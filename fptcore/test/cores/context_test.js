@@ -33,6 +33,7 @@ describe('ContextCore', () => {
         join_link: 'https://test.test/entry/t/' + trip.id + '/r/' + player.roleName,
         contact_name: 'Vance Farraday',
         user_name: 'Troy McClure',
+        first_name: 'Troy',
         participant_name: 'Troy McClure',
         phone_number: null,
         headline: null,

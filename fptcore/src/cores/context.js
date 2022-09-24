@@ -25,6 +25,7 @@ class ContextCore {
       contact_name: contactName,
       user_name: participant.name,
       participant_name: participant.name,
+      first_name: (participant.name || '').split(' ')[0],
       phone_number: participant.phoneNumber || null,
       directive: page && page.directive || null,
       headline: page && page.directive || null,
