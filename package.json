@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "install_all": "cd fptcore && npm install && cd ../headquarters && npm install && cd ../apps/travel && npm install && cd ../../apps/agency && npm install",
+    "install_all": "cd fptcore && npm install && cd ../headquarters && npm install && npm rebuild && cd ../apps/travel && npm install && cd ../../apps/agency && npm install",
     "test": "npm run test_core && npm run test_agency && npm run test_hq",
     "test_hq": "cd headquarters; npm test",
     "test_core": "cd fptcore; npm test",

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
