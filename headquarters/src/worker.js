@@ -9,6 +9,7 @@ const models = require('./models');
 const { initTracing } = require('./sentry');
 const RunnerWorker = require('./workers/runner');
 const SchedulerWorker = require('./workers/scheduler');
+const MaintenanceWorker = require('./workers/maintenance');
 
 // Configure Sentry
 Sentry.init({
@@ -22,8 +23,9 @@ Sentry.init({
 
 initTracing(models);
 
-const SCHEDULE_INTERVAL = 10000;
-const RUN_INTERVAL = 1000;
+const SCHEDULE_INTERVAL = 10000; // 10 secs
+const RUN_INTERVAL = 1000; // sec
+const MAINTENANCE_INTERVAL = 86400 * 1000;  // every day
 
 let isRunningActions = false;
 let isSchedulingActions = false;
@@ -75,9 +77,18 @@ async function runActions() {
   isRunningActions = false;
 }
 
+async function runMaintenance() {
+  try {
+    await MaintenanceWorker.runMaintenance();
+  } catch (err) {
+    handleWorkerError(err);
+  }
+}
+
 function start() {
   setInterval(runActions, RUN_INTERVAL);
   setInterval(scheduleActions, SCHEDULE_INTERVAL);
+  setInterval(runMaintenance, MAINTENANCE_INTERVAL);
 }
 
 module.exports = {

@@ -2,9 +2,11 @@ const database = require('../config').database;
 const Org = require('./org');
 
 const {
+  allowNullModifier,
   belongsToField,
   booleanField,
   datetimeField,
+  integerField,
   requiredStringField,
   mutableModifier,
   optionalStringField,
@@ -20,6 +22,8 @@ const Experience = database.define('Experience', snakeCaseColumns({
   title: mutableModifier(requiredStringField(255)),
   domain: mutableModifier(optionalStringField(64)),
   timezone: mutableModifier(requiredStringField(32)),
+  countryCode: mutableModifier(integerField()),
+  areaCode: mutableModifier(allowNullModifier(integerField())),
   isArchived: mutableModifier(booleanField(false))
 }));
 

@@ -10,12 +10,22 @@ class RelaysController {
   /**
    * Purchase a new number.
    */
-  static async purchaseNumber() {
-    const availableNumbers = await config
+  static async purchaseNumber(experienceId) {
+    const experience = await models.Experience.findByPk(experienceId);
+    // First try in desired area code
+    let availableNumbers = await config
       .getTwilioClient()
       .availablePhoneNumbers('US')
       .local
-      .list();
+      .list(experience.areaCode ? { areaCode: experience.areaCode } : {});
+    // If none available, try anywhere
+    if (!availableNumbers.length) {
+      availableNumbers = await config
+        .getTwilioClient()
+        .availablePhoneNumbers('US')
+        .local
+        .list();
+    }
     if (!availableNumbers.length) {
       throw new Error('No numbers available for purchase.');
     }
@@ -38,7 +48,7 @@ class RelaysController {
   /**
    * Return either an allocated or purchased relay phone number for a given participant.
    */
-  static async assignRelayPhoneNumber(participantPhoneNumber) {
+  static async assignRelayPhoneNumber(experienceId, participantPhoneNumber) {
     const twilioClient = config.getTwilioClient();
     if (!twilioClient) {
       return null;
@@ -72,7 +82,7 @@ class RelaysController {
       }
     }
     // If we get here, all existing numbers are taken. Let's purchase a new one!
-    return await RelaysController.purchaseNumber();
+    return await RelaysController.purchaseNumber(experienceId);
   }
 
   /**
@@ -97,7 +107,7 @@ class RelaysController {
     }
     // If it doesn't we'll need to create it! Allocate a new number.
     const relayPhoneNumber = await (
-      RelaysController.assignRelayPhoneNumber(participantPhoneNumber)
+      RelaysController.assignRelayPhoneNumber(experienceId, participantPhoneNumber)
     );
     // Return null if we couldn't allocate a phone number -- due to no twilio
     // client.

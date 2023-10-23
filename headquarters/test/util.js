@@ -16,6 +16,7 @@ const dummyExperienceFields = {
   name: 'dummy',
   title: 'dummy',
   timezone: 'US/Pacific',
+  countryCode: 1
 };
 
 const dummyContent = {

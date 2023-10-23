@@ -14,7 +14,8 @@ const Org = database.define('Org', snakeCaseColumns({
   createdAt: datetimeField(),
   name: requiredStringField(64),
   title: requiredStringField(64),
-  isPersonal: booleanField(false)
+  isPersonal: booleanField(false),
+  isPaid: booleanField(false),
 }));
 
 module.exports = Org;

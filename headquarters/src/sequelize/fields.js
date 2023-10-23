@@ -52,7 +52,8 @@ function integerField() {
   return {
     type: INTEGER,
     allowNull: false,
-    readOnly: true
+    readOnly: true,
+    validate: { notNull: { msg: 'must be present' } }
   };
 }
 

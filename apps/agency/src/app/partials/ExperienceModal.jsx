@@ -45,7 +45,9 @@ function getDefaultState(experience, example, existingExperiences) {
       name: experience.name,
       title: experience.title,
       domain: experience.domain,
-      timezone: experience.timezone
+      timezone: experience.timezone,
+      countryCode: experience.countryCode,
+      areaCode: experience.areaCode
     };
   }
   if (example) {
@@ -54,10 +56,12 @@ function getDefaultState(experience, example, existingExperiences) {
       name: nameForTitle(title),
       title: title,
       domain: '',
-      timezone: 'US/Pacific'
+      timezone: 'US/Pacific',
+      countryCode: 1,
+      areaCode: null
     };
   }
-  return { name: '', title: '', domain: '', timezone: 'US/Pacific' };
+  return { name: '', title: '', domain: '', timezone: 'US/Pacific', countryCode: 1, areaCode: null };
 }
 
 export default class ExperienceModal extends Component {
@@ -108,7 +112,9 @@ export default class ExperienceModal extends Component {
       name: this.state.name,
       title: this.state.title,
       domain: this.state.domain,
-      timezone: this.state.timezone
+      timezone: this.state.timezone,
+      countryCode: this.state.countryCode,
+      areaCode: this.state.areaCode
     });
   }
 
@@ -198,6 +204,35 @@ export default class ExperienceModal extends Component {
       </div>
     );
 
+    const countryAndAreaCodeRow = isNew ? null : (
+      <div className="row">
+        <div className="form-group col-6">
+          <label htmlFor="exp_country_code">
+            Country Code
+          </label>
+          <input
+            type="number"
+            id="exp_country_code"
+            className="form-control"
+            value={this.state.countryCode}
+            onChange={e => this.handleChangeField('countryCode', e)}
+            placeholder={'Country code'} />
+        </div>
+        <div className="form-group col-6">
+          <label htmlFor="exp_area_code">
+            Area Code
+          </label>
+          <input
+            type="number"
+            id="exp_area_code"
+            className="form-control"
+            value={this.state.areaCode || ''}
+            onChange={e => this.handleChangeField('areaCode', e)}
+            placeholder={'Area code'} />
+        </div>
+      </div>
+    );
+
     const overlapWarning = this.hasOverlappingName() ? (
       <div className="alert alert-warning">
         An existing experience has a title too close to
@@ -228,6 +263,7 @@ export default class ExperienceModal extends Component {
               </div>
             </div>
             {timezoneRow}
+            {countryAndAreaCodeRow}
             {domainRow}
           </form>
         </ModalBody>
