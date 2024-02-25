@@ -10,8 +10,7 @@
     "migrate:scripts": "node cmd/migrate-scripts.js",
     "dryrun:scripts:": "node cmd/migrate-scripts.js --dry-run",
     "migrate:examples": "node cmd/migrate-examples",
-    "dryrun:examples": "node cmd/migrate-examples --dry-run",
-    "prune-twilio-numbers": "node cmd/prune-twilio-numbers"
+    "dryrun:examples": "node cmd/migrate-examples --dry-run"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.3.1",

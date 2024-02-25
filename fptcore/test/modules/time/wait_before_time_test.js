@@ -6,7 +6,7 @@ const wait_before_time = require('../../../src/modules/time/wait_before_time');
 describe('#wait_before_time', () => {
   it('waits for a period before a time', () => {
     const now = moment.utc();
-    const waitFor = moment.utc('2024-01-01T00:00:00.000Z');
+    const waitFor = moment.utc('2028-01-01T00:00:00.000Z');
     const params = { until: 't', before: '10s' };
     const actionContext = {
       evaluateAt: now,

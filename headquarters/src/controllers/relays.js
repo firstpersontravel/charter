@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Sequelize = require('sequelize');
 
 const config = require('../config');
@@ -6,20 +5,30 @@ const models = require('../models');
 
 const logger = config.logger.child({ name: 'controllers.relays' });
 
+const MESSAGING_SERVICES_BY_STAGE = {
+  test: {
+    relayPhoneNumber: '+13334445555',
+    messagingServiceId: 'MG1234'
+  },
+  production: {
+    relayPhoneNumber: '+12762902593',
+    messagingServiceId: 'MGf67465fa393f01c9b8e322c12721c03c'
+  }
+};
+
 class RelaysController {
   /**
    * Purchase a new number.
    */
-  static async purchaseNumber(experienceId) {
-    const experience = await models.Experience.findByPk(experienceId);
+  static async purchaseNumber(areaCode) {
     // First try in desired area code
     let availableNumbers = await config
       .getTwilioClient()
       .availablePhoneNumbers('US')
       .local
-      .list(experience.areaCode ? { areaCode: experience.areaCode } : {});
-    // If none available, try anywhere
-    if (!availableNumbers.length) {
+      .list(areaCode ? { areaCode: areaCode } : {});
+    // If an area code was specified and none available, try anywhere
+    if (areaCode && !availableNumbers.length) {
       availableNumbers = await config
         .getTwilioClient()
         .availablePhoneNumbers('US')
@@ -48,41 +57,8 @@ class RelaysController {
   /**
    * Return either an allocated or purchased relay phone number for a given participant.
    */
-  static async assignRelayPhoneNumber(experienceId, participantPhoneNumber) {
-    const twilioClient = config.getTwilioClient();
-    if (!twilioClient) {
-      return null;
-    }
-    // Find existing numbers for this environment.
-    const allExistingNumbers = await twilioClient.incomingPhoneNumbers.list();
-    const envExistingNumbers = _(allExistingNumbers)
-      .filter(num => num.smsUrl.indexOf(config.env.HQ_TWILIO_HOST) === 0)
-      .map(num => num.phoneNumber)
-      .value();
-    let overlaps;
-    if (participantPhoneNumber === '') {
-      // If we're trying to create a new entryway, don't overlap with
-      // anything at all.
-      overlaps = {};
-    } else {
-      // If we're assigning a number for a specific participant, then find all global
-      // relays or relays for that participant, and ensure we don't overlap.
-      overlaps = {
-        participantPhoneNumber: { [Sequelize.Op.or]: ['', participantPhoneNumber] }
-      };
-    }
-    const existingRelays = await models.Relay.findAll({ where: overlaps });
-
-    // Look through existing numbers for one that is available.
-    for (const envExistingNumber of envExistingNumbers) {
-      // If there are no existing relays with this relay number, then it's
-      // available to be assigned.
-      if (!_.find(existingRelays, { relayPhoneNumber: envExistingNumber })) {
-        return envExistingNumber;
-      }
-    }
-    // If we get here, all existing numbers are taken. Let's purchase a new one!
-    return await RelaysController.purchaseNumber(experienceId);
+  static assignRelayPhoneNumber() {
+    return MESSAGING_SERVICES_BY_STAGE[config.env.HQ_STAGE];
   }
 
   /**
@@ -106,9 +82,7 @@ class RelaysController {
       return existingRelay;
     }
     // If it doesn't we'll need to create it! Allocate a new number.
-    const relayPhoneNumber = await (
-      RelaysController.assignRelayPhoneNumber(experienceId, participantPhoneNumber)
-    );
+    const {relayPhoneNumber, messagingServiceId} = RelaysController.assignRelayPhoneNumber();
     // Return null if we couldn't allocate a phone number -- due to no twilio
     // client.
     if (!relayPhoneNumber) {
@@ -117,6 +91,7 @@ class RelaysController {
     // And create the relay.
     return await models.Relay.create(Object.assign({}, relayFields, {
       relayPhoneNumber: relayPhoneNumber,
+      messagingServiceId: messagingServiceId,
       isActive: true
     }));
   }
