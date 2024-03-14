@@ -1,10 +1,6 @@
-const config = require('../config');
-
 const RelayController = require('../controllers/relay');
 const EntrywayController = require('../controllers/entryway');
 const TripResetHandler = require('./trip_reset');
-
-var logger = config.logger.child({ name: 'handlers.twilio_util' });
 
 class TwilioUtil {
   /**
@@ -16,10 +12,6 @@ class TwilioUtil {
     const player = await RelayController.lookupPlayer(relay, participantPhoneNumber);
     if (player) {
       return player.tripId;
-    }
-    if (relay.participantPhoneNumber !== '') {
-      logger.warn(`Relay ${relay.id} is not an entryway; can't create a new trip.`);
-      return null;
     }
     // If no player, and it's an entryway, then we need to create a new trip.
     const trip = await EntrywayController.createTripFromRelay(relay, 

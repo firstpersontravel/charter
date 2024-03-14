@@ -18,10 +18,6 @@ describe('TextConvoExample', () => {
   let entryway;
 
   beforeEach(async () => {
-    config.getTwilioClient().incomingPhoneNumbers.list.resolves([{
-      smsUrl: `${config.env.HQ_TWILIO_HOST}/url`,
-      phoneNumber: '+13334445555'
-    }]);
     script = await TestUtil.createExample(example);
     entryway = (
       await ExperienceController.ensureEntrywayRelays(script.experienceId)
@@ -57,7 +53,7 @@ describe('TextConvoExample', () => {
     sinon.assert.calledOnce(createMessageStub);
     assert.deepStrictEqual(createMessageStub.firstCall.args, [{
       body: 'Why hello there, fine sir/lady/being! What is your name?',
-      from: '+13334445555',
+      messagingServiceSid: 'MG1234',
       to: '+15556667777'
     }]);
 
@@ -73,7 +69,7 @@ describe('TextConvoExample', () => {
     sinon.assert.calledTwice(createMessageStub);
     assert.deepStrictEqual(createMessageStub.getCall(1).args, [{
       body: 'Greetings, Sam. You may now await your righteous quest.',
-      from: '+13334445555',
+      messagingServiceSid: 'MG1234',
       to: '+15556667777'
     }]);
   });

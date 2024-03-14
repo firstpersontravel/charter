@@ -35,8 +35,7 @@ class ExperienceController {
     });
     const entrywayRelays = [];
     for (const relaySpec of entrywayRelaySpecs) {
-      const relay = await RelaysController.ensureRelay(experience.orgId,
-        experienceId, null, relaySpec, '');
+      const relay = await RelaysController.ensureRelay(experience.orgId, experienceId, relaySpec);
       entrywayRelays.push(relay);
     }
     return entrywayRelays.filter(Boolean);

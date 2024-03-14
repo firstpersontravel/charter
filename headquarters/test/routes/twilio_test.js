@@ -68,8 +68,7 @@ describe('twilioRoutes', () => {
       forRoleName: 'Player',
       asRoleName: 'Player',
       withRoleName: 'Actor',
-      relayPhoneNumber: '+19999999999',
-      participantPhoneNumber: ''
+      relayPhoneNumber: '+19999999999'
     });
     
     await models.Relay.create({
@@ -80,8 +79,7 @@ describe('twilioRoutes', () => {
       forRoleName: 'Actor',
       asRoleName: 'Actor',
       withRoleName: 'Player',
-      relayPhoneNumber: '+19999999998',
-      participantPhoneNumber: ''
+      relayPhoneNumber: '+19999999998'
     });
   });
 

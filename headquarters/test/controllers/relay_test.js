@@ -63,7 +63,6 @@ describe('RelayController', () => {
         where: {
           stage: 'test',
           experienceId: relay.experienceId,
-          tripId: relay.tripId,
           withRoleName: 'with',
           asRoleName: 'as',
           isActive: true
@@ -154,6 +153,7 @@ describe('RelayController', () => {
     const stubRelay = {
       isActive: true,
       relayPhoneNumber: '+11111111111',
+      messagingServiceId: 'MG1234567890',
       forRoleName: 'For'
     };
 
@@ -166,7 +166,7 @@ describe('RelayController', () => {
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
       sinon.assert.calledWith(config.getTwilioClient().messages.create, {
         to: stubPlayer.participant.phoneNumber,
-        from: stubRelay.relayPhoneNumber,
+        messagingServiceSid: stubRelay.messagingServiceId,
         body: 'msg'
       });
 
@@ -186,7 +186,7 @@ describe('RelayController', () => {
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
       sinon.assert.calledWith(config.getTwilioClient().messages.create, {
         to: stubPlayer.participant.phoneNumber,
-        from: stubRelay.relayPhoneNumber,
+        messagingServiceSid: stubRelay.messagingServiceId,
         mediaUrl: 'url'
       });
     });
@@ -235,7 +235,7 @@ describe('RelayController', () => {
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
       sinon.assert.calledWith(config.getTwilioClient().messages.create, {
         to: stubPlayer.participant.phoneNumber,
-        from: stubRelay.relayPhoneNumber,
+        messagingServiceSid: stubRelay.messagingServiceId,
         body: 'msg'
       });
 
@@ -264,7 +264,7 @@ describe('RelayController', () => {
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
       sinon.assert.calledWith(config.getTwilioClient().messages.create, {
         to: stubPlayer.participant.phoneNumber,
-        from: stubRelay.relayPhoneNumber,
+        messagingServiceSid: stubRelay.messagingServiceId,
         body: 'msg'
       });
 

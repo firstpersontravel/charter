@@ -54,21 +54,15 @@ describe('TripRelaysController', () => {
   describe('#ensureRelay', () => {
     const trip = { orgId: 2, id: 1, experienceId: 10 };
     const relaySpec = { for: 'Role' };
-    const phoneNum = '1234567890';
     const stubRelay = {};
 
     it('fetches relay by phone number', async () => {
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
-      sandbox.stub(TripRelaysController, 'participantNumberForRelay')
-        .resolves(phoneNum);
 
       const res = await TripRelaysController.ensureRelay(trip, relaySpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.calledWith(TripRelaysController.participantNumberForRelay,
-        trip, relaySpec);
-      sinon.assert.calledWith(RelaysController.ensureRelay,
-        2, 10, 1, relaySpec, phoneNum);
+      sinon.assert.calledWith(RelaysController.ensureRelay, 2, 10, relaySpec);
     });
 
     it('fetches relay for entryway', async () => {
@@ -76,26 +70,10 @@ describe('TripRelaysController', () => {
       sandbox.stub(RelaysController, 'ensureRelay').resolves(stubRelay);
       sandbox.stub(TripRelaysController, 'participantNumberForRelay');
 
-      const res = await TripRelaysController.ensureRelay(
-        trip, entrywaySpec);
+      const res = await TripRelaysController.ensureRelay(trip, entrywaySpec);
 
       assert.strictEqual(res, stubRelay);
-      sinon.assert.notCalled(TripRelaysController.participantNumberForRelay);
-      sinon.assert.calledWith(RelaysController.ensureRelay,
-        2, 10, null, entrywaySpec, '');
-    });
-
-    it('returns null if no phone number found', async () => {
-      sandbox.stub(RelaysController, 'ensureRelay');
-      sandbox.stub(TripRelaysController, 'participantNumberForRelay')
-        .resolves(null);
-
-      const res = await TripRelaysController.ensureRelay(trip, relaySpec);
-
-      assert.strictEqual(res, null);
-      sinon.assert.notCalled(RelaysController.ensureRelay);
-      sinon.assert.calledWith(TripRelaysController.participantNumberForRelay,
-        trip, relaySpec);
+      sinon.assert.calledWith(RelaysController.ensureRelay, 2, 10, entrywaySpec);
     });
   });
 

@@ -54,7 +54,6 @@ class RelayController {
       where: {
         stage: config.env.HQ_STAGE,
         experienceId: relay.experienceId,
-        tripId: relay.tripId,
         withRoleName: withRoleName,
         asRoleName: asRoleName,
         isActive: true
@@ -160,7 +159,7 @@ class RelayController {
       return;
     }
     const opts = Object.assign(
-      { to: toPhoneNumber, from: relay.relayPhoneNumber },
+      { to: toPhoneNumber, messagingServiceSid: relay.messagingServiceId },
       body ? { body: body } : null,
       mediaUrl ? { mediaUrl: mediaUrl } : null
     );

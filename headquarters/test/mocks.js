@@ -42,6 +42,12 @@ function createTestMocks() {
     send: mocks.stub().resolves()
   };
   mocks.stub(config, 'getSendgridClient').returns(sendgridStubClient);
+
+  // Global messaging service
+  mocks.stub(config, 'getGlobalMessagingServiceInfo').returns({
+    relayPhoneNumber: '+13334445555',
+    messagingServiceId: 'MG1234'
+  });
 }
 
 function teardownTestMocks() {

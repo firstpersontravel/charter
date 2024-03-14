@@ -2,10 +2,8 @@ const database = require('../config').database;
 
 const Experience = require('./experience');
 const Org = require('./org');
-const Trip = require('./trip');
 
 const {
-  allowNullModifier,
   belongsToField,
   booleanField,
   enumStringField,
@@ -27,13 +25,10 @@ const Relay = database.define('Relay', snakeCaseColumns({
   withRoleName: requiredStringField(32),
   relayPhoneNumber: requiredStringField(15),
   messagingServiceId: optionalStringField(34),
-  messagingComplianceId: optionalStringField(34),
-  participantPhoneNumber: optionalStringField(15),  // blank if for everyone
   isActive: mutableModifier(booleanField(true))
 }));
 
 Relay.belongsTo(Org, belongsToField('org'));
 Relay.belongsTo(Experience, belongsToField('experience'));
-Relay.belongsTo(Trip, allowNullModifier(belongsToField('trip')));
 
 module.exports = Relay;

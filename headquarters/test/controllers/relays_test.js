@@ -1,5 +1,4 @@
 const assert = require('assert');
-const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
@@ -7,10 +6,6 @@ const models = require('../../src/models');
 const RelaysController = require('../../src/controllers/relays');
 
 describe('RelaysController', () => {
-  describe('#purchaseNumber', () => {
-    it.skip('purchases a phone number', async () => {});
-  });
-
   describe('#assignRelayPhoneNumber', () => {
     it.skip('assigns number if available', async () => {});
     it.skip('purchases number if not available', async () => {});
@@ -25,8 +20,7 @@ describe('RelaysController', () => {
 
   describe('#findByNumber', () => {
     const stubRelay = {
-      relayPhoneNumber: '1234567890',
-      participantPhoneNumber: '9999999999'
+      relayPhoneNumber: '1234567890'
     };
 
     it('locates relay', async () => {
@@ -34,8 +28,7 @@ describe('RelaysController', () => {
       sandbox.stub(models.Relay, 'findOne').resolves(stubRelay);
 
       const result = await RelaysController.findByNumber(
-        stubRelay.relayPhoneNumber,
-        stubRelay.participantPhoneNumber
+        stubRelay.relayPhoneNumber
       );
 
       assert.strictEqual(result, stubRelay);
@@ -43,8 +36,7 @@ describe('RelaysController', () => {
         where: {
           isActive: true,
           relayPhoneNumber: '1234567890',
-          stage: 'test',
-          participantPhoneNumber: { [Sequelize.Op.or]: ['', '9999999999'] }
+          stage: 'test'
         }
       });
     });

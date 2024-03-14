@@ -97,7 +97,7 @@ open "http://localhost:5001/travel"
 
 ```sh
 # run local tunnel
-ngrok http -subdomain=fpt 5001
+ngrok http --subdomain=fpt 5001
 ```
 
 ### Getting a nice console

@@ -31,8 +31,7 @@ function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActio
     const relay = _.find(experience.relays, {
       forRoleName: entryway.for,
       asRoleName: entryway.as || entryway.for,
-      withRoleName: entryway.with,
-      participantPhoneNumber: ''
+      withRoleName: entryway.with
     });
     if (!relay) {
       hasUnallocated = true;
@@ -302,8 +301,7 @@ const withExp = withLoader(Schedule, ['experience.id'], (props) => {
   props.listCollection('relays', {
     orgId: props.experience.orgId,
     experienceId: props.experience.id,
-    stage: getStage(),
-    participantPhoneNumber: ''
+    stage: getStage()
   });
 });
 

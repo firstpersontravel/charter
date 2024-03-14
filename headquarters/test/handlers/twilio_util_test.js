@@ -13,7 +13,7 @@ describe('TwilioUtil', () => {
     const player = { tripId: 100 };
 
     it('returns player trip id if exists', async () => {
-      const relay = { id: 10, participantPhoneNumber: '2223334444' };
+      const relay = { id: 10 };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(player);
       sandbox.stub(EntrywayController, 'createTripFromRelay');
 
@@ -31,7 +31,7 @@ describe('TwilioUtil', () => {
     });
 
     it('creates a trip if none exist', async () => {
-      const relay = { id: 10, participantPhoneNumber: '' };
+      const relay = { id: 10 };
       const stubTrip = { id: 2 };
       sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
       sandbox.stub(EntrywayController, 'createTripFromRelay')
@@ -49,22 +49,6 @@ describe('TwilioUtil', () => {
 
       // And calls reset to start
       sinon.assert.calledWith(TripResetHandler.resetToStart, 2);
-    });
-
-    it('does not create a trip for non-entryway', async () => {
-      const relay = { id: 10, participantPhoneNumber: '4445556666' };
-      const stubTrip = { id: 2 };
-      sandbox.stub(RelayController, 'lookupPlayer').resolves(null);
-      sandbox.stub(EntrywayController, 'createTripFromRelay')
-        .resolves(stubTrip);
-
-      const res = await TwilioUtil.lookupOrCreateTripId(relay, phoneNumber);
-
-      // Returns no trip.
-      assert.strictEqual(res, null);
-
-      // Doesn't try to create a trip since it's not a universal relay.
-      sinon.assert.notCalled(EntrywayController.createTripFromRelay);
     });
   });
 });

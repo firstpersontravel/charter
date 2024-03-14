@@ -30,22 +30,7 @@ class TripRelaysController {
    * Ensure a relay exists for a given spec and script.
    */
   static async ensureRelay(trip, relaySpec) {
-    // If it's a entryway, look for a universal relay.
-    if (relaySpec.entryway) {
-      return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
-        null, relaySpec, '');
-    }
-    // Otherwise, look up the participant phone number for a relay.
-    const participantPhoneNumber = await this.participantNumberForRelay(trip, relaySpec);
-    // If no player was found, or the player doesn't have a phone
-    // number, then we can't create a relay, so we have to return null.
-    if (participantPhoneNumber === null) {
-      return null;
-    }
-    // If we have a phone number, then we can ensure a relay exists for that
-    // number.
-    return await RelaysController.ensureRelay(trip.orgId, trip.experienceId,
-      trip.id, relaySpec, participantPhoneNumber);
+    return await RelaysController.ensureRelay(trip.orgId, trip.experienceId, relaySpec);
   }
 
   /**
