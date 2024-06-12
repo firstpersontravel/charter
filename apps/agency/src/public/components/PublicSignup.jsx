@@ -34,7 +34,7 @@ export default class PublicSignup extends Component {
 
   renderSignupErrorAlert() {
     if (this.props.signupRequest === 'rejected') {
-      const defaultErrorMsg = 'There was an error while trying to sign up.';
+      const defaultErrorMsg = 'Hmm, there was an error while trying to sign up';
       const errorMsg = this.props.signupError || defaultErrorMsg;
       const includeLink = !!this.props.signupError;
       const loginLink = includeLink ?
@@ -52,8 +52,8 @@ export default class PublicSignup extends Component {
   renderSignupFailedAlert() {
     if (this.props.signupRequest === 'fulfilled' && !this.props.authInfo) {
       return (
-        <div className="alert alert-warning" role="alert">
-          That email and password was incorrect.
+        <div className="alert alert-warning text-center" role="alert">
+        That email and password are incorrect
         </div>
       );
     }
@@ -62,17 +62,16 @@ export default class PublicSignup extends Component {
 
   render() {
     return (
-      <div className="container-fluid">
-        <div className="col-md-6 offset-md-3">
-          <h1>Welcome to Charter!</h1>
+      <div className="container d-flex h-100 justify-content-center">
+        <div className="col-md-5 flex align-self-center">
+          <h1>Create an account</h1>
           <p>
-            You can create an account here. Already have an account? <Link to="/login">Log in!</Link>
+            Already have an account? <Link to="/login">Log in</Link>
           </p>
           {this.renderSignupErrorAlert()}
           {this.renderSignupFailedAlert()}
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
-              <label htmlFor="fullNameInput">Your name</label>
               <input
                 type="text"
                 name="fullName"
@@ -81,10 +80,9 @@ export default class PublicSignup extends Component {
                 id="fullNameInput"
                 value={this.state.fullName}
                 onChange={e => this.setState({ fullName: e.target.value })}
-                placeholder="What is your name?" />
+                placeholder="Your name" />
             </div>
             <div className="form-group">
-              <label htmlFor="emailInput">Email address</label>
               <input
                 type="email"
                 name="email"
@@ -93,10 +91,9 @@ export default class PublicSignup extends Component {
                 id="emailInput"
                 value={this.state.email}
                 onChange={e => this.setState({ email: e.target.value })}
-                placeholder="What's your email?" />
+                placeholder="Email" />
             </div>
             <div className="form-group">
-              <label htmlFor="pwInput">Password</label>
               <input
                 type="password"
                 name="password"
@@ -105,12 +102,9 @@ export default class PublicSignup extends Component {
                 id="pwInput"
                 value={this.state.password}
                 onChange={e => this.setState({ password: e.target.value })}
-                placeholder="What would you like your password to be?" />
+                placeholder="Password" />
             </div>
             <div className="form-group">
-              <label htmlFor="orgNameInput">
-                Workspace name (this could be a company or group name, or just your name)
-              </label>
               <input
                 maxLength="64"
                 type="text"
@@ -120,7 +114,7 @@ export default class PublicSignup extends Component {
                 id="orgNameInput"
                 value={this.state.orgTitle}
                 onChange={e => this.setState({ orgTitle: e.target.value })}
-                placeholder="What would you like to name your workspace?" />
+                placeholder="Workspace name" />
             </div>
             <button
               type="submit"
@@ -130,21 +124,13 @@ export default class PublicSignup extends Component {
               {this.isSigningUp() ? 'Signing up...' : 'Sign up'}
             </button>
           </form>
-          <p>
-            Please remember that this is an experimental toolkit and very much
-            a work-in-progress. We&apos;re delighted that you&apos;re
-            interested in trying out these tools and we&apos;d love your help
-            making them better!
+          <p class="">
+          Charter is a beta toolkit and we’d love your help making it better.
           </p>
           <p>
-            This tool is provided for free for art projects, experiments,
-            and other revenue-free experiences. It costs us money to run the
-            servers and telephone relays, so if you are charging fees for
-            experiences built using this platform, be in touch at{' '}
-            <a href="mailto:agency@firstperson.travel">
-              agency@firstperson.travel
-            </a> and we&apos;ll work out a fair and reasonable pricing
-            structure.
+          Right now we’re free for art projects, experiments, and other no-revenue experiences. It costs us money to maintain our servers so if you are charging fees for experiences built using it, please get in touch with us at {' '}
+          <a href="mailto:agency@firstperson.travel">agency@firstperson.travel </a>
+           and we'll work out a fair and reasonable pricing structure.
           </p>
         </div>
       </div>

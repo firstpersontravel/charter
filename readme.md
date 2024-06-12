@@ -56,7 +56,7 @@ docker-compose logs -f
 # Run migrations
 docker-compose exec server sequelize db:migrate
 
-# Create a new migration
+# Create a new migration 
 docker-compose exec server sequelize migration:generate --name add-some-fields
 
 # Run script migrations
