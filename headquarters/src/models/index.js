@@ -11,6 +11,7 @@ module.exports = {
   Player: require('./player'),
   Profile: require('./profile'),
   Relay: require('./relay'),
+  RelayEntryway: require('./relay_entryway'),
   Script: require('./script'),
   Trip: require('./trip'),
   User: require('./user')
