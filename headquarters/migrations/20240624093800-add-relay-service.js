@@ -13,6 +13,7 @@ module.exports = {
       title: { type: 'VARCHAR(64)', allowNull: false, defaultValue: '' },
       phone_number: { type: 'VARCHAR(15)', allowNull: false, defaultValue: '' },
       sid: { type: 'VARCHAR(34)', allowNull: false, defaultValue: '' },
+      is_shared: { type: 'TINYINT(1)', allowNull: false, defaultValue: 0 },
       is_active: { type: 'TINYINT(1)', allowNull: false, defaultValue: 1 },
     }, {
       charset: 'utf8mb4',

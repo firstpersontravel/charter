@@ -1,8 +1,9 @@
+const moment = require('moment');
+
 const config = require('../config');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 const RelayController = require('../controllers/relay');
-const RelaysController = require('../controllers/relays');
 const TwilioUtil = require('./twilio_util');
 
 var logger = config.logger.child({ name: 'handlers.twilio_message' });
@@ -44,15 +45,9 @@ function getMessageActions(relay, body, media) {
  * Handle an incoming message and return success.
  */
 async function handleIncomingMessage(fromNumber, toNumber, body, media) {
-  const relay = await RelaysController.findByNumber(toNumber, fromNumber);
-
-  // No action if we can't find the right relay
-  if (!relay) {
-    logger.warn('Message target relay not found.');
-    return false;
-  }
-
-  // Or if relay isn't an SMS relay.
+  const relay = await TwilioUtil.getRelayForExistingOrNewTrip(toNumber, fromNumber, body);
+  
+  // If relay doesn't have a spec in the associated experience, return
   const script = await RelayController.scriptForRelay(relay);
   if (!script) {
     logger.warn('Message target script not found.');
@@ -65,18 +60,16 @@ async function handleIncomingMessage(fromNumber, toNumber, body, media) {
     return false;
   }
 
-  // Get player or create trip.
-  const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
-  if (!tripId) {
-    // If we couldn't create one, probably cos it's not an entryway.
-    return false;
-  }
+  // Set last active for the relay.
+  await relay.update({
+    lastActiveAt: moment.utc()
+  });
 
-  // Whether it's an entryway or not, 
+  // And apply trip actions based on the message.
   const actions = getMessageActions(relay, body, media);
   for (let action of actions) {
-    await KernelController.applyAction(tripId, action);
-    await NotifyController.notifyAction(tripId, action);
+    await KernelController.applyAction(relay.tripId, action);
+    await NotifyController.notifyAction(relay.tripId, action);
   }
   return true;
 }

@@ -18,6 +18,7 @@ const RelayService = database.define('RelayService', snakeCaseColumns({
   title: requiredStringField(64),
   phoneNumber: requiredStringField(15),
   sid: requiredStringField(34),
+  isShared: mutableModifier(booleanField(true)),
   isActive: mutableModifier(booleanField(true)),
 }));
 

@@ -134,6 +134,24 @@ async function createDummyTripForScript(script, variantNames) {
   return trip;
 }
 
+async function createDummyEntrywayForScript(script) {
+  const relayService = await models.RelayService.create({
+    stage: 'test',
+    title: 'Test',
+    phoneNumber: '+12223334444',
+    sid: 'MG1234',
+    isShared: false,
+    isActive: true
+  });
+  return await models.RelayEntryway.create({
+    orgId: script.orgId,
+    experienceId: script.experienceId,
+    relayServiceId: relayService.id,
+    keyword: '',
+    welcome: 'Welcome to the test experience!'
+  });
+}
+
 async function createExample(example) {
   const content = Object.assign({
     meta: { version: ScriptCore.CURRENT_VERSION }
@@ -154,6 +172,7 @@ async function createExample(example) {
 }
 
 const TestUtil = {
+  createDummyEntrywayForScript,
   createDummyExperience,
   createDummyGroup,
   createDummyGroupForScript,

@@ -81,7 +81,7 @@ class KernelOpController {
   }
 
   static async initiateCall(objs, op) {
-    return await TripRelaysController.initiateCall(
+    await TripRelaysController.initiateCall(
       objs.trip, op.toRoleName, op.asRoleName, op.detectVoicemail);
   }
 

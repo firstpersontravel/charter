@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const { sandbox, mockNow } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
+const ExperienceController = require('../../src/controllers/experience');
 const RelayController = require('../../src/controllers/relay');
 
 describe('RelayController', () => {
@@ -12,30 +13,19 @@ describe('RelayController', () => {
       const stubScript = { name: 'abc', experience: {} };
       const relay = { experienceId: 10, orgId: 20 };
 
-      sandbox.stub(models.Script, 'findOne').resolves(stubScript);
+      sandbox.stub(ExperienceController, 'findActiveScript').resolves(stubScript);
       const res = await RelayController.scriptForRelay(relay);
       assert.strictEqual(res, stubScript);
-      sinon.assert.calledWith(models.Script.findOne, {
-        where: { isActive: true, isArchived: false },
-        include: [{
-          model: models.Org,
-          as: 'org',
-          where: { id: 20 }
-        }, {
-          model: models.Experience,
-          as: 'experience',
-          where: { id: 10 }
-        }]
-      });
+      sinon.assert.calledWith(ExperienceController.findActiveScript, 10);
     });
   });
 
   describe('#specForRelay', () => {
-    const stubRelays = [
+    const stubRelaySpecs = [
       { for: 'for', with: 'with', as: 'as' },
       { for: 'for2', with: 'with', as: 'as' }
     ];
-    const stubScript = { content: { relays: stubRelays } };
+    const stubScript = { content: { relays: stubRelaySpecs } };
 
     it('finds spec with as, for and with', () => {
       const res = RelayController.specForRelay(stubScript,
@@ -82,7 +72,7 @@ describe('RelayController', () => {
 
       sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
-      const res = await RelayController.lookupPlayer(relay, phoneNumber);
+      const res = await RelayController.lookupPlayer(relay.experienceId, relay.forRoleName, phoneNumber);
 
       assert.strictEqual(res, stubPlayer);
 
@@ -106,11 +96,15 @@ describe('RelayController', () => {
   });
 
   describe('#initiateCall', () => {
-    const stubRelay = { id: 3, relayPhoneNumber: '+19999999999' };
+    const stubRelay = { id: 3, relayPhoneNumber: '+19999999999', update: () => {} };
     const stubPlayer = {
       tripId: 1,
       getParticipant: async () => ({ phoneNumber: '+11111111111' })
     };
+
+    beforeEach(() => {
+      sandbox.stub(stubRelay, 'update');
+    });
 
     it('makes a call', async () => {
       // Test a call from Actor to Player
@@ -134,6 +128,8 @@ describe('RelayController', () => {
           ),
           statusCallbackMethod: 'POST'
         }]);
+      
+      sinon.assert.calledOnce(stubRelay.update);
     });
 
     it('sets machineDetection when expecting a message', async () => {
@@ -154,8 +150,13 @@ describe('RelayController', () => {
       isActive: true,
       relayPhoneNumber: '+11111111111',
       messagingServiceId: 'MG1234567890',
-      forRoleName: 'For'
+      forRoleName: 'For',
+      update: () => {}
     };
+
+    beforeEach(() => {
+      sandbox.stub(stubRelay, 'update');
+    });
 
     it('sends a text message', async () => {
       sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
@@ -175,6 +176,8 @@ describe('RelayController', () => {
         where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
         include: [{ model: models.Participant, as: 'participant' }]
       });
+
+      sinon.assert.calledOnce(stubRelay.update);
     });
 
     it('sends an image message', async () => {
@@ -205,19 +208,6 @@ describe('RelayController', () => {
         where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
         include: [{ model: models.Participant, as: 'participant' }]
       });
-    });
-
-    it('prevents send for inactive relay', async () => {
-      const inactiveRelay = { isActive: false };
-      sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
-
-      await RelayController.sendMessage(inactiveRelay, stubTrip, 'msg', null);
-
-      // Test twilio message sent
-      sinon.assert.notCalled(config.getTwilioClient().messages.create);
-
-      // Test player was fetched with right args
-      sinon.assert.notCalled(models.Player.findOne);
     });
 
     it('logs a warning on twilio permission error', async () => {

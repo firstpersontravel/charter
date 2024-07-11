@@ -9,11 +9,6 @@ const RelayController = require('../../src/controllers/relay');
 const EntrywayController = require('../../src/controllers/entryway');
 const TripsController = require('../../src/controllers/trips');
 
-const mockEntryway = {
-  orgId: 9,
-  experienceId: 20,
-  forRoleName: 'Player'
-};
 const mockTrip = { id: 100 };
 const mockScript = {
   id: 10,
@@ -101,7 +96,7 @@ describe('EntrywayController', () => {
     });
   });
 
-  describe('#createTripFromRelay', () => {
+  describe('#createTripFromEntryway', () => {
     it('creates group and participant when they don\'t exist', async () => {
       const mockGroup = { id: 1 };
       const mockParticipant = { id: 2 };
@@ -116,7 +111,7 @@ describe('EntrywayController', () => {
       sandbox.stub(EntrywayController, 'assignActors').resolves();
 
       // Create from entryway
-      await EntrywayController.createTripFromRelay(mockEntryway, '123');
+      await EntrywayController.createTripFromEntryway(mockScript, 'player', '123');
 
       // Test calls
       sinon.assert.calledWith(models.Group.findOrCreate, {
@@ -146,7 +141,7 @@ describe('EntrywayController', () => {
         where: {
           orgId: 9,
           isArchived: false,
-          roleName: 'Player',
+          roleName: 'player',
           experienceId: 20,
           participantId: 2
         },

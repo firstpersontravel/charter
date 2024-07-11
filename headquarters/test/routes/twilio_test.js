@@ -1,12 +1,11 @@
 const assert = require('assert');
 const httpMocks = require('node-mocks-http');
-const moment = require('moment-timezone');
 const sinon = require('sinon');
 const twilio = require('twilio');
 
 const ScriptCore = require('fptcore/src/cores/script');
 
-const { sandbox } = require('../mocks');
+const { mockNow, sandbox } = require('../mocks');
 const twilioRoutes = require('../../src/routes/twilio');
 const models = require('../../src/models');
 const KernelController = require('../../src/kernel/kernel');
@@ -35,7 +34,7 @@ describe('twilioRoutes', () => {
     const script = await TestUtil.createScriptWithContent(scriptContent);
     trip = await TestUtil.createDummyTripForScript(script, []);
     travelerParticipant = await models.Participant.create({
-      createdAt: moment.utc(),
+      createdAt: mockNow,
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'tester1',
@@ -44,7 +43,7 @@ describe('twilioRoutes', () => {
       isActive: true
     });
     actorParticipant = await models.Participant.create({
-      createdAt: moment.utc(),
+      createdAt: mockNow,
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       firstName: 'actor2',
@@ -64,22 +63,28 @@ describe('twilioRoutes', () => {
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       stage: 'test',
+      lastActiveAt: mockNow,
       isActive: true,
+      forPhoneNumber: '+18888888888',
       forRoleName: 'Player',
       asRoleName: 'Player',
       withRoleName: 'Actor',
-      relayPhoneNumber: '+19999999999'
+      relayPhoneNumber: '+19999999999',
+      messagingServiceId: 'MG1234'
     });
     
     await models.Relay.create({
       orgId: trip.orgId,
       experienceId: trip.experienceId,
       stage: 'test',
+      lastActiveAt: mockNow,
       isActive: true,
+      forPhoneNumber: '+18888888888',
       forRoleName: 'Actor',
       asRoleName: 'Actor',
       withRoleName: 'Player',
-      relayPhoneNumber: '+19999999998'
+      relayPhoneNumber: '+19999999998',
+      messagingServiceId: 'MG1235'
     });
   });
 

@@ -1,8 +1,10 @@
 const _ = require('lodash');
+const moment = require('moment');
 const Sentry = require('@sentry/node');
 
 const config = require('../config');
 const models = require('../models');
+const ExperienceController = require('./experience');
 const LogEntryController = require('./log_entry');
 
 const logger = config.logger.child({ name: 'controllers.relay' });
@@ -18,21 +20,7 @@ class RelayController {
    * Find script for relay
    */
   static async scriptForRelay(relay) {
-    return await models.Script.findOne({
-      where: {
-        isActive: true,
-        isArchived: false
-      },
-      include: [{
-        model: models.Org,
-        as: 'org',
-        where: { id: relay.orgId }
-      }, {
-        model: models.Experience,
-        as: 'experience',
-        where: { id: relay.experienceId }
-      }]
-    });
+    return await ExperienceController.findActiveScript(relay.experienceId);
   }
 
   /**
@@ -44,6 +32,13 @@ class RelayController {
       r.with === relay.withRoleName &&
       (r.as || r.for) === relay.asRoleName
     )) || null;
+  }
+
+  /**
+   * Find an entryway relay
+   */
+  static getEntrywayRelaySpec(script) {
+    return _.find(script.content.relays, r => !!r.entryway) || null;
   }
 
   /**
@@ -65,21 +60,21 @@ class RelayController {
    * Get player for the "for" role for this relay and a given participant phone
    * number.
    */
-  static async lookupPlayer(relay, participantNumber) {
+  static async lookupPlayer(experienceId, roleName, phoneNumber) {
     // If we found an existing matching player with this number,
     // then we're good -- return it -- even if this is an entryway because
     // that means a specific participant has already been assigned.
     return await models.Player.findOne({
-      where: { roleName: relay.forRoleName },
+      where: { roleName: roleName },
       include: [{
         model: models.Participant,
         as: 'participant',
-        where: { phoneNumber: participantNumber }
+        where: { phoneNumber: phoneNumber }
       }, {
         model: models.Trip,
         as: 'trip',
         where: {
-          experienceId: relay.experienceId,
+          experienceId: experienceId,
           isArchived: false
         },
       }]
@@ -123,7 +118,10 @@ class RelayController {
       ),
       statusCallbackMethod: 'POST'
     };
-    return await config.getTwilioClient().calls.create(callOpts);
+    await config.getTwilioClient().calls.create(callOpts);
+    await relay.update({
+      lastActiveAt: moment.utc()
+    });
   }
 
   /**
@@ -132,10 +130,6 @@ class RelayController {
   static async sendMessage(relay, trip, body, mediaUrl) {
     // Skip if twilio isn't active.
     if (!config.getTwilioClient()) {
-      return;
-    }
-    // Skip inactive relays.
-    if (!relay.isActive) {
       return;
     }
     // Don't do anything if a blank message.
@@ -189,6 +183,9 @@ class RelayController {
         .log(trip, 'error', `Could not send SMS to ${toPhoneNumber}: ${err.message}`);
       Sentry.captureException(err);
     }
+    await relay.update({
+      lastActiveAt: moment.utc()
+    });
   }
 }
 

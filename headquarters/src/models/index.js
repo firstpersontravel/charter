@@ -12,6 +12,7 @@ module.exports = {
   Profile: require('./profile'),
   Relay: require('./relay'),
   RelayEntryway: require('./relay_entryway'),
+  RelayService: require('./relay_service'),
   Script: require('./script'),
   Trip: require('./trip'),
   User: require('./user')

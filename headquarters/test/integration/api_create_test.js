@@ -107,7 +107,7 @@ describe('API create', () => {
       const forbiddenModels = {
         Action: { name: 'test' },
         Message: { fromRoleName: 'test' },
-        Relay: {}
+        Relay: { forPhoneNumeber: '123' }
       };
       return Promise.all(Object.keys(forbiddenModels).map(modelName => {
         return request(app)

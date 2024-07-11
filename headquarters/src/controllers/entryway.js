@@ -4,7 +4,6 @@ const RoleCore = require('fptcore/src/cores/role');
 
 const models = require('../models');
 
-const RelayController = require('./relay');
 const TripsController = require('./trips');
 
 class EntrywayController {
@@ -52,17 +51,9 @@ class EntrywayController {
   }
 
   /**
-   * Create a new trip from an incoming entryway message or call.
-   */
-  static async createTripFromRelay(entrywayRelay, fromNumber) {
-    const script = await RelayController.scriptForRelay(entrywayRelay);
-    return this.createTrip(script, entrywayRelay.forRoleName, fromNumber);
-  }
-
-  /**
    * Create a new trip with properties.
    */
-  static async createTrip(script, participantRoleName, participantNumber, participantName=null) {
+  static async createTripFromEntryway(script, participantRoleName, participantNumber, participantName=null) {
     const localTime = moment.utc().tz(script.experience.timezone);
     const [group, ] = await models.Group.findOrCreate({
       where: {

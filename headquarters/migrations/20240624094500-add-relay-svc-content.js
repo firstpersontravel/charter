@@ -1,13 +1,13 @@
 'use strict';
 
 const relayServiceRows = [
-  ['development', 'Charter Local 1', '+12093221681', 'MGd19ffb55c6e66cc84eb84dbd2cdede92', 1],
-  ['production', 'Charter Production 1', '+12762902593', 'MGf67465fa393f01c9b8e322c12721c03c', 1],
-  ['production', 'Charter Production 2', '+14255216695', 'MG9a077a98725b8b433587ae600c426464', 0],
-  ['production', 'Charter Production 3', '+14092481258', 'MGf9e24586e48fa09a7a462d30bda36485', 0],
-  ['production', 'Charter Production 4', '+12692413728', 'MG117d886869789e469a22b17407713276', 0],
-  ['production', 'Charter Production 5', '+14127753156', 'MG28c98bb5ee9e1136701d5d315c3ae344', 0],
-  ['production', 'Charter Production 6', '+15022731706', 'MGd75f059bd332e2880385377cd61f5cbd', 0],
+  ['development', 'Charter Local 1', '+12093221681', 'MGd19ffb55c6e66cc84eb84dbd2cdede92', 1, 1],
+  ['production', 'Charter Production 1', '+12762902593', 'MGf67465fa393f01c9b8e322c12721c03c', 1, 1],
+  ['production', 'Charter Production 2', '+14255216695', 'MG9a077a98725b8b433587ae600c426464', 0, 0],
+  ['production', 'Charter Production 3', '+14092481258', 'MGf9e24586e48fa09a7a462d30bda36485', 0, 0],
+  ['production', 'Charter Production 4', '+12692413728', 'MG117d886869789e469a22b17407713276', 0, 0],
+  ['production', 'Charter Production 5', '+14127753156', 'MG28c98bb5ee9e1136701d5d315c3ae344', 0, 0],
+  ['production', 'Charter Production 6', '+15022731706', 'MGd75f059bd332e2880385377cd61f5cbd', 0, 0],
 ];
 
 const relayEntrypointRows = [
@@ -24,7 +24,8 @@ module.exports = {
       title: r[1],
       phone_number: r[2],
       sid: r[3],
-      is_active: r[4]
+      is_shared: r[4],
+      is_active: r[5]
     })));
 
     await queryInterface.bulkInsert('RelayEntryways', relayEntrypointRows.map(r => ({

@@ -105,22 +105,6 @@ sendgridClient.setApiKey(env.HQ_SENDGRID_KEY);
 const fayePath = `${serverUrl}/pubsub`;
 const fayeClient = new faye.Client(fayePath, { timeout: 5 });
 
-// Configure global messaging service
-const DEFAULT_MESSAGING_SERVICES_BY_STAGE = {
-  development: {
-    relayPhoneNumber: '+12093221681',
-    messagingServiceId: 'MGd19ffb55c6e66cc84eb84dbd2cdede92'
-  },
-  production: {
-    relayPhoneNumber: '+12762902593',
-    messagingServiceId: 'MGf67465fa393f01c9b8e322c12721c03c'
-  }
-};
-
-function getGlobalMessagingServiceInfo() {
-  return DEFAULT_MESSAGING_SERVICES_BY_STAGE[env.HQ_STAGE];
-}
-
 module.exports = {
   getApnProvider: () => apnProvider,
   serverPort: serverPort,
@@ -129,6 +113,5 @@ module.exports = {
   logger: logger,
   getFayeClient: () => fayeClient,
   getTwilioClient: () => twilioClient,
-  getSendgridClient: () => sendgridClient,
-  getGlobalMessagingServiceInfo: getGlobalMessagingServiceInfo
+  getSendgridClient: () => sendgridClient
 };

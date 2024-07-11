@@ -9,7 +9,6 @@ const RelayController = require('../../src/controllers/relay');
 const RelaysController = require('../../src/controllers/relays');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
-const TwilioUtil = require('../../src/handlers/twilio_util');
 
 describe('TwilioCallHandler', () => {
   describe('#_triggerEventAndGatherTwiml', () => {
@@ -155,10 +154,14 @@ describe('TwilioCallHandler', () => {
   });
 
   describe('#handleIncomingCall', () => {
-    const mockRelay = { asRoleName: 'Player', withRoleName: 'Recipient' };
-    const mockScript = {};
-    const mockSpec = {};
-    const mockTripId = 123;
+    const stubRelay = { asRoleName: 'Player', withRoleName: 'Recipient', update: () => {} };
+    const stubScript = {};
+    const stubSpec = {};
+    const stubTripId = 123;
+
+    beforeEach(() => {
+      sandbox.stub(stubRelay, 'update');
+    });
 
     it('hangs up if relay not found', async () => {
       sandbox.stub(RelaysController, 'findByNumber').resolves(null);
@@ -175,8 +178,8 @@ describe('TwilioCallHandler', () => {
     });
 
     it('hangs up if no spec found', async () => {
-      sandbox.stub(RelaysController, 'findByNumber').resolves(mockRelay);
-      sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
+      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       sandbox.stub(RelayController, 'specForRelay').returns(null);
   
       const res = await TwilioCallHandler.handleIncomingCall(
@@ -194,10 +197,9 @@ describe('TwilioCallHandler', () => {
       const twimlSentinel = new twilio.twiml.VoiceResponse();
       twimlSentinel.say({}, 'message');
   
-      sandbox.stub(RelaysController, 'findByNumber').resolves(mockRelay);
-      sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
-      sandbox.stub(RelayController, 'specForRelay').returns(mockSpec);
-      sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(mockTripId);
+      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
+      sandbox.stub(RelayController, 'specForRelay').returns(stubSpec);
   
       // Return twiml
       sandbox
@@ -213,7 +215,7 @@ describe('TwilioCallHandler', () => {
       // Test event was called properly
       sinon.assert.calledWith(
         TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
-        mockTripId, mockRelay, {
+        stubTripId, stubRelay, {
           type: 'call_received',
           from: 'Player',
           to: 'Recipient'
@@ -221,10 +223,9 @@ describe('TwilioCallHandler', () => {
     });
 
     it('plays default message if no twiml was gathered', async () => {
-      sandbox.stub(RelaysController, 'findByNumber').resolves(mockRelay);
-      sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
-      sandbox.stub(RelayController, 'specForRelay').returns(mockSpec);
-      sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(mockTripId);
+      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
+      sandbox.stub(RelayController, 'specForRelay').returns(stubSpec);
   
       // Return twiml
       sandbox
@@ -244,7 +245,7 @@ describe('TwilioCallHandler', () => {
       // Test event was called properly
       sinon.assert.calledWith(
         TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
-        mockTripId, mockRelay, {
+        stubTripId, stubRelay, {
           type: 'call_received',
           from: 'Player',
           to: 'Recipient'
@@ -257,14 +258,14 @@ describe('TwilioCallHandler', () => {
     const tripId = 2;
     const callSid = 3;
     const clipName = 'clip';
-    const mockRelay = { id: 1 };
+    const stubRelay = { id: 1 };
 
     const twimlSentinel = new twilio.twiml.VoiceResponse();
     twimlSentinel.say({}, 'message');
 
     beforeEach(() => {
       sandbox.stub(TwilioCallHandler, '_interruptCall').resolves();
-      sandbox.stub(models.Relay, 'findByPk').resolves(mockRelay);
+      sandbox.stub(models.Relay, 'findByPk').resolves(stubRelay);
     });
 
     it('returns twiml if final', async () => {
@@ -282,7 +283,7 @@ describe('TwilioCallHandler', () => {
       // Test event was called properly
       sinon.assert.calledWith(
         TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
-        tripId, mockRelay, {
+        tripId, stubRelay, {
           type: 'clip_answered',
           clip: 'clip',
           partial: false,
@@ -325,7 +326,7 @@ describe('TwilioCallHandler', () => {
       // Test event was called properly
       sinon.assert.calledWith(
         TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
-        tripId, mockRelay, {
+        tripId, stubRelay, {
           type: 'clip_answered',
           clip: 'clip',
           partial: true,

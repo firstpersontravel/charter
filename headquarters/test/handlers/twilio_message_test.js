@@ -3,13 +3,18 @@ const sinon = require('sinon');
 
 const { sandbox } = require('../mocks');
 const RelayController = require('../../src/controllers/relay');
-const RelaysController = require('../../src/controllers/relays');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioMessageHandler = require('../../src/handlers/twilio_message');
 const TwilioUtil = require('../../src/handlers/twilio_util');
 
 describe('TwilioMessageHandler', () => {
+  beforeEach(() => {
+    sandbox.stub(KernelController, 'applyAction').resolves();
+  });
+
   describe('#handleIncomingMessage', () => {
+    const fromPhoneNumber = '123';
+    const toPhoneNumber = '456';
     const script = {
       content: {
         relays: [{
@@ -19,25 +24,27 @@ describe('TwilioMessageHandler', () => {
         }]
       }
     };
-    const relaySentinel = {
+
+    const stubRelay = {
       id: 2,
       experienceId: 20,
+      tripId: 100,
       forRoleName: 'From',
       asRoleName: 'From',
-      withRoleName: 'To'
+      withRoleName: 'To',
+      update: () => {}
     };
 
     beforeEach(() => {
       sandbox.stub(RelayController, 'scriptForRelay').resolves(script);
-      sandbox.stub(RelaysController, 'findByNumber').resolves(relaySentinel);
-      sandbox.stub(TwilioUtil, 'lookupOrCreateTripId').resolves(100);
-      sandbox.stub(KernelController, 'applyAction').resolves();
+      sandbox.stub(TwilioUtil, 'getRelayForExistingOrNewTrip').resolves(stubRelay);
+      sandbox.stub(stubRelay, 'update');
     });
 
-    it('handles incoming text message', async () => {
+    it('handles incoming text message for existing trip', async () => {
       const result = await (
         TwilioMessageHandler.handleIncomingMessage(
-          '123', '456', 'incomïng mêssage', []));
+          fromPhoneNumber, toPhoneNumber, 'incomïng mêssage', []));
 
       assert.strictEqual(result, true);
       sinon.assert.calledOnce(KernelController.applyAction);
@@ -55,10 +62,10 @@ describe('TwilioMessageHandler', () => {
         }]);
     });
 
-    it('handles incoming MMS image', async () => {
+    it('handles incoming MMS image for existing trip', async () => {
       const result = await (
         TwilioMessageHandler.handleIncomingMessage(
-          '123', '456', null,
+          fromPhoneNumber, toPhoneNumber, null,
           [{ url: 'http://test/image.jpg', contentType: 'image/jpg' }]));
 
       assert.strictEqual(result, true);
@@ -77,9 +84,9 @@ describe('TwilioMessageHandler', () => {
         }]);
     });
 
-    it('handles message with text and mms', async () => {
+    it('handles message with text and mms for existing trip', async () => {
       const result = await TwilioMessageHandler.handleIncomingMessage(
-        '123', '456', 'text',
+        fromPhoneNumber, toPhoneNumber, 'text',
         [{ url: 'http://test/image.jpg', contentType: 'image/jpg' }]);
 
       assert.strictEqual(result, true);

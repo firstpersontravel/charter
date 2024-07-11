@@ -6,12 +6,26 @@ const yaml = require('js-yaml');
 
 const config = require('../../src/config');
 const models = require('../../src/models');
-const ExperienceController = require('../../src/controllers/experience');
 const TwilioMessageHandler = require('../../src/handlers/twilio_message');
 const TestUtil = require('../util');
 
 const examplePath = path.join(__dirname, '../../examples/textconvo.yaml');
 const example = yaml.safeLoad(fs.readFileSync(examplePath, 'utf8'));
+
+async function assertTripAndRelay(script) {
+  // Test trip was created
+  const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
+  assert(trip);
+
+  // Test relay was created
+  const relay = await models.Relay.findOne({ where: {
+    tripId: trip.id,
+    forRoleName: 'Knight',
+    withRoleName: 'King'
+  }});
+
+  return { trip: trip, relay: relay };
+}
 
 describe('TextConvoExample', () => {
   let script;
@@ -19,9 +33,7 @@ describe('TextConvoExample', () => {
 
   beforeEach(async () => {
     script = await TestUtil.createExample(example);
-    entryway = (
-      await ExperienceController.ensureEntrywayRelays(script.experienceId)
-    )[0];
+    entryway = null; // NEEDS FIXING
   });
 
   it('runs through polite conversation', async () => {

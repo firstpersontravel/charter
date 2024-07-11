@@ -1,7 +1,4 @@
-const _ = require('lodash');
-
 const models = require('../models');
-const RelaysController = require('./relays');
 
 class ExperienceController {
   /**
@@ -17,28 +14,11 @@ class ExperienceController {
       include: [{
         model: models.Experience,
         as: 'experience'
-      }]
+      }, {
+        model: models.Org,
+        as: 'org'
+      }],
     });
-  }
-
-  /**
-   * Create entryway relays.
-   */
-  static async ensureEntrywayRelays(experienceId) {
-    // Get active script by name
-    const experience = await models.Experience.findByPk(experienceId);
-    const script = await this.findActiveScript(experience.id);
-
-    // Create only entryway relays
-    const entrywayRelaySpecs = _.filter(script.content.relays, {
-      entryway: true
-    });
-    const entrywayRelays = [];
-    for (const relaySpec of entrywayRelaySpecs) {
-      const relay = await RelaysController.ensureRelay(experience.orgId, experienceId, relaySpec);
-      entrywayRelays.push(relay);
-    }
-    return entrywayRelays.filter(Boolean);
   }
 }
 

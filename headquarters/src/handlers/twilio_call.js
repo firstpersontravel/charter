@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const twilio = require('twilio');
+const moment = require('moment');
 
 const config = require('../config');
 const models = require('../models');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 const RelayController = require('../controllers/relay');
-const RelaysController = require('../controllers/relays');
 const TwilioUtil = require('./twilio_util');
 const TwilioCallOps = require('./twilio_call_ops');
 const TwilioCallUtil = require('./twilio_call_util');
@@ -66,7 +66,7 @@ class TwilioCallHandler {
   }
 
   static async handleIncomingCall(fromNumber, toNumber) {
-    const relay = await RelaysController.findByNumber(toNumber, fromNumber);
+    const relay = await TwilioUtil.getRelayForExistingOrNewTrip(toNumber, fromNumber, null);
     if (!relay) {
       return TwilioCallUtil.say('No Charter relay found for this number.');
     }
@@ -77,19 +77,16 @@ class TwilioCallHandler {
       return TwilioCallUtil.say('No Charter relay spec found for this number.');
     }
 
-    // Lookup the trip id or create one.
-    const tripId = await TwilioUtil.lookupOrCreateTripId(relay, fromNumber);
-    if (!tripId) {
-      // If we couldn't create one, probably cos its not an entryway.
-      return TwilioCallUtil.say('No Charter trip could be found or created.');
-    }
+    await relay.update({
+      lastActiveAt: moment.utc()
+    });
 
     const event = {
       type: 'call_received',
       from: relay.asRoleName,
       to: relay.withRoleName
     };
-    const twimlRes = await this._triggerEventAndGatherTwiml(tripId, relay,
+    const twimlRes = await this._triggerEventAndGatherTwiml(relay.tripId, relay,
       event);
     // If we have a response, then return it
     if (twimlRes.response.children.length > 0) {
