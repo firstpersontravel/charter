@@ -6,9 +6,9 @@ const { sandbox } = require('../mocks');
 const config = require('../../src/config');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
-const RelaysController = require('../../src/controllers/relays');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
+const TwilioUtil = require('../../src/handlers/twilio_util');
 
 describe('TwilioCallHandler', () => {
   describe('#_triggerEventAndGatherTwiml', () => {
@@ -154,42 +154,43 @@ describe('TwilioCallHandler', () => {
   });
 
   describe('#handleIncomingCall', () => {
-    const stubRelay = { asRoleName: 'Player', withRoleName: 'Recipient', update: () => {} };
+    const stubRelay = { asRoleName: 'Player', withRoleName: 'Recipient', tripId: 123, update: () => {} };
     const stubScript = {};
     const stubSpec = {};
-    const stubTripId = 123;
+    const playerNumber = '+11111111111';
+    const relayNumber = '+12222222222';
 
     beforeEach(() => {
       sandbox.stub(stubRelay, 'update');
     });
 
     it('hangs up if relay not found', async () => {
-      sandbox.stub(RelaysController, 'findByNumber').resolves(null);
+      sandbox.stub(TwilioUtil, 'getRelayForExistingOrNewTrip').resolves(null);
 
       const res = await TwilioCallHandler.handleIncomingCall(
-        '+11111111111', '+12222222222');
+        playerNumber, relayNumber);
 
       // Test returns twiml sentinel
       assert.strictEqual(
         res.toString(),
         '<?xml version="1.0" encoding="UTF-8"?>' +
-        '<Response><Say>No Charter relay found for this number.' +
+        '<Response><Say>No matching relay found for this number.' +
         '</Say></Response>');
     });
 
     it('hangs up if no spec found', async () => {
-      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(TwilioUtil, 'getRelayForExistingOrNewTrip').resolves(stubRelay);
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       sandbox.stub(RelayController, 'specForRelay').returns(null);
   
       const res = await TwilioCallHandler.handleIncomingCall(
-        '+11111111111', '+12222222222');
+        playerNumber, relayNumber);
 
       // Test returns twiml sentinel
       assert.strictEqual(
         res.toString(),
         '<?xml version="1.0" encoding="UTF-8"?>' +
-        '<Response><Say>No Charter relay spec found for this number.' +
+        '<Response><Say>No matching relay spec found for this number.' +
         '</Say></Response>');
     });
 
@@ -197,7 +198,7 @@ describe('TwilioCallHandler', () => {
       const twimlSentinel = new twilio.twiml.VoiceResponse();
       twimlSentinel.say({}, 'message');
   
-      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(TwilioUtil, 'getRelayForExistingOrNewTrip').resolves(stubRelay);
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       sandbox.stub(RelayController, 'specForRelay').returns(stubSpec);
   
@@ -207,7 +208,7 @@ describe('TwilioCallHandler', () => {
         .resolves(twimlSentinel);
 
       const res = await TwilioCallHandler.handleIncomingCall(
-        '+11111111111', '+12222222222');
+        playerNumber, relayNumber);
 
       // Test returns twiml sentinel
       assert.strictEqual(res, twimlSentinel);
@@ -215,7 +216,7 @@ describe('TwilioCallHandler', () => {
       // Test event was called properly
       sinon.assert.calledWith(
         TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
-        stubTripId, stubRelay, {
+        stubRelay.tripId, stubRelay, {
           type: 'call_received',
           from: 'Player',
           to: 'Recipient'
@@ -223,7 +224,7 @@ describe('TwilioCallHandler', () => {
     });
 
     it('plays default message if no twiml was gathered', async () => {
-      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(TwilioUtil, 'getRelayForExistingOrNewTrip').resolves(stubRelay);
       sandbox.stub(RelayController, 'scriptForRelay').resolves(stubScript);
       sandbox.stub(RelayController, 'specForRelay').returns(stubSpec);
   
@@ -233,7 +234,7 @@ describe('TwilioCallHandler', () => {
         .resolves(new twilio.twiml.VoiceResponse());
 
       const res = await TwilioCallHandler.handleIncomingCall(
-        '+11111111111', '+12222222222');
+        playerNumber, relayNumber);
 
       // Test returns twiml sentinel
       assert.strictEqual(
@@ -245,7 +246,7 @@ describe('TwilioCallHandler', () => {
       // Test event was called properly
       sinon.assert.calledWith(
         TwilioCallHandler._triggerEventAndGatherTwiml.getCall(0),
-        stubTripId, stubRelay, {
+        stubRelay.tripId, stubRelay, {
           type: 'call_received',
           from: 'Player',
           to: 'Recipient'

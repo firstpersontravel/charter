@@ -42,6 +42,9 @@ npm run migrate
 # Run tests
 npm test
 
+# Run tests showing all log output
+SHOW_TEST_LOGS=1 npm test
+
 # Watch all local apps in parallel to rebuild on changes
 npm run watch
 open http://localhost:5001

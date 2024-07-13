@@ -48,10 +48,9 @@ class RelayController {
     return await models.Relay.findAll({
       where: {
         stage: config.env.HQ_STAGE,
-        experienceId: relay.experienceId,
+        tripId: relay.tripId,
         withRoleName: withRoleName,
-        asRoleName: asRoleName,
-        isActive: true
+        asRoleName: asRoleName
       }
     });
   }

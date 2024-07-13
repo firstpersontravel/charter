@@ -42,7 +42,7 @@ describe('RelayController', () => {
 
   describe('#findSiblings', () => {
     it('looks up sibling relays', async () => {
-      const relay = { experienceId: 10, tripId: 3 };
+      const relay = { tripId: 3 };
       const stubResult = { id: 2 };
       sandbox.stub(models.Relay, 'findAll').resolves(stubResult);
       
@@ -52,10 +52,9 @@ describe('RelayController', () => {
       sinon.assert.calledWith(models.Relay.findAll, {
         where: {
           stage: 'test',
-          experienceId: relay.experienceId,
+          tripId: relay.tripId,
           withRoleName: 'with',
-          asRoleName: 'as',
-          isActive: true
+          asRoleName: 'as'
         }
       });
     });
@@ -147,7 +146,6 @@ describe('RelayController', () => {
     const stubTrip = { id: 1, orgId: 1 };
     const stubPlayer = { participant: { phoneNumber: whitelistedNumber } };
     const stubRelay = {
-      isActive: true,
       relayPhoneNumber: '+11111111111',
       messagingServiceId: 'MG1234567890',
       forRoleName: 'For',

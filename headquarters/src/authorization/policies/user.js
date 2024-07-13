@@ -136,7 +136,7 @@ const userCanOperateOrgTrips = {
     const allowedFieldNames = {
       Action: ['isArchived', 'scheduledAt'],
       Message: ['replyReceivedAt', 'isInGallery', 'isArchived'],
-      Relay: ['isActive']
+      Relay: []
     };
     const allowedFieldNamesForResource = allowedFieldNames[resource.modelName];
     if (_.includes(allowedActions, action)) {

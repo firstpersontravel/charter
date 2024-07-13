@@ -46,6 +46,12 @@ function getMessageActions(relay, body, media) {
  */
 async function handleIncomingMessage(fromNumber, toNumber, body, media) {
   const relay = await TwilioUtil.getRelayForExistingOrNewTrip(toNumber, fromNumber, body);
+
+  // If relay service wasn't found for this to number, which shouldn't really happen.
+  if (!relay) {
+    logger.warn(`No relay service found matching ${toNumber}.`);
+    return false;
+  }
   
   // If relay doesn't have a spec in the associated experience, return
   const script = await RelayController.scriptForRelay(relay);

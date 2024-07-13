@@ -68,13 +68,13 @@ class TwilioCallHandler {
   static async handleIncomingCall(fromNumber, toNumber) {
     const relay = await TwilioUtil.getRelayForExistingOrNewTrip(toNumber, fromNumber, null);
     if (!relay) {
-      return TwilioCallUtil.say('No Charter relay found for this number.');
+      return TwilioCallUtil.say('No matching relay found for this number.');
     }
 
     const script = await RelayController.scriptForRelay(relay);
     const relaySpec = RelayController.specForRelay(script, relay);
     if (!relaySpec) {
-      return TwilioCallUtil.say('No Charter relay spec found for this number.');
+      return TwilioCallUtil.say('No matching relay spec found for this number.');
     }
 
     await relay.update({

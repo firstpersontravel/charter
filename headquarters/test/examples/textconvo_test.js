@@ -28,25 +28,27 @@ async function assertTripAndRelay(script) {
 }
 
 describe('TextConvoExample', () => {
+  const playerNumber = '+15556667777';
   let script;
-  let entryway;
+  let relayEntryway;
+  let relayService;
 
   beforeEach(async () => {
     script = await TestUtil.createExample(example);
-    entryway = null; // NEEDS FIXING
+    relayEntryway = await TestUtil.createDummyEntrywayForScript(script);
+    relayService = await relayEntryway.getRelayService();
   });
 
   it('runs through polite conversation', async () => {
     // Test start on text to entryway
     const msgResult = await TwilioMessageHandler.handleIncomingMessage(
-      '+15556667777', entryway.relayPhoneNumber, 'hi', []);
+      playerNumber, relayService.phoneNumber, 'hi', []);
 
     // Test message handled ok
     assert.strictEqual(msgResult, true);
 
     // Test trip was created
-    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
-    assert(trip);
+    const { trip } = await assertTripAndRelay(script);
 
     // Test value was set
     assert.strictEqual(trip.values.game_started, true);
@@ -60,40 +62,46 @@ describe('TextConvoExample', () => {
     assert.strictEqual(messages[1].content,
       'Why hello there, fine sir/lady/being! What is your name?');
 
-    // Test first response message was sent via twilio
+    // Test welcome message and first response message were sent via twilio
     const createMessageStub = config.getTwilioClient().messages.create;
-    sinon.assert.calledOnce(createMessageStub);
+    sinon.assert.calledTwice(createMessageStub);
+
     assert.deepStrictEqual(createMessageStub.firstCall.args, [{
+      body: 'Welcome to the test experience!',
+      messagingServiceSid: 'MG1234',
+      to: playerNumber
+    }]);
+
+    assert.deepStrictEqual(createMessageStub.secondCall.args, [{
       body: 'Why hello there, fine sir/lady/being! What is your name?',
       messagingServiceSid: 'MG1234',
-      to: '+15556667777'
+      to: playerNumber
     }]);
 
     // Response
     await TwilioMessageHandler.handleIncomingMessage(
-      '+15556667777', entryway.relayPhoneNumber, 'Sam', []);
+      playerNumber, relayService.phoneNumber, 'Sam', []);
 
     // Test interpreted
     await trip.reload();
     assert.strictEqual(trip.values.player_name, 'Sam');
 
     // Test second response sent
-    sinon.assert.calledTwice(createMessageStub);
-    assert.deepStrictEqual(createMessageStub.getCall(1).args, [{
+    sinon.assert.calledThrice(createMessageStub);
+    assert.deepStrictEqual(createMessageStub.getCall(2).args, [{
       body: 'Greetings, Sam. You may now await your righteous quest.',
       messagingServiceSid: 'MG1234',
-      to: '+15556667777'
+      to: playerNumber
     }]);
   });
 
   it('runs through rude conversation', async () => {
     // Test start on text to entryway
     await TwilioMessageHandler.handleIncomingMessage(
-      '+15556667777', entryway.relayPhoneNumber, 'yo', []);
+      playerNumber, relayService.phoneNumber, 'yo', []);
 
     // Test trip was created
-    const trip = await models.Trip.findOne({ where: { scriptId: script.id } });
-    assert(trip);
+    const { trip } = await assertTripAndRelay(script);
 
     // Test message was created
     const messages = await models.Message.findAll({
