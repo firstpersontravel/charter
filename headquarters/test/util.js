@@ -134,11 +134,11 @@ async function createDummyTripForScript(script, variantNames) {
   return trip;
 }
 
-async function createDummyEntrywayForScript(script) {
+async function createDummyEntrywayForScript(script, phoneNumber) {
   const relayService = await models.RelayService.create({
     stage: 'test',
     title: 'Test',
-    phoneNumber: '+12223334444',
+    phoneNumber: phoneNumber || '+12223334444',
     sid: 'MG1234',
     isShared: false,
     isActive: true

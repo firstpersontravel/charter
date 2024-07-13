@@ -9,6 +9,7 @@ const {
   datetimeField,
   enumStringField,
   requiredStringField,
+  mutableModifier,
   snakeCaseColumns
 } = require('../sequelize/fields');
 
@@ -25,7 +26,7 @@ const Relay = database.define('Relay', snakeCaseColumns({
   withRoleName: requiredStringField(32),
   relayPhoneNumber: requiredStringField(15),
   messagingServiceId: requiredStringField(34),
-  lastActiveAt: datetimeField(),
+  lastActiveAt: mutableModifier(datetimeField()),
 }));
 
 Relay.belongsTo(Org, belongsToField('org'));

@@ -11,7 +11,7 @@ const TripResetHandler = require('./trip_reset');
 
 var logger = config.logger.child({ name: 'handlers.twilio_util' });
 
-const DEFAULT_WELCOME_BODY = 'Welcome to Charter! STOP to end.';
+const DEFAULT_WELCOME_BODY = 'Welcome to Charter! You will receive text messages based on the experience you joined. Text STOP to end or HELP for info.';
 
 class TwilioUtil {
   static async sendCharterDefaultEntrywayMessage(relayService, toNumber) {
@@ -37,6 +37,10 @@ class TwilioUtil {
       logger.warn('Message relay service not found.');
       return null;
     }
+    // Continue on inactive relay services since we want to allow validating them with twilio.
+    if (!relayService.isActive) {
+      logger.warn('Message relay service is inactive.');
+    }
     // Search for matching entryways
     const entrywayKeywords = [''];
     if (messageBody) {
@@ -46,7 +50,9 @@ class TwilioUtil {
       where: {
         relayServiceId: relayService.id,
         keyword: { [Sequelize.Op.or]: entrywayKeywords }
-      }
+      },
+      // Sort by descending keyword to put matching keyword first (preferred), empty second
+      order: [['keyword', 'DESC']]
     });
     // If we found a service but no entryways, just return a charter default message, but don't continue.
     if (!relayEntryway) {

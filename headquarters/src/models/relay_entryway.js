@@ -7,6 +7,7 @@ const RelayService = require('./relay_service');
 const {
   belongsToField,
   optionalStringField,
+  mutableModifier,
   requiredStringField,
   snakeCaseColumns
 } = require('../sequelize/fields');
@@ -15,8 +16,8 @@ const {
  * Relay model.
  */
 const RelayEntryway = database.define('RelayEntryway', snakeCaseColumns({
-  welcome: requiredStringField(255),
-  keyword: optionalStringField(32),
+  welcome: mutableModifier(requiredStringField(255)),
+  keyword: mutableModifier(optionalStringField(32)),
 }));
 
 RelayEntryway.belongsTo(Org, belongsToField('org'));
