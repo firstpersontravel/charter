@@ -62,6 +62,10 @@ function mergeFields(record, fields) {
   });
 }
 
+function toLowerCamelCase(str) {
+  return str[0].toLowerCase() + str.substring(1);
+}
+
 function respondWithRecord(res, model, record, opts, status = 200) {
   const item = serializeRecord(model, record, opts);
   const data = { [model.name.toLowerCase()]: item };
@@ -70,7 +74,7 @@ function respondWithRecord(res, model, record, opts, status = 200) {
 }
 
 function respondWithRecords(res, model, records, opts) {
-  const modelNamePlural = inflection.pluralize(model.name.toLowerCase());
+  const modelNamePlural = inflection.pluralize(toLowerCamelCase(model.name));
   const items = records.map(record => serializeRecord(model, record, opts));
   const data = { [modelNamePlural]: items };
   respondWithJson(res, { data: data });

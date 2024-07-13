@@ -1,5 +1,18 @@
 const _ = require('lodash');
 
+const userCanListRelayServices = {
+  name: 'userCanListRelayServices',
+  test: (subject, action, resource) => {
+    // If not a user, policy does not apply
+    if (!subject.isUser) {
+      return;
+    }
+    if ((action === 'list' || action === 'retrieve') && resource.modelName == 'RelayService') {
+      return { allowed: true, reason: 'Users can list relay services.' };
+    }
+  }
+};
+
 const userCanListOrgRecords = {
   name: 'userCanListOrgRecords',
   test: (subject, action, resource) => {
@@ -182,6 +195,7 @@ const userCanAdministrateOrgTrips = {
 };
 
 module.exports = [
+  userCanListRelayServices,
   userCanListOrgRecords,
   userCanRetrieveOrgRecords,
   userCanUpdateOrgScripts,

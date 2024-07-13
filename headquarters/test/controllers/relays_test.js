@@ -29,6 +29,7 @@ describe('RelaysController', () => {
         orgId: experience.orgId,
         experienceId: experience.id,
         relayServiceId: relayService.id,
+        stage: config.env.HQ_STAGE,
         welcome: 'welcome!',
         keyword: ''
       });

@@ -45,24 +45,30 @@ function createModelRouter(model, opts={}) {
   return router;
 }
 
-// REST API routers for Organization-filtered models
+// Global routes
+apiRouter.use('/relayServices', createModelRouter(models.RelayService, {}));
+
+// Organization-filtered routes
 const orgRecordOpts = { requireFilters: ['orgId'] };
 apiRouter.use('/experiences', createModelRouter(models.Experience,
   orgRecordOpts));
 
+// Experience-filtered routes
 const expRecordOpts = { requireFilters: ['orgId', 'experienceId'] };
 apiRouter.use('/assets', createModelRouter(models.Asset, expRecordOpts));
 apiRouter.use('/groups', createModelRouter(models.Group, expRecordOpts));
 apiRouter.use('/participants', createModelRouter(models.Participant, expRecordOpts));
 apiRouter.use('/profiles', createModelRouter(models.Profile, expRecordOpts));
 apiRouter.use('/relays', createModelRouter(models.Relay, expRecordOpts));
+apiRouter.use('/relayEntryways', createModelRouter(models.RelayEntryway, expRecordOpts));
 apiRouter.use('/scripts', createModelRouter(models.Script, expRecordOpts));
 apiRouter.use('/trips', createModelRouter(models.Trip, expRecordOpts));
 
+// Trip-filtered routes
 const tripRecordOpts = { requireFilters: ['orgId', 'tripId'] };
 apiRouter.use('/actions', createModelRouter(models.Action, tripRecordOpts));
 apiRouter.use('/messages', createModelRouter(models.Message, tripRecordOpts));
-apiRouter.use('/log-entries', createModelRouter(models.LogEntry, tripRecordOpts));
+apiRouter.use('/logEntries', createModelRouter(models.LogEntry, tripRecordOpts));
 
 const playerTripOrParticipantFilter = (whereQuery) => {
   if (!whereQuery.tripId && !whereQuery.participantId) {

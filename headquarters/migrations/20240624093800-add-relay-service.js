@@ -29,6 +29,7 @@ module.exports = {
       org_id: { type: 'INTEGER', allowNull: false },
       experience_id: { type: 'INTEGER', allowNull: false },
       relay_service_id: { type: 'INTEGER', allowNull: false },
+      stage: { type: 'VARCHAR(32)', allowNull: false, defaultValue: '' },
       welcome: { type: 'VARCHAR(255)', allowNull: false, defaultValue: '' },
       keyword: { type: 'VARCHAR(32)', allowNull: false, defaultValue: '' },
     }, {

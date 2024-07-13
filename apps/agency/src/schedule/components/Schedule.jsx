@@ -15,50 +15,40 @@ import { getStage } from '../../utils';
 
 function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState) {
   const activeScript = _.find(scripts, { isActive: true });
-  const entrywaySpecs = _.filter(_.get(activeScript, 'content.relays'), {
-    entryway: true
-  });
-  if (!entrywaySpecs.length) {
+  const entrywaySpec = _.find(_.get(activeScript, 'content.relays'), { entryway: true });
+  if (!entrywaySpec) {
     return (
       <div>
         <i className="fa fa-phone mr-1" />
-        Runs cannot be created by text or call because no entryway phone lines exist.
+        Runs cannot be created by text or call because no entryway phone line exists.
       </div>
     );
   }
-  let hasUnallocated = false;
-  const renderedEntryways = entrywaySpecs.map((entryway) => {
-    const relay = _.find(experience.relays, {
-      forRoleName: entryway.for,
-      asRoleName: entryway.as || entryway.for,
-      withRoleName: entryway.with
-    });
-    if (!relay) {
-      hasUnallocated = true;
-    }
-    const forRole = _.find(activeScript.content.roles,
-      { name: entryway.for });
+  const relayEntryway = _.find(experience.relayEntryways, {});
+  if (!relayEntryway) {
     return (
-      <span key={entryway.name}>
-        {forRole.title} {relay ? `at ${formatPhoneNumberIntl(relay.relayPhoneNumber)}` : ''}
-      </span>
+      <div>
+        <i className="fa fa-phone mr-1" />
+        Runs cannot be created by text or call because a phone number{' '}
+        has not been allocated for this experience.{' '}
+        Contact agency@firstperson.travel for help setting this up.
+      </div>
     );
-  });
-
-  const allocateRelaysBtn = hasUnallocated ? (
-    <button
-      disabled={systemActionRequestState === 'pending'}
-      className="btn btn-sm btn-primary ml-2"
-      onClick={() => updateRelays(
-        org.id, experience.id)}>
-      Assign number
-    </button>
-  ) : null;
-
+  }
+  if (relayEntryway.keyword) {
+    return (
+      <div>
+        <i className="fa fa-phone mr-1" />
+        Runs can be created by text starting with &quot;{relayEntryway.keyword}&quot;{' '}
+        at {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
+      </div>
+    );
+  }
   return (
     <div>
-      <i className="fa fa-phone" /> Runs can be created by call or texts: {renderedEntryways}
-      {allocateRelaysBtn}
+      <i className="fa fa-phone mr-1" />
+      Runs can be created by call or text at{' '}
+      {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
     </div>
   );
 }
@@ -298,9 +288,12 @@ Schedule.defaultProps = {
 const withExp = withLoader(Schedule, ['experience.id'], (props) => {
   // Non-archived trips, groups, and scripts are all queryed by the Project
   // container.
-  props.listCollection('relays', {
+  props.listCollection('relayEntryways', {
     orgId: props.experience.orgId,
     experienceId: props.experience.id,
+    stage: getStage()
+  });
+  props.listCollection('relayServices', {
     stage: getStage()
   });
 });

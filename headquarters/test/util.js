@@ -147,6 +147,7 @@ async function createDummyEntrywayForScript(script, phoneNumber) {
     orgId: script.orgId,
     experienceId: script.experienceId,
     relayServiceId: relayService.id,
+    stage: 'test',
     keyword: '',
     welcome: 'Welcome to the test experience!'
   });

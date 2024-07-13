@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import { instancesIncluder, instanceFromDatastore } from '../../datastore-utils';
+import { instanceIncluder, instancesIncluder, instanceFromDatastore } from '../../datastore-utils';
 import {
   createInstance,
   updateInstance,
@@ -18,7 +18,11 @@ const mapStateToProps = (state, ownProps) => ({
   experience: instanceFromDatastore(state, {
     col: 'experiences',
     filter: { name: ownProps.match.params.experienceName },
-    include: { relays: instancesIncluder('relays', 'experienceId', 'id') }
+    include: {
+      relayEntryways: instancesIncluder('relayEntryways', 'experienceId', 'id', {}, {
+        relayService: instanceIncluder('relayServices', 'id', 'relayServiceId')
+      })
+    }
   }),
   scripts: lookupScripts(state, ownProps),
   groups: lookupGroups(state, ownProps)

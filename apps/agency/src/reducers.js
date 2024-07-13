@@ -19,6 +19,8 @@ export const initialState = {
     players: [],
     messages: [],
     relays: [],
+    relayEntryways: [],
+    relayServices: [],
     actions: []
   }
 };

@@ -12,9 +12,9 @@ const relayServiceRows = [
 
 const relayEntrypointRows = [
   // FPT "Text testing" local
-  [1, 837, 1, 'Welcome to FPT testing', ''],
+  [1, 837, 1, 'development', 'Welcome to FPT testing', ''],
   // FPT "Text testing" production
-  [1, 837, 2, 'Welcome to FPT production', ''],
+  [1, 837, 2, 'production', 'Welcome to FPT production', ''],
 ];
 
 module.exports = {
@@ -32,8 +32,9 @@ module.exports = {
       org_id: r[0],
       experience_id: r[1],
       relay_service_id: r[2],
-      welcome: r[3],
-      keyword: r[4]
+      stage: r[3],
+      welcome: r[4],
+      keyword: r[5]
     })));
   },
 
