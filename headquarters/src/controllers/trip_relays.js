@@ -146,7 +146,7 @@ class TripRelaysController {
         continue;
       }
       const [body, mediaUrl] = this._partsForRelayMessage(script, trip, relay, message);
-      await RelayController.sendMessage(relay, trip, body, mediaUrl);
+      await RelayController.sendMessage(relay, body, mediaUrl);
     }
 
     // Send to inverse relays -- relays as the role sending the message. These
@@ -166,7 +166,7 @@ class TripRelaysController {
         continue;
       }
       const [body, mediaUrl] = this._partsForRelayMessage(script, trip, relay, message);
-      await RelayController.sendMessage(relay, trip, body, mediaUrl);
+      await RelayController.sendMessage(relay, body, mediaUrl);
     }
   }
 }

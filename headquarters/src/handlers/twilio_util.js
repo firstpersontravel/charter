@@ -11,14 +11,12 @@ const TripResetHandler = require('./trip_reset');
 
 var logger = config.logger.child({ name: 'handlers.twilio_util' });
 
-const DEFAULT_WELCOME_BODY = 'Welcome to Charter! You will receive text messages based on the experience you joined. Text STOP to end or HELP for info.';
-
 class TwilioUtil {
   static async sendCharterDefaultEntrywayMessage(relayService, toNumber) {
     await config.getTwilioClient().messages.create({
       to: toNumber,
       messagingServiceSid: relayService.sid,
-      body: DEFAULT_WELCOME_BODY
+      body: RelaysController.getDefaultWelcome()
     });
   }
 
@@ -78,9 +76,8 @@ class TwilioUtil {
     // Create relay for trip
     const newRelay = await RelaysController.createRelayFromIncoming(relayService, relayEntryway, entrywayRelaySpec, trip, forNumber);
 
-    // Send entryway welcome message via new relay
-    const welcome = relayEntryway.welcome || DEFAULT_WELCOME_BODY;
-    await RelayController.sendMessage(newRelay, trip, welcome);
+    // Send welcome message
+    await RelaysController.sendWelcome(relayEntryway, newRelay);
 
     return newRelay;
   }

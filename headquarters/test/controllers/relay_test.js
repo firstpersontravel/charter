@@ -143,9 +143,10 @@ describe('RelayController', () => {
 
   describe('#sendMessage', () => {
     const whitelistedNumber = '+19144844223';
-    const stubTrip = { id: 1, orgId: 1 };
     const stubPlayer = { participant: { phoneNumber: whitelistedNumber } };
     const stubRelay = {
+      orgId: 1,
+      tripId: 1,
       relayPhoneNumber: '+11111111111',
       messagingServiceId: 'MG1234567890',
       forRoleName: 'For',
@@ -159,7 +160,7 @@ describe('RelayController', () => {
     it('sends a text message', async () => {
       sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
-      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+      await RelayController.sendMessage(stubRelay, 'msg', null);
 
       // Test twilio message sent
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
@@ -171,7 +172,7 @@ describe('RelayController', () => {
 
       // Test player was fetched with right args
       sinon.assert.calledWith(models.Player.findOne, {
-        where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
+        where: { tripId: stubRelay.tripId, roleName: stubRelay.forRoleName },
         include: [{ model: models.Participant, as: 'participant' }]
       });
 
@@ -181,7 +182,7 @@ describe('RelayController', () => {
     it('sends an image message', async () => {
       sandbox.stub(models.Player, 'findOne').resolves(stubPlayer);
 
-      await RelayController.sendMessage(stubRelay, stubTrip, null, 'url');
+      await RelayController.sendMessage(stubRelay, null, 'url');
 
       // Test twilio message sent
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
@@ -196,14 +197,14 @@ describe('RelayController', () => {
       const player = { participant: { phoneNumber: '4445556666' } };
       sandbox.stub(models.Player, 'findOne').resolves(player);
 
-      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+      await RelayController.sendMessage(stubRelay, 'msg', null);
 
       // Test twilio message sent
       sinon.assert.notCalled(config.getTwilioClient().messages.create);
 
       // Test player was fetched with right args
       sinon.assert.calledWith(models.Player.findOne, {
-        where: { tripId: stubTrip.id, roleName: stubRelay.forRoleName },
+        where: { tripId: stubRelay.tripId, roleName: stubRelay.forRoleName },
         include: [{ model: models.Participant, as: 'participant' }]
       });
     });
@@ -217,7 +218,7 @@ describe('RelayController', () => {
         code: 21408
       });
 
-      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+      await RelayController.sendMessage(stubRelay, 'msg', null);
 
       // Test twilio message attempted to be created
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);
@@ -246,7 +247,7 @@ describe('RelayController', () => {
         code: 123456
       });
 
-      await RelayController.sendMessage(stubRelay, stubTrip, 'msg', null);
+      await RelayController.sendMessage(stubRelay, 'msg', null);
 
       // Test twilio message attempted to be created
       sinon.assert.calledOnce(config.getTwilioClient().messages.create);

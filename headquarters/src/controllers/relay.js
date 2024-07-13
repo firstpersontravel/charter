@@ -126,7 +126,7 @@ class RelayController {
   /**
    * Send a message through twilio.
    */
-  static async sendMessage(relay, trip, body, mediaUrl) {
+  static async sendMessage(relay, body, mediaUrl) {
     // Skip if twilio isn't active.
     if (!config.getTwilioClient()) {
       return;
@@ -139,7 +139,7 @@ class RelayController {
     // as the message's sendTo since a relay can, say, forward Sarai's messages
     // to the TravelAgent as well.
     const toPlayer = await models.Player.findOne({
-      where: { tripId: trip.id, roleName: relay.forRoleName },
+      where: { tripId: relay.tripId, roleName: relay.forRoleName },
       include: [{ model: models.Participant, as: 'participant' }]
     });
     if (!_.get(toPlayer, 'participant.phoneNumber')) {
@@ -167,19 +167,19 @@ class RelayController {
       // Region geo permissions not activated to send SMS messages
       if (err.code === 21408) {
         await LogEntryController
-          .log(trip, 'warn', `Could not send SMS to ${toPhoneNumber}; that region is not enabled.`);
+          .log(relay.orgId, relay.tripId, 'warn', `Could not send SMS to ${toPhoneNumber}; that region is not enabled.`);
         return;
       }
       // Unreachable -- maybe trying to message a US number from an international number
       if (err.code === 21612) {
         await LogEntryController
-          .log(trip, 'warn', `Could not send SMS to ${toPhoneNumber}; that number is unreachable.`);
+          .log(relay.orgId, relay.tripId, 'warn', `Could not send SMS to ${toPhoneNumber}; that number is unreachable.`);
         logger.warn(opts, err.message);
         return;
       }
       // Capture exception and continue
       await LogEntryController
-        .log(trip, 'error', `Could not send SMS to ${toPhoneNumber}: ${err.message}`);
+        .log(relay.orgId, relay.tripId, 'error', `Could not send SMS to ${toPhoneNumber}: ${err.message}`);
       Sentry.captureException(err);
     }
     await relay.update({

@@ -134,15 +134,19 @@ async function createDummyTripForScript(script, variantNames) {
   return trip;
 }
 
-async function createDummyEntrywayForScript(script, phoneNumber) {
-  const relayService = await models.RelayService.create({
+async function createDummyRelayService(phoneNumber='+12223334444', isShared=false) {
+  return await models.RelayService.create({
     stage: 'test',
     title: 'Test',
-    phoneNumber: phoneNumber || '+12223334444',
+    phoneNumber: phoneNumber,
     sid: 'MG1234',
-    isShared: false,
+    isShared: isShared,
     isActive: true
   });
+}
+
+async function createDummyEntrywayForScript(script, phoneNumber='+12223334444') {
+  const relayService = await createDummyRelayService(phoneNumber);
   return await models.RelayEntryway.create({
     orgId: script.orgId,
     experienceId: script.experienceId,
@@ -180,6 +184,7 @@ const TestUtil = {
   createDummyOrg,
   createDummyTrip,
   createDummyTripForScript,
+  createDummyRelayService,
   createDummyScript,
   createDummyUser,
   createExample,

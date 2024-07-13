@@ -118,7 +118,7 @@ describe('TwilioUtil', () => {
       sinon.assert.calledWith(RelaysController.createRelayFromIncoming, stubRelayService, stubRelayEntryway, stubScript.content.relays[0], stubTrip, playerNum);
 
       // Send custom welcome message since we have an entryway associated
-      sinon.assert.calledWith(RelayController.sendMessage, stubCreatedRelay, stubTrip, stubRelayEntryway.welcome);
+      sinon.assert.calledWith(RelayController.sendMessage, stubCreatedRelay, stubRelayEntryway.welcome);
       sinon.assert.notCalled(TwilioUtil.sendCharterDefaultEntrywayMessage);
     });
   });

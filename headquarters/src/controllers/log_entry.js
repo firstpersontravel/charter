@@ -11,13 +11,13 @@ const LEVELS = {
 };
 
 class LogEntryController {
-  static async log(trip, level, message) {
+  static async log(orgId, tripId, level, message) {
     if (!LEVELS[level]) {
       throw new Error(`Invalid log level "${level}".`);
     }
     await models.LogEntry.create({
-      orgId: trip.orgId,
-      tripId: trip.id,
+      orgId: orgId,
+      tripId: tripId,
       createdAt: moment.utc(),
       level: LEVELS[level],
       message: message
