@@ -154,6 +154,11 @@ describe('RelaysController', () => {
           relayPhoneNumber: '1234567890',
           stage: 'test'
         },
+        include: [{
+          model: models.Trip,
+          where: { isArchived: false },
+          as: 'trip'
+        }],
         order: [
           ['lastActiveAt', 'DESC']
         ]

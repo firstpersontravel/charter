@@ -92,6 +92,11 @@ class RelaysController {
         relayPhoneNumber: relayNumber,
         forPhoneNumber: forNumber
       },
+      include: [{
+        model: models.Trip,
+        where: { isArchived: false },
+        as: 'trip'
+      }],
       order: [
         // Find the relay with the most recent activity
         ['lastActiveAt', 'DESC']

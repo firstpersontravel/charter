@@ -175,4 +175,31 @@ describe('Twilio Integration', () => {
     const { trip } = await assertTripAndRelay(altScript);
     assert.strictEqual(trip.scriptId, altScript.id);
   });
+
+  it('start new trip after archive', async () => {
+    await relayEntryway.update({ keyword: '' });
+    await altRelayEntryway.update({ keyword: 'not used' });
+
+    // Test start on text to entryway
+    await TwilioMessageHandler.handleIncomingMessage(
+      playerNumber, relayService.phoneNumber, 'something something', []);
+
+    // Test trip was created with original script, not alternate one (with blank '' keyword)
+    const { trip } = await assertTripAndRelay(script);
+    assert.strictEqual(trip.scriptId, script.id);
+
+    // Assert welcome message was sent
+    sinon.assert.calledOnce(config.getTwilioClient().messages.create);
+
+    // Archive trip
+    trip.update({ isArchived: true });
+
+    // Send another text
+    await TwilioMessageHandler.handleIncomingMessage(
+      playerNumber, relayService.phoneNumber, 'something something', []);
+
+    // Assert another trip was created
+    const trips = await models.Trip.findAll({ where: { scriptId: script.id } });
+    assert.strictEqual(trips.length, 2);
+  });
 });
