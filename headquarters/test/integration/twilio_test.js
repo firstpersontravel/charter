@@ -191,7 +191,7 @@ describe('Twilio Integration', () => {
 
       // Charter default welcome message is sent.
       assert.deepStrictEqual(config.getTwilioClient().messages.create.firstCall.args, [{
-        body: 'Welcome to Charter! You will receive text messages based on the experience you joined. Text STOP to end or HELP for info.',
+        body: RelaysController.getDefaultWelcome(),
         messagingServiceSid: 'MG1234',
         to: playerNumber
       }]);

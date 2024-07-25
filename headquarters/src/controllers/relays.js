@@ -7,7 +7,7 @@ const RelayController = require('./relay');
 
 class RelaysController {
   static getDefaultWelcome() {
-    return 'Welcome to Charter! You will receive text messages based on the experience you joined. Text STOP to end or HELP for info.';
+    return 'Welcome to Charter by First Person Travel! You will receive text messages based on the experience you joined. Text STOP to end or HELP for info.';
   }
 
   static async getOutgoingRelayService(orgId, experienceId) {
