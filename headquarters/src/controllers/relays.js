@@ -88,8 +88,12 @@ class RelaysController {
   }
 
   static async sendWelcome(relayEntryway, relay) {
-    // Send entryway welcome message via new relay
-    const welcome = (relayEntryway && relayEntryway.welcome) || this.getDefaultWelcome();
+    // If we have a relay but it has no welcome message assigned, skip the usual message.
+    if (relayEntryway && !relayEntryway.welcome) {
+      return;
+    }
+    // Otherwise entryway welcome message via new relay.
+    const welcome = relayEntryway ? relayEntryway.welcome : this.getDefaultWelcome();
     await RelayController.sendMessage(relay, welcome);
   }
 

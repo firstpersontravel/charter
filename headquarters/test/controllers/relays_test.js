@@ -6,10 +6,10 @@ const config = require('../../src/config');
 const models = require('../../src/models');
 const RelaysController = require('../../src/controllers/relays');
 const TestUtil = require('../util');
+const RelayController = require('../../src/controllers/relay');
 
 describe('RelaysController', () => {
   describe('#getOutgoingRelayService', () => {
-
     let experience;
 
     beforeEach(async () => {
@@ -72,7 +72,6 @@ describe('RelaysController', () => {
 
 
   describe('#ensureRelay', () => {
-
     const stubOrgId = 1;
     const stubExpId = 2;
     const stubTripId = 3;
@@ -87,7 +86,8 @@ describe('RelaysController', () => {
     it('returns relay if exists', async () => {
       sandbox.stub(models.Relay, 'findOne').resolves(stubRelay);
       sandbox.stub(models.Relay, 'create').resolves();
-      
+      sandbox.stub(RelaysController, 'sendWelcome').resolves(); 
+
       const result = await RelaysController.ensureRelay(stubOrgId, stubExpId, stubTripId, stubRelaySpec, stubForPhoneNumber);
 
       assert.strictEqual(result, stubRelay);
@@ -105,13 +105,17 @@ describe('RelaysController', () => {
         }
       });
       sinon.assert.notCalled(models.Relay.create);
+      sinon.assert.notCalled(RelaysController.sendWelcome);
     });
 
     it('creates relay if does not exist', async () => {
+      const stubEntryway = {};
       sandbox.stub(models.Relay, 'findOne').resolves(null);
       sandbox.stub(RelaysController, 'getOutgoingRelayService').resolves(stubRelayService);
       sandbox.stub(models.Relay, 'create').resolves(stubRelay);
-      
+      sandbox.stub(RelaysController, 'sendWelcome').resolves();
+      sandbox.stub(models.RelayEntryway, 'findOne').resolves(stubEntryway);
+
       const result = await RelaysController.ensureRelay(stubOrgId, stubExpId, stubTripId, stubRelaySpec, stubForPhoneNumber);
 
       assert.strictEqual(result, stubRelay);
@@ -129,6 +133,35 @@ describe('RelaysController', () => {
         messagingServiceId: stubRelayService.sid,
         lastActiveAt: mockNow
       });
+
+      sinon.assert.calledWith(RelaysController.sendWelcome, stubEntryway, stubRelay);
+    });
+  });
+
+  describe('#sendWelcome', () => {
+    const stubRelay = {};
+
+    beforeEach(() => {
+      sandbox.stub(RelayController, 'sendMessage').resolves();
+      sandbox.stub(RelaysController, 'getDefaultWelcome').returns('default');
+    });
+
+    it('sends relay entryway welcome', async () => {
+      await RelaysController.sendWelcome({ welcome: 'hi' }, stubRelay);
+      
+      sinon.assert.calledWith(RelayController.sendMessage, stubRelay, 'hi');
+    });
+
+    it('skips entryway welcome if blank', async () => {
+      await RelaysController.sendWelcome({ welcome: '' }, stubRelay);
+      
+      sinon.assert.notCalled(RelayController.sendMessage);
+    });
+
+    it('sends default welcome if no entryway', async () => {
+      await RelaysController.sendWelcome(null, stubRelay);
+      
+      sinon.assert.calledWith(RelayController.sendMessage, stubRelay, 'default');
     });
   });
 
