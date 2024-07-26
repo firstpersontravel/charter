@@ -16,6 +16,8 @@ import { getStage } from '../../utils';
 function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState) {
   const activeScript = _.find(scripts, { isActive: true });
   const entrywaySpec = _.find(_.get(activeScript, 'content.relays'), { entryway: true });
+  const entrywayForRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.for });
+  const entrywayWithRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.with });
   if (!entrywaySpec) {
     return (
       <div>
@@ -39,15 +41,16 @@ function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActio
     return (
       <div>
         <i className="fa fa-phone mr-1" />
-        Runs can be created by text starting with &quot;{relayEntryway.keyword}&quot;{' '}
-        at {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
+        Runs can be created for <b>{entrywayForRole.title}</b> by text starting with &quot;{relayEntryway.keyword}&quot;{' '}
+        to <b>{entrywayWithRole.title}</b> at{' '}
+        {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
       </div>
     );
   }
   return (
     <div>
       <i className="fa fa-phone mr-1" />
-      Runs can be created by call or text at{' '}
+      Runs can be created for <b>{entrywayForRole.title}</b> by call or text to <b>{entrywayWithRole.title}</b> at{' '}
       {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
     </div>
   );
@@ -74,7 +77,7 @@ function renderEntrywayWebpage(org, experience, scripts) {
       return (
         <div className="constrain-text" key={`${i.name}-${role.name}`}>
           <i className="fa fa-file mr-1" />
-          Runs for {role.title} can be created at
+          Runs for <b>{role.title}</b> can be created at
           <a
             className="ml-1"
             href={roleUrl}

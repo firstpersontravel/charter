@@ -101,8 +101,8 @@ export default class App extends Component {
     return this.renderErrorModal(
       'exclamation-triangle',
       'There was a validation error updating your project.',
-      'This shouldn\'t normally happen.' +
-      'We\'ve been notified and we\'ll fix this right away.' +
+      'This shouldn\'t normally happen. ' +
+      'We\'ve been notified and we\'ll fix this right away. ' +
       'In the meantime, you can reload the page and try something different.',
       false);
   }

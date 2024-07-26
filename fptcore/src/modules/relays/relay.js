@@ -50,10 +50,5 @@ module.exports = {
       return 'new';
     }
     return parts.join(' ');
-  },
-  validateResource: function(scriptContent, resource) {
-    if (resource.entryway && _.filter(scriptContent.relays, { entryway: true }).length > 1) {
-      return ['Every script may have at most one entryway phone line.'];
-    }
   }
 };
