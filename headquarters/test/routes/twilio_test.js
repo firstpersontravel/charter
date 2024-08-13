@@ -11,6 +11,8 @@ const models = require('../../src/models');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 const TestUtil = require('../util');
+const RelayController = require('../../src/controllers/relay');
+const RelaysController = require('../../src/controllers/relays');
 
 const scriptContent = {
   meta: { version: ScriptCore.CURRENT_VERSION },
@@ -175,6 +177,70 @@ describe('twilioRoutes', () => {
       );
       assert.strictEqual(res.statusCode, 200);
       assert.strictEqual(res._getData(), expectedXml);
+    });
+  });
+
+  describe('#incomingCallStatusRoute', () => {
+    const stubRelay = {
+      id: 2,
+      experienceId: 4,
+      forRoleName: 'for'
+    };
+    const stubPlayer = {
+      tripId: 1
+    };
+
+    beforeEach(() => {
+      // We're simulating a Player call to the Player relay, so have the
+      // action return a dial out to the Actor.
+      sandbox.stub(TwilioCallHandler, 'handleCallEnded').resolves();
+      sandbox.stub(RelaysController, 'findByNumber').resolves(stubRelay);
+      sandbox.stub(RelayController, 'lookupPlayer').resolves(stubPlayer);
+    });
+
+    it('handles call end', async () => {
+      // Create dummy request
+      const req = httpMocks.createRequest({
+        body: {
+          CallStatus: 'completed',
+          From: travelerParticipant.phoneNumber,
+          To: travelerRelay.relayPhoneNumber
+        }
+      });
+      const res = httpMocks.createResponse();
+
+      // Call the route
+      await twilioRoutes.incomingCallStatusRoute(req, res);
+
+      sinon.assert.calledWith(RelaysController.findByNumber,
+        req.body.To, req.body.From);
+
+      sinon.assert.calledWith(RelayController.lookupPlayer,
+        stubRelay.experienceId, stubRelay.forRoleName);
+
+      sinon.assert.calledWith(TwilioCallHandler.handleCallEnded,
+        stubRelay.id, stubPlayer.tripId);
+
+      assert.strictEqual(res.statusCode, 200);
+    });
+
+    it('handles other call status', async () => {
+      // Create dummy request
+      const req = httpMocks.createRequest({
+        body: {
+          CallStatus: 'other',
+          From: travelerParticipant.phoneNumber,
+          To: travelerRelay.relayPhoneNumber
+        }
+      });
+      const res = httpMocks.createResponse();
+
+      // Call the route
+      await twilioRoutes.incomingCallStatusRoute(req, res);
+
+      sinon.assert.notCalled(TwilioCallHandler.handleCallEnded);
+
+      assert.strictEqual(res.statusCode, 200);
     });
   });
 

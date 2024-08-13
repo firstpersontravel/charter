@@ -30,7 +30,7 @@ async function incomingCallStatusRoute(req, res) {
     return;
   }
 
-  const player = await RelayController.lookupPlayer(relay, req.body.From);
+  const player = await RelayController.lookupPlayer(relay.experienceId, relay.forRoleName, req.body.From);
   if (!player) {
     logger.warn('Status received without matching player.');
     res.status(500).end();
