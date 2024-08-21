@@ -16,8 +16,6 @@ import { getStage } from '../../utils';
 function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState) {
   const activeScript = _.find(scripts, { isActive: true });
   const entrywaySpec = _.find(_.get(activeScript, 'content.relays'), { entryway: true });
-  const entrywayForRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.for });
-  const entrywayWithRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.with });
   if (!entrywaySpec) {
     return (
       <div>
@@ -26,6 +24,8 @@ function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActio
       </div>
     );
   }
+  const entrywayForRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.for });
+  const entrywayWithRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.with });
   const relayEntryway = _.find(experience.relayEntryways, {});
   if (!relayEntryway) {
     return (
