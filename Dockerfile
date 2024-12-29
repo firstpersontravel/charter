@@ -1,7 +1,7 @@
 ##########################
 ##### Travel builder #####
 ##########################
-FROM node:12-alpine as travel-builder
+FROM node:12-alpine AS travel-builder
 
 ARG GIT_HASH
 
@@ -31,10 +31,10 @@ RUN ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore && \
 ##########################
 ##### Agency builder #####
 ##########################
-FROM node:12-alpine as agency-builder
+FROM node:12-alpine AS agency-builder
 
 # Install requirements for node-sass and app build tools
-RUN apk add gcc && npm install -q -g webpack webpack-cli
+RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/

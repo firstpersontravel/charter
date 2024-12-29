@@ -1,33 +1,14 @@
 const _ = require('lodash');
-const crypto = require('crypto');
-const twilio = require('twilio');
 
 const coreWalker = require('fptcore/src/core-walker');
 
-const config = require('../config');
 const models = require('../models');
-const { instrument } = require('../sentry');
 const { createTripToken } = require('./auth');
 const { Sequelize } = require('sequelize');
 const { respondWithJson } = require('./utils');
 
 function camelToDash(str) {
   return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`);
-}
-
-function createVideoToken(identity) {
-  if (!config.env.HQ_TWILIO_SID || !config.env.HQ_TWILIO_VIDEO_SID) {
-    return null;
-  }
-  const accessToken = new twilio.jwt.AccessToken(
-    config.env.HQ_TWILIO_SID,
-    config.env.HQ_TWILIO_VIDEO_SID,
-    config.env.HQ_TWILIO_VIDEO_KEY
-  );
-  accessToken.identity = identity;
-  const grant = new twilio.jwt.AccessToken.VideoGrant();
-  accessToken.addGrant(grant);
-  return accessToken.toJwt();
 }
 
 function jsonApiSerialize(instance) {
@@ -125,7 +106,6 @@ async function getPlayerRoute(req, res) {
  * Legacy getter for THG app in JSONAPI format. There is no security here.
  */
 async function getTripRoute(req, res) {
-  const playerId = req.query.playerId;
   const includeScript = !!req.query.script;
   const trip = await models.Trip.findOne({
     where: { id: req.params.id },
@@ -196,12 +176,6 @@ async function getTripRoute(req, res) {
 
   // Sneak in a day long auth token
   data.attributes['auth-token'] = createTripToken(trip, 86400);
-
-  // Create a video token by IP in case multiple users or devices share a role.
-  const userAgentHash = crypto.createHash('md5').update(req.get('User-Agent')).digest('hex');
-  const identity = `${playerId}-${userAgentHash}-${req.ip}`;
-  data.attributes['video-token'] = instrument('twilio', 'createVideoToken', 
-    () => createVideoToken(identity));
 
   const includedData = objs.map(jsonApiSerialize);
   const response = { data: data, included: includedData };

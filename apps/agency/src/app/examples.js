@@ -29,11 +29,6 @@ export default [{
   desc: 'A walking tour through two restaurants, with dish selections at each stop.',
   demo: 'Demonstrates messages, images, geofences, and directions.'
 }, {
-  name: 'room-demo',
-  title: 'Room demo',
-  desc: 'A shared video meeting room where participants can choose to either watch or share.',
-  demo: 'Demonstrates video rooms.'
-}, {
   name: 'tacosyndicate',
   title: 'Taco Syndicate',
   desc: 'A fully realized twenty-minute experience set in Hayes Valley, SF.',
