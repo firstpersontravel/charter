@@ -94,6 +94,13 @@ npm run build
 open "http://localhost:5001/travel"
 ```
 
+### Deploy to production
+
+```sh
+git push -f HEAD production
+git push
+```
+
 ## Debugging
 
 ### Test local environment from a device
