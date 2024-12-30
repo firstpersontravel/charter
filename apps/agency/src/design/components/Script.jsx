@@ -21,12 +21,6 @@ function getBadgesForScript(script, maxRevision) {
       <span key="draft" className="badge badge-secondary ml-2">Draft</span>
     );
   }
-
-  if (script.isLocked) {
-    badges.push(
-      <span key="locked" className="badge badge-warning ml-2">Locked</span>
-    );
-  }
   return badges;
 }
 
@@ -35,7 +29,6 @@ class Script extends Component {
     super(props);
     this.handleActivateScript = this.handleActivateScript.bind(this);
     this.handleRevertScript = this.handleRevertScript.bind(this);
-    this.handleLockScript = this.handleLockScript.bind(this);
     this.handleNewDraft = this.handleNewDraft.bind(this);
     this.handleUpdateExperience = this.handleUpdateExperience.bind(this);
     this.handleArchiveExperienceToggle = this.handleArchiveExperienceToggle
@@ -98,12 +91,6 @@ class Script extends Component {
     this.props.history.push(
       `/${script.org.name}/${script.experience.name}/script` +
       `/${nextRevision}/design/${sliceType}/${sliceName}`);
-  }
-
-  handleLockScript() {
-    this.props.updateInstance('scripts', this.props.script.id, {
-      isLocked: !this.props.script.isLocked
-    });
   }
 
   handleRevertScript() {
@@ -260,15 +247,6 @@ class Script extends Component {
       </button>
     );
 
-    const lockBtn = (
-      <button
-        onClick={this.handleLockScript}
-        className="btn btn-xs btn-outline-secondary ml-2">
-        <i className={`fa ${script.isLocked ? 'fa-unlock' : 'fa-lock'}`} />&nbsp;
-        {script.isLocked ? 'Unlock' : 'Lock'}
-      </button>
-    );
-
     const activateBtns = !script.isActive && isMaxRevision ? (
       <span>
         {revertBtn}
@@ -276,7 +254,7 @@ class Script extends Component {
       </span>
     ) : null;
 
-    const newDraftBtns = isMaxRevision && (script.isActive || script.isLocked)
+    const newDraftBtns = isMaxRevision && script.isActive
       ? newDraftBtn : null;
 
     const historyLength = this.props.revisionHistory.length;
@@ -367,7 +345,6 @@ class Script extends Component {
               </div>
               {badges}
               {activateBtns}
-              {script.isActive ? lockBtn : null}
               {newDraftBtns}
               {undoBtn}
               {redoBtn}

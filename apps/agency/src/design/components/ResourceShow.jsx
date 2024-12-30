@@ -269,22 +269,6 @@ export default class ResourceShow extends Component {
   handleUpdateScript(newScriptContent, redirectToResource, forceRedirect) {
     const script = this.props.script;
 
-    // If we're editing the active script, then make a new one
-    if (script.isLocked) {
-      const newRevision = script.revision + 1;
-      this.props.createInstance('scripts', {
-        orgId: script.orgId,
-        experienceId: script.experienceId,
-        revision: newRevision,
-        content: newScriptContent
-      });
-      this.setState({
-        redirectToRevision: newRevision,
-        redirectToResource: redirectToResource
-      });
-      return;
-    }
-
     // Save current as an old revision
     this.props.saveRevision(script.id, script.content, newScriptContent);
 

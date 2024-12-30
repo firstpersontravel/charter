@@ -55,7 +55,6 @@ const Script = database.define('Script', snakeCaseColumns({
     }
   })),
   isActive: mutableModifier(booleanField(false)),
-  isLocked: mutableModifier(booleanField(false)),
   isArchived: mutableModifier(booleanField(false))
 }));
 
