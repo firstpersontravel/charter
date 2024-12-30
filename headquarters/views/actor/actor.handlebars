@@ -10,7 +10,7 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         <a class="nav-link" href="">
-          {{participantName}} &bull; {{groupDate}}
+          {{participantName}}
         </a>
       </li>
       <li class="nav-item dropdown">
@@ -20,12 +20,12 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <a
             class='dropdown-item'
-            href='/actor/{{orgName}}/{{groupId}}/{{participantId}}'>All runs
+            href='/actor/{{orgName}}/{{participantId}}'>All runs
           </a>
           {{#each trips}}
             <a
               class="dropdown-item"
-              href="/actor/{{@root/orgName}}/{{@root/groupId}}/{{@root/participantId}}?trip={{tripId}}">
+              href="/actor/{{@root/orgName}}/{{@root/participantId}}?trip={{tripId}}">
               {{tripTitle}}
             </a>
           {{/each}}
