@@ -3,15 +3,12 @@ import { connect } from 'react-redux';
 
 import { instanceFromDatastore } from '../../datastore-utils';
 import {
-  bulkUpdate,
   createInstance,
   updateInstance,
-  createTrip,
-  listCollection,
-  trackEvent
+  listCollection
 } from '../../actions';
-import { lookupActiveTrips } from './utils';
-import Group from '../components/Group';
+import { lookupTrip, lookupScript } from './utils';
+import Trip from '../components/Trip';
 
 const mapStateToProps = (state, ownProps) => ({
   org: _.find(state.datastore.orgs, { name: ownProps.match.params.orgName }),
@@ -19,18 +16,14 @@ const mapStateToProps = (state, ownProps) => ({
     col: 'experiences',
     filter: { name: ownProps.match.params.experienceName }
   }),
-  group: lookupActiveTrips(state, ownProps),
-  participants: state.datastore.participants,
-  profiles: state.datastore.profiles
+  trip: lookupTrip(state, ownProps),
+  script: lookupScript(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({
-  bulkUpdate: (...args) => dispatch(bulkUpdate(...args)),
-  createTrip: (...args) => dispatch(createTrip(...args)),
   createInstance: (...args) => dispatch(createInstance(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args)),
-  listCollection: (...args) => dispatch(listCollection(...args)),
-  trackEvent: (...args) => dispatch(trackEvent(...args))
+  listCollection: (...args) => dispatch(listCollection(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Group);
+export default connect(mapStateToProps, mapDispatchToProps)(Trip);

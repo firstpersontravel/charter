@@ -131,10 +131,6 @@ export default class Group extends Component {
   }
 
   loadData(org, experience, script, tripIds) {
-    if (experience.isNull || experience.isLoading) {
-      // Await loading
-      return;
-    }
     if (!tripIds || !tripIds.length) {
       this.props.listCollection('trips', {
         orgId: org.id,

@@ -124,7 +124,6 @@ class Script extends Component {
       orgId: experience.orgId,
       experienceId: experience.id
     };
-    this.props.bulkUpdate('groups', expFilters, { isArchived: true });
     this.props.bulkUpdate('trips', expFilters, { isArchived: true });
     this.props.history.push(`/${this.props.match.params.orgName}`);
   }

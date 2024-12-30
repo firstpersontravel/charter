@@ -10,6 +10,7 @@ describe('TripsController', () => {
     it('creates a trip and players', async () => {
       const stubExperience = {
         id: 3,
+        orgId: 200,
         timezone: 'US/Pacific',
       };
       const stubScript = {
@@ -38,30 +39,21 @@ describe('TripsController', () => {
           }]
         }
       };
-      const stubGroup = {
-        id: 1,
-        orgId: 200,
-        date: '2018-01-01',
-        script: stubScript,
-        experience: stubExperience
-      };
       const stubTrip = {
         id: 3,
         experienceId: 3,
         orgId: 200
       };
-      sandbox.stub(models.Group, 'findOne').resolves(stubGroup);
+      sandbox.stub(models.Experience, 'findByPk').resolves(stubExperience);
+      sandbox.stub(models.Script, 'findOne').resolves(stubScript);
       sandbox.stub(models.Trip, 'create').resolves(stubTrip);
       sandbox.stub(models.Player, 'create').resolves({ id: 4 });
 
-      await TripsController.createTrip(1, 'title', ['basic']);
+      await TripsController.createTrip(3, 'title', ['basic']);
 
-      sinon.assert.calledWith(models.Group.findOne, {
-        where: { id: 1 },
-        include: [
-          { model: models.Script, as: 'script' },
-          { model: models.Experience, as: 'experience' }
-        ]
+      sinon.assert.calledWith(models.Experience.findByPk, 3);
+      sinon.assert.calledWith(models.Script.findOne, {
+        where: { experienceId: 3, isActive: true }
       });
       // Create trip
       sinon.assert.calledOnce(models.Trip.create);
@@ -69,15 +61,14 @@ describe('TripsController', () => {
         createdAt: mockNow,
         updatedAt: mockNow,
         orgId: 200,
-        date: '2018-01-01',
+        date: mockNow.format('YYYY-MM-DD'),
         tripState: {
           currentSceneName: '',
           currentPageNamesByRole: {}
         },
-        groupId: 1,
         schedule: {
-          basicIntro: '2018-01-01T18:00:00.000Z',
-          startAt: '2018-01-01T16:00:00.000Z'
+          basicIntro: `${mockNow.format('YYYY-MM-DD')}T18:00:00.000Z`,
+          startAt: `${mockNow.format('YYYY-MM-DD')}T16:00:00.000Z`
         },
         scriptId: 2,
         experienceId: 3,

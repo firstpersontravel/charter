@@ -24,25 +24,22 @@ class TripsController {
   /**
    * Create an initial trip including players with default values.
    */
-  static async createTrip(groupId, title, variantNames=[]) {
-    const group = await models.Group.findOne({
-      where: { id: groupId },
-      include: [
-        { model: models.Script, as: 'script' },
-        { model: models.Experience, as: 'experience' }
-      ]
+  static async createTrip(experienceId, title, variantNames=[]) {
+    const experience = await models.Experience.findByPk(experienceId);
+    const script = await models.Script.findOne({
+      where: { experienceId: experienceId, isActive: true }
     });
+    const date = moment.utc().format('YYYY-MM-DD');
     const initialFields = TripCore.getInitialFields(
-      group.script.content, group.date,
-      group.experience.timezone, variantNames);
+      script.content, date,
+      experience.timezone, variantNames);
     const tripFields = Object.assign({
       createdAt: moment.utc(),
       updatedAt: moment.utc(),
-      orgId: group.orgId,
-      experienceId: group.experience.id,
-      groupId: group.id,
-      scriptId: group.script.id,
-      date: group.date,
+      orgId: experience.orgId,
+      experienceId: experience.id,
+      scriptId: script.id,
+      date: date,
       title: title,
       tripState: { currentSceneName: '' },
       variantNames: variantNames.join(','),
@@ -51,9 +48,9 @@ class TripsController {
 
     // Create trip on first scene
     const trip = await models.Trip.create(tripFields);
-    const roles = group.script.content.roles || [];
+    const roles = script.content.roles || [];
     for (let role of roles) {
-      await this._createPlayer(group.script.content, trip, role, variantNames);
+      await this._createPlayer(script.content, trip, role, variantNames);
     }
 
     return trip;

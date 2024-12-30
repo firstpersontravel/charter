@@ -72,7 +72,6 @@ export default withLoader(Experience, ['org.id', 'experience.id'], (props) => {
     orgId: props.org.id,
     experienceId: props.experience.id
   };
-  props.listCollection('groups', filters);
   props.listCollection('trips', filters);
   props.listCollection('scripts', filters);
   props.listCollection('profiles', filters);

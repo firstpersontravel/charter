@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -7,7 +6,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { TextUtil } from 'fptcore';
 
 function getVariantSections(script) {
-  if (!script) {
+  if (!script || !script.content) {
     return [];
   }
   return _(script.content.variants)
@@ -18,11 +17,11 @@ function getVariantSections(script) {
     .value();
 }
 
-function getDefaultState(group, trip) {
+function getDefaultState(script, trip) {
   const existingVariantNames = trip ?
     trip.variantNames.split(',').filter(Boolean) : [];
-  const variantSections = getVariantSections(group && group.script);
-  const variants = group && group.script && group.script.content.variants;
+  const variantSections = getVariantSections(script);
+  const variants = script && script.content && script.content.variants;
   const variantNames = variantSections.map((section, i) => (
     existingVariantNames[i] || _.get(_.filter(variants, {
       section: section
@@ -37,7 +36,7 @@ function getDefaultState(group, trip) {
 export default class TripModal extends Component {
   constructor(props) {
     super(props);
-    this.state = getDefaultState(props.group, props.trip);
+    this.state = getDefaultState(props.script, props.trip);
     this.handleConfirm = this.handleConfirm.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeVariant = this.handleChangeVariant.bind(this);
@@ -46,7 +45,7 @@ export default class TripModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState(getDefaultState(nextProps.group, nextProps.trip));
+    this.setState(getDefaultState(nextProps.script, nextProps.trip));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -64,7 +63,7 @@ export default class TripModal extends Component {
   }
 
   handleConfirm(e) {
-    this.props.onConfirm(this.props.group, _.extend({}, this.state));
+    this.props.onConfirm(this.props.script, _.extend({}, this.state));
     if (e) {
       e.preventDefault();
     }
@@ -75,7 +74,7 @@ export default class TripModal extends Component {
   }
 
   handleChangeVariant(section, event) {
-    const variantSections = getVariantSections(this.props.group.script);
+    const variantSections = getVariantSections(this.props.script);
     const sectionIndex = variantSections.indexOf(section);
     const variantNames = _.clone(this.state.variantNames);
     variantNames[sectionIndex] = event.target.value;
@@ -83,20 +82,19 @@ export default class TripModal extends Component {
   }
 
   render() {
-    const group = this.props.group;
-    if (!group || !group.script) {
+    const script = this.props.script;
+    if (!script || !script.content) {
       return null;
     }
     const trip = this.props.trip;
-    const newTitle = group ? `New run on ${moment(group.date).format('MMM D, YYYY')}` : 'New run';
+    const newTitle = 'New run';
     const title = trip ? `Edit ${trip.title}` : newTitle;
     const isNew = !trip;
-    const confirmLabel = isNew ? 'Create' : 'Update with values';
-    const confirmColor = isNew ? 'primary' : 'danger';
+    const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.state.date !== '' && this.state.title !== '';
-    const variantSections = getVariantSections(group.script);
+    const variantSections = getVariantSections(script);
     const variantFields = variantSections.map((section, i) => {
-      const options = _.filter(group.script.content.variants, {
+      const options = _.filter(script.content.variants, {
         section: section
       });
       const groupOptions = options.map(variant => (
@@ -146,7 +144,7 @@ export default class TripModal extends Component {
         </ModalBody>
         <ModalFooter>
           <Button
-            color={confirmColor}
+            color="primary"
             onClick={this.handleConfirm}
             disabled={!isValid}>
             {confirmLabel}
@@ -162,14 +160,13 @@ export default class TripModal extends Component {
 }
 
 TripModal.propTypes = {
+  script: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  group: PropTypes.object,
   trip: PropTypes.object,
   onConfirm: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired
 };
 
 TripModal.defaultProps = {
-  trip: null,
-  group: null
+  trip: null
 };

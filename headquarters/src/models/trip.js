@@ -1,6 +1,5 @@
 const database = require('../config').database;
 const Experience = require('./experience');
-const Group = require('./group');
 const Org = require('./org');
 const Script = require('./script');
 
@@ -42,6 +41,5 @@ const Trip = database.define('Trip', snakeCaseColumns({
 Trip.belongsTo(Org, belongsToField('org'));
 Trip.belongsTo(Experience, belongsToField('experience'));
 Trip.belongsTo(Script, belongsToField('script'));
-Trip.belongsTo(Group, belongsToField('group'));
 
 module.exports = Trip;

@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 
 import { instanceIncluder, instancesIncluder, instanceFromDatastore } from '../../datastore-utils';
 import {
-  createInstance,
+  createTrip,
   updateInstance,
   assignTempRelayEntryway,
   listCollection,
   trackEvent
 } from '../../actions';
-import { lookupActiveTripss, lookupScripts } from './utils';
+import { lookupActiveTrips, lookupScript } from './utils';
 import Schedule from '../components/Schedule';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -24,12 +24,14 @@ const mapStateToProps = (state, ownProps) => ({
       })
     }
   }),
-  scripts: lookupScripts(state, ownProps),
-  groups: lookupActiveTripss(state, ownProps)
+  script: lookupScript(state, ownProps),
+  trips: lookupActiveTrips(state, ownProps),
+  participants: state.datastore.participants,
+  profiles: state.datastore.profiles
 });
 
 const mapDispatchToProps = dispatch => ({
-  createInstance: (...args) => dispatch(createInstance(...args)),
+  createTrip: (...args) => dispatch(createTrip(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args)),
   listCollection: (...args) => dispatch(listCollection(...args)),
   assignTempRelayEntryway: (...args) => dispatch(assignTempRelayEntryway(...args)),

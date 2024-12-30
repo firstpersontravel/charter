@@ -9,47 +9,12 @@ const TestUtil = require('../util');
 
 describe('API replace', () => {
 
-  let group;
   let trip;
   let user;
 
   beforeEach(async () => {
     trip = await TestUtil.createDummyTrip();
-    group = await trip.getGroup();
     user = await TestUtil.createDummyUser(trip.orgId);
-  });
-
-  describe('PUT /api/groups/:id', () => {
-    it('rejects change to date', () => {
-      return request(app)
-        .put(`/api/groups/${group.id}`)
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({ date: '2017-01-03' })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body.error, {
-            fields: [{ field: 'date', message: 'date is readonly' }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects change to missing field', () => {
-      return request(app)
-        .put(`/api/groups/${group.id}`)
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({ unknown: '1234' })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body.error, {
-            message: 'Invalid field: "unknown".',
-            type: 'ValidationError'
-          });
-        });
-    });
   });
 
   describe('PUT /api/players/:id', () => {
@@ -137,7 +102,7 @@ describe('API replace', () => {
       return request(app)
         .put(`/api/trips/${trip.id}`)
         .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({ scriptId: 100, groupId: 200 })
+        .send({ scriptId: 100 })
         .set('Accept', 'application/json')
         .expect(422)
         .then(async (res) => {
@@ -145,11 +110,8 @@ describe('API replace', () => {
             fields: [{
               field: 'scriptId',
               message: 'scriptId is readonly',
-            }, {
-              field: 'groupId',
-              message: 'groupId is readonly'
             }],
-            message: 'Invalid fields: groupId, scriptId.',
+            message: 'Invalid fields: scriptId.',
             type: 'ValidationError'
           });
         });

@@ -5,19 +5,19 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumberIntl } from 'react-phone-number-input';
 
-import { TextUtil } from 'fptcore';
+import { PlayerCore, TextUtil, TripCore } from 'fptcore';
 
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
-import GroupModal from '../partials/GroupModal';
+import TripModal from '../partials/TripModal';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 import { getStage } from '../../utils';
+import ScheduleUtils from '../utils';
 
 function renderEntrywayRelay(
-  org, experience, scripts, assignTempRelayEntryway, systemActionRequestState
+  org, experience, script, assignTempRelayEntryway, systemActionRequestState
 ) {
-  const activeScript = _.find(scripts, { isActive: true });
-  const entrywaySpec = _.find(_.get(activeScript, 'content.relays'), { entryway: true });
+  const entrywaySpec = _.find(_.get(script, 'content.relays'), { entryway: true });
   if (!entrywaySpec) {
     return (
       <div>
@@ -26,8 +26,8 @@ function renderEntrywayRelay(
       </div>
     );
   }
-  const entrywayForRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.for });
-  const entrywayWithRole = _.find(_.get(activeScript, 'content.roles'), { name: entrywaySpec.with });
+  const entrywayForRole = _.find(_.get(script, 'content.roles'), { name: entrywaySpec.for });
+  const entrywayWithRole = _.find(_.get(script, 'content.roles'), { name: entrywaySpec.with });
   const relayEntryway = _.find(experience.relayEntryways, {});
   if (!relayEntryway) {
     return (
@@ -67,9 +67,8 @@ function renderEntrywayRelay(
   );
 }
 
-function renderEntrywayWebpage(org, experience, scripts) {
-  const activeScript = _.find(scripts, { isActive: true });
-  const entrywayInterfaces = _.filter(activeScript.content.interfaces, { entryway: true });
+function renderEntrywayWebpage(org, experience, script) {
+  const entrywayInterfaces = _.filter(script.content.interfaces, { entryway: true });
   if (!entrywayInterfaces.length) {
     return (
       <div>
@@ -80,7 +79,7 @@ function renderEntrywayWebpage(org, experience, scripts) {
   }
 
   return entrywayInterfaces.map((i) => {
-    const roles = _.filter(activeScript.content.roles, { interface: i.name });
+    const roles = _.filter(script.content.roles, { interface: i.name });
     return roles.map((role) => {
       const roleUrl =
         `${window.location.origin}/entry/${org.name}/` +
@@ -103,19 +102,18 @@ function renderEntrywayWebpage(org, experience, scripts) {
 }
 
 function renderEntrywayNote(
-  org, experience, scripts, assignTempRelayEntryway, systemActionRequestState
+  org, experience, script, assignTempRelayEntryway, systemActionRequestState
 ) {
-  const activeScript = _.find(scripts, { isActive: true });
-  if (!activeScript) {
+  if (!script.content) {
     return null;
   }
   const actorUrl = `${window.location.origin}/actor/${org.name}`;
   return (
     <div className="alert alert-secondary">
       {renderEntrywayRelay(
-        org, experience, scripts, assignTempRelayEntryway, systemActionRequestState
+        org, experience, script, assignTempRelayEntryway, systemActionRequestState
       )}
-      {renderEntrywayWebpage(org, experience, scripts)}
+      {renderEntrywayWebpage(org, experience, script)}
       <div>
         <i className="fa fa-theater-masks mr-1" />
         Performer URL: <a target="_blank" rel="noopener noreferrer" href={actorUrl}>{actorUrl}</a>
@@ -127,14 +125,14 @@ function renderEntrywayNote(
 class Schedule extends Component {
   constructor(props) {
     super(props);
-    this.handleCreateGroupToggle = this.handleCreateGroupToggle.bind(this);
-    this.handleCreateGroup = this.handleCreateGroup.bind(this);
+    this.handleCreateTripToggle = this.handleCreateTripToggle.bind(this);
+    this.handleCreateTrip = this.handleCreateTrip.bind(this);
     this.state = { redirectToNext: null };
   }
 
   componentDidUpdate(prevProps) {
-    const oldMax = Math.max(...prevProps.groups.map(g => g.id));
-    const newMax = Math.max(...this.props.groups.map(g => g.id));
+    const oldMax = Math.max(...prevProps.trips.map(g => g.id));
+    const newMax = Math.max(...this.props.trips.map(g => g.id));
     if (this.state.redirectToNext === oldMax && newMax > oldMax) {
       this.props.history.push(
         `/${this.props.org.name}/${this.props.experience.name}/schedule` +
@@ -143,22 +141,61 @@ class Schedule extends Component {
     }
   }
 
-  handleCreateGroupToggle() {
+  handleCreateTripToggle() {
     this.props.history.push(
       `/${this.props.org.name}/${this.props.experience.name}/schedule` +
       `/${this.props.match.params.year}/${this.props.match.params.month}`);
   }
 
-  handleCreateGroup(fields) {
-    this.props.createInstance('groups', {
-      date: fields.date,
-      orgId: this.props.org.id,
-      experienceId: this.props.experience.id,
-      scriptId: fields.scriptId
+  initialFieldsForRole(experience, script, role, variantNames) {
+    const profiles = ScheduleUtils.filterAssignableProfiles(
+      this.props.profiles, this.props.participants, experience.id,
+      role.name);
+
+    const participants = profiles
+      .filter(profile => !!profile.participantId)
+      .map(profile => _.find(this.props.participants, { id: profile.participantId }))
+      .filter(Boolean);
+
+    const participantId = participants.length === 1 ? participants[0].id : null;
+    const fields = Object.assign({
+      orgId: experience.orgId,
+      experienceId: experience.id,
+      participantId: participantId
+    }, PlayerCore.getInitialFields(script.content, role.name, variantNames));
+    return fields;
+  }
+
+  initializeTrip(script, tripFields) {
+    const roles = script.content.roles || [];
+    this.props.createTrip(tripFields, roles.map(role => ({
+      collection: 'players',
+      fields: this.initialFieldsForRole(script.experience, script,
+        role, tripFields.variantNames.split(',')),
+      insertions: { tripId: 'id' }
+    })));
+    this.props.trackEvent('Created a run');
+  }
+
+  handleCreateTrip(script, fields) {
+    const date = moment().format('YYYY-MM-DD');
+    const initialFields = TripCore.getInitialFields(
+      script.content, date,
+      script.experience.timezone, fields.variantNames);
+    const tripFields = Object.assign(initialFields, {
+      orgId: script.orgId,
+      experienceId: script.experienceId,
+      scriptId: script.id,
+      date: date,
+      title: fields.title,
+      variantNames: fields.variantNames.join(','),
+      tripState: { currentSceneName: '' }
     });
-    this.props.trackEvent('Created a run group');
-    this.handleCreateGroupToggle();
-    const oldMax = Math.max(...this.props.groups.map(g => g.id));
+
+    this.initializeTrip(script, tripFields);
+    this.handleCreateTripToggle();
+
+    const oldMax = Math.max(...this.props.trips.map(g => g.id));
     this.setState({ redirectToNext: oldMax });
   }
 
@@ -190,27 +227,24 @@ class Schedule extends Component {
     );
   }
 
-  renderGroupItem(group) {
+  renderTripItem(trip) {
     const archivedStyle = { textDecoration: 'line-through' };
     const archivedIcon = <i className="fa fa-archive ml-1" />;
-    const groupDate = moment.utc(group.date).format('MMM D');
-    const tripTitles = group.trips.length ?
-      ` ∙ ${group.trips.map(trip => trip.title).join(', ')}` :
-      '';
-    const groupTitle = `${groupDate}${tripTitles}`;
-    const groupText = groupTitle + (group.isArchived ? ' (archived)' : '');
+    const tripDate = moment.utc(trip.date).format('MMM D');
+    const tripTitle = `${tripDate} ${trip.title}`;
+    const tripText = tripTitle + (trip.isArchived ? ' (archived)' : '');
     return {
-      key: group.id,
-      text: groupText,
+      key: trip.id,
+      text: tripText,
       label: (
-        <span style={group.isArchived ? archivedStyle : null}>
-          {groupTitle}{group.isArchived ? archivedIcon : null}
+        <span style={trip.isArchived ? archivedStyle : null}>
+          {tripTitle}{trip.isArchived ? archivedIcon : null}
         </span>
       ),
       url: (
         `/${this.props.org.name}/${this.props.experience.name}` +
-        `/schedule/${moment(group.date).format('YYYY/MM')}` +
-        `/${group.id}${this.props.location.search}`
+        `/schedule/${moment(trip.date).format('YYYY/MM')}` +
+        `/${trip.id}${this.props.location.search}`
       )
     };
   }
@@ -219,41 +253,48 @@ class Schedule extends Component {
     const now = moment.utc().format('YYYY-MM');
     const cur = `${this.props.match.params.year}-${this.props.match.params.month}`;
     const isCurrentOrFuture = cur >= now;
-    const newGroupItem = isCurrentOrFuture ? [{
+    const newTripItem = isCurrentOrFuture ? [{
       key: 'new',
       isExact: true,
-      text: 'New run group',
-      label: 'New run group',
-      url: `/${this.props.org.name}/${this.props.experience.name}/schedule/${this.props.match.params.year}/${this.props.match.params.month}?group=new`
+      text: 'New run',
+      label: 'New run',
+      url: `/${this.props.org.name}/${this.props.experience.name}/schedule/${this.props.match.params.year}/${this.props.match.params.month}?trip=new`
     }] : [];
 
-    const groupItems = this.props.groups
+    const tripItems = this.props.trips
       .sort((a, b) => (a.isArchived < b.isArchived ? -1 : 1))
-      .map(group => this.renderGroupItem(group))
-      .concat(newGroupItem);
+      .map(trip => this.renderTripItem(trip))
+      .concat(newTripItem);
 
-    if (!groupItems.length) {
-      if (this.props.groups.isLoading) {
+    if (!tripItems.length) {
+      if (this.props.trips.isLoading) {
         return <Loader />;
       }
       return (
         <div className="alert alert-warning">
-          No runs for {moment.utc(cur, 'YYYY-MM').format('MMM YYYY')}.
+          No trips for {moment.utc(cur, 'YYYY-MM').format('MMM YYYY')}.
         </div>
       );
     }
 
     return (
-      <ResponsiveListGroup items={groupItems} history={this.props.history} />
+      <ResponsiveListGroup items={tripItems} history={this.props.history} />
     );
   }
 
   render() {
-    if (this.props.groups.isError) {
+    // console.log('this.props.script', this.props.script);
+    // if (this.props.script.isLoading) {
+    //   return <Loader />;
+    // }
+    if (!this.props.script.isLoading && !this.props.script.content) {
+      return <div className="container-fluid">Error</div>;
+    }
+    if (this.props.trips.isError || this.props.script.isError) {
       return <div className="container-fluid">Error</div>;
     }
     const query = new URLSearchParams(this.props.location.search);
-    const isCreateGroupModalOpen = query.get('group') === 'new';
+    const isCreateTripModalOpen = query.get('trip') === 'new';
     const isShowingArchived = query.get('archived') === 'true';
     const toggleArchivedLink = isShowingArchived ?
       <Link to={{ search: '' }}>Hide archived</Link> :
@@ -269,16 +310,16 @@ class Schedule extends Component {
             </div>
           </div>
           <div className="col-sm-8">
-            {renderEntrywayNote(this.props.org, this.props.experience, this.props.scripts,
+            {renderEntrywayNote(this.props.org, this.props.experience, this.props.script,
               this.props.assignTempRelayEntryway, this.props.systemActionRequestState)}
             {this.props.children}
           </div>
         </div>
-        <GroupModal
-          isOpen={isCreateGroupModalOpen}
-          scripts={this.props.scripts}
-          onClose={this.handleCreateGroupToggle}
-          onConfirm={this.handleCreateGroup} />
+        <TripModal
+          isOpen={isCreateTripModalOpen}
+          script={this.props.script}
+          onClose={this.handleCreateTripToggle}
+          onConfirm={this.handleCreateTrip} />
       </div>
     );
   }
@@ -288,14 +329,16 @@ Schedule.propTypes = {
   match: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
   experience: PropTypes.object.isRequired,
+  script: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  groups: PropTypes.array.isRequired,
-  scripts: PropTypes.array.isRequired,
-  createInstance: PropTypes.func.isRequired,
-  trackEvent: PropTypes.func.isRequired,
+  trips: PropTypes.array.isRequired,
+  createTrip: PropTypes.func.isRequired,
   assignTempRelayEntryway: PropTypes.func.isRequired,
   systemActionRequestState: PropTypes.string,
+  trackEvent: PropTypes.func.isRequired,
+  participants: PropTypes.array.isRequired,
+  profiles: PropTypes.array.isRequired,
   children: PropTypes.node.isRequired
 };
 
@@ -325,12 +368,6 @@ export default withLoader(withExp, [
     'YYYY-MM-DD');
   const nextMonth = thisMonth.clone().add(1, 'months');
   props.listCollection('trips', {
-    date__gte: thisMonth.format('YYYY-MM-DD'),
-    date__lt: nextMonth.format('YYYY-MM-DD'),
-    experienceId: props.experience.id,
-    orgId: props.experience.orgId
-  });
-  props.listCollection('groups', {
     date__gte: thisMonth.format('YYYY-MM-DD'),
     date__lt: nextMonth.format('YYYY-MM-DD'),
     experienceId: props.experience.id,

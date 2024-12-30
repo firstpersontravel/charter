@@ -56,7 +56,6 @@ apiRouter.use('/experiences', createModelRouter(models.Experience,
 // Experience-filtered routes
 const expRecordOpts = { requireFilters: ['orgId', 'experienceId'] };
 apiRouter.use('/assets', createModelRouter(models.Asset, expRecordOpts));
-apiRouter.use('/groups', createModelRouter(models.Group, expRecordOpts));
 apiRouter.use('/participants', createModelRouter(models.Participant, expRecordOpts));
 apiRouter.use('/profiles', createModelRouter(models.Profile, expRecordOpts));
 apiRouter.use('/relays', createModelRouter(models.Relay, expRecordOpts));
@@ -86,11 +85,6 @@ apiRouter.post('/trips/:tripId/events',
   asyncRoute(apiActionsRoutes.createTripEventRoute));
 apiRouter.post('/trips/:tripId/device_state/:participantId',
   asyncRoute(apiActionsRoutes.updateDeviceStateRoute));
-
-apiRouter.post('/groups/:groupId/actions',
-  asyncRoute(apiActionsRoutes.createGroupActionRoute));
-apiRouter.post('/groups/:groupId/events',
-  asyncRoute(apiActionsRoutes.createGroupEventRoute));
 
 // Experience admin routes
 apiRouter.post('/admin/experiences/:experienceId/assign_temp_relay_entryway',

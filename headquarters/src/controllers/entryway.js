@@ -55,20 +55,11 @@ class EntrywayController {
    */
   static async createTripFromEntryway(script, participantRoleName, participantNumber, participantName=null) {
     const localTime = moment.utc().tz(script.experience.timezone);
-    const [group, ] = await models.Group.findOrCreate({
-      where: {
-        orgId: script.orgId,
-        experienceId: script.experienceId,
-        scriptId: script.id,
-        date: localTime.format('YYYY-MM-DD'),
-        isArchived: false
-      }
-    });
     const title = participantName || localTime.format('h:mm a z');
     const defaultVariantNames = (script.content.variants || [])
       .filter(v => v.default)
       .map(v => v.name);
-    const trip = await TripsController.createTrip(group.id, title,
+    const trip = await TripsController.createTrip(script.experienceId, title,
       defaultVariantNames);
 
     // Look for a participant, or create if doesn't exist.

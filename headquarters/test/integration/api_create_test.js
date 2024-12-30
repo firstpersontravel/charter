@@ -279,12 +279,12 @@ describe('API create', () => {
 
   describe('POST /api/trips', () => {
 
-    let group;
+    let script;
     let user;
 
     beforeEach(async () => {
-      group = await TestUtil.createDummyGroup();
-      user = await TestUtil.createDummyUser(group.orgId);
+      script = await TestUtil.createDummyScript();
+      user = await TestUtil.createDummyUser(script.orgId);
     });
 
     it('creates trip', () => {
@@ -292,10 +292,9 @@ describe('API create', () => {
         .post('/api/trips')
         .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
-          orgId: group.orgId,
-          experienceId: group.experienceId,
-          scriptId: group.scriptId,
-          groupId: group.id,
+          orgId: script.orgId,
+          experienceId: script.experienceId,
+          scriptId: script.id,
           title: 'test',
           date: '2018-04-02',
           schedule: {},
@@ -316,10 +315,9 @@ describe('API create', () => {
         .post('/api/trips')
         .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
         .send({
-          orgId: group.orgId,
-          experienceId: group.experienceId,
-          scriptId: group.scriptId,
-          groupId: 1000,
+          orgId: script.orgId,
+          experienceId: script.experienceId,
+          scriptId: '2435',
           title: 'test',
           date: '2018-04-02',
           schedule: {},
@@ -336,126 +334,6 @@ describe('API create', () => {
             type: 'ValidationError'
           });
         });        
-    });
-  });
-
-  describe('POST /api/groups/:id', () => {
-    let trip;
-    let user;
-
-    beforeEach(async () => {
-      trip = await TestUtil.createDummyTrip();
-      user = await TestUtil.createDummyUser(trip.orgId);
-    });
-
-    it('creates group with date', () => {
-      return request(app)
-        .post('/api/groups')
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({
-          orgId: trip.orgId,
-          experienceId: trip.experienceId,
-          scriptId: trip.scriptId,
-          date: '2018-04-04'
-        })
-        .set('Accept', 'application/json')
-        .expect(201)
-        .then(async (res) => {
-          assert.strictEqual(res.body.data.group.date, '2018-04-04');
-        });
-    });
-
-    it('rejects badly formatted date', () => {
-      return request(app)
-        .post('/api/groups')
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({
-          orgId: trip.orgId,
-          experienceId: trip.experienceId,
-          scriptId: trip.scriptId,
-          date: 'abcd'
-        })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body.error, {
-            fields: [{
-              field: 'date',
-              message: 'must be a date in YYYY-MM-DD format'
-            }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects invalid date', () => {
-      return request(app)
-        .post('/api/groups')
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({
-          orgId: trip.orgId,
-          experienceId: trip.experienceId,
-          scriptId: trip.scriptId,
-          date: '2000-40-80'
-        })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body.error, {
-            fields: [{
-              field: 'date',
-              message: 'must be a date in YYYY-MM-DD format'
-            }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects date with time', () => {
-      return request(app)
-        .post('/api/groups')
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({
-          orgId: trip.orgId,
-          experienceId: trip.experienceId,
-          scriptId: trip.scriptId,
-          date: '2018-01-01T10:00:00Z'
-        })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body.error, {
-            fields: [{
-              field: 'date',
-              message: 'must be a date in YYYY-MM-DD format'
-            }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
-    });
-
-    it('rejects null date', () => {
-      return request(app)
-        .post('/api/groups')
-        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
-        .send({
-          orgId: trip.orgId,
-          experienceId: trip.experienceId,
-          scriptId: trip.scriptId,
-          date: null
-        })
-        .set('Accept', 'application/json')
-        .expect(422)
-        .then(async (res) => {
-          assert.deepStrictEqual(res.body.error, {
-            fields: [{ field: 'date', message: 'must be present' }],
-            message: 'Invalid fields: date.',
-            type: 'ValidationError'
-          });
-        });
     });
   });
 });

@@ -9,8 +9,8 @@ export default function MonthIndex({ match, org, experience }) {
     <div>
       <Link
         className="btn btn-block btn-primary"
-        to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${match.params.year}/${match.params.month}?group=new`}>
-        Schedule a run group in {d.format('MMMM YYYY')}
+        to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${match.params.year}/${match.params.month}?trip=new`}>
+        Create a run in {d.format('MMMM YYYY')}
       </Link>
     </div>
   );

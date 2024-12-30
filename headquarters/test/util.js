@@ -103,30 +103,8 @@ async function createDummyTrip() {
   return await createDummyTripForScript(script);
 }
 
-async function createDummyGroup() {
-  const script = await createDummyScript();
-  const today = moment.utc().format('YYYY-MM-DD');
-  return await models.Group.create({
-    orgId: script.orgId,
-    experienceId: script.experienceId,
-    scriptId: script.id,
-    date: today
-  });
-}
-
-async function createDummyGroupForScript(script) {
-  const today = moment.utc().format('YYYY-MM-DD');
-  return await models.Group.create({
-    orgId: script.orgId,
-    experienceId: script.experienceId,
-    scriptId: script.id,
-    date: today
-  });
-}
-
 async function createDummyTripForScript(script, variantNames) {
-  const group = await createDummyGroupForScript(script);
-  const trip = await TripsController.createTrip(group.id, 'test',
+  const trip = await TripsController.createTrip(script.experienceId, 'test',
     variantNames || []);
   // Start to get to right scene.
   await TripResetHandler.resetToStart(trip.id);
@@ -179,8 +157,6 @@ async function createExample(example) {
 const TestUtil = {
   createDummyEntrywayForScript,
   createDummyExperience,
-  createDummyGroup,
-  createDummyGroupForScript,
   createDummyOrg,
   createDummyTrip,
   createDummyTripForScript,
