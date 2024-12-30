@@ -2,12 +2,14 @@ const authz = require('../authorization/authz');
 const models = require('../models');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
+const RelayEntrywayController = require('../controllers/relay_entryway');
 const TripResetHandler = require('../handlers/trip_reset');
 
-async function updateRelaysRoute(req, res) {
+async function assignTempRelayEntrywayRoute(req, res) {
   const experience = await models.Experience.findByPk(req.params.experienceId);
   res.loggingOrgId = experience.orgId;
   authz.checkRecord(req, 'update', models.Experience, experience);
+  await RelayEntrywayController.assignTempRelayEntryway(experience);
   res.json({ data: { ok: true } });
 }
 
@@ -43,5 +45,5 @@ module.exports = {
   notifyRoute,
   resetRoute,
   triggerRoute,
-  updateRelaysRoute
+  assignTempRelayEntrywayRoute
 };

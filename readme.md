@@ -97,8 +97,8 @@ open "http://localhost:5001/travel"
 ### Deploy to production
 
 ```sh
-git push -f HEAD production
-git push
+git branch -f production HEAD
+git push origin production
 ```
 
 ## Debugging

@@ -558,13 +558,13 @@ export function postEvent(orgId, experienceId, tripId, event, playerId = null) {
   };
 }
 
-export function updateRelays(orgId, experienceId) {
+export function assignTempRelayEntryway(orgId, experienceId) {
   return function (dispatch) {
     const params = { method: 'POST' };
-    const url = `/api/admin/experiences/${experienceId}/update_relays`;
+    const url = `/api/admin/experiences/${experienceId}/assign_temp_relay_entryway`;
     request('system', null, 'action', url, params, dispatch)
       .then((response) => {
-        dispatch(listCollection('relays', {
+        dispatch(listCollection('relayEntryways', {
           orgId: orgId,
           experienceId: experienceId,
           stage: getStage()

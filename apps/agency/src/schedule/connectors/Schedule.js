@@ -5,7 +5,7 @@ import { instanceIncluder, instancesIncluder, instanceFromDatastore } from '../.
 import {
   createInstance,
   updateInstance,
-  updateRelays,
+  assignTempRelayEntryway,
   listCollection,
   trackEvent
 } from '../../actions';
@@ -32,7 +32,7 @@ const mapDispatchToProps = dispatch => ({
   createInstance: (...args) => dispatch(createInstance(...args)),
   updateInstance: (...args) => dispatch(updateInstance(...args)),
   listCollection: (...args) => dispatch(listCollection(...args)),
-  updateRelays: (...args) => dispatch(updateRelays(...args)),
+  assignTempRelayEntryway: (...args) => dispatch(assignTempRelayEntryway(...args)),
   trackEvent: (...args) => dispatch(trackEvent(...args))
 });
 

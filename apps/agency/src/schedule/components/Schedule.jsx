@@ -13,7 +13,9 @@ import GroupModal from '../partials/GroupModal';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
 import { getStage } from '../../utils';
 
-function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState) {
+function renderEntrywayRelay(
+  org, experience, scripts, assignTempRelayEntryway, systemActionRequestState
+) {
   const activeScript = _.find(scripts, { isActive: true });
   const entrywaySpec = _.find(_.get(activeScript, 'content.relays'), { entryway: true });
   if (!entrywaySpec) {
@@ -33,7 +35,12 @@ function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActio
         <i className="fa fa-phone mr-1" />
         Runs cannot be created by text or call because a phone number{' '}
         has not been allocated for this experience.{' '}
-        Contact agency@firstperson.travel for help setting this up.
+        <button
+          disabled={systemActionRequestState === 'pending'}
+          className="btn btn-sm btn-primary ml-2"
+          onClick={() => assignTempRelayEntryway(org.id, experience.id)}>
+          Assign temporary number
+        </button>
       </div>
     );
   }
@@ -47,11 +54,15 @@ function renderEntrywayRelay(org, experience, scripts, updateRelays, systemActio
       </div>
     );
   }
+  const tempDisclaimer = relayEntryway.isTemporary ?
+    ' This number is temporary and may be reclaimed without notice. Contact agency@firstperson.travel for a permanent number.' :
+    '';
   return (
     <div>
       <i className="fa fa-phone mr-1" />
       Runs can be created for <b>{entrywayForRole.title}</b> by call or text to <b>{entrywayWithRole.title}</b> at{' '}
       {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
+      {tempDisclaimer}
     </div>
   );
 }
@@ -91,7 +102,9 @@ function renderEntrywayWebpage(org, experience, scripts) {
   });
 }
 
-function renderEntrywayNote(org, experience, scripts, updateRelays, systemActionRequestState) {
+function renderEntrywayNote(
+  org, experience, scripts, assignTempRelayEntryway, systemActionRequestState
+) {
   const activeScript = _.find(scripts, { isActive: true });
   if (!activeScript) {
     return null;
@@ -99,7 +112,9 @@ function renderEntrywayNote(org, experience, scripts, updateRelays, systemAction
   const actorUrl = `${window.location.origin}/actor/${org.name}`;
   return (
     <div className="alert alert-secondary">
-      {renderEntrywayRelay(org, experience, scripts, updateRelays, systemActionRequestState)}
+      {renderEntrywayRelay(
+        org, experience, scripts, assignTempRelayEntryway, systemActionRequestState
+      )}
       {renderEntrywayWebpage(org, experience, scripts)}
       <div>
         <i className="fa fa-theater-masks mr-1" />
@@ -255,7 +270,7 @@ class Schedule extends Component {
           </div>
           <div className="col-sm-8">
             {renderEntrywayNote(this.props.org, this.props.experience, this.props.scripts,
-              this.props.updateRelays, this.props.systemActionRequestState)}
+              this.props.assignTempRelayEntryway, this.props.systemActionRequestState)}
             {this.props.children}
           </div>
         </div>
@@ -279,7 +294,7 @@ Schedule.propTypes = {
   scripts: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,
   trackEvent: PropTypes.func.isRequired,
-  updateRelays: PropTypes.func.isRequired,
+  assignTempRelayEntryway: PropTypes.func.isRequired,
   systemActionRequestState: PropTypes.string,
   children: PropTypes.node.isRequired
 };

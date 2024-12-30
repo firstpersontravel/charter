@@ -93,8 +93,8 @@ apiRouter.post('/groups/:groupId/events',
   asyncRoute(apiActionsRoutes.createGroupEventRoute));
 
 // Experience admin routes
-apiRouter.post('/admin/experiences/:experienceId/update_relays',
-  asyncRoute(apiAdminRoutes.updateRelaysRoute));
+apiRouter.post('/admin/experiences/:experienceId/assign_temp_relay_entryway',
+  asyncRoute(apiAdminRoutes.assignTempRelayEntrywayRoute));
 
 // Trip admin routes
 apiRouter.post('/admin/trips/:tripId/notify',

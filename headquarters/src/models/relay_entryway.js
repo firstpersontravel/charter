@@ -6,6 +6,7 @@ const RelayService = require('./relay_service');
 
 const {
   belongsToField,
+  booleanField,
   optionalStringField,
   enumStringField,
   mutableModifier,
@@ -22,6 +23,7 @@ const RelayEntryway = database.define('RelayEntryway', snakeCaseColumns({
   stage: enumStringField(32, RELAY_STAGE_OPTIONS),
   welcome: mutableModifier(requiredStringField(255)),
   keyword: mutableModifier(optionalStringField(32)),
+  isTemporary: booleanField()
 }));
 
 RelayEntryway.belongsTo(Org, belongsToField('org'));
