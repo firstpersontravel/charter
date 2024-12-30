@@ -96,7 +96,7 @@ export default class GroupPlayers extends Component {
     );
   }
 
-  renderPlayerCell(roleName, trip, player, index) {
+  renderPlayerCell(roleName, trip, player) {
     const group = this.props.group;
     const experience = this.props.group.experience;
     const script = this.props.group.script;
@@ -180,26 +180,8 @@ export default class GroupPlayers extends Component {
     if (!experience || !script) {
       return null;
     }
-    const role = _.find(script.content.roles, { name: roleName });
-    const players = _.filter(trip.players, { roleName: roleName });
-    const playerCells = players.map(player => (
-      <div key={player.id}>
-        {this.renderPlayerCell(roleName, trip, player, 0)}
-      </div>
-    ));
-    const maxPlayers = role.max_players || 1;
-    const newCells = _.range(players.length, maxPlayers)
-      .map(i => (
-        <div key={i}>
-          {this.renderPlayerCell(roleName, trip, null, i)}
-        </div>
-      ));
-    return (
-      <div>
-        {playerCells}
-        {newCells}
-      </div>
-    );
+    const player = _.find(trip.players, { roleName: roleName });
+    return this.renderPlayerCell(roleName, trip, player);
   }
 
   renderRoleRow(trips, role) {

@@ -192,7 +192,7 @@ const joinRoute = async (req, res) => {
   const existingPlayers = await models.Player.findAll({
     where: { tripId: trip.id, roleName: roleName, participantId: { [Sequelize.Op.ne]: null } }
   });
-  if (existingPlayers.length >= (playerRole.max_players || 1)) {
+  if (existingPlayers.length > 0) {
     const lastPlayer = existingPlayers[existingPlayers.length - 1];
     res.redirect(`/travel/${lastPlayer.tripId}/${lastPlayer.id}`);
     return;
