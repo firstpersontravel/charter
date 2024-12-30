@@ -9,7 +9,7 @@ import {
   listCollection,
   trackEvent
 } from '../../actions';
-import { lookupGroups, lookupScripts } from './utils';
+import { lookupActiveTripss, lookupScripts } from './utils';
 import Schedule from '../components/Schedule';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -25,7 +25,7 @@ const mapStateToProps = (state, ownProps) => ({
     }
   }),
   scripts: lookupScripts(state, ownProps),
-  groups: lookupGroups(state, ownProps)
+  groups: lookupActiveTripss(state, ownProps)
 });
 
 const mapDispatchToProps = dispatch => ({

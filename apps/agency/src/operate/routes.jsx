@@ -3,11 +3,11 @@ import { Redirect, Route, Switch } from 'react-router';
 import PropTypes from 'prop-types';
 
 import NotFound from '../partials/NotFound';
-import GroupConnector from './connectors/Group';
-import GroupAllConnector from './connectors/GroupAll';
-import GroupOverviewConnector from './connectors/GroupOverview';
-import GroupMessagesConnector from './connectors/GroupMessages';
-import GroupUpcomingConnector from './connectors/GroupUpcoming';
+import ActiveTripsConnector from './connectors/ActiveTrips';
+import ActiveTripsAllConnector from './connectors/ActiveTripsAll';
+import ActiveTripsOverviewConnector from './connectors/ActiveTripsOverview';
+import ActiveTripsMessagesConnector from './connectors/ActiveTripsMessages';
+import ActiveTripsUpcomingConnector from './connectors/ActiveTripsUpcoming';
 import TripConnector from './connectors/Trip';
 import TripScenesConnector from './connectors/TripScenes';
 import TripGalleryConnector from './connectors/TripGallery';
@@ -84,41 +84,41 @@ TripsRoutes.propTypes = {
   match: PropTypes.object.isRequired
 };
 
-function GroupRoutes({ match, history }) {
+function ActiveTripsRoutes({ match, history }) {
   return (
-    <GroupConnector match={match}>
-      <GroupAllConnector match={match} history={history}>
+    <ActiveTripsConnector match={match}>
+      <ActiveTripsAllConnector match={match} history={history}>
         <Switch>
           <Route
             path={match.path} exact
-            component={GroupOverviewConnector} />
+            component={ActiveTripsOverviewConnector} />
           <Route
             path={`${match.path}/role`}
             component={RolesRoutes} />
           <Route
             path={`${match.path}/messages`}
-            component={GroupMessagesConnector} />
+            component={ActiveTripsMessagesConnector} />
           <Route
             path={`${match.path}/upcoming`}
-            component={GroupUpcomingConnector} />
+            component={ActiveTripsUpcomingConnector} />
           <Route
             path={`${match.path}/trip`}
             component={TripsRoutes} />
           <Route component={NotFound} />
         </Switch>
-      </GroupAllConnector>
-    </GroupConnector>
+      </ActiveTripsAllConnector>
+    </ActiveTripsConnector>
   );
 }
 
-GroupRoutes.propTypes = {
+ActiveTripsRoutes.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 };
 
 export default function OperateRoutes({ match }) {
   return (
-    <Route path={`${match.path}/:groupId`} component={GroupRoutes} />
+    <Route path={match.path} component={ActiveTripsRoutes} />
   );
 }
 

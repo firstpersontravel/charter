@@ -115,7 +115,7 @@ export default function Message({ message, updateInstance }) {
   const respondBtn = shouldShowRespond ? (
     <Link
       className="btn btn-xs btn-outline-secondary"
-      to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages?for=${actorRole.name}&with=${audienceRole.name}`}>
+      to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/messages?for=${actorRole.name}&with=${audienceRole.name}`}>
       Respond to {audienceRole.title}
     </Link>
   ) : null;

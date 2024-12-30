@@ -16,7 +16,7 @@ export function lookupExperiences(state, ownProps) {
   });
 }
 
-export function lookupGroups(state, ownProps) {
+export function lookupActiveTripss(state, ownProps) {
   return instancesFromDatastore(state, {
     col: 'groups',
     sort: 'date',

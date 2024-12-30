@@ -123,7 +123,7 @@ class Group extends Component {
     return (
       <tr key={trip.id}>
         <td style={trip.isArchived ? archivedStyle : null}>
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/trip/${trip.id}`}>
+          <Link to={`/${group.org.name}/${group.experience.name}/operate/trip/${trip.id}`}>
             <strong>{trip.title}</strong>
           </Link>
           {trip.isArchived && <i className="fa fa-archive ml-1" />}
@@ -142,17 +142,6 @@ class Group extends Component {
   renderHeader() {
     const group = this.props.group;
     const dateShort = moment(group.date).format('MMM D');
-    const hasTrips = group.trips.length > 0;
-    const opsBtn = hasTrips ? (
-      <Link
-        className={`btn ${group.isArchived ? 'btn-secondary' : 'btn-primary'}`}
-        to={
-          `/${group.org.name}/${group.experience.name}` +
-          `/operate/${group.id}`
-        }>
-        Ops
-      </Link>
-    ) : null;
     return (
       <div className="mb-3">
         <div className="float-right text-right">
@@ -167,8 +156,6 @@ class Group extends Component {
             onClick={() => this.handleArchiveGroup()}>
             {this.props.group.isArchived ? 'Unarchive' : 'Archive'}
           </button>
-          &nbsp;
-          {opsBtn}
         </div>
         <h4>{dateShort}</h4>
       </div>

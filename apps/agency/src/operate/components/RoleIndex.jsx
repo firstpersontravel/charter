@@ -5,7 +5,7 @@ import L from 'leaflet';
 import { NavLink, Link } from 'react-router-dom';
 
 import Preview from '../partials/Preview';
-import GroupMap from '../partials/GroupMap';
+import ActiveTripsMap from '../partials/ActiveTripsMap';
 import { renderJoinLink, renderPlayLink } from '../../partials/links';
 
 function renderMap(trip, participant) {
@@ -16,8 +16,7 @@ function renderMap(trip, participant) {
     participant.locationLatitude,
     participant.locationLongitude);
   return (
-    <GroupMap
-      group={trip.group}
+    <ActiveTripsMap
       center={center}
       zoom={15}
       trips={[trip]} />
@@ -54,7 +53,7 @@ function renderPlayerCell(player, isFirst) {
   const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
   const page = _.find(player.trip.script.content.pages, { name: pageName });
   const pageTitle = page ? page.title : 'None';
-  const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/players/${player.roleName}`;
+  const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/players/${player.roleName}`;
 
   const renderedMap = isFirst ?
     renderMap(trip, player.participant) : null;

@@ -73,25 +73,36 @@ const tripIncludes = {
   actionContext: getTripActionContext
 };
 
-const groupIncludes = {
-  org: instanceIncluder('orgs', 'id', 'orgId'),
-  experience: instanceIncluder('experiences', 'id', 'experienceId'),
-  script: instanceIncluder('scripts', 'id', 'scriptId', scriptIncludes)
-};
-
-const tripIncludesWithGroup = Object.assign({
-  group: instanceIncluder('groups', 'id', 'groupId', groupIncludes)
-}, tripIncludes);
-
 const playerIncludesWithTrip = Object.assign({
-  trip: instanceIncluder('trips', 'id', 'tripId', tripIncludesWithGroup),
+  trip: instanceIncluder('trips', 'id', 'tripId', tripIncludes),
   org: getPlayerOrgFromTrip,
   experience: getPlayerExperienceFromTrip
 }, playerIncludes);
 
-const groupIncludesWithTrips = Object.assign({
-  trips: instancesIncluder('trips', 'groupId', 'id', {}, tripIncludes)
-}, groupIncludes);
+export function lookupOrg(state, ownProps) {
+  const authData = _.find(state.datastore.auth, { id: 'latest' }).data;
+  return _.find(authData.orgs, { name: ownProps.match.params.orgName });
+}
+
+export function lookupExperience(state, ownProps) {
+  return instanceFromDatastore(state, {
+    col: 'experiences',
+    filter: {
+      name: ownProps.match.params.experienceName
+    }
+  });
+}
+
+export function lookupScript(state, ownProps) {
+  return instanceFromDatastore(state, {
+    col: 'scripts',
+    filter: {
+      experience: { name: ownProps.match.params.experienceName }
+      // isActive: true
+    },
+    include: scriptIncludes
+  });
+}
 
 export function lookupTrip(state, ownProps) {
   return instanceFromDatastore(state, {
@@ -101,7 +112,7 @@ export function lookupTrip(state, ownProps) {
       experience: { name: ownProps.match.params.experienceName },
       id: Number(ownProps.match.params.tripId)
     },
-    include: tripIncludesWithGroup
+    include: tripIncludes
   });
 }
 
@@ -130,15 +141,15 @@ export function lookupPlayersByRole(state, ownProps) {
   });
 }
 
-export function lookupGroup(state, ownProps) {
-  return instanceFromDatastore(state, {
-    col: 'groups',
+export function lookupActiveTrips(state, ownProps) {
+  return instancesFromDatastore(state, {
+    col: 'trips',
     filter: {
       org: { name: ownProps.match.params.orgName },
       experience: { name: ownProps.match.params.experienceName },
-      id: Number(ownProps.match.params.groupId)
+      isArchived: false
     },
-    include: groupIncludesWithTrips
+    include: tripIncludes
   });
 }
 
@@ -168,7 +179,11 @@ export function lookupMessages(state, ownProps, limit = null, filters = null) {
   const selfFilter = msgFilterForParams(ownProps.match);
   const tripFilter = ownProps.match.params.tripId ?
     { id: Number(ownProps.match.params.tripId), isArchived: false } :
-    { groupId: Number(ownProps.match.params.groupId), isArchived: false };
+    {
+      org: { name: ownProps.match.params.orgName },
+      experience: { name: ownProps.match.params.experienceName },
+      isArchived: false
+    };
   const msgFilters = { trip: tripFilter, self: selfFilter };
   const allFilters = Object.assign(msgFilters, filters);
   return instancesFromDatastore(state, {
@@ -204,8 +219,8 @@ export function lookupDirections(state, ownProps) {
 }
 
 export function lookupUpcomingActions(state, ownProps) {
-  const group = lookupGroup(state, ownProps);
-  const tripIds = _.map(group.trips, 'id');
+  const trips = lookupActiveTrips(state, ownProps);
+  const tripIds = _.map(trips, 'id');
   // Filter actions by those greater than an hour ago -- to allow
   // some time to unarchive archived actions.
   const oneHourAgo = moment.utc().subtract(1, 'hours');

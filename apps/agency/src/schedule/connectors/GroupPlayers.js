@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { lookupGroup } from '../../operate/connectors/utils';
+import { lookupActiveTrips } from '../../operate/connectors/utils';
 import {
   createInstance,
   createInstances,
@@ -9,7 +9,7 @@ import {
 import GroupPlayers from '../components/GroupPlayers';
 
 const mapStateToProps = (state, ownProps) => ({
-  group: lookupGroup(state, ownProps),
+  group: lookupActiveTrips(state, ownProps),
   participants: state.datastore.participants,
   profiles: state.datastore.profiles
 });

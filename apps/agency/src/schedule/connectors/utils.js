@@ -30,7 +30,7 @@ function isGroupInMonth(group, year, month) {
   );
 }
 
-export function lookupGroupsByDate(state, ownProps, year, month) {
+export function lookupActiveTripssByDate(state, ownProps, year, month) {
   const query = new URLSearchParams(ownProps.location.search);
   const showArchived = query.get('archived') === 'true';
   const filter = {
@@ -52,13 +52,13 @@ export function lookupGroupsByDate(state, ownProps, year, month) {
   });
 }
 
-export function lookupGroups(state, ownProps) {
+export function lookupActiveTripss(state, ownProps) {
   const year = ownProps.match.params.year;
   const month = ownProps.match.params.month;
-  return lookupGroupsByDate(state, ownProps, year, month);
+  return lookupActiveTripssByDate(state, ownProps, year, month);
 }
 
-export function lookupGroup(state, ownProps) {
+export function lookupActiveTrips(state, ownProps) {
   return instanceFromDatastore(state, {
     col: 'groups',
     filter: { id: Number(ownProps.match.params.groupId) },

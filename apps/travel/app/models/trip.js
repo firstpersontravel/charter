@@ -9,7 +9,6 @@ export default DS.Model.extend({
   
   // Extra fields inserted by the legacy API
   authToken: DS.attr('string'),
-  videoToken: DS.attr('string'),
   preloadUrls: DS.attr('obj'),
 
   date: DS.attr('string'),

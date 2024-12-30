@@ -10,7 +10,7 @@ import {
   listCollection,
   trackEvent
 } from '../../actions';
-import { lookupGroup } from './utils';
+import { lookupActiveTrips } from './utils';
 import Group from '../components/Group';
 
 const mapStateToProps = (state, ownProps) => ({
@@ -19,7 +19,7 @@ const mapStateToProps = (state, ownProps) => ({
     col: 'experiences',
     filter: { name: ownProps.match.params.experienceName }
   }),
-  group: lookupGroup(state, ownProps),
+  group: lookupActiveTrips(state, ownProps),
   participants: state.datastore.participants,
   profiles: state.datastore.profiles
 });

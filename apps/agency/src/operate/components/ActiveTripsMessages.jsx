@@ -36,7 +36,7 @@ function renderTripMessages(trip, messages, updateInstance) {
     .value();
 }
 
-export default function GroupMessages({ group, messages, updateInstance }) {
+export default function ActiveTripsMessages({ messages, updateInstance }) {
   if (!messages.length) {
     return (
       <div className="alert alert-info">No messages.</div>
@@ -55,8 +55,7 @@ export default function GroupMessages({ group, messages, updateInstance }) {
   );
 }
 
-GroupMessages.propTypes = {
-  group: PropTypes.object.isRequired,
+ActiveTripsMessages.propTypes = {
   messages: PropTypes.array.isRequired,
   updateInstance: PropTypes.func.isRequired
 };

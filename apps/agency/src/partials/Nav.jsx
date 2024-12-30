@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import React from 'react';
-import moment from 'moment';
 import { NavLink, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -118,7 +116,7 @@ function renderBrand(org, experience) {
   );
 }
 
-function renderMenu(org, experience, experiences, groups, groupId) {
+function renderMenu(org, experience, experiences) {
   if (!org) {
     return null;
   }
@@ -155,44 +153,6 @@ function renderMenu(org, experience, experiences, groups, groupId) {
     );
   }
 
-  const groupLinks = groups
-    .filter(group => group.trips.length > 0)
-    .map(group => (
-      <Link
-        key={group.id}
-        className="btn btn-link dropdown-item"
-        to={`/${org.name}/${experience.name}/operate/${group.id}`}>
-        {moment.utc(group.date).format('MMM D, YYYY')}
-      </Link>
-    ));
-
-  const activeGroup = window.location.pathname.indexOf('operate') > 0 &&
-    _.find(groups, { id: groupId });
-
-  const opsTitle = activeGroup ?
-    `Operate: ${moment.utc(activeGroup.date).format('MMM D')}` :
-    'Operate';
-  const opsDropdown = groupLinks.length > 0 ? (
-    <li className="nav-item dropdown">
-      <NavLink
-        style={{ cursor: 'pointer' }}
-        id="opsDropdown"
-        data-toggle="dropdown"
-        activeClassName="active"
-        className={`dropdown-toggle nav-link constrain-text ${activeGroup ? 'active' : ''}`}
-        to={`/${org.name}/${experience.name}/operate`}>
-        {opsTitle}
-      </NavLink>
-      <div className="dropdown-menu" aria-labelledby="opsDropdown">
-        {groupLinks}
-      </div>
-    </li>
-  ) : null;
-
-  const entryUrl = activeGroup ?
-    `/${org.name}/${experience.name}/schedule/${moment.utc(activeGroup.date).format('YYYY/MM')}/${activeGroup.id}` :
-    `/${org.name}/${experience.name}/schedule`;
-
   return (
     <ul className="navbar-nav mr-auto">
       {experienceDropdown}
@@ -207,10 +167,15 @@ function renderMenu(org, experience, experiences, groups, groupId) {
       <NavLink
         activeClassName="active"
         className="nav-link"
-        to={entryUrl}>
+        to={`/${org.name}/${experience.name}/schedule`}>
         Schedule
       </NavLink>
-      {opsDropdown}
+      <NavLink
+        activeClassName="active"
+        className="nav-link"
+        to={`/${org.name}/${experience.name}/operate`}>
+        Operate
+      </NavLink>
       <li className="nav-item">
         <NavLink
           activeClassName="active"
@@ -223,7 +188,7 @@ function renderMenu(org, experience, experiences, groups, groupId) {
   );
 }
 
-export default function Nav({ authInfo, org, experience, experiences, groups, groupId }) {
+export default function Nav({ authInfo, org, experience, experiences }) {
   const orgTitle = org ? org.title : globalTitle;
   document.title = `${orgTitle}`;
   const stage = getStage();
@@ -237,7 +202,7 @@ export default function Nav({ authInfo, org, experience, experiences, groups, gr
         <span className="navbar-toggler-icon" />
       </button>
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        {renderMenu(org, experience, experiences, groups, groupId)}
+        {renderMenu(org, experience, experiences)}
       </div>
       <div className="navbar-collapse collapse w-100 order-3">
         {renderRight(authInfo)}
@@ -250,16 +215,12 @@ Nav.propTypes = {
   authInfo: PropTypes.object,
   org: PropTypes.object,
   experience: PropTypes.object,
-  experiences: PropTypes.array,
-  groups: PropTypes.array,
-  groupId: PropTypes.number
+  experiences: PropTypes.array
 };
 
 Nav.defaultProps = {
   authInfo: null,
   org: null,
   experience: null,
-  experiences: [],
-  groups: [],
-  groupId: null
+  experiences: []
 };
