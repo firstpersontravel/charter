@@ -149,7 +149,7 @@ export default function ActiveTripsAll({ children, org, experience, trips, nextU
     .value();
 
   const items = [{
-    text: 'Run group',
+    text: 'Active runs',
     isExact: true,
     url: `/${org.name}/${experience.name}/operate`
   }, {

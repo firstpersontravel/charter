@@ -135,7 +135,7 @@ export function lookupPlayersByRole(state, ownProps) {
     filter: {
       roleName: ownProps.match.params.roleName,
       participantId: participantId,
-      trip: { groupId: Number(ownProps.match.params.groupId) }
+      trip: { isArchived: false }
     },
     include: playerIncludesWithTrip
   });
