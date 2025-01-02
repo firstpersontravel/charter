@@ -12,7 +12,7 @@ function renderTabs(trip) {
         <NavLink
           className="nav-link"
           activeClassName="active"
-          to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/scenes`}>
+          to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/scenes`}>
           Scenes
         </NavLink>
       </li>
@@ -20,7 +20,7 @@ function renderTabs(trip) {
         <NavLink
           className="nav-link"
           activeClassName="active"
-          to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/values`}>
+          to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/values`}>
           Values
         </NavLink>
       </li>
@@ -28,7 +28,7 @@ function renderTabs(trip) {
         <NavLink
           className="nav-link"
           activeClassName="active"
-          to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/schedule`}>
+          to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/schedule`}>
           Timing
         </NavLink>
       </li>
@@ -36,7 +36,7 @@ function renderTabs(trip) {
         <NavLink
           className="nav-link"
           activeClassName="active"
-          to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/messages`}>
+          to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/messages`}>
           Messages
         </NavLink>
       </li>
@@ -44,7 +44,7 @@ function renderTabs(trip) {
         <NavLink
           className="nav-link"
           activeClassName="active"
-          to={`/${trip.org.name}/${trip.experience.name}/operate/${trip.groupId}/trip/${trip.id}/gallery`}>
+          to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/gallery`}>
           Gallery
         </NavLink>
       </li>

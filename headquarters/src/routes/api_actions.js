@@ -31,28 +31,6 @@ async function createTripActionRoute(req, res) {
   res.json({ data: { ok: true } });
 }
 
-async function createGroupActionRoute(req, res) {
-  const groupId = Number(req.params.groupId);
-  const playerId = req.body.player_id;
-  const clientId = req.body.client_id;
-  if (!req.body.name) {
-    res.status(400);
-    res.json({ error: 'Name required.' });
-    return;
-  }
-  const group = await models.Group.findByPk(groupId);
-  res.loggingOrgId = group.orgId;
-  authz.checkRecord(req, 'action', models.Group, group);
-
-  const trips = await models.Trip.findAll({
-    where: { groupId: groupId, isArchived: false }
-  });
-  const action = { name: req.body.name, params: req.body.params || {} };
-  await applyAction(req, trips, action, playerId, clientId);
-  res.status(200);
-  res.json({ data: { ok: true } });
-}
-
 async function applyEvent(req, trips, event, playerId, clientId) {
   for (const trip of trips) {
     await KernelController.applyEvent(trip.id, event, playerId);
@@ -69,24 +47,6 @@ async function createTripEventRoute(req, res) {
   const event = _.omit(req.body, ['client_id', 'player_id']);
   authz.checkRecord(req, 'event', models.Trip, trip);
   await applyEvent(req, [trip], event, playerId, clientId);
-  res.status(200);
-  res.json({ data: { ok: true } });
-}
-
-async function createGroupEventRoute(req, res) {
-  const groupId = Number(req.params.groupId);
-  const playerId = req.body.player_id;
-  const clientId = req.body.client_id;
-  
-  const group = await models.Group.findByPk(groupId);
-  res.loggingOrgId = group.orgId;
-  authz.checkRecord(req, 'event', models.Group, group);
-
-  const trips = await models.Trip.findAll({
-    where: { groupId: groupId, isArchived: false }
-  });
-  const event = _.omit(req.body, ['client_id', 'player_id']);
-  await applyEvent(req, trips, event, playerId, clientId);
   res.status(200);
   res.json({ data: { ok: true } });
 }
@@ -118,8 +78,6 @@ async function updateDeviceStateRoute(req, res) {
 }
 
 module.exports = {
-  createGroupActionRoute,
-  createGroupEventRoute,
   createTripActionRoute,
   createTripEventRoute,
   updateDeviceStateRoute

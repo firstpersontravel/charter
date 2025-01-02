@@ -14,7 +14,7 @@ function truncate(msg, len) {
   return msg.length > len ? `${msg.slice(0, len)}...` : msg;
 }
 
-export default class GroupPlayers extends Component {
+export default class TripPlayers extends Component {
   constructor(props) {
     super(props);
     this.handleAssignParticipant = this.handleAssignParticipant.bind(this);
@@ -52,14 +52,14 @@ export default class GroupPlayers extends Component {
       return;
     }
 
-    const trips = (this.props.group.trips || []).filter(trip => !trip.isArchived);
+    const trips = [this.props.trip];
     const firstUnassignedPlayerForEachTrip = trips
       .map(t => t.players.find(p => p.roleName === roleName && !p.participantId))
       .filter(Boolean);
 
     const participantFields = {
-      orgId: this.props.group.orgId,
-      experienceId: this.props.group.experienceId,
+      orgId: this.props.trip.orgId,
+      experienceId: this.props.trip.experienceId,
       name: fields.name,
       phoneNumber: fields.phoneNumber,
       email: fields.email
@@ -69,8 +69,8 @@ export default class GroupPlayers extends Component {
     const nextItems = [{
       collection: 'profiles',
       fields: {
-        orgId: this.props.group.orgId,
-        experienceId: this.props.group.experienceId,
+        orgId: this.props.trip.orgId,
+        experienceId: this.props.trip.experienceId,
         roleName: roleName
       },
       insertions: { participantId: 'id' }
@@ -97,9 +97,8 @@ export default class GroupPlayers extends Component {
   }
 
   renderPlayerCell(roleName, trip, player) {
-    const group = this.props.group;
-    const experience = this.props.group.experience;
-    const script = this.props.group.script;
+    const experience = trip.experience;
+    const script = trip.script;
 
     const role = _.find(script.content.roles, { name: roleName });
     const participantIdsAlreadyChosen = _.filter(trip.players, { roleName: roleName })
@@ -150,12 +149,12 @@ export default class GroupPlayers extends Component {
     const goToParticipant = participant ? (
       <Link
         className="ml-1"
-        to={`/${group.org.name}/${group.experience.name}/directory/${participant.id}`}>
+        to={`/${trip.org.name}/${trip.experience.name}/directory/${participant.id}`}>
         <i className="fa fa-user text-dark" />
       </Link>
     ) : null;
 
-    const canEdit = !group.isArchived && !trip.isArchived;
+    const canEdit = !trip.isArchived;
     const participantControl = canEdit ? (
       <PopoverControl
         title={role.title}
@@ -175,8 +174,8 @@ export default class GroupPlayers extends Component {
   }
 
   renderRoleCell(roleName, trip) {
-    const experience = this.props.group.experience;
-    const script = this.props.group.script;
+    const experience = trip.experience;
+    const script = trip.script;
     if (!experience || !script) {
       return null;
     }
@@ -206,7 +205,7 @@ export default class GroupPlayers extends Component {
   }
 
   renderRoleRows(trips) {
-    const script = this.props.group.script;
+    const script = trips[0].script;
     if (!script) {
       return null;
     }
@@ -218,10 +217,6 @@ export default class GroupPlayers extends Component {
   render() {
     const query = new URLSearchParams(this.props.location.search);
     const isCreatingParticipant = !!query.get('role');
-
-    const trips = (this.props.group.trips || []).filter(trip => !trip.isArchived);
-    const headerCells = trips.map(trip => this.renderScheduleHeader(trip));
-    const roleRows = this.renderRoleRows(trips);
     return (
       <div className="row">
         <div className="col-sm-12">
@@ -229,12 +224,12 @@ export default class GroupPlayers extends Component {
             <thead>
               <tr>
                 <th>Role</th>
-                {headerCells}
+                {this.renderScheduleHeader(this.props.trip)}
                 <th />
               </tr>
             </thead>
             <tbody>
-              {roleRows}
+              {this.renderRoleRows([this.props.trip])}
             </tbody>
           </table>
           <ParticipantModal
@@ -248,8 +243,8 @@ export default class GroupPlayers extends Component {
   }
 }
 
-GroupPlayers.propTypes = {
-  group: PropTypes.object.isRequired,
+TripPlayers.propTypes = {
+  trip: PropTypes.object.isRequired,
   participants: PropTypes.array.isRequired,
   profiles: PropTypes.array.isRequired,
   createInstance: PropTypes.func.isRequired,

@@ -5,18 +5,18 @@
 </nav>
 <div class="container-fluid">
   <br/>
-  {{#each groups}}
+  {{#each trips}}
     <h3>{{experienceTitle}} &bull; {{groupDate}}</h3>
-    {{#each groupParticipants}}
+    {{#each tripParticipants}}
       <a
         class='btn btn-block btn-outline-secondary'
-        href='/actor/{{@root/orgName}}/{{groupId}}/{{participantId}}'>
+        href='/actor/{{@root/orgName}}/{{participantId}}'>
         {{name}} ({{roleTitles}})
       </a>
     {{else}}
       <p>No performers are active in this run group.</p>
     {{/each}}
   {{else}}
-    <p>No run groups with performers are active.</p>
+    <p>No run trips with performers are active.</p>
   {{/each}}
 </div>

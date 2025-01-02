@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { RoleCore, SceneCore } from 'fptcore';
 
-import GroupMap from '../partials/GroupMap';
+import ActiveTripsMap from '../partials/ActiveTripsMap';
 import { renderActorLink, renderJoinLink, renderPlayLink } from '../../partials/links';
 
 function getAllPlayers(trips) {
@@ -22,12 +22,12 @@ function getTripPlayer(trip, roleName, participant) {
   ));
 }
 
-function renderExternalLink(group, trips, role, participant) {
+function renderExternalLink(trips, role, participant) {
   if (!trips.length) {
     return null;
   }
   if (trips.length > 1 && participant) {
-    return renderActorLink(group, participant);
+    return renderActorLink(trips[0].org, participant);
   }
   const trip = trips[0];
   const player = getTripPlayer(trip, role.name, participant);
@@ -42,47 +42,21 @@ function renderExternalLink(group, trips, role, participant) {
   return null;
 }
 
-export default class GroupOverview extends Component {
-  renderAddParticipantIcon(player) {
-    const script = this.props.group.script;
-    if (!RoleCore.canRoleHaveParticipant(script.content, player.role)) {
-      return null;
-    }
-    if (player.participant) {
-      return null;
-    }
-    const group = this.props.group;
-    return (
-      <span>
-        &nbsp;
-        <Link
-          to={
-            `/${group.org.name}/${group.experience.name}` +
-            `/operate/${group.id}/casting`
-          }>
-          <span className="text-danger">
-            <i className="fa fa-user-plus" />
-          </span>
-        </Link>
-      </span>
-    );
-  }
-
+export default class ActiveTripsOverview extends Component {
   renderRoleParticipant(role, participant) {
-    const group = this.props.group;
     const participantId = participant ? participant.id : 0;
     const participantName = participant ? participant.name : 'No user';
-    const trips = group.trips
+    const trips = this.props.trips
       .filter(trip => getTripPlayer(trip, role.name, participant));
     if (!trips.length) {
       return null;
     }
     const tripTitles = trips.map(t => t.title).join(', ');
-    const externalLink = renderExternalLink(group, trips, role, participant);
+    const externalLink = renderExternalLink(trips, role, participant);
     return (
       <div key={`${role.name}-${participantId}`} className="constrain-text">
         <Link
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${role.name}/${participantId}`}>
+          to={`/${this.props.org.name}/${this.props.experience.name}/operate/role/${role.name}/${participantId}`}>
           <strong>{role.title}</strong> ({participantName}, {tripTitles})
         </Link> {externalLink}
       </div>
@@ -94,7 +68,6 @@ export default class GroupOverview extends Component {
   }
 
   renderTrip(trip) {
-    const group = this.props.group;
     const currentScene = _.find(trip.script.content.scenes, {
       name: trip.tripState.currentSceneName
     });
@@ -103,7 +76,7 @@ export default class GroupOverview extends Component {
     return (
       <div key={trip.id}>
         <Link
-          to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/trip/${trip.id}`}>
+          to={`/${this.props.org.name}/${this.props.experience.name}/operate/trip/${trip.id}`}>
           <strong>{trip.title}:</strong> {currentSceneTitle}
         </Link>
       </div>
@@ -111,18 +84,15 @@ export default class GroupOverview extends Component {
   }
 
   renderAllPlayers() {
-    const group = this.props.group;
-    const trips = group.trips
-      .filter(trip => !trip.isArchived)
-      .map(trip => (
-        this.renderTrip(trip)
-      ));
+    const renderedTrips = this.props.trips
+      .map(trip => this.renderTrip(trip));
 
-    const roles = _(group.script.content.roles)
-      .filter(role => RoleCore.canRoleHaveParticipant(group.script.content, role))
+    const script = this.props.script;
+    const roles = _(script.content.roles)
+      .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
       .sort(SceneCore.sortResource)
       .value();
-    const allPlayers = getAllPlayers(group.trips);
+    const allPlayers = getAllPlayers(this.props.trips);
 
     function participantsForRole(role) {
       return _(allPlayers)
@@ -142,7 +112,7 @@ export default class GroupOverview extends Component {
       <div>
         <div className="mb-2">
           <h5>Runs</h5>
-          {trips}
+          {renderedTrips}
         </div>
         <div className="mb-2">
           <h5>Participants</h5>
@@ -157,10 +127,9 @@ export default class GroupOverview extends Component {
       <div>
         <div className="row">
           <div className="col-md-7">
-            <GroupMap
-              group={this.props.group}
+            <ActiveTripsMap
               directions={this.props.directions}
-              trips={this.props.group.trips} />
+              trips={this.props.trips} />
           </div>
           <div className="col-md-5">
             {this.renderAllPlayers()}
@@ -171,7 +140,10 @@ export default class GroupOverview extends Component {
   }
 }
 
-GroupOverview.propTypes = {
-  group: PropTypes.object.isRequired,
+ActiveTripsOverview.propTypes = {
+  org: PropTypes.object.isRequired,
+  experience: PropTypes.object.isRequired,
+  script: PropTypes.object.isRequired,
+  trips: PropTypes.array.isRequired,
   directions: PropTypes.array.isRequired
 };

@@ -27,11 +27,6 @@ const actorsListRoute = async (req, res) => {
       }, {
         model: models.Experience,
         as: 'experience'
-      }, {
-        model: models.Group,
-        as: 'group'
-        // TODO - uncomment this. currently causes crash in node on tests
-        // where: { isArchived: false }
       }]
     }, {
       model: models.Participant,
@@ -43,15 +38,15 @@ const actorsListRoute = async (req, res) => {
     }]
   });
   // Just show all participants for now. How to filter for actors; figure out later.
-  const groups = _(players)
-    .map('trip.group')
+  const trips = _(players)
+    .map('trip')
     // TODO - remove this filter once we can put it in the DB query.
-    .filter(group => !group.isArchived)
+    .filter(trip => !trip.isArchived)
     .uniqBy('id')
     .sortBy('date')
-    .map(group => {
-      const groupPlayers = players.filter(player => player.trip.groupId === group.id);
-      const groupParticipants = _(players)
+    .map(trip => {
+      const tripPlayers = players.filter(player => player.trip.id === trip.id);
+      const tripParticipants = _(players)
         .filter(player => {
           const role = _.find(player.trip.script.content.roles, { name: player.roleName });
           if (!role) {
@@ -64,13 +59,12 @@ const actorsListRoute = async (req, res) => {
         .uniqBy('id')
         .value();
       return {
-        experienceTitle: groupPlayers[0].trip.experience.title,
-        groupDate: moment(group.date).format('MMM DD'),
-        groupParticipants: groupParticipants.map(participant => ({
-          groupId: group.id,
+        experienceTitle: tripPlayers[0].trip.experience.title,
+        tripDate: moment(trip.date).format('MMM DD'),
+        tripParticipants: tripParticipants.map(participant => ({
           participantId: participant.id,
           name: participant.name,
-          experienceTitle: groupPlayers[0].trip.experience.title,
+          experienceTitle: tripPlayers[0].trip.experience.title,
           roleTitles: _(players)
             .filter(p => p.participant.id === participant.id)
             .map(p => _.get(p.trip.script.content.roles.find(r => r.name === p.roleName), 'title'))
@@ -81,13 +75,13 @@ const actorsListRoute = async (req, res) => {
         }))
       };
     })
-    .filter(group => group.groupParticipants.length > 0)
+    .filter(trip => trip.tripParticipants.length > 0)
     .value();
   res.render('actor/actors', {
     layout: 'actor',
     orgName: org.name,
     orgTitle: org.title,
-    groups: groups
+    trips: trips
   });
 };
 
@@ -95,8 +89,6 @@ const actorsListRoute = async (req, res) => {
  * Show a participant, including all active players.
  */
 const participantShowRoute = async (req, res) => {
-  const groupId = req.params.groupId;
-  const group = await models.Group.findByPk(groupId);
   const participant = await models.Participant.findOne({
     where: { id: req.params.participantId },
     include: [{
@@ -117,7 +109,7 @@ const participantShowRoute = async (req, res) => {
     include: [{
       model: models.Trip,
       as: 'trip',
-      where: { isArchived: false, groupId: groupId }
+      where: { isArchived: false }
     }]
   });
   if (!players.length) {
@@ -141,15 +133,13 @@ const participantShowRoute = async (req, res) => {
     orgName: req.params.orgName,
     orgTitle: participant.org.title,
     experienceTitle: participant.experience.title,
-    groupId: group.id,
-    groupDate: moment(group.date).format('MMM D'),
     participantName: participant.name,
     currentRunSelector: currentTrip ? currentTrip.title : 'All runs',
     trips: players.map(player => ({
       tripId: player.tripId,
       tripTitle: player.trip.title
     })),
-    iframeQuery: currentTripId ? '' : `?groupactions=${groupId}`
+    iframeQuery: ''
   };
   res.render('actor/actor', Object.assign({ layout: 'actor' }, params));
 };

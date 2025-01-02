@@ -110,7 +110,6 @@ async function getTripRoute(req, res) {
   const trip = await models.Trip.findOne({
     where: { id: req.params.id },
     include: [
-      { model: models.Group, as: 'group' },
       { model: models.Script, as: 'script' },
       { model: models.Experience, as: 'experience' },
       { model: models.Org, as: 'org' }
@@ -159,7 +158,6 @@ async function getTripRoute(req, res) {
     trip.script.content = filterScriptContent(trip.script.content);
     // Sub in the directions assets data into the script as a resource
     trip.script.content.directions = assets.map(a => a.data);
-    objs.push(trip.group);
     objs.push(trip.script);
     objs.push(trip.experience);
     objs.push(trip.org);

@@ -9,13 +9,11 @@ const TestUtil = require('../util');
 
 describe('API retrieve', () => {
   const today = moment.utc().format('YYYY-MM-DD');
-  let group;
   let trip;
   let user;
 
   beforeEach(async () => {
     trip = await TestUtil.createDummyTrip();
-    group = await trip.getGroup();
     user = await TestUtil.createDummyUser(trip.orgId);
   });
 
@@ -35,7 +33,6 @@ describe('API retrieve', () => {
                 id: trip.id,
                 experienceId: trip.experienceId,
                 scriptId: trip.scriptId,
-                groupId: group.id,
                 orgId: trip.orgId,
                 tripState: {
                   currentSceneName: 'SCENE-MAIN',

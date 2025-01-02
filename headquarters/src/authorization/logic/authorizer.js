@@ -29,8 +29,7 @@ class Authorizer {
         orgId: req.auth.participant.orgId,
         experienceId: req.auth.participant.experienceId,
         participantIds: [req.auth.participant.id],
-        tripIds: req.auth.players.map(player => player.tripId),
-        groupIds: req.auth.players.map(player => player.trip.groupId)
+        tripIds: req.auth.players.map(player => player.tripId)
       };
     }
     // Then trip
@@ -41,8 +40,7 @@ class Authorizer {
         orgId: req.auth.trip.orgId,
         experienceId: req.auth.trip.experienceId,
         participantIds: req.auth.players.map(p => p.participantId).filter(Boolean),
-        tripIds: [req.auth.trip.id],
-        groupIds: [req.auth.trip.groupId]
+        tripIds: [req.auth.trip.id]
       };
     }
     // Then anonymous

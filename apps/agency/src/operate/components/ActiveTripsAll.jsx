@@ -16,13 +16,12 @@ function getAllPlayers(trips) {
 
 const archivedIcon = <i className="fa fa-archive ml-1" />;
 
-function renderTripItem(group, trip, isToplevel) {
+function renderTripItem(org, experience, trip, isToplevel) {
   return {
     key: trip.id,
     url: (
-      `/${group.org.name}/${group.experience.name}` +
-      `/operate/${group.id}` +
-      `/trip/${trip.id}`
+      `/${org.name}/${experience.name}` +
+      `/operate/trip/${trip.id}`
     ),
     text: `${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
     label: (
@@ -34,17 +33,17 @@ function renderTripItem(group, trip, isToplevel) {
   };
 }
 
-function renderTripsItem(group, currentTripId) {
-  if (!group.trips.length) {
+function renderTripsItem(org, experience, trips, currentTripId) {
+  if (!trips.length) {
     return null;
   }
-  if (group.trips.length === 1) {
-    return renderTripItem(group, group.trips[0], true);
+  if (trips.length === 1) {
+    return renderTripItem(org, experience, trips[0], true);
   }
   let tripTitle = 'Runs';
   let tripLabel = 'Runs';
   if (currentTripId) {
-    const trip = _.find(group.trips, { id: Number(currentTripId) });
+    const trip = _.find(trips, { id: Number(currentTripId) });
     if (trip) {
       tripTitle = `Run: ${trip.title}`;
       tripLabel = (
@@ -57,25 +56,26 @@ function renderTripsItem(group, currentTripId) {
   return {
     text: tripTitle,
     label: tripLabel,
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/trip`,
-    subItems: _(group.trips)
+    url: `/${org.name}/${experience.name}/operate/trip`,
+    subItems: _(trips)
       .sortBy(trip => [trip.isArchived, trip.title])
-      .map(trip => renderTripItem(group, trip))
+      .map(trip => renderTripItem(org, experience, trip))
       .value()
   };
 }
 
-export default function GroupAll({ children, group, nextUnappliedAction,
+export default function ActiveTripsAll({ children, org, experience, trips, nextUnappliedAction,
   numMessagesNeedingReply, match, history }) {
   // Error or loading cases should be handled by `Group`
-  if (group.trips.length === 0) {
+  if (trips.length === 0) {
     return <div>No trips</div>;
   }
-  const roles = _(group.script.content.roles)
-    .filter(role => RoleCore.canRoleHaveParticipant(group.script.content, role))
+  const script = trips[0].script;
+  const roles = _(script.content.roles)
+    .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
     .sort(SceneCore.sortResource)
     .value();
-  const allPlayers = getAllPlayers(group.trips);
+  const allPlayers = getAllPlayers(trips);
   const allParticipants = _(allPlayers).map('participant').uniq().value();
 
   function isParticipantArchived(participant, roleName) {
@@ -84,8 +84,8 @@ export default function GroupAll({ children, group, nextUnappliedAction,
       p.roleName === roleName &&
       p.participantId === participantId
     ));
-    const trips = players.map(p => group.trips.find(t => p.tripId === t.id));
-    return _.every(trips, t => t.isArchived);
+    const pTrips = players.map(p => trips.find(t => p.tripId === t.id));
+    return _.every(pTrips, t => t.isArchived);
   }
 
   let roleTitle = 'Participants';
@@ -97,7 +97,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   const pathParticipantId = pathRoleMatch ? pathRoleMatch[2] : null;
 
   if (pathRoleName && pathParticipantId) {
-    const role = _.find(group.script.content.roles, { name: pathRoleName });
+    const role = _.find(script.content.roles, { name: pathRoleName });
     const pathParticipant = pathParticipantId !== '0' ?
       _.find(allParticipants, { id: Number(pathParticipantId) }) : null;
     const participantName = pathParticipant ? pathParticipant.name : '';
@@ -111,7 +111,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
 
   const pathTripMatch = path.match(/\/trip\/(\d+)/);
   const pathTripId = pathTripMatch ? pathTripMatch[1] : null;
-  const tripsItem = renderTripsItem(group, pathTripId);
+  const tripsItem = renderTripsItem(org, experience, trips, pathTripId);
 
   function itemsForRole(role) {
     const participants = _(allPlayers)
@@ -128,9 +128,8 @@ export default function GroupAll({ children, group, nextUnappliedAction,
         const title = `${role.title} (${participant ? participant.name : 'No user'})`;
         return {
           url: (
-            `/${group.org.name}/${group.experience.name}` +
-            `/operate/${group.id}` +
-            `/role/${role.name}/${participant ? participant.id : 0}`
+            `/${org.name}/${experience.name}` +
+            `/operate/role/${role.name}/${participant ? participant.id : 0}`
           ),
           label: (
             <span className={isArchived ? 'faint' : ''}>
@@ -150,13 +149,13 @@ export default function GroupAll({ children, group, nextUnappliedAction,
     .value();
 
   const items = [{
-    text: 'Run group',
+    text: 'Active runs',
     isExact: true,
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}`
+    url: `/${org.name}/${experience.name}/operate`
   }, {
     text: roleTitle,
     label: roleLabel,
-    url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/role`,
+    url: `/${org.name}/${experience.name}/operate/role`,
     subItems: roleItems
   }, tripsItem];
 
@@ -172,7 +171,7 @@ export default function GroupAll({ children, group, nextUnappliedAction,
         </span>
       ),
       text: 'Messages',
-      url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/messages`
+      url: `/${org.name}/${experience.name}/operate/messages`
     });
   }
 
@@ -184,13 +183,13 @@ export default function GroupAll({ children, group, nextUnappliedAction,
           <span style={{ position: 'relative', top: '-2px' }} className="badge badge-info mr-1">
             {moment
               .utc(nextUnappliedAction.scheduledAt)
-              .tz(group.experience.timezone)
+              .tz(experience.timezone)
               .format('h:mm:ssa')}
           </span>
           Upcoming
         </span>
       ),
-      url: `/${group.org.name}/${group.experience.name}/operate/${group.id}/upcoming`
+      url: `/${org.name}/${experience.name}/operate/upcoming`
     });
   }
 
@@ -202,15 +201,17 @@ export default function GroupAll({ children, group, nextUnappliedAction,
   );
 }
 
-GroupAll.propTypes = {
+ActiveTripsAll.propTypes = {
   children: PropTypes.node.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  group: PropTypes.object.isRequired,
+  org: PropTypes.object.isRequired,
+  experience: PropTypes.object.isRequired,
+  trips: PropTypes.array.isRequired,
   nextUnappliedAction: PropTypes.object,
   numMessagesNeedingReply: PropTypes.number.isRequired
 };
 
-GroupAll.defaultProps = {
+ActiveTripsAll.defaultProps = {
   nextUnappliedAction: null
 };

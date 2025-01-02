@@ -39,11 +39,6 @@ describe('Trip', () => {
     await assertValidation(trip, { scriptId: 'must be present' });
   });
 
-  it('requires a group', async () => {
-    trip.groupId = null;
-    await assertValidation(trip, { groupId: 'must be present' });
-  });
-
   it('requires a date', async () => {
     trip.date = null;
     await assertValidation(trip, { date: 'must be present' });
@@ -80,11 +75,9 @@ describe('Trip', () => {
     const testTrip = await TestUtil.createDummyTrip();
     testTrip.experienceId = 2;
     testTrip.scriptId = 3;
-    testTrip.groupId = 4;
     await assertValidation(testTrip, {
       experienceId: 'experienceId is readonly',
-      scriptId: 'scriptId is readonly',
-      groupId: 'groupId is readonly'
+      scriptId: 'scriptId is readonly'
     });
   });
 });

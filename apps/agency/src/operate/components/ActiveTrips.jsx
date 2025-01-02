@@ -44,20 +44,18 @@ export default class Group extends Component {
   componentWillMount() {
     // no need to load on mount because the app on load refreshes live
     // data for all active groups
-    const group = this.props.group;
-    const tripIds = _.map(group.trips, 'id');
-    this.loadData(this.props.org, group, tripIds);
+    const tripIds = _.map(this.props.trips, 'id');
+    this.loadData(this.props.org, this.props.experience, this.props.script, tripIds);
     this.refreshInterval = setInterval(this.autoRefresh, REFRESH_FREQUENCY);
     this.throttleInterval = setInterval(this.autoThrottle, THROTTLE_FREQUENCY);
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
   }
 
   componentWillReceiveProps(nextProps) {
-    const curTripIds = _.map(this.props.group.trips, 'id');
-    const nextTripIds = _.map(nextProps.group.trips, 'id');
-    if (!_.isEqual(curTripIds.sort(), nextTripIds.sort()) ||
-        this.props.group.id !== nextProps.group.id) {
-      this.loadData(nextProps.org, nextProps.group, nextTripIds);
+    const curTripIds = _.map(this.props.trips, 'id');
+    const nextTripIds = _.map(nextProps.trips, 'id');
+    if (!_.isEqual(curTripIds.sort(), nextTripIds.sort())) {
+      this.loadData(nextProps.org, nextProps.experience, nextProps.script, nextTripIds);
     }
     this.checkNextUnappliedAction(nextProps.nextUnappliedAction);
   }
@@ -97,7 +95,7 @@ export default class Group extends Component {
       this.refreshTimeout = null;
       this.nextActionAt = null;
     }
-    const timezone = this.props.group.experience.timezone;
+    const timezone = this.props.experience.timezone;
     console.log(
       `next action ${nextUnappliedAction.id} ${scheduledAt.fromNow()} ` +
       `(${scheduledAt.clone().tz(timezone).format('h:mm:ssa z')})`
@@ -115,8 +113,8 @@ export default class Group extends Component {
   }
 
   handleRefresh() {
-    const tripIds = _.map(this.props.group.trips, 'id');
-    this.loadData(this.props.org, this.props.group, tripIds);
+    const tripIds = _.map(this.props.trips, 'id');
+    this.loadData(this.props.org, this.props.experience, this.props.script, tripIds);
   }
 
   autoRefresh() {
@@ -126,37 +124,26 @@ export default class Group extends Component {
   autoThrottle() {
     // If we've throttled messages for trips, load them now, then clear
     if (this.state.throttledTripIds.size > 0) {
-      this.props.refreshLiveData(this.props.org.id, this.props.group.experienceId,
+      this.props.refreshLiveData(this.props.org.id, this.props.experience.id,
         [...this.state.throttledTripIds]);
       this.setState({ throttledTripIds: new Set() });
     }
   }
 
-  loadData(org, group, tripIds) {
-    if (group.isNull) {
-      return;
-    }
+  loadData(org, experience, script, tripIds) {
     if (!tripIds || !tripIds.length) {
-      // If we have no trip ids, it's probably because this group was
-      // archived, so the trips are not loaded by default. We still want to
-      // be able to view it though, so do an initial load. This triggers a prop
-      // refresh, and now that all the trip ids are present, a normal
-      // refreshLiveData will do the trick.`
-      const groupId = this.props.match.params.groupId;
-      this.props.retrieveInstance('groups', groupId);
       this.props.listCollection('trips', {
         orgId: org.id,
-        experienceId: group.experienceId,
-        groupId: groupId
+        experienceId: experience.id,
+        isArchived: false
       });
       return;
     }
     this.updateFayeSubscriptions(tripIds);
-    this.props.refreshLiveData(org.id, group.experienceId, tripIds);
-    this.props.retrieveInstance('scripts', group.scriptId);
+    this.props.refreshLiveData(org.id, experience.id, tripIds);
     this.props.listCollection('assets', {
       orgId: org.id,
-      experienceId: group.experienceId,
+      experienceId: experience.id,
       type: 'directions'
     });
   }
@@ -208,7 +195,7 @@ export default class Group extends Component {
     this.lastRefreshMsec = Date.now();
     this.props.refreshLiveData(
       this.props.org.id,
-      this.props.group.experienceId,
+      this.props.experience.id,
       [tripId]
     );
   }
@@ -226,17 +213,13 @@ export default class Group extends Component {
   }
 
   render() {
-    const group = this.props.group;
-    if (group.isError) {
-      return <div className="container-fluid">Error - please reload</div>;
-    }
-    if (group.isNull && !group.isLoading) {
-      return <div className="container-fluid">Group not found</div>;
-    }
-    if (!group.script || group.script.isNull || group.script.isLoading) {
+    if (this.props.experience.isNull || this.props.experience.isLoading) {
       return <Loader />;
     }
-    if (group.trips.length === 0) {
+    if (this.props.script.isNull || this.props.script.isLoading) {
+      return <Loader />;
+    }
+    if (this.props.trips.length === 0) {
       return <div className="container-fluid">No trips</div>;
     }
 
@@ -258,11 +241,11 @@ export default class Group extends Component {
 Group.propTypes = {
   areRequestsPending: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
-  match: PropTypes.object.isRequired,
-  group: PropTypes.object.isRequired,
   org: PropTypes.object.isRequired,
+  experience: PropTypes.object.isRequired,
+  trips: PropTypes.array.isRequired,
+  script: PropTypes.object.isRequired,
   nextUnappliedAction: PropTypes.object,
-  retrieveInstance: PropTypes.func.isRequired,
   listCollection: PropTypes.func.isRequired,
   refreshLiveData: PropTypes.func.isRequired
 };

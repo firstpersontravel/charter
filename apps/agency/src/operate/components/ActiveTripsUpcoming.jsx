@@ -23,14 +23,14 @@ function getScheduledTripTriggers(trip) {
   }));
 }
 
-function getScheduledGroupTriggers(group) {
-  return _(group.trips)
+function getScheduledGroupTriggers(trips) {
+  return _(trips)
     .map(trip => getScheduledTripTriggers(trip))
     .flatten()
     .value();
 }
 
-export default class GroupUpcoming extends Component {
+export default class ActiveTripsUpcoming extends Component {
   renderTrigger(trigger, trip) {
     const timeShort = moment
       .utc(trigger.scheduledAt)
@@ -119,9 +119,8 @@ export default class GroupUpcoming extends Component {
   }
 
   render() {
-    const group = this.props.group;
-    const trips = group.trips;
-    const scheduledTriggers = getScheduledGroupTriggers(group);
+    const trips = this.props.trips;
+    const scheduledTriggers = getScheduledGroupTriggers(trips);
     const allUpcoming = []
       .concat(this.props.actions)
       .concat(scheduledTriggers);
@@ -163,8 +162,8 @@ export default class GroupUpcoming extends Component {
   }
 }
 
-GroupUpcoming.propTypes = {
-  group: PropTypes.object.isRequired,
+ActiveTripsUpcoming.propTypes = {
+  trips: PropTypes.array.isRequired,
   postAdminAction: PropTypes.func.isRequired,
   updateInstance: PropTypes.func.isRequired,
   actions: PropTypes.array.isRequired

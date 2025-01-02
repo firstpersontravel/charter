@@ -1,4 +1,5 @@
 const assert = require('assert');
+const moment = require('moment-timezone');
 const httpMocks = require('node-mocks-http');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
@@ -21,6 +22,7 @@ describe('pageActorRoutes', () => {
         roleName: 'Gabe',
         participant: { id: 10, name: 'g s' },
         trip: {
+          id: 5,
           script: {
             content: {
               roles: [
@@ -34,9 +36,7 @@ describe('pageActorRoutes', () => {
               ]
             }
           },
-          experience: { title: 'Amazing Adventure' },
-          groupId: 5,
-          group: { id: 5, date: '2020-03-03', }
+          experience: { title: 'Amazing Adventure' }
         }
       }]);
 
@@ -52,8 +52,7 @@ describe('pageActorRoutes', () => {
           where: { isArchived: false },
           include: [
             { model: models.Script, as: 'script' },
-            { model: models.Experience, as: 'experience' },
-            { model: models.Group, as: 'group' }
+            { model: models.Experience, as: 'experience' }
           ]
         }, {
           model: models.Participant,
@@ -72,11 +71,10 @@ describe('pageActorRoutes', () => {
         layout: 'actor',
         orgName: 'org',
         orgTitle: 'Org',
-        groups: [{
+        trips: [{
           experienceTitle: 'Amazing Adventure',
-          groupDate: 'Mar 03',
-          groupParticipants: [{
-            groupId: 5, 
+          tripDate: moment.utc().format('MMM DD'),
+          tripParticipants: [{
             participantId: 10,
             name: 'g s',
             experienceTitle: 'Amazing Adventure',

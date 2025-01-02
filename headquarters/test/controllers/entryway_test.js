@@ -1,4 +1,3 @@
-const moment = require('moment-timezone');
 const sinon = require('sinon');
 
 const RoleCore = require('fptcore/src/cores/role');
@@ -98,12 +97,23 @@ describe('EntrywayController', () => {
 
   describe('#createTripFromEntryway', () => {
     it('creates group and participant when they don\'t exist', async () => {
-      const mockGroup = { id: 1 };
+      const mockExperience = { id: 1 };
+      const mockScript = {
+        id: 3,
+        orgId: 9,
+        experienceId: 20,
+        content: {},
+        experience: {
+          title: 'Script',
+          timezone: 'US/Pacific'
+        }
+      };
       const mockParticipant = { id: 2 };
       const mockProfile = { isActive: true };
 
       sandbox.stub(RelayController, 'scriptForRelay').resolves(mockScript);
-      sandbox.stub(models.Group, 'findOrCreate').resolves([mockGroup]);
+      sandbox.stub(models.Experience, 'findByPk').resolves([mockExperience]);
+      sandbox.stub(models.Script, 'findByPk').resolves([mockScript]);
       sandbox.stub(models.Participant, 'findOrCreate').resolves([mockParticipant]);
       sandbox.stub(models.Profile, 'findOrCreate').resolves([mockProfile]);
       sandbox.stub(TripsController, 'createTrip').resolves(mockTrip);
@@ -114,17 +124,6 @@ describe('EntrywayController', () => {
       await EntrywayController.createTripFromEntryway(mockScript, 'player', '123');
 
       // Test calls
-      sinon.assert.calledWith(models.Group.findOrCreate, {
-        where: {
-          orgId: 9,
-          experienceId: 20,
-          scriptId: 10,
-          date: moment.utc()
-            .tz(mockScript.experience.timezone)
-            .format('YYYY-MM-DD'),
-          isArchived: false
-        }
-      });
       sinon.assert.calledWith(models.Participant.findOrCreate, {
         where: {
           orgId: 9,

@@ -19,19 +19,17 @@ export default Ember.Controller.extend({
     const trip = this.get('trip.model');
     const orgName = trip.get('org.name');
     const expName = trip.get('experience.name');
-    const groupId = trip.get('group.id');
     const tripId = trip.id;
-    return `/${orgName}/${expName}/operate/${groupId}/trip/${tripId}`;
+    return `/${orgName}/${expName}/operate/trip/${tripId}`;
   }.property('trip.model'),
 
   playerUrl: function() {
     const trip = this.get('trip.model');
     const orgName = trip.get('org.name');
     const expName = trip.get('experience.name');
-    const groupId = trip.get('group.id');
     const roleName = this.get('player.model.roleName');
     const participantId = this.get('player.model.participant.id') || 0;
-    return `/${orgName}/${expName}/operate/${groupId}/role/${roleName}/${participantId}`;
+    return `/${orgName}/${expName}/operate/role/${roleName}/${participantId}`;
   }.property('trip.model', 'player.model'),
 
   localTime: function() {

@@ -6,21 +6,21 @@ import NotFound from '../partials/NotFound';
 import ScheduleConnector from './connectors/Schedule';
 import ScheduleIndexConnector from './connectors/ScheduleIndex';
 import MonthIndexConnector from './connectors/MonthIndex';
-import GroupConnector from './connectors/Group';
-import GroupPlayersConnector from './connectors/GroupPlayers';
+import TripConnector from './connectors/Trip';
+import TripPlayersConnector from './connectors/TripPlayers';
 
-function GroupRoutes({ history, match, location }) {
+function TripRoutes({ history, match, location }) {
   return (
-    <GroupConnector history={history} match={match} location={location}>
+    <TripConnector history={history} match={match} location={location}>
       <Switch>
-        <Route path={match.path} component={GroupPlayersConnector} />
+        <Route path={match.path} component={TripPlayersConnector} />
         <Route component={NotFound} />
       </Switch>
-    </GroupConnector>
+    </TripConnector>
   );
 }
 
-GroupRoutes.propTypes = {
+TripRoutes.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired
@@ -31,7 +31,7 @@ function MonthRoutes({ match, location, history }) {
     <ScheduleConnector match={match} location={location} history={history}>
       <Switch>
         <Route path={match.path} exact component={MonthIndexConnector} />
-        <Route path={`${match.path}/:groupId`} component={GroupRoutes} />
+        <Route path={`${match.path}/:tripId`} component={TripRoutes} />
         <Route component={NotFound} />
       </Switch>
     </ScheduleConnector>

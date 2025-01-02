@@ -8,8 +8,8 @@ export function isProduction() {
   return getStage() === 'production';
 }
 
-export function getActorIframeUrl(group, participant) {
-  return `${window.location.origin}/actor/${group.org.name}/${group.id}/${participant.id}`;
+export function getActorIframeUrl(org, participant) {
+  return `${window.location.origin}/actor/${org.name}/${participant.id}`;
 }
 
 export function getPlayerIframeUrl(trip, player) {

@@ -1,13 +1,13 @@
 import { connect } from 'react-redux';
 
-import { lookupGroup, lookupUpcomingActions } from './utils';
+import { lookupActiveTrips, lookupUpcomingActions } from './utils';
 import { postAdminAction, updateInstance } from '../../actions';
-import GroupUpcoming from '../components/GroupUpcoming';
+import ActiveTripsUpcoming from '../components/ActiveTripsUpcoming';
 
 const mapStateToProps = (state, ownProps) => {
-  const group = lookupGroup(state, ownProps);
+  const trips = lookupActiveTrips(state, ownProps);
   return {
-    group: group,
+    trips: trips,
     actions: lookupUpcomingActions(state, ownProps)
   };
 };
@@ -17,4 +17,4 @@ const mapDispatchToProps = dispatch => ({
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupUpcoming);
+export default connect(mapStateToProps, mapDispatchToProps)(ActiveTripsUpcoming);

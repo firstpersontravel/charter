@@ -70,7 +70,7 @@ export default class TripMessages extends Component {
     const trip = this.props.trip;
     this.props.history.push(
       `/${trip.org.name}/${trip.experience.name}/operate/` +
-      `${trip.groupId}/trip/${trip.id}/messages?for=${event.target.value}`);
+      `trip/${trip.id}/messages?for=${event.target.value}`);
   }
 
   handleCounterpartChange(event) {
@@ -78,7 +78,7 @@ export default class TripMessages extends Component {
     const trip = this.props.trip;
     this.props.history.push(
       `/${trip.org.name}/${trip.experience.name}/operate/` +
-      `${trip.groupId}/trip/${trip.id}/messages` +
+      `trip/${trip.id}/messages` +
       `?for=${query.get('for')}&with=${event.target.value}`);
   }
 

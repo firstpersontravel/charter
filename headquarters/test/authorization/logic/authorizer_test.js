@@ -54,8 +54,7 @@ describe('Authorizer', () => {
         orgId: 1,
         experienceId: 2,
         participantIds: [4],
-        tripIds: [3],
-        groupIds: [5]
+        tripIds: [3]
       });
     });
 
@@ -67,8 +66,7 @@ describe('Authorizer', () => {
           title: 'Ted\'s trip',
           id: 1,
           orgId: 2,
-          experienceId: 3,
-          groupId: 5
+          experienceId: 3
         },
         players: [{
           participantId: 4
@@ -83,8 +81,7 @@ describe('Authorizer', () => {
         orgId: 2,
         experienceId: 3,
         participantIds: [4],
-        tripIds: [1],
-        groupIds: [5]
+        tripIds: [1]
       });
     });
   });

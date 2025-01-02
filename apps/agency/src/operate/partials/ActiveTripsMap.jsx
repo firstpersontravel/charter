@@ -135,7 +135,7 @@ function getPolylineRemaining(coords, currentCoords) {
   return coordsRemaining;
 }
 
-export default class GroupMap extends Component {
+export default class ActiveTripsMap extends Component {
   getWaypointLatLngs() {
     const script = this.props.trips[0].script;
     const waypoints = WaypointCore.getAllWaypointOptions(script.content);
@@ -160,7 +160,6 @@ export default class GroupMap extends Component {
   }
 
   getActiveRoutePolylines() {
-    const group = this.props.group;
     const script = this.props.trips[0].script;
     const activePlayers = _(this.props.trips)
       .map('players')
@@ -177,7 +176,7 @@ export default class GroupMap extends Component {
         const trip = _.find(this.props.trips, { id: player.tripId });
         const role = (script.content.roles || []).find(r => r.name === player.roleName);
         const playerLink = (
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${group.id}/role/${player.roleName}/${player.participantId || 0}`}>
+          <Link to={`/${trip.org.name}/${trip.experience.name}/operate/role/${player.roleName}/${player.participantId || 0}`}>
             {trip.title}: {role.title}
           </Link>
         );
@@ -272,14 +271,13 @@ export default class GroupMap extends Component {
   }
 
   renderMarkerPlayerSection(player) {
-    const group = this.props.group;
     const trip = _.find(this.props.trips, { id: player.tripId });
     const role = (trip.script.content.roles || []).find(r => r.name === player.roleName);
     const timezone = this.props.trips[0].experience.timezone;
     return (
       <div key={player.id}>
         <div>
-          <Link to={`/${group.org.name}/${group.experience.name}/operate/${trip.groupId}/role/${player.roleName}/${player.participantId || 0}`}>
+          <Link to={`/${trip.org.name}/${trip.experience.name}/operate/role/${player.roleName}/${player.participantId || 0}`}>
             {trip.title}{' '}
             {role.title}{' '}
             ({player.participant.name})
@@ -382,15 +380,14 @@ export default class GroupMap extends Component {
 
 L.Icon.Default.imagePath = '/static/images/';
 
-GroupMap.propTypes = {
+ActiveTripsMap.propTypes = {
   center: PropTypes.instanceOf(L.LatLng),
   zoom: PropTypes.number,
-  group: PropTypes.object.isRequired,
   directions: PropTypes.array,
   trips: PropTypes.array.isRequired
 };
 
-GroupMap.defaultProps = {
+ActiveTripsMap.defaultProps = {
   center: null,
   zoom: null,
   directions: []

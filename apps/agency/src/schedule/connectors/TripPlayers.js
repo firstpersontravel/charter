@@ -1,15 +1,15 @@
 import { connect } from 'react-redux';
 
-import { lookupGroup } from '../../operate/connectors/utils';
+import { lookupTrip } from '../../operate/connectors/utils';
 import {
   createInstance,
   createInstances,
   updateInstance
 } from '../../actions';
-import GroupPlayers from '../components/GroupPlayers';
+import TripPlayers from '../components/TripPlayers';
 
 const mapStateToProps = (state, ownProps) => ({
-  group: lookupGroup(state, ownProps),
+  trip: lookupTrip(state, ownProps),
   participants: state.datastore.participants,
   profiles: state.datastore.profiles
 });
@@ -20,4 +20,4 @@ const mapDispatchToProps = dispatch => ({
   updateInstance: (...args) => dispatch(updateInstance(...args))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupPlayers);
+export default connect(mapStateToProps, mapDispatchToProps)(TripPlayers);
