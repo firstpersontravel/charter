@@ -1,18 +1,15 @@
 import React from 'react';
-import { Route } from 'react-router';
+import { Switch, Route } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 
-function DummyComponent() {
-  console.log('dummy');
-  return (
-    <div>
-      hi
-    </div>
-  );
-}
+import IndexComponent from './components/index';
+import AppComponent from './components/app';
 
 export default (
   <BrowserRouter>
-    <Route path="/" component={DummyComponent} />
+    <Switch>
+      <Route path="/" exact component={IndexComponent} />
+      <Route path="/:tripId/:playerId" component={AppComponent} />
+    </Switch>
   </BrowserRouter>
 );
