@@ -137,6 +137,24 @@ app.use('/travel', (req, res) => {
   res.status(200).set('Content-Type', 'text/html').send(indexWithRuntimeVars);
 });
 
+// Serve one-page travel2 app
+app.use('/travel2', (req, res) => {
+  res.render('travel2/index', {
+    layout: null,
+    googleApiKey: config.env.FRONTEND_GOOGLE_API_KEY,
+    envJson: JSON.stringify({
+      FRONTEND_ANALYTICS_ENABLED: config.env.FRONTEND_ANALYTICS_ENABLED,
+      FRONTEND_CONTENT_BUCKET: config.env.FRONTEND_CONTENT_BUCKET,
+      FRONTEND_GOOGLE_API_KEY: config.env.FRONTEND_GOOGLE_API_KEY,
+      FRONTEND_SENTRY_DSN: config.env.FRONTEND_SENTRY_DSN,
+      FRONTEND_SENTRY_ENVIRONMENT: config.env.FRONTEND_SENTRY_ENVIRONMENT,
+      FRONTEND_SERVER_URL: config.env.FRONTEND_SERVER_URL,
+      FRONTEND_STAGE: config.env.HQ_STAGE || '',
+      GIT_HASH: config.env.GIT_HASH || ''
+    })
+  });
+});
+
 // Serve one-page agency app
 app.use('', (req, res) => {
   res.render('agency/index', {
