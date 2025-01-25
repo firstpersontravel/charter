@@ -5,7 +5,11 @@ export const initialState = {
   org: null,
   experience: null,
   script: null,
-  trip: null
+  trip: null,
+  profiles: null,
+  players: null,
+  participants: null,
+  messages: null
 };
 
 function readEntity(obj) {
