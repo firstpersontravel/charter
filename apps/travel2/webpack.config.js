@@ -23,8 +23,7 @@ module.exports = {
   devtool: isProduction ? 'source-map' : 'cheap-source-map',
   entry: [
     './src/index.jsx',
-    './style/style.scss',
-    './node_modules/react-phone-number-input/style.css'
+    './style/app.less'
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -69,6 +68,14 @@ module.exports = {
     }, {
       test: /\.s?css$/,
       loaders: ['style-loader', 'css-loader', 'sass-loader']
+    }, {
+      test: /\.less$/i,
+      loaders: [
+        // compiles Less to CSS
+        'style-loader',
+        'css-loader',
+        'less-loader'
+      ]
     }, {
     //   test: /\.json$/,
     //   loader: 'json-loader'
