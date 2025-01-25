@@ -1,10 +1,9 @@
 const assert = require('assert');
-const moment = require('moment-timezone');
 const httpMocks = require('node-mocks-http');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
-const { sandbox } = require('../mocks');
+const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');
 const pageActorRoutes = require('../../src/routes/page_actor');
 
@@ -73,7 +72,7 @@ describe('pageActorRoutes', () => {
         orgTitle: 'Org',
         trips: [{
           experienceTitle: 'Amazing Adventure',
-          tripDate: moment.utc().format('MMM DD'),
+          tripDate: mockNow.format('MMM DD'),
           tripParticipants: [{
             participantId: 10,
             name: 'g s',

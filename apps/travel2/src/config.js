@@ -1,8 +1,9 @@
 export default {
-  analyticsEnabled: !!window.config.FRONTEND_ANALYTICS_ENABLED,
-  contentBucket: window.config.FRONTEND_CONTENT_BUCKET,
+  authToken: window.config.TRAVEL2_AUTH_TOKEN,
+  analyticsEnabled: !!window.config.TRAVEL2_ANALYTICS_ENABLED,
+  contentBucket: window.config.TRAVEL2_CONTENT_BUCKET,
   gitHash: window.config.GIT_HASH,
-  googleApiKey: window.config.FRONTEND_GOOGLE_API_KEY,
-  serverUrl: window.config.FRONTEND_SERVER_URL,
-  stage: window.config.FRONTEND_STAGE
+  googleApiKey: window.config.TRAVEL2_GOOGLE_API_KEY,
+  serverUrl: window.config.TRAVEL2_SERVER_URL,
+  stage: window.config.TRAVEL2_STAGE
 };
