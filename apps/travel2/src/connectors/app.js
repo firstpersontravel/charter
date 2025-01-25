@@ -1,14 +1,21 @@
 import { connect } from 'react-redux';
 
 import App from '../components/app';
+import Evaluator from '../util/evaluator';
 import { refreshData } from '../actions';
+
+function getPlayer(state, ownProps) {
+  if (!state.players) {
+    return null;
+  }
+  return state.players.find(p => p.id === ownProps.match.params.playerId);
+}
 
 function getInterface(state, ownProps) {
   if (!state.trip) {
     return null;
   }
-  const playerId = ownProps.match.params.playerId;
-  const player = state.players.find(p => p.id === playerId);
+  const player = getPlayer(state, ownProps);
   if (!player) {
     return null;
   }
@@ -20,6 +27,9 @@ function getInterface(state, ownProps) {
 function mapStateToProps(state, ownProps) {
   return {
     trip: state.trip,
+    experience: state.experience,
+    player: getPlayer(state, ownProps),
+    evaluator: new Evaluator(state, ownProps.match.params.playerId),
     interface: getInterface(state, ownProps)
   };
 }

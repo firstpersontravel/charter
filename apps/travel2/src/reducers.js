@@ -13,10 +13,15 @@ export const initialState = {
 };
 
 function readEntity(obj) {
-  const keys = Object.keys(obj.attributes);
+  const attrKeys = Object.keys(obj.attributes);
+  const relationshipKeys = Object.keys(obj.relationships)
+    .filter(key => !!obj.relationships[key].data);
+  const relationships = Object.fromEntries(relationshipKeys
+    .map(key => [`${key}Id`, obj.relationships[key].data.id]));
   return {
     id: obj.id,
-    ...Object.fromEntries(keys.map(key => [_.camelCase(key), obj.attributes[key]]))
+    ...relationships,
+    ...Object.fromEntries(attrKeys.map(key => [_.camelCase(key), obj.attributes[key]]))
   };
 }
 
