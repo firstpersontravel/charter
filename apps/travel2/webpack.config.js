@@ -66,9 +66,6 @@ module.exports = {
         // path.join(__dirname, 'node_modules/fptcore/src')
       ]
     }, {
-      test: /\.s?css$/,
-      loaders: ['style-loader', 'css-loader', 'sass-loader']
-    }, {
       test: /\.less$/i,
       loaders: [
         // compiles Less to CSS

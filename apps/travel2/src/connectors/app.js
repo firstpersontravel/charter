@@ -8,7 +8,7 @@ function getPlayer(state, ownProps) {
   if (!state.players) {
     return null;
   }
-  return state.players.find(p => p.id === ownProps.match.params.playerId);
+  return state.players.find(p => p.id === Number(ownProps.match.params.playerId));
 }
 
 function getInterface(state, ownProps) {
@@ -20,17 +20,22 @@ function getInterface(state, ownProps) {
     return null;
   }
   const script = state.script;
-  const role = script.content.roles.find(r => r.name === player.role);
-  return (script.content.interfaces || []).find(i => i.name === role.interface);
+  const role = (script.content.roles || []).find(r => r.name === player.roleName);
+  if (!role) {
+    return null;
+  }
+  const iface = (script.content.interfaces || []).find(i => i.name === role.interface);
+  return iface;
 }
 
 function mapStateToProps(state, ownProps) {
   return {
-    trip: state.trip,
     experience: state.experience,
+    trip: state.trip,
+    script: state.script,
     player: getPlayer(state, ownProps),
-    evaluator: new Evaluator(state, ownProps.match.params.playerId),
-    interface: getInterface(state, ownProps)
+    evaluator: new Evaluator(state, Number(ownProps.match.params.playerId)),
+    iface: getInterface(state, ownProps)
   };
 }
 

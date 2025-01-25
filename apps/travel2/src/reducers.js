@@ -26,7 +26,6 @@ function readEntity(obj) {
 }
 
 function loadLegacyDataHandler(state, action) {
-  console.log(action.legacyData);
   const included = action.legacyData.included;
   return update(state, {
     org: { $set: readEntity(included.find(i => i.type === 'org')) },

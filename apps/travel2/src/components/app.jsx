@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import fptCore from 'fptcore';
-
 import CustomCss from '../partials/custom-css';
+import Panel from '../partials/panel';
 
 const DEFAULT_TABS = [{
   title: 'Main',
@@ -14,12 +13,12 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTab: null
+      selectedTabName: null
     };
   }
 
   componentDidMount() {
-    this.props.refreshData(this.props.match.params.playerId);
+    this.props.refreshData(this.props.match.params.tripId);
   }
 
   getTabs() {
@@ -31,18 +30,34 @@ export default class App extends Component {
     return this.getTabs().filter(t => this.props.evaluator.evaluateIf(t.visible_if));
   }
 
+  getSelectedTab() {
+    const visibleTabs = this.getVisibleTabs();
+    const tab = visibleTabs.find(t => t.title === this.state.selectedTabName);
+    return tab || visibleTabs[0];
+  }
+
   getCurrentPageName() {
-    return this.state.trip.tripState.currentPageNamesByRole[this.props.player.roleName];
+    return this.props.trip.tripState.currentPageNamesByRole[this.props.player.roleName];
   }
 
   getCurrentPage() {
     const pageName = this.getCurrentPageName();
-    const page = (this.state.script.content.pages || []).find(p => p.name === pageName);
+    const page = (this.props.script.content.pages || []).find(p => p.name === pageName);
     return page;
   }
 
+  getTabPanels() {
+    const selectedTab = this.getSelectedTab();
+    const tabPanels = selectedTab ? selectedTab.panels : [];
+    return this.collectPanelPartials(tabPanels);
+  }
+
   getPagePanels() {
-    return this.getCurrentPage().panels;
+    const currentPage = this.getCurrentPage();
+    if (!currentPage) {
+      return [];
+    }
+    return currentPage.panels.filter(p => this.props.evaluator.evaluateIf(p.visible_if));
   }
 
   getHeaderPanels() {
@@ -65,7 +80,7 @@ export default class App extends Component {
 
   collectPanelPartials(basePanels) {
     let collectedPanels = [];
-    basePanels.forEach(function (panel) {
+    basePanels.forEach((panel) => {
       if (panel.type === 'current_page') {
         let innerPanels = this.getPagePanels();
         if (!innerPanels || innerPanels.length === 0) {
@@ -94,29 +109,52 @@ export default class App extends Component {
 
   renderPanel(panel, i) {
     return (
-      <div key={i}>
-        {panel.type}
-      </div>
+      <Panel key={i} panel={panel} evaluator={this.props.evaluator} />
     );
   }
 
   renderHeaderPanels() {
-    const headerPanels = this.getHeaderPanels();
-    return headerPanels.map((h, i) => this.renderHeaderPanels(h, i));
+    return this.getHeaderPanels().map((h, i) => this.renderPanel(h, i));
+  }
+
+  renderTabPanels() {
+    return this.getTabPanels().map((p, i) => this.renderPanel(p, i));
+  }
+
+  renderTabs() {
+    if (!this.shouldShowTabs()) {
+      return null;
+    }
+    const tabItems = this.getVisibleTabs().map(t => (
+      <a href="" className="pure-menu-link">
+        {t.title}
+      </a>
+    ));
+    return (
+      <div className="page-layout-tabs-menu pure-menu pure-menu-horizontal">
+        <ul className="pure-menu-list">
+          {tabItems}
+        </ul>
+      </div>
+    );
   }
 
   render() {
-    if (!this.props.trip) {
+    if (!this.props.trip || !this.props.player) {
       return <div>Loading</div>;
     }
-    const tripId = this.props.match.params.tripId;
-    const playerId = this.props.match.params.playerId;
-    console.log(`trip ${tripId} player ${playerId}`);
     return (
       <div className="trip-container">
         <CustomCss iface={this.props.iface} />
-        {this.renderHeaderPanels()}
-        App test test
+        <div className="page-layout page-layout-tabs">
+          {this.renderHeaderPanels()}
+          <div className="page-layout-tabs-content pure-g">
+            <div className="page-layout-tabs-content-inner pure-u-1">
+              {this.renderTabPanels()}
+            </div>
+          </div>
+          {this.renderTabs()}
+        </div>
       </div>
     );
   }
@@ -126,6 +164,7 @@ App.propTypes = {
   evaluator: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   experience: PropTypes.object,
+  script: PropTypes.object,
   trip: PropTypes.object,
   player: PropTypes.object,
   iface: PropTypes.object,
@@ -135,6 +174,7 @@ App.propTypes = {
 App.defaultProps = {
   experience: null,
   trip: null,
+  script: null,
   iface: null,
   player: null
 };
