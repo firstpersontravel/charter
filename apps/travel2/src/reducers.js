@@ -39,9 +39,21 @@ function loadLegacyDataHandler(state, action) {
   });
 }
 
+function refreshLegacyDataHandler(state, action) {
+  const included = action.legacyData.included;
+  return update(state, {
+    trip: { $set: readEntity(action.legacyData.data) },
+    profiles: { $set: included.filter(i => i.type === 'profile').map(readEntity) },
+    players: { $set: included.filter(i => i.type === 'player').map(readEntity) },
+    participants: { $set: included.filter(i => i.type === 'participant').map(readEntity) },
+    messages: { $set: included.filter(i => i.type === 'message').map(readEntity) }
+  });
+}
+
 const handlers = {
   '@@INIT': () => initialState,
-  loadLegacyData: loadLegacyDataHandler
+  loadLegacyData: loadLegacyDataHandler,
+  refreshLegacyData: refreshLegacyDataHandler
 };
 
 export default function reducer(state, action) {

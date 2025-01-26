@@ -12,13 +12,18 @@ const DEFAULT_TABS = [{
 export default class App extends Component {
   constructor(props) {
     super(props);
+    this.onFireEvent = this.onFireEvent.bind(this);
     this.state = {
       selectedTabName: null
     };
   }
 
   componentDidMount() {
-    this.props.refreshData(this.props.match.params.tripId);
+    this.props.loadData(this.props.match.params.tripId, this.props.match.params.playerId);
+  }
+
+  onFireEvent(event) {
+    this.props.fireEvent(this.props.trip.id, this.props.player.id, event);
   }
 
   getTabs() {
@@ -109,7 +114,11 @@ export default class App extends Component {
 
   renderPanel(panel, i) {
     return (
-      <Panel key={i} panel={panel} evaluator={this.props.evaluator} />
+      <Panel
+        key={i}
+        panel={panel}
+        evaluator={this.props.evaluator}
+        fireEvent={this.onFireEvent} />
     );
   }
 
@@ -168,7 +177,8 @@ App.propTypes = {
   trip: PropTypes.object,
   player: PropTypes.object,
   iface: PropTypes.object,
-  refreshData: PropTypes.func.isRequired
+  loadData: PropTypes.func.isRequired,
+  fireEvent: PropTypes.func.isRequired
 };
 
 App.defaultProps = {

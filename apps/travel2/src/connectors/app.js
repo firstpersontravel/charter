@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import App from '../components/app';
 import Evaluator from '../util/evaluator';
-import { refreshData } from '../actions';
+import { loadData, fireEvent } from '../actions';
 
 function getPlayer(state, ownProps) {
   if (!state.players) {
@@ -39,8 +39,9 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-const mapDispatchToProps = dispatch => ({
-  refreshData: (...args) => dispatch(refreshData(...args))
-});
+const mapDispatchToProps = {
+  loadData,
+  fireEvent
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

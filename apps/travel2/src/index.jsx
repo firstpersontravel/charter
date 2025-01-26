@@ -7,7 +7,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import * as Sentry from '@sentry/react';
 
-import config from './config';
 import Router from './router';
 import reducers, { initialState } from './reducers';
 
