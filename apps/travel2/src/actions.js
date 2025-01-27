@@ -81,3 +81,9 @@ export function fireEvent(tripId, playerId, event) {
       .then(() => refresh(tripId, dispatch));
   };
 }
+
+export function receiveMessage(tripId, msg) {
+  return function (dispatch) {
+    return refresh(tripId, dispatch);
+  };
+}

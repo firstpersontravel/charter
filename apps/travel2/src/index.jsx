@@ -11,8 +11,8 @@ import Router from './router';
 import reducers, { initialState } from './reducers';
 
 Sentry.init({
-  dsn: window.config.FRONTEND_SENTRY_DSN,
-  environment: window.config.FRONTEND_SENTRY_ENVIRONMENT,
+  dsn: window.config.TRAVEL2_SENTRY_DSN,
+  environment: window.config.TRAVEL2_SENTRY_ENVIRONMENT,
   release: window.config.GIT_HASH
 });
 

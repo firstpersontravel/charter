@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import CustomCss from '../partials/custom-css';
 import Panel from '../partials/panel';
+import EventSub from '../util/event-sub';
 
 const DEFAULT_TABS = [{
   title: 'Main',
@@ -154,6 +155,7 @@ export default class App extends Component {
     }
     return (
       <div className="trip-container">
+        <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
         <CustomCss iface={this.props.iface} />
         <div className="page-layout page-layout-tabs">
           {this.renderHeaderPanels()}
@@ -178,7 +180,8 @@ App.propTypes = {
   player: PropTypes.object,
   iface: PropTypes.object,
   loadData: PropTypes.func.isRequired,
-  fireEvent: PropTypes.func.isRequired
+  fireEvent: PropTypes.func.isRequired,
+  receiveMessage: PropTypes.func.isRequired
 };
 
 App.defaultProps = {
