@@ -84,7 +84,7 @@ export default Ember.Component.extend(WindowHeightMixin, {
       this.get('player').evaluateIf(panel.visible_if)
     ));
 
-    return collectedPanels;    
+    return collectedPanels;
   },
 
   tabPanels: function() {

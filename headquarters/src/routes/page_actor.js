@@ -60,7 +60,7 @@ const actorsListRoute = async (req, res) => {
         .value();
       return {
         experienceTitle: tripPlayers[0].trip.experience.title,
-        tripDate: moment(trip.date).format('MMM DD'),
+        tripDate: moment.utc(trip.date).format('MMM DD'),
         tripParticipants: tripParticipants.map(participant => ({
           participantId: participant.id,
           name: participant.name,

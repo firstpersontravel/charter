@@ -51,6 +51,29 @@ COPY apps/agency /var/app/apps/agency
 # Build agency
 RUN cd /var/app/apps/agency && NODE_ENV=production webpack
 
+##########################
+##### Travel2 builder #####
+##########################
+FROM node:12-alpine AS travel2-builder
+
+# Install requirements for node-sass and app build tools
+RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
+
+# Install core modules
+COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
+RUN cd /var/app/fptcore && npm -q install
+
+# Install travel2 modules
+COPY apps/travel2/package.json apps/travel2/package-lock.json /var/app/apps/travel2/
+RUN cd /var/app/apps/travel2 && npm -q install
+
+# Install apps directory and static dir
+COPY fptcore /var/app/fptcore
+COPY apps/travel2 /var/app/apps/travel2
+
+# Build travel2
+RUN cd /var/app/apps/travel2 && NODE_ENV=production webpack
+
 ######################
 ##### Main image #####
 ######################
@@ -75,6 +98,7 @@ COPY headquarters /var/app/headquarters
 # Copy build applications
 COPY --from=travel-builder /var/app/apps/travel/dist /var/app/apps/travel/dist
 COPY --from=agency-builder /var/app/build /var/app/build
+COPY --from=travel2-builder /var/app/build /var/app/build
 
 # Set the default directory for our environment
 WORKDIR /var/app
