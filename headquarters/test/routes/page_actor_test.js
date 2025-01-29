@@ -1,5 +1,4 @@
 const assert = require('assert');
-const moment = require('moment-timezone');
 const httpMocks = require('node-mocks-http');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
@@ -23,6 +22,7 @@ describe('pageActorRoutes', () => {
         participant: { id: 10, name: 'g s' },
         trip: {
           id: 5,
+          date: '2024-03-20',
           script: {
             content: {
               roles: [
@@ -73,7 +73,7 @@ describe('pageActorRoutes', () => {
         orgTitle: 'Org',
         trips: [{
           experienceTitle: 'Amazing Adventure',
-          tripDate: moment.utc().format('MMM DD'),
+          tripDate: 'Mar 20',
           tripParticipants: [{
             participantId: 10,
             name: 'g s',
