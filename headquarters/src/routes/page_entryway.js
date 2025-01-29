@@ -144,7 +144,7 @@ const entrywaySubmitRoute = async (req, res) => {
     return;
   }
 
-  const trip = await EntrywayController.createTrip(script, playerRole.name, 
+  const trip = await EntrywayController.createTripFromEntryway(script, playerRole.name, 
     phoneNumber ? `+1${phoneNumber}` : '', name);
 
   // Reset it to the start to initiate starting actions like start scene.

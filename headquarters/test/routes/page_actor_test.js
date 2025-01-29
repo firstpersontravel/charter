@@ -22,6 +22,7 @@ describe('pageActorRoutes', () => {
         participant: { id: 10, name: 'g s' },
         trip: {
           id: 5,
+          date: '2024-03-20',
           script: {
             content: {
               roles: [
@@ -72,7 +73,7 @@ describe('pageActorRoutes', () => {
         orgTitle: 'Org',
         trips: [{
           experienceTitle: 'Amazing Adventure',
-          tripDate: mockNow.format('MMM DD'),
+          tripDate: 'Mar 20',
           tripParticipants: [{
             participantId: 10,
             name: 'g s',
