@@ -9,6 +9,10 @@ export default class Evaluator {
     this.playerId = playerId;
   }
 
+  getScriptContent() {
+    return this.state.script.content;
+  }
+
   getPlayer() {
     return this.state.players.find(p => p.id === this.playerId);
   }

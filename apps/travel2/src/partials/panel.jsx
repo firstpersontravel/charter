@@ -5,16 +5,20 @@ import PropTypes from 'prop-types';
 import AudioForegroundPanel from '../panels/audio-foreground';
 import ButtonPanel from '../panels/button';
 import ChoicePanel from '../panels/choice';
+import ContentBrowsePanel from '../panels/content-browse';
 import TextPanel from '../panels/text';
+import YesnoPanel from '../panels/yesno';
 
 const panelTypes = {
   audio_foreground: AudioForegroundPanel,
   button: ButtonPanel,
   choice: ChoicePanel,
-  text: TextPanel
+  content_browse: ContentBrowsePanel,
+  text: TextPanel,
+  yesno: YesnoPanel
 };
 
-export default function Panel(props) {
+function renderSubpanel(props) {
   if (panelTypes[props.panel.type]) {
     return React.createElement(panelTypes[props.panel.type], props);
   }
@@ -23,6 +27,10 @@ export default function Panel(props) {
       Unknown type: {props.panel.type}
     </div>
   );
+}
+
+export default function Panel(props) {
+  return renderSubpanel({ ...props, renderSubpanel: renderSubpanel });
 }
 
 Panel.propTypes = {
