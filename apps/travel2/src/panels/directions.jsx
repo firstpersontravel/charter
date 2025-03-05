@@ -1,18 +1,47 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import PropTypes from 'prop-types';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCrosshairs } from '@fortawesome/free-solid-svg-icons'
 
+import { Circle, Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
+
+import L from 'leaflet';
+import PolylineEncoded from 'polyline-encoded';
+
+L.Icon.Default.imagePath = '/static/images/';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fptCore from 'fptcore';
+
+import 'leaflet/dist/leaflet.css';
+
+const MAPBOX_TILE_URL = 'https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2FiZXNtZWQiLCJhIjoiY2lxcGhsZjBjMDI2eGZubm5pa2RkZ2M3aSJ9.e_3OxrkDEvTfRx6HrbUPmg';
 
 export default class DirectionsPanel extends React.Component {
   constructor(props) {
     super(props);
+    this.elementRef = createRef();
+    this.updateRect = this.updateRect.bind(this);
+    this.state = { rect: null };
   }
 
   onArrive() {}
+
+  updateRect() {
+    if (this.elementRef.current) {
+      this.setState({ rect: this.elementRef.current.getBoundingClientRect() });
+    }
+  };
+
+  componentDidMount() {
+    this.updateRect();
+    window.addEventListener('resize', this.updateRect);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateRect);
+  }
 
   shouldShowArrivalConfirmation() {
     return false;
@@ -103,10 +132,25 @@ export default class DirectionsPanel extends React.Component {
     );
   }
 
+  getHeight() {
+    if (!this.state.rect) {
+      return 1000;
+    }
+    const bottomPadding = 35;
+    return window.innerHeight - this.state.rect.top - bottomPadding;
+  }
+
   renderMap() {
     return (
       <div className="pure-u-1-1 pure-u-sm-2-3 directions-map">
-        ...map...
+        <Map center={[37.7749, -122.4194]} zoom={13} style={{ height: this.getHeight() }}>
+          <TileLayer url={MAPBOX_TILE_URL} />
+          <Marker position={[37.7749, -122.4194]}>
+            <Popup>
+              A pretty CSS3 popup. <br/> Easily customizable.
+            </Popup>
+          </Marker>
+        </Map>
       </div>
     );
   }
@@ -209,7 +253,7 @@ export default class DirectionsPanel extends React.Component {
 
   render() {
     return (
-      <div className="page-panel-directions pure-g">
+      <div className="page-panel-directions pure-g" ref={this.elementRef}>
         {this.renderPhoneFormat()}
         {this.renderMap()}
         {this.renderDirections()}

@@ -21,6 +21,9 @@ const plugins = [
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   devtool: isProduction ? 'source-map' : 'cheap-source-map',
+  devServer: {
+    port: 8082
+  },
   entry: [
     './src/index.jsx',
     './style/app.less'
@@ -66,7 +69,7 @@ module.exports = {
         // path.join(__dirname, 'node_modules/fptcore/src')
       ]
     }, {
-      test: /\.less$/i,
+      test: /\.(less|css)$/i,
       loaders: [
         // compiles Less to CSS
         'style-loader',
