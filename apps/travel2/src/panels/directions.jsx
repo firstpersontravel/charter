@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCrosshairs } from '@fortawesome/free-solid-svg-icons'
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fptCore from 'fptcore';
 
@@ -167,7 +170,7 @@ export default class DirectionsPanel extends React.Component {
         </td>
         <td className="directions-list-zoom">
           <button className="pure-button" onClick={() => this.onZoomTo(step)}>
-            <i className="fa fa-crosshairs"></i>
+            <FontAwesomeIcon icon={faCrosshairs} />
           </button>
         </td>
       </tr>
@@ -184,7 +187,7 @@ export default class DirectionsPanel extends React.Component {
             <td className="directions-list-distance"></td>
             <td className="directions-list-zoom">
               <button className="pure-button" onClick={this.onZoomToEnd}>
-                <i className="fa fa-crosshairs"></i>
+                <FontAwesomeIcon icon={faCrosshairs} />
               </button>
             </td>
           </tr>
