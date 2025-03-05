@@ -1,5 +1,7 @@
 import config from './config';
 
+import moment from 'moment';
+
 function loadLegacyData(legacyData) {
   return {
     type: 'loadLegacyData',
@@ -85,5 +87,18 @@ export function fireEvent(tripId, playerId, event) {
 export function receiveMessage(tripId, msg) {
   return function (dispatch) {
     return refresh(tripId, dispatch);
+  };
+}
+
+export function updateLocation(tripId, participantId, lat, lng) {
+  return function (dispatch) {
+    const params = {
+      location_latitude: lat,
+      location_longitude: lng,
+      location_accuracy: 30,
+      location_timestamp: Math.floor(moment.utc().valueOf() / 1000)
+    };
+    postData(`${config.serverUrl}/api/trips/${tripId}/device_state/${participantId}`, params)
+      .then(() => refresh(tripId, dispatch));
   };
 }

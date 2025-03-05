@@ -1,15 +1,27 @@
 import React, { createRef } from 'react';
 import PropTypes from 'prop-types';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCrosshairs } from '@fortawesome/free-solid-svg-icons'
+import { Map, Marker, TileLayer, Polyline } from 'react-leaflet';
 
-import { Circle, Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
-
-import L from 'leaflet';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import PolylineEncoded from 'polyline-encoded';
 
+import distance from '../util/distance';
+
+import L from 'leaflet';
+
 L.Icon.Default.imagePath = '/static/images/';
+
+const participantIcon = L.icon({
+  iconUrl: '/static/images/marker-orange.png',
+  iconRetinaUrl: '/static/images/marker-orange-2x.png',
+  shadowUrl: '/static/images/marker-shadow.png',
+  shadowRetinaUrl: '/static/images/marker-shadow@2x.png',
+  iconSize:     [25, 41],
+  shadowSize:   [41, 41],
+  iconAnchor:   [12, 41],
+  shadowAnchor: [12, 41]
+});
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fptCore from 'fptcore';
@@ -23,10 +35,21 @@ export default class DirectionsPanel extends React.Component {
     super(props);
     this.elementRef = createRef();
     this.updateRect = this.updateRect.bind(this);
-    this.state = { rect: null };
+    this.onZoomToEnd = this.onZoomToEnd.bind(this);
+    this.onZoomToSelf = this.onZoomToSelf.bind(this);
+    this.onArrive = this.onArrive.bind(this);
+    this.state = {
+      center: null,
+      rect: null
+    };
   }
 
-  onArrive() {}
+  onArrive() {
+    this.props.fireEvent({
+      type: 'directions_arrived',
+      directions_id: this.props.panel.id
+    });
+  }
 
   updateRect() {
     if (this.elementRef.current) {
@@ -43,10 +66,6 @@ export default class DirectionsPanel extends React.Component {
     window.removeEventListener('resize', this.updateRect);
   }
 
-  shouldShowArrivalConfirmation() {
-    return false;
-  }
-
   getDestinationName() {
     if (this.props.panel.destination_name) {
       return this.props.panel.destination_name;
@@ -60,11 +79,6 @@ export default class DirectionsPanel extends React.Component {
   getWaypointOption(waypointName) {
     const scriptContent = this.props.evaluator.getScriptContent();
     const waypointOptions = this.props.evaluator.getWaypointOptions();
-    const routeName = this.props.panel.route;
-    const route = (scriptContent.routes || []).find(r => r.name === routeName);
-    if (!route) {
-      return null;
-    }
     return fptCore.WaypointCore.optionForWaypoint(scriptContent,
       waypointName, waypointOptions);
   }
@@ -76,9 +90,32 @@ export default class DirectionsPanel extends React.Component {
   }
 
   getToWaypoint() {
+    if (this.props.panel.waypoint) {
+      const waypointName = this.props.panel.waypoint;
+      return this.getWaypointOption(waypointName);
+    }
     const routeName = this.props.panel.route;
     const route = (this.props.evaluator.getScriptContent().routes || []).find(r => r.name === routeName);
     return route && this.getWaypointOption(route.to);
+  }
+
+  getPolyline() {
+    const route = this.getDirections();
+    if (!route) { return []; }
+    return L.Polyline.fromEncoded(route.polyline).getLatLngs();
+  }
+
+  getWaypointLocation() {
+    const waypoint = this.getToWaypoint();
+    if (!waypoint) { return null; }
+    const coords = waypoint.location.coords;
+    return coords ? L.latLng(coords[0], coords[1]) : null;
+  }
+
+  getParticipantLocation() {
+    const participant = this.props.evaluator.getParticipant();
+    if (!participant || !participant.locationLatitude) { return null; }
+    return L.latLng(participant.locationLatitude, participant.locationLongitude);
   }
 
   getDirections() {
@@ -102,16 +139,42 @@ export default class DirectionsPanel extends React.Component {
     ));
   }
 
-  onZoomToSelf() {
+  getDistanceToWaypoint() {
+    const participant = this.props.evaluator.getParticipant();
+    if (!participant || !participant.locationLatitude) { return null; }
+    const waypoint = this.getToWaypoint();
+    if (!waypoint) { return null; }
+    return distance(
+      participant.locationLatitude,
+      participant.locationLongitude,
+      waypoint.location.coords[0],
+      waypoint.location.coords[1]
+    );
+  }
 
+  isCloseToWaypoint() {
+    const distance = this.getDistanceToWaypoint();
+    return distance !== null && distance < 500;
+  }
+
+  hasArrivalTrigger() {
+    return !!(this.props.evaluator.getScriptContent().triggers || []).find(trigger => (
+      trigger.event &&
+      trigger.event.type === 'directions_arrived' &&
+      trigger.event.directions === this.props.panel.id
+    ));
+  }
+
+  shouldShowArrivalConfirmation() {
+    return this.isCloseToWaypoint() && this.hasArrivalTrigger();
+  }
+
+  onZoomToSelf() {
+    this.setState({ center: this.getParticipantLocation() });
   }
 
   onZoomToEnd() {
-
-  }
-
-  onZoomTo(step) {
-
+    this.setState({ center: this.getWaypointLocation() });
   }
 
   renderPhoneFormat() {
@@ -141,15 +204,20 @@ export default class DirectionsPanel extends React.Component {
   }
 
   renderMap() {
+    const center = this.state.center || this.getParticipantLocation();
+    const waypointMarker = this.getWaypointLocation() && (
+      <Marker position={this.getWaypointLocation()} />
+    );
+    const participantMarker = this.getParticipantLocation() && (
+      <Marker position={this.getParticipantLocation()} icon={participantIcon} />
+    );
     return (
       <div className="pure-u-1-1 pure-u-sm-2-3 directions-map">
-        <Map center={[37.7749, -122.4194]} zoom={13} style={{ height: this.getHeight() }}>
+        <Map center={center} zoom={13} style={{ height: this.getHeight() }}>
           <TileLayer url={MAPBOX_TILE_URL} />
-          <Marker position={[37.7749, -122.4194]}>
-            <Popup>
-              A pretty CSS3 popup. <br/> Easily customizable.
-            </Popup>
-          </Marker>
+          <Polyline positions={this.getPolyline()} />
+          {waypointMarker}
+          {participantMarker}
         </Map>
       </div>
     );
@@ -212,11 +280,7 @@ export default class DirectionsPanel extends React.Component {
         <td className="directions-list-distance">
           {step.distance}
         </td>
-        <td className="directions-list-zoom">
-          <button className="pure-button" onClick={() => this.onZoomTo(step)}>
-            <FontAwesomeIcon icon={faCrosshairs} />
-          </button>
-        </td>
+        <td className="directions-list-zoom"></td>
       </tr>
     ));
 
@@ -229,11 +293,7 @@ export default class DirectionsPanel extends React.Component {
               Arrive at <strong>{this.getDestinationName()}</strong>
             </td>
             <td className="directions-list-distance"></td>
-            <td className="directions-list-zoom">
-              <button className="pure-button" onClick={this.onZoomToEnd}>
-                <FontAwesomeIcon icon={faCrosshairs} />
-              </button>
-            </td>
+            <td className="directions-list-zoom"></td>
           </tr>
         </tbody>
       </table>

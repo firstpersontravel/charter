@@ -21,6 +21,10 @@ export default class Evaluator {
     return this.state.players.find(p => p.id === this.playerId);
   }
 
+  getParticipant() {
+    return this.state.participants.find(p => p.id === this.getPlayer().participantId);
+  }
+
   getActionContext() {
     const player = this.getPlayer();
     return {

@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import App from '../components/app';
 import Evaluator from '../util/evaluator';
-import { loadData, fireEvent, receiveMessage } from '../actions';
+import { loadData, fireEvent, receiveMessage, updateLocation } from '../actions';
 
 function getPlayer(state, ownProps) {
   if (!state.players) {
@@ -28,12 +28,21 @@ function getInterface(state, ownProps) {
   return iface;
 }
 
+function getParticipant(state, ownProps) {
+  const player = getPlayer(state, ownProps);
+  if (!player || !player.participantId) {
+    return null;
+  }
+  return state.participants.find(p => p.id === player.participantId);
+}
+
 function mapStateToProps(state, ownProps) {
   return {
     experience: state.experience,
     trip: state.trip,
     script: state.script,
     player: getPlayer(state, ownProps),
+    participant: getParticipant(state, ownProps),
     evaluator: new Evaluator(state, Number(ownProps.match.params.playerId)),
     iface: getInterface(state, ownProps)
   };
@@ -42,7 +51,8 @@ function mapStateToProps(state, ownProps) {
 const mapDispatchToProps = {
   loadData,
   fireEvent,
-  receiveMessage
+  receiveMessage,
+  updateLocation
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -5,6 +5,10 @@ import CustomCss from '../partials/custom-css';
 import Panel from '../partials/panel';
 import EventSub from '../util/event-sub';
 
+function hasLoggedIntoCreationTool() {
+  return !!localStorage.getItem('auth_latest');
+}
+
 const DEFAULT_TABS = [{
   title: 'Main',
   panels: [{ type: 'current_page' }]
@@ -15,6 +19,7 @@ export default class App extends Component {
     super(props);
     this.onFireEvent = this.onFireEvent.bind(this);
     this.onSelectTab = this.onSelectTab.bind(this);
+    this.onSetDebugLocation = this.onSetDebugLocation.bind(this);
     this.state = {
       selectedTabName: null
     };
@@ -31,6 +36,29 @@ export default class App extends Component {
   onSelectTab(e, tabTitle) {
     e.preventDefault();
     this.setState({ selectedTabName: tabTitle });
+  }
+
+  onSetDebugLocation(e) {
+    const waypointOptionName = e.target.value;
+    if (!waypointOptionName) {
+      return;
+    }
+    const waypoint = this.props.script.content.waypoints
+      .find(w => !!w.options.find(o => o.name === waypointOptionName));
+    if (!waypoint) {
+      return;
+    }
+    const waypointOption = waypoint.options.find(o => o.name === waypointOptionName);
+    const coords = waypointOption.location.coords;
+    if (!coords) {
+      return;
+    }
+    this.props.updateLocation(
+      this.props.trip.id,
+      this.props.player.participantId,
+      coords[0],
+      coords[1]
+    );
   }
 
   getTabs() {
@@ -165,24 +193,66 @@ export default class App extends Component {
     );
   }
 
+  getWaypointOptions() {
+    return this.props.script.content.waypoints
+      .map(w => w.options.map(o => Object.assign({ waypoint: w }, o)))
+      .flat();
+  }
+
+  renderDebugLocationField() {
+    const renderedWaypointOptions = this.getWaypointOptions().map(o => (
+      <option key={`${o.waypoint.name}-${o.name}`} value={o.name}>{o.waypoint.title}</option>
+    ));
+    return (
+      <form className="pure-form pure-g">
+        <select
+          disabled={!this.props.player.participantId}
+          className="pure-input-1"
+          onChange={this.onSetDebugLocation}>
+          <option value=''>Go to:</option>
+          {renderedWaypointOptions}
+        </select>
+      </form>
+    );
+  }
+
+  renderDebug() {
+    if (!hasLoggedIntoCreationTool()) {
+      return null;
+    }
+    return (
+      <div className="application-debug-console pure-g">
+        <div className="pure-u-4-5" style={{paddingTop: "0.5em", paddingBottom: "0.5em"}}>
+        (Logged into Charter: not sending GPS or page acks)
+        </div>
+        <div className="pure-u-1-5">
+          {this.renderDebugLocationField()}
+        </div>
+      </div>
+    );
+  }
+
   render() {
     if (!this.props.trip || !this.props.player) {
       return <div>Loading</div>;
     }
     return (
-      <div className="trip-container">
-        <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
-        <CustomCss iface={this.props.iface} />
-        <div className="page-layout page-layout-tabs">
-          {this.renderHeaderPanels()}
-          <div className="page-layout-tabs-content pure-g">
-            <div className="page-layout-tabs-content-inner pure-u-1">
-              {this.renderTabPanels()}
+      <>
+        {this.renderDebug()}
+        <div className="trip-container">
+          <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
+          <CustomCss iface={this.props.iface} />
+          <div className="page-layout page-layout-tabs">
+            {this.renderHeaderPanels()}
+            <div className="page-layout-tabs-content pure-g">
+              <div className="page-layout-tabs-content-inner pure-u-1">
+                {this.renderTabPanels()}
+              </div>
             </div>
+            {this.renderTabs()}
           </div>
-          {this.renderTabs()}
         </div>
-      </div>
+      </>
     );
   }
 }
@@ -194,10 +264,12 @@ App.propTypes = {
   script: PropTypes.object,
   trip: PropTypes.object,
   player: PropTypes.object,
+  participant: PropTypes.object,
   iface: PropTypes.object,
   loadData: PropTypes.func.isRequired,
   fireEvent: PropTypes.func.isRequired,
-  receiveMessage: PropTypes.func.isRequired
+  receiveMessage: PropTypes.func.isRequired,
+  updateLocation: PropTypes.func.isRequired
 };
 
 App.defaultProps = {
@@ -205,5 +277,6 @@ App.defaultProps = {
   trip: null,
   script: null,
   iface: null,
-  player: null
+  player: null,
+  participant: null
 };
