@@ -13,6 +13,10 @@ export default class Evaluator {
     return this.state.script.content;
   }
 
+  getWaypointOptions() {
+    return this.state.trip.waypointOptions;
+  }
+
   getPlayer() {
     return this.state.players.find(p => p.id === this.playerId);
   }

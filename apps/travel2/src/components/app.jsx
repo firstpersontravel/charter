@@ -14,6 +14,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.onFireEvent = this.onFireEvent.bind(this);
+    this.onSelectTab = this.onSelectTab.bind(this);
     this.state = {
       selectedTabName: null
     };
@@ -27,6 +28,11 @@ export default class App extends Component {
     this.props.fireEvent(this.props.trip.id, this.props.player.id, event);
   }
 
+  onSelectTab(e, tabTitle) {
+    e.preventDefault();
+    this.setState({ selectedTabName: tabTitle });
+  }
+
   getTabs() {
     const iface = this.props.iface;
     return iface && iface.tabs && iface.tabs.length ? iface.tabs : DEFAULT_TABS;
@@ -34,6 +40,14 @@ export default class App extends Component {
 
   getVisibleTabs() {
     return this.getTabs().filter(t => this.props.evaluator.evaluateIf(t.visible_if));
+  }
+
+  getSelectedTabTitle() {
+    const firstVisibleTab = this.getVisibleTabs()[0];
+    if (!firstVisibleTab) {
+      return null;
+    }
+    return this.state.selectedTabName || firstVisibleTab.title;
   }
 
   getSelectedTab() {
@@ -60,7 +74,7 @@ export default class App extends Component {
 
   getPagePanels() {
     const currentPage = this.getCurrentPage();
-    if (!currentPage) {
+    if (!currentPage || !currentPage.panels) {
       return [];
     }
     return currentPage.panels.filter(p => this.props.evaluator.evaluateIf(p.visible_if));
@@ -136,9 +150,11 @@ export default class App extends Component {
       return null;
     }
     const tabItems = this.getVisibleTabs().map(t => (
-      <a href="" className="pure-menu-link">
-        {t.title}
-      </a>
+      <li key={t.title} className={`pure-menu-item ${t.title === this.getSelectedTabTitle() ? 'pure-menu-selected' : ''}`}>
+        <a href="#" className="pure-menu-link" onClick={(e) => this.onSelectTab(e, t.title)}>
+          {t.title}
+        </a>
+      </li>
     ));
     return (
       <div className="page-layout-tabs-menu pure-menu pure-menu-horizontal">

@@ -6,6 +6,7 @@ import AudioForegroundPanel from '../panels/audio-foreground';
 import ButtonPanel from '../panels/button';
 import ChoicePanel from '../panels/choice';
 import ContentBrowsePanel from '../panels/content-browse';
+import DirectionsPanel from '../panels/directions';
 import TextPanel from '../panels/text';
 import YesnoPanel from '../panels/yesno';
 
@@ -14,6 +15,7 @@ const panelTypes = {
   button: ButtonPanel,
   choice: ChoicePanel,
   content_browse: ContentBrowsePanel,
+  directions: DirectionsPanel,
   text: TextPanel,
   yesno: YesnoPanel
 };
