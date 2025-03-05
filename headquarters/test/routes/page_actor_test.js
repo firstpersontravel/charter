@@ -3,7 +3,7 @@ const httpMocks = require('node-mocks-http');
 const Sequelize = require('sequelize');
 const sinon = require('sinon');
 
-const { sandbox, mockNow } = require('../mocks');
+const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const pageActorRoutes = require('../../src/routes/page_actor');
 
