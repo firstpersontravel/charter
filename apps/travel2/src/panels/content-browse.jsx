@@ -18,6 +18,7 @@ export default function ContentBrowsePanel({ panel, evaluator, fireEvent, render
 
   const renderedItems = visibleItems.map(item => (
     <li
+      key={item.name}
       className={
         `pure-menu-item ${item.name === selectedItemName ? 'pure-menu-selected' : ''}`
       }>
@@ -31,7 +32,7 @@ export default function ContentBrowsePanel({ panel, evaluator, fireEvent, render
   const selectedPanels = (selectedItem.panels || [])
     .filter(p => evaluator.evaluateIf(p.visible_if));
   const renderedPanels = selectedPanels
-    .map(p => renderSubpanel({ panel, evaluator, fireEvent, renderSubpanel }));
+    .map(p => renderSubpanel({ panel: p, evaluator, fireEvent, renderSubpanel, key: p.id }));
 
   return (
     <div>

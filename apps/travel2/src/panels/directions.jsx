@@ -204,7 +204,7 @@ export default class DirectionsPanel extends React.Component {
   }
 
   renderMap() {
-    const center = this.state.center || this.getParticipantLocation();
+    const center = this.state.center || this.getParticipantLocation() || this.getWaypointLocation() || L.latLng(37.884223, -122.312019);
     const waypointMarker = this.getWaypointLocation() && (
       <Marker position={this.getWaypointLocation()} />
     );
