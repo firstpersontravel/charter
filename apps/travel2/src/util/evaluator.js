@@ -21,6 +21,16 @@ export default class Evaluator {
     return this.state.players.find(p => p.id === this.playerId);
   }
 
+  getMessages(asRoleName, withRoleName = null) {
+    const messages = this.state.messages
+      .filter(m => [m.fromRoleName, m.toRoleName].includes(asRoleName));
+    if (withRoleName) {
+      return messages
+        .filter(m => [m.fromRoleName, m.toRoleName].includes(withRoleName));
+    }
+    return messages;
+  }
+
   getParticipant() {
     return this.state.participants.find(p => p.id === this.getPlayer().participantId);
   }

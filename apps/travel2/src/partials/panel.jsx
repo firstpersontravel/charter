@@ -7,6 +7,8 @@ import ButtonPanel from '../panels/button';
 import ChoicePanel from '../panels/choice';
 import ContentBrowsePanel from '../panels/content-browse';
 import DirectionsPanel from '../panels/directions';
+import ImagePanel from '../panels/image';
+import MessagesBrowsePanel from '../panels/messages-browse';
 import TextPanel from '../panels/text';
 import YesnoPanel from '../panels/yesno';
 
@@ -16,6 +18,8 @@ const panelTypes = {
   choice: ChoicePanel,
   content_browse: ContentBrowsePanel,
   directions: DirectionsPanel,
+  image: ImagePanel,
+  messages_browse: MessagesBrowsePanel,
   text: TextPanel,
   yesno: YesnoPanel
 };
