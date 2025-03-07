@@ -1,6 +1,5 @@
 import config from './config';
 
-import moment from 'moment';
 
 function loadLegacyData(legacyData) {
   return {

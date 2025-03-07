@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 
 import MessagesThreadPanel from './messages-thread';
 
-export default function MessagesBrowsePanel({ panel, evaluator, fireEvent, postAction }) {
+export default function MessagesBrowsePanel({
+  panel, evaluator, fireEvent, postAction
+}) {
   const asRoleName = panel.as || evaluator.getPlayer().roleName;
 
   const messagesWithSelf = evaluator.getMessages(asRoleName);
   const messagesWithRoleNames = [...new Set(messagesWithSelf
-    .map(m => m.fromRoleName === asRoleName ? m.toRoleName : m.fromRoleName))];
+    .map(m => (m.fromRoleName === asRoleName ? m.toRoleName : m.fromRoleName)))];
   const messagesWithRoles = messagesWithRoleNames
     .map(roleName => evaluator.getScriptContent().roles.find(r => r.name === roleName));
 
@@ -47,8 +49,7 @@ export default function MessagesBrowsePanel({ panel, evaluator, fireEvent, postA
               }}
               evaluator={evaluator}
               fireEvent={fireEvent}
-              postAction={postAction}
-            />
+              postAction={postAction} />
           </div>
         </div>
       </div>

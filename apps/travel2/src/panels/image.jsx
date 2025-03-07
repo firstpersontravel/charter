@@ -9,7 +9,7 @@ export default function ImagePanel({ panel, evaluator }) {
   }
   return (
     <div className={`page-panel-image ${imageStyleClass}`}>
-      <img style={{padding: "1em"}} src={fullPath}/>
+      <img style={{ padding: '1em' }} src={fullPath} />
     </div>
   );
 }

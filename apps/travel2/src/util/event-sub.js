@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Faye from 'faye';
 
-export default class EventSub extends Component {
+export default class EventSub extends React.Component {
   constructor(props) {
     super(props);
     this.client = new Faye.Client('/pubsub');
@@ -13,6 +13,7 @@ export default class EventSub extends Component {
   componentDidMount() {
     this.subscription = this.client.subscribe(`/trip_${this.props.tripId}`, this.onReceiveMessage);
   }
+
   componentWillUnmount() {
     this.subscription.cancel();
     this.subscription = null;

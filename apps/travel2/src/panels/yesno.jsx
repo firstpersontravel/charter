@@ -25,7 +25,8 @@ export default function YesnoPanel({ panel, evaluator, fireEvent }) {
   });
   return (
     <div className="page-panel-yesno page-panel-padded">
-      {humanizedText}<br />
+      {humanizedText}
+      <br />
       {choices}
     </div>
   );

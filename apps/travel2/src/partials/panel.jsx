@@ -38,7 +38,9 @@ function renderSubpanel(props) {
   }
   return (
     <div>
-      Unknown type: {props.panel.type}
+      Unknown type:
+      {' '}
+      {props.panel.type}
     </div>
   );
 }

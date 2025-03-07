@@ -46,7 +46,8 @@ export default class App extends Component {
     if (!this.props.player.participantId) {
       return;
     }
-    this.props.updateLocation(this.props.trip.id, this.props.player.participantId, lat, lng, accuracy, timestamp);
+    this.props.updateLocation(this.props.trip.id, this.props.player.participantId,
+      lat, lng, accuracy, timestamp);
   }
 
   onSelectTab(e, tabTitle) {
@@ -65,7 +66,7 @@ export default class App extends Component {
       return;
     }
     const waypointOption = waypoint.options.find(o => o.name === waypointOptionName);
-    const coords = waypointOption.location.coords;
+    const { coords } = waypointOption.location;
     if (!coords) {
       return;
     }
@@ -74,7 +75,7 @@ export default class App extends Component {
   }
 
   getTabs() {
-    const iface = this.props.iface;
+    const { iface } = this.props;
     return iface && iface.tabs && iface.tabs.length ? iface.tabs : DEFAULT_TABS;
   }
 
@@ -143,6 +144,12 @@ export default class App extends Component {
     return audioStates[this.props.player.roleName] || null;
   }
 
+  getWaypointOptions() {
+    return this.props.script.content.waypoints
+      .map(w => w.options.map(o => Object.assign({ waypoint: w }, o)))
+      .flat();
+  }
+
   collectPanelPartials(basePanels) {
     let collectedPanels = [];
     basePanels.forEach((panel) => {
@@ -179,8 +186,7 @@ export default class App extends Component {
         panel={panel}
         evaluator={this.props.evaluator}
         fireEvent={this.onFireEvent}
-        postAction={this.onPostAction}
-      />
+        postAction={this.onPostAction} />
     );
   }
 
@@ -198,7 +204,7 @@ export default class App extends Component {
     }
     const tabItems = this.getVisibleTabs().map(t => (
       <li key={t.title} className={`pure-menu-item ${t.title === this.getSelectedTabTitle() ? 'pure-menu-selected' : ''}`}>
-        <a href="#" className="pure-menu-link" onClick={(e) => this.onSelectTab(e, t.title)}>
+        <a href="#" className="pure-menu-link" onClick={e => this.onSelectTab(e, t.title)}>
           {t.title}
         </a>
       </li>
@@ -212,12 +218,6 @@ export default class App extends Component {
     );
   }
 
-  getWaypointOptions() {
-    return this.props.script.content.waypoints
-      .map(w => w.options.map(o => Object.assign({ waypoint: w }, o)))
-      .flat();
-  }
-
   renderDebugLocationField() {
     const renderedWaypointOptions = this.getWaypointOptions().map(o => (
       <option key={`${o.waypoint.name}-${o.name}`} value={o.name}>{o.waypoint.title}</option>
@@ -228,7 +228,7 @@ export default class App extends Component {
           disabled={!this.props.player.participantId}
           className="pure-input-1"
           onChange={this.onSetDebugLocation}>
-          <option value=''>Go to:</option>
+          <option value="">Go to:</option>
           {renderedWaypointOptions}
         </select>
       </form>
@@ -241,8 +241,8 @@ export default class App extends Component {
     }
     return (
       <div className="application-debug-console pure-g">
-        <div className="pure-u-4-5" style={{paddingTop: "0.5em", paddingBottom: "0.5em"}}>
-        (Logged into Charter; not tracking location)
+        <div className="pure-u-4-5" style={{ paddingTop: '0.5em', paddingBottom: '0.5em' }}>
+          (Logged into Charter; not tracking location)
         </div>
         <div className="pure-u-1-5">
           {this.renderDebugLocationField()}
@@ -294,10 +294,10 @@ App.propTypes = {
   script: PropTypes.object,
   trip: PropTypes.object,
   player: PropTypes.object,
-  participant: PropTypes.object,
   iface: PropTypes.object,
   loadData: PropTypes.func.isRequired,
   fireEvent: PropTypes.func.isRequired,
+  postAction: PropTypes.func.isRequired,
   receiveMessage: PropTypes.func.isRequired,
   updateLocation: PropTypes.func.isRequired
 };
@@ -307,6 +307,5 @@ App.defaultProps = {
   trip: null,
   script: null,
   iface: null,
-  player: null,
-  participant: null
+  player: null
 };

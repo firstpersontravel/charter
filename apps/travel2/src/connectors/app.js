@@ -2,7 +2,9 @@ import { connect } from 'react-redux';
 
 import App from '../components/app';
 import Evaluator from '../util/evaluator';
-import { loadData, fireEvent, receiveMessage, updateLocation, postAction } from '../actions';
+import {
+  loadData, fireEvent, receiveMessage, updateLocation, postAction
+} from '../actions';
 
 function getPlayer(state, ownProps) {
   if (!state.players) {
@@ -19,7 +21,7 @@ function getInterface(state, ownProps) {
   if (!player) {
     return null;
   }
-  const script = state.script;
+  const { script } = state;
   const role = (script.content.roles || []).find(r => r.name === player.roleName);
   if (!role) {
     return null;

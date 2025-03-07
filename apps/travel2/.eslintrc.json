@@ -1,43 +1,49 @@
 {
-    "extends": "airbnb",
-    "parser": "babel-eslint",
-    "plugins": [
-      "react"
-    ],
-    "env": {
-      "browser": true
-    },
-    "globals": {
-      "describe": true,
-      "it": true,
-      "window": true,
-      "google": true,
-      "fptcore": true,
-      "FS": true,
-      "Intercom": true
-    },
-    "rules": {
-      "class-methods-use-this": 0,
-      "object-shorthand": 0,
-      "import/prefer-default-export": 0,
-      "comma-dangle": [2, "never"],
-      "func-names": 0,
-      "no-console": 0,
-      "no-unused-vars": [2, {
-        "vars": "all",
-        "args": "none"
-      }],
-      "no-restricted-syntax": 0,
-      "jsx-a11y/no-static-element-interactions": 0,
-      "react/jsx-closing-bracket-location": [2, "after-props"],
-      "react/forbid-prop-types": 0
-    },
-    "settings": {
-      "import/resolver": {
-        "webpack": {
-          "config": "webpack.config.js"
-        }
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "plugins": [
+    "react"
+  ],
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "window": true,
+    "google": true,
+    "fptcore": true,
+    "FS": true,
+    "Intercom": true
+  },
+  "rules": {
+    "class-methods-use-this": 0,
+    "object-shorthand": 0,
+    "import/prefer-default-export": 0,
+    "comma-dangle": [2, "never"],
+    "func-names": 0,
+    "no-console": 0,
+    "no-unused-vars": [2, {
+      "vars": "all",
+      "args": "none"
+    }],
+    "no-restricted-syntax": 0,
+    "jsx-a11y/no-static-element-interactions": 0,
+    "react/jsx-closing-bracket-location": [2, "after-props"],
+    "react/forbid-prop-types": 0,
+    "react/destructuring-assignment": 0,
+    "jsx-a11y/anchor-is-valid": 0,
+    "jsx-a11y/media-has-caption": 0,
+    "react/button-has-type": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "react/no-danger": 0,
+    "jsx-a11y/alt-text": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "webpack.config.js"
       }
     }
   }
-  
+}

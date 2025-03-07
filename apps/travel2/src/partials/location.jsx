@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class LocationTracker extends Component {
+const MIN_FIX_FREQUENCY = 30000;
+
+
+export default class LocationTracker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       watchId: null,
       lastFix: null,
-      lastError: null,
-      isWatching: false
+      lastError: null
     };
 
     // throttle out updates more frequent than every 30 secs
-    this.minFixFrequency = 30000;
-    this._lastFix = null;
-    this._interval = null;
-    this._startCallback = null;
+    this.interval = null;
+    this.startCallback = null;
 
     // Bind methods
     this.handleFix = this.handleFix.bind(this);
@@ -32,21 +32,40 @@ export default class LocationTracker extends Component {
     this.stopWatching();
   }
 
+  getErrorTitle() {
+    const { lastError } = this.state;
+    if (!lastError) return null;
+
+    switch (lastError.code) {
+      case 'NO_GEOLOCATION':
+        return 'Location not supported';
+      case 1: // PERMISSION_DENIED
+        return 'Location permission denied';
+      case 2: // POSITION_UNAVAILABLE
+        return 'Location unavailable';
+      case 3: // TIMEOUT
+        return 'Location request timeout';
+      default:
+        return 'Unknown error';
+    }
+  }
+
+
   handleFix(position, force = false) {
     const thisFix = new Date();
-    if (this._lastFix && thisFix - this._lastFix < this.minFixFrequency && !force) {
+    if (this.state.lastFix && thisFix - this.state.lastFix < MIN_FIX_FREQUENCY && !force) {
       // ignore fix if more frequent
       return;
     }
-    
-    this._lastFix = new Date();
+
+    this.state.lastFix = new Date();
     const fix = {
       coords: position.coords,
       timestamp: position.timestamp
     };
-    
+
     this.setState({ lastFix: fix, lastError: null });
-    
+
     // Call the updateLocation prop with the new location
     if (this.props.updateLocation) {
       this.props.updateLocation(
@@ -59,30 +78,11 @@ export default class LocationTracker extends Component {
   }
 
   handleError(error) {
-    this.setState({ 
-      lastFix: null, 
-      lastError: error, 
-      watchId: null,
-      isWatching: false 
+    this.setState({
+      lastFix: null,
+      lastError: error,
+      watchId: null
     });
-  }
-
-  getErrorTitle() {
-    const { lastError } = this.state;
-    if (!lastError) return null;
-    
-    switch (lastError.code) {
-      case 'NO_GEOLOCATION':
-        return "Location not supported";
-      case 1: // PERMISSION_DENIED
-        return "Location permission denied";
-      case 2: // POSITION_UNAVAILABLE
-        return "Location unavailable";
-      case 3: // TIMEOUT
-        return "Location request timeout";
-      default:
-        return "Unknown error";
-    }
   }
 
   startWatching() {
@@ -102,26 +102,26 @@ export default class LocationTracker extends Component {
       this.handleError,
       options
     );
-    
-    this.setState({ watchId, isWatching: true });
+
+    this.setState({ watchId });
 
     // Start watching again on focus, and every minute
-    this._startCallback = () => this.startWatching();
-    window.addEventListener('focus', this._startCallback);
-    this._interval = setInterval(this._startCallback, 60000);
+    this.startCallback = () => this.startWatching();
+    window.addEventListener('focus', this.startCallback);
+    this.interval = setInterval(this.startCallback, 60000);
   }
 
   stopWatching() {
     if (!this.state.watchId) return;
-    
+
     navigator.geolocation.clearWatch(this.state.watchId);
-    clearInterval(this._interval);
-    window.removeEventListener('focus', this._startCallback);
-    
-    this._startCallback = null;
-    this._interval = null;
-    
-    this.setState({ watchId: null, isWatching: false });
+    clearInterval(this.interval);
+    window.removeEventListener('focus', this.startCallback);
+
+    this.startCallback = null;
+    this.interval = null;
+
+    this.setState({ watchId: null });
   }
 
   render() {
@@ -131,5 +131,5 @@ export default class LocationTracker extends Component {
 }
 
 LocationTracker.propTypes = {
-  updateLocation: PropTypes.func.isRequired,
+  updateLocation: PropTypes.func.isRequired
 };

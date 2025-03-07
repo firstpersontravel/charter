@@ -6,6 +6,7 @@ export default class Soundtrack extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      // eslint-disable-next-line react/no-unused-state
       currentTime: moment.utc(),
       duration: null,
       durationForUrl: null,
@@ -20,6 +21,7 @@ export default class Soundtrack extends Component {
   componentDidMount() {
     // Initialize timer for updating current time
     this.interval = setInterval(() => {
+      // eslint-disable-next-line react/no-unused-state
       this.setState({ currentTime: moment.utc() });
     }, 1000);
 
@@ -58,7 +60,7 @@ export default class Soundtrack extends Component {
 
   onAudioEnded = () => {
     this.setState({ isPlaying: false });
-    this.audioRef.current.src = ''; 
+    this.audioRef.current.src = '';
   }
 
   onAudioCanPlay = () => {
@@ -96,12 +98,13 @@ export default class Soundtrack extends Component {
   // Audio playback functions
   startOrAskPermission = () => {
     if (!this.props.audioState?.isPlaying) return;
-    
+
     if (!this.audioRef.current) return;
-    
+
     if (this.state.hasPlayPermission) {
       this.startPlaying();
     } else {
+      // eslint-disable-next-line no-undef
       swal({ title: 'Please tap to continue' }, () => {
         this.setState({ hasPlayPermission: true });
         this.startPlaying();
@@ -110,9 +113,9 @@ export default class Soundtrack extends Component {
   }
 
   startPlaying = () => {
-    const time = this.audioTime()
+    const time = this.audioTime();
     if (!this.audioRef.current) return;
-    
+
     if (time && time > 0) {
       this.audioRef.current.currentTime = time;
       // Don't start audio if we're later than the duration
@@ -124,14 +127,14 @@ export default class Soundtrack extends Component {
       .then(() => {
         this.setState({ isPlaying: true });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error playing audio:', err);
       });
   }
 
   stopPlaying = () => {
     if (!this.state.isPlaying || !this.audioRef.current) return;
-    
+
     this.setState({ isPlaying: false });
     this.audioRef.current.pause();
   }
@@ -140,11 +143,11 @@ export default class Soundtrack extends Component {
   audioTime = () => {
     const hasAudio = !!this.props.audioState?.url;
     if (!hasAudio) return 0;
-    
+
     if (!this.props.audioState?.isPlaying) {
       return (this.props.audioState?.pausedTime || 0).toFixed(1);
     }
-    
+
     const startedAt = this.props.audioState?.startedAt;
     const startedTime = this.props.audioState?.startedTime;
     const elapsedMsec = moment.utc().diff(startedAt);
@@ -158,29 +161,6 @@ export default class Soundtrack extends Component {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
-  render() {
-    const { audioState } = this.props;
-    const { duration } = this.state;
-    
-    // Computed properties
-    const hasAudio = !!audioState?.url;
-    const audioIsInProgress = hasAudio && this.audioTime() <= duration;
-    const audioIsLoading = !duration;
-    const audioHasEnded = hasAudio && duration && this.audioTime() > duration;
-    const audioElapsed = this.formatTime(this.audioTime());
-    const audioRemaining = this.formatTime(duration - this.audioTime());
-    const audioTitle = audioState?.title || 'Soundtrack';
-    const audioIsPlaying = !!audioState?.isPlaying;
-    const audioIsPaused = !!audioState?.pausedTime;
-
-    return (
-      <div className={`trip-soundtrack ${hasAudio ? 'active' : 'inactive'}`}>
-        <audio ref={this.audioRef} style={{ display: 'none' }} />
-        {this.renderContent(hasAudio, audioTitle, audioIsLoading, audioIsPlaying, audioHasEnded, audioElapsed)}
-      </div>
-    );
-  }
-
   renderContent(hasAudio, audioTitle, audioIsLoading, audioIsPlaying, audioHasEnded, audioElapsed) {
     if (!hasAudio) {
       return 'Nothing playing';
@@ -188,8 +168,9 @@ export default class Soundtrack extends Component {
 
     return (
       <>
-        <i className="fa fa-music"></i>
-        {audioTitle}&nbsp;&bull;&nbsp;
+        <i className="fa fa-music" />
+        {audioTitle}
+&nbsp;&bull;&nbsp;
         {this.renderAudioStatus(audioIsLoading, audioIsPlaying, audioHasEnded, audioElapsed)}
       </>
     );
@@ -214,8 +195,33 @@ export default class Soundtrack extends Component {
 
     return audioElapsed;
   }
+
+  render() {
+    const { audioState } = this.props;
+    const { duration } = this.state;
+
+    // Computed properties
+    const hasAudio = !!audioState?.url;
+    const audioIsLoading = !duration;
+    const audioHasEnded = hasAudio && duration && this.audioTime() > duration;
+    const audioElapsed = this.formatTime(this.audioTime());
+    const audioTitle = audioState?.title || 'Soundtrack';
+    const audioIsPlaying = !!audioState?.isPlaying;
+
+    return (
+      <div className={`trip-soundtrack ${hasAudio ? 'active' : 'inactive'}`}>
+        <audio ref={this.audioRef} style={{ display: 'none' }} />
+        {this.renderContent(hasAudio, audioTitle, audioIsLoading, audioIsPlaying,
+          audioHasEnded, audioElapsed)}
+      </div>
+    );
+  }
 }
 
 Soundtrack.propTypes = {
   audioState: PropTypes.object
+};
+
+Soundtrack.defaultProps = {
+  audioState: null
 };

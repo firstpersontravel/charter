@@ -20,7 +20,8 @@ export default function ChoicePanel({ panel, evaluator, fireEvent }) {
   });
   return (
     <div className="page-panel-choice page-panel-padded">
-      {humanizedText}<br />
+      {humanizedText}
+      <br />
       {choices}
     </div>
   );

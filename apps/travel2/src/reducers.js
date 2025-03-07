@@ -26,7 +26,7 @@ function readEntity(obj) {
 }
 
 function loadLegacyDataHandler(state, action) {
-  const included = action.legacyData.included;
+  const { included } = action.legacyData;
   return update(state, {
     org: { $set: readEntity(included.find(i => i.type === 'org')) },
     experience: { $set: readEntity(included.find(i => i.type === 'experience')) },
@@ -40,7 +40,7 @@ function loadLegacyDataHandler(state, action) {
 }
 
 function refreshLegacyDataHandler(state, action) {
-  const included = action.legacyData.included;
+  const { included } = action.legacyData;
   return update(state, {
     trip: { $set: readEntity(action.legacyData.data) },
     profiles: { $set: included.filter(i => i.type === 'profile').map(readEntity) },

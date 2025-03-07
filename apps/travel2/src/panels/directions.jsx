@@ -1,14 +1,17 @@
 import React, { createRef } from 'react';
 import PropTypes from 'prop-types';
 
-import { Map, Marker, TileLayer, Polyline } from 'react-leaflet';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import PolylineEncoded from 'polyline-encoded';
-
-import distance from '../util/distance';
+import {
+  Map, Marker, TileLayer, Polyline
+} from 'react-leaflet';
 
 import L from 'leaflet';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import fptCore from 'fptcore';
+import distance from '../util/distance';
+
+import 'leaflet/dist/leaflet.css';
 
 L.Icon.Default.imagePath = '/static/images/';
 
@@ -17,16 +20,11 @@ const participantIcon = L.icon({
   iconRetinaUrl: '/static/images/marker-orange-2x.png',
   shadowUrl: '/static/images/marker-shadow.png',
   shadowRetinaUrl: '/static/images/marker-shadow@2x.png',
-  iconSize:     [25, 41],
-  shadowSize:   [41, 41],
-  iconAnchor:   [12, 41],
+  iconSize: [25, 41],
+  shadowSize: [41, 41],
+  iconAnchor: [12, 41],
   shadowAnchor: [12, 41]
 });
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import fptCore from 'fptcore';
-
-import 'leaflet/dist/leaflet.css';
 
 const MAPBOX_TILE_URL = 'https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2FiZXNtZWQiLCJhIjoiY2lxcGhsZjBjMDI2eGZubm5pa2RkZ2M3aSJ9.e_3OxrkDEvTfRx6HrbUPmg';
 
@@ -44,19 +42,6 @@ export default class DirectionsPanel extends React.Component {
     };
   }
 
-  onArrive() {
-    this.props.fireEvent({
-      type: 'directions_arrived',
-      directions_id: this.props.panel.id
-    });
-  }
-
-  updateRect() {
-    if (this.elementRef.current) {
-      this.setState({ rect: this.elementRef.current.getBoundingClientRect() });
-    }
-  };
-
   componentDidMount() {
     this.updateRect();
     window.addEventListener('resize', this.updateRect);
@@ -66,14 +51,19 @@ export default class DirectionsPanel extends React.Component {
     window.removeEventListener('resize', this.updateRect);
   }
 
-  getDestinationName() {
-    if (this.props.panel.destination_name) {
-      return this.props.panel.destination_name;
-    }
-    if (this.getToWaypoint()) {
-      return this.getToWaypoint().location.address || this.getToWaypoint().location.title;
-    }
-    return 'destination';
+  onZoomToSelf() {
+    this.setState({ center: this.getParticipantLocation() });
+  }
+
+  onZoomToEnd() {
+    this.setState({ center: this.getWaypointLocation() });
+  }
+
+  onArrive() {
+    this.props.fireEvent({
+      type: 'directions_arrived',
+      directions_id: this.props.panel.id
+    });
   }
 
   getWaypointOption(waypointName) {
@@ -85,7 +75,8 @@ export default class DirectionsPanel extends React.Component {
 
   getFromWaypoint() {
     const routeName = this.props.panel.route;
-    const route = (this.props.evaluator.getScriptContent().routes || []).find(r => r.name === routeName);
+    const route = (this.props.evaluator.getScriptContent().routes || [])
+      .find(r => r.name === routeName);
     return route && this.getWaypointOption(route.from);
   }
 
@@ -95,7 +86,8 @@ export default class DirectionsPanel extends React.Component {
       return this.getWaypointOption(waypointName);
     }
     const routeName = this.props.panel.route;
-    const route = (this.props.evaluator.getScriptContent().routes || []).find(r => r.name === routeName);
+    const route = (this.props.evaluator.getScriptContent().routes || [])
+      .find(r => r.name === routeName);
     return route && this.getWaypointOption(route.to);
   }
 
@@ -105,10 +97,19 @@ export default class DirectionsPanel extends React.Component {
     return L.Polyline.fromEncoded(route.polyline).getLatLngs();
   }
 
+  getHeight() {
+    if (!this.state.rect) {
+      return 1000;
+    }
+    const bottomPadding = 35;
+    return window.innerHeight - this.state.rect.top - bottomPadding;
+  }
+
+
   getWaypointLocation() {
     const waypoint = this.getToWaypoint();
     if (!waypoint) { return null; }
-    const coords = waypoint.location.coords;
+    const { coords } = waypoint.location;
     return coords ? L.latLng(coords[0], coords[1]) : null;
   }
 
@@ -133,9 +134,9 @@ export default class DirectionsPanel extends React.Component {
     const fromOption = this.getWaypointOption(route.from);
     const toOption = this.getWaypointOption(route.to);
     return (scriptContent.directions || []).find(direction => (
-      direction.route === routeName &&
-      direction.from_option === fromOption.name &&
-      direction.to_option === toOption.name
+      direction.route === routeName
+      && direction.from_option === fromOption.name
+      && direction.to_option === toOption.name
     ));
   }
 
@@ -152,16 +153,32 @@ export default class DirectionsPanel extends React.Component {
     );
   }
 
+  getDestinationName() {
+    if (this.props.panel.destination_name) {
+      return this.props.panel.destination_name;
+    }
+    if (this.getToWaypoint()) {
+      return this.getToWaypoint().location.address || this.getToWaypoint().location.title;
+    }
+    return 'destination';
+  }
+
+  updateRect() {
+    if (this.elementRef.current) {
+      this.setState({ rect: this.elementRef.current.getBoundingClientRect() });
+    }
+  }
+
   isCloseToWaypoint() {
-    const distance = this.getDistanceToWaypoint();
-    return distance !== null && distance < 500;
+    const distanceToWaypoint = this.getDistanceToWaypoint();
+    return distanceToWaypoint !== null && distanceToWaypoint < 500;
   }
 
   hasArrivalTrigger() {
     return !!(this.props.evaluator.getScriptContent().triggers || []).find(trigger => (
-      trigger.event &&
-      trigger.event.type === 'directions_arrived' &&
-      trigger.event.directions === this.props.panel.id
+      trigger.event
+      && trigger.event.type === 'directions_arrived'
+      && trigger.event.directions === this.props.panel.id
     ));
   }
 
@@ -169,19 +186,14 @@ export default class DirectionsPanel extends React.Component {
     return this.isCloseToWaypoint() && this.hasArrivalTrigger();
   }
 
-  onZoomToSelf() {
-    this.setState({ center: this.getParticipantLocation() });
-  }
-
-  onZoomToEnd() {
-    this.setState({ center: this.getWaypointLocation() });
-  }
-
   renderPhoneFormat() {
     if (this.shouldShowArrivalConfirmation()) {
       return (
         <div className="pure-u-1-1 pure-visible-xs">
-          <h3>Close to {this.getDestinationName()}</h3>
+          <h3>
+            Close to
+            {this.getDestinationName()}
+          </h3>
           <button className="pure-button pure-button-primary pure-button-block}" onClick={this.onArrive}>
             Confirm arrival
           </button>
@@ -190,21 +202,17 @@ export default class DirectionsPanel extends React.Component {
     }
     return (
       <div className="pure-u-1-1 pure-visible-xs">
-        <h3>Directions to {this.getDestinationName()}</h3>
+        <h3>
+          Directions to
+          {this.getDestinationName()}
+        </h3>
       </div>
     );
   }
 
-  getHeight() {
-    if (!this.state.rect) {
-      return 1000;
-    }
-    const bottomPadding = 35;
-    return window.innerHeight - this.state.rect.top - bottomPadding;
-  }
-
   renderMap() {
-    const center = this.state.center || this.getParticipantLocation() || this.getWaypointLocation() || L.latLng(37.884223, -122.312019);
+    const center = this.state.center || this.getParticipantLocation()
+      || this.getWaypointLocation() || L.latLng(37.884223, -122.312019);
     const waypointMarker = this.getWaypointLocation() && (
       <Marker position={this.getWaypointLocation()} />
     );
@@ -227,7 +235,10 @@ export default class DirectionsPanel extends React.Component {
     if (this.shouldShowArrivalConfirmation()) {
       return (
         <>
-          <h2>Close to {this.getDestinationName()}</h2>
+          <h2>
+            Close to
+            {this.getDestinationName()}
+          </h2>
           <button className="pure-button pure-button-primary pure-button-block" onClick={this.onArrive}>
             Confirm arrival
           </button>
@@ -244,7 +255,9 @@ export default class DirectionsPanel extends React.Component {
     if (this.getDestinationName()) {
       title = (
         <h2>
-          Directions to {this.getDestinationName()}
+          Directions to
+          {' '}
+          {this.getDestinationName()}
         </h2>
       );
       destinationTitle += `: ${this.getDestinationName()}`;
@@ -260,7 +273,9 @@ export default class DirectionsPanel extends React.Component {
         </p>
         <p>
           <button className="pure-button pure-button-block" onClick={this.onZoomToEnd}>
-            Zoom to {destinationTitle}
+            Zoom to
+            {' '}
+            {destinationTitle}
           </button>
         </p>
       </>
@@ -272,7 +287,7 @@ export default class DirectionsPanel extends React.Component {
       return null;
     }
 
-    const renderedSteps = this.getDirections().steps.map((step) => (
+    const renderedSteps = this.getDirections().steps.map(step => (
       <tr key={step.instructions}>
         <td className="directions-list-instruction">
           <div dangerouslySetInnerHTML={{ __html: step.instructions }} />
@@ -280,7 +295,7 @@ export default class DirectionsPanel extends React.Component {
         <td className="directions-list-distance">
           {step.distance}
         </td>
-        <td className="directions-list-zoom"></td>
+        <td className="directions-list-zoom" />
       </tr>
     ));
 
@@ -290,10 +305,12 @@ export default class DirectionsPanel extends React.Component {
           {renderedSteps}
           <tr>
             <td className="directions-list-instruction">
-              Arrive at <strong>{this.getDestinationName()}</strong>
+              Arrive at
+              {' '}
+              <strong>{this.getDestinationName()}</strong>
             </td>
-            <td className="directions-list-distance"></td>
-            <td className="directions-list-zoom"></td>
+            <td className="directions-list-distance" />
+            <td className="directions-list-zoom" />
           </tr>
         </tbody>
       </table>
@@ -317,7 +334,7 @@ export default class DirectionsPanel extends React.Component {
         {this.renderPhoneFormat()}
         {this.renderMap()}
         {this.renderDirections()}
-    </div>
+      </div>
     );
   }
 }
