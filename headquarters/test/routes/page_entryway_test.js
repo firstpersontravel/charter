@@ -65,7 +65,7 @@ describe('pageEntrywayRoutes', () => {
       await pageEntrywayRoutes.entrywayRoute(req, res);
 
       assert.strictEqual(res.statusCode, 302);
-      assert.strictEqual(res._getRedirectUrl(), `/travel/${tripId}/${playerId}`);
+      assert.strictEqual(res._getRedirectUrl(), `/travel2/${tripId}/${playerId}`);
     });
 
     it('returns a page', async () => {
@@ -159,7 +159,7 @@ describe('pageEntrywayRoutes', () => {
       await pageEntrywayRoutes.entrywaySubmitRoute(req, res);
 
       assert.strictEqual(res.statusCode, 302);
-      assert.strictEqual(res._getRedirectUrl(), `/travel/${tripId}/${playerId}`);
+      assert.strictEqual(res._getRedirectUrl(), `/travel2/${tripId}/${playerId}`);
       assert.strictEqual(res.cookies[`exp-${experienceId}`].value, playerId);
     });
   });
@@ -279,7 +279,7 @@ nav {
 
       // Test rendered redirect
       assert.strictEqual(res.statusCode, 302);
-      const redirectUrl = `/travel/${existingPlayer.tripId}/${existingPlayer.id}`;
+      const redirectUrl = `/travel2/${existingPlayer.tripId}/${existingPlayer.id}`;
       assert.strictEqual(res._getRedirectUrl(), redirectUrl);
     });
   });
@@ -337,7 +337,7 @@ nav {
 
         // Test rendered redirect
         assert.strictEqual(res.statusCode, 302);
-        const redirectUrl = `/travel/${player.tripId}/${player.id}`;
+        const redirectUrl = `/travel2/${player.tripId}/${player.id}`;
         assert.strictEqual(res._getRedirectUrl(), redirectUrl);
       });
 

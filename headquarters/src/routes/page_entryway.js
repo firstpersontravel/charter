@@ -108,7 +108,7 @@ const entrywayRoute = async (req, res) => {
 
   const loggedInPlayer = await getLoggedInPlayer(req, experience.id, playerRole.name);
   if (loggedInPlayer) {
-    res.redirect(`/travel/${loggedInPlayer.tripId}/${loggedInPlayer.id}`);
+    res.redirect(`/travel2/${loggedInPlayer.tripId}/${loggedInPlayer.id}`);
     return;
   }
 
@@ -158,7 +158,7 @@ const entrywaySubmitRoute = async (req, res) => {
     { where: { id: player.participantId } });
 
   res.cookie(`exp-${experience.id}`, player.id);
-  res.redirect(`/travel/${player.tripId}/${player.id}`);
+  res.redirect(`/travel2/${player.tripId}/${player.id}`);
 };
 
 
@@ -184,7 +184,7 @@ const joinRoute = async (req, res) => {
   // Return logged in player
   const loggedInPlayer = await getLoggedInPlayer(req, trip.experienceId, roleName);
   if (loggedInPlayer) {
-    res.redirect(`/travel/${loggedInPlayer.tripId}/${loggedInPlayer.id}`);
+    res.redirect(`/travel2/${loggedInPlayer.tripId}/${loggedInPlayer.id}`);
     return;
   }
 
@@ -194,7 +194,7 @@ const joinRoute = async (req, res) => {
   });
   if (existingPlayers.length > 0) {
     const lastPlayer = existingPlayers[existingPlayers.length - 1];
-    res.redirect(`/travel/${lastPlayer.tripId}/${lastPlayer.id}`);
+    res.redirect(`/travel2/${lastPlayer.tripId}/${lastPlayer.id}`);
     return;
   }
 
@@ -282,7 +282,7 @@ const joinSubmitRoute = async (req, res) => {
   }
     
   res.cookie(`exp-${trip.experienceId}`, player.id);
-  res.redirect(`/travel/${player.tripId}/${player.id}`);
+  res.redirect(`/travel2/${player.tripId}/${player.id}`);
 };
 
 module.exports = {

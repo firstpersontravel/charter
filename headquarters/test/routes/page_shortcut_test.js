@@ -27,7 +27,7 @@ describe('pageShortcutRoutes', () => {
 
       // Test redirect happens correctly
       assert.strictEqual(res.statusCode, 302);
-      assert.strictEqual(res._getRedirectUrl(), '/travel/2/1');
+      assert.strictEqual(res._getRedirectUrl(), '/travel2/2/1');
 
       // Test call made correctly
       sinon.assert.calledOnce(models.Player.findOne);
