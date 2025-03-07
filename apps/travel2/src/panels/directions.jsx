@@ -7,6 +7,9 @@ import {
 
 import L from 'leaflet';
 
+// eslint-disable-next-line no-unused-vars
+import PolylineEncoded from 'polyline-encoded';
+
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fptCore from 'fptcore';
 import distance from '../util/distance';
