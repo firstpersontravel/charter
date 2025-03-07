@@ -73,6 +73,19 @@ export function refreshData(tripId, playerId) {
   };
 }
 
+export function postAction(tripId, playerId, actionName, actionParams) {
+  return function (dispatch) {
+    const params = {
+      client_id: config.clientId,
+      player_id: playerId,
+      name: actionName,
+      params: actionParams
+    };
+    postData(`${config.serverUrl}/api/trips/${tripId}/actions`, params)
+      .then(() => refresh(tripId, dispatch));
+  };
+}
+
 export function fireEvent(tripId, playerId, event) {
   return function (dispatch) {
     const params = Object.assign({}, event, {

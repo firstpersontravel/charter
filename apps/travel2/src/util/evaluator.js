@@ -17,8 +17,16 @@ export default class Evaluator {
     return this.state.trip.waypointOptions;
   }
 
+  getTrip() {
+    return this.state.trip;
+  }
+
   getPlayer() {
     return this.state.players.find(p => p.id === this.playerId);
+  }
+
+  getPlayerByRoleName(roleName) {
+    return this.state.players.find(p => p.roleName === roleName);
   }
 
   getMessages(asRoleName, withRoleName = null) {

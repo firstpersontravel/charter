@@ -9,6 +9,7 @@ import ContentBrowsePanel from '../panels/content-browse';
 import DirectionsPanel from '../panels/directions';
 import ImagePanel from '../panels/image';
 import MessagesBrowsePanel from '../panels/messages-browse';
+import MessagesThreadPanel from '../panels/messages-thread';
 import TextPanel from '../panels/text';
 import YesnoPanel from '../panels/yesno';
 
@@ -20,6 +21,7 @@ const panelTypes = {
   directions: DirectionsPanel,
   image: ImagePanel,
   messages_browse: MessagesBrowsePanel,
+  messages: MessagesThreadPanel,
   text: TextPanel,
   yesno: YesnoPanel
 };
@@ -42,5 +44,6 @@ export default function Panel(props) {
 Panel.propTypes = {
   panel: PropTypes.object.isRequired,
   evaluator: PropTypes.object.isRequired,
-  fireEvent: PropTypes.func.isRequired
+  fireEvent: PropTypes.func.isRequired,
+  postAction: PropTypes.func.isRequired
 };

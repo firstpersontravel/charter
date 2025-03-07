@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default function MessagesBrowsePanel({ panel, evaluator, fireEvent, renderSubpanel }) {
+import MessagesThreadPanel from './messages-thread';
+
+export default function MessagesBrowsePanel({ panel, evaluator, fireEvent, postAction }) {
   const asRoleName = panel.as || evaluator.getPlayer().roleName;
 
   const messagesWithSelf = evaluator.getMessages(asRoleName);
@@ -19,13 +21,11 @@ export default function MessagesBrowsePanel({ panel, evaluator, fireEvent, rende
       className={
         `pure-menu-item ${role.name === selectedContactName ? 'pure-menu-selected' : ''}`
       }>
-      <a onClick={() => setSelectedItemName(role.name)} className="pure-menu-link">
+      <a onClick={() => setSelectedContactName(role.name)} className="pure-menu-link">
         {role.title}
       </a>
     </li>
   ));
-
-  const renderedPanels = 'hi';
 
   return (
     <div>
@@ -40,7 +40,15 @@ export default function MessagesBrowsePanel({ panel, evaluator, fireEvent, rende
         </div>
         <div className="messages-detail pure-u-3-4 pure-u-sm-3-4 scrollable">
           <div className="messages-detail-inner">
-            {renderedPanels}
+            <MessagesThreadPanel
+              panel={{
+                as: asRoleName,
+                with: selectedContactName
+              }}
+              evaluator={evaluator}
+              fireEvent={fireEvent}
+              postAction={postAction}
+            />
           </div>
         </div>
       </div>
@@ -52,5 +60,5 @@ MessagesBrowsePanel.propTypes = {
   panel: PropTypes.object.isRequired,
   evaluator: PropTypes.object.isRequired,
   fireEvent: PropTypes.func.isRequired,
-  renderSubpanel: PropTypes.func.isRequired
+  postAction: PropTypes.func.isRequired
 };

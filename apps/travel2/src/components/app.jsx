@@ -18,6 +18,7 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.onFireEvent = this.onFireEvent.bind(this);
+    this.onPostAction = this.onPostAction.bind(this);
     this.onSelectTab = this.onSelectTab.bind(this);
     this.onSetDebugLocation = this.onSetDebugLocation.bind(this);
     this.state = {
@@ -31,6 +32,10 @@ export default class App extends Component {
 
   onFireEvent(event) {
     this.props.fireEvent(this.props.trip.id, this.props.player.id, event);
+  }
+
+  onPostAction(actionName, actionParams) {
+    this.props.postAction(this.props.trip.id, this.props.player.id, actionName, actionParams);
   }
 
   onSelectTab(e, tabTitle) {
@@ -161,7 +166,9 @@ export default class App extends Component {
         key={i}
         panel={panel}
         evaluator={this.props.evaluator}
-        fireEvent={this.onFireEvent} />
+        fireEvent={this.onFireEvent}
+        postAction={this.onPostAction}
+      />
     );
   }
 

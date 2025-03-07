@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-export default function ContentBrowsePanel({ panel, evaluator, fireEvent, renderSubpanel }) {
+export default function ContentBrowsePanel({ panel, evaluator, fireEvent, postAction, renderSubpanel }) {
 
   const scriptContent = evaluator.getScriptContent();
   const sectionName = panel.section;
@@ -32,7 +32,7 @@ export default function ContentBrowsePanel({ panel, evaluator, fireEvent, render
   const selectedPanels = (selectedItem.panels || [])
     .filter(p => evaluator.evaluateIf(p.visible_if));
   const renderedPanels = selectedPanels
-    .map(p => renderSubpanel({ panel: p, evaluator, fireEvent, renderSubpanel, key: p.id }));
+    .map(p => renderSubpanel({ panel: p, evaluator, fireEvent, postAction, renderSubpanel, key: p.id }));
 
   return (
     <div>
@@ -59,5 +59,6 @@ ContentBrowsePanel.propTypes = {
   panel: PropTypes.object.isRequired,
   evaluator: PropTypes.object.isRequired,
   fireEvent: PropTypes.func.isRequired,
+  postAction: PropTypes.func.isRequired,
   renderSubpanel: PropTypes.func.isRequired
 };
