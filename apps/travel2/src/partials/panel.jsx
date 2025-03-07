@@ -10,7 +10,10 @@ import DirectionsPanel from '../panels/directions';
 import ImagePanel from '../panels/image';
 import MessagesBrowsePanel from '../panels/messages-browse';
 import MessagesThreadPanel from '../panels/messages-thread';
+import NumberpadPanel from '../panels/numberpad';
+import TextEntryPanel from '../panels/text-entry';
 import TextPanel from '../panels/text';
+import VideoPanel from '../panels/video';
 import YesnoPanel from '../panels/yesno';
 
 const panelTypes = {
@@ -22,7 +25,10 @@ const panelTypes = {
   image: ImagePanel,
   messages_browse: MessagesBrowsePanel,
   messages: MessagesThreadPanel,
+  numberpad: NumberpadPanel,
   text: TextPanel,
+  text_entry: TextEntryPanel,
+  video: VideoPanel,
   yesno: YesnoPanel
 };
 
