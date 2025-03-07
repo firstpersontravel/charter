@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCalendar,
+  faUser,
+  faLocationArrow
+} from '@fortawesome/free-solid-svg-icons';
 
 import CustomCss from '../partials/custom-css';
 import Panel from '../partials/panel';
@@ -265,9 +271,47 @@ export default class App extends Component {
     if (!hasLoggedIntoCreationTool()) {
       return null;
     }
+
+    // Generate URLs similar to the Ember implementation
+    const { trip, player = {} } = this.props;
+
+    const tripUrl = trip && trip.org && trip.experience
+      ? `/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}`
+      : '#';
+
+    const playerUrl = trip && trip.org && trip.experience && player && player.roleName
+      ? `/${trip.org.name}/${trip.experience.name}/operate/role/${player.roleName}/${player.participantId || 0}`
+      : '#';
+
+    const playerRole = this.props.script.content.roles.find(r => r.name === player.roleName);
+
+    // Format last location fix timestamp if available
+    const lastFixTimestamp = this.props.participant.locationTimestamp;
+    const lastFixTimestampLocal = lastFixTimestamp
+      ? moment.utc(lastFixTimestamp).local().format('h:mm:ssa')
+      : 'none';
+
     return (
       <div className="application-debug-console pure-g">
         <div className="pure-u-4-5" style={{ paddingTop: '0.5em', paddingBottom: '0.5em' }}>
+          <span className="text-padded">
+            <FontAwesomeIcon icon={faCalendar} />
+            &nbsp;
+            <a href={tripUrl} target="_blank" rel="noopener noreferrer">
+              {trip && trip.title}
+            </a>
+            &nbsp;
+            <FontAwesomeIcon icon={faUser} />
+            &nbsp;
+            <a href={playerUrl} target="_blank" rel="noopener noreferrer">
+              {playerRole && playerRole.title}
+            </a>
+            &nbsp;
+            <FontAwesomeIcon icon={faLocationArrow} />
+            &nbsp;
+            {lastFixTimestampLocal}
+          </span>
+          &nbsp;
           (Logged into Charter; not tracking location)
         </div>
         <div className="pure-u-1-5">
@@ -320,6 +364,7 @@ App.propTypes = {
   script: PropTypes.object,
   trip: PropTypes.object,
   player: PropTypes.object,
+  participant: PropTypes.object,
   iface: PropTypes.object,
   loadData: PropTypes.func.isRequired,
   fireEvent: PropTypes.func.isRequired,
@@ -333,5 +378,6 @@ App.defaultProps = {
   trip: null,
   script: null,
   iface: null,
-  player: null
+  player: null,
+  participant: null
 };
