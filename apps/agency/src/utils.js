@@ -13,7 +13,7 @@ export function getActorIframeUrl(org, participant) {
 }
 
 export function getPlayerIframeUrl(trip, player) {
-  return `${window.location.origin}/travel/${trip.id}/${player.id}`;
+  return `${window.location.origin}/travel2/${trip.id}/${player.id}`;
 }
 
 export function getPlayerJoinUrl(trip, player) {
