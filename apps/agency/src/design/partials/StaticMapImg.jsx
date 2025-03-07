@@ -10,7 +10,7 @@ export default function StaticMapImg({ size, polylines, markers, paths, ...props
 
   if (polylines) {
     const pathParams = polylines
-      .map(polyline => `path=enc:${polyline}`)
+      .map(polyline => `path=enc:${encodeURIComponent(polyline)}`)
       .join('&');
     mapUrl += `&${pathParams}`;
   }

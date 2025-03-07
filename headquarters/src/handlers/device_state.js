@@ -86,10 +86,6 @@ class DeviceStateHandler {
         as: 'trip',
         where: { isArchived: false },
         include: [{
-          model: models.Group,
-          as: 'group',
-          where: { isArchived: false }
-        }, {
           model: models.Script,
           as: 'script'
         }]
