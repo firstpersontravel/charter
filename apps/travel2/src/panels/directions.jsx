@@ -184,7 +184,7 @@ export default class DirectionsPanel extends React.Component {
     return (
       <div className="pure-u-1-1 pure-visible-xs">
         <h3>
-          Directions to
+          Directions to&nbsp;
           {this.getDestinationName()}
         </h3>
       </div>
