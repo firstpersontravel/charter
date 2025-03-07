@@ -6,6 +6,7 @@ import CustomCss from '../partials/custom-css';
 import Panel from '../partials/panel';
 import EventSub from '../util/event-sub';
 import LocationTracker from '../partials/location';
+import Soundtrack from '../partials/soundtrack';
 
 function hasLoggedIntoCreationTool() {
   return !!localStorage.getItem('auth_latest');
@@ -137,6 +138,11 @@ export default class App extends Component {
     return this.collectPanelPartials(headerPanels);
   }
 
+  getAudioState() {
+    const audioStates = this.props.trip.tripState.audioStateByRole || {};
+    return audioStates[this.props.player.roleName] || null;
+  }
+
   collectPanelPartials(basePanels) {
     let collectedPanels = [];
     basePanels.forEach((panel) => {
@@ -265,6 +271,7 @@ export default class App extends Component {
         <div className="trip-container">
           <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
           <CustomCss iface={this.props.iface} />
+          <Soundtrack audioState={this.getAudioState()} />
           <div className="page-layout page-layout-tabs">
             {this.renderHeaderPanels()}
             <div className="page-layout-tabs-content pure-g">

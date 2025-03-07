@@ -26,7 +26,9 @@ module.exports = {
   },
   entry: [
     './src/index.jsx',
-    './style/app.less'
+    './style/app.less',
+    './vendor/sweetalert.css',
+    './vendor/sweetalert.min.js'
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
