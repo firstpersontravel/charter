@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import CustomCss from '../partials/custom-css';
 import Panel from '../partials/panel';
 import EventSub from '../util/event-sub';
+import LocationTracker from '../partials/location';
 
 function hasLoggedIntoCreationTool() {
   return !!localStorage.getItem('auth_latest');
@@ -21,6 +23,7 @@ export default class App extends Component {
     this.onPostAction = this.onPostAction.bind(this);
     this.onSelectTab = this.onSelectTab.bind(this);
     this.onSetDebugLocation = this.onSetDebugLocation.bind(this);
+    this.onUpdateLocation = this.onUpdateLocation.bind(this);
     this.state = {
       selectedTabName: null
     };
@@ -36,6 +39,13 @@ export default class App extends Component {
 
   onPostAction(actionName, actionParams) {
     this.props.postAction(this.props.trip.id, this.props.player.id, actionName, actionParams);
+  }
+
+  onUpdateLocation(lat, lng, accuracy, timestamp) {
+    if (!this.props.player.participantId) {
+      return;
+    }
+    this.props.updateLocation(this.props.trip.id, this.props.player.participantId, lat, lng, accuracy, timestamp);
   }
 
   onSelectTab(e, tabTitle) {
@@ -58,12 +68,8 @@ export default class App extends Component {
     if (!coords) {
       return;
     }
-    this.props.updateLocation(
-      this.props.trip.id,
-      this.props.player.participantId,
-      coords[0],
-      coords[1]
-    );
+    const timestamp = Math.floor(moment.utc().valueOf() / 1000);
+    this.onUpdateLocation(coords[0], coords[1], 30, timestamp);
   }
 
   getTabs() {
@@ -230,12 +236,21 @@ export default class App extends Component {
     return (
       <div className="application-debug-console pure-g">
         <div className="pure-u-4-5" style={{paddingTop: "0.5em", paddingBottom: "0.5em"}}>
-        (Logged into Charter: not sending GPS or page acks)
+        (Logged into Charter; not tracking location)
         </div>
         <div className="pure-u-1-5">
           {this.renderDebugLocationField()}
         </div>
       </div>
+    );
+  }
+
+  renderLocationTracking() {
+    if (hasLoggedIntoCreationTool()) {
+      return null;
+    }
+    return (
+      <LocationTracker updateLocation={this.onUpdateLocation} />
     );
   }
 
@@ -246,6 +261,7 @@ export default class App extends Component {
     return (
       <>
         {this.renderDebug()}
+        {this.renderLocationTracking()}
         <div className="trip-container">
           <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
           <CustomCss iface={this.props.iface} />

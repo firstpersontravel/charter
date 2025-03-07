@@ -103,13 +103,13 @@ export function receiveMessage(tripId, msg) {
   };
 }
 
-export function updateLocation(tripId, participantId, lat, lng) {
+export function updateLocation(tripId, participantId, lat, lng, accuracy, timestamp) {
   return function (dispatch) {
     const params = {
       location_latitude: lat,
       location_longitude: lng,
-      location_accuracy: 30,
-      location_timestamp: Math.floor(moment.utc().valueOf() / 1000)
+      location_accuracy: accuracy,
+      location_timestamp: timestamp
     };
     postData(`${config.serverUrl}/api/trips/${tripId}/device_state/${participantId}`, params)
       .then(() => refresh(tripId, dispatch));

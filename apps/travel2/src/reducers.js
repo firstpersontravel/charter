@@ -57,8 +57,17 @@ const handlers = {
 };
 
 export default function reducer(state, action) {
+  if (!action.type) {
+    console.warn('Unexpected action', action);
+    return state;
+  }
+  // Handle Redux actions
+  if (action.type.startsWith('@@')) {
+    return state;
+  }
   if (!handlers[action.type]) {
-    throw new Error(`${action.type} unhandled`);
+    console.warn('Unexpected action', action.type);
+    return state;
   }
   return handlers[action.type](state, action);
 }
