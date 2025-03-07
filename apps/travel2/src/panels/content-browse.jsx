@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 export default function ContentBrowsePanel({
-  panel, evaluator, fireEvent, postAction, renderSubpanel
+  panel, evaluator, fireEvent, postAction, renderSubpanel, layoutHeight
 }) {
   const scriptContent = evaluator.getScriptContent();
   const sectionName = panel.section;
@@ -34,13 +34,13 @@ export default function ContentBrowsePanel({
     .filter(p => evaluator.evaluateIf(p.visible_if));
   const renderedPanels = selectedPanels
     .map(p => renderSubpanel({
-      panel: p, evaluator, fireEvent, postAction, renderSubpanel, key: p.id
+      panel: p, evaluator, fireEvent, postAction, renderSubpanel, layoutHeight, key: p.id
     }));
 
   return (
     <div>
       <div className="page-panel-content-browse pure-g">
-        <div className="content-list pure-u-1-4">
+        <div className="content-list pure-u-1-4" style={{ height: layoutHeight }}>
           <div className="pure-menu">
             <div className="pure-menu-heading">{panel.title}</div>
             <ul className="pure-menu-list">
@@ -48,7 +48,7 @@ export default function ContentBrowsePanel({
             </ul>
           </div>
         </div>
-        <div className="content-detail pure-u-3-4 scrollable">
+        <div className="content-detail pure-u-3-4 scrollable" style={{ height: layoutHeight }}>
           <div className="content-detail-inner">
             {renderedPanels}
           </div>
@@ -63,5 +63,6 @@ ContentBrowsePanel.propTypes = {
   evaluator: PropTypes.object.isRequired,
   fireEvent: PropTypes.func.isRequired,
   postAction: PropTypes.func.isRequired,
-  renderSubpanel: PropTypes.func.isRequired
+  renderSubpanel: PropTypes.func.isRequired,
+  layoutHeight: PropTypes.number.isRequired
 };

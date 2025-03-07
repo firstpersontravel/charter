@@ -53,5 +53,6 @@ Panel.propTypes = {
   panel: PropTypes.object.isRequired,
   evaluator: PropTypes.object.isRequired,
   fireEvent: PropTypes.func.isRequired,
-  postAction: PropTypes.func.isRequired
+  postAction: PropTypes.func.isRequired,
+  layoutHeight: PropTypes.number.isRequired
 };

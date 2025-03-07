@@ -11,7 +11,7 @@ export default class MessagesThreadPanel extends React.Component {
       displayCount: 10
     };
 
-    this.messagesContainerRef = React.createRef();
+    this.sendRef = React.createRef();
     this.displayIncrease = 10;
 
     // Bind methods
@@ -24,10 +24,15 @@ export default class MessagesThreadPanel extends React.Component {
     this.renderRecentMessages = this.renderRecentMessages.bind(this);
   }
 
+  componentDidMount() {
+    if (this.sendRef.current) {
+      this.sendRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    // Scroll to bottom when messages change
-    if (this.messagesContainerRef.current) {
-      this.messagesContainerRef.current.scrollTop = this.messagesContainerRef.current.scrollHeight;
+    if (this.sendRef.current) {
+      this.sendRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }
 
@@ -125,7 +130,7 @@ export default class MessagesThreadPanel extends React.Component {
   // Render message form
   renderMessageForm(placeholder) {
     return (
-      <div className="message-send">
+      <div className="message-send" ref={this.sendRef}>
         <form encType="multipart/form-data" className="pure-g">
           <input
             className="pure-u-5-6 message-input"
@@ -178,7 +183,7 @@ export default class MessagesThreadPanel extends React.Component {
     const placeholder = `Compose message to ${withName}`;
 
     return (
-      <div className="page-panel-messages" ref={this.messagesContainerRef}>
+      <div className="page-panel-messages">
         <h1>
           You &amp;
           {withName}

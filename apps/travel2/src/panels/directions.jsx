@@ -35,23 +35,12 @@ export default class DirectionsPanel extends React.Component {
   constructor(props) {
     super(props);
     this.elementRef = createRef();
-    this.updateRect = this.updateRect.bind(this);
     this.onZoomToEnd = this.onZoomToEnd.bind(this);
     this.onZoomToSelf = this.onZoomToSelf.bind(this);
     this.onArrive = this.onArrive.bind(this);
     this.state = {
-      center: null,
-      rect: null
+      center: null
     };
-  }
-
-  componentDidMount() {
-    this.updateRect();
-    window.addEventListener('resize', this.updateRect);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.updateRect);
   }
 
   onZoomToSelf() {
@@ -101,13 +90,8 @@ export default class DirectionsPanel extends React.Component {
   }
 
   getHeight() {
-    if (!this.state.rect) {
-      return 1000;
-    }
-    const bottomPadding = 35;
-    return window.innerHeight - this.state.rect.top - bottomPadding;
+    return this.props.layoutHeight - 20;
   }
-
 
   getWaypointLocation() {
     const waypoint = this.getToWaypoint();
@@ -164,12 +148,6 @@ export default class DirectionsPanel extends React.Component {
       return this.getToWaypoint().location.address || this.getToWaypoint().location.title;
     }
     return 'destination';
-  }
-
-  updateRect() {
-    if (this.elementRef.current) {
-      this.setState({ rect: this.elementRef.current.getBoundingClientRect() });
-    }
   }
 
   isCloseToWaypoint() {
@@ -322,7 +300,7 @@ export default class DirectionsPanel extends React.Component {
 
   renderDirections() {
     return (
-      <div className="pure-u-sm-1-3 directions-list scrollable">
+      <div className="pure-u-sm-1-3 directions-list scrollable" style={{ height: this.getHeight(), overflow: 'scroll' }}>
         <div className="directions-list-inner">
           {this.renderDirectionsHeader()}
           {this.renderDirectionsList()}
@@ -345,5 +323,6 @@ export default class DirectionsPanel extends React.Component {
 DirectionsPanel.propTypes = {
   panel: PropTypes.object.isRequired,
   evaluator: PropTypes.object.isRequired,
-  fireEvent: PropTypes.func.isRequired
+  fireEvent: PropTypes.func.isRequired,
+  layoutHeight: PropTypes.number.isRequired
 };

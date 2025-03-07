@@ -25,13 +25,35 @@ export default class App extends Component {
     this.onSelectTab = this.onSelectTab.bind(this);
     this.onSetDebugLocation = this.onSetDebugLocation.bind(this);
     this.onUpdateLocation = this.onUpdateLocation.bind(this);
+    this.onWindowResize = this.onWindowResize.bind(this);
+    this.layoutRef = React.createRef();
     this.state = {
-      selectedTabName: null
+      selectedTabName: null,
+      layoutHeight: 0
     };
   }
 
   componentDidMount() {
     this.props.loadData(this.props.match.params.tripId, this.props.match.params.playerId);
+    window.addEventListener('resize', this.onWindowResize);
+    this.onWindowResize();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.trip !== this.props.trip || prevProps.player !== this.props.player) {
+      this.onWindowResize();
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onWindowResize() {
+    const layoutTop = this.layoutRef.current?.getBoundingClientRect().top || 0;
+    const tabHeight = this.shouldShowTabs() ? 30 : 0;
+    const layoutHeight = window.innerHeight - layoutTop - tabHeight;
+    this.setState({ layoutHeight: layoutHeight });
   }
 
   onFireEvent(event) {
@@ -80,6 +102,9 @@ export default class App extends Component {
   }
 
   getVisibleTabs() {
+    if (!this.props.trip || !this.props.player) {
+      return [];
+    }
     return this.getTabs().filter(t => this.props.evaluator.evaluateIf(t.visible_if));
   }
 
@@ -176,7 +201,7 @@ export default class App extends Component {
   }
 
   shouldShowTabs() {
-    return this.getTabs().length > 1;
+    return this.getVisibleTabs().length > 1;
   }
 
   renderPanel(panel, i) {
@@ -186,7 +211,8 @@ export default class App extends Component {
         panel={panel}
         evaluator={this.props.evaluator}
         fireEvent={this.onFireEvent}
-        postAction={this.onPostAction} />
+        postAction={this.onPostAction}
+        layoutHeight={this.state.layoutHeight} />
     );
   }
 
@@ -274,7 +300,7 @@ export default class App extends Component {
           <Soundtrack audioState={this.getAudioState()} />
           <div className="page-layout page-layout-tabs">
             {this.renderHeaderPanels()}
-            <div className="page-layout-tabs-content pure-g">
+            <div className="page-layout-tabs-content pure-g" ref={this.layoutRef}>
               <div className="page-layout-tabs-content-inner pure-u-1">
                 {this.renderTabPanels()}
               </div>

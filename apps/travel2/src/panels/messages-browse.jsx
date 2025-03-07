@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import MessagesThreadPanel from './messages-thread';
 
 export default function MessagesBrowsePanel({
-  panel, evaluator, fireEvent, postAction
+  panel, evaluator, fireEvent, postAction, layoutHeight
 }) {
   const asRoleName = panel.as || evaluator.getPlayer().roleName;
 
@@ -40,7 +40,7 @@ export default function MessagesBrowsePanel({
             </ul>
           </div>
         </div>
-        <div className="messages-detail pure-u-3-4 pure-u-sm-3-4 scrollable">
+        <div className="messages-detail pure-u-3-4 pure-u-sm-3-4 scrollable" style={{ height: layoutHeight, overflow: 'scroll' }}>
           <div className="messages-detail-inner">
             <MessagesThreadPanel
               panel={{
@@ -61,5 +61,6 @@ MessagesBrowsePanel.propTypes = {
   panel: PropTypes.object.isRequired,
   evaluator: PropTypes.object.isRequired,
   fireEvent: PropTypes.func.isRequired,
-  postAction: PropTypes.func.isRequired
+  postAction: PropTypes.func.isRequired,
+  layoutHeight: PropTypes.number.isRequired
 };
