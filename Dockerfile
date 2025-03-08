@@ -1,34 +1,4 @@
 ##########################
-##### Travel builder #####
-##########################
-FROM node:12-alpine AS travel-builder
-
-ARG GIT_HASH
-
-# Git is needed for bower; install travel build tools
-RUN apk add git && npm install -q -g ember-cli@2.16.0 bower
-
-# Install core modules
-COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
-RUN cd /var/app/fptcore && npm -q install
-
-# Install travel bower
-COPY apps/travel/bower.json /var/app/apps/travel/
-RUN cd /var/app/apps/travel && bower install -q --allow-root
-
-# Install travel modules
-COPY apps/travel/package.json apps/travel/package-lock.json /var/app/apps/travel/
-RUN cd /var/app/apps/travel && npm -q install
-
-# Install core and travel app
-COPY fptcore /var/app/fptcore
-COPY apps/travel /var/app/apps/travel
-
-# Link core with symlink and build travel app
-RUN ln -nsf /var/app/fptcore /var/app/apps/travel/node_modules/fptcore && \
-    cd /var/app/apps/travel && ember build --env production
-
-##########################
 ##### Agency builder #####
 ##########################
 FROM node:12-alpine AS agency-builder
@@ -96,7 +66,6 @@ COPY fptcore /var/app/fptcore
 COPY headquarters /var/app/headquarters
 
 # Copy build applications
-COPY --from=travel-builder /var/app/apps/travel/dist /var/app/apps/travel/dist
 COPY --from=agency-builder /var/app/build /var/app/build
 COPY --from=travel2-builder /var/app/build /var/app/build
 

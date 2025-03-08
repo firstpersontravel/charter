@@ -1,7 +1,7 @@
 const config = require('../config');
 const models = require('../models');
 
-const ignorePrefixes = ['/static', '/build', '/travel', '/health', '/version'];
+const ignorePrefixes = ['/static', '/build', '/travel2', '/health', '/version'];
 
 // Cache org names in memory for fast logging
 const cachedOrgNamesById = {};

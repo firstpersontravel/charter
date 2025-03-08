@@ -16,24 +16,6 @@ jobs:
     - name: Run lint
       run: cd apps/agency && CI=true npm run test
 
-  build_travel:
-    name: Build travel
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup node
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - name: Install dependencies
-      run: |
-        cd apps/travel
-        npm -q -g install bower
-        npm -q install
-    - name: Build
-      run: cd apps/travel && CI=true npm run build
-
   lint_travel2:
     name: Lint travel2
     runs-on: ubuntu-latest
@@ -166,7 +148,7 @@ jobs:
     name: Deploy to production
     if: github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
-    needs: [build, test_core, test_hq, lint_agency, lint_travel2, build_travel]
+    needs: [build, test_core, test_hq, lint_agency, lint_travel2]
     steps:
     - name: Checkout infra
       uses: actions/checkout@v2

@@ -91,7 +91,7 @@ docker-compose exec server npm rebuild bcrypt --build-from-source
 
 ```sh
 npm run build
-open "http://localhost:5001/travel"
+open "http://localhost:5001/travel2"
 ```
 
 ### Deploy to production
