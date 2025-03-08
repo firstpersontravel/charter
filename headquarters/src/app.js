@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const expressHandlebars  = require('express-handlebars');
-const fs = require('fs');
 const path = require('path');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
@@ -116,7 +115,6 @@ const root = path.dirname(path.dirname(path.resolve(__dirname)));
 const serveFile = f => (req, res) => res.sendFile(path.resolve(root, f));
 app.use('/static', express.static(path.join(root, 'static')));
 app.use('/build', express.static(path.join(root, 'build')));
-app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
 app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 
 // Serve one-page travel2 app
