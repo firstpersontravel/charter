@@ -286,7 +286,7 @@ export default class App extends Component {
     const playerRole = this.props.script.content.roles.find(r => r.name === player.roleName);
 
     // Format last location fix timestamp if available
-    const lastFixTimestamp = this.props.participant.locationTimestamp;
+    const lastFixTimestamp = this.props.participant && this.props.participant.locationTimestamp;
     const lastFixTimestampLocal = lastFixTimestamp
       ? moment.utc(lastFixTimestamp).local().format('h:mm:ssa')
       : 'none';

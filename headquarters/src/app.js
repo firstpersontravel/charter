@@ -116,27 +116,8 @@ const root = path.dirname(path.dirname(path.resolve(__dirname)));
 const serveFile = f => (req, res) => res.sendFile(path.resolve(root, f));
 app.use('/static', express.static(path.join(root, 'static')));
 app.use('/build', express.static(path.join(root, 'build')));
-app.use('/travel/dist', express.static(path.join(root, 'apps/travel/dist')));
 app.use('/assets', express.static(path.join(root, 'apps/travel/dist/assets')));
 app.use('/favicon.ico', serveFile('static/images/favicon.png'));
-
-// Serve one-page travel app with secret insertions from server environment.
-app.use('/travel', (req, res) => {
-  const index = fs.readFileSync(path.join(root, 'apps/travel/dist/index.html'), 'utf-8');
-  const insertion = `
-  <script>
-  window.TRAVEL_STAGE = "${config.env.HQ_STAGE}";
-  window.TRAVEL_SENTRY_DSN = "${config.env.TRAVEL_SENTRY_DSN}";
-  window.TRAVEL_SENTRY_ENVIRONMENT = "${config.env.TRAVEL_SENTRY_ENVIRONMENT}";
-  window.TRAVEL_UPLOAD_ACCESS_KEY = "${config.env.TRAVEL_UPLOAD_ACCESS_KEY}";
-  window.TRAVEL_UPLOAD_BUCKET = "${config.env.TRAVEL_UPLOAD_BUCKET}";
-  window.TRAVEL_UPLOAD_POLICY_BASE64 = "${config.env.TRAVEL_UPLOAD_POLICY_BASE64}";
-  window.TRAVEL_UPLOAD_SIGNATURE = "${config.env.TRAVEL_UPLOAD_SIGNATURE}";
-  </script>
-  `;
-  const indexWithRuntimeVars = index.replace('<body>', `<body>${insertion}`);
-  res.status(200).set('Content-Type', 'text/html').send(indexWithRuntimeVars);
-});
 
 // Serve one-page travel2 app
 app.use('/travel2/:tripId/:playerId', (req, res) => {

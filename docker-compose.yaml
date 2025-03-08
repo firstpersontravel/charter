@@ -10,7 +10,6 @@ services:
       - ./static:/var/app/static
       - ./build:/var/app/build
       - ./apps/agency/static:/var/app/apps/agency/static
-      - ./apps/travel/dist:/var/app/apps/travel/dist
     env_file: [./local.env]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
