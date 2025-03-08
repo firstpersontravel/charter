@@ -88,7 +88,7 @@ export default class App extends Component {
     if (!waypointOptionName) {
       return;
     }
-    const waypoint = this.props.script.content.waypoints
+    const waypoint = (this.props.script.content.waypoints || [])
       .find(w => !!w.options.find(o => o.name === waypointOptionName));
     if (!waypoint) {
       return;
@@ -176,7 +176,7 @@ export default class App extends Component {
   }
 
   getWaypointOptions() {
-    return this.props.script.content.waypoints
+    return (this.props.script.content.waypoints || [])
       .map(w => w.options.map(o => Object.assign({ waypoint: w }, o)))
       .flat();
   }
@@ -331,6 +331,8 @@ export default class App extends Component {
   }
 
   render() {
+    console.log('trip', this.props.trip);
+    console.log('player', this.props.player);
     if (!this.props.trip || !this.props.player) {
       return <div>Loading</div>;
     }
