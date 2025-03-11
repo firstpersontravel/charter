@@ -12,6 +12,7 @@ brew install node awscli
 pyenv install 3.13.1
 pyenv virtualenv 3.13.1 charter
 pyenv global 3.13.1
+pip install setuptools
 
 # Set up nvm
 nvm install 20.18.3
