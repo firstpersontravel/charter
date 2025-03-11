@@ -3,5 +3,5 @@ version: '3.7'
 services:
   server:
     image: fpt:latest
-    env_file: [./prod.env]
+    env_file: [./secrets/prod.env]
     command: node bin/server.js

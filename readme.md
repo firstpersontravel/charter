@@ -27,7 +27,7 @@ cp precommit.sh ./.git/hooks/pre-commit
 
 # Create a local env
 mkdir -p secrets
-cp example.env local.env
+cp example.env secrets/local.env
 
 # Build docker container; rebuild if you add new modules
 docker build . -t fpt:latest

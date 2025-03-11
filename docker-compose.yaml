@@ -10,7 +10,7 @@ services:
       - ./static:/var/app/static
       - ./build:/var/app/build
       - ./apps/agency/static:/var/app/apps/agency/static
-    env_file: [./local.env]
+    env_file: [./secrets/local.env]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
       - NODE_PATH=/var/app/headquarters/node_modules
@@ -26,7 +26,7 @@ services:
       - ./fptcore:/var/app/fptcore
       - ./headquarters:/var/app/hqdev
       - /var/app/hqdev/node_modules # hide host node modules
-    env_file: [./local.env]
+    env_file: [./secrets/local.env]
     environment:
       - PATH=/var/app/headquarters/node_modules/.bin:$PATH
       - NODE_PATH=/var/app/headquarters/node_modules
