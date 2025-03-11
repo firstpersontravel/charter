@@ -22,9 +22,9 @@ module.exports = {
   development: config,
   test: Object.assign({}, config, {
     dialect: 'sqlite',
-    username: 'galaxy_test',
-    database: 'galaxy_test',
-    password: 'galaxy_test_pw',
+    username: 'charter_test',
+    database: 'charter_test',
+    password: 'charter_test_pw',
     // logging: console.log
   }),
   production: config

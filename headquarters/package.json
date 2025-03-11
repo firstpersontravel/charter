@@ -37,7 +37,7 @@
     "module-alias": "^2.2.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.25",
-    "mysql2": "^1.5.3",
+    "mysql2": "^3.13.0",
     "pino": "^6.2.1",
     "pino-pretty": "^4.0.0",
     "react-s3-uploader": "^4.9.3",
