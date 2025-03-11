@@ -1,7 +1,7 @@
 ##########################
 ##### Agency builder #####
 ##########################
-FROM node:22-alpine AS agency-builder
+FROM node:23-alpine AS agency-builder
 
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
@@ -24,7 +24,7 @@ RUN cd /var/app/apps/agency && NODE_ENV=production && NODE_OPTIONS=--openssl-leg
 ##########################
 ##### Travel2 builder #####
 ##########################
-FROM node:22-alpine AS travel2-builder
+FROM node:23-alpine AS travel2-builder
 
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
@@ -47,7 +47,7 @@ RUN cd /var/app/apps/travel2 && NODE_ENV=production && NODE_OPTIONS=--openssl-le
 ######################
 ##### Main image #####
 ######################
-FROM node:22-alpine
+FROM node:23-alpine
  
 # Update OS, install tools, install requirements for node-gyp
 RUN apk update && apk upgrade && apk add bash mysql mysql-client make python3 py3-setuptools g++
