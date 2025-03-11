@@ -67,8 +67,9 @@ describe('TripsController', () => {
           currentPageNamesByRole: {}
         },
         schedule: {
-          basicIntro: `${mockNow.format('YYYY-MM-DD')}T18:00:00.000Z`,
-          startAt: `${mockNow.format('YYYY-MM-DD')}T16:00:00.000Z`
+          // TODO: fix this to work whether we're in DST or not
+          basicIntro: `${mockNow.format('YYYY-MM-DD')}T17:00:00.000Z`,
+          startAt: `${mockNow.format('YYYY-MM-DD')}T15:00:00.000Z`
         },
         scriptId: 2,
         experienceId: 3,

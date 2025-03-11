@@ -128,8 +128,8 @@ export function lookupPlayer(state, ownProps) {
 }
 
 export function lookupPlayersByRole(state, ownProps) {
-  const participantId = ownProps.match.params.participantId !== '0' ?
-    Number(ownProps.match.params.participantId) : null;
+  const participantId = ownProps.match.params.participantId !== '0'
+    ? Number(ownProps.match.params.participantId) : null;
   return instancesFromDatastore(state, {
     col: 'players',
     filter: {
@@ -155,20 +155,20 @@ export function lookupActiveTrips(state, ownProps) {
 
 function msgFilterForParams(match) {
   // If we're specifying two roles, find all messages between those roles.
-  if (match.params.roleName &&
-      match.params.withRoleName &&
-      match.params.withRoleName !== 'All') {
+  if (match.params.roleName
+      && match.params.withRoleName
+      && match.params.withRoleName !== 'All') {
     const betweenRoleNames = [match.params.roleName, match.params.withRoleName];
     return msg => (
-      _.includes(betweenRoleNames, msg.fromRoleName) &&
-      _.includes(betweenRoleNames, msg.toRoleName)
+      _.includes(betweenRoleNames, msg.fromRoleName)
+      && _.includes(betweenRoleNames, msg.toRoleName)
     );
   }
   // If we're specifying one role, find all messages to and from that role
   if (match.params.roleName) {
     return msg => (
-      msg.fromRoleName === match.params.roleName ||
-      msg.toRoleName === match.params.roleName
+      msg.fromRoleName === match.params.roleName
+      || msg.toRoleName === match.params.roleName
     );
   }
   // If no roles are specified, return all.
@@ -177,9 +177,9 @@ function msgFilterForParams(match) {
 
 export function lookupMessages(state, ownProps, limit = null, filters = null) {
   const selfFilter = msgFilterForParams(ownProps.match);
-  const tripFilter = ownProps.match.params.tripId ?
-    { id: Number(ownProps.match.params.tripId), isArchived: false } :
-    {
+  const tripFilter = ownProps.match.params.tripId
+    ? { id: Number(ownProps.match.params.tripId), isArchived: false }
+    : {
       org: { name: ownProps.match.params.orgName },
       experience: { name: ownProps.match.params.experienceName },
       isArchived: false

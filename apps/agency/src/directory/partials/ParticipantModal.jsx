@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button, Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
 
 const EMAIL_REGEX = /^[\w._-]+@[\w.-]+$/;
@@ -29,9 +31,9 @@ export default class ParticipantModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.isOpen &&
-        !prevProps.isOpen &&
-        this.firstInputRef.current) {
+    if (this.props.isOpen
+        && !prevProps.isOpen
+        && this.firstInputRef.current) {
       this.firstInputRef.current.focus();
     }
   }
@@ -65,7 +67,7 @@ export default class ParticipantModal extends Component {
   }
 
   render() {
-    const participant = this.props.participant;
+    const { participant } = this.props;
     const title = participant ? 'Edit participant' : 'New participant';
     const isNew = !participant;
     const confirmLabel = isNew ? 'Create' : 'Update';

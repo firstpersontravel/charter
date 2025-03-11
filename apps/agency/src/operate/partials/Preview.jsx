@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { coreEvaluator, TemplateUtil } from 'fptcore';
 
 import { urlForResource } from '../../design/utils/section-utils';
-import { fullMediaUrl } from '../../operate/utils';
+import { fullMediaUrl } from '../utils';
 
 function truncateMsg(msg, maxLength) {
   return msg.length > maxLength ? `${msg.slice(0, maxLength)}...` : msg;
@@ -123,7 +123,8 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
         }
         // eslint-disable-next-line no-alert
         const submission = prompt(
-          `What entry for numberpad with placeholder "${panel.placeholder}"?`);
+          `What entry for numberpad with placeholder "${panel.placeholder}"?`
+        );
         if (!submission) {
           return;
         }
@@ -153,7 +154,8 @@ function renderTextEntry(trip, player, page, panel, onEvent) {
         }
         // eslint-disable-next-line no-alert
         const submission = prompt(
-          `What entry for input with placeholder "${panel.placeholder}"?`);
+          `What entry for input with placeholder "${panel.placeholder}"?`
+        );
         if (!submission) {
           return;
         }
@@ -243,8 +245,8 @@ function renderHeader(trip, player, page, onAction) {
   if (!page) {
     return 'No page';
   }
-  const headerText = truncateMsg(_.trim(page.directive ?
-    TemplateUtil.templateText(trip.evalContext, page.directive,
+  const headerText = truncateMsg(_.trim(page.directive
+    ? TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone, player.roleName) : ''), 100);
   const header = headerText ? (<span className="ml-1">{headerText}</span>) : null;
 
@@ -319,7 +321,9 @@ function renderPage(trip, player, page, onEvent, onAction) {
   ));
 }
 
-export default function Preview({ trip, player, page, onEvent, onAction }) {
+export default function Preview({
+  trip, player, page, onEvent, onAction
+}) {
   if (!page) {
     return null;
   }

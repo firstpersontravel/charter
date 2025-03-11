@@ -14,7 +14,8 @@ function renderMap(trip, participant) {
   }
   const center = L.latLng(
     participant.locationLatitude,
-    participant.locationLongitude);
+    participant.locationLongitude
+  );
   return (
     <ActiveTripsMap
       center={center}
@@ -39,7 +40,10 @@ function renderPlayerPage(trip, player, page) {
   if (!page) {
     return (
       <div key={player.id} className="alert alert-warning">
-        No active page for trip {player.trip.title}.
+        No active page for trip
+        {' '}
+        {player.trip.title}
+        .
       </div>
     );
   }
@@ -49,17 +53,19 @@ function renderPlayerPage(trip, player, page) {
 }
 
 function renderPlayerCell(player, isFirst) {
-  const trip = player.trip;
+  const { trip } = player;
   const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
   const page = _.find(player.trip.script.content.pages, { name: pageName });
   const pageTitle = page ? page.title : 'None';
   const tripRoleUrl = `/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/players/${player.roleName}`;
 
-  const renderedMap = isFirst ?
-    renderMap(trip, player.participant) : null;
+  const renderedMap = isFirst
+    ? renderMap(trip, player.participant) : null;
   const renderedParticipant = isFirst ? (
     <div>
-      <strong>User:</strong> {renderParticipant(player, player.participant)}
+      <strong>User:</strong>
+      {' '}
+      {renderParticipant(player, player.participant)}
     </div>
   ) : null;
 
@@ -98,13 +104,18 @@ function renderPlayerCell(player, isFirst) {
           </NavLink>
         </div>
         <div>
-          <strong>Page:</strong> {pageTitle}
+          <strong>Page:</strong>
+          {' '}
+          {pageTitle}
         </div>
         <div>
-          <strong>Audio:</strong> {audioStateTitle}
+          <strong>Audio:</strong>
+          {' '}
+          {audioStateTitle}
         </div>
         <div>
-          <strong>Interface:</strong>&nbsp;
+          <strong>Interface:</strong>
+&nbsp;
           {renderPlayLink(trip, player)}
         </div>
         {joinLink}

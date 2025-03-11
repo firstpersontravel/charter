@@ -11,8 +11,8 @@ export default function ScheduleIndex({ match, trips }) {
     return (
       <Redirect
         to={
-          `/${match.params.orgName}/${match.params.experienceName}` +
-          `/schedule/${year}/${month}/${trips[0].id}`
+          `/${match.params.orgName}/${match.params.experienceName}`
+          + `/schedule/${year}/${month}/${trips[0].id}`
         } />
     );
   }

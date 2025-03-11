@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CompactPicker } from 'react-color';
 
-function ColorField({ script, spec, value, name, path, opts, onPropUpdate }) {
+function ColorField({
+  script, spec, value, name, path, opts, onPropUpdate
+}) {
   const valOrDefault = value || spec.default;
   const isWhiteOrBlank = !valOrDefault || valOrDefault.toLowerCase() === '#ffffff';
   const [isEditing, setEditing] = React.useState(false);
@@ -23,7 +25,9 @@ function ColorField({ script, spec, value, name, path, opts, onPropUpdate }) {
       style={{ position: 'absolute', zIndex: 2 }}
       onClick={() => setEditing(false)}>
       <div
-        style={{ position: 'fixed', top: 0, left: 0, bottom: 0, right: 0 }}
+        style={{
+          position: 'fixed', top: 0, left: 0, bottom: 0, right: 0
+        }}
         onClick={() => setEditing(false)} />
       <CompactPicker
         color={valOrDefault}

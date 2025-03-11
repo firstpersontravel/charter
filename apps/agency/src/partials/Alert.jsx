@@ -20,7 +20,9 @@ function renderAction(action) {
   );
 }
 
-export default function Alert({ color, header, content, action }) {
+export default function Alert({
+  color, header, content, action
+}) {
   return (
     <div className="row" style={{ height: 'calc(100% - 66px)' }}>
       <div className="col-sm-12 my-auto">

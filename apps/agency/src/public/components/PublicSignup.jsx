@@ -5,15 +5,17 @@ import PropTypes from 'prop-types';
 export default class PublicSignup extends Component {
   constructor(props) {
     super(props);
-    this.state = { fullName: '', email: '', password: '', orgTitle: '' };
+    this.state = {
+      fullName: '', email: '', password: '', orgTitle: ''
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   canSubmit() {
-    if (!this.state.fullName ||
-        !this.state.email ||
-        !this.state.password ||
-        !this.state.orgTitle) {
+    if (!this.state.fullName
+        || !this.state.email
+        || !this.state.password
+        || !this.state.orgTitle) {
       return false;
     }
     if (this.isSigningUp()) {
@@ -37,12 +39,13 @@ export default class PublicSignup extends Component {
       const defaultErrorMsg = 'There was an error while trying to sign up.';
       const errorMsg = this.props.signupError || defaultErrorMsg;
       const includeLink = !!this.props.signupError;
-      const loginLink = includeLink ?
-        <Link to="/login" className="pl-1">Log in?</Link> :
-        null;
+      const loginLink = includeLink
+        ? <Link to="/login" className="pl-1">Log in?</Link>
+        : null;
       return (
         <div className="alert alert-danger" role="alert">
-          {errorMsg}{loginLink}
+          {errorMsg}
+          {loginLink}
         </div>
       );
     }
@@ -66,7 +69,9 @@ export default class PublicSignup extends Component {
         <div className="col-md-6 offset-md-3">
           <h1>Welcome to Charter!</h1>
           <p>
-            You can create an account here. Already have an account? <Link to="/login">Log in!</Link>
+            You can create an account here. Already have an account?
+            {' '}
+            <Link to="/login">Log in!</Link>
           </p>
           {this.renderSignupErrorAlert()}
           {this.renderSignupFailedAlert()}
@@ -140,10 +145,13 @@ export default class PublicSignup extends Component {
             This tool is provided for free for art projects, experiments,
             and other revenue-free experiences. It costs us money to run the
             servers and telephone relays, so if you are charging fees for
-            experiences built using this platform, be in touch at{' '}
+            experiences built using this platform, be in touch at
+            {' '}
             <a href="mailto:agency@firstperson.travel">
               agency@firstperson.travel
-            </a> and we&apos;ll work out a fair and reasonable pricing
+            </a>
+            {' '}
+            and we&apos;ll work out a fair and reasonable pricing
             structure.
           </p>
         </div>

@@ -15,8 +15,8 @@ function stringOrYesNo(val) {
 
 function BaseEmpty({ spec }) {
   const nullIsNone = (
-    spec.type === 'reference' ||
-    spec.type === 'timeOffset'
+    spec.type === 'reference'
+    || spec.type === 'timeOffset'
   );
   const nullText = nullIsNone ? 'None' : 'Empty';
   let label = _.get(spec, 'display.placeholder') || nullText;

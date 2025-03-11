@@ -49,11 +49,12 @@ export default class Test extends Component {
   }
 
   handleChangeVariant(sectionName, event) {
-    this.setState({
-      variantSections: Object.assign({}, this.state.variantSections, {
+    this.setState(prevState => ({
+      variantSections: {
+        ...prevState.variantSections,
         [sectionName]: event.target.value
-      })
-    });
+      }
+    }));
   }
 
   handleReset() {

@@ -97,8 +97,8 @@ export default class TripPlayers extends Component {
   }
 
   renderPlayerCell(roleName, trip, player) {
-    const experience = trip.experience;
-    const script = trip.script;
+    const { experience } = trip;
+    const { script } = trip;
 
     const role = _.find(script.content.roles, { name: roleName });
     const participantIdsAlreadyChosen = _.filter(trip.players, { roleName: roleName })
@@ -119,7 +119,8 @@ export default class TripPlayers extends Component {
     }
 
     const profileChoices = ScheduleUtils.filterAssignableProfiles(
-      this.props.profiles, this.props.participants, experience.id, roleName);
+      this.props.profiles, this.props.participants, experience.id, roleName
+    );
     const participantChoices = profileChoices
       .map(profile => (
         _.find(this.props.participants, { id: profile.participantId })
@@ -139,7 +140,11 @@ export default class TripPlayers extends Component {
     if (participantChoices.length === 0) {
       return (
         <span>
-          {playLink} <em className="faint">No participants</em> {joinLink}
+          {playLink}
+          {' '}
+          <em className="faint">No participants</em>
+          {' '}
+          {joinLink}
         </span>
       );
     }
@@ -167,15 +172,19 @@ export default class TripPlayers extends Component {
 
     return (
       <div>
-        {playLink} {participantControl}
-        {goToParticipant} {participant ? null : joinLink}
+        {playLink}
+        {' '}
+        {participantControl}
+        {goToParticipant}
+        {' '}
+        {participant ? null : joinLink}
       </div>
     );
   }
 
   renderRoleCell(roleName, trip) {
-    const experience = trip.experience;
-    const script = trip.script;
+    const { experience } = trip;
+    const { script } = trip;
     if (!experience || !script) {
       return null;
     }
@@ -205,7 +214,7 @@ export default class TripPlayers extends Component {
   }
 
   renderRoleRows(trips) {
-    const script = trips[0].script;
+    const { script } = trips[0];
     if (!script) {
       return null;
     }

@@ -19,12 +19,14 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
       &nbsp;
       <Link
         to={
-          `/${script.org.name}/${script.experience.name}` +
-          `/script/${script.revision}` +
-          `/design/${sliceType}/${sliceName}` +
-          `/${collectionName}/new${query}`
+          `/${script.org.name}/${script.experience.name}`
+          + `/script/${script.revision}`
+          + `/design/${sliceType}/${sliceName}`
+          + `/${collectionName}/new${query}`
         }>
-        Add {titleForResourceType(resourceType).toLowerCase()}
+        Add
+        {' '}
+        {titleForResourceType(resourceType).toLowerCase()}
       </Link>
     </p>
   );

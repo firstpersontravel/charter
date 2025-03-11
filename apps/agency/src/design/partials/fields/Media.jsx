@@ -14,7 +14,7 @@ const MEDIA_MIME_TYPES = {
 class MediaField extends Component {
   constructor(props) {
     super(props);
-    this.state = { uploading: false, progress: null, error: null };
+    this.state = { uploading: false, error: null };
     this.handleUploadStart = this.handleUploadStart.bind(this);
     this.handleUploadProgress = this.handleUploadProgress.bind(this);
     this.handleUploadError = this.handleUploadError.bind(this);
@@ -22,17 +22,17 @@ class MediaField extends Component {
   }
 
   getS3Folder() {
-    const script = this.props.script;
+    const { script } = this.props;
     return `${script.org.name}/${script.experience.name}`;
   }
 
   handleUploadStart(file, next) {
-    this.setState({ uploading: true, progress: 0, error: null });
+    this.setState({ uploading: true, error: null });
     next(file);
   }
 
   handleUploadProgress(percent, status, file) {
-    this.setState({ uploading: true, progress: percent, error: null });
+    this.setState({ uploading: true, error: null });
   }
 
   handleUploadError(message, file, reqContext) {
@@ -41,11 +41,11 @@ class MediaField extends Component {
       fullMessage = `${message}: ${reqContext.response}`;
     }
     Sentry.captureMessage(fullMessage, 'error');
-    this.setState({ uploading: false, progress: null, error: message });
+    this.setState({ uploading: false, error: message });
   }
 
   handleUploadFinish(signResult) {
-    this.setState({ uploading: false, progress: null, error: null });
+    this.setState({ uploading: false, error: null });
     const bucketDomain = `https://${config.contentBucket}.s3.amazonaws.com`;
     const publicUrl = `${bucketDomain}/${signResult.fileKey}`;
     this.props.onPropUpdate(this.props.path, publicUrl);
@@ -66,7 +66,9 @@ class MediaField extends Component {
     if (this.state.error) {
       return (
         <span className="text-danger">
-          Error uploading: {this.state.error}
+          Error uploading:
+          {' '}
+          {this.state.error}
         </span>
       );
     }
@@ -134,7 +136,9 @@ class MediaField extends Component {
   render() {
     return (
       <span>
-        {this.renderStatus()} {this.renderMedia()}
+        {this.renderStatus()}
+        {' '}
+        {this.renderMedia()}
         {this.renderUploader()}
       </span>
     );
@@ -151,8 +155,7 @@ MediaField.propTypes = {
 };
 
 MediaField.defaultProps = {
-  value: '',
-  opts: {}
+  value: ''
 };
 
 export default MediaField;

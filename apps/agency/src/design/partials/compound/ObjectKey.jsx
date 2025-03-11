@@ -9,7 +9,7 @@ import Label from './Label';
 
 const COMPLEX_TYPES = ['dictionary', 'object', 'list', 'component'];
 
-function invalidWarningForSpec(script, keySpec, value, itemValue) {
+function invalidWarningForSpec(script, name, keySpec, value, itemValue) {
   // Don't show invalid warning on complex types -- wait for iterating
   // into nested children.
   if (_.includes(COMPLEX_TYPES, keySpec.type)) {
@@ -84,19 +84,21 @@ function shouldHideSpec(script, value, spec, keySpec, keyName) {
   return false;
 }
 
-function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
-  keyName, onPropUpdate, renderAny }) {
+function ObjectKey({
+  script, resource, spec, value, name, path, opts, keySpec,
+  keyName, onPropUpdate, renderAny
+}) {
   if (shouldHideSpec(script, value, spec, keySpec)) {
     return null;
   }
   const isInline = (
-    _.get(spec, 'display.form') === 'inline' ||
-    _.get(opts, 'inline')
+    _.get(spec, 'display.form') === 'inline'
+    || _.get(opts, 'inline')
   );
   // Nest inline
-  const optsWithInline = isInline ?
-    Object.assign({}, opts, { inline: true }) :
-    opts;
+  const optsWithInline = isInline
+    ? Object.assign({}, opts, { inline: true })
+    : opts;
   const inlineStyle = { display: 'inline-block', marginRight: '0.5em' };
   const blockStyle = { verticalAlign: 'top' };
   const itemStyle = isInline ? inlineStyle : blockStyle;
@@ -116,7 +118,7 @@ function ObjectKey({ script, resource, spec, value, name, path, opts, keySpec,
         onPropUpdate: onPropUpdate
       })}
       {clearForSpec(keySpec, itemValue, itemPath, onPropUpdate)}
-      {invalidWarningForSpec(script, keySpec, value, itemValue)}
+      {invalidWarningForSpec(script, name, keySpec, value, itemValue)}
     </div>
   );
 }

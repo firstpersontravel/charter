@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 
-import { lookupOrg, lookupExperience, lookupScript, lookupDirections, lookupActiveTrips } from './utils';
+import {
+  lookupOrg, lookupExperience, lookupScript, lookupDirections, lookupActiveTrips
+} from './utils';
 import ActiveTripsOverview from '../components/ActiveTripsOverview';
 
 const mapStateToProps = (state, ownProps) => ({

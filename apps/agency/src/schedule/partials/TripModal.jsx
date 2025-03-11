@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button, Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 
 import { TextUtil } from 'fptcore';
 
@@ -18,8 +20,8 @@ function getVariantSections(script) {
 }
 
 function getDefaultState(script, trip) {
-  const existingVariantNames = trip ?
-    trip.variantNames.split(',').filter(Boolean) : [];
+  const existingVariantNames = trip
+    ? trip.variantNames.split(',').filter(Boolean) : [];
   const variantSections = getVariantSections(script);
   const variants = script && script.content && script.content.variants;
   const variantNames = variantSections.map((section, i) => (
@@ -49,9 +51,9 @@ export default class TripModal extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.isOpen &&
-        !prevProps.isOpen &&
-        this.titleInputRef.current) {
+    if (this.props.isOpen
+        && !prevProps.isOpen
+        && this.titleInputRef.current) {
       this.titleInputRef.current.focus();
     }
   }
@@ -76,17 +78,19 @@ export default class TripModal extends Component {
   handleChangeVariant(section, event) {
     const variantSections = getVariantSections(this.props.script);
     const sectionIndex = variantSections.indexOf(section);
-    const variantNames = _.clone(this.state.variantNames);
-    variantNames[sectionIndex] = event.target.value;
-    this.setState({ variantNames: variantNames });
+    this.setState((prevState) => {
+      const variantNames = [...prevState.variantNames];
+      variantNames[sectionIndex] = event.target.value;
+      return { variantNames: variantNames };
+    });
   }
 
   render() {
-    const script = this.props.script;
+    const { script } = this.props;
     if (!script || !script.content) {
       return null;
     }
-    const trip = this.props.trip;
+    const { trip } = this.props;
     const newTitle = 'New run';
     const title = trip ? `Edit ${trip.title}` : newTitle;
     const isNew = !trip;

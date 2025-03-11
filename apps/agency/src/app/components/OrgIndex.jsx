@@ -101,8 +101,10 @@ export default class OrgIndex extends Component {
           <Link
             className="btn btn-block btn-secondary"
             to={`/${this.props.org.name}?creating=${example.name}`}>
-            <i className="fa fa-plus" />&nbsp;
-            Create {example.title.toLowerCase()}
+            <i className="fa fa-plus" />
+&nbsp;
+            Create
+            {example.title.toLowerCase()}
           </Link>
         </div>
       </div>
@@ -137,7 +139,9 @@ export default class OrgIndex extends Component {
           <Link
             to={`/${this.props.org.name}/${experience.name}`}
             className="btn btn-block btn-primary">
-            Go to {experience.title}
+            Go to
+            {' '}
+            {experience.title}
           </Link>
         </div>
       </div>

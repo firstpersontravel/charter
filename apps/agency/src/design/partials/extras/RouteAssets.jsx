@@ -21,15 +21,15 @@ class RouteOption extends Component {
 
   getDirAsset() {
     return _.find(this.props.directions, dir => (
-      dir.data.from_option === this.props.fromOpt.name &&
-      dir.data.to_option === this.props.toOpt.name
+      dir.data.from_option === this.props.fromOpt.name
+      && dir.data.to_option === this.props.toOpt.name
     ));
   }
 
   fetchGoogleRoute() {
     const directionsService = new google.maps.DirectionsService();
-    const fromOpt = this.props.fromOpt;
-    const toOpt = this.props.toOpt;
+    const { fromOpt } = this.props;
+    const { toOpt } = this.props;
     const mode = this.props.route.mode || 'driving';
     const request = {
       origin: `${fromOpt.location.coords[0]},${fromOpt.location.coords[1]}`,
@@ -121,19 +121,27 @@ class RouteOption extends Component {
   }
 
   render() {
-    const fromOpt = this.props.fromOpt;
-    const toOpt = this.props.toOpt;
+    const { fromOpt } = this.props;
+    const { toOpt } = this.props;
     const dirAsset = this.getDirAsset();
     const status = dirAsset ? (
       <span className="text-success">
-        Updated {moment.utc(dirAsset.updatedAt).format('MMM D, YYYY')}
+        Updated
+        {' '}
+        {moment.utc(dirAsset.updatedAt).format('MMM D, YYYY')}
       </span>
     ) : (
       <span className="text-danger">Needed</span>
     );
     return (
       <div>
-        {titleForLocation(fromOpt.location)} to {titleForLocation(toOpt.location)}: {status}&nbsp;
+        {titleForLocation(fromOpt.location)}
+        {' '}
+        to
+        {titleForLocation(toOpt.location)}
+        :
+        {status}
+&nbsp;
         {this.renderFetchBtn()}
       </div>
     );
@@ -185,8 +193,10 @@ function RouteOptions(script, route, directions, createInstance, updateInstance)
   );
 }
 
-export default function RouteAssets({ script, resource, assets,
-  createInstance, updateInstance }) {
+export default function RouteAssets({
+  script, resource, assets,
+  createInstance, updateInstance
+}) {
   const directions = _(assets)
     .filter({ type: 'directions' })
     .filter(asset => asset.data.route === resource.name)

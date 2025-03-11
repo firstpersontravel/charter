@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import Nav from '../../partials/Nav';
 
 export default function Frame({
-  authInfo, org, experience, experiences, children }) {
+  authInfo, org, experience, experiences, children
+}) {
   return (
     <div>
       <Nav

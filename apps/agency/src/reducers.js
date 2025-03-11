@@ -70,8 +70,9 @@ function updateInstanceFieldsHandler(state, action) {
   const index = _.findIndex(collection, { id: action.instanceId });
   if (index === -1) {
     console.warn(
-      `Tried to update nonexistent ${action.collectionName} ` +
-      `with id ${action.instanceId}`);
+      `Tried to update nonexistent ${action.collectionName} `
+      + `with id ${action.instanceId}`
+    );
     return state;
   }
   const instance = collection[index];

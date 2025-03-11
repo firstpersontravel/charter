@@ -14,11 +14,12 @@ export default class TripSchedule extends Component {
   }
 
   handleTimeUpdate(timeName, oldTimestamp, newTimeShorthand) {
-    const trip = this.props.trip;
-    const timezone = trip.experience.timezone;
+    const { trip } = this.props;
+    const { timezone } = trip.experience;
     const oldDate = moment.utc(oldTimestamp).tz(timezone).format('YYYY-MM-DD');
     const newTimestamp = TimeUtil.convertTimeShorthandToIso(
-      newTimeShorthand, oldDate, timezone);
+      newTimeShorthand, oldDate, timezone
+    );
     this.props.updateInstance('trips', trip.id, {
       schedule: { [timeName]: newTimestamp }
     });
@@ -42,7 +43,8 @@ export default class TripSchedule extends Component {
           <PopoverControl
             title={timeName}
             onConfirm={_.curry(this.handleTimeUpdate)(
-              timeName, timestamp)}
+              timeName, timestamp
+            )}
             value={timeString}
             validate={TimeUtil.validateTimeShorthand}
             label={timeString} />
@@ -52,7 +54,7 @@ export default class TripSchedule extends Component {
   }
 
   render() {
-    const timezone = this.props.trip.experience.timezone;
+    const { timezone } = this.props.trip.experience;
     const timeRows = _.map(this.props.trip.schedule, (timestamp, timeName) => (
       this.renderTimeRow(timeName, timestamp, timezone)
     ));

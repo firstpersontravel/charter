@@ -7,8 +7,10 @@ import { TextUtil } from 'fptcore';
 import BaseClear from '../fields/BaseClear';
 import { newItemsForSpecType } from './utils';
 
-function DictionaryField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, renderAny }) {
+function DictionaryField({
+  script, resource, spec, value, name, path, opts,
+  onPropUpdate, renderAny
+}) {
   const AnyField = renderAny;
   const items = _.map(value, (val, key) => (
     // eslint-disable-next-line react/no-array-index-key
@@ -26,7 +28,7 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         spec={spec.keys}
         value={key}
         name={`${name} Key`}
-        path={'INVALID'}
+        path="INVALID"
         opts={{ editable: false }} />
       :&nbsp;
       <AnyField
@@ -56,10 +58,10 @@ function DictionaryField({ script, resource, spec, value, name, path, opts,
         resource={resource}
         onPropUpdate={onPropUpdate}
         spec={spec.keys}
-        value={'New item'}
+        value="New item"
         name={
           `New entry for ${TextUtil.titleForSpec(spec, name).toLowerCase()}`}
-        path={'INVALID'}
+        path="INVALID"
         opts={{
           onConfirm: val => onPropUpdate(`${path}[${val}]`, newItem)
         }} />

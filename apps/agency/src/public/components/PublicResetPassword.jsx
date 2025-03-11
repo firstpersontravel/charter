@@ -41,12 +41,13 @@ export default class PublicSignup extends Component {
       const defaultErrorMsg = 'There was an error while trying to sign up.';
       const errorMsg = this.props.resetPasswordError || defaultErrorMsg;
       const includeLink = !!this.props.resetPasswordError;
-      const loginLink = includeLink ?
-        <Link to="/login" className="pl-1">Log in?</Link> :
-        null;
+      const loginLink = includeLink
+        ? <Link to="/login" className="pl-1">Log in?</Link>
+        : null;
       return (
         <div className="alert alert-danger" role="alert">
-          {errorMsg}{loginLink}
+          {errorMsg}
+          {loginLink}
         </div>
       );
     }
@@ -68,7 +69,9 @@ export default class PublicSignup extends Component {
     if (this.props.resetPasswordRequest === 'fulfilled') {
       return (
         <div className="alert alert-success" role="alert">
-          Your password was reset. <Link to="/login" className="pl-1">You may now log in.</Link>
+          Your password was reset.
+          {' '}
+          <Link to="/login" className="pl-1">You may now log in.</Link>
         </div>
       );
     }

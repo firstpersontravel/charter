@@ -94,15 +94,15 @@ class LocationField extends Component {
     if (this.state.isGeocoding) {
       return 'Searching...';
     }
-    const label = this.props.value ?
-      labelForLocation(this.props.value) :
-      <BaseEmpty spec={this.props.spec} />;
+    const label = this.props.value
+      ? labelForLocation(this.props.value)
+      : <BaseEmpty spec={this.props.spec} />;
     return (
       <>
         <PopoverControl
           title={`${typeTitleForSpec(this.props.spec)}: ${labelForSpec(this.props.spec, this.props.name)}`}
           validate={val => !!val}
-          helpText={'Enter an address, including the city.'}
+          helpText="Enter an address, including the city."
           helpTextBottom={bottomHelpForSpec(this.props.spec)}
           onConfirm={this.handleGeocodeRequest}
           label={label}
@@ -123,8 +123,7 @@ LocationField.propTypes = {
 };
 
 LocationField.defaultProps = {
-  value: null,
-  opts: {}
+  value: null
 };
 
 export default LocationField;

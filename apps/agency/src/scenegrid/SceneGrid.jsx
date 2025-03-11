@@ -26,14 +26,13 @@ export default class SceneGrid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openTriggerTooltipName: null,
-      openPopoverPageName: null
+      openTriggerTooltipName: null
     };
     this.cachedTriggerNames = {};
   }
 
   getPlayersForScene(scene) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     return _(trip.players)
       .filter(player => player.role && player.role.interface)
       .filter(player => (
@@ -51,14 +50,15 @@ export default class SceneGrid extends Component {
    * and nested objects.
    */
   getTriggerTitle(trigger) {
-    const script = this.props.trip.script;
+    const { script } = this.props.trip;
     const key = `${script.id}-${trigger.name}`;
     if (this.cachedTriggerNames[key]) {
       return this.cachedTriggerNames[key];
     }
     const triggerResourceClass = coreRegistry.resources.trigger;
     const triggerTitle = triggerResourceClass.getEventTitle(
-      script.content, trigger, coreRegistry, coreWalker);
+      script.content, trigger, coreRegistry, coreWalker
+    );
     this.cachedTriggerNames[key] = triggerTitle;
     return triggerTitle;
   }
@@ -84,7 +84,7 @@ export default class SceneGrid extends Component {
   }
 
   renderPlayerPage(player, page) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     return (
       <Preview
         key={page.name}
@@ -97,7 +97,7 @@ export default class SceneGrid extends Component {
   }
 
   renderScenePlayerColumn(scene, player, colWidth) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     const pages = _.filter(trip.script.content.pages, {
       interface: player.role.interface,
       scene: scene.name
@@ -127,8 +127,8 @@ export default class SceneGrid extends Component {
   }
 
   renderTriggerBtn(scene, trigger) {
-    const trip = this.props.trip;
-    const currentSceneName = this.props.trip.tripState.currentSceneName;
+    const { trip } = this.props;
+    const { currentSceneName } = this.props.trip.tripState;
     const isCurrentScene = scene.name === currentSceneName;
     const hasBeenTriggered = !!trip.history[trigger.name];
     const canTrigger = isCurrentScene || scene.global;
@@ -158,7 +158,9 @@ export default class SceneGrid extends Component {
               openTriggerTooltipName: isTooltipOpen ? null : trigger.name
             });
           }}>
-          Cue trigger associated with: {btnTitle}
+          Cue trigger associated with:
+          {' '}
+          {btnTitle}
         </Tooltip>
       </span>
     );
@@ -166,7 +168,7 @@ export default class SceneGrid extends Component {
 
   renderSceneRow(scene, colWidth, isFirst) {
     const players = this.getPlayersForScene(scene);
-    const currentSceneName = this.props.trip.tripState.currentSceneName;
+    const { currentSceneName } = this.props.trip.tripState;
     const isCurrentScene = scene.name === currentSceneName;
     const sceneClass = isCurrentScene ? 'row-current-scene' : '';
     const columns = players.map(player => (
@@ -185,7 +187,7 @@ export default class SceneGrid extends Component {
       </a>
     ) : null;
 
-    const trip = this.props.trip;
+    const { trip } = this.props;
     const triggers = _(trip.script.content.triggers)
       .filter({ scene: scene.name })
       .value();
@@ -251,7 +253,7 @@ export default class SceneGrid extends Component {
   }
 
   render() {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     const scenes = _.get(trip, 'script.content.scenes') || [];
     const sortedScenes = scenes.sort(SceneCore.sortResource);
     const maxPlayersInScene = Math.max(...sortedScenes

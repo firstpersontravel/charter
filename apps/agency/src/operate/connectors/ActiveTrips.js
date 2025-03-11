@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import { connect } from 'react-redux';
 
-import { lookupOrg, lookupExperience, lookupScript, lookupActiveTrips } from './utils';
+import {
+  lookupOrg, lookupExperience, lookupScript, lookupActiveTrips
+} from './utils';
 import { refreshLiveData, listCollection } from '../../actions';
 import ActiveTrips from '../components/ActiveTrips';
 

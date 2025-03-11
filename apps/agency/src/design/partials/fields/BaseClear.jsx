@@ -2,12 +2,14 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function BaseClear({ spec, value, path, onPropUpdate }) {
+function BaseClear({
+  spec, value, path, onPropUpdate
+}) {
   const shouldAllowClear = (
-    !spec.required &&
-    !spec.parent &&
-    !_.isUndefined(value) &&
-    !_.isNull(value)
+    !spec.required
+    && !spec.parent
+    && !_.isUndefined(value)
+    && !_.isNull(value)
   );
   if (!shouldAllowClear) {
     return null;

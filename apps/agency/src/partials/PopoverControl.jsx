@@ -137,9 +137,9 @@ export default class PopoverControl extends Component {
   render() {
     const valueStyle = {
       cursor: 'pointer',
-      borderBottom: this.props.underlined ?
-        '1px dashed rgba(0, 0, 0, 0.5)' :
-        'none'
+      borderBottom: this.props.underlined
+        ? '1px dashed rgba(0, 0, 0, 0.5)'
+        : 'none'
     };
     return (
       <span className="popover-control">

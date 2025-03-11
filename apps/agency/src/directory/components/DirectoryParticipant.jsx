@@ -42,10 +42,11 @@ export default class DirectoryParticipant extends Component {
   }
 
   handleParticipantModalClose() {
-    const experience = this.props.experience;
+    const { experience } = this.props;
     this.props.history.push(
-      `/${experience.org.name}/${experience.name}/directory` +
-      `/${this.props.participant.id}`);
+      `/${experience.org.name}/${experience.name}/directory`
+      + `/${this.props.participant.id}`
+    );
   }
 
   handleUpdateParticipant(fields) {
@@ -58,12 +59,13 @@ export default class DirectoryParticipant extends Component {
   }
 
   handleProfileModalClose() {
-    const experience = this.props.experience;
+    const { experience } = this.props;
     const query = new URLSearchParams(this.props.location.search);
     this.props.history.push(
-      `/${experience.org.name}/${experience.name}/directory` +
-      `/${this.props.participant.id}` +
-      `${query.get('archived_profiles') ? '?archived_profiles=true' : ''}`);
+      `/${experience.org.name}/${experience.name}/directory`
+      + `/${this.props.participant.id}`
+      + `${query.get('archived_profiles') ? '?archived_profiles=true' : ''}`
+    );
   }
 
   handleUpdateProfile(fields) {
@@ -100,10 +102,13 @@ export default class DirectoryParticipant extends Component {
   renderParticipantFields() {
     return (
       <p>
-        <strong>Email:</strong> {this.props.participant.email}
+        <strong>Email:</strong>
+        {' '}
+        {this.props.participant.email}
         <br />
         <strong>Phone:</strong>
-        &nbsp;{formatPhoneNumberIntl(this.props.participant.phoneNumber)}
+        &nbsp;
+        {formatPhoneNumberIntl(this.props.participant.phoneNumber)}
         <br />
       </p>
     );
@@ -112,8 +117,8 @@ export default class DirectoryParticipant extends Component {
   renderProfile(profile) {
     const query = new URLSearchParams(this.props.location.search);
     const archivedProfiles = query.get('archived_profiles');
-    const experience = this.props.experience;
-    const script = experience.script;
+    const { experience } = this.props;
+    const { script } = experience;
 
     const role = _.find(script.content.roles, { name: profile.roleName });
     if (!role) {
@@ -123,7 +128,8 @@ export default class DirectoryParticipant extends Component {
     const renderedValues = requiredValues
       .map(requiredValue => (
         <div key={requiredValue}>
-          {requiredValue}:&nbsp;
+          {requiredValue}
+          :&nbsp;
           {profile.values[requiredValue] || <span className="text-danger">empty</span>}
         </div>
       ));
@@ -185,11 +191,11 @@ export default class DirectoryParticipant extends Component {
     const archivedProfiles = query.get('archived_profiles');
     const editingProfileId = query.get('editing_profile');
     const isEditingParticipant = query.get('editing');
-    const experience = this.props.experience;
-    const editingProfile = editingProfileId ?
-      _.find(this.props.profiles, { id: Number(editingProfileId) }) :
-      null;
-    const participant = this.props.participant;
+    const { experience } = this.props;
+    const editingProfile = editingProfileId
+      ? _.find(this.props.profiles, { id: Number(editingProfileId) })
+      : null;
+    const { participant } = this.props;
     const participantFields = this.renderParticipantFields();
     const profilesList = this.renderProfilesList();
     const hasAnyArchived = _.find(this.props.profiles, { isArchived: true });
@@ -207,7 +213,9 @@ export default class DirectoryParticipant extends Component {
     return (
       <div className="col-sm-9">
         <h3>
-          <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link> &rsaquo;&nbsp;
+          <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link>
+          {' '}
+          &rsaquo;&nbsp;
           {participant.name}
         </h3>
         <p>

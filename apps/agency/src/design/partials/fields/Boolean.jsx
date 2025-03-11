@@ -7,7 +7,9 @@ import {
   doesSpecHaveDefault
 } from '../../utils/resource-utils';
 
-function BooleanField({ spec, value, name, path, opts, onPropUpdate }) {
+function BooleanField({
+  spec, value, name, path, opts, onPropUpdate
+}) {
   const style = _.isUndefined(value) ? { opacity: 0.5 } : {};
   const def = doesSpecHaveDefault(spec) ? defaultForSpec(spec) : false;
   const existing = _.isUndefined(value) ? def : value;

@@ -20,26 +20,28 @@ function makeQueryString(params) {
 export default class ContentTree extends Component {
   renderResource(collectionName, resource, isNested) {
     const resourceType = TextUtil.singularize(collectionName);
-    const script = this.props.script;
+    const { script } = this.props;
     const title = titleForResource(script.content, collectionName, resource);
     return ({
       key: `${collectionName}-${resource.name}`,
       url: (
-        `/${script.org.name}/${script.experience.name}` +
-        `/script/${script.revision}` +
-        `/design/${this.props.sliceType}/${this.props.sliceName}` +
-        `/${collectionName}/${resource.name}`
+        `/${script.org.name}/${script.experience.name}`
+        + `/script/${script.revision}`
+        + `/design/${this.props.sliceType}/${this.props.sliceName}`
+        + `/${collectionName}/${resource.name}`
       ),
       text:
-        `${isNested ? '- ' : ''}` +
-        `${titleForResourceType(resourceType)}: ${title}`,
+        `${isNested ? '- ' : ''}`
+        + `${titleForResourceType(resourceType)}: ${title}`,
       label: (
         <span>
           <ResourceBadge
             showType={false}
             className={isNested ? 'ml-2' : ''}
             resource={resource}
-            resourceType={resourceType} /> {title}
+            resourceType={resourceType} />
+          {' '}
+          {title}
         </span>
       )
     });
@@ -62,26 +64,26 @@ export default class ContentTree extends Component {
 
   renderNewItem(contentSection) {
     const collectionName = contentSection.collection;
-    const script = this.props.script;
+    const { script } = this.props;
     const resourceType = TextUtil.singularize(collectionName);
     const queryString = makeQueryString(contentSection.filter);
-    const title = contentSection.title ?
-      contentSection.title :
-      titleForResourceType(resourceType);
+    const title = contentSection.title
+      ? contentSection.title
+      : titleForResourceType(resourceType);
     return ({
       key: `${contentSection.key || collectionName}-new`,
       isActive: (match, location) => (
-        match &&
-        location.pathname === match.url &&
-        location.search === queryString
+        match
+        && location.pathname === match.url
+        && location.search === queryString
       ),
       className: 'mb-3',
       url: {
         pathname: (
-          `/${script.org.name}/${script.experience.name}` +
-          `/script/${script.revision}` +
-          `/design/${this.props.sliceType}/${this.props.sliceName}` +
-          `/${collectionName}/new`
+          `/${script.org.name}/${script.experience.name}`
+          + `/script/${script.revision}`
+          + `/design/${this.props.sliceType}/${this.props.sliceName}`
+          + `/${collectionName}/new`
         ),
         search: queryString
       },
@@ -92,7 +94,9 @@ export default class ContentTree extends Component {
             className="mr-1"
             showType={false}
             resourceType={resourceType} />
-          Add {title.toLowerCase()}
+          Add
+          {' '}
+          {title.toLowerCase()}
         </span>
       )
     });
@@ -101,9 +105,9 @@ export default class ContentTree extends Component {
   renderContentSection(contentSection) {
     const collectionName = contentSection.collection;
     const resourceType = TextUtil.singularize(collectionName);
-    const title = contentSection.title ?
-      TextUtil.pluralize(contentSection.title) :
-      TextUtil.pluralize(titleForResourceType(resourceType));
+    const title = contentSection.title
+      ? TextUtil.pluralize(contentSection.title)
+      : TextUtil.pluralize(titleForResourceType(resourceType));
     const headerItem = {
       key: `${contentSection.key || collectionName}-header`,
       url: '',
@@ -130,7 +134,7 @@ export default class ContentTree extends Component {
   }
 
   render() {
-    const contentList = this.props.contentList;
+    const { contentList } = this.props;
     const allItems = _(contentList)
       .map(item => this.renderContentSection(item))
       .flatten()

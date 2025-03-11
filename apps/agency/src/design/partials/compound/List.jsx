@@ -33,8 +33,10 @@ function renderNewItemBtn(itemSpec, newPath, onPropUpdate) {
   );
 }
 
-function ListField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, renderAny }) {
+function ListField({
+  script, resource, spec, value, name, path, opts,
+  onPropUpdate, renderAny
+}) {
   const items = _.map(value, (item, i) => (
     <ListItem
       script={script}

@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button, Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 
 export default class ProfileModal extends Component {
   static getDefaultState(profile) {
@@ -27,8 +29,8 @@ export default class ProfileModal extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.isOpen
-        && !prevProps.isOpen &&
-        this.firstInputRef.current) {
+        && !prevProps.isOpen
+        && this.firstInputRef.current) {
       this.firstInputRef.current.focus();
     }
   }
@@ -48,11 +50,12 @@ export default class ProfileModal extends Component {
   }
 
   handleChangeValue(nestedAttribute, event) {
-    this.setState({
-      values: Object.assign(this.state.values, {
+    this.setState(prevState => ({
+      values: {
+        ...prevState.values,
         [nestedAttribute]: event.target.value
-      })
-    });
+      }
+    }));
   }
 
   isValid() {
@@ -63,13 +66,13 @@ export default class ProfileModal extends Component {
   }
 
   render() {
-    const profile = this.props.profile;
+    const { profile } = this.props;
     const title = profile ? 'Edit profile' : 'New profile';
     const isNew = !profile;
     const confirmLabel = isNew ? 'Create' : 'Update';
     const isValid = this.isValid();
 
-    const experience = this.props.experience;
+    const { experience } = this.props;
     if (!experience || !experience.script) {
       return null;
     }

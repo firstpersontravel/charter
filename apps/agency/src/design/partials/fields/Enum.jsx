@@ -23,7 +23,9 @@ function labelForValue(spec, value) {
   return <BaseEmpty spec={spec} />;
 }
 
-function EnumField({ spec, value, name, path, opts, onPropUpdate }) {
+function EnumField({
+  spec, value, name, path, opts, onPropUpdate
+}) {
   return (
     <BaseEnum
       spec={spec}

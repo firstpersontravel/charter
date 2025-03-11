@@ -9,7 +9,7 @@ const assetComponentsByResourceType = {
 
 export default class ResourceExtras extends Component {
   render() {
-    const resourceType = this.props.resourceType;
+    const { resourceType } = this.props;
     const AssetsComponent = assetComponentsByResourceType[resourceType];
     if (AssetsComponent) {
       return (

@@ -7,7 +7,7 @@ import { listCollection } from '../../actions';
 const mapStateToProps = (state, ownProps) => {
   const authInfo = _.get(_.find(state.datastore.auth, { id: 'latest' }), 'data');
   const experienceRequest = state.requests['experiences.list'];
-  const experienceName = ownProps.match.params.experienceName;
+  const { experienceName } = ownProps.match.params;
   return {
     org: _.find(authInfo.orgs, { name: ownProps.match.params.orgName }),
     experienceName: experienceName,

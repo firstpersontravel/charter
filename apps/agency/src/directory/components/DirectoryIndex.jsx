@@ -64,10 +64,11 @@ export default class DirectoryIndex extends Component {
   handleParticipantModalClose() {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
-    const experience = this.props.experience;
+    const { experience } = this.props;
     this.props.history.push(
-      `/${experience.org.name}/${experience.name}/directory` +
-      `${roleName ? `?role=${roleName}` : ''}`);
+      `/${experience.org.name}/${experience.name}/directory`
+      + `${roleName ? `?role=${roleName}` : ''}`
+    );
   }
 
   renderParticipant(participant) {
@@ -78,7 +79,7 @@ export default class DirectoryIndex extends Component {
     if (participant.devicePushToken) {
       statusIcons.push(<i key="comment" className="fa fa-comment" />);
     }
-    const experience = this.props.experience;
+    const { experience } = this.props;
     const profileParams = { participantId: participant.id };
     const participantProfiles = _(this.props.profiles)
       .filter(profileParams)
@@ -117,11 +118,11 @@ export default class DirectoryIndex extends Component {
   renderHeader() {
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
-    const experience = this.props.experience;
+    const { experience } = this.props;
     if (roleName && experience.script) {
       const role = _.find(experience.script.content.roles, { name: roleName });
-      const roleTitle = roleName === 'Archived' ? 'Archived' :
-        (role && role.title);
+      const roleTitle = roleName === 'Archived' ? 'Archived'
+        : (role && role.title);
       return (
         <h3>
           <Link to={`/${experience.org.name}/${experience.name}/directory`}>Directory</Link>
@@ -136,7 +137,7 @@ export default class DirectoryIndex extends Component {
   }
 
   renderNewParticipantButton() {
-    const experience = this.props.experience;
+    const { experience } = this.props;
     const query = new URLSearchParams(this.props.location.search);
     const roleName = query.get('role');
     if (roleName === 'Archived') {
@@ -161,8 +162,8 @@ export default class DirectoryIndex extends Component {
   }
 
   render() {
-    if (this.props.participants.isLoading ||
-        this.props.profiles.isLoading) {
+    if (this.props.participants.isLoading
+        || this.props.profiles.isLoading) {
       return <Loader />;
     }
     const query = new URLSearchParams(this.props.location.search);

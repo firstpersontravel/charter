@@ -51,8 +51,10 @@ export function iconForResource(resourceType, resource) {
   );
 }
 
-export default function ResourceBadge({ resourceType, resource, style,
-  className, showType, ...props }) {
+export default function ResourceBadge({
+  resourceType, resource, style,
+  className, showType, ...props
+}) {
   const styleWithColor = Object.assign({
     backgroundColor: COLORS[resourceType] || '#cccccc'
   }, style);

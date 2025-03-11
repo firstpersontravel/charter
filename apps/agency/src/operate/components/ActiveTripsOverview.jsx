@@ -17,8 +17,8 @@ function getAllPlayers(trips) {
 
 function getTripPlayer(trip, roleName, participant) {
   return trip.players.find(p => (
-    p.roleName === roleName &&
-    p.participantId === (participant ? participant.id : null)
+    p.roleName === roleName
+    && p.participantId === (participant ? participant.id : null)
   ));
 }
 
@@ -35,7 +35,9 @@ function renderExternalLink(trips, role, participant) {
     const playerLink = renderPlayLink(trip, player);
     return player.participantId ? playerLink : (
       <React.Fragment>
-        {playerLink} {renderJoinLink(trip, player)}
+        {playerLink}
+        {' '}
+        {renderJoinLink(trip, player)}
       </React.Fragment>
     );
   }
@@ -57,8 +59,16 @@ export default class ActiveTripsOverview extends Component {
       <div key={`${role.name}-${participantId}`} className="constrain-text">
         <Link
           to={`/${this.props.org.name}/${this.props.experience.name}/operate/role/${role.name}/${participantId}`}>
-          <strong>{role.title}</strong> ({participantName}, {tripTitles})
-        </Link> {externalLink}
+          <strong>{role.title}</strong>
+          {' '}
+          (
+          {participantName}
+          ,
+          {tripTitles}
+          )
+        </Link>
+        {' '}
+        {externalLink}
       </div>
     );
   }
@@ -71,13 +81,18 @@ export default class ActiveTripsOverview extends Component {
     const currentScene = _.find(trip.script.content.scenes, {
       name: trip.tripState.currentSceneName
     });
-    const currentSceneTitle = currentScene ? currentScene.title :
-      'Not started';
+    const currentSceneTitle = currentScene ? currentScene.title
+      : 'Not started';
     return (
       <div key={trip.id}>
         <Link
           to={`/${this.props.org.name}/${this.props.experience.name}/operate/trip/${trip.id}`}>
-          <strong>{trip.title}:</strong> {currentSceneTitle}
+          <strong>
+            {trip.title}
+            :
+          </strong>
+          {' '}
+          {currentSceneTitle}
         </Link>
       </div>
     );
@@ -87,7 +102,7 @@ export default class ActiveTripsOverview extends Component {
     const renderedTrips = this.props.trips
       .map(trip => this.renderTrip(trip));
 
-    const script = this.props.script;
+    const { script } = this.props;
     const roles = _(script.content.roles)
       .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
       .sort(SceneCore.sortResource)

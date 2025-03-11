@@ -33,8 +33,8 @@ function renderMessageIcon(message) {
   const oneHourAgo = moment.utc().subtract(1, 'hour');
   let textClass = '';
   let icon = '';
-  if (message.isReplyNeeded && message.replyReceivedAt &&
-      moment.utc(message.replyReceivedAt).isAfter(oneHourAgo)) {
+  if (message.isReplyNeeded && message.replyReceivedAt
+      && moment.utc(message.replyReceivedAt).isAfter(oneHourAgo)) {
     textClass = 'text-success';
     icon = 'fa-check-circle';
   } else if (message.isReplyNeeded && !message.replyReceivedAt) {
@@ -49,7 +49,8 @@ function renderMessageIcon(message) {
   }
   return (
     <span className={textClass}>
-      <i className={`fa ${icon}`} />&nbsp;
+      <i className={`fa ${icon}`} />
+&nbsp;
     </span>
   );
 }
@@ -85,7 +86,8 @@ function renderActions(message, updateInstance) {
   ) : null;
   return (
     <span>
-      {archiveAction}{' '}
+      {archiveAction}
+      {' '}
       {markRepliedAction}
     </span>
   );
@@ -95,7 +97,7 @@ export default function Message({ message, updateInstance }) {
   if (!message.trip) {
     return null;
   }
-  const trip = message.trip;
+  const { trip } = message;
   const roles = trip.script.content.roles || [];
   const toRole = roles.find(r => r.name === message.toRoleName);
   const fromRole = roles.find(r => r.name === message.fromRoleName);
@@ -110,20 +112,25 @@ export default function Message({ message, updateInstance }) {
   const content = renderMessageContent(message);
   const icon = renderMessageIcon(message);
   const archivedClass = message.isArchived ? 'message-archived' : '';
-  const shouldShowRespond = message.isReplyNeeded &&
-    !message.reponseReceivedAt;
+  const shouldShowRespond = message.isReplyNeeded
+    && !message.reponseReceivedAt;
   const respondBtn = shouldShowRespond ? (
     <Link
       className="btn btn-xs btn-outline-secondary"
       to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/messages?for=${actorRole.name}&with=${audienceRole.name}`}>
-      Respond to {audienceRole.title}
+      Respond to
+      {' '}
+      {audienceRole.title}
     </Link>
   ) : null;
 
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <strong className="mr-1">{fromRole.title}:</strong>
+      <strong className="mr-1">
+        {fromRole.title}
+        :
+      </strong>
       {content}
       &nbsp;
       <span className="faint">{timeShort}</span>

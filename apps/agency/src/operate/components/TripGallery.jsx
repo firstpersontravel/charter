@@ -16,9 +16,9 @@ function renderMessage(trip, message, updateInstance) {
     maxWidth: '150px',
     marginBottom: '0.5em'
   };
-  const imageStyle = message.isInGallery ?
-    { maxHeight: '150px' } :
-    { maxHeight: '150px', opacity: 0.5 };
+  const imageStyle = message.isInGallery
+    ? { maxHeight: '150px' }
+    : { maxHeight: '150px', opacity: 0.5 };
   return (
     <div key={message.id} style={cellStyle}>
       <div>
@@ -27,7 +27,8 @@ function renderMessage(trip, message, updateInstance) {
           src={mediaUrl}
           style={imageStyle}
           onClick={() => updateInGallery(
-            message.id, !message.isInGallery, updateInstance)}
+            message.id, !message.isInGallery, updateInstance
+          )}
           className="img-fluid" />
       </div>
       <div>
@@ -75,7 +76,7 @@ export default class TripGallery extends Component {
   }
 
   renderLink() {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     const host = (isProduction() && trip.script.host) || defaultHost;
     const url = `${host}/gallery/${trip.id}`;
     return (

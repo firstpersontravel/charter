@@ -10,7 +10,7 @@ import { sections, getSliceContent } from '../utils/section-utils';
 
 export default class Slice extends Component {
   renderSidenav() {
-    const script = this.props.script;
+    const { script } = this.props;
     const sceneLinks = (script.content.scenes || [])
       .sort(SceneCore.sortResource)
       .map(scene => ({
@@ -21,10 +21,11 @@ export default class Slice extends Component {
             <i
               style={{ width: '1.5em' }}
               className={
-                'd-none d-md-inline-block fa ' +
-                `fa-${coreRegistry.resources.scene.icon(scene)}`
+                'd-none d-md-inline-block fa '
+                + `fa-${coreRegistry.resources.scene.icon(scene)}`
               } />
-            &nbsp;{scene.title}
+            &nbsp;
+            {scene.title}
           </span>
         ),
         text: scene.title
@@ -38,7 +39,8 @@ export default class Slice extends Component {
           <i
             style={{ width: '1.5em' }}
             className={`d-none d-md-inline-block fa fa-${section[2]}`} />
-          &nbsp;{section[1]}
+          &nbsp;
+          {section[1]}
         </span>
       ),
       text: section[1]
@@ -85,8 +87,8 @@ export default class Slice extends Component {
   }
 
   render() {
-    const sliceType = this.props.match.params.sliceType;
-    const sliceName = this.props.match.params.sliceName;
+    const { sliceType } = this.props.match.params;
+    const { sliceName } = this.props.match.params;
     const scriptContent = this.props.script.content;
     const contentList = getSliceContent(scriptContent, sliceType, sliceName);
     return (

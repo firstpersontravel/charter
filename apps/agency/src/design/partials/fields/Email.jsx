@@ -9,7 +9,9 @@ function isEmpty(warnings) {
   return !warnings || warnings.length === 0;
 }
 
-function EmailField({ script, spec, value, name, path, opts, onPropUpdate }) {
+function EmailField({
+  script, spec, value, name, path, opts, onPropUpdate
+}) {
   return (
     <BaseString
       spec={spec}

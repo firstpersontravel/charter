@@ -51,9 +51,7 @@ Experience.propTypes = {
 
 Experience.defaultProps = {
   experienceRequest: null,
-  experience: null,
-  org: null,
-  authInfo: null
+  experience: null
 };
 
 export default withLoader(Experience, ['org.id', 'experience.id'], (props) => {

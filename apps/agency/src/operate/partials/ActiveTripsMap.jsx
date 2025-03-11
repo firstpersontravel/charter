@@ -3,7 +3,9 @@ import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Circle, Map, Marker, Popup, TileLayer, Polyline } from 'react-leaflet';
+import {
+  Circle, Map, Marker, Popup, TileLayer, Polyline
+} from 'react-leaflet';
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
 
@@ -58,7 +60,8 @@ function renderGeofenceOptions(script, geofence) {
     return null;
   }
   const waypointOptions = WaypointCore.optionsForWaypoint(
-    script.content, geofence.center);
+    script.content, geofence.center
+  );
   return waypointOptions.map(waypointOption => (
     <Circle
       key={`${geofence.name}-${waypointOption.name}`}
@@ -69,7 +72,9 @@ function renderGeofenceOptions(script, geofence) {
       fillOpacity={0}>
       <Popup>
         <div>
-          {geofence.distance}m around {waypoint.title}
+          {geofence.distance}
+          m around
+          {waypoint.title}
         </div>
       </Popup>
     </Circle>
@@ -81,12 +86,14 @@ function groupByLocation(items, latProp, lngProp, threshold) {
   items.forEach((item) => {
     const itemPos = L.latLng(
       _.get(item, latProp),
-      _.get(item, lngProp));
+      _.get(item, lngProp)
+    );
     const nearbyGroups = itemGroups
       .filter((existingGroup) => {
         const groupPos = L.latLng(
           _.get(existingGroup[0], latProp),
-          _.get(existingGroup[0], lngProp));
+          _.get(existingGroup[0], lngProp)
+        );
         return (groupPos.distanceTo(itemPos) < threshold);
       });
     if (nearbyGroups.length > 0) {
@@ -102,9 +109,9 @@ function getZoomFit(center, dist, threshold) {
   const minZoom = 9;
   const maxZoom = 25;
   for (let zoom = minZoom; zoom < maxZoom; zoom += 0.5) {
-    const metersPerPixel = (40075016.686 *
-      Math.abs(Math.cos((center.lat * 180) / Math.PI))) /
-      (2 ** (zoom + 8));
+    const metersPerPixel = (40075016.686
+      * Math.abs(Math.cos((center.lat * 180) / Math.PI)))
+      / (2 ** (zoom + 8));
     const pixels = dist / metersPerPixel;
     if (pixels > threshold) {
       return zoom;
@@ -115,8 +122,8 @@ function getZoomFit(center, dist, threshold) {
 
 function fastDist(coords1, coords2) {
   return (
-    ((coords1[0] - coords2[0]) ** 2) +
-    ((coords1[1] - coords2[1]) ** 2)
+    ((coords1[0] - coords2[0]) ** 2)
+    + ((coords1[1] - coords2[1]) ** 2)
   );
 }
 
@@ -137,7 +144,7 @@ function getPolylineRemaining(coords, currentCoords) {
 
 export default class ActiveTripsMap extends Component {
   getWaypointLatLngs() {
-    const script = this.props.trips[0].script;
+    const { script } = this.props.trips[0];
     const waypoints = WaypointCore.getAllWaypointOptions(script.content);
     return waypoints
       .map(waypoint => (
@@ -160,7 +167,7 @@ export default class ActiveTripsMap extends Component {
   }
 
   getActiveRoutePolylines() {
-    const script = this.props.trips[0].script;
+    const { script } = this.props.trips[0];
     const activePlayers = _(this.props.trips)
       .map('players')
       .flatten()
@@ -177,7 +184,9 @@ export default class ActiveTripsMap extends Component {
         const role = (script.content.roles || []).find(r => r.name === player.roleName);
         const playerLink = (
           <Link to={`/${trip.org.name}/${trip.experience.name}/operate/role/${player.roleName}/${player.participantId || 0}`}>
-            {trip.title}: {role.title}
+            {trip.title}
+            :
+            {role.title}
           </Link>
         );
         const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
@@ -188,7 +197,8 @@ export default class ActiveTripsMap extends Component {
         if (page.waypoint) {
           const waypointOption = WaypointCore.optionForWaypoint(
             script.content, page.waypoint,
-            trip.waypointOptions);
+            trip.waypointOptions
+          );
           return [
             <Marker
               key={`${player.id}-target`}
@@ -230,16 +240,16 @@ export default class ActiveTripsMap extends Component {
         }
         const coords = PolylineEncoded.decode(directions.data.polyline);
         const destination = coords[coords.length - 1];
-        const participant = player.participant;
-        const participantCoords = participant &&
-          participant.locationLatitude &&
-          [participant.locationLatitude, participant.locationLongitude];
+        const { participant } = player;
+        const participantCoords = participant
+          && participant.locationLatitude
+          && [participant.locationLatitude, participant.locationLongitude];
         const coordsRemaining = getPolylineRemaining(coords, participantCoords);
         return [
           <Polyline
             key={player.id}
             positions={coordsRemaining}
-            color={'#f3a842'}
+            color="#f3a842"
             weight={6} />,
           <Marker
             key={`${player.id}-target`}
@@ -248,7 +258,10 @@ export default class ActiveTripsMap extends Component {
             <Popup>
               <RouterForwarder context={this.context}>
                 <div>
-                  {playerLink} destination of {page.title}
+                  {playerLink}
+                  {' '}
+                  destination of
+                  {page.title}
                 </div>
               </RouterForwarder>
             </Popup>
@@ -263,7 +276,8 @@ export default class ActiveTripsMap extends Component {
   getPlayerGroups() {
     const players = _.filter(
       _.flatMap(this.props.trips, 'players'),
-      'participant.locationLatitude');
+      'participant.locationLatitude'
+    );
     return groupByLocation(players,
       'participant.locationLatitude',
       'participant.locationLongitude',
@@ -273,19 +287,24 @@ export default class ActiveTripsMap extends Component {
   renderMarkerPlayerSection(player) {
     const trip = _.find(this.props.trips, { id: player.tripId });
     const role = (trip.script.content.roles || []).find(r => r.name === player.roleName);
-    const timezone = this.props.trips[0].experience.timezone;
+    const { timezone } = this.props.trips[0].experience;
     return (
       <div key={player.id}>
         <div>
           <Link to={`/${trip.org.name}/${trip.experience.name}/operate/role/${player.roleName}/${player.participantId || 0}`}>
-            {trip.title}{' '}
-            {role.title}{' '}
-            ({player.participant.name})
+            {trip.title}
+            {' '}
+            {role.title}
+            {' '}
+            (
+            {player.participant.name}
+            )
           </Link>
         </div>
         <div className="mb-1">
           <i className="fa fa-location-arrow" />
-          &nbsp;{moment
+          &nbsp;
+          {moment
             .utc(player.participant.locationTimestamp)
             .tz(timezone)
             .format('ddd, h:mmA z')}
@@ -295,14 +314,15 @@ export default class ActiveTripsMap extends Component {
   }
 
   renderMarker(playerGroup) {
-    const participant = playerGroup[0].participant;
+    const { participant } = playerGroup[0];
     const oneHourAgo = moment.utc().subtract(1, 'hour');
     const locatedAt = moment.utc(participant.locationTimestamp);
     const locIsRecent = locatedAt.isAfter(oneHourAgo);
     const icon = locIsRecent ? participantIcon : participantIconExpired;
     const position = L.latLng(
       participant.locationLatitude,
-      participant.locationLongitude);
+      participant.locationLongitude
+    );
     const playerSections = playerGroup
       .map(player => (
         this.renderMarkerPlayerSection(player)
@@ -328,7 +348,7 @@ export default class ActiveTripsMap extends Component {
   }
 
   renderGeofences() {
-    const script = this.props.trips[0].script;
+    const { script } = this.props.trips[0];
     const geofences = script.content.geofences || [];
     return _(geofences)
       .map(geofence => (
@@ -344,9 +364,9 @@ export default class ActiveTripsMap extends Component {
     }
     const allRoutes = this.getRoutePolylines();
     const activeRoutes = this.getActiveRoutePolylines();
-    const latLngs = (allRoutes.length > 0) ?
-      allRoutes.map(polyline => polyline.props.positions[0]) :
-      this.getWaypointLatLngs();
+    const latLngs = (allRoutes.length > 0)
+      ? allRoutes.map(polyline => polyline.props.positions[0])
+      : this.getWaypointLatLngs();
 
     if (latLngs.length === 0) {
       return <div>No map locations</div>;

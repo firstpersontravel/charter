@@ -45,9 +45,9 @@ class Trip extends Component {
             className="nav-link"
             activeClassName="active"
             to={
-              `/${this.props.org.name}/${this.props.experience.name}` +
-              `/schedule/${this.props.match.params.year}/${this.props.match.params.month}` +
-              `/${this.props.trip.id}`}>
+              `/${this.props.org.name}/${this.props.experience.name}`
+              + `/schedule/${this.props.match.params.year}/${this.props.match.params.month}`
+              + `/${this.props.trip.id}`}>
             Users
           </NavLink>
         </li>
@@ -65,21 +65,21 @@ class Trip extends Component {
   }
 
   render() {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     if (!trip.isLoading && (trip.isError || trip.isNull)) {
       return <Alert color="danger" content="Error loading trip." />;
     }
-    if ((!trip && trip.isLoading) ||
-        !trip.script ||
-        trip.script.isNull) {
+    if ((!trip && trip.isLoading)
+        || !trip.script
+        || trip.script.isNull) {
       return <Loader />;
     }
 
     const query = new URLSearchParams(this.props.location.search);
     const editingTripId = query.get('trip');
     const isEditingTrip = !!editingTripId;
-    const editingTrip = (isEditingTrip && editingTripId !== 'new') ?
-      trip : null;
+    const editingTrip = (isEditingTrip && editingTripId !== 'new')
+      ? trip : null;
 
     const dateShort = moment(trip.date).format('MMM D');
 
@@ -107,7 +107,9 @@ class Trip extends Component {
             {archiveTripBtn}
           </div>
           <h4 style={trip.isArchived ? archivedStyle : null}>
-            {dateShort}: {trip.title}
+            {dateShort}
+            :
+            {trip.title}
           </h4>
         </div>
 

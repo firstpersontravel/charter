@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 
 import ObjectKey from './ObjectKey';
 
-function ObjectField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, renderAny }) {
+function ObjectField({
+  script, resource, spec, value, name, path, opts,
+  onPropUpdate, renderAny
+}) {
   return Object.keys(spec.properties).map(key => (
     <ObjectKey
       key={key}

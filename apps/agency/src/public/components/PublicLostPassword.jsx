@@ -105,7 +105,6 @@ PublicLostPassword.propTypes = {
 };
 
 PublicLostPassword.defaultProps = {
-  authInfo: null,
   lostPasswordRequest: null,
   lostPasswordError: null
 };

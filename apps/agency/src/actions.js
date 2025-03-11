@@ -66,8 +66,8 @@ function modelNameForCollectionName(collectionName) {
 
 function processError(err) {
   Sentry.withScope((scope) => {
-    if (typeof FS === 'function' &&
-        typeof FS.getCurrentSessionURL === 'function') {
+    if (typeof FS === 'function'
+        && typeof FS.getCurrentSessionURL === 'function') {
       scope.setExtra('Fullstory Record', FS.getCurrentSessionURL(true));
     }
     Sentry.captureException(err);
@@ -113,36 +113,43 @@ function throwRequestError(url, params, response) {
       if (response.status === 401) {
         throw new RequestError(
           `Authentication error on ${params.method} to ${url}: ${response.status}.`,
-          url, params, response.status, responseData);
+          url, params, response.status, responseData
+        );
       }
       if (response.status === 403) {
         throw new RequestError(
           `Forbidden error on ${params.method} to ${url}: ${response.status}.`,
-          url, params, response.status, responseData);
+          url, params, response.status, responseData
+        );
       }
       if (response.status === 400) {
         throw new RequestError(
           `Bad request error on ${params.method} to ${url}: ${response.status}.`,
-          url, params, response.status, responseData);
+          url, params, response.status, responseData
+        );
       }
       if (response.status === 422) {
         throw new RequestError(
           `Validation error on ${params.method} to ${url}: ${response.status}.`,
-          url, params, response.status, responseData);
+          url, params, response.status, responseData
+        );
       }
       if (response.status === 500) {
         throw new RequestError(
           `Internal error on ${params.method} to ${url}: ${response.status}.`,
-          url, params, response.status, responseData);
+          url, params, response.status, responseData
+        );
       }
       if (response.status === 502 || response.status === 503) {
         throw new RequestError(
           `Gateway error on ${params.method} to ${url}: ${response.status}.`,
-          url, params, response.status, responseData);
+          url, params, response.status, responseData
+        );
       }
       throw new RequestError(
         `Unknown error on ${params.method} to ${url}: ${response.status}.`,
-        url, params, response.status, responseData);
+        url, params, response.status, responseData
+      );
     });
 }
 
@@ -180,9 +187,9 @@ function fetchJsonAssuringSuccess(url, params) {
 
 function request(collectionName, instanceId, operationName, url, params,
   dispatch) {
-  const requestName = instanceId ?
-    `${collectionName}.${instanceId}.${operationName}` :
-    `${collectionName}.${operationName}`;
+  const requestName = instanceId
+    ? `${collectionName}.${instanceId}.${operationName}`
+    : `${collectionName}.${operationName}`;
   dispatch(saveRequest(requestName, 'pending', null));
   return fetchJsonAssuringSuccess(url, params)
     .then(
@@ -604,7 +611,8 @@ export function createTrip(fields, nextItems) {
     createInstances('trips', fields, nextItems)(dispatch)
       .then(trip => (
         postAdminAction(trip.orgId, trip.experienceId, trip.id, 'reset')(
-          dispatch)
+          dispatch
+        )
       ))
       .catch(err => handleRequestError(err, dispatch));
   };
