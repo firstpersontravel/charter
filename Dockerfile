@@ -1,7 +1,7 @@
 ##########################
 ##### Agency builder #####
 ##########################
-FROM node:16-alpine AS agency-builder
+FROM node:20-alpine AS agency-builder
 
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
@@ -19,12 +19,12 @@ COPY fptcore /var/app/fptcore
 COPY apps/agency /var/app/apps/agency
 
 # Build agency
-RUN cd /var/app/apps/agency && NODE_ENV=production webpack
+RUN cd /var/app/apps/agency && NODE_ENV=production && NODE_OPTIONS=--openssl-legacy-provider webpack
 
 ##########################
 ##### Travel2 builder #####
 ##########################
-FROM node:16-alpine AS travel2-builder
+FROM node:20-alpine AS travel2-builder
 
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
@@ -42,23 +42,23 @@ COPY fptcore /var/app/fptcore
 COPY apps/travel2 /var/app/apps/travel2
 
 # Build travel2
-RUN cd /var/app/apps/travel2 && NODE_ENV=production webpack
+RUN cd /var/app/apps/travel2 && NODE_ENV=production && NODE_OPTIONS=--openssl-legacy-provider webpack
 
 ######################
 ##### Main image #####
 ######################
-FROM node:16-alpine
+FROM node:20-alpine
  
 # Update OS, install tools, install requirements for node-gyp
-RUN apk update && apk upgrade && apk add bash mysql mysql-client make python3 g++
+RUN apk update && apk upgrade && apk add bash mysql mysql-client make python3 py3-setuptools g++
 
 # Install core modules
 COPY fptcore/package.json fptcore/package-lock.json /var/app/fptcore/
 RUN cd /var/app/fptcore && npm -q install
 
-# Install server node requirements
+# Install server node requirements. Force install fsevents@2.3.3 to fix node-gyp error
 COPY headquarters/package.json headquarters/package-lock.json /var/app/headquarters/
-RUN cd /var/app/headquarters && npm -q install
+RUN cd /var/app/headquarters && npm -q install --no-optional
 
 # Install static directory, server and common code
 COPY static /var/app/static

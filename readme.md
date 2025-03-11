@@ -8,9 +8,15 @@
 # Install basics with homebrew
 brew install node awscli
 
+# Set up python (needed for node-gyp)
+pyenv install 3.13.1
+pyenv virtualenv 3.13.1 charter
+pyenv global 3.13.1
+pip install setuptools
+
 # Set up nvm
-nvm install 16.20.2
-nvm use 16.20.2
+nvm install 20.18.3
+nvm use 20.18.3
 ```
 
 ### Set up environment
@@ -21,7 +27,7 @@ cp precommit.sh ./.git/hooks/pre-commit
 
 # Create a local env
 mkdir -p secrets
-cp example.env local.env
+cp example.env secrets/local.env
 
 # Build docker container; rebuild if you add new modules
 docker build . -t fpt:latest

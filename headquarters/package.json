@@ -26,6 +26,7 @@
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "faye": "^1.2.4",
+    "fsevents": "^2.3.3",
     "js-yaml": "^3.6.1",
     "json-stable-stringify": "^1.0.1",
     "jsonschema": "^1.2.6",
@@ -49,10 +50,13 @@
     "eslint": "^4.15.0",
     "mocha": "^4.1.0",
     "node-mocks-http": "^1.6.6",
-    "nodemon": "^1.18.9",
+    "nodemon": "^3.1.9",
     "sinon": "^4.1.5",
     "sqlite3": "^5.1.6",
     "supertest": "^3.0.0"
+  },
+  "optionalDependencies": {
+      "fsevents": "*"
   },
   "_moduleAliases": {
     "fptcore": "../fptcore"
