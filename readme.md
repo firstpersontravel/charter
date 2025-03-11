@@ -123,7 +123,7 @@ ngrok http --subdomain=fpt 5001
 docker-compose exec server node --experimental-repl-await
 
 # MySQL console
-docker-compose exec mysql mysql galaxy -ugalaxy -pgalaxypassword
+docker-compose exec mysql mysql charter -ucharter -pcharterpassword
 ```
 
 ## Todo later:

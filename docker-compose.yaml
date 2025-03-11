@@ -34,7 +34,14 @@ services:
     command: nodemon --legacy-watch --polling-interval 1000 --watch /var/app/fptcore --watch /var/app/hqdev bin/worker.js
 
   mysql:
-    image: biarms/mysql:5.7
-    environment: [MYSQL_ROOT_PASSWORD=root]
-    volumes: ["./docker/mysql:/docker-entrypoint-initdb.d"]
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_AUTHENTICATION_PLUGIN: caching_sha2_password
+    volumes:
+      - "./docker/mysql:/docker-entrypoint-initdb.d"
+      - mysql:/var/lib/mysql
     ports: ["4310:3306"]
+
+volumes:
+  mysql:
