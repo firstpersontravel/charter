@@ -8,9 +8,9 @@
 # Install basics with homebrew
 brew install node awscli
 
-# Set up n
-npm install -g n
-n 12.16.2
+# Set up nvm
+nvm install 16.20.2
+nvm use 16.20.2
 ```
 
 ### Set up environment
