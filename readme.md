@@ -15,8 +15,8 @@ pyenv global 3.13.1
 pip install setuptools
 
 # Set up nvm
-nvm install 20.18.3
-nvm use 20.18.3
+nvm install 23.9.0
+nvm use 23.9.0
 ```
 
 ### Set up environment
