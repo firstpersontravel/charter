@@ -4,7 +4,9 @@ import PropTypes from 'prop-types';
 import AnyField from './Any';
 import ObjectField from './Object';
 
-function ResourceField({ script, resource, spec, value, onPropUpdate }) {
+function ResourceField({
+  script, resource, spec, value, onPropUpdate
+}) {
   // If value is missing any required fields, then just show the required
   // fields before allowing you to fill in any others. In practice the only
   // resources that are missing required fields should be new ones.
@@ -35,8 +37,8 @@ function ResourceField({ script, resource, spec, value, onPropUpdate }) {
       resource={resource}
       spec={{ properties: displayProperties }}
       value={value}
-      name={''}
-      path={''}
+      name=""
+      path=""
       opts={{}}
       renderAny={AnyField}
       onPropUpdate={onPropUpdate} />
@@ -49,10 +51,6 @@ ResourceField.propTypes = {
   onPropUpdate: PropTypes.func.isRequired,
   spec: PropTypes.object.isRequired,
   value: PropTypes.object.isRequired
-};
-
-ResourceField.defaultProps = {
-  opts: {}
 };
 
 export default ResourceField;

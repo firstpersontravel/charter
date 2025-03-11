@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 import BaseString from './BaseString';
 
-function CoordsField({ spec, value, name, path, opts, onPropUpdate }) {
+function CoordsField({
+  spec, value, name, path, opts, onPropUpdate
+}) {
   const clean = val => val.split(',').map(v => Number(v));
   return (
     <BaseString
@@ -16,11 +18,11 @@ function CoordsField({ spec, value, name, path, opts, onPropUpdate }) {
       validate={(val) => {
         const coords = clean(val);
         return (
-          coords.length === 2 &&
-          coords[0] &&
-          coords[1] &&
-          !isNaN(Number(coords[0])) &&
-          !isNaN(Number(coords[1]))
+          coords.length === 2
+          && coords[0]
+          && coords[1]
+          && !Number.isNaN(Number(coords[0]))
+          && !Number.isNaN(Number(coords[1]))
         );
       }}
       onPropUpdate={onPropUpdate} />

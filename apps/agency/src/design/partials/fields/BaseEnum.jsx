@@ -7,7 +7,9 @@ import { TextUtil } from 'fptcore';
 import BaseEmpty from './BaseEmpty';
 import PopoverControl from '../../../partials/PopoverControl';
 
-function BaseEnum({ spec, value, name, path, opts, choices, clean, label, onPropUpdate }) {
+function BaseEnum({
+  spec, value, name, path, opts, choices, clean, label, onPropUpdate
+}) {
   if (opts.editable === false) {
     return value;
   }

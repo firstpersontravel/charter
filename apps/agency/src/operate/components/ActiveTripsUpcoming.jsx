@@ -18,7 +18,8 @@ function getScheduledTripTriggers(trip) {
     type: 'trigger',
     tripId: trip.id,
     scheduledAt: coreRegistry.events.time_occurred.timeForSpec(
-      trigger.event, trip.evalContext),
+      trigger.event, trip.evalContext
+    ),
     name: trigger.name
   }));
 }
@@ -69,8 +70,8 @@ export default class ActiveTripsUpcoming extends Component {
     const actionResourceClass = coreRegistry.actions[action.name];
     const values = renderParams(trip.script, actionResourceClass.params,
       action.params);
-    const cellClass = action.isArchived ?
-      'upcoming-archived' : 'upcoming-unarchived';
+    const cellClass = action.isArchived
+      ? 'upcoming-archived' : 'upcoming-unarchived';
 
     const archiveButton = (
       <button
@@ -119,7 +120,7 @@ export default class ActiveTripsUpcoming extends Component {
   }
 
   render() {
-    const trips = this.props.trips;
+    const { trips } = this.props;
     const scheduledTriggers = getScheduledGroupTriggers(trips);
     const allUpcoming = []
       .concat(this.props.actions)

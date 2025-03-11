@@ -95,6 +95,7 @@ class TripKernel {
   }
 
   event() {}
+
   initiateCall() {}
 
   twiml(op) {
@@ -103,8 +104,8 @@ class TripKernel {
       level: 'info',
       type: 'Call',
       message:
-        `${clause.clause}: ` +
-        `${truncateMsg(clause.message || 'audio clip', maxMessageLength)}`
+        `${clause.clause}: `
+        + `${truncateMsg(clause.message || 'audio clip', maxMessageLength)}`
     });
   }
 
@@ -143,10 +144,10 @@ export default class TripTestHarness extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.script.id !== this.props.script.id ||
-        nextProps.variantNames.join(',') !==
-        this.props.variantNames.join(',') ||
-        nextProps.startedAt !== this.props.startedAt) {
+    if (nextProps.script.id !== this.props.script.id
+        || nextProps.variantNames.join(',')
+        !== this.props.variantNames.join(',')
+        || nextProps.startedAt !== this.props.startedAt) {
       this.resetState(nextProps.script, nextProps.variantNames);
     }
   }
@@ -162,7 +163,7 @@ export default class TripTestHarness extends Component {
 
   getBaseTripObject() {
     const state = this.pendingState || this.state;
-    const script = this.props.script;
+    const { script } = this.props;
     const trip = Object.assign({}, state.trip, {
       script: script,
       org: script.org,
@@ -236,9 +237,9 @@ export default class TripTestHarness extends Component {
       this.processResultOp(resultOp)
     ));
     if (result.scheduledActions.length > 0) {
-      const newScheduledActions = this.state.scheduledActions
-        .concat(result.scheduledActions);
-      this.setState({ scheduledActions: newScheduledActions });
+      this.setState(prevState => ({
+        scheduledActions: prevState.scheduledActions.concat(result.scheduledActions)
+      }));
     }
   }
 
@@ -256,7 +257,7 @@ export default class TripTestHarness extends Component {
   }
 
   handleAction(name, params, playerId) {
-    const script = this.props.script;
+    const { script } = this.props;
     const actionResourceClass = coreRegistry.actions[name];
     const actionInfo = renderParams(script, actionResourceClass.params,
       params);
@@ -269,7 +270,7 @@ export default class TripTestHarness extends Component {
   }
 
   handleEvent(event, playerId) {
-    const script = this.props.script;
+    const { script } = this.props;
     const eventResourceClass = coreRegistry.events[event.type];
     if (eventResourceClass.eventParams) {
       const eventInfo = renderParams(script, eventResourceClass.eventParams,
@@ -302,9 +303,10 @@ export default class TripTestHarness extends Component {
     if (actionsToRun.length === 0) {
       // Don't set scheduled actions but update nextTime if an action is coming
       // in less than 15 secs.
-      const nextEpochMsec = Math.min(...this.state.scheduledActions
-        .map(a => a.scheduleAt.valueOf()));
-      this.setState({ nextTime: nextEpochMsec });
+      this.setState(prevState => ({
+        // eslint-disable-next-line react/no-unused-state
+        nextTime: Math.min(...prevState.scheduledActions.map(a => a.scheduleAt.valueOf()))
+      }));
       return;
     }
     actionsToRun.forEach((action) => {
@@ -312,9 +314,11 @@ export default class TripTestHarness extends Component {
       const result = Kernel.resultForImmediateAction(action, actionContext);
       this.processResult(result);
     });
-    const actionsToKeep = this.state.scheduledActions
-      .filter(action => moment(action.scheduleAt).isSameOrAfter(now));
-    this.setState({ scheduledActions: actionsToKeep });
+    this.setState(prevState => ({
+      scheduledActions: prevState.scheduledActions.filter(
+        action => moment(action.scheduleAt).isSameOrAfter(now)
+      )
+    }));
   }
 
   runAllScheduled() {
@@ -329,7 +333,8 @@ export default class TripTestHarness extends Component {
   startTrip() {
     const actionContext = this.getActionContext();
     const firstSceneName = SceneCore.getStartingSceneName(
-      this.props.script.content, actionContext);
+      this.props.script.content, actionContext
+    );
     if (firstSceneName) {
       this.handleAction('start_scene', { scene_name: firstSceneName });
     }
@@ -378,7 +383,9 @@ export default class TripTestHarness extends Component {
         </button>
         <div>
           <i className="fa fa-clock-o mr-1" />
-          next {nextTime}
+          next
+          {' '}
+          {nextTime}
         </div>
       </div>
     );

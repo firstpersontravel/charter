@@ -20,14 +20,16 @@ function renderTripItem(org, experience, trip, isToplevel) {
   return {
     key: trip.id,
     url: (
-      `/${org.name}/${experience.name}` +
-      `/operate/trip/${trip.id}`
+      `/${org.name}/${experience.name}`
+      + `/operate/trip/${trip.id}`
     ),
     text: `${trip.title} ${trip.isArchived ? ' (archived)' : ''}`,
     label: (
       <span className={trip.isArchived ? 'faint' : ''}>
         {isToplevel ? 'Run: ' : ''}
-        {trip.title} {trip.isArchived ? archivedIcon : null}
+        {trip.title}
+        {' '}
+        {trip.isArchived ? archivedIcon : null}
       </span>
     )
   };
@@ -48,7 +50,8 @@ function renderTripsItem(org, experience, trips, currentTripId) {
       tripTitle = `Run: ${trip.title}`;
       tripLabel = (
         <span>
-          {tripTitle}{trip.isArchived ? archivedIcon : null}
+          {tripTitle}
+          {trip.isArchived ? archivedIcon : null}
         </span>
       );
     }
@@ -64,13 +67,15 @@ function renderTripsItem(org, experience, trips, currentTripId) {
   };
 }
 
-export default function ActiveTripsAll({ children, org, experience, trips, nextUnappliedAction,
-  numMessagesNeedingReply, match, history }) {
+export default function ActiveTripsAll({
+  children, org, experience, trips, nextUnappliedAction,
+  numMessagesNeedingReply, match, history
+}) {
   // Error or loading cases should be handled by `Group`
   if (trips.length === 0) {
     return <div>No trips</div>;
   }
-  const script = trips[0].script;
+  const { script } = trips[0];
   const roles = _(script.content.roles)
     .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
     .sort(SceneCore.sortResource)
@@ -81,8 +86,8 @@ export default function ActiveTripsAll({ children, org, experience, trips, nextU
   function isParticipantArchived(participant, roleName) {
     const participantId = participant ? participant.id : null;
     const players = allPlayers.filter(p => (
-      p.roleName === roleName &&
-      p.participantId === participantId
+      p.roleName === roleName
+      && p.participantId === participantId
     ));
     const pTrips = players.map(p => trips.find(t => p.tripId === t.id));
     return _.every(pTrips, t => t.isArchived);
@@ -98,14 +103,17 @@ export default function ActiveTripsAll({ children, org, experience, trips, nextU
 
   if (pathRoleName && pathParticipantId) {
     const role = _.find(script.content.roles, { name: pathRoleName });
-    const pathParticipant = pathParticipantId !== '0' ?
-      _.find(allParticipants, { id: Number(pathParticipantId) }) : null;
+    const pathParticipant = pathParticipantId !== '0'
+      ? _.find(allParticipants, { id: Number(pathParticipantId) }) : null;
     const participantName = pathParticipant ? pathParticipant.name : '';
     const participantSuffix = participantName ? ` (${participantName})` : '';
     const isArchived = isParticipantArchived(pathParticipant, pathRoleName);
     roleTitle = `Participant: ${role.title}${participantSuffix}`;
     roleLabel = (
-      <span>{roleTitle}{isArchived ? archivedIcon : null}</span>
+      <span>
+        {roleTitle}
+        {isArchived ? archivedIcon : null}
+      </span>
     );
   }
 
@@ -128,12 +136,13 @@ export default function ActiveTripsAll({ children, org, experience, trips, nextU
         const title = `${role.title} (${participant ? participant.name : 'No user'})`;
         return {
           url: (
-            `/${org.name}/${experience.name}` +
-            `/operate/role/${role.name}/${participant ? participant.id : 0}`
+            `/${org.name}/${experience.name}`
+            + `/operate/role/${role.name}/${participant ? participant.id : 0}`
           ),
           label: (
             <span className={isArchived ? 'faint' : ''}>
-              {title}{isArchived ? archivedIcon : null}
+              {title}
+              {isArchived ? archivedIcon : null}
             </span>
           ),
           text: `${title} ${isArchived ? ' (archived)' : ''}`

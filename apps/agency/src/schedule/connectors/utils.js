@@ -24,8 +24,8 @@ function isTripInMonth(trip, year, month) {
   const thisMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
   const nextMonth = thisMonth.clone().add(1, 'months');
   return (
-    moment(trip.date).isSameOrAfter(thisMonth) &&
-    moment(trip.date).isBefore(nextMonth)
+    moment(trip.date).isSameOrAfter(thisMonth)
+    && moment(trip.date).isBefore(nextMonth)
   );
 }
 
@@ -52,8 +52,8 @@ export function lookupActiveTripsByDate(state, ownProps, year, month) {
 }
 
 export function lookupActiveTrips(state, ownProps) {
-  const year = ownProps.match.params.year;
-  const month = ownProps.match.params.month;
+  const { year } = ownProps.match.params;
+  const { month } = ownProps.match.params;
   return lookupActiveTripsByDate(state, ownProps, year, month);
 }
 

@@ -90,7 +90,8 @@ function ActiveTripsRoutes({ match, history }) {
       <ActiveTripsAllConnector match={match} history={history}>
         <Switch>
           <Route
-            path={match.path} exact
+            path={match.path}
+            exact
             component={ActiveTripsOverviewConnector} />
           <Route
             path={`${match.path}/role`}

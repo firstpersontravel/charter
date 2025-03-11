@@ -10,28 +10,32 @@ export default class Directory extends Component {
     if (!roleProfiles.length) {
       return null;
     }
-    const role = roleProfiles[0].role;
+    const { role } = roleProfiles[0];
     if (!role) {
       return null;
     }
-    const experience = this.props.experience;
+    const { experience } = this.props;
     return (
       <div key={roleName} className="constrain-text">
-        &rsaquo; <Link
+        &rsaquo;
+        {' '}
+        <Link
           to={{
             pathname: `/${experience.org.name}/${experience.name}/directory`,
             search: `?role=${roleName}`
           }}>
           {role.title}
         </Link>
-         &nbsp;({roleProfiles.length})
+         &nbsp;(
+        {roleProfiles.length}
+        )
       </div>
     );
   }
 
   renderRoles() {
-    const script = this.props.experience.script;
-    const profiles = this.props.profiles;
+    const { script } = this.props.experience;
+    const { profiles } = this.props;
     const roleNames = _(script.content.roles)
       .map('name')
       .value();
@@ -42,7 +46,7 @@ export default class Directory extends Component {
   }
 
   renderRolesSidebar() {
-    const experience = this.props.experience;
+    const { experience } = this.props;
     const query = new URLSearchParams(this.props.location.search);
     const roleQuery = query.get('role');
     return (
@@ -67,8 +71,8 @@ export default class Directory extends Component {
   }
 
   render() {
-    if (this.props.profiles.isLoading ||
-      !this.props.experience.script) {
+    if (this.props.profiles.isLoading
+      || !this.props.experience.script) {
       return <Loader />;
     }
     return (

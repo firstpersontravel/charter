@@ -2,7 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { coreRegistry, coreWalker, TextUtil, SceneCore } from 'fptcore';
+import {
+  coreRegistry, coreWalker, TextUtil, SceneCore
+} from 'fptcore';
 
 import { urlForResource } from '../../utils/section-utils';
 import { titleForResource } from '../../utils/text-utils';
@@ -43,7 +45,7 @@ function labelForValue(script, spec, referringTo) {
 
 function choicesForSpec(script, spec) {
   const componentClass = coreRegistry.components[spec.componentType];
-  const typeKey = componentClass.typeKey;
+  const { typeKey } = componentClass;
   const resAndComponents = coreWalker
     .getResourcesAndComponentsByComponentType(script.content,
       spec.componentType)
@@ -59,9 +61,11 @@ function choicesForSpec(script, spec) {
   return choices;
 }
 
-function ComponentReferenceField({ script, resource, spec, value, name, path,
-  opts, onPropUpdate }) {
-  const componentType = spec.componentType;
+function ComponentReferenceField({
+  script, resource, spec, value, name, path,
+  opts, onPropUpdate
+}) {
+  const { componentType } = spec;
   const referringTo = coreWalker.getResourceAndComponentById(script.content,
     componentType, value);
 

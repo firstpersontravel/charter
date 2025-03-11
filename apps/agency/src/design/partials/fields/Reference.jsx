@@ -71,7 +71,9 @@ function choicesForSpec(script, resource, spec) {
   return choices;
 }
 
-function ReferenceField({ script, resource, spec, value, name, path, opts, onPropUpdate }) {
+function ReferenceField({
+  script, resource, spec, value, name, path, opts, onPropUpdate
+}) {
   const label = labelForValue(script, spec, value);
   if (opts && opts.editable === false) {
     return label;
@@ -84,7 +86,10 @@ function ReferenceField({ script, resource, spec, value, name, path, opts, onPro
     if (!collection || !collection.length) {
       return (
         <em className="faint">
-          No {titleForResourceType(resourceType).toLowerCase()}s exist.
+          No
+          {' '}
+          {titleForResourceType(resourceType).toLowerCase()}
+          s exist.
         </em>
       );
     }

@@ -26,8 +26,7 @@ Organization.propTypes = {
 };
 
 Organization.defaultProps = {
-  org: null,
-  authInfo: null
+  org: null
 };
 
 export default withLoader(Organization, ['org.id'], (props) => {

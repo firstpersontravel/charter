@@ -13,7 +13,7 @@ export function hasVisual(resourceType) {
 
 export default class ResourceVisual extends Component {
   render() {
-    const resourceType = this.props.resourceType;
+    const { resourceType } = this.props;
     const VisualComponent = visualComponentsByResourceType[resourceType];
     if (VisualComponent) {
       return (

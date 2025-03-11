@@ -188,7 +188,9 @@ function renderMenu(org, experience, experiences) {
   );
 }
 
-export default function Nav({ authInfo, org, experience, experiences }) {
+export default function Nav({
+  authInfo, org, experience, experiences
+}) {
   const orgTitle = org ? org.title : globalTitle;
   document.title = `${orgTitle}`;
   const stage = getStage();

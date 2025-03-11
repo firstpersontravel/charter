@@ -6,9 +6,9 @@ import StaticMapImg from '../StaticMapImg';
 
 function mPerLatDegree(lat) {
   return (
-    111132.954 +
-    (-559.822 * Math.cos(2 * lat)) +
-    (1.175 * Math.cos(4 * lat))
+    111132.954
+    + (-559.822 * Math.cos(2 * lat))
+    + (1.175 * Math.cos(4 * lat))
   );
 }
 

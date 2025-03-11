@@ -9,7 +9,7 @@ import ResourceVisual, { hasVisual } from './ResourceVisual';
 
 export default class ResourceContainer extends Component {
   getResourceType() {
-    const collectionName = this.props.collectionName;
+    const { collectionName } = this.props;
     const resourceType = TextUtil.singularize(collectionName);
     return resourceType;
   }
@@ -60,7 +60,7 @@ export default class ResourceContainer extends Component {
   }
 
   render() {
-    const collectionName = this.props.collectionName;
+    const { collectionName } = this.props;
     const resourceType = TextUtil.singularize(collectionName);
     const mainClassName = hasVisual(resourceType) ? 'col-sm-8' : 'col';
     return (

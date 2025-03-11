@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button, Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/react';
 
@@ -19,10 +21,6 @@ export default class App extends Component {
     window.addEventListener('focus', this.handleFocus);
   }
 
-  componentDidCatch(error, errorInfo) {
-    this.props.crash(error, errorInfo);
-  }
-
   componentWillUnmount() {
     clearInterval(this.refreshTokenInterval);
     this.refreshTokenInterval = null;
@@ -30,6 +28,10 @@ export default class App extends Component {
 
   static getDerivedStateFromError(error) {
     return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    this.props.crash(error, errorInfo);
   }
 
   refreshToken() {
@@ -75,9 +77,10 @@ export default class App extends Component {
     return this.renderErrorModal(
       'exclamation-triangle',
       'We\'re sorry, there was an error.',
-      'We\'ve been notified and we\'ll fix this right away. ' +
-      'In the meantime, you can reload the page and try what you were doing again.',
-      true);
+      'We\'ve been notified and we\'ll fix this right away. '
+      + 'In the meantime, you can reload the page and try what you were doing again.',
+      true
+    );
   }
 
   renderUpgradeAvailable() {
@@ -85,26 +88,29 @@ export default class App extends Component {
       'shipping-fast',
       'An upgrade is available!',
       'Please reload the page to get the newest version of Charter.',
-      false);
+      false
+    );
   }
 
   renderNetworkError() {
     return this.renderErrorModal(
       'wifi',
       'Couldn\'t reach the Charter server.',
-      'Please check your connection and try again. ' +
-      'You may need to retry your last action.',
-      false);
+      'Please check your connection and try again. '
+      + 'You may need to retry your last action.',
+      false
+    );
   }
 
   renderValidationError() {
     return this.renderErrorModal(
       'exclamation-triangle',
       'There was a validation error updating your project.',
-      'This shouldn\'t normally happen. ' +
-      'We\'ve been notified and we\'ll fix this right away. ' +
-      'In the meantime, you can reload the page and try something different.',
-      false);
+      'This shouldn\'t normally happen. '
+      + 'We\'ve been notified and we\'ll fix this right away. '
+      + 'In the meantime, you can reload the page and try something different.',
+      false
+    );
   }
 
   renderAuthError() {
@@ -112,7 +118,8 @@ export default class App extends Component {
       'lock',
       'You have been logged out',
       'Please log in again. Apologies for the inconvenience!',
-      true);
+      true
+    );
   }
 
   renderForbiddenError() {
@@ -120,7 +127,8 @@ export default class App extends Component {
       'lock',
       'You do not have permission to perform this operation',
       'Please let us know if you think you are seeing this message in error.',
-      true);
+      true
+    );
   }
 
   renderError(err) {

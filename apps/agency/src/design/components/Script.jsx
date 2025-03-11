@@ -44,8 +44,8 @@ class Script extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.script.id !== nextProps.script.id ||
-      this.props.revisionHistoryUpdated !== nextProps.revisionHistoryUpdated) {
+    if (this.props.script.id !== nextProps.script.id
+      || this.props.revisionHistoryUpdated !== nextProps.revisionHistoryUpdated) {
       this.setState({
         revisionHistoryIndex: nextProps.revisionHistory.length - 1
       });
@@ -76,7 +76,7 @@ class Script extends Component {
   }
 
   handleNewDraft() {
-    const script = this.props.script;
+    const { script } = this.props;
     const maxRevision = Math.max(..._.map(this.props.scripts, 'revision'));
     const nextRevision = maxRevision + 1;
     this.props.createInstance('scripts', {
@@ -89,8 +89,9 @@ class Script extends Component {
     const path = this.props.location.pathname;
     const [sliceType, sliceName] = path.split('/').slice(-2);
     this.props.history.push(
-      `/${script.org.name}/${script.experience.name}/script` +
-      `/${nextRevision}/design/${sliceType}/${sliceName}`);
+      `/${script.org.name}/${script.experience.name}/script`
+      + `/${nextRevision}/design/${sliceType}/${sliceName}`
+    );
   }
 
   handleRevertScript() {
@@ -104,19 +105,20 @@ class Script extends Component {
     const path = this.props.location.pathname;
     const [sliceType, sliceName] = path.split('/').slice(-2);
     this.props.history.push(
-      `/${activeScript.org.name}/${activeScript.experience.name}` +
-      `/script/${activeScript.revision}` +
-      `/design/${sliceType}/${sliceName}`);
+      `/${activeScript.org.name}/${activeScript.experience.name}`
+      + `/script/${activeScript.revision}`
+      + `/design/${sliceType}/${sliceName}`
+    );
   }
 
   handleArchiveExperienceToggle() {
-    this.setState({
-      isArchiveExperienceModalOpen: !this.state.isArchiveExperienceModalOpen
-    });
+    this.setState(prevState => ({
+      isArchiveExperienceModalOpen: !prevState.isArchiveExperienceModalOpen
+    }));
   }
 
   handleArchiveExperienceConfirm() {
-    const experience = this.props.script.experience;
+    const { experience } = this.props.script;
     this.props.updateInstance('experiences', experience.id, {
       isArchived: true
     });
@@ -129,11 +131,12 @@ class Script extends Component {
   }
 
   handleUpdateExperience(example, fields) {
-    const experience = this.props.script.experience;
+    const { experience } = this.props.script;
     this.props.updateInstance('experiences', experience.id, fields);
     this.props.history.push(
-      `/${this.props.match.params.orgName}/${fields.name}` +
-      `/script/${this.props.script.revision}`);
+      `/${this.props.match.params.orgName}/${fields.name}`
+      + `/script/${this.props.script.revision}`
+    );
   }
 
   handleUndo() {
@@ -162,7 +165,7 @@ class Script extends Component {
   }
 
   renderNav() {
-    const script = this.props.script;
+    const { script } = this.props;
     const sceneLinks = _.map(script.content.scenes, scene => (
       <Link
         key={scene.name}
@@ -213,7 +216,7 @@ class Script extends Component {
   }
 
   renderOpts() {
-    const script = this.props.script;
+    const { script } = this.props;
     const maxRevision = Math.max(..._.map(this.props.scripts, 'revision'));
     const isMaxRevision = script.revision === maxRevision;
     const activeRevision = _.get(_.find(this.props.scripts,
@@ -223,8 +226,10 @@ class Script extends Component {
       <button
         onClick={this.handleRevertScript}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-undo" />&nbsp;
-        Revert to {activeRevision}
+        <i className="fa fa-undo" />
+&nbsp;
+        Revert to
+        {activeRevision}
       </button>
     ) : null;
 
@@ -232,7 +237,8 @@ class Script extends Component {
       <button
         onClick={this.handleActivateScript}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-check" />&nbsp;
+        <i className="fa fa-check" />
+&nbsp;
         Activate
       </button>
     );
@@ -241,7 +247,8 @@ class Script extends Component {
       <button
         onClick={this.handleNewDraft}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-pencil-alt" />&nbsp;
+        <i className="fa fa-pencil-alt" />
+&nbsp;
         New draft
       </button>
     );
@@ -265,7 +272,8 @@ class Script extends Component {
         disabled={numUndosAvail <= 0}
         onClick={this.handleUndo}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-undo" />&nbsp;
+        <i className="fa fa-undo" />
+&nbsp;
         Undo
       </button>
     );
@@ -275,7 +283,8 @@ class Script extends Component {
         disabled={numRedosAvail <= 0}
         onClick={this.handleRedo}
         className="btn btn-xs btn-outline-secondary ml-2">
-        <i className="fa fa-redo" />&nbsp;
+        <i className="fa fa-redo" />
+&nbsp;
         Redo
       </button>
     );
@@ -283,7 +292,9 @@ class Script extends Component {
     const goToLatestLink = !isMaxRevision ? (
       <span className="ml-2 p-0">
         <Link to={`/${script.org.name}/${script.experience.name}/script/${maxRevision}/design`}>
-          Go to {maxRevision}
+          Go to
+          {' '}
+          {maxRevision}
         </Link>
       </span>
     ) : null;
@@ -293,7 +304,11 @@ class Script extends Component {
         key={s.id}
         className="dropdown-item"
         to={`/${script.org.name}/${script.experience.name}/script/${s.revision}/design`}>
-        Rev {s.revision} {getBadgesForScript(s, maxRevision)}
+        Rev
+        {' '}
+        {s.revision}
+        {' '}
+        {getBadgesForScript(s, maxRevision)}
       </Link>
     ));
 
@@ -337,7 +352,9 @@ class Script extends Component {
             </div>
             <div className="col-sm-9 align-right-sm">
               <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Rev. {this.props.script.revision}
+                Rev.
+                {' '}
+                {this.props.script.revision}
               </button>
               <div className="dropdown-menu" aria-labelledby="scriptRevs">
                 {scriptRevisions}

@@ -50,7 +50,8 @@ export default class ResourceView extends Component {
   getFieldNames() {
     return _.without(
       Object.keys(this.getResourceClass().properties),
-      ...HIDE_FIELD_NAMES.concat(this.props.excludeFields));
+      ...HIDE_FIELD_NAMES.concat(this.props.excludeFields)
+    );
   }
 
   handleRevertChanges() {
@@ -106,17 +107,18 @@ export default class ResourceView extends Component {
 
   renderHeader() {
     const resourceType = TextUtil.singularize(this.props.collectionName);
-    const resource = this.props.resource;
+    const { resource } = this.props;
 
-    const isNew = this.props.isNew;
-    const hasUnsavableChanges = this.state.hasUnsavableChanges;
+    const { isNew } = this.props;
+    const { hasUnsavableChanges } = this.state;
     const canDelete = this.props.canDelete && !hasUnsavableChanges;
 
     const duplicateBtn = (
       <button
         className="btn btn-sm btn-outline-secondary mr-1"
         onClick={(this.handleDuplicate)}>
-        <i className="fa fa-copy" />&nbsp;
+        <i className="fa fa-copy" />
+&nbsp;
         Duplicate
       </button>
     );
@@ -126,7 +128,8 @@ export default class ResourceView extends Component {
       <button
         className={deleteBtnClass}
         onClick={(this.handleDelete)}>
-        <i className="fa fa-trash" />&nbsp;
+        <i className="fa fa-trash" />
+&nbsp;
         {canDelete ? 'Delete' : 'Can\'t delete'}
       </button>
     );
@@ -135,7 +138,8 @@ export default class ResourceView extends Component {
       <button
         className="btn btn-sm btn-outline-secondary mr-1"
         onClick={this.props.onDelete}>
-        <i className="fa fa-trash" />&nbsp;
+        <i className="fa fa-trash" />
+&nbsp;
         Cancel
       </button>
     );
@@ -145,7 +149,8 @@ export default class ResourceView extends Component {
       <button
         className="btn btn-sm btn-secondary mr-1"
         onClick={this.handleRevertChanges}>
-        <i className="fa fa-undo" />&nbsp;
+        <i className="fa fa-undo" />
+&nbsp;
         Revert
       </button>
     );
@@ -167,14 +172,16 @@ export default class ResourceView extends Component {
   }
 
   renderTitle() {
-    const script = this.props.script;
-    const collectionName = this.props.collectionName;
+    const { script } = this.props;
+    const { collectionName } = this.props;
     const resourceType = TextUtil.singularize(collectionName);
     const resourceClass = this.getResourceClass();
     const resource = this.state.pendingResource;
     const emptyTitle = (
       <span className="faint">
-        New {titleForResourceType(resourceType).toLowerCase()}
+        New
+        {' '}
+        {titleForResourceType(resourceType).toLowerCase()}
       </span>
     );
     const emptyWarning = resource.title ? null : (
@@ -200,7 +207,7 @@ export default class ResourceView extends Component {
   }
 
   renderFields() {
-    const script = this.props.script;
+    const { script } = this.props;
     const fieldNames = this.getFieldNames();
     if (!fieldNames.length) {
       return (
@@ -232,8 +239,8 @@ export default class ResourceView extends Component {
       // as exclamation points. TODO: we should have error classes!
       .filter((err) => {
         if (
-          _.startsWith(err, 'Required param') &&
-          _.endsWith(err, 'not present.')
+          _.startsWith(err, 'Required param')
+          && _.endsWith(err, 'not present.')
         ) {
           return false;
         }

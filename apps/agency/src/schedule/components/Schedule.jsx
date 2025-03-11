@@ -33,8 +33,10 @@ function renderEntrywayRelay(
     return (
       <div>
         <i className="fa fa-phone mr-1" />
-        Runs cannot be created by text or call because a phone number{' '}
-        has not been allocated for this experience.{' '}
+        Runs cannot be created by text or call because a phone number
+        {' '}
+        has not been allocated for this experience.
+        {' '}
         <button
           disabled={systemActionRequestState === 'pending'}
           className="btn btn-sm btn-primary ml-2"
@@ -48,20 +50,43 @@ function renderEntrywayRelay(
     return (
       <div>
         <i className="fa fa-phone mr-1" />
-        Runs can be created for <b>{entrywayForRole.title}</b> by text starting with &quot;{relayEntryway.keyword}&quot;{' '}
-        to <b>{entrywayWithRole.title}</b> at{' '}
-        {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
+        Runs can be created for
+        {' '}
+        <b>{entrywayForRole.title}</b>
+        {' '}
+        by text starting with &quot;
+        {relayEntryway.keyword}
+        &quot;
+        {' '}
+        to
+        {' '}
+        <b>{entrywayWithRole.title}</b>
+        {' '}
+        at
+        {' '}
+        {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}
+        .
       </div>
     );
   }
-  const tempDisclaimer = relayEntryway.isTemporary ?
-    ' This number is temporary and may be reclaimed without notice. Contact agency@firstperson.travel for a permanent number.' :
-    '';
+  const tempDisclaimer = relayEntryway.isTemporary
+    ? ' This number is temporary and may be reclaimed without notice. Contact agency@firstperson.travel for a permanent number.'
+    : '';
   return (
     <div>
       <i className="fa fa-phone mr-1" />
-      Runs can be created for <b>{entrywayForRole.title}</b> by call or text to <b>{entrywayWithRole.title}</b> at{' '}
-      {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}.
+      Runs can be created for
+      {' '}
+      <b>{entrywayForRole.title}</b>
+      {' '}
+      by call or text to
+      {' '}
+      <b>{entrywayWithRole.title}</b>
+      {' '}
+      at
+      {' '}
+      {formatPhoneNumberIntl(relayEntryway.relayService.phoneNumber)}
+      .
       {tempDisclaimer}
     </div>
   );
@@ -81,13 +106,16 @@ function renderEntrywayWebpage(org, experience, script) {
   return entrywayInterfaces.map((i) => {
     const roles = _.filter(script.content.roles, { interface: i.name });
     return roles.map((role) => {
-      const roleUrl =
-        `${window.location.origin}/entry/${org.name}/` +
-        `${experience.name}/${TextUtil.dashVarForText(role.title)}`;
+      const roleUrl = `${window.location.origin}/entry/${org.name}/`
+        + `${experience.name}/${TextUtil.dashVarForText(role.title)}`;
       return (
         <div className="constrain-text" key={`${i.name}-${role.name}`}>
           <i className="fa fa-file mr-1" />
-          Runs for <b>{role.title}</b> can be created at
+          Runs for
+          {' '}
+          <b>{role.title}</b>
+          {' '}
+          can be created at
           <a
             className="ml-1"
             href={roleUrl}
@@ -116,7 +144,9 @@ function renderEntrywayNote(
       {renderEntrywayWebpage(org, experience, script)}
       <div>
         <i className="fa fa-theater-masks mr-1" />
-        Performer URL: <a target="_blank" rel="noopener noreferrer" href={actorUrl}>{actorUrl}</a>
+        Performer URL:
+        {' '}
+        <a target="_blank" rel="noopener noreferrer" href={actorUrl}>{actorUrl}</a>
       </div>
     </div>
   );
@@ -135,22 +165,25 @@ class Schedule extends Component {
     const newMax = Math.max(...this.props.trips.map(g => g.id));
     if (this.state.redirectToNext === oldMax && newMax > oldMax) {
       this.props.history.push(
-        `/${this.props.org.name}/${this.props.experience.name}/schedule` +
-        `/${this.props.match.params.year}/${this.props.match.params.month}` +
-        `/${newMax}`);
+        `/${this.props.org.name}/${this.props.experience.name}/schedule`
+        + `/${this.props.match.params.year}/${this.props.match.params.month}`
+        + `/${newMax}`
+      );
     }
   }
 
   handleCreateTripToggle() {
     this.props.history.push(
-      `/${this.props.org.name}/${this.props.experience.name}/schedule` +
-      `/${this.props.match.params.year}/${this.props.match.params.month}`);
+      `/${this.props.org.name}/${this.props.experience.name}/schedule`
+      + `/${this.props.match.params.year}/${this.props.match.params.month}`
+    );
   }
 
   initialFieldsForRole(experience, script, role, variantNames) {
     const profiles = ScheduleUtils.filterAssignableProfiles(
       this.props.profiles, this.props.participants, experience.id,
-      role.name);
+      role.name
+    );
 
     const participants = profiles
       .filter(profile => !!profile.participantId)
@@ -181,7 +214,8 @@ class Schedule extends Component {
     const date = moment().format('YYYY-MM-DD');
     const initialFields = TripCore.getInitialFields(
       script.content, date,
-      script.experience.timezone, fields.variantNames);
+      script.experience.timezone, fields.variantNames
+    );
     const tripFields = Object.assign(initialFields, {
       orgId: script.orgId,
       experienceId: script.experienceId,
@@ -203,7 +237,8 @@ class Schedule extends Component {
     const now = moment.utc();
     const cur = moment(
       `${this.props.match.params.year}-${this.props.match.params.month}-01`,
-      'YYYY-MM-DD');
+      'YYYY-MM-DD'
+    );
     const oneMonthAgo = cur.clone().subtract(1, 'months');
     const inOneMonth = cur.clone().add(1, 'months');
     return (
@@ -238,13 +273,14 @@ class Schedule extends Component {
       text: tripText,
       label: (
         <span style={trip.isArchived ? archivedStyle : null}>
-          {tripTitle}{trip.isArchived ? archivedIcon : null}
+          {tripTitle}
+          {trip.isArchived ? archivedIcon : null}
         </span>
       ),
       url: (
-        `/${this.props.org.name}/${this.props.experience.name}` +
-        `/schedule/${moment(trip.date).format('YYYY/MM')}` +
-        `/${trip.id}${this.props.location.search}`
+        `/${this.props.org.name}/${this.props.experience.name}`
+        + `/schedule/${moment(trip.date).format('YYYY/MM')}`
+        + `/${trip.id}${this.props.location.search}`
       )
     };
   }
@@ -272,7 +308,10 @@ class Schedule extends Component {
       }
       return (
         <div className="alert alert-warning">
-          No trips for {moment.utc(cur, 'YYYY-MM').format('MMM YYYY')}.
+          No trips for
+          {' '}
+          {moment.utc(cur, 'YYYY-MM').format('MMM YYYY')}
+          .
         </div>
       );
     }
@@ -296,9 +335,9 @@ class Schedule extends Component {
     const query = new URLSearchParams(this.props.location.search);
     const isCreateTripModalOpen = query.get('trip') === 'new';
     const isShowingArchived = query.get('archived') === 'true';
-    const toggleArchivedLink = isShowingArchived ?
-      <Link to={{ search: '' }}>Hide archived</Link> :
-      <Link to={{ search: '?archived=true' }}>Show archived</Link>;
+    const toggleArchivedLink = isShowingArchived
+      ? <Link to={{ search: '' }}>Hide archived</Link>
+      : <Link to={{ search: '?archived=true' }}>Show archived</Link>;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -365,7 +404,8 @@ export default withLoader(withExp, [
 ], (props) => {
   const thisMonth = moment(
     `${props.match.params.year}-${props.match.params.month}-01`,
-    'YYYY-MM-DD');
+    'YYYY-MM-DD'
+  );
   const nextMonth = thisMonth.clone().add(1, 'months');
   props.listCollection('trips', {
     date__gte: thisMonth.format('YYYY-MM-DD'),

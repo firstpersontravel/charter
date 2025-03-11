@@ -56,7 +56,9 @@ export default class PublicLogin extends Component {
         <div className="col-md-6 offset-md-3">
           <h1>Welcome to Charter!</h1>
           <p>
-            If you have an account, please sign in here. Otherwise you can <Link to="/signup">create an account.</Link>
+            If you have an account, please sign in here. Otherwise you can
+            {' '}
+            <Link to="/signup">create an account.</Link>
           </p>
           {this.renderLoginErrorAlert()}
           {this.renderLoginFailedAlert()}
@@ -95,17 +97,28 @@ export default class PublicLogin extends Component {
               </button>
               <Link
                 className="ml-2"
-                to="/lost-pw">Forgot your password?
+                to="/lost-pw">
+                Forgot your password?
               </Link>
             </div>
           </form>
           <p>
-            {
-              // eslint-disable-next-line max-len
-            }Please remember that this is an experimental toolkit and very much a work-in-progress. We&apos;re delighted that you&apos;re interested in trying out these tools and we&apos;d love your help making them better!
+            Please remember that this is an experimental toolkit and very much a work-in-progress.
+            {' '}
+            We&apos;re delighted that you&apos;re interested in trying out these tools and we&apos;d
+            {' '}
+            love your help making them better!
           </p>
           <p>
-            This tool is provided for free for art projects, experiments, and other revenue-free experiences. It costs us money to run the servers and telephone relays, so if you are charging fees for experiences built using this platform, be in touch at <a href="mailto:agency@firstperson.travel">agency@firstperson.travel</a> and we&apos;ll work out a fair and reasonable pricing structure.
+            This tool is provided for free for art projects, experiments, and other revenue-free
+            {' '}
+            experiences. It costs us money to run the servers and telephone relays, so if you are
+            {' '}
+            charging fees for experiences built using this platform, be in touch at
+            {' '}
+            <a href="mailto:agency@firstperson.travel">agency@firstperson.travel</a>
+            {' '}
+            and we&apos;ll work out a fair and reasonable pricing structure.
           </p>
         </div>
       </div>

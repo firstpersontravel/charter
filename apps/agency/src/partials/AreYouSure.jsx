@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Modal, ModalHeader, ModalBody, ModalFooter
+} from 'reactstrap';
 
 export default class AreYouSure extends Component {
   constructor(props) {

@@ -16,7 +16,7 @@ export default class TripValues extends Component {
   }
 
   handleCustomizationUpdate(key, newValue) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     this.props.updateInstance('trips', this.props.trip.id, {
       customizations: { [key]: newValue }
     });
@@ -25,7 +25,7 @@ export default class TripValues extends Component {
   }
 
   handleValueUpdate(key, newValue) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     this.props.updateInstance('trips', this.props.trip.id, {
       values: { [key]: newValue }
     });
@@ -38,7 +38,7 @@ export default class TripValues extends Component {
   }
 
   handleWaypointUpdate(key, event) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     this.props.updateInstance('trips', this.props.trip.id, {
       waypointOptions: { [key]: event.target.value }
     });
@@ -148,7 +148,7 @@ export default class TripValues extends Component {
   }
 
   renderWaypointRow(waypoint) {
-    const waypointOptions = this.props.trip.waypointOptions;
+    const { waypointOptions } = this.props.trip;
     const currentValue = _.get(waypointOptions, waypoint.name);
     const currentOrDefault = currentValue || waypoint.options[0].name;
     const options = waypoint.options.map(option => (
@@ -225,7 +225,7 @@ export default class TripValues extends Component {
   }
 
   render() {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     const customizations = _(trip.customizations)
       .map((v, k) => ({ key: k, value: v }))
       .value();

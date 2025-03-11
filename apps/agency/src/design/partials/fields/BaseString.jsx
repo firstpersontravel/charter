@@ -15,7 +15,9 @@ export function bottomHelpForSpec(spec) {
   return `This is a ${typeTitleForSpec(spec)} field: ${validation.help}`;
 }
 
-function BaseString({ spec, value, name, path, opts, validate, clean, onPropUpdate }) {
+function BaseString({
+  spec, value, name, path, opts, validate, clean, onPropUpdate
+}) {
   const isMultiline = spec.display && spec.display.multiline;
   const isTextarea = spec.type === 'markdown' || isMultiline;
   const textLabel = isTextarea ? (

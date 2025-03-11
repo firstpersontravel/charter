@@ -51,8 +51,10 @@ const fieldComponents = {
   timeShorthand: TimeShorthandField
 };
 
-function AnyField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate }) {
+function AnyField({
+  script, resource, spec, value, name, path, opts,
+  onPropUpdate
+}) {
   const fieldType = spec.type;
   if (!fieldComponents[fieldType]) {
     return `??? (${fieldType})`;

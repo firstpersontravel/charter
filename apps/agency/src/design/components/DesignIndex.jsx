@@ -7,12 +7,14 @@ import { Link } from 'react-router-dom';
 import Alert from '../../partials/Alert';
 import Loader from '../../partials/Loader';
 
-export default function DesignIndex({ match, experience, scripts, history,
-  updateInstance, isCreatingScript, isCreatingExperience }) {
-  if (scripts.isLoading ||
-      experience.isLoading ||
-      isCreatingScript ||
-      isCreatingExperience) {
+export default function DesignIndex({
+  match, experience, scripts, history,
+  updateInstance, isCreatingScript, isCreatingExperience
+}) {
+  if (scripts.isLoading
+      || experience.isLoading
+      || isCreatingScript
+      || isCreatingExperience) {
     return <Loader />;
   }
   if (scripts.isError || experience.isError) {
@@ -30,7 +32,7 @@ export default function DesignIndex({ match, experience, scripts, history,
       <Alert
         color="warning"
         content="No script found for this project."
-        action={
+        action={(
           <span>
             <button
               className="btn btn-link"
@@ -46,7 +48,7 @@ export default function DesignIndex({ match, experience, scripts, history,
               Back
             </Link>
           </span>
-        } />
+        )} />
     );
   }
   const script = _(scripts)
@@ -58,8 +60,8 @@ export default function DesignIndex({ match, experience, scripts, history,
     return (
       <Redirect
         to={
-          `/${script.org.name}/${script.experience.name}/script/` +
-          `${script.revision}/design`} />
+          `/${script.org.name}/${script.experience.name}/script/`
+          + `${script.revision}/design`} />
     );
   }
   return (

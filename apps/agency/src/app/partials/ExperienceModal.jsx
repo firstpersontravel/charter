@@ -61,7 +61,9 @@ function getDefaultState(experience, example, existingExperiences) {
       areaCode: null
     };
   }
-  return { name: '', title: '', domain: '', timezone: 'US/Pacific', countryCode: 1, areaCode: null };
+  return {
+    name: '', title: '', domain: '', timezone: 'US/Pacific', countryCode: 1, areaCode: null
+  };
 }
 
 export default class ExperienceModal extends Component {
@@ -70,7 +72,8 @@ export default class ExperienceModal extends Component {
       return Object.assign(
         { prevExpId: props.experience.id },
         getDefaultState(props.experience, props.example,
-          props.existingExperiences));
+          props.existingExperiences)
+      );
     }
     return null;
   }
@@ -158,8 +161,8 @@ export default class ExperienceModal extends Component {
   }
 
   render() {
-    const experience = this.props.experience;
-    const example = this.props.example;
+    const { experience } = this.props;
+    const { example } = this.props;
     const exampleTitle = example ? example.title.toLowerCase() : 'project';
     const title = experience ? 'Edit project' : `New ${exampleTitle}`;
     const isNew = !experience;
@@ -171,7 +174,7 @@ export default class ExperienceModal extends Component {
       </option>
     ));
 
-    const host = window.location.host;
+    const { host } = window.location;
     const placeholderDomain = host;
     const timezoneRow = isNew ? null : (
       <div className="row">
@@ -216,7 +219,7 @@ export default class ExperienceModal extends Component {
             className="form-control"
             value={this.state.countryCode}
             onChange={e => this.handleChangeField('countryCode', e)}
-            placeholder={'Country code'} />
+            placeholder="Country code" />
         </div>
         <div className="form-group col-6">
           <label htmlFor="exp_area_code">
@@ -228,7 +231,7 @@ export default class ExperienceModal extends Component {
             className="form-control"
             value={this.state.areaCode || ''}
             onChange={e => this.handleChangeField('areaCode', e)}
-            placeholder={'Area code'} />
+            placeholder="Area code" />
         </div>
       </div>
     );
@@ -236,7 +239,9 @@ export default class ExperienceModal extends Component {
     const overlapWarning = this.hasOverlappingName() ? (
       <div className="alert alert-warning">
         An existing experience has a title too close to
-        &quot;{this.state.title}&quot;; please choose a distinct title.
+        &quot;
+        {this.state.title}
+        &quot;; please choose a distinct title.
       </div>
     ) : null;
 

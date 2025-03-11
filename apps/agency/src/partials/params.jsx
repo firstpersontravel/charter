@@ -30,7 +30,7 @@ export function renderParam(script, key, spec, param) {
     }
   }
   if (spec.type === 'componentReference') {
-    const componentType = spec.componentType;
+    const { componentType } = spec;
     const variantClass = coreRegistry[componentType][spec.componentVariant];
     const component = coreWalker.getComponentById(script.content,
       spec.componentType, param);
@@ -54,7 +54,8 @@ export function renderParams(script, spec, params) {
     .map(([key, val]) => (
       <div key={key}>
         <span className="mr-1" style={{ fontVariant: 'small-caps' }}>
-          {labelForSpec(spec[key], key)}:
+          {labelForSpec(spec[key], key)}
+          :
         </span>
         {renderParam(script, key, spec[key], val)}
       </div>
@@ -69,7 +70,8 @@ export function renderMessageContent(script, fields) {
     const url = fullMediaUrl(script.org, script.experience, fields.content);
     return (
       <span>
-        {roleTitle}:&nbsp;
+        {roleTitle}
+        :&nbsp;
         <img alt="Message" src={url} className="img-fluid" />
       </span>
     );

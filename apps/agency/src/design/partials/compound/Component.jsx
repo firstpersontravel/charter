@@ -6,8 +6,10 @@ import { coreRegistry, TextUtil } from 'fptcore';
 import ObjectKey from './ObjectKey';
 import NewComponentBtn from './NewComponentBtn';
 
-function ComponentField({ script, resource, spec, value, name, path, opts,
-  onPropUpdate, renderAny }) {
+function ComponentField({
+  script, resource, spec, value, name, path, opts,
+  onPropUpdate, renderAny
+}) {
   if (!value) {
     const newComponentLabel = (
       <span className="btn btn-sm btn-outline-secondary">

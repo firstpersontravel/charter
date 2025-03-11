@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 import BaseString from './BaseString';
 
-function NumberField({ spec, value, name, path, opts, onPropUpdate }) {
+function NumberField({
+  spec, value, name, path, opts, onPropUpdate
+}) {
   return (
     <BaseString
       spec={spec}
@@ -11,7 +13,7 @@ function NumberField({ spec, value, name, path, opts, onPropUpdate }) {
       name={name}
       path={path}
       opts={opts}
-      validate={val => !isNaN(Number(val))}
+      validate={val => !Number.isNaN(Number(val))}
       clean={val => Number(val)}
       onPropUpdate={onPropUpdate} />
   );

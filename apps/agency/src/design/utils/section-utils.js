@@ -177,12 +177,12 @@ function getItem(scriptContent, contentFilter, resource) {
 
 function filterItems(scriptContent, contentFilter) {
   const allItems = scriptContent[contentFilter.collection] || [];
-  const prefilteredItems = contentFilter.filter ?
-    _.filter(allItems, contentFilter.filter) :
-    allItems;
-  const filteredItems = contentFilter.filterFn ?
-    prefilteredItems.filter(contentFilter.filterFn) :
-    prefilteredItems;
+  const prefilteredItems = contentFilter.filter
+    ? _.filter(allItems, contentFilter.filter)
+    : allItems;
+  const filteredItems = contentFilter.filterFn
+    ? prefilteredItems.filter(contentFilter.filterFn)
+    : prefilteredItems;
   return filteredItems;
 }
 
@@ -219,8 +219,8 @@ function sectionForResource(scriptContent, collectionName, resource) {
       if (sectionFilter.collection === collectionName) {
         return sectionName;
       }
-      if (sectionFilter.children &&
-          sectionFilter.children.includes(collectionName)) {
+      if (sectionFilter.children
+          && sectionFilter.children.includes(collectionName)) {
         return sectionName;
       }
     }
@@ -246,9 +246,9 @@ export function urlForResource(script, collectionName, resourceName) {
   const { sliceType, sliceName } = sliceForResource(script.content,
     collectionName, resource);
   return (
-    `/${script.org.name}/${script.experience.name}` +
-    `/script/${script.revision}` +
-    `/design/${sliceType}/${sliceName}` +
-    `/${collectionName}/${resourceName}`
+    `/${script.org.name}/${script.experience.name}`
+    + `/script/${script.revision}`
+    + `/design/${sliceType}/${sliceName}`
+    + `/${collectionName}/${resourceName}`
   );
 }

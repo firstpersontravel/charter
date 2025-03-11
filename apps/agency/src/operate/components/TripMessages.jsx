@@ -23,8 +23,8 @@ export default class TripMessages extends Component {
   componentWillReceiveProps(nextProps) {
     // If we've already loaded these props and players have already
     // been loaded, no need to redo
-    if (_.isEqual(nextProps.location.search, this.props.location.search) &&
-        this.props.trip.players.length > 0) {
+    if (_.isEqual(nextProps.location.search, this.props.location.search)
+        && this.props.trip.players.length > 0) {
       return;
     }
     this.setState({ pendingMessage: '' });
@@ -67,19 +67,21 @@ export default class TripMessages extends Component {
   }
 
   handleRoleChange(event) {
-    const trip = this.props.trip;
+    const { trip } = this.props;
     this.props.history.push(
-      `/${trip.org.name}/${trip.experience.name}/operate/` +
-      `trip/${trip.id}/messages?for=${event.target.value}`);
+      `/${trip.org.name}/${trip.experience.name}/operate/`
+      + `trip/${trip.id}/messages?for=${event.target.value}`
+    );
   }
 
   handleCounterpartChange(event) {
     const query = new URLSearchParams(this.props.location.search);
-    const trip = this.props.trip;
+    const { trip } = this.props;
     this.props.history.push(
-      `/${trip.org.name}/${trip.experience.name}/operate/` +
-      `trip/${trip.id}/messages` +
-      `?for=${query.get('for')}&with=${event.target.value}`);
+      `/${trip.org.name}/${trip.experience.name}/operate/`
+      + `trip/${trip.id}/messages`
+      + `?for=${query.get('for')}&with=${event.target.value}`
+    );
   }
 
   handlePendingMessageChange(event) {
@@ -89,7 +91,7 @@ export default class TripMessages extends Component {
   handleSendPendingMessage(event) {
     event.preventDefault();
     this.setState({ pendingMessage: '' });
-    const orgId = this.props.trip.orgId;
+    const { orgId } = this.props.trip;
     const expId = this.props.trip.experienceId;
     const tripId = this.props.trip.id;
     const query = new URLSearchParams(this.props.location.search);
@@ -105,7 +107,7 @@ export default class TripMessages extends Component {
     if (!query.get('for')) {
       return 'Send message';
     }
-    const script = this.props.trip.script;
+    const { script } = this.props.trip;
     const selfRoleName = query.get('for');
     const selfRole = _.find(script.content.roles, { name: selfRoleName });
     if (!query.get('with')) {
@@ -117,17 +119,19 @@ export default class TripMessages extends Component {
   }
 
   renderForRoleOptions() {
-    const script = this.props.trip.script;
+    const { script } = this.props.trip;
     return script.content.roles.map(role => (
       <option key={role.name} value={role.name}>
-        For {role.title}
+        For
+        {' '}
+        {role.title}
       </option>
     ));
   }
 
   renderWithRoleOptions() {
     const query = new URLSearchParams(this.props.location.search);
-    const script = this.props.trip.script;
+    const { script } = this.props.trip;
     const selfRoleName = query.get('for');
     if (!selfRoleName) {
       return [];
@@ -137,13 +141,15 @@ export default class TripMessages extends Component {
       .filter(role => role.name !== selfRoleName)
       .map(role => (
         <option key={role.name} value={role.name}>
-          With {role.title}
+          With
+          {' '}
+          {role.title}
         </option>
       ));
   }
 
   renderSend() {
-    const script = this.props.trip.script;
+    const { script } = this.props.trip;
     const query = new URLSearchParams(this.props.location.search);
     const hasRole = !!query.get('for');
     const hasWithRole = !!query.get('with');
@@ -151,8 +157,8 @@ export default class TripMessages extends Component {
     const withRole = _.find(script.content.roles, { name: withRoleName });
     const sendPlaceholder = this.renderSendPlaceholder();
     const sendLabel = hasWithRole ? `Send to ${withRole.title}` : 'Send';
-    const isSendDisabled = !hasRole || !hasWithRole ||
-      !this.state.pendingMessage;
+    const isSendDisabled = !hasRole || !hasWithRole
+      || !this.state.pendingMessage;
     const forRoleOptions = this.renderForRoleOptions();
     const withRoleOptions = this.renderWithRoleOptions();
     return (

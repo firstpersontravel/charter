@@ -10,7 +10,7 @@ export default class LabelWithTip extends React.Component {
   }
 
   toggle() {
-    this.setState({ open: !this.state.open });
+    this.setState(prevState => ({ open: !prevState.open }));
   }
 
   render() {
@@ -20,7 +20,8 @@ export default class LabelWithTip extends React.Component {
         id={labelId}
         className="mr-1"
         style={{ verticalAlign: 'top', fontVariant: 'small-caps' }}>
-        {this.props.label}:
+        {this.props.label}
+        :
       </span>
     );
     if (!this.props.help) {

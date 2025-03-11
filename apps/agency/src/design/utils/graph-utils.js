@@ -96,9 +96,9 @@ export function getChildResourceTypes(collectionName) {
     .keys()
     .filter(childResourceType => (
       _.some(coreRegistry.resources[childResourceType].properties, property => (
-        property.type === 'reference' &&
-        property.collection === collectionName &&
-        property.parent
+        property.type === 'reference'
+        && property.collection === collectionName
+        && property.parent
       ))
     ))
     .value();

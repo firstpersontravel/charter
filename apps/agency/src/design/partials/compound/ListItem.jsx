@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import {
+  Dropdown, DropdownToggle, DropdownMenu, DropdownItem
+} from 'reactstrap';
 
 import { coreWalker } from 'fptcore';
 
@@ -15,7 +17,8 @@ import { newItemForSpec } from './utils';
 function canRemove(script, itemSpec, item) {
   if (itemSpec.type === 'component') {
     const refs = coreWalker.getResourcesReferencingComponent(
-      script.content, itemSpec.component, item.id);
+      script.content, itemSpec.component, item.id
+    );
     if (refs.length > 0) {
       return false;
     }
@@ -32,7 +35,9 @@ function renderRemoveBtn(script, value, path, itemSpec, item, index, onPropUpdat
         onPropUpdate(path, updated);
       }}
       className={`dropdown-item btn btn-link ${removable ? '' : 'disabled'}`}>
-      <i className="fa fa-trash" /> {removable ? 'Remove' : 'Can\'t remove'}
+      <i className="fa fa-trash" />
+      {' '}
+      {removable ? 'Remove' : 'Can\'t remove'}
     </DropdownItem>
   );
 }
@@ -81,7 +86,9 @@ function renderNewItemBtn(value, path, itemSpec, item, index, onPropUpdate,
           .concat(value.slice(index));
         onPropUpdate(path, updated);
       }}>
-      <i className="fa fa-plus" /> Add item above
+      <i className="fa fa-plus" />
+      {' '}
+      Add item above
     </DropdownItem>
   );
 }
@@ -104,7 +111,9 @@ function renderDupeBtn(value, path, itemSpec, item, index, onPropUpdate) {
         onPropUpdate(path, updated);
       }}
       className="dropdown-item btn btn-link">
-      <i className="fa fa-copy" /> Duplicate
+      <i className="fa fa-copy" />
+      {' '}
+      Duplicate
     </DropdownItem>
   );
 }
@@ -151,8 +160,10 @@ function renderItemMenu(script, resource, spec, value, name, path, opts,
   );
 }
 
-function ListItem({ script, resource, spec, value, name, path, opts,
-  item, index, onPropUpdate, renderAny }) {
+function ListItem({
+  script, resource, spec, value, name, path, opts,
+  item, index, onPropUpdate, renderAny
+}) {
   const AnyField = renderAny;
   const itemPath = `${path}[${index}]`;
   const itemMenu = renderItemMenu(script, resource, spec, value, name, path,

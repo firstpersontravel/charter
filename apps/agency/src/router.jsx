@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Switch, Redirect, Route, withRouter } from 'react-router';
+import {
+  Switch, Redirect, Route, withRouter
+} from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { connectedRouterRedirect } from 'redux-auth-wrapper/history4/redirect';
@@ -38,10 +40,16 @@ function NoOrgs() {
     <Alert
       color="warning"
       header="No workspaces"
-      content={
-        <div>You are not a member of any workspaces. This shouldn&apos;t happen normally: please contact <a href="mailto:support@firstperson.travel">support@firstperson.travel</a> and we&apos;ll get one created for you right away.
+      content={(
+        <div>
+          You are not a member of any workspaces. This shouldn&apos;t happen normally:
+          {' '}
+          please contact
+          <a href="mailto:support@firstperson.travel">support@firstperson.travel</a>
+          {' '}
+          and we&apos;ll get one created for you right away.
         </div>
-      } />
+      )} />
   );
 }
 

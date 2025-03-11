@@ -95,10 +95,10 @@ export default class Group extends Component {
       this.refreshTimeout = null;
       this.nextActionAt = null;
     }
-    const timezone = this.props.experience.timezone;
+    const { timezone } = this.props.experience;
     console.log(
-      `next action ${nextUnappliedAction.id} ${scheduledAt.fromNow()} ` +
-      `(${scheduledAt.clone().tz(timezone).format('h:mm:ssa z')})`
+      `next action ${nextUnappliedAction.id} ${scheduledAt.fromNow()} `
+      + `(${scheduledAt.clone().tz(timezone).format('h:mm:ssa z')})`
     );
     const msecFromNow = Math.max(0, scheduledAt.diff(moment.utc(), 'ms'));
     this.refreshedForActionIds[nextUnappliedAction.id] = true;
@@ -184,9 +184,9 @@ export default class Group extends Component {
     // by the auto-refresh.
     if (Date.now() - (this.lastRefreshMsec || 0) < THROTTLE_FREQUENCY) {
       if (!this.state.throttledTripIds.has(tripId)) {
-        this.setState({
-          throttledTripIds: new Set(tripId, ...this.state.throttledTripIds)
-        });
+        this.setState(prevState => ({
+          throttledTripIds: new Set(prevState.throttledTripIds).add(tripId)
+        }));
       }
       return;
     }
@@ -202,13 +202,29 @@ export default class Group extends Component {
 
   renderRefresh() {
     if (this.props.areRequestsPending) {
-      return (<span><i className="fa fa-spin fa-sync" /> Refreshing</span>);
+      return (
+        <span>
+          <i className="fa fa-spin fa-sync" />
+          {' '}
+          Refreshing
+        </span>
+      );
     }
     if (this.state.throttledTripIds.size > 0) {
-      return (<span><i className="fa fa-clock" /> Pending</span>);
+      return (
+        <span>
+          <i className="fa fa-clock" />
+          {' '}
+          Pending
+        </span>
+      );
     }
     return (
-      <span><i className="fa fa-sync" /> Refresh</span>
+      <span>
+        <i className="fa fa-sync" />
+        {' '}
+        Refresh
+      </span>
     );
   }
 

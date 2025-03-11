@@ -12,8 +12,8 @@ import {
 function NewComponentBtn({ componentSpec, onConfirm, label }) {
   const componentType = componentSpec.component;
   const variantOptions = getComponentVariantOptions(componentType);
-  const title = componentSpec.title ||
-    `New ${TextUtil.singularize(componentType).toLowerCase()}`;
+  const title = componentSpec.title
+    || `New ${TextUtil.singularize(componentType).toLowerCase()}`;
   return (
     <PopoverControl
       title={title}
@@ -26,7 +26,7 @@ function NewComponentBtn({ componentSpec, onConfirm, label }) {
         onConfirm(getNewComponent(componentType, val));
       }}
       label={label}
-      value={''}
+      value=""
       underlined={false} />
   );
 }

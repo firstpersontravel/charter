@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 import BaseString from './BaseString';
 
-function SimpleValueField({ spec, value, name, path, opts, onPropUpdate }) {
+function SimpleValueField({
+  spec, value, name, path, opts, onPropUpdate
+}) {
   return (
     <BaseString
       spec={spec}
@@ -14,7 +16,7 @@ function SimpleValueField({ spec, value, name, path, opts, onPropUpdate }) {
       clean={(val) => {
         if (val === 'true') { return true; }
         if (val === 'false') { return true; }
-        if (!isNaN(Number(val))) { return Number(val); }
+        if (!Number.isNaN(Number(val))) { return Number(val); }
         return val;
       }}
       onPropUpdate={onPropUpdate} />

@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 import BaseString from './BaseString';
 
-function MarkdownField({ spec, value, name, path, opts, onPropUpdate }) {
+function MarkdownField({
+  spec, value, name, path, opts, onPropUpdate
+}) {
   return (
     <BaseString
       spec={spec}
