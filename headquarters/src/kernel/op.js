@@ -55,8 +55,7 @@ class KernelOpController {
       createdAt: op.fields.createdAt.toDate(),
       medium: op.fields.medium,
       content: op.fields.content,
-      isReplyNeeded: op.fields.isReplyNeeded,
-      isInGallery: op.fields.isInGallery
+      isReplyNeeded: op.fields.isReplyNeeded
     };
     const message = await models.Message.create(fields);
     await MessageController.sendMessage(message);

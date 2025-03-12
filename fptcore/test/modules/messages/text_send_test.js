@@ -28,8 +28,7 @@ describe('#send_text', () => {
         createdAt: now,
         medium: 'text',
         content: 'hi',
-        isReplyNeeded: false,
-        isInGallery: false
+        isReplyNeeded: false
       },
       suppressRelayId: null
     }, {

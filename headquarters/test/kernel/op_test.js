@@ -127,7 +127,6 @@ describe('KernelOpController', () => {
         medium: 'text',
         orgId: 456,
         experienceId: 789,
-        isInGallery: undefined,
         isReplyNeeded: undefined,
         tripId: 123,
         fromRoleName: 'BadGuy',

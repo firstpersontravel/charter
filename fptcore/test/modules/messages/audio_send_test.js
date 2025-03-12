@@ -41,8 +41,7 @@ describe('#send_audio', () => {
         createdAt: now,
         medium: 'audio',
         content: 'url',
-        isReplyNeeded: false,
-        isInGallery: false
+        isReplyNeeded: false
       },
       suppressRelayId: null
     }, {

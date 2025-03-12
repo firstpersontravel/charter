@@ -26,7 +26,6 @@ const {
   actorRouter,
   contentRouter,
   entrywayRouter,
-  galleryRouter,
   shortcutRouter
 } = require('./routers/page');
 
@@ -100,7 +99,6 @@ app.use('/api', apiRouter);
 app.use('/auth', authRouter);
 app.use('/content', contentRouter);
 app.use('/entry', entrywayRouter);
-app.use('/gallery', galleryRouter);
 app.use('/s', shortcutRouter);
 app.use('/endpoints/twilio', twilioRouter);
 

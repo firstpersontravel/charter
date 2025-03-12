@@ -27,7 +27,6 @@ const Message = database.define('Message', snakeCaseColumns({
   content: textField(),
   isReplyNeeded: booleanField(false),
   replyReceivedAt: mutableModifier(allowNullModifier(datetimeField())),
-  isInGallery: mutableModifier(booleanField(false)),
   isArchived: mutableModifier(booleanField(false))
 }));
 

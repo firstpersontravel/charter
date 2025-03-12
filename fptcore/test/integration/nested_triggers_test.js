@@ -287,8 +287,7 @@ describe('Integration - Nested Triggers', () => {
         createdAt: now,
         fromRoleName: 'Cowboy',
         toRoleName: 'Farmer',
-        isReplyNeeded: false,
-        isInGallery: false
+        isReplyNeeded: false
       },
       suppressRelayId: null
     }, {
@@ -334,8 +333,7 @@ describe('Integration - Nested Triggers', () => {
         createdAt: now,
         fromRoleName: 'Cowboy',
         toRoleName: 'Farmer',
-        isReplyNeeded: false,
-        isInGallery: false
+        isReplyNeeded: false
       },
       suppressRelayId: null
     }, {
