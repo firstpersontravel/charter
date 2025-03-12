@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import {
-  Circle, Map, Marker, Popup, TileLayer, Polyline
+  Circle, MapContainer, Marker, Popup, TileLayer, Polyline
 } from 'react-leaflet';
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
@@ -158,7 +158,7 @@ export default class ActiveTripsMap extends Component {
       const latlngs = PolylineEncoded.decode(directionsItem.data.polyline);
       return (
         <Polyline
-          key={`${directionsItem.name}-${directionsItem.data.polyline}`}
+          key={directionsItem.id}
           positions={latlngs}
           weight={4} />
       );
@@ -381,7 +381,7 @@ export default class ActiveTripsMap extends Component {
     const zoom = this.props.zoom || getZoomFit(center, dist, 200);
 
     return (
-      <Map
+      <MapContainer
         center={center}
         zoom={zoom}
         scrollWheelZoom={false}
@@ -393,7 +393,7 @@ export default class ActiveTripsMap extends Component {
         {activeRoutes}
         {geofences}
         {markers}
-      </Map>
+      </MapContainer>
     );
   }
 }
