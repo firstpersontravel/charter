@@ -12,7 +12,7 @@ function camelToDash(str) {
 }
 
 function jsonApiSerialize(instance) {
-  const model = models[instance._modelOptions.name.singular];
+  const model = models[instance.constructor.options.name.singular];
   const relationships = _(model.associations)
     .toPairs()
     .filter((keyAndFk) => instance.dataValues[`${keyAndFk[0]}Id`])
