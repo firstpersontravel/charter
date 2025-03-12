@@ -39,8 +39,9 @@
     "pino": "^6.2.1",
     "pino-pretty": "^4.0.0",
     "react-s3-uploader": "^4.9.3",
-    "sequelize": "^5.22.5",
-    "sequelize-cli": "^5.5.1",
+    "sequelize": "^6.37.6",
+    "sequelize-cli": "^6.6.2",
+    "sequelize-noupdate-attributes": "^2.0.2",
     "twilio": "^3.42.0"
   },
   "devDependencies": {

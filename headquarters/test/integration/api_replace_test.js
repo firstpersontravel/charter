@@ -64,7 +64,7 @@ describe('API replace', () => {
           assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'tripId',
-              message: 'tripId is readonly',
+              message: '(noUpdateAttributes): `tripId` cannot be updated due to `readOnly` constraint.',
             }],
             message: 'Invalid fields: tripId.',
             type: 'ValidationError'
@@ -109,7 +109,7 @@ describe('API replace', () => {
           assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'scriptId',
-              message: 'scriptId is readonly',
+              message: '(noUpdateAttributes): `scriptId` cannot be updated due to `readOnly` constraint.'
             }],
             message: 'Invalid fields: scriptId.',
             type: 'ValidationError'

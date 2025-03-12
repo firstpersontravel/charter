@@ -9,7 +9,7 @@ const faye = require('faye');
 const Sequelize = require('sequelize');
 const twilio = require('twilio');
 
-const sequelizeReadonlyPlugin = require('./sequelize/readonly');
+const sequelizeReadonlyPlugin  = require('sequelize-noupdate-attributes');
 
 // Read config if on live environment
 try {
