@@ -17,7 +17,6 @@
     "@sentry/node": "^5.25.0",
     "@sentry/tracing": "^5.26.0",
     "apn": "^2.2.0",
-    "axios": "^0.17.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.15.2",
     "commander": "^2.19.0",
