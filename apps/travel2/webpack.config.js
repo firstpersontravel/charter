@@ -67,8 +67,10 @@ module.exports = {
         ]
       },
       include: [
-        path.join(__dirname, 'src')
-        // path.join(__dirname, 'node_modules/fptcore/src')
+        path.join(__dirname, 'src'),
+        // Shouldn't need this -- just need it since react-leaflet and react-phone-number-input
+        // use nullish coalescing operator. Maybe can remove node_modules from babel later.
+        path.join(__dirname, 'node_modules')
       ]
     }, {
       test: /\.(less|css)$/i,

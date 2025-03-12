@@ -41,7 +41,7 @@ export default class Group extends Component {
     this.state = { throttledTripIds: new Set() };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // no need to load on mount because the app on load refreshes live
     // data for all active groups
     const tripIds = _.map(this.props.trips, 'id');

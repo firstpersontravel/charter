@@ -1,8 +1,8 @@
-import React, { createRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Map, Marker, TileLayer, Polyline
+  MapContainer, Marker, TileLayer, Polyline
 } from 'react-leaflet';
 
 import L from 'leaflet';
@@ -34,21 +34,10 @@ const MAPBOX_TILE_URL = 'https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/til
 export default class DirectionsPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.elementRef = createRef();
-    this.onZoomToEnd = this.onZoomToEnd.bind(this);
-    this.onZoomToSelf = this.onZoomToSelf.bind(this);
     this.onArrive = this.onArrive.bind(this);
     this.state = {
       center: null
     };
-  }
-
-  onZoomToSelf() {
-    this.setState({ center: this.getParticipantLocation() });
-  }
-
-  onZoomToEnd() {
-    this.setState({ center: this.getWaypointLocation() });
   }
 
   onArrive() {
@@ -201,13 +190,16 @@ export default class DirectionsPanel extends React.Component {
       <Marker position={this.getParticipantLocation()} icon={participantIcon} />
     );
     return (
-      <div className="pure-u-1-1 pure-u-sm-2-3 directions-map">
-        <Map center={center} zoom={13} style={{ height: this.getHeight() }}>
+      <div className="pure-u-1-1 pure-u-sm-2-3 directions-map" style={{ height: this.getHeight() }}>
+        <MapContainer
+          center={center}
+          zoom={13}
+          style={{ height: '100%', minHeight: '100%' }}>
           <TileLayer url={MAPBOX_TILE_URL} />
           <Polyline positions={this.getPolyline()} />
           {waypointMarker}
           {participantMarker}
-        </Map>
+        </MapContainer>
       </div>
     );
   }
@@ -231,36 +223,16 @@ export default class DirectionsPanel extends React.Component {
       return null;
     }
 
-    let title = null;
-    let destinationTitle = 'destination';
     if (this.getDestinationName()) {
-      title = (
+      return (
         <h2>
           Directions to
           {' '}
           {this.getDestinationName()}
         </h2>
       );
-      destinationTitle += `: ${this.getDestinationName()}`;
     }
-
-    return (
-      <>
-        {title}
-        <p>
-          <button className="pure-button pure-button-block" onClick={this.onZoomToSelf}>
-            Zoom to current location
-          </button>
-        </p>
-        <p>
-          <button className="pure-button pure-button-block" onClick={this.onZoomToEnd}>
-            Zoom to
-            {' '}
-            {destinationTitle}
-          </button>
-        </p>
-      </>
-    );
+    return null;
   }
 
   renderDirectionsList() {
@@ -311,7 +283,7 @@ export default class DirectionsPanel extends React.Component {
 
   render() {
     return (
-      <div className="page-panel-directions pure-g" ref={this.elementRef}>
+      <div className="page-panel-directions pure-g">
         {this.renderPhoneFormat()}
         {this.renderMap()}
         {this.renderDirections()}
