@@ -331,8 +331,6 @@ export default class App extends Component {
   }
 
   render() {
-    console.log('trip', this.props.trip);
-    console.log('player', this.props.player);
     if (!this.props.trip || !this.props.player) {
       return <div>Loading</div>;
     }
