@@ -22,13 +22,13 @@ function serializeField(field, dataValue) {
 }
 
 function serializeRecord(model, record, opts) {
-  return _(model.attributes)
+  return _(model.rawAttributes)
     .keys()
     .filter(key => !_.includes(opts.blacklistFields, key))
     .sort()
     .map(key => ([
       key,
-      serializeField(model.attributes[key], record.get(key, { plain: true }))
+      serializeField(model.rawAttributes[key], record.get(key, { plain: true }))
     ]))
     .fromPairs()
     .value();
@@ -42,7 +42,7 @@ const globalReadonlyFields = ['createdAt', 'updatedAt'];
 
 function deserializeFields(model, fields, opts) {
   return _.mapValues(fields, function(value, key) {
-    if (!model.attributes[key] ||
+    if (!model.rawAttributes[key] ||
         _.includes(opts.blacklistFields, key) ||
         _.includes(globalReadonlyFields, key)) {
       throw errors.validationError(`Invalid field: "${key}".`);
@@ -93,9 +93,9 @@ function apiErrorFromValidationError(err) {
     // Check for *NESTED* validation errors and unpack those -- this is most
     // likely from the script schema validation.
     if (fieldErr.path === 'content' &&
-        fieldErr.__raw &&
-        fieldErr.__raw.errors) {
-      fields.push.apply(fields, fieldErr.__raw.errors.map(rawErr => ({
+        fieldErr.original &&
+        fieldErr.original.errors) {
+      fields.push.apply(fields, fieldErr.original.errors.map(rawErr => ({
         field: fieldErr.path,
         path: rawErr.path,
         message: rawErr.message
@@ -118,11 +118,11 @@ async function updateRecord(model, record, fields) {
 
   // Add timestamps.
   const now = moment.utc();
-  if (record.isNewRecord && model.attributes.createdAt) {
+  if (record.isNewRecord && model.rawAttributes.createdAt) {
     record.createdAt = now;
     updateFields.push('createdAt');
   }
-  if (model.attributes.updatedAt) {
+  if (model.rawAttributes.updatedAt) {
     record.updatedAt = now;
     updateFields.push('updatedAt');
   }
@@ -180,7 +180,7 @@ function orderFromParam(model, sortQueryParam) {
   }
   const isDescending = sortQueryParam[0] === '-';
   const paramName = sortQueryParam.substring(isDescending ? 1 : 0);
-  if (!model.attributes[paramName]) {
+  if (!model.rawAttributes[paramName]) {
     throw errors.badRequestError(`Invalid sort parameter: ${paramName}.`);
   }
   return [[paramName, isDescending ? 'DESC' : 'ASC']];
@@ -219,7 +219,7 @@ const valConstants = {
 };
 
 function whereValueFromQuery(model, fieldName, operator, value) {
-  const attribute = model.attributes[fieldName];
+  const attribute = model.rawAttributes[fieldName];
   if (!attribute) {
     throw errors.badRequestError(`Invalid query field: "${fieldName}".`);
   }

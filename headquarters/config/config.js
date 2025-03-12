@@ -14,7 +14,6 @@ const config = {
   dialectOptions: {
     charset: 'utf8mb4'
   },
-  operatorsAliases: false,
   logging: false
 };
 

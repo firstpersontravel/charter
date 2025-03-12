@@ -27,7 +27,7 @@ async function migrateScript(script, assets, isDryRun) {
     await script.validate();
   } catch (err) {
     console.log(`Script #${script.id} failed validation: ${err.message}.`);
-    err.errors[0].__raw.errors.forEach((innerErr) => {
+    err.errors[0].original.errors.forEach((innerErr) => {
       console.log(`- ${innerErr.path}: ${innerErr.message}`);
     });
     return false;
