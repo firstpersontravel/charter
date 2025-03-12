@@ -49,7 +49,7 @@ moment.updateLocale('en', {
 config.database = new Sequelize(require('../config/config').test);
 
 // Readonly plugin
-const sequelizeReadonlyPlugin = require('../src/sequelize/readonly');
+const sequelizeReadonlyPlugin  = require('sequelize-noupdate-attributes');
 sequelizeReadonlyPlugin(config.database);
 
 // Require models to make sure all are registered

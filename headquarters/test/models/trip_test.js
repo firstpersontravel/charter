@@ -76,8 +76,8 @@ describe('Trip', () => {
     testTrip.experienceId = 2;
     testTrip.scriptId = 3;
     await assertValidation(testTrip, {
-      experienceId: 'experienceId is readonly',
-      scriptId: 'scriptId is readonly'
+      experienceId: '(noUpdateAttributes): `experienceId` cannot be updated due to `readOnly` constraint.',
+      scriptId: '(noUpdateAttributes): `scriptId` cannot be updated due to `readOnly` constraint.'
     });
   });
 });
