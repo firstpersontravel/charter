@@ -81,8 +81,8 @@ async function createScriptWithContent(scriptContent) {
   try {
     await script.validate();
   } catch (err) {
-    if (_.get(err, 'errors[0].__raw.errors')) {
-      const errorStrs = err.errors[0].__raw.errors
+    if (_.get(err, 'errors[0].original.errors')) {
+      const errorStrs = err.errors[0].original.errors
         .map(e => `${e.path}: ${e.message}`)
         .join(' ');
       throw new Error(errorStrs);
