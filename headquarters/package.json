@@ -17,7 +17,6 @@
     "@sentry/node": "^5.25.0",
     "@sentry/tracing": "^5.26.0",
     "apn": "^2.2.0",
-    "axios": "^0.17.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.15.2",
     "commander": "^2.19.0",
@@ -26,7 +25,6 @@
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "faye": "^1.2.4",
-    "fsevents": "^2.3.3",
     "js-yaml": "^3.6.1",
     "json-stable-stringify": "^1.0.1",
     "jsonschema": "^1.2.6",
@@ -56,7 +54,7 @@
     "supertest": "^3.0.0"
   },
   "optionalDependencies": {
-      "fsevents": "*"
+    "fsevents": "*"
   },
   "_moduleAliases": {
     "fptcore": "../fptcore"
