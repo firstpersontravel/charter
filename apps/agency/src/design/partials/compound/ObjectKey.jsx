@@ -24,7 +24,7 @@ function invalidWarningForSpec(script, name, keySpec, value, itemValue) {
       return (
         <i
           title={`${keySpec.type} required`}
-          className="fa fa-exclamation-circle text-danger ml-1" />
+          className="fa fa-exclamation-circle text-danger ms-1" />
       );
     }
     return null;
@@ -37,7 +37,7 @@ function invalidWarningForSpec(script, name, keySpec, value, itemValue) {
     return (
       <i
         title={validatorErrors.join(', ')}
-        className="fa fa-exclamation-circle text-danger ml-1" />
+        className="fa fa-exclamation-circle text-danger ms-1" />
     );
   }
 

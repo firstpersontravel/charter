@@ -108,7 +108,7 @@ export default class SceneGrid extends Component {
     const iframeLink = trip.id ? (
       <a
         target="_blank"
-        className="ml-1 text-dark"
+        className="ms-1 text-dark"
         rel="noopener noreferrer"
         href={getPlayerIframeUrl(trip, player)}>
         <i className="fa fa-external-link-alt" />
@@ -117,7 +117,7 @@ export default class SceneGrid extends Component {
     return (
       <div className={`col-sm-${colWidth} player-column`} key={player.id}>
         <h5 className="constrain-text">
-          <ResourceBadge resourceType="role" className="mr-1" showType={false} />
+          <ResourceBadge resourceType="role" className="me-1" showType={false} />
           {player.role.title}
           {iframeLink}
         </h5>
@@ -182,7 +182,7 @@ export default class SceneGrid extends Component {
         onClick={() => this.handleAction('start_scene', {
           scene_name: scene.name
         })}
-        className="ml-1">
+        className="ms-1">
         <i className="fa fa-arrow-circle-right" />
       </a>
     ) : null;
@@ -227,12 +227,12 @@ export default class SceneGrid extends Component {
           <ResourceBadge
             resource={scene}
             resourceType="scene"
-            className="mr-1"
+            className="me-1"
             showType={false} />
           {scene.title}
           <Link
             to={`/${trip.org.name}/${trip.experience.name}/script/${trip.script.revision}/design/scene/${scene.name}`}
-            className="ml-1">
+            className="ms-1">
             <i className="fa fa-pencil" />
           </Link>
           {startSceneButton}

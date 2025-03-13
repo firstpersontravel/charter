@@ -79,7 +79,7 @@ export default class PopoverControl extends Component {
         <select
           autoFocus
           ref={this.inputRef}
-          className="form-control mr-1 mb-1"
+          className="form-control me-1 mb-1"
           style={{ maxWidth: '100%' }}
           value={this.state.value}
           onChange={this.handleChange}>
@@ -105,7 +105,7 @@ export default class PopoverControl extends Component {
         autoFocus
         ref={this.inputRef}
         type="text"
-        className="form-control mr-1"
+        className="form-control me-1"
         style={{ width: '100%', display: 'block' }}
         value={this.state.value}
         onChange={this.handleChange} />
@@ -167,7 +167,7 @@ export default class PopoverControl extends Component {
               {this.renderEdit()}
               {this.renderHelpBottom()}
               <button
-                className="btn btn-primary mr-1"
+                className="btn btn-primary me-1"
                 disabled={!this.isValid()}
                 onClick={this.handleConfirm}>
                 <i className="fa fa-check" />

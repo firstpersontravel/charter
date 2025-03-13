@@ -127,7 +127,7 @@ export default function Message({ message, updateInstance }) {
   return (
     <div className={`message ${archivedClass}`}>
       {icon}
-      <strong className="mr-1">
+      <strong className="me-1">
         {fromRole.title}
         :
       </strong>

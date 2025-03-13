@@ -248,7 +248,7 @@ function renderHeader(trip, player, page, onAction) {
   const headerText = truncateMsg(_.trim(page.directive
     ? TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone, player.roleName) : ''), 100);
-  const header = headerText ? (<span className="ml-1">{headerText}</span>) : null;
+  const header = headerText ? (<span className="ms-1">{headerText}</span>) : null;
 
   const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
   const curPageName = currentPageNamesByRole[player.roleName];
@@ -259,7 +259,7 @@ function renderHeader(trip, player, page, onAction) {
   const textClass = isCurrentPage ? 'text-white' : 'text-dark';
   const designLink = trip.script.org && trip.script.experience ? (
     <Link
-      className={`ml-1 ${textClass}`}
+      className={`ms-1 ${textClass}`}
       to={urlForResource(trip.script, 'pages', page.name)}>
       <i className="fa fa-pencil-alt" />
     </Link>
@@ -267,7 +267,7 @@ function renderHeader(trip, player, page, onAction) {
 
 
   const isAckedIcon = isAckedPage ? (
-    <span className={`ml-1 ${textClass}`}>
+    <span className={`ms-1 ${textClass}`}>
       <i className="fa fa-check" />
       {moment
         .utc(player.acknowledgedPageAt)
@@ -285,7 +285,7 @@ function renderHeader(trip, player, page, onAction) {
         role_name: player.roleName,
         page_name: page.name
       }, player.id)}
-      className="ml-1">
+      className="ms-1">
       <i className="fa fa-arrow-circle-right" />
     </a>
   ) : null;

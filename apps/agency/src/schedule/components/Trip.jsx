@@ -92,7 +92,7 @@ class Trip extends Component {
     );
     const archiveTripBtn = (
       <button
-        className="btn btn-sm btn-outline-secondary ml-1"
+        className="btn btn-sm btn-outline-secondary ms-1"
         onClick={() => this.handleArchiveTrip(trip)}>
         {trip.isArchived ? 'Unarchive' : 'Archive'}
       </button>

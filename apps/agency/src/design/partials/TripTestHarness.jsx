@@ -349,15 +349,15 @@ export default class TripTestHarness extends Component {
 
   renderLogEntry(logEntry) {
     const badgeClasses = {
-      info: 'badge-info',
-      warn: 'badge-warning',
-      error: 'badge-danger'
+      info: 'bg-info',
+      warn: 'bg-warning',
+      error: 'bg-danger'
     };
     return (
       <div
         key={logEntry.id}
         style={{ wordBreak: 'break-word', overflow: 'hidden' }}>
-        <span className={`badge ${badgeClasses[logEntry.level]} mr-1`}>
+        <span className={`badge ${badgeClasses[logEntry.level]} me-1`}>
           {logEntry.type}
         </span>
         {logEntry.message}
@@ -379,10 +379,10 @@ export default class TripTestHarness extends Component {
           onClick={() => {
             this.runAllScheduled();
           }}>
-          <i className="fa fa-forward mr-1" />
+          <i className="fa fa-forward me-1" />
         </button>
         <div>
-          <i className="fa fa-clock-o mr-1" />
+          <i className="fa fa-clock-o me-1" />
           next
           {' '}
           {nextTime}

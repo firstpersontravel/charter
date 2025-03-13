@@ -14,7 +14,7 @@ function renderCreateResource(script, sliceType, sliceName, collectionName) {
   const query = sliceType === 'scene' ? `?scene=${sliceName}` : '';
   return (
     <p key={collectionName} className="mb-3">
-      <ResourceBadge resourceType={resourceType} className="mr-1" />
+      <ResourceBadge resourceType={resourceType} className="me-1" />
       {resourceClass.help}
       &nbsp;
       <Link

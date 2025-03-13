@@ -15,7 +15,7 @@ function BooleanField({
   const existing = _.isUndefined(value) ? def : value;
   return (
     <input
-      className="ml-1 mt-2"
+      className="ms-1 mt-2"
       style={style}
       type="checkbox"
       checked={!!existing}

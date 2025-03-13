@@ -94,7 +94,7 @@ export default class ResponsiveTabs extends Component {
         <NavLink
           className={`${this.props.linkClassName} dropdown-toggle`}
           activeClassName="active"
-          data-toggle="dropdown"
+          data-bs-toggle="dropdown"
           // Set tab to active if the current path starts with the root item url
           isActive={(match, location) => _.startsWith(location.pathname, item.url)}
           // But navigate to the first subitem url if there are subitems, to avoid going
