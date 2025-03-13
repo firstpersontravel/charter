@@ -48,8 +48,7 @@ module.exports = {
         createdAt: actionContext.evaluateAt,
         medium: 'audio',
         content: content,
-        isReplyNeeded: isReplyNeeded,
-        isInGallery: false
+        isReplyNeeded: isReplyNeeded
       }
     }, {
       operation: 'event',

@@ -48,8 +48,7 @@ module.exports = {
         createdAt: actionContext.evaluateAt,
         medium: 'image',
         content: content,
-        isReplyNeeded: isReplyNeeded,
-        isInGallery: true
+        isReplyNeeded: isReplyNeeded
       }
     }, {
       operation: 'event',

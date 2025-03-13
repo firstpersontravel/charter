@@ -40,14 +40,6 @@ function renderTabs(trip) {
           Messages
         </NavLink>
       </li>
-      <li className="nav-item">
-        <NavLink
-          className="nav-link"
-          activeClassName="active"
-          to={`/${trip.org.name}/${trip.experience.name}/operate/trip/${trip.id}/gallery`}>
-          Gallery
-        </NavLink>
-      </li>
     </ul>
   );
 }

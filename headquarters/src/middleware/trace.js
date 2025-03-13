@@ -11,7 +11,6 @@ const tracePrefixes = [
   '/content/',
   '/endpoints/',
   '/entry/',
-  '/gallery/',
   '/s/',
   '/s3/'
 ];

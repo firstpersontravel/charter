@@ -41,8 +41,7 @@ describe('#send_image', () => {
         createdAt: now,
         medium: 'image',
         content: 'url',
-        isReplyNeeded: false,
-        isInGallery: true
+        isReplyNeeded: false
       },
       suppressRelayId: null
     }, {

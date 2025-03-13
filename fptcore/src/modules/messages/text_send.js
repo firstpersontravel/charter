@@ -43,8 +43,7 @@ module.exports = {
         createdAt: actionContext.evaluateAt,
         medium: 'text',
         content: content,
-        isReplyNeeded: isReplyNeeded,
-        isInGallery: false
+        isReplyNeeded: isReplyNeeded
       }
     }, {
       operation: 'event',

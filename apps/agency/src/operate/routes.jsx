@@ -10,7 +10,6 @@ import ActiveTripsMessagesConnector from './connectors/ActiveTripsMessages';
 import ActiveTripsUpcomingConnector from './connectors/ActiveTripsUpcoming';
 import TripConnector from './connectors/Trip';
 import TripScenesConnector from './connectors/TripScenes';
-import TripGalleryConnector from './connectors/TripGallery';
 import TripMessagesConnector from './connectors/TripMessages';
 import TripScheduleConnector from './connectors/TripSchedule';
 import TripValuesConnector from './connectors/TripValues';
@@ -61,9 +60,6 @@ function TripRoutes({ match }) {
         <Route
           path={`${match.path}/messages`}
           component={TripMessagesConnector} />
-        <Route
-          path={`${match.path}/gallery`}
-          component={TripGalleryConnector} />
         <Route component={NotFound} />
       </Switch>
     </TripConnector>

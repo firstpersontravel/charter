@@ -68,7 +68,6 @@ describe('API update', () => {
         name: 'hi',
         medium: 'text',
         content: 'hi there',
-        isInGallery: false,
         isArchived: false
       });
     });
@@ -76,7 +75,6 @@ describe('API update', () => {
     it('allows change to permitted fields', () => {
       const now = moment.utc();
       const permittedFields = [
-        ['isInGallery', true, true],
         ['isArchived', true, true],
         ['replyReceivedAt', now, now.toISOString()]
       ];

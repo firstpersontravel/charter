@@ -3,7 +3,6 @@ const express = require('express');
 const actorRoutes = require('../routes/page_actor');
 const contentRoutes = require('../routes/page_content');
 const entrywayRoutes = require('../routes/page_entryway');
-const galleryRoutes = require('../routes/page_gallery');
 const shortcutRoutes = require('../routes/page_shortcut');
 const { asyncRoute } = require('./utils');
 
@@ -30,10 +29,6 @@ const actorRouter = express.Router();
 actorRouter.get('/:orgName', asyncRoute(actorRoutes.actorsListRoute));
 actorRouter.get('/:orgName/:participantId', asyncRoute(actorRoutes.participantShowRoute));
 
-// Gallery routes
-const galleryRouter = express.Router();
-galleryRouter.get('/:tripId', asyncRoute(galleryRoutes.galleryRoute));
-
 // Content routes
 const contentRouter = express.Router();
 contentRouter.get('/examples/:exampleName',
@@ -43,6 +38,5 @@ module.exports = {
   actorRouter,
   contentRouter,
   entrywayRouter,
-  galleryRouter,
   shortcutRouter
 };
