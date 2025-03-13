@@ -375,7 +375,7 @@ export default class TripTestHarness extends Component {
     return (
       <div className="alert alert-warning">
         <button
-          className="p-1 btn btn-link text-dark float-right"
+          className="p-1 btn btn-link text-dark float-end"
           onClick={() => {
             this.runAllScheduled();
           }}>

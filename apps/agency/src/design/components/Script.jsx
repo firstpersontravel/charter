@@ -203,7 +203,7 @@ class Script extends Component {
           <NavLink
             className="nav-link dropdown-toggle"
             activeClassName="active"
-            data-toggle="dropdown"
+            data-bs-toggle="dropdown"
             to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene`}>
             {sceneTitle}
           </NavLink>
@@ -314,10 +314,10 @@ class Script extends Component {
 
     const expOpts = (
       <div className="dropdown ms-2 d-inline" style={{ cursor: 'pointer' }}>
-        <span id="expDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i className="fa fa-cog" />
+        <span id="expDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i className="fa fa-cog" style={{ top: '0.1em', position: 'relative' }} />
         </span>
-        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="expDropdown">
+        <div className="dropdown-menu dropdown-menu-end" aria-labelledby="expDropdown">
           <Link
             className="dropdown-item"
             to={`${window.location.pathname}?editing=true`}>
@@ -350,8 +350,8 @@ class Script extends Component {
                 Preview
               </NavLink>
             </div>
-            <div className="col-sm-9 align-right-sm">
-              <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div className="col-sm-9 text-end">
+              <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Rev.
                 {' '}
                 {this.props.script.revision}
