@@ -7,6 +7,17 @@ import * as Sentry from '@sentry/react';
 import Examples from '../examples';
 import ExperienceModal from '../partials/ExperienceModal';
 
+// Add custom CSS for equal height cards
+const cardStyles = {
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column'
+};
+
+const cardBodyStyles = {
+  flex: '1 1 auto'
+};
+
 export default class OrgIndex extends Component {
   constructor(props) {
     super(props);
@@ -91,21 +102,23 @@ export default class OrgIndex extends Component {
 
   renderExample(example) {
     return (
-      <div key={example.name} className="card mb-3">
-        <h5 className="card-header d-none d-sm-block">{example.title}</h5>
-        <div className="card-body d-none d-sm-block">
-          <p className="card-text">{example.desc}</p>
-          <p className="card-text">{example.demo}</p>
-        </div>
-        <div className="card-footer">
-          <Link
-            className="btn btn-block btn-secondary"
-            to={`/${this.props.org.name}?creating=${example.name}`}>
-            <i className="fa fa-plus" />
-&nbsp;
-            Create
-            {example.title.toLowerCase()}
-          </Link>
+      <div className="col mb-3" key={example.name}>
+        <div className="card" style={cardStyles}>
+          <h5 className="card-header d-none d-sm-block">{example.title}</h5>
+          <div className="card-body d-none d-sm-block" style={cardBodyStyles}>
+            <p className="card-text">{example.desc}</p>
+            <p className="card-text">{example.demo}</p>
+          </div>
+          <div className="card-footer d-grid gap-2">
+            <Link
+              className="btn btn-secondary"
+              to={`/${this.props.org.name}?creating=${example.name}`}>
+              <i className="fa fa-plus" />
+  &nbsp;
+              Create&nbsp;
+              {example.title.toLowerCase()}
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -113,51 +126,53 @@ export default class OrgIndex extends Component {
 
   renderExperience(experience) {
     return (
-      <div key={experience.id} className="card mb-3">
-        <h5 className="card-header d-none d-sm-block">{experience.title}</h5>
-        <div className="card-body d-none d-sm-block">
-          <p className="card-text">
+      <div className="col mb-3" key={experience.id}>
+        <div className="card" style={cardStyles}>
+          <h5 className="card-header d-none d-sm-block">{experience.title}</h5>
+          <div className="card-body d-none d-sm-block" style={cardBodyStyles}>
+            <p className="card-text">
+              <Link
+                to={`/${this.props.org.name}/${experience.name}/script`}>
+                Edit project
+              </Link>
+            </p>
+            <p className="card-text">
+              <Link
+                to={`/${this.props.org.name}/${experience.name}/schedule`}>
+                Schedule
+              </Link>
+            </p>
+            <p className="card-text">
+              <Link
+                to={`/${this.props.org.name}/${experience.name}/directory`}>
+                Browse users
+              </Link>
+            </p>
+          </div>
+          <div className="card-footer d-grid gap-2">
             <Link
-              to={`/${this.props.org.name}/${experience.name}/script`}>
-              Edit project
+              to={`/${this.props.org.name}/${experience.name}`}
+              className="btn btn-primary">
+              Go to
+              {' '}
+              {experience.title}
             </Link>
-          </p>
-          <p className="card-text">
-            <Link
-              to={`/${this.props.org.name}/${experience.name}/schedule`}>
-              Schedule
-            </Link>
-          </p>
-          <p className="card-text">
-            <Link
-              to={`/${this.props.org.name}/${experience.name}/directory`}>
-              Browse users
-            </Link>
-          </p>
-        </div>
-        <div className="card-footer">
-          <Link
-            to={`/${this.props.org.name}/${experience.name}`}
-            className="btn btn-block btn-primary">
-            Go to
-            {' '}
-            {experience.title}
-          </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   renderExamples() {
-    const renderedExperiences = this.props.experiences.map(experience => (
-      this.renderExperience(experience)
-    ));
-    const renderedExamples = Examples.map(example => (
-      this.renderExample(example)
-    ));
+    const renderedExperiences = this.props.experiences.map(
+      experience => this.renderExperience(experience)
+    );
+    const renderedExamples = Examples.map(
+      example => this.renderExample(example)
+    );
     const items = [].concat(renderedExperiences).concat(renderedExamples);
     return (
-      <div className="card-deck">
+      <div className="row row-cols-1 row-cols-md-3">
         {items}
       </div>
     );

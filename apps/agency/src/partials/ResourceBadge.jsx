@@ -59,16 +59,16 @@ export default function ResourceBadge({
     backgroundColor: COLORS[resourceType] || '#cccccc'
   }, style);
   const resourceIcon = iconForResource(resourceType, resource);
-  let titleClass = 'ml-1 d-inline d-sm-none d-md-inline';
+  let titleClass = 'ms-1 d-inline d-sm-none d-md-inline';
   if (showType === true) {
-    titleClass = 'ml-1 d-inline';
+    titleClass = 'ms-1 d-inline';
   } else if (showType === false) {
     titleClass = 'd-none';
   }
   return (
     <span
       style={styleWithColor}
-      className={`badge badge-secondary ${className}`}
+      className={`badge ${className}`}
       {...props}>
       {resourceIcon}
       <span className={titleClass}>

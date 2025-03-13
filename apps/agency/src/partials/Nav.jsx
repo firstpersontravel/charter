@@ -7,27 +7,25 @@ import { getStage } from '../utils';
 const globalTitle = 'Charter';
 
 const helpItem = (
-  <li className="nav-item">
-    <div className="dropdown">
-      <button className="btn btn-link p-2 mr-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i className="fa fa-question-circle" />
-      </button>
-      <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-        <a
-          className="btn btn-link dropdown-item"
-          rel="noopener noreferrer"
-          target="_blank"
-          href="https://charter-docs.firstperson.travel/docs/tutorials/starter">
-          Tutorials
-        </a>
-        <a
-          className="btn btn-link dropdown-item"
-          rel="noopener noreferrer"
-          target="_blank"
-          href="https://charter-docs.firstperson.travel/docs/reference/resources">
-          Reference
-        </a>
-      </div>
+  <li className="nav-item dropdown">
+    <button className="btn btn-link p-2 me-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i className="fa fa-question-circle" />
+    </button>
+    <div className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+      <a
+        className="btn btn-link dropdown-item"
+        rel="noopener noreferrer"
+        target="_blank"
+        href="https://charter-docs.firstperson.travel/docs/tutorials/starter">
+        Tutorials
+      </a>
+      <a
+        className="btn btn-link dropdown-item"
+        rel="noopener noreferrer"
+        target="_blank"
+        href="https://charter-docs.firstperson.travel/docs/reference/resources">
+        Reference
+      </a>
     </div>
   </li>
 );
@@ -39,7 +37,7 @@ function titleForOrg(org) {
 function renderRight(authInfo) {
   if (!authInfo || !authInfo.user) {
     return (
-      <ul className="navbar-nav ml-auto">
+      <ul className="navbar-nav">
         {helpItem}
         <li className="nav-item">
           <Link className="btn btn-primary" to="/login">
@@ -60,14 +58,14 @@ function renderRight(authInfo) {
   ));
 
   return (
-    <ul className="navbar-nav ml-auto">
+    <ul className="navbar-nav ms-auto">
       {helpItem}
       <li className="nav-item">
         <div className="dropdown">
-          <button className="btn btn-link p-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button className="btn btn-link p-2 text-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i className="fa fa-user" />
           </button>
-          <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <div className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
             {orgLinks}
             <Link className="btn btn-link dropdown-item" to="/logout">
               Log out
@@ -97,7 +95,7 @@ function renderBrand(org, experience) {
       <NavLink
         key="main"
         activeClassName="active"
-        className="navbar-brand mr-1"
+        className="navbar-brand me-1"
         to="/">
         {inkwell}
         {globalTitle.toUpperCase()}
@@ -108,7 +106,7 @@ function renderBrand(org, experience) {
     <NavLink
       key="org"
       activeClassName="active"
-      className="navbar-brand mr-1"
+      className="navbar-brand me-1"
       to={`/${org.name}`}>
       {inkwell}
       {titleForOrg(org).toUpperCase()}
@@ -136,7 +134,7 @@ function renderMenu(org, experience, experiences) {
         style={{ cursor: 'pointer' }}
         className="bold nav-link dropdown-toggle constrain-text"
         id="experiencesDropdown"
-        data-toggle="dropdown">
+        data-bs-toggle="dropdown">
         {experience ? experience.title : 'Projects'}
       </div>
       <div className="dropdown-menu" aria-labelledby="experiencesDropdown">
@@ -147,14 +145,14 @@ function renderMenu(org, experience, experiences) {
 
   if (!experience) {
     return (
-      <ul className="navbar-nav mr-auto">
+      <ul className="navbar-nav me-auto">
         {experienceDropdown}
       </ul>
     );
   }
 
   return (
-    <ul className="navbar-nav mr-auto">
+    <ul className="navbar-nav me-auto">
       {experienceDropdown}
       <li className="nav-item">
         <NavLink
@@ -199,15 +197,17 @@ export default function Nav({
 
   return (
     <nav className={navClass}>
-      {renderBrand(org, experience)}
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-        <span className="navbar-toggler-icon" />
-      </button>
-      <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        {renderMenu(org, experience, experiences)}
-      </div>
-      <div className="navbar-collapse collapse w-100 order-3">
-        {renderRight(authInfo)}
+      <div className="container-fluid mt-0">
+        {renderBrand(org, experience)}
+        <button className="navbar-toggler" type="button" data-bs-toggle="dropdown" data-bs-target="#navbarSupportedContent">
+          <span className="navbar-toggler-icon" />
+        </button>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          {renderMenu(org, experience, experiences)}
+        </div>
+        <div className="d-flex navbar-collapse collapse order-3 justify-content-end">
+          {renderRight(authInfo)}
+        </div>
       </div>
     </nav>
   );

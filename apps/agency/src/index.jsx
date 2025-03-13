@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -76,7 +76,8 @@ const app = (
   </Provider>
 );
 
-ReactDOM.render(app, document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
+root.render(app);
 
 if (config.analyticsEnabled) {
   /* eslint-disable */

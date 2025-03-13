@@ -27,6 +27,10 @@ h1, .h1, h2, .h2 {
   font-family: RecoletaAlt-SemiBold;
 }
 
+a {
+  text-decoration: none;
+}
+
 body {
   height: 100%;
 }
@@ -109,7 +113,7 @@ body {
   z-index: 1000;
   position: absolute;
   right: 0;
-  top: 0;
+  top: -0.5em;
   padding: 0.5em;
 }
 

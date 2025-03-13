@@ -14,11 +14,11 @@ function getBadgesForScript(script, maxRevision) {
   const badges = [];
   if (script.isActive) {
     badges.push(
-      <span key="active" className="badge badge-primary ml-2">Active</span>
+      <span key="active" className="badge bg-primary ms-2">Active</span>
     );
   } else if (script.revision === maxRevision) {
     badges.push(
-      <span key="draft" className="badge badge-secondary ml-2">Draft</span>
+      <span key="draft" className="badge bg-secondary ms-2">Draft</span>
     );
   }
   return badges;
@@ -203,7 +203,7 @@ class Script extends Component {
           <NavLink
             className="nav-link dropdown-toggle"
             activeClassName="active"
-            data-toggle="dropdown"
+            data-bs-toggle="dropdown"
             to={`/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene`}>
             {sceneTitle}
           </NavLink>
@@ -225,7 +225,7 @@ class Script extends Component {
     const revertBtn = activeRevision ? (
       <button
         onClick={this.handleRevertScript}
-        className="btn btn-xs btn-outline-secondary ml-2">
+        className="btn btn-xs btn-outline-secondary ms-2">
         <i className="fa fa-undo" />
 &nbsp;
         Revert to
@@ -236,7 +236,7 @@ class Script extends Component {
     const activateBtn = (
       <button
         onClick={this.handleActivateScript}
-        className="btn btn-xs btn-outline-secondary ml-2">
+        className="btn btn-xs btn-outline-secondary ms-2">
         <i className="fa fa-check" />
 &nbsp;
         Activate
@@ -246,7 +246,7 @@ class Script extends Component {
     const newDraftBtn = (
       <button
         onClick={this.handleNewDraft}
-        className="btn btn-xs btn-outline-secondary ml-2">
+        className="btn btn-xs btn-outline-secondary ms-2">
         <i className="fa fa-pencil-alt" />
 &nbsp;
         New draft
@@ -271,7 +271,7 @@ class Script extends Component {
       <button
         disabled={numUndosAvail <= 0}
         onClick={this.handleUndo}
-        className="btn btn-xs btn-outline-secondary ml-2">
+        className="btn btn-xs btn-outline-secondary ms-2">
         <i className="fa fa-undo" />
 &nbsp;
         Undo
@@ -282,7 +282,7 @@ class Script extends Component {
       <button
         disabled={numRedosAvail <= 0}
         onClick={this.handleRedo}
-        className="btn btn-xs btn-outline-secondary ml-2">
+        className="btn btn-xs btn-outline-secondary ms-2">
         <i className="fa fa-redo" />
 &nbsp;
         Redo
@@ -290,7 +290,7 @@ class Script extends Component {
     );
 
     const goToLatestLink = !isMaxRevision ? (
-      <span className="ml-2 p-0">
+      <span className="ms-2 p-0">
         <Link to={`/${script.org.name}/${script.experience.name}/script/${maxRevision}/design`}>
           Go to
           {' '}
@@ -313,11 +313,11 @@ class Script extends Component {
     ));
 
     const expOpts = (
-      <div className="dropdown ml-2 d-inline" style={{ cursor: 'pointer' }}>
-        <span id="expDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i className="fa fa-cog" />
+      <div className="dropdown ms-2 d-inline" style={{ cursor: 'pointer' }}>
+        <span id="expDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i className="fa fa-cog" style={{ top: '0.1em', position: 'relative' }} />
         </span>
-        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="expDropdown">
+        <div className="dropdown-menu dropdown-menu-end" aria-labelledby="expDropdown">
           <Link
             className="dropdown-item"
             to={`${window.location.pathname}?editing=true`}>
@@ -350,8 +350,8 @@ class Script extends Component {
                 Preview
               </NavLink>
             </div>
-            <div className="col-sm-9 align-right-sm">
-              <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div className="col-sm-9 text-end">
+              <button className="dropdown btn btn-unstyled dropdown-toggle" type="button" id="scriptRevs" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Rev.
                 {' '}
                 {this.props.script.revision}

@@ -78,6 +78,7 @@ export default class ResponsiveTabs extends Component {
   }
 
   renderTabDropdown(item) {
+    const navUrl = item.subItems.length > 0 ? item.subItems[0].url : item.url;
     const subitemLinks = item.subItems.map(subitem => (
       <Link
         key={subitem.key || subitem.text}
@@ -93,8 +94,12 @@ export default class ResponsiveTabs extends Component {
         <NavLink
           className={`${this.props.linkClassName} dropdown-toggle`}
           activeClassName="active"
-          data-toggle="dropdown"
-          to={item.url}>
+          data-bs-toggle="dropdown"
+          // Set tab to active if the current path starts with the root item url
+          isActive={(match, location) => _.startsWith(location.pathname, item.url)}
+          // But navigate to the first subitem url if there are subitems, to avoid going
+          // to a blank page.
+          to={navUrl}>
           {item.label || item.text}
         </NavLink>
         <div className="dropdown-menu">
@@ -152,7 +157,7 @@ ResponsiveTabs.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     key: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     label: PropTypes.node,
-    isExact: PropTypes.boolean,
+    isExact: PropTypes.bool,
     text: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     subItems: PropTypes.arrayOf(PropTypes.shape({

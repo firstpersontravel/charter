@@ -25,7 +25,7 @@ function labelForValue(script, spec, value) {
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         <ResourceBadge
-          className="mr-1"
+          className="me-1"
           resourceType={resourceType}
           showType={false} />
         {title}
@@ -99,7 +99,7 @@ function ReferenceField({
   const referringToResource = _.find(collection, { name: value });
   const link = referringToResource ? (
     <Link
-      className="text-dark ml-1"
+      className="text-dark ms-1"
       to={urlForResource(script, spec.collection, value)}>
       <i className="faint fa fa-external-link-square-alt" />
     </Link>

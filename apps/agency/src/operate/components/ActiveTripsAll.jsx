@@ -14,7 +14,7 @@ function getAllPlayers(trips) {
     .value();
 }
 
-const archivedIcon = <i className="fa fa-archive ml-1" />;
+const archivedIcon = <i className="fa fa-archive ms-1" />;
 
 function renderTripItem(org, experience, trip, isToplevel) {
   return {
@@ -172,7 +172,7 @@ export default function ActiveTripsAll({
     items.push({
       label: (
         <span>
-          <span style={{ position: 'relative', top: '-2px' }} className="badge badge-warning mr-1">
+          <span style={{ position: 'relative', top: '-2px' }} className="badge bg-warning me-1">
             <i className="fa fa-comment" />
             {numMessagesNeedingReply}
           </span>
@@ -189,7 +189,7 @@ export default function ActiveTripsAll({
       text: 'Upcoming',
       label: (
         <span>
-          <span style={{ position: 'relative', top: '-2px' }} className="badge badge-info mr-1">
+          <span style={{ position: 'relative', top: '-2px' }} className="badge badge-info me-1">
             {moment
               .utc(nextUnappliedAction.scheduledAt)
               .tz(experience.timezone)

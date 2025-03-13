@@ -88,7 +88,7 @@ class MediaField extends Component {
     }
     return (
       <ReactS3Uploader
-        className="m-1 ml-2"
+        className="m-1 ms-2"
         style={this.state.uploading ? { display: 'none' } : null}
         signingUrl="/s3/sign"
         signingUrlMethod="GET"

@@ -21,13 +21,13 @@ export default class DirectoryParticipant extends Component {
       .bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.loadData(this.props.match.params.participantId);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.match.params.participantId !== this.props.match.params.participantId) {
-      this.loadData(nextProps.match.params.participantId);
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.participantId !== this.props.match.params.participantId) {
+      this.loadData(this.props.match.params.participantId);
     }
   }
 

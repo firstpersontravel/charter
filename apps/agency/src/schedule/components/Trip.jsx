@@ -92,7 +92,7 @@ class Trip extends Component {
     );
     const archiveTripBtn = (
       <button
-        className="btn btn-sm btn-outline-secondary ml-1"
+        className="btn btn-sm btn-outline-secondary ms-1"
         onClick={() => this.handleArchiveTrip(trip)}>
         {trip.isArchived ? 'Unarchive' : 'Archive'}
       </button>
@@ -102,14 +102,12 @@ class Trip extends Component {
     return (
       <div>
         <div className="mb-3">
-          <div className="float-right text-right">
+          <div className="float-end text-end">
             {editTripBtn}
             {archiveTripBtn}
           </div>
           <h4 style={trip.isArchived ? archivedStyle : null}>
-            {dateShort}
-            :
-            {trip.title}
+            {`${dateShort}: ${trip.title}`}
           </h4>
         </div>
 
