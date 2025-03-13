@@ -21,7 +21,7 @@ function renderEntrywayRelay(
   if (!entrywaySpec) {
     return (
       <div>
-        <i className="fa fa-phone mr-1" />
+        <i className="fa fa-phone me-1" />
         Runs cannot be created by text or call because no entryway phone line exists.
       </div>
     );
@@ -32,14 +32,14 @@ function renderEntrywayRelay(
   if (!relayEntryway) {
     return (
       <div>
-        <i className="fa fa-phone mr-1" />
+        <i className="fa fa-phone me-1" />
         Runs cannot be created by text or call because a phone number
         {' '}
         has not been allocated for this experience.
         {' '}
         <button
           disabled={systemActionRequestState === 'pending'}
-          className="btn btn-sm btn-primary ml-2"
+          className="btn btn-sm btn-primary ms-2"
           onClick={() => assignTempRelayEntryway(org.id, experience.id)}>
           Assign temporary number
         </button>
@@ -49,7 +49,7 @@ function renderEntrywayRelay(
   if (relayEntryway.keyword) {
     return (
       <div>
-        <i className="fa fa-phone mr-1" />
+        <i className="fa fa-phone me-1" />
         Runs can be created for
         {' '}
         <b>{entrywayForRole.title}</b>
@@ -74,7 +74,7 @@ function renderEntrywayRelay(
     : '';
   return (
     <div>
-      <i className="fa fa-phone mr-1" />
+      <i className="fa fa-phone me-1" />
       Runs can be created for
       {' '}
       <b>{entrywayForRole.title}</b>
@@ -97,7 +97,7 @@ function renderEntrywayWebpage(org, experience, script) {
   if (!entrywayInterfaces.length) {
     return (
       <div>
-        <i className="fa fa-file mr-1" />
+        <i className="fa fa-file me-1" />
         Runs cannot be created over the web because no entryway interfaces exist.
       </div>
     );
@@ -110,14 +110,14 @@ function renderEntrywayWebpage(org, experience, script) {
         + `${experience.name}/${TextUtil.dashVarForText(role.title)}`;
       return (
         <div className="constrain-text" key={`${i.name}-${role.name}`}>
-          <i className="fa fa-file mr-1" />
+          <i className="fa fa-file me-1" />
           Runs for
           {' '}
           <b>{role.title}</b>
           {' '}
           can be created at
           <a
-            className="ml-1"
+            className="ms-1"
             href={roleUrl}
             target="_blank"
             rel="noopener noreferrer">
@@ -143,7 +143,7 @@ function renderEntrywayNote(
       )}
       {renderEntrywayWebpage(org, experience, script)}
       <div>
-        <i className="fa fa-theater-masks mr-1" />
+        <i className="fa fa-theater-masks me-1" />
         Performer URL:
         {' '}
         <a target="_blank" rel="noopener noreferrer" href={actorUrl}>{actorUrl}</a>
@@ -264,7 +264,7 @@ class Schedule extends Component {
 
   renderTripItem(trip) {
     const archivedStyle = { textDecoration: 'line-through' };
-    const archivedIcon = <i className="fa fa-archive ml-1" />;
+    const archivedIcon = <i className="fa fa-archive ms-1" />;
     const tripDate = moment.utc(trip.date).format('MMM D');
     const tripTitle = `${tripDate} ${trip.title}`;
     const tripText = tripTitle + (trip.isArchived ? ' (archived)' : '');

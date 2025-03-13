@@ -42,7 +42,7 @@ export default class PublicSignup extends Component {
       const errorMsg = this.props.resetPasswordError || defaultErrorMsg;
       const includeLink = !!this.props.resetPasswordError;
       const loginLink = includeLink
-        ? <Link to="/login" className="pl-1">Log in?</Link>
+        ? <Link to="/login" className="ps-1">Log in?</Link>
         : null;
       return (
         <div className="alert alert-danger" role="alert">
@@ -71,7 +71,7 @@ export default class PublicSignup extends Component {
         <div className="alert alert-success" role="alert">
           Your password was reset.
           {' '}
-          <Link to="/login" className="pl-1">You may now log in.</Link>
+          <Link to="/login" className="ps-1">You may now log in.</Link>
         </div>
       );
     }

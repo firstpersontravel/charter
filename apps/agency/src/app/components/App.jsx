@@ -49,7 +49,7 @@ export default class App extends Component {
   renderErrorModal(icon, header, body, feedback) {
     const feedbackBtn = feedback ? (
       <Button
-        color="secondary mr-1"
+        color="secondary me-1"
         onClick={() => Sentry.showReportDialog()}>
         Report feedback
       </Button>
@@ -57,7 +57,7 @@ export default class App extends Component {
     return (
       <Modal isOpen centered zIndex={3000}>
         <ModalHeader>
-          <i className={`mr-1 fa fa-${icon}`} />
+          <i className={`me-1 fa fa-${icon}`} />
           {header}
         </ModalHeader>
         <ModalBody>{body}</ModalBody>

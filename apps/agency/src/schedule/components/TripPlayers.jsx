@@ -153,7 +153,7 @@ export default class TripPlayers extends Component {
       .concat(participantChoices);
     const goToParticipant = participant ? (
       <Link
-        className="ml-1"
+        className="ms-1"
         to={`/${trip.org.name}/${trip.experience.name}/directory/${participant.id}`}>
         <i className="fa fa-user text-dark" />
       </Link>

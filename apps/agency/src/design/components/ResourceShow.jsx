@@ -345,8 +345,8 @@ export default class ResourceShow extends Component {
     const extraButtons = isNew ? null : (
       <Link
         to={{ search: '' }}
-        className="btn btn-sm btn-outline-secondary mr-1">
-        <i className="fa fa-times mr-1" />
+        className="btn btn-sm btn-outline-secondary me-1">
+        <i className="fa fa-times me-1" />
         Close
       </Link>
     );
@@ -386,7 +386,7 @@ export default class ResourceShow extends Component {
         className="mb-2"
         key={`${collectionName}:${childResource.name}`}>
         <div className="constrain-text">
-          <ResourceBadge resourceType={resourceType} className="mr-1" />
+          <ResourceBadge resourceType={resourceType} className="me-1" />
           <Link
             className="text-dark"
             to={{ search: `?child=${collectionName}.${childResource.name}` }}>
@@ -425,7 +425,7 @@ export default class ResourceShow extends Component {
     return (
       <Link
         key={childResourceType}
-        className="btn btn-sm btn-outline-secondary mr-2"
+        className="btn btn-sm btn-outline-secondary me-2"
         to={{ search: `?child=${childCollectionName}.new` }}>
         Add
         {' '}
@@ -475,7 +475,7 @@ export default class ResourceShow extends Component {
       .value();
 
     return (
-      <div className="mb-2 ml-4">
+      <div className="mb-2 ms-4">
         {childrenByCollection}
         {this.renderPendingChild()}
         {this.renderCreateChildren()}

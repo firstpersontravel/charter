@@ -40,7 +40,7 @@ export default class PublicSignup extends Component {
       const errorMsg = this.props.signupError || defaultErrorMsg;
       const includeLink = !!this.props.signupError;
       const loginLink = includeLink
-        ? <Link to="/login" className="pl-1">Log in?</Link>
+        ? <Link to="/login" className="ps-1">Log in?</Link>
         : null;
       return (
         <div className="alert alert-danger" role="alert">

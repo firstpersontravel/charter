@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 export default function MonthIndex({ match }) {
   return (
-    <div>
+    <div className="d-grid">
       <Link
-        className="btn btn-block btn-primary"
+        className="btn btn-primary"
         to={`/${match.params.orgName}/${match.params.experienceName}/schedule/${match.params.year}/${match.params.month}?trip=new`}>
         New run
       </Link>

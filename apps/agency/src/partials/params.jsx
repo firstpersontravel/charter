@@ -53,7 +53,7 @@ export function renderParams(script, spec, params) {
     .filter(([key, val]) => spec[key])
     .map(([key, val]) => (
       <div key={key}>
-        <span className="mr-1" style={{ fontVariant: 'small-caps' }}>
+        <span className="me-1" style={{ fontVariant: 'small-caps' }}>
           {labelForSpec(spec[key], key)}
           :
         </span>

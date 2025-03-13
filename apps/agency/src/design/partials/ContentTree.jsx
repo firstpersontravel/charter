@@ -37,7 +37,7 @@ export default class ContentTree extends Component {
         <span>
           <ResourceBadge
             showType={false}
-            className={isNested ? 'ml-2' : ''}
+            className={isNested ? 'ms-2' : ''}
             resource={resource}
             resourceType={resourceType} />
           {' '}
@@ -91,7 +91,7 @@ export default class ContentTree extends Component {
       label: (
         <span style={{ opacity: 0.7 }}>
           <ResourceBadge
-            className="mr-1"
+            className="me-1"
             showType={false}
             resourceType={resourceType} />
           Add

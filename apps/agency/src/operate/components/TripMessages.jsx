@@ -191,11 +191,11 @@ export default class TripMessages extends Component {
             onChange={this.handlePendingMessageChange}
             placeholder={sendPlaceholder} />
         </div>
-        <div className="col-sm-2">
+        <div className="col-sm-2 d-grid">
           <button
             type="submit"
             disabled={isSendDisabled}
-            className="btn btn-block constrain-text btn-primary">
+            className="btn constrain-text btn-primary">
             {sendLabel}
           </button>
         </div>

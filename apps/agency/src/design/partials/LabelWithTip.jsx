@@ -18,7 +18,7 @@ export default class LabelWithTip extends React.Component {
     const label = (
       <span
         id={labelId}
-        className="mr-1"
+        className="me-1"
         style={{ verticalAlign: 'top', fontVariant: 'small-caps' }}>
         {this.props.label}
         :

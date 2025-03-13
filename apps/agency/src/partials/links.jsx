@@ -5,11 +5,11 @@ import { getPlayerIframeUrl, getPlayerJoinUrl, getActorIframeUrl } from '../util
 export function renderActorLink(org, participant) {
   return (
     <a
-      className="badge badge-secondary"
+      className="badge bg-secondary"
       target="_blank"
       rel="noreferrer noopener"
       href={getActorIframeUrl(org, participant)}>
-      <i className="fa fa-external-link-alt mr-1" />
+      <i className="fa fa-external-link-alt me-1" />
       Perform
     </a>
   );
@@ -21,11 +21,11 @@ export function renderPlayLink(trip, player) {
   }
   return (
     <a
-      className="badge badge-secondary"
+      className="badge bg-secondary"
       target="_blank"
       rel="noreferrer noopener"
       href={getPlayerIframeUrl(trip, player)}>
-      <i className="fa fa-external-link-alt mr-1" />
+      <i className="fa fa-external-link-alt me-1" />
       Play
     </a>
   );
@@ -37,11 +37,11 @@ export function renderJoinLink(trip, player) {
   }
   return (
     <a
-      className="badge badge-secondary"
+      className="badge bg-secondary"
       target="_blank"
       rel="noreferrer noopener"
       href={getPlayerJoinUrl(trip, player)}>
-      <i className="fa fa-external-link-alt mr-1" />
+      <i className="fa fa-external-link-alt me-1" />
       Join
     </a>
   );

@@ -60,7 +60,7 @@ function renderButton(trip, player, page, panel, onEvent) {
   const btnEvent = { type: 'button_pressed', button_id: panel.id };
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => onEvent && onEvent(btnEvent, player.id)}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
@@ -101,7 +101,7 @@ function renderDirections(trip, player, page, panel, onEvent) {
   };
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => onEvent && onEvent(btnEvent, player.id)}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
@@ -116,7 +116,7 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
   }
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => {
         if (!onEvent) {
           return;
@@ -147,7 +147,7 @@ function renderTextEntry(trip, player, page, panel, onEvent) {
   }
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => {
         if (!onEvent) {
           return;
@@ -248,7 +248,7 @@ function renderHeader(trip, player, page, onAction) {
   const headerText = truncateMsg(_.trim(page.directive
     ? TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone, player.roleName) : ''), 100);
-  const header = headerText ? (<span className="ml-1">{headerText}</span>) : null;
+  const header = headerText ? (<span className="ms-1">{headerText}</span>) : null;
 
   const currentPageNamesByRole = trip.tripState.currentPageNamesByRole || {};
   const curPageName = currentPageNamesByRole[player.roleName];
@@ -259,7 +259,7 @@ function renderHeader(trip, player, page, onAction) {
   const textClass = isCurrentPage ? 'text-white' : 'text-dark';
   const designLink = trip.script.org && trip.script.experience ? (
     <Link
-      className={`ml-1 ${textClass}`}
+      className={`ms-1 ${textClass}`}
       to={urlForResource(trip.script, 'pages', page.name)}>
       <i className="fa fa-pencil-alt" />
     </Link>
@@ -267,7 +267,7 @@ function renderHeader(trip, player, page, onAction) {
 
 
   const isAckedIcon = isAckedPage ? (
-    <span className={`ml-1 ${textClass}`}>
+    <span className={`ms-1 ${textClass}`}>
       <i className="fa fa-check" />
       {moment
         .utc(player.acknowledgedPageAt)
@@ -285,7 +285,7 @@ function renderHeader(trip, player, page, onAction) {
         role_name: player.roleName,
         page_name: page.name
       }, player.id)}
-      className="ml-1">
+      className="ms-1">
       <i className="fa fa-arrow-circle-right" />
     </a>
   ) : null;
@@ -315,7 +315,7 @@ function renderPage(trip, player, page, onEvent, onAction) {
     );
   }
   return visiblePanels.map(panel => (
-    <div key={`${page.name}-${panel.id}`}>
+    <div key={`${page.name}-${panel.id}`} className="d-grid">
       {renderPanel(trip, player, page, panel, onEvent, onAction)}
     </div>
   ));

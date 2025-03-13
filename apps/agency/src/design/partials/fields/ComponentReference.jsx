@@ -76,7 +76,7 @@ function ComponentReferenceField({
 
   const link = referringTo[0] ? (
     <Link
-      className="text-dark ml-1"
+      className="text-dark ms-1"
       to={urlForResource(script, referringTo[0], referringTo[1].name)}>
       <i className="faint fa fa-external-link-square-alt" />
     </Link>

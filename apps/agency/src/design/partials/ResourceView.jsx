@@ -115,7 +115,7 @@ export default class ResourceView extends Component {
 
     const duplicateBtn = (
       <button
-        className="btn btn-sm btn-outline-secondary mr-1"
+        className="btn btn-sm btn-outline-secondary me-1"
         onClick={(this.handleDuplicate)}>
         <i className="fa fa-copy" />
 &nbsp;
@@ -136,7 +136,7 @@ export default class ResourceView extends Component {
 
     const cancelBtn = (
       <button
-        className="btn btn-sm btn-outline-secondary mr-1"
+        className="btn btn-sm btn-outline-secondary me-1"
         onClick={this.props.onDelete}>
         <i className="fa fa-trash" />
 &nbsp;
@@ -147,7 +147,7 @@ export default class ResourceView extends Component {
     // Only shown in case errors make there be pending unsaveable changes.
     const revertBtn = (
       <button
-        className="btn btn-sm btn-secondary mr-1"
+        className="btn btn-sm btn-secondary me-1"
         onClick={this.handleRevertChanges}>
         <i className="fa fa-undo" />
 &nbsp;
@@ -185,7 +185,7 @@ export default class ResourceView extends Component {
       </span>
     );
     const emptyWarning = resource.title ? null : (
-      <i className="text-danger fa fa-exclamation-circle ml-1" />
+      <i className="text-danger fa fa-exclamation-circle ms-1" />
     );
     if (resourceClass.properties.title) {
       return (

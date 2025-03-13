@@ -96,7 +96,7 @@ export default class PublicLogin extends Component {
                 {this.isLoggingIn() ? 'Logging in...' : 'Log in'}
               </button>
               <Link
-                className="ml-2"
+                className="ms-2"
                 to="/lost-pw">
                 Forgot your password?
               </Link>
