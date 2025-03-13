@@ -53,11 +53,6 @@ module.exports = {
   plugins: plugins,
   module: {
     rules: [{
-    //   enforce: 'pre',
-    //   test: /\.jsx?$/,
-    //   loader: 'eslint-loader',
-    //   include: path.join(__dirname, 'src')
-    // }, {
       test: /\.jsx?$/,
       loader: 'babel-loader',
       options: {
@@ -70,20 +65,18 @@ module.exports = {
         path.join(__dirname, 'src'),
         // Shouldn't need this -- just need it since react-leaflet and react-phone-number-input
         // use nullish coalescing operator. Maybe can remove node_modules from babel later.
-        path.join(__dirname, 'node_modules')
+        path.join(__dirname, 'node_modules/leaflet'),
+        path.join(__dirname, 'node_modules/@react-leaflet'),
+        path.join(__dirname, 'node_modules/react-leaflet')
       ]
     }, {
       test: /\.(less|css)$/i,
       loaders: [
-        // compiles Less to CSS
         'style-loader',
         'css-loader',
         'less-loader'
       ]
     }, {
-    //   test: /\.json$/,
-    //   loader: 'json-loader'
-    // }, {
       test: /\.png$/,
       loader: 'file-loader?name=[name].[ext]'
     }, {
