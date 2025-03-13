@@ -60,7 +60,7 @@ function renderButton(trip, player, page, panel, onEvent) {
   const btnEvent = { type: 'button_pressed', button_id: panel.id };
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => onEvent && onEvent(btnEvent, player.id)}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
@@ -101,7 +101,7 @@ function renderDirections(trip, player, page, panel, onEvent) {
   };
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => onEvent && onEvent(btnEvent, player.id)}
       disabled={isBtnDisabled(trip, player, page) || !onEvent}>
       {panelText}
@@ -116,7 +116,7 @@ function renderNumberpad(trip, player, page, panel, onEvent) {
   }
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => {
         if (!onEvent) {
           return;
@@ -147,7 +147,7 @@ function renderTextEntry(trip, player, page, panel, onEvent) {
   }
   return (
     <button
-      className="btn btn-block constrain-text btn-outline-secondary mb-2"
+      className="btn constrain-text btn-outline-secondary mb-2"
       onClick={() => {
         if (!onEvent) {
           return;
@@ -315,7 +315,7 @@ function renderPage(trip, player, page, onEvent, onAction) {
     );
   }
   return visiblePanels.map(panel => (
-    <div key={`${page.name}-${panel.id}`}>
+    <div key={`${page.name}-${panel.id}`} className="d-grid">
       {renderPanel(trip, player, page, panel, onEvent, onAction)}
     </div>
   ));

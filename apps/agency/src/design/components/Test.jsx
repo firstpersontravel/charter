@@ -104,7 +104,7 @@ export default class Test extends Component {
   renderReset() {
     return (
       <button
-        className="btn btn-block btn-primary"
+        className="btn btn-primary"
         onClick={this.handleReset}>
         Reset
       </button>
@@ -115,7 +115,7 @@ export default class Test extends Component {
     const variantNames = Object.values(this.state.variantSections);
     const hasSidePanel = !!variantSectionsForScript(this.props.script).length;
     const sidePanel = hasSidePanel ? (
-      <div className="col-sm-1 script-tester-col">
+      <div className="col-sm-1 script-tester-col d-grid">
         {this.renderParams()}
         {this.renderReset()}
       </div>
