@@ -43,7 +43,7 @@ const enhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 /* eslint-enable */
 const enhancer = enhancers(
   applyMiddleware(
-    thunkMiddleware,
+    thunkMiddleware
     // loggerMiddleware
   )
 );
