@@ -210,7 +210,7 @@ describe('API create', () => {
           assert.deepStrictEqual(res.body.error, {
             fields: [{
               field: 'content',
-              message: 'meta is not of a type(s) object',
+              message: 'instance is not of a type(s) object',
               path: 'meta'
             }],
             message: 'Invalid fields: content.',

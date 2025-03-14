@@ -118,7 +118,7 @@ class ScriptCore {
       const metaErrors = metaResult.errors.map(function(e) {
         return {
           message: e.property + ' ' + e.message,
-          path: e.property,
+          path: 'meta',
           collection: 'meta'
         };
       });

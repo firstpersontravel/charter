@@ -51,7 +51,7 @@ export default class Group extends Component {
     this.checkNextUnappliedAction(this.props.nextUnappliedAction);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const curTripIds = _.map(this.props.trips, 'id');
     const nextTripIds = _.map(nextProps.trips, 'id');
     if (!_.isEqual(curTripIds.sort(), nextTripIds.sort())) {

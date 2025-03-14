@@ -19,7 +19,7 @@ $font-weight-base:            $font-weight-normal;
 
 @import "../node_modules/leaflet/dist/leaflet.css";
 
-$fa-font-path: "/static/agency/webfonts";
+$fa-font-path: "../fonts";
 @import "../node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
 @import "../node_modules/@fortawesome/fontawesome-free/scss/solid";
 

@@ -43,7 +43,7 @@ class Script extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.script.id !== nextProps.script.id
       || this.props.revisionHistoryUpdated !== nextProps.revisionHistoryUpdated) {
       this.setState({

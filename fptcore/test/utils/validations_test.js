@@ -373,12 +373,12 @@ describe('Validations', () => {
 
     it('warns if a field is missing', () => {
       err(Validations.location.validate({}, 's', {}, { address: '123 Main St', title: 'Test' }),
-        'Location param "s" must be valid: s requires property "coords".');
+        'Location param "s" must be valid: instance requires property "coords".');
     });
 
     it('warns if not an object', () => {
       err(Validations.location.validate({}, 's', {}, '123 Main St'),
-        'Location param "s" must be valid: s is not of a type(s) object.');
+        'Location param "s" must be valid: instance is not of a type(s) object.');
     });
   });
 });

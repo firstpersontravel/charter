@@ -23,7 +23,7 @@ export default class ProfileModal extends Component {
     this.firstInputRef = React.createRef();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState(ProfileModal.getDefaultState(nextProps.profile));
   }
 

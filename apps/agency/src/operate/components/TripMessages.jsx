@@ -20,7 +20,7 @@ export default class TripMessages extends Component {
     this.loadData(this.props.trip, query.get('for'), query.get('with'));
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     // If we've already loaded these props and players have already
     // been loaded, no need to redo
     if (_.isEqual(nextProps.location.search, this.props.location.search)
