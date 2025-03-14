@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const currentYear = new Date().getFullYear();
 const plugins = [
-  // To strip all locales except “en”
+  // To strip all locales except "en"
   new MomentLocalesPlugin(),
   // To include only specific zones, use the matchZones option
   new MomentTimezonePlugin({
@@ -20,7 +20,7 @@ const plugins = [
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',
-  devtool: isProduction ? 'source-map' : 'cheap-source-map',
+  devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',
   devServer: {
     port: 8082
   },
@@ -34,21 +34,20 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       fptcore: path.resolve(__dirname, '../../fptcore/src/index.js')
+    },
+    fallback: {
+      fs: false,
+      net: false,
+      tls: false,
+      child_process: false,
+      console: false
+      // Remove other Node.js polyfills that aren't needed
     }
   },
   output: {
     filename: 'bundle.js',
     path: path.join(__dirname, '../../build/travel2'),
     publicPath: '/build/travel2/'
-  },
-  node: {
-    console: true,
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    dl: 'empty',
-    uriparser: 'empty',
-    child_process: 'empty'
   },
   plugins: plugins,
   module: {
@@ -71,20 +70,20 @@ module.exports = {
       ]
     }, {
       test: /\.(less|css)$/i,
-      loaders: [
+      use: [
         'style-loader',
         'css-loader',
         'less-loader'
       ]
     }, {
       test: /\.png$/,
-      loader: 'file-loader?name=[name].[ext]'
+      type: 'asset/resource'
     }, {
       test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-      loader: 'url-loader?limit=10000&name=[name].[ext]'
+      type: 'asset/resource'
     }, {
       test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-      loader: 'url-loader?limit=10000&name=[name].[ext]'
+      type: 'asset/resource'
     }]
   }
 };
