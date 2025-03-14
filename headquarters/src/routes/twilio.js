@@ -45,9 +45,11 @@ async function incomingCallStatusRoute(req, res) {
   handleTwimlResponse(res);
 }
 
+const numOrFirst = numOrList => Number(numOrList.length > 0 ? numOrList[0] : numOrList);
+
 async function outgoingCallRoute(req, res) {
-  const tripId = Number(req.query.trip);
-  const relayId = Number(req.query.relay);
+  const tripId = numOrFirst(req.query.trip);
+  const relayId = numOrFirst(req.query.relay);
   const answeredBy = req.body.AnsweredBy;
   const answeredByHuman = _.includes(['human', 'unknown'], answeredBy);
   const twimlResponse = await (
@@ -57,8 +59,8 @@ async function outgoingCallRoute(req, res) {
 }
 
 async function callResponseRoute(req, res) {
-  const relayId = Number(req.query.relay);
-  const tripId = Number(req.query.trip);
+  const relayId = numOrFirst(req.query.relay);
+  const tripId = numOrFirst(req.query.trip);
   const clipName = req.query.clip;
   const callSid = req.body.CallSid;
   const isPartial = req.query.partial === 'true';
@@ -74,8 +76,8 @@ async function callResponseRoute(req, res) {
 }
 
 async function callStatusRoute(req, res) {
-  const relayId = Number(req.query.relay);
-  const tripId = Number(req.query.trip);
+  const relayId = numOrFirst(req.query.relay);
+  const tripId = numOrFirst(req.query.trip);
   if (req.body.CallStatus !== 'completed') {
     logger.info(`Unrecognized call status: ${req.body.CallStatus}`);
     res.status(200).send('OK');
