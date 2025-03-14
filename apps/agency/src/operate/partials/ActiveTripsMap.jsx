@@ -185,8 +185,7 @@ export default class ActiveTripsMap extends Component {
         const playerLink = (
           <Link to={`/${trip.org.name}/${trip.experience.name}/operate/role/${player.roleName}/${player.participantId || 0}`}>
             {trip.title}
-            :
-            {role.title}
+            {role ? `: ${role.title}` : ''}
           </Link>
         );
         const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
