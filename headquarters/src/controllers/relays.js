@@ -75,9 +75,11 @@ class RelaysController {
 
     // Get the entryway if it exists, to load custom welcome message
     const outgoingRelayEntryway = await models.RelayEntryway.findOne({
-      relayServiceId: outgoingRelayService.id,
-      orgId: orgId,
-      experienceId: experienceId
+      where: {
+        relayServiceId: outgoingRelayService.id,
+        orgId: orgId,
+        experienceId: experienceId
+      }
     });
     
     // Send welcome message for new relays
