@@ -29,7 +29,7 @@ export default class ResourceView extends Component {
     this.handleDuplicate = this.handleDuplicate.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.resource !== this.props.resource) {
       const pendingResource = _.cloneDeep(nextProps.resource);
       const resourceType = TextUtil.singularize(nextProps.collectionName);

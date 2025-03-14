@@ -46,7 +46,7 @@ export default class TripModal extends Component {
     this.titleInputRef = React.createRef();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState(getDefaultState(nextProps.script, nextProps.trip));
   }
 

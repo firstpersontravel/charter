@@ -143,7 +143,7 @@ export default class TripTestHarness extends Component {
     this.timer = setInterval(this.handleTimer, 1000);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.script.id !== this.props.script.id
         || nextProps.variantNames.join(',')
         !== this.props.variantNames.join(',')

@@ -16,8 +16,7 @@ const locationSchema = {
 };
 
 function checkSchemaParam(typeName, name, param, schema) {
-  const opts = { propertyName: name };
-  const result = validator.validate(param, schema, opts);
+  const result = validator.validate(param, schema);
   if (!result.valid) {
     const errs = result.errors
       .map(e => `${e.property} ${e.message}`)

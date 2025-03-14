@@ -111,14 +111,12 @@ class ScriptCore {
   static validateScriptContent(scriptContent) {
     // Check meta block
     const metaValidator = new jsonschema.Validator();
-    const metaOptions = { propertyName: 'meta' };
-    const metaResult = metaValidator.validate(scriptContent.meta || null,
-      metaSchema, metaOptions);
+    const metaResult = metaValidator.validate(scriptContent.meta || null, metaSchema);
     if (!metaResult.valid) {
       const metaErrors = metaResult.errors.map(function(e) {
         return {
           message: e.property + ' ' + e.message,
-          path: e.property,
+          path: 'meta',
           collection: 'meta'
         };
       });

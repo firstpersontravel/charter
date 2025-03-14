@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const currentYear = new Date().getFullYear();
 const plugins = [
-  // To strip all locales except “en”
+  // To strip all locales except "en"
   new MomentLocalesPlugin(),
   // To include only specific zones, use the matchZones option
   new MomentTimezonePlugin({
@@ -30,6 +30,17 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       fptcore: path.resolve(__dirname, '../../fptcore/src/index.js')
+    },
+    fallback: {
+      // Webpack 5 no longer polyfills Node.js core modules automatically
+      // For modules that should be empty, use 'false' instead of 'empty'
+      fs: false,
+      net: false,
+      tls: false,
+      child_process: false,
+      // These were previously set to 'empty'
+      dl: false,
+      uriparser: false
     }
   },
   output: {
@@ -37,26 +48,20 @@ module.exports = {
     path: path.join(__dirname, '../../build/agency'),
     publicPath: '/build/agency/'
   },
-  node: {
-    console: true,
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    dl: 'empty',
-    uriparser: 'empty',
-    child_process: 'empty'
-  },
+  // Removed 'node' configuration as it's deprecated in Webpack 5
   plugins: plugins,
   module: {
     rules: [{
       test: /\.jsx?$/,
-      loader: 'babel-loader',
-      options: {
-        presets: [
-          '@babel/preset-env',
-          '@babel/preset-react'
-        ]
-      },
+      use: [{
+        loader: 'babel-loader',
+        options: {
+          presets: [
+            '@babel/preset-env',
+            '@babel/preset-react'
+          ]
+        }
+      }],
       include: [
         path.join(__dirname, 'src'),
         // Shouldn't need this -- just need it since react-leaflet and react-phone-number-input
@@ -67,16 +72,26 @@ module.exports = {
       ]
     }, {
       test: /\.s?css$/,
-      loaders: ['style-loader', 'css-loader', 'sass-loader']
+      use: [
+        {
+          loader: 'style-loader'
+        },
+        {
+          loader: 'css-loader'
+        },
+        {
+          loader: 'sass-loader'
+        }
+      ]
     }, {
       test: /\.png$/,
-      loader: 'file-loader?name=[name].[ext]'
+      type: 'asset/resource'
     }, {
       test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-      loader: 'url-loader?limit=10000&name=[name].[ext]'
+      type: 'asset/resource'
     }, {
       test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-      loader: 'url-loader?limit=10000&name=[name].[ext]'
+      type: 'asset/resource'
     }]
   }
 };

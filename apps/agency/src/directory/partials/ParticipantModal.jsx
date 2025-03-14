@@ -26,7 +26,7 @@ export default class ParticipantModal extends Component {
     this.firstInputRef = React.createRef();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState(ParticipantModal.getDefaultState(nextProps.participant));
   }
 
