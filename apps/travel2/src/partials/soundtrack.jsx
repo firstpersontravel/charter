@@ -98,8 +98,13 @@ export default class Soundtrack extends Component {
   // Audio playback functions
   startOrAskPermission = () => {
     if (!this.props.audioState?.isPlaying) return;
-
     if (!this.audioRef.current) return;
+    if (!this.state.duration) return;
+
+    if (this.audioTime() > this.state.duration) {
+      this.setState({ isPlaying: false });
+      return;
+    }
 
     if (this.state.hasPlayPermission) {
       this.startPlaying();

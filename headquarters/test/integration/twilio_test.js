@@ -59,8 +59,10 @@ describe('Twilio Integration', () => {
       });
       // Associated it with the trip
       const player = await models.Player.findOne({
-        tripId: trip.id,
-        roleName: 'Knight'
+        where: {
+          tripId: trip.id,
+          roleName: 'Knight'
+        }
       });
       await player.update({
         participantId: participant.id

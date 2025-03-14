@@ -79,7 +79,10 @@ export default class DirectionsPanel extends React.Component {
   }
 
   getHeight() {
-    return this.props.layoutHeight - 20;
+    // Limit map height on mobile
+    const fullHeight = this.props.layoutHeight - 20;
+    const maxHeight = window.innerWidth < 768 ? 300 : fullHeight;
+    return Math.min(fullHeight, maxHeight);
   }
 
   getWaypointLocation() {
