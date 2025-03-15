@@ -3,7 +3,9 @@
   "license": "UNLICENSED",
   "version": "0.1.0",
   "scripts": {
-    "pretest": "eslint . || echo 'Skipping failed lint.'",
+    "pretest": "npm run lint && npm run tsc",
+    "tsc": "tsc --noEmit",
+    "lint": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
     "migrate": "npm run migrate:db; npm run migrate:scripts",
     "migrate:db": "sequelize db:migrate",
@@ -42,9 +44,12 @@
     "sequelize": "^6.37.6",
     "sequelize-cli": "^6.6.2",
     "sequelize-noupdate-attributes": "^2.0.2",
-    "twilio": "^3.42.0"
+    "tsc": "^2.0.4",
+    "twilio": "^3.42.0",
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
+    "@types/node": "^22.13.10",
     "chalk": "^4.1.0",
     "eslint": "^4.15.0",
     "mocha": "^4.1.0",

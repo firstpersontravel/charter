@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const twilio = require('twilio');
 
 const { sandbox } = require('../mocks');
-const config = require('../../src/config');
+const config = require('../../src/config.ts');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
 const KernelController = require('../../src/kernel/kernel');

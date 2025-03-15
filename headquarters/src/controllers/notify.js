@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const config = require('../config');
+const config = require('../config.ts');
 const { instrumentAsync } = require('../sentry');
 
 const logger = config.logger.child({ name: 'controllers.notify' });
