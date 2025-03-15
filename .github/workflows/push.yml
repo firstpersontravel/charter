@@ -64,6 +64,7 @@ jobs:
     - name: Run tests
       run: |
         cd headquarters
+        npm install -g typescript
         CI=true npm run lint
         CI=true npx tsc
         CI=true npm run mocha
