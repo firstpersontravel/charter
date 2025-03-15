@@ -58,16 +58,10 @@ jobs:
         node-version: 23.x
     - name: Install dependencies
       run: |
-        npm install -g typescript
         (cd fptcore && npm -q install)
         (cd headquarters && npm -q install)
     - name: Run tests
-      run: |
-        cd headquarters
-        npm install -g typescript
-        CI=true npm run lint
-        CI=true npx tsc
-        CI=true npm run mocha
+      run: cd headquarters && CI=true npm test
 
   # See: https://github.com/marketplace/actions/build-docker-images-using-cache
   build:
