@@ -8,7 +8,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: 23.x
     - name: Install dependencies
@@ -23,7 +23,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: 23.x
     - name: Install dependencies
@@ -38,7 +38,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Setup node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: 23.x
     - name: Install dependencies
@@ -59,7 +59,7 @@ jobs:
     - name: Install dependencies
       run: |
         (cd fptcore && npm -q install)
-        (cd headquarters && npm -q install)
+        (cd headquarters && npm -q install && npm install -g typescript)
     - name: Run tests
       run: cd headquarters && CI=true npm run test
 
