@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "pretest": "npm run lint && npm run tsc",
-    "tsc": "tsc --noEmit",
+    "tsc": "npx -p typescript tsc --noEmit",
     "lint": "eslint . || echo 'Skipping failed lint.'",
     "test": "mocha --timeout 10000 --recursive test",
     "migrate": "npm run migrate:db; npm run migrate:scripts",
