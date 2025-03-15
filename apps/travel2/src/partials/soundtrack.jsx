@@ -8,8 +8,6 @@ export default class Soundtrack extends Component {
     this.state = {
       // eslint-disable-next-line react/no-unused-state
       currentTime: moment.utc(),
-      duration: null,
-      durationForUrl: null,
       hasPlayPermission: false,
       isPlaying: false
     };
@@ -30,6 +28,7 @@ export default class Soundtrack extends Component {
 
     this.audioRef.current.addEventListener('ended', this.onAudioEnded.bind(this));
     this.audioRef.current.addEventListener('canplay', this.onAudioCanPlay.bind(this));
+    this.audioRef.current.addEventListener('loadedmetadata', this.onAudioLoadedMetadata.bind(this));
 
     if (this.props.audioState?.isPlaying) {
       this.startOrAskPermission();
@@ -69,23 +68,13 @@ export default class Soundtrack extends Component {
     }
   }
 
-  handleAudioUrlChange = () => {
-    if (!this.props.audioState?.url) {
-      this.setState({
-        duration: null,
-        durationForUrl: null
-      });
-      return;
-    }
+  onAudioLoadedMetadata = () => {
+    this.startOrAskPermission();
+  }
 
-    const audioUrl = this.props.audioState.url;
-    if (this.state.durationForUrl !== audioUrl) {
-      this.audioRef.current.addEventListener('loadedmetadata', () => {
-        this.setState({
-          duration: this.audioRef.current.duration,
-          durationForUrl: audioUrl
-        });
-      });
+  handleAudioUrlChange = () => {
+    const audioUrl = this.props.audioState?.url;
+    if (audioUrl && this.audioRef.current.src !== audioUrl) {
       this.audioRef.current.src = audioUrl;
       this.audioRef.current.load();
       // If already ready, play now
@@ -99,9 +88,10 @@ export default class Soundtrack extends Component {
   startOrAskPermission = () => {
     if (!this.props.audioState?.isPlaying) return;
     if (!this.audioRef.current) return;
-    if (!this.state.duration) return;
+    if (!this.audioRef.current.duration) return;
+    if (!this.audioRef.current.paused) return;
 
-    if (this.audioTime() > this.state.duration) {
+    if (this.audioTime() > this.audioRef.current.duration) {
       this.setState({ isPlaying: false });
       return;
     }
@@ -124,7 +114,7 @@ export default class Soundtrack extends Component {
     if (time && time > 0) {
       this.audioRef.current.currentTime = time;
       // Don't start audio if we're later than the duration
-      if (this.state.duration && time > this.state.duration) {
+      if (this.audioRef.current.duration && time > this.audioRef.current.duration) {
         return;
       }
     }
@@ -203,11 +193,11 @@ export default class Soundtrack extends Component {
 
   render() {
     const { audioState } = this.props;
-    const { duration } = this.state;
 
     // Computed properties
     const hasAudio = !!audioState?.url;
-    const audioIsLoading = !duration;
+    const audioIsLoading = Number.isNaN(this.audioRef.current?.duration);
+    const duration = this.audioRef.current?.duration;
     const audioHasEnded = hasAudio && duration && this.audioTime() > duration;
     const audioElapsed = this.formatTime(this.audioTime());
     const audioTitle = audioState?.title || 'Soundtrack';
