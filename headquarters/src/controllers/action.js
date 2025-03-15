@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const config = require('../config');
+const config = require('../config.ts');
 const models = require('../models');
 
 const logger = config.logger.child({ name: 'controllers.action' });

@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const config = require('../config');
+const config = require('../config.ts');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 const RelayController = require('../controllers/relay');

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const sinon = require('sinon');
 
 const authMiddleware = require('../../src/middleware/auth');
-const config = require('../../src/config');
+const config = require('../../src/config.ts');
 const models = require('../../src/models');
 const { sandbox, mockNow } = require('../mocks');
 

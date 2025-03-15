@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const assert = require('assert');
 const yaml = require('js-yaml');
 
-const config = require('../../src/config');
+const config = require('../../src/config.ts');
 const models = require('../../src/models');
 const TwilioMessageHandler = require('../../src/handlers/twilio_message');
 const TestUtil = require('../util');

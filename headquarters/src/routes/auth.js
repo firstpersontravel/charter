@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
 
-const config = require('../config');
+const config = require('../config.ts');
 const models = require('../models');
 const { instrument } = require('../sentry');
 const authMiddleware = require('../middleware/auth');
