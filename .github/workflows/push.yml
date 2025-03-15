@@ -58,6 +58,7 @@ jobs:
         node-version: 23.x
     - name: Install dependencies
       run: |
+        npm install -g typescript
         (cd fptcore && npm -q install)
         (cd headquarters && npm -q install)
     - name: Run tests
