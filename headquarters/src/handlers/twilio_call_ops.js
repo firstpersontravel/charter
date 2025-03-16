@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../config.ts');
 const models = require('../models');
 const RelayController = require('../controllers/relay');
 const TwilioCallUtil = require('./twilio_call_util');

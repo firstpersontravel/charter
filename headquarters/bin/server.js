@@ -3,7 +3,7 @@ const moment = require('moment-timezone');
 const faye = require('faye');
 
 const app = require('../src/app');
-const config = require('../src/config');
+const config = require('../src/config.ts');
 const models = require('../src/models');
 
 async function init() {

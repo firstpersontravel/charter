@@ -11,7 +11,7 @@ import PolylineEncoded from 'polyline-encoded';
 
 import { WaypointCore } from 'fptcore';
 
-import Constants from '../../constants';
+import Constants from '../../constants.ts';
 import RouterForwarder from './RouterForwarder';
 
 const GROUPING_THRESHOLD = 20;

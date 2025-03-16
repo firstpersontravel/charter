@@ -2,7 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 
 const { mockNow, sandbox } = require('../mocks');
-const config = require('../../src/config');
+const config = require('../../src/config.ts');
 const models = require('../../src/models');
 const RelaysController = require('../../src/controllers/relays');
 const TestUtil = require('../util');

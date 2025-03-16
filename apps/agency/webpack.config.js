@@ -52,13 +52,14 @@ module.exports = {
   plugins: plugins,
   module: {
     rules: [{
-      test: /\.jsx?$/,
+      test: /\.(js|ts)x?$/,
       use: [{
         loader: 'babel-loader',
         options: {
           presets: [
             '@babel/preset-env',
-            '@babel/preset-react'
+            '@babel/preset-react',
+            '@babel/preset-typescript'
           ]
         }
       }],
