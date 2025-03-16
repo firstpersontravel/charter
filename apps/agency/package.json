@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "pretest": "eslint --ext .jsx --ext .js .",
+    "pretest": "npm run lint && npm run tscheck",
+    "lint": "eslint --ext .jsx --ext .js .",
     "test": "echo 'no tests.'",
+    "tscheck": "tsc --noEmit",
     "prebuild": "npm run test",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && webpack",
     "watch": "export NODE_OPTIONS=--openssl-legacy-provider && webpack --watch",
@@ -63,6 +65,10 @@
     "webpack-cli": "^6.0.1"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "7.26.0",
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "typescript": "5.8.2",
     "webpack": "^5.98.0",
     "webpack-dev-server": "^5.2.0"
   }
