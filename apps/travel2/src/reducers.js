@@ -2,6 +2,7 @@ import _ from 'lodash';
 import update from 'immutability-helper';
 
 export const initialState = {
+  globalError: null,
   org: null,
   experience: null,
   script: null,
@@ -50,10 +51,17 @@ function refreshLegacyDataHandler(state, action) {
   });
 }
 
+function setGlobalErrorHandler(state, action) {
+  return update(state, {
+    globalError: { $set: action.err.message }
+  });
+}
+
 const handlers = {
   '@@INIT': () => initialState,
   loadLegacyData: loadLegacyDataHandler,
-  refreshLegacyData: refreshLegacyDataHandler
+  refreshLegacyData: refreshLegacyDataHandler,
+  setGlobalError: setGlobalErrorHandler
 };
 
 export default function reducer(state, action) {

@@ -15,14 +15,21 @@ function refreshLegacyData(legacyData) {
   };
 }
 
+function setGlobalError(err) {
+  return {
+    type: 'setGlobalError',
+    err: err
+  };
+}
+
 function fetchData(url, args) {
   return fetch(url, args)
     .catch((err) => {
-      console.error('error');
+      throw new Error('Failed to load data.');
     })
     .then((response) => {
-      if (!response.ok) {
-        console.error('error');
+      if (!response || !response.ok) {
+        throw new Error('Failed to load data.');
       }
       return response.json();
     });
@@ -55,6 +62,9 @@ export function loadData(tripId, playerId) {
     getData(`${config.serverUrl}/api/legacy/trip/${tripId}?script=1`)
       .then((legacyData) => {
         dispatch(loadLegacyData(legacyData));
+      })
+      .catch((err) => {
+        dispatch(setGlobalError(err));
       });
   };
 }
@@ -63,6 +73,9 @@ function refresh(tripId, dispatch) {
   return getData(`${config.serverUrl}/api/legacy/trip/${tripId}`)
     .then((legacyData) => {
       dispatch(refreshLegacyData(legacyData));
+    })
+    .catch((err) => {
+      dispatch(setGlobalError(err));
     });
 }
 
@@ -81,6 +94,9 @@ export function postAction(tripId, playerId, actionName, actionParams) {
       params: actionParams
     };
     postData(`${config.serverUrl}/api/trips/${tripId}/actions`, params)
+      .catch((err) => {
+        dispatch(setGlobalError(err));
+      })
       .then(() => refresh(tripId, dispatch));
   };
 }
@@ -92,6 +108,9 @@ export function fireEvent(tripId, playerId, event) {
       player_id: playerId
     });
     postData(`${config.serverUrl}/api/trips/${tripId}/events`, params)
+      .catch((err) => {
+        dispatch(setGlobalError(err));
+      })
       .then(() => refresh(tripId, dispatch));
   };
 }
@@ -111,6 +130,9 @@ export function updateLocation(tripId, participantId, lat, lng, accuracy, timest
       location_timestamp: timestamp
     };
     postData(`${config.serverUrl}/api/trips/${tripId}/device_state/${participantId}`, params)
+      .catch((err) => {
+        dispatch(setGlobalError(err));
+      })
       .then(() => refresh(tripId, dispatch));
   };
 }
