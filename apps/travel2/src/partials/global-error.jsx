@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function GlobalError({ globalError }) {
+export default function GlobalError({ globalError = null }) {
   if (!globalError) {
     return null;
   }
@@ -20,8 +20,4 @@ export default function GlobalError({ globalError }) {
 
 GlobalError.propTypes = {
   globalError: PropTypes.string
-};
-
-GlobalError.defaultProps = {
-  globalError: null
 };

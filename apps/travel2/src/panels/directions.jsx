@@ -81,7 +81,7 @@ export default class DirectionsPanel extends React.Component {
   getHeight() {
     // Limit map height on mobile
     const fullHeight = this.props.layoutHeight - 20;
-    const maxHeight = window.innerWidth < 768 ? 300 : fullHeight;
+    const maxHeight = window.innerWidth < 568 ? 250 : fullHeight;
     return Math.min(fullHeight, maxHeight);
   }
 
@@ -142,9 +142,21 @@ export default class DirectionsPanel extends React.Component {
     return 'destination';
   }
 
+  getGeofenceRadius() {
+    if (this.props.panel.geofence) {
+      const scriptContent = this.props.evaluator.getScriptContent();
+      const geofence = scriptContent.geofences.find(g => g.name === this.props.panel.geofence);
+      if (geofence) {
+        return geofence.distance;
+      }
+    }
+    // If no geofence is set, use a default radius of 500 meters
+    return 500;
+  }
+
   isCloseToWaypoint() {
     const distanceToWaypoint = this.getDistanceToWaypoint();
-    return distanceToWaypoint !== null && distanceToWaypoint < 500;
+    return distanceToWaypoint !== null && distanceToWaypoint < this.getGeofenceRadius();
   }
 
   hasArrivalTrigger() {
@@ -162,7 +174,7 @@ export default class DirectionsPanel extends React.Component {
   renderPhoneFormat() {
     if (this.shouldShowArrivalConfirmation()) {
       return (
-        <div className="pure-u-1-1 pure-visible-xs">
+        <div className="pure-u-1 pure-visible-xs">
           <h3>
             Close to
             {this.getDestinationName()}
@@ -174,7 +186,7 @@ export default class DirectionsPanel extends React.Component {
       );
     }
     return (
-      <div className="pure-u-1-1 pure-visible-xs">
+      <div className="pure-u-1 pure-visible-xs">
         <h3>
           Directions to&nbsp;
           {this.getDestinationName()}
@@ -193,10 +205,10 @@ export default class DirectionsPanel extends React.Component {
       <Marker position={this.getParticipantLocation()} icon={participantIcon} />
     );
     return (
-      <div className="pure-u-1-1 pure-u-sm-2-3 directions-map" style={{ height: this.getHeight() }}>
+      <div className="pure-u-1 pure-u-sm-2-3 directions-map" style={{ height: this.getHeight() }}>
         <MapContainer
           center={center}
-          zoom={13}
+          zoom={18}
           style={{ height: '100%', minHeight: '100%' }}>
           <TileLayer url={MAPBOX_TILE_URL} />
           <Polyline positions={this.getPolyline()} />
@@ -215,7 +227,10 @@ export default class DirectionsPanel extends React.Component {
             Close to
             {this.getDestinationName()}
           </h2>
-          <button className="pure-button pure-button-primary pure-button-block" onClick={this.onArrive}>
+          <button
+            className="pure-button pure-button-primary pure-button-block"
+            style={{ marginBottom: '.5em' }}
+            onClick={this.onArrive}>
             Confirm arrival
           </button>
         </>
