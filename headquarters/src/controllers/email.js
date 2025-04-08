@@ -2,7 +2,7 @@ const _ = require('lodash');
 const marked = require('marked');
 const markedPlainTextRenderer = require('marked-plaintext');
 
-const config = require('../config.ts');
+const config = require('../config');
 
 const logger = config.logger.child({ name: 'controllers.email' });
 

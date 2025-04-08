@@ -1,4 +1,4 @@
-const config = require('../../config.ts');
+const config = require('../../config');
 const errors = require('../../errors');
 
 /**

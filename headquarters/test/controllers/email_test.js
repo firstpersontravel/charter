@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 
-const config = require('../../src/config.ts');
+const config = require('../../src/config');
 const EmailController = require('../../src/controllers/email');
 
 describe('EmailController', () => {

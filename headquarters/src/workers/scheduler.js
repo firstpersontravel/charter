@@ -6,7 +6,7 @@ const Sentry = require('@sentry/node');
 const coreRegistry = require('fptcore/src/core-registry');
 const KernelTriggers = require('fptcore/src/kernel/triggers');
 
-const config = require('../config.ts');
+const config = require('../config');
 const models = require('../models');
 const ActionContext = require('../kernel/action_context');
 const { fmtLocal } = require('./util');

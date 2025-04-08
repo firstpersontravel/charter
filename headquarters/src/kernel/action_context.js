@@ -6,7 +6,7 @@ const coreRegistry = require('fptcore/src/core-registry');
 const ContextCore = require('fptcore/src/cores/context');
 const TemplateUtil = require('fptcore/src/utils/template');
 
-const config = require('../config.ts');
+const config = require('../config');
 const models = require('../models');
 
 class ActionContext {

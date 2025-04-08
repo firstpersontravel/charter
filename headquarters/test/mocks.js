@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const moment = require('moment-timezone');
 
-const config = require('../src/config.ts');
+const config = require('../src/config');
 
 const mocks = sinon.sandbox.create();
 const sandbox = sinon.sandbox.create();

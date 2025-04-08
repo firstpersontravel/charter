@@ -2,7 +2,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const Sentry = require('@sentry/node');
 
-const config = require('../config.ts');
+const config = require('../config');
 const models = require('../models');
 const ExperienceController = require('./experience');
 const LogEntryController = require('./log_entry');

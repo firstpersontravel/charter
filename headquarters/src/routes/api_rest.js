@@ -3,7 +3,7 @@ const moment = require('moment');
 const inflection = require('inflection');
 const Sequelize = require('sequelize');
 
-const config = require('../config.ts');
+const config = require('../config');
 const errors = require('../errors');
 const { respondWithJson } = require('./utils');
 

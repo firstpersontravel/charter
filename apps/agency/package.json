@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "pretest": "npm run lint && npm run tscheck",
-    "lint": "eslint --ext .jsx --ext .js .",
+    "lint": "eslint --ext .jsx --ext .js --ext .tsx --ext .ts .",
     "test": "echo 'no tests.'",
     "tscheck": "tsc --noEmit",
     "prebuild": "npm run test",

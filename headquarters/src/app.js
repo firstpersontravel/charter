@@ -9,7 +9,7 @@ const path = require('path');
 const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
 
-const config = require('./config.ts');
+const config = require('./config');
 const models = require('./models');
 const { initTracing } = require('./sentry');
 const { createTripToken } = require('./routes/auth');

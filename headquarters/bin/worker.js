@@ -1,4 +1,4 @@
-const config = require('../src/config.ts');
+const config = require('../src/config');
 const worker = require('../src/worker');
 
 worker.start();

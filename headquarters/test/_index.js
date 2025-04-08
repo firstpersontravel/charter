@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const moment = require('moment');
 const Sequelize = require('sequelize');
 
-const config = require('../src/config.ts');
+const config = require('../src/config');
 const mocks = require('./mocks');
 
 // Set flag for consumption in app.
@@ -46,7 +46,7 @@ moment.updateLocale('en', {
 });
 
 // SQLite database
-config.database = new Sequelize(require('../config/config.ts').test);
+config.database = new Sequelize(require('../config/config').test);
 
 // Readonly plugin
 const sequelizeReadonlyPlugin  = require('sequelize-noupdate-attributes');

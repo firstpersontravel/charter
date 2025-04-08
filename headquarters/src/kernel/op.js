@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const config = require('../config.ts');
+const config = require('../config');
 const EmailController = require('../controllers/email');
 const MessageController = require('../controllers/message');
 const KernelLogger = require('./logger');

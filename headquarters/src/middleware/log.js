@@ -1,4 +1,4 @@
-const config = require('../config.ts');
+const config = require('../config');
 const models = require('../models');
 
 const ignorePrefixes = ['/static', '/build', '/travel2', '/health', '/version'];

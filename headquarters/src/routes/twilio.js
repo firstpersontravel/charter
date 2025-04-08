@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const twilio = require('twilio');
 
-const config = require('../config.ts');
+const config = require('../config');
 const RelayController = require('../controllers/relay');
 const RelaysController = require('../controllers/relays');
 const TwilioCallHandler = require('../handlers/twilio_call');

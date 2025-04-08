@@ -3,7 +3,7 @@ const _ = require('lodash');
 const Kernel = require('fptcore/src/kernel/kernel');
 
 const { instrumentAsync } = require('../sentry');
-const config = require('../config.ts');
+const config = require('../config');
 const ActionController = require('../controllers/action');
 const KernelOpController = require('./op');
 const ActionContext = require('./action_context');

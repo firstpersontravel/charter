@@ -1,6 +1,6 @@
 const s3Router = require('react-s3-uploader/s3router');
 
-const config = require('../config.ts');
+const config = require('../config');
 
 // S3 signing url
 const s3Opts = {

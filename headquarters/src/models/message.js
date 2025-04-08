@@ -1,4 +1,4 @@
-const database = require('../config.ts').database;
+const database = require('../config').database;
 const Trip = require('./trip');
 const Org = require('./org');
 

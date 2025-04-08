@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const config = require('../../src/config.ts');
+const config = require('../../src/config');
 const models = require('../../src/models');
 const { mockNow } = require('../mocks');
 const TwilioMessageHandler = require('../../src/handlers/twilio_message');

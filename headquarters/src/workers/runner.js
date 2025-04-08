@@ -3,7 +3,7 @@ const moment = require('moment-timezone');
 const Sequelize = require('sequelize');
 const Sentry = require('@sentry/node');
 
-const config = require('../config.ts');
+const config = require('../config');
 const models = require('../models');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
