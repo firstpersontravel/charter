@@ -13,6 +13,7 @@ import Panel from '../partials/panel';
 import EventSub from '../util/event-sub';
 import LocationTracker from '../partials/location';
 import Soundtrack from '../partials/soundtrack';
+import GlobalError from '../partials/global-error';
 
 function hasLoggedIntoCreationTool() {
   return !!localStorage.getItem('auth_latest');
@@ -183,7 +184,7 @@ export default class App extends Component {
 
   collectPanelPartials(basePanels) {
     let collectedPanels = [];
-    basePanels.forEach((panel) => {
+    for (const panel of (basePanels || [])) {
       if (panel.type === 'current_page') {
         let innerPanels = this.getPagePanels();
         if (!innerPanels || innerPanels.length === 0) {
@@ -197,7 +198,7 @@ export default class App extends Component {
       } else {
         collectedPanels.push(panel);
       }
-    }, this);
+    }
 
     collectedPanels = collectedPanels.filter(panel => (
       this.props.evaluator.evaluateIf(panel.visible_if)
@@ -330,8 +331,28 @@ export default class App extends Component {
     );
   }
 
+  renderFailedToLoad() {
+    return (
+      <div className="pure-g">
+        <div className="pure-u-1" style={{ padding: '2em', textAlign: 'center' }}>
+          <div>
+            {this.props.globalError || 'An unknown error occurred.'}
+          </div>
+          <button
+            className="pure-button"
+            onClick={() => { window.location = window.location.href; }}>
+            Reload the page
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     if (!this.props.trip || !this.props.player) {
+      if (this.props.globalError) {
+        return this.renderFailedToLoad();
+      }
       return <div>Loading</div>;
     }
     return (
@@ -340,6 +361,7 @@ export default class App extends Component {
         {this.renderLocationTracking()}
         <div className="trip-container">
           <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
+          <GlobalError globalError={this.props.globalError} />
           <CustomCss iface={this.props.iface} />
           <Soundtrack audioState={this.getAudioState()} />
           <div className="page-layout page-layout-tabs">
@@ -358,6 +380,7 @@ export default class App extends Component {
 }
 
 App.propTypes = {
+  globalError: PropTypes.string,
   evaluator: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   experience: PropTypes.object,
@@ -374,6 +397,7 @@ App.propTypes = {
 };
 
 App.defaultProps = {
+  globalError: null,
   experience: null,
   trip: null,
   script: null,

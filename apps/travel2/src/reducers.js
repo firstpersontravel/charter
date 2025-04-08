@@ -2,6 +2,7 @@ import _ from 'lodash';
 import update from 'immutability-helper';
 
 export const initialState = {
+  globalError: null,
   org: null,
   experience: null,
   script: null,
@@ -28,6 +29,7 @@ function readEntity(obj) {
 function loadLegacyDataHandler(state, action) {
   const { included } = action.legacyData;
   return update(state, {
+    globalError: { $set: null },
     org: { $set: readEntity(included.find(i => i.type === 'org')) },
     experience: { $set: readEntity(included.find(i => i.type === 'experience')) },
     script: { $set: readEntity(included.find(i => i.type === 'script')) },
@@ -42,6 +44,7 @@ function loadLegacyDataHandler(state, action) {
 function refreshLegacyDataHandler(state, action) {
   const { included } = action.legacyData;
   return update(state, {
+    globalError: { $set: null },
     trip: { $set: readEntity(action.legacyData.data) },
     profiles: { $set: included.filter(i => i.type === 'profile').map(readEntity) },
     players: { $set: included.filter(i => i.type === 'player').map(readEntity) },
@@ -50,10 +53,17 @@ function refreshLegacyDataHandler(state, action) {
   });
 }
 
+function setGlobalErrorHandler(state, action) {
+  return update(state, {
+    globalError: { $set: action.err.message }
+  });
+}
+
 const handlers = {
   '@@INIT': () => initialState,
   loadLegacyData: loadLegacyDataHandler,
-  refreshLegacyData: refreshLegacyDataHandler
+  refreshLegacyData: refreshLegacyDataHandler,
+  setGlobalError: setGlobalErrorHandler
 };
 
 export default function reducer(state, action) {

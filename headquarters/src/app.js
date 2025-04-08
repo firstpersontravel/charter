@@ -115,6 +115,10 @@ app.use('/static', express.static(path.join(root, 'static')));
 app.use('/build', express.static(path.join(root, 'build')));
 app.use('/favicon.ico', serveFile('static/images/favicon.png'));
 
+// Static pages
+app.use('/terms', (req, res) => res.render('agency/terms', { layout: null }));
+app.use('/privacy', (req, res) => res.render('agency/privacy', { layout: null }));
+
 // Serve one-page travel2 app
 app.use('/travel2/:tripId/:playerId', (req, res) => {
   res.render('travel2/index', {

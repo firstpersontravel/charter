@@ -40,6 +40,7 @@ function getParticipant(state, ownProps) {
 
 function mapStateToProps(state, ownProps) {
   return {
+    globalError: state.globalError,
     experience: state.experience,
     trip: state.trip,
     script: state.script,
