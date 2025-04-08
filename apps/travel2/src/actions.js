@@ -59,7 +59,7 @@ function postData(url, params) {
 
 export function loadData(tripId, playerId) {
   return function (dispatch) {
-    getData(`${config.serverUrl}/api/legacy/trip/${tripId}?script=1`)
+    getData(`/api/legacy/trip/${tripId}?script=1`)
       .then((legacyData) => {
         dispatch(loadLegacyData(legacyData));
       })
@@ -70,7 +70,7 @@ export function loadData(tripId, playerId) {
 }
 
 function refresh(tripId, dispatch) {
-  return getData(`${config.serverUrl}/api/legacy/trip/${tripId}`)
+  return getData(`/api/legacy/trip/${tripId}`)
     .then((legacyData) => {
       dispatch(refreshLegacyData(legacyData));
     })
@@ -93,7 +93,7 @@ export function postAction(tripId, playerId, actionName, actionParams) {
       name: actionName,
       params: actionParams
     };
-    postData(`${config.serverUrl}/api/trips/${tripId}/actions`, params)
+    postData(`/api/trips/${tripId}/actions`, params)
       .catch((err) => {
         dispatch(setGlobalError(err));
       })
@@ -107,7 +107,7 @@ export function fireEvent(tripId, playerId, event) {
       client_id: config.clientId,
       player_id: playerId
     });
-    postData(`${config.serverUrl}/api/trips/${tripId}/events`, params)
+    postData(`/api/trips/${tripId}/events`, params)
       .catch((err) => {
         dispatch(setGlobalError(err));
       })
@@ -129,7 +129,7 @@ export function updateLocation(tripId, participantId, lat, lng, accuracy, timest
       location_accuracy: accuracy,
       location_timestamp: timestamp
     };
-    postData(`${config.serverUrl}/api/trips/${tripId}/device_state/${participantId}`, params)
+    postData(`/api/trips/${tripId}/device_state/${participantId}`, params)
       .catch((err) => {
         dispatch(setGlobalError(err));
       })
