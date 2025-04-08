@@ -29,6 +29,7 @@ function readEntity(obj) {
 function loadLegacyDataHandler(state, action) {
   const { included } = action.legacyData;
   return update(state, {
+    globalError: { $set: null },
     org: { $set: readEntity(included.find(i => i.type === 'org')) },
     experience: { $set: readEntity(included.find(i => i.type === 'experience')) },
     script: { $set: readEntity(included.find(i => i.type === 'script')) },
@@ -43,6 +44,7 @@ function loadLegacyDataHandler(state, action) {
 function refreshLegacyDataHandler(state, action) {
   const { included } = action.legacyData;
   return update(state, {
+    globalError: { $set: null },
     trip: { $set: readEntity(action.legacyData.data) },
     profiles: { $set: included.filter(i => i.type === 'profile').map(readEntity) },
     players: { $set: included.filter(i => i.type === 'player').map(readEntity) },

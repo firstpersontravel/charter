@@ -13,6 +13,7 @@ import Panel from '../partials/panel';
 import EventSub from '../util/event-sub';
 import LocationTracker from '../partials/location';
 import Soundtrack from '../partials/soundtrack';
+import GlobalError from '../partials/global-error';
 
 function hasLoggedIntoCreationTool() {
   return !!localStorage.getItem('auth_latest');
@@ -330,7 +331,7 @@ export default class App extends Component {
     );
   }
 
-  renderGlobalError() {
+  renderFailedToLoad() {
     return (
       <div className="pure-g">
         <div className="pure-u-1" style={{ padding: '2em', textAlign: 'center' }}>
@@ -349,10 +350,10 @@ export default class App extends Component {
 
   render() {
     if (!this.props.trip || !this.props.player) {
+      if (this.props.globalError) {
+        return this.renderFailedToLoad();
+      }
       return <div>Loading</div>;
-    }
-    if (this.props.globalError) {
-      return this.renderGlobalError();
     }
     return (
       <>
@@ -360,6 +361,7 @@ export default class App extends Component {
         {this.renderLocationTracking()}
         <div className="trip-container">
           <EventSub tripId={this.props.trip.id} receiveMessage={this.props.receiveMessage} />
+          <GlobalError globalError={this.props.globalError} />
           <CustomCss iface={this.props.iface} />
           <Soundtrack audioState={this.getAudioState()} />
           <div className="page-layout page-layout-tabs">
