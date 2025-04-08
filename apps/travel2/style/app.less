@@ -1,6 +1,7 @@
 // @import "pure.less";
 // @import "pure-responsive.less";
 @import "../node_modules/purecss/build/pure.css";
+@import "../node_modules/purecss/build/grids-responsive.css";
 @import "fonts.less";
 
 * { box-sizing: border-box; }
@@ -365,7 +366,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 }
 
 /* pure-hidden-xs */
-@media screen and (max-width:567px) {
+@media screen and (max-width:35.5em) {
     .pure-visible-sm{display:none}
     .pure-visible-md{display:none}
     .pure-visible-lg{display:none}
@@ -373,7 +374,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     .pure-hidden-xs{display:none}
 }
 /* pure-hidden-sm */
-@media screen and (min-width:568px) and (max-width:767px) {
+@media screen and (min-width:35.5em) and (max-width:48em) {
     .pure-visible-xs{display:none}
     .pure-visible-md{display:none}
     .pure-visible-lg{display:none}
@@ -381,7 +382,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     .pure-hidden-sm{display:none}
 }
 /* pure-hidden-md */
-@media screen and (min-width:768px) and (max-width:1023px) {
+@media screen and (min-width:48em) and (max-width:64em) {
     .pure-visible-xs{display:none}
     .pure-visible-sm{display:none}
     .pure-visible-lg{display:none}
@@ -389,7 +390,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     .pure-hidden-md{display:none}
 }
 /* pure-hidden-lg */
-@media screen and (min-width:1024px) and (max-width:1279px) {
+@media screen and (min-width:64em) and (max-width:80em) {
     .pure-visible-xs{display:none}
     .pure-visible-sm{display:none}
     .pure-visible-md{display:none}
@@ -397,7 +398,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
     .pure-hidden-lg{display:none}
 }
 /* pure-hidden-xl */
-@media screen and (min-width:1280px) {
+@media screen and (min-width:80em) {
     .pure-visible-xs{display:none}
     .pure-visible-sm{display:none}
     .pure-visible-md{display:none}
@@ -408,7 +409,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
 /**
  * Media queries
  */
-@media (max-width: 767px) {
+@media (max-width: 48em) {
     .trip-header {
         h1 { font-size: 24px; }
     }
@@ -421,7 +422,7 @@ label.pure-button-selected, button.pure-button-selected, a.pure-button-selected 
         }
     }
 }
-@media (min-width: 768px) {
+@media (min-width: 48em) {
     .page-panel-padded {
         padding: 0.5em 1em;
     }

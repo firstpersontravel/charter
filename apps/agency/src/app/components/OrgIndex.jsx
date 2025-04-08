@@ -7,13 +7,6 @@ import * as Sentry from '@sentry/react';
 import Examples from '../examples';
 import ExperienceModal from '../partials/ExperienceModal';
 
-// Add custom CSS for equal height cards
-const cardStyles = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column'
-};
-
 const cardBodyStyles = {
   flex: '1 1 auto'
 };
@@ -103,7 +96,7 @@ export default class OrgIndex extends Component {
   renderExample(example) {
     return (
       <div className="col mb-3" key={example.name}>
-        <div className="card" style={cardStyles}>
+        <div className="card card-project">
           <h5 className="card-header d-none d-sm-block">{example.title}</h5>
           <div className="card-body d-none d-sm-block" style={cardBodyStyles}>
             <p className="card-text">{example.desc}</p>
@@ -127,7 +120,7 @@ export default class OrgIndex extends Component {
   renderExperience(experience) {
     return (
       <div className="col mb-3" key={experience.id}>
-        <div className="card" style={cardStyles}>
+        <div className="card card-project">
           <h5 className="card-header d-none d-sm-block">{experience.title}</h5>
           <div className="card-body d-none d-sm-block" style={cardBodyStyles}>
             <p className="card-text">

@@ -222,6 +222,12 @@ body {
 }
 
 @media(min-width: 576px) {
+  // Equal height cards
+  .card-project {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
   .tab-right-float {
     float: right;
     margin-top: 0.5em;

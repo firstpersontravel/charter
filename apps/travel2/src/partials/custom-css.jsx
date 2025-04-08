@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { adjustColorBrightness, chooseTextColor } from '../util/color-util';
 
-export default function CustomCss({ iface }) {
+export default function CustomCss({ iface = null }) {
   if (!iface) {
     return null;
   }
@@ -86,8 +86,4 @@ export default function CustomCss({ iface }) {
 
 CustomCss.propTypes = {
   iface: PropTypes.object
-};
-
-CustomCss.defaultProps = {
-  iface: null
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const MIN_FIX_FREQUENCY = 30000;
+const MIN_FIX_FREQUENCY = 20_000;
 
 
 export default class LocationTracker extends React.Component {
@@ -9,7 +9,7 @@ export default class LocationTracker extends React.Component {
     super(props);
     this.state = {
       watchId: null,
-      lastFix: null,
+      lastFixAt: null,
       lastError: null
     };
 
@@ -51,35 +51,29 @@ export default class LocationTracker extends React.Component {
   }
 
 
-  handleFix(position, force = false) {
-    const thisFix = new Date();
-    if (this.state.lastFix && thisFix - this.state.lastFix < MIN_FIX_FREQUENCY && !force) {
-      // ignore fix if more frequent
+  handleFix(position) {
+    const thisFixAt = new Date();
+    if (this.state.lastFixAt && thisFixAt - this.state.lastFixAt < MIN_FIX_FREQUENCY) {
       return;
     }
 
-    this.state.lastFix = new Date();
-    const fix = {
-      coords: position.coords,
-      timestamp: position.timestamp
-    };
-
-    this.setState({ lastFix: fix, lastError: null });
+    this.setState({
+      lastFixAt: thisFixAt,
+      lastError: null
+    });
 
     // Call the updateLocation prop with the new location
-    if (this.props.updateLocation) {
-      this.props.updateLocation(
-        position.coords.latitude,
-        position.coords.longitude,
-        position.coords.accuracy,
-        Math.floor(position.timestamp / 1000)
-      );
-    }
+    this.props.updateLocation(
+      position.coords.latitude,
+      position.coords.longitude,
+      position.coords.accuracy,
+      Math.floor(position.timestamp / 1000)
+    );
   }
 
   handleError(error) {
     this.setState({
-      lastFix: null,
+      lastFixAt: null,
       lastError: error,
       watchId: null
     });
