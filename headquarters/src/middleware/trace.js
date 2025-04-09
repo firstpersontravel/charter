@@ -49,7 +49,6 @@ function traceMiddleware() {
 
     // We also set __sentry_transaction on the response so people can grab the transaction there to add
     // spans to it later.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     res.__sentry_transaction = transaction;
 
     // Instrument json stringification in response

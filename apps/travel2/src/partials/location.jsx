@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const MIN_FIX_FREQUENCY = 20_000;
-
+const MIN_FIX_FREQUENCY = 20000;
 
 export default class LocationTracker extends React.Component {
   constructor(props) {
