@@ -1,5 +1,6 @@
 require('module-alias/register');
 
+const ESLintPlugin = require('eslint-webpack-plugin');
 const MomentTimezonePlugin = require('moment-timezone-data-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const path = require('path');
@@ -8,6 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const currentYear = new Date().getFullYear();
 const plugins = [
+  [new ESLintPlugin()],
   // To strip all locales except "en"
   new MomentLocalesPlugin(),
   // To include only specific zones, use the matchZones option
