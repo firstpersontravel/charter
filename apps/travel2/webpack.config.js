@@ -9,7 +9,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const currentYear = new Date().getFullYear();
 const plugins = [
-  [new ESLintPlugin()],
+  new ESLintPlugin({ configType: 'eslintrc' }),
   // To strip all locales except "en"
   new MomentLocalesPlugin(),
   // To include only specific zones, use the matchZones option
