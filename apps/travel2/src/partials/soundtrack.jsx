@@ -14,6 +14,9 @@ export default class Soundtrack extends Component {
 
     this.audioRef = React.createRef();
     this.interval = null;
+    this.onAudioEnded = this.onAudioEnded.bind(this);
+    this.onAudioCanPlay = this.onAudioCanPlay.bind(this);
+    this.onAudioLoadedMetadata = this.onAudioLoadedMetadata.bind(this);
   }
 
   componentDidMount() {
@@ -57,22 +60,22 @@ export default class Soundtrack extends Component {
     this.audioRef.current.removeEventListener('canplay');
   }
 
-  onAudioEnded = () => {
+  onAudioEnded() {
     this.setState({ isPlaying: false });
     this.audioRef.current.src = '';
   }
 
-  onAudioCanPlay = () => {
+  onAudioCanPlay() {
     if (!this.state.isPlaying) {
       this.startOrAskPermission();
     }
   }
 
-  onAudioLoadedMetadata = () => {
+  onAudioLoadedMetadata() {
     this.startOrAskPermission();
   }
 
-  handleAudioUrlChange = () => {
+  handleAudioUrlChange() {
     const audioUrl = this.props.audioState?.url;
     if (audioUrl && this.audioRef.current.src !== audioUrl) {
       this.audioRef.current.src = audioUrl;
@@ -85,7 +88,7 @@ export default class Soundtrack extends Component {
   }
 
   // Audio playback functions
-  startOrAskPermission = () => {
+  startOrAskPermission() {
     if (!this.props.audioState?.isPlaying) return;
     if (!this.audioRef.current) return;
     if (!this.audioRef.current.duration) return;
@@ -107,7 +110,7 @@ export default class Soundtrack extends Component {
     }
   }
 
-  startPlaying = () => {
+  startPlaying() {
     const time = this.audioTime();
     if (!this.audioRef.current) return;
 
@@ -127,7 +130,7 @@ export default class Soundtrack extends Component {
       });
   }
 
-  stopPlaying = () => {
+  stopPlaying() {
     if (!this.state.isPlaying || !this.audioRef.current) return;
 
     this.setState({ isPlaying: false });
@@ -135,7 +138,7 @@ export default class Soundtrack extends Component {
   }
 
   // Computed properties
-  audioTime = () => {
+  audioTime() {
     const hasAudio = !!this.props.audioState?.url;
     if (!hasAudio) return 0;
 
@@ -150,7 +153,7 @@ export default class Soundtrack extends Component {
     return currentTime;
   }
 
-  formatTime = (timeInSeconds) => {
+  formatTime(timeInSeconds) {
     const mins = Math.floor(timeInSeconds / 60);
     const secs = Math.floor(timeInSeconds - mins * 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
