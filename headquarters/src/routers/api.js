@@ -129,7 +129,6 @@ function getErrorResponse(err) {
 }
 
 // Fallthrough error handler
-// eslint-disable-next-line no-unused-vars
 apiRouter.use(function(err, req, res, next) {
   // Log full error stack only if it's an internal error or 5XX
   if (!err.status || err.status >= 500) {

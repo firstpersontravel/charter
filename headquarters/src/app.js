@@ -160,7 +160,6 @@ app.use('', (req, res) => {
 app.use(Sentry.Handlers.errorHandler());
 
 // Fallthrough error handler
-// eslint-disable-next-line no-unused-vars
 app.use(function errorHandler(err, req, res, next) {
   config.logger.error({ name: 'error' }, err.stack);
   const errorResponse = { message: err.message };
