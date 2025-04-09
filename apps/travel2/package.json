@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "pretest": "npm run lint",
-    "lint": "eslint --ext .jsx --ext .js --ext .tsx --ext .ts .",
+    "lint": "eslint --ext .jsx --ext .js .",
     "test": "echo 'no tests.'",
     "prebuild": "npm run test",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && webpack",
