@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
 
 const { instrumentAsync } = require('../sentry');
-const config = require('../config');
+const config = require('../config.ts');
 const models = require('../models');
 const { authenticationError } = require('../errors');
 

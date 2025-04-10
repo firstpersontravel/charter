@@ -28,7 +28,7 @@ try {
 }
 
 const ENV_DEFAULTS = {true: true, false: false};
-const env = {};
+const env: { [key: string]: string | boolean } = {};
 
 for (const k in process.env) {
   if (ENV_DEFAULTS[process.env[k]] !== undefined) {
@@ -45,7 +45,7 @@ const serverPort = process.env.HQ_SERVER_PORT || 8000;
 const serverUrl = process.env.HQ_SERVER_URL || `http://localhost:${serverPort}`;
 
 // Pretty print logs locally
-const pinoConfig = {
+const pinoConfig: any = {
   base: {},
   formatters: {
     level: (label) => ({ level: label })
@@ -58,7 +58,7 @@ if (process.env.HQ_STAGE === 'development') {
 const logger = pino(pinoConfig);
 
 // Configure database
-const dbConfig = require('../config/config');
+const dbConfig = require('../config/config.ts');
 const environmentName = process.env.NODE_ENV || 'development';
 
 let database = new Sequelize(dbConfig[environmentName]);

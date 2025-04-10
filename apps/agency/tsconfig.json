@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    // Emit Configuration
+    "noEmit": true,
+
+    // Modules Configuration
+    "module": "ES2022",
+    "moduleResolution": "node",
+
+    // Language and Environment Configuration
+    "target": "ES2022",
+    "jsx": "react-jsx",
+
+    // JavaScript Support Configuration
+    // "allowJs": true,
+    // "checkJs": true,
+
+    // Interop Constraints Configuration
+    "esModuleInterop": true,
+  },
+  "include": ["src/**/*", "webpack.config.js"],
+  "exclude": ["node_modules"]
+}

@@ -278,7 +278,6 @@ function renderHeader(trip, player, page, onAction) {
 
   const showGoToPageBtn = onAction && isCurrentScene && !isCurrentPage;
   const goToPageButton = (showGoToPageBtn) ? (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <a
       style={{ cursor: 'pointer' }}
       onClick={() => onAction('send_to_page', {

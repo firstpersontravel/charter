@@ -1,6 +1,6 @@
 const Sentry = require('@sentry/node');
 
-const config = require('./config');
+const config = require('./config.ts');
 
 function instrument(op, desc, fn) {
   const transaction = Sentry.getCurrentHub().getScope().getTransaction();

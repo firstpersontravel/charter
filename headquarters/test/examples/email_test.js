@@ -5,7 +5,7 @@ const moment = require('moment-timezone');
 const sinon = require('sinon');
 const yaml = require('js-yaml');
 
-const config = require('../../src/config');
+const config = require('../../src/config.ts');
 const models = require('../../src/models');
 const KernelController = require('../../src/kernel/kernel');
 const TestUtil = require('../util');

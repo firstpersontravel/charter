@@ -1,10 +1,16 @@
 {
-  "extends": "airbnb",
+  "extends": [
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parserOptions": {
-    "parser": "@babel/eslint-parser",
+    "parser": "@typescript-eslint/parser",
+    "plugins": ["@typescript-eslint"],
+    "project": "./tsconfig.json",
     "requireConfigFile": false,
     "ecmaVersion": 2020,
-    "sourceType": "module"
+    "sourceType": "module",
+    "root": true
   },
   "plugins": [
     "react"
@@ -33,7 +39,6 @@
       "args": "none"
     }],
     "no-restricted-syntax": 0,
-    "jsx-a11y/no-static-element-interactions": 0,
     "react/jsx-closing-bracket-location": [2, "after-props"],
     "react/forbid-prop-types": 0,
     "react/destructuring-assignment": 0,
@@ -64,7 +69,11 @@
     "react/jsx-props-no-spreading": 0,
     "max-classes-per-file": 0,
     "react/jsx-fragments": 0,
-    "react/require-default-props": 0
+    "react/require-default-props": 0,
+    "@typescript-eslint/comma-dangle": 0,
+    "import/extensions": 0,
+    "@typescript-eslint/no-unused-vars": 0,
+    "@typescript-eslint/no-var-requires": 0
   },
   "settings": {
     "import/resolver": {

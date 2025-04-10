@@ -2,7 +2,7 @@ const _ = require('lodash');
 const jsonschema = require('jsonschema');
 const { ValidationError } = require('sequelize');
 
-const database = require('../config').database;
+const database = require('../config.ts').database;
 const Experience = require('./experience');
 const Org = require('./org');
 

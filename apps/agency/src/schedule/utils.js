@@ -1,4 +1,4 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
 class ScheduleUtils {
   static filterAssignableProfiles(profiles, participants, experienceId, roleName) {

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const twilio = require('twilio');
 const moment = require('moment');
 
-const config = require('../config');
+const config = require('../config.ts');
 const models = require('../models');
 const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');

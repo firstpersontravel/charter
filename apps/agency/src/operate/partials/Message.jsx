@@ -60,7 +60,6 @@ function renderActions(message, updateInstance) {
     return null;
   }
   const archiveAction = (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <span
       className="faint"
       onClick={() => (
@@ -73,7 +72,6 @@ function renderActions(message, updateInstance) {
   );
   const isReplyNeeded = message.isReplyNeeded && !message.replyReceivedAt;
   const markRepliedAction = isReplyNeeded ? (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <span
       className="faint"
       onClick={() => (
