@@ -7,7 +7,7 @@ const ScriptCore = require('fptcore/src/cores/script');
 const { instrument } = require('../sentry');
 const Experience = require('./experience');
 const Org = require('./org');
-const database = require('../config').database;
+const database = require('../config.ts').database;
 
 const {
   belongsToField,

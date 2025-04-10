@@ -4,7 +4,7 @@ const moment = require('moment');
 const Sentry = require('@sentry/node');
 const Sequelize = require('sequelize');
 
-const config = require('./config');
+const config = require('./config.ts');
 const models = require('./models');
 const { initTracing } = require('./sentry');
 const RunnerWorker = require('./workers/runner');

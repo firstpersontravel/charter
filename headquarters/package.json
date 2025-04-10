@@ -7,7 +7,7 @@
     "tsc": "tsc --noEmit",
     "lint": "eslint . || echo 'Skipping failed lint.'",
     "test": "npm run mocha",
-    "mocha": "ts-mocha --timeout 10000 --recursive test",
+    "mocha": "mocha --timeout 10000 --recursive test",
     "migrate": "npm run migrate:db; npm run migrate:scripts",
     "migrate:db": "sequelize db:migrate",
     "migrate:scripts": "node cmd/migrate-scripts.js",
@@ -45,7 +45,6 @@
     "sequelize": "^6.37.6",
     "sequelize-cli": "^6.6.2",
     "sequelize-noupdate-attributes": "^2.0.2",
-    "ts-mocha": "^11.1.0",
     "twilio": "^3.42.0",
     "typescript": "^5.8.2"
   },

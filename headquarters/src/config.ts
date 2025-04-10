@@ -58,7 +58,7 @@ if (process.env.HQ_STAGE === 'development') {
 const logger = pino(pinoConfig);
 
 // Configure database
-const dbConfig = require('../config/config');
+const dbConfig = require('../config/config.ts');
 const environmentName = process.env.NODE_ENV || 'development';
 
 let database = new Sequelize(dbConfig[environmentName]);
