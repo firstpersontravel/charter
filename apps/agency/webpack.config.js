@@ -1,5 +1,6 @@
 require('module-alias/register');
 
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MomentTimezonePlugin = require('moment-timezone-data-webpack-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
@@ -17,6 +18,12 @@ const plugins = [
     matchZones: /^(US|Europe)/,
     startYear: currentYear - 5,
     endYear: currentYear + 5
+  }),
+  sentryWebpackPlugin({
+    org: 'first-person-travel',
+    project: 'agency',
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    release: process.env.GIT_HASH
   })
 ];
 
