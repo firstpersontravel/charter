@@ -248,13 +248,11 @@ export function listCollection(collectionName, query, opts) {
 export function associateAuthData(authData) {
   const org = authData.orgs[0];
   // Sentry
-  Sentry.configureScope((scope) => {
-    scope.setUser({
-      id: authData.user.id,
-      email: authData.user.email,
-      orgName: org && org.name
-    });
-  });
+  Sentry.getCurrentScope().setUser({
+    id: authData.user.id,
+    email: authData.user.email,
+    orgName: org && org.name
+  }); 
   // FullStory
   if (typeof FS === 'function') {
     FS.identify(`${getStage()}-${authData.user.id}`, {

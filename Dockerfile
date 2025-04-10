@@ -1,7 +1,14 @@
+ARG GIT_HASH
+ARG SENTRY_AUTH_TOKEN
+
 ##########################
 ##### Agency builder #####
 ##########################
 FROM node:23-alpine AS agency-builder
+
+# Set environment variables for uploading source maps
+ENV GIT_HASH=$GIT_HASH
+ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
 
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
