@@ -71,7 +71,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build Image
-      uses: whoan/docker-build-with-cache-action@v5
+      uses: whoan/docker-build-with-cache-action@v8.1
       with:
         username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
