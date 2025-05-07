@@ -8,6 +8,8 @@ const path = require('path');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+console.log('process.env.GIT_HASH', process.env.GIT_HASH);
+
 const currentYear = new Date().getFullYear();
 const plugins = [
   new ESLintPlugin({ configType: 'eslintrc' }),
