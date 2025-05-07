@@ -53,7 +53,10 @@ COPY fptcore /var/app/fptcore
 COPY apps/travel2 /var/app/apps/travel2
 
 # Build travel2
-RUN cd /var/app/apps/travel2 && NODE_ENV=production && NODE_OPTIONS=--openssl-legacy-provider webpack
+RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
+  cd /var/app/apps/travel2 \
+  && NODE_ENV=production \
+  && NODE_OPTIONS=--openssl-legacy-provider webpack
 
 ######################
 ##### Main image #####
