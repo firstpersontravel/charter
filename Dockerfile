@@ -3,6 +3,10 @@
 ##########################
 FROM node:23-alpine AS agency-builder
 
+# Set environment variables for uploading source maps
+ARG GIT_HASH
+ENV GIT_HASH=${GIT_HASH}
+
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11
 
@@ -19,12 +23,19 @@ COPY fptcore /var/app/fptcore
 COPY apps/agency /var/app/apps/agency
 
 # Build agency
-RUN cd /var/app/apps/agency && NODE_ENV=production && NODE_OPTIONS=--openssl-legacy-provider webpack
+RUN --mount=type=secret,id=SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
+  cd /var/app/apps/agency \
+  && NODE_ENV=production \
+  && NODE_OPTIONS=--openssl-legacy-provider webpack
 
 ##########################
 ##### Travel2 builder #####
 ##########################
 FROM node:23-alpine AS travel2-builder
+
+# Set environment variables for uploading source maps
+ARG GIT_HASH
+ENV GIT_HASH=${GIT_HASH}
 
 # Install requirements for node-sass and app build tools
 RUN apk add gcc && npm install -q -g webpack@4.44.1 webpack-cli@3.3.11

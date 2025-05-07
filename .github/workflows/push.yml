@@ -71,14 +71,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build Image
-      uses: whoan/docker-build-with-cache-action@v5
+      uses: whoan/docker-build-with-cache-action@v8.1
       with:
         username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
         image_name: charter
         image_tag: ${{ github.sha }}
-        build_extra_args: '--build-arg=GIT_HASH=${{ github.sha }}'
+        build_extra_args: '--build-arg=GIT_HASH=${{ github.sha }} --secret id=SENTRY_AUTH_TOKEN'
+      env:
+        SENTRY_AUTH_TOKEN: "${{ secrets.SENTRY_AUTH_TOKEN }}"
 
   # deploy_test:
   #   name: Deploy to test

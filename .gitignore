@@ -5,3 +5,4 @@ npm-debug.log
 build/
 *.env
 secrets/
+.env.sentry-build-plugin
