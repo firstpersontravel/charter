@@ -78,7 +78,9 @@ jobs:
         registry: 875382849197.dkr.ecr.us-west-2.amazonaws.com
         image_name: charter
         image_tag: ${{ github.sha }}
-        build_extra_args: '--build-arg=GIT_HASH=${{ github.sha }} --build-arg=SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}'
+        build_extra_args: '--build-arg=GIT_HASH=${{ github.sha }} --secret id=SENTRY_AUTH_TOKEN'
+      env:
+        SENTRY_AUTH_TOKEN: "${{ secrets.SENTRY_AUTH_TOKEN }}"
 
   # deploy_test:
   #   name: Deploy to test
