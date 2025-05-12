@@ -154,7 +154,12 @@ export default class PopoverControl extends Component {
         </button>
         <Popover
           placement="top"
-          flip={false}
+          modifiers={[{
+            name: 'flip',
+            options: {
+              fallbackPlacements: ['bottom']
+            }
+          }]}
           isOpen={this.state.isOpen}
           target={this.labelId}
           toggle={this.handleClose}>

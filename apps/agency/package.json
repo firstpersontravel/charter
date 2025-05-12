@@ -44,7 +44,6 @@
     "moment-timezone-data-webpack-plugin": "^1.3.0",
     "path": "^0.12.7",
     "polyline-encoded": "^0.0.8",
-    "popper.js": "^1.15.0",
     "prop-types": "^15.8.1",
     "react": "^18.0.0",
     "react-color": "^2.18.1",
