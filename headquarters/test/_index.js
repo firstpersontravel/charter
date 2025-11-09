@@ -46,7 +46,7 @@ moment.updateLocale('en', {
 });
 
 // SQLite database
-config.database = new Sequelize(require('../config/config.ts').test);
+config.database = new Sequelize(require('../config/config.js').test);
 
 // Readonly plugin
 const sequelizeReadonlyPlugin  = require('sequelize-noupdate-attributes');

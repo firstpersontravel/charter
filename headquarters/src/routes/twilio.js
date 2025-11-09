@@ -45,7 +45,7 @@ async function incomingCallStatusRoute(req, res) {
   handleTwimlResponse(res);
 }
 
-const numOrFirst = numOrList => Number(numOrList.length > 0 ? numOrList[0] : numOrList);
+const numOrFirst = numOrList => Array.isArray(numOrList) ? Number(numOrList[0]) : Number(numOrList);
 
 async function outgoingCallRoute(req, res) {
   const tripId = numOrFirst(req.query.trip);
@@ -56,6 +56,11 @@ async function outgoingCallRoute(req, res) {
     TwilioCallHandler.handleOutgoingCall(relayId, tripId, answeredByHuman)
   );
   handleTwimlResponse(res, twimlResponse);
+}
+
+// Generally only called if there are https issues.
+async function callResponseGetRoute(req, res) {
+  res.status(405).end();
 }
 
 async function callResponseRoute(req, res) {
@@ -111,6 +116,7 @@ async function incomingMessageRoute(req, res) {
 module.exports = {
   callInterruptRoute,
   callResponseRoute,
+  callResponseGetRoute,
   callStatusRoute,
   incomingCallRoute,
   incomingCallStatusRoute,

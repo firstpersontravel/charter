@@ -14,6 +14,8 @@ twilioRouter.get('/calls/outgoing',
   asyncRoute(twilioRoutes.outgoingCallRoute));
 twilioRouter.post('/calls/outgoing',
   asyncRoute(twilioRoutes.outgoingCallRoute));
+twilioRouter.get('/calls/response',
+  asyncRoute(twilioRoutes.callResponseGetRoute));
 twilioRouter.post('/calls/response',
   asyncRoute(twilioRoutes.callResponseRoute));
 twilioRouter.post('/calls/status',

@@ -39,6 +39,7 @@ describe('TripsController', () => {
           }]
         }
       };
+      const isDST = mockNow.isDST();
       const stubTrip = {
         id: 3,
         experienceId: 3,
@@ -67,9 +68,8 @@ describe('TripsController', () => {
           currentPageNamesByRole: {}
         },
         schedule: {
-          // TODO: fix this to work whether we're in DST or not
-          basicIntro: `${mockNow.format('YYYY-MM-DD')}T17:00:00.000Z`,
-          startAt: `${mockNow.format('YYYY-MM-DD')}T15:00:00.000Z`
+          basicIntro: `${mockNow.format('YYYY-MM-DD')}T${isDST ? 17 : 18}:00:00.000Z`,
+          startAt: `${mockNow.format('YYYY-MM-DD')}T${isDST ? 15 : 16}:00:00.000Z`
         },
         scriptId: 2,
         experienceId: 3,
