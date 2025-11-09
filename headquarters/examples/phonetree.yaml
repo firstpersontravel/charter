@@ -16,28 +16,28 @@ content:
     - name: CLIP-GREETING
       title: Greetings
       scene: SCENE-MAIN
-      transcript: 'Press 1 for a beverage, or 2 for a joke.'
+      transcript: 'Thanks for calling! Lets try a keypad response first. Press 1 or 2.'
       answer_expected: true
-    - name: CLIP-DRINK
-      title: Greetings
+    - name: CLIP-DOOR
+      title: Choose a door
       scene: SCENE-MAIN
-      transcript: Would you like a refreshing beverage?
+      transcript: Now lets try a voice response. Choose the left or right door.
       answer_expected: true
       answer_hints:
-        - 'yes'
-        - 'no'
-    - name: CLIP-DRINK-YES
-      title: 'yes'
+        - left
+        - right
+    - name: CLIP-DOOR-LEFT
+      title: Left door
       scene: SCENE-MAIN
-      transcript: Here you go!
-    - name: CLIP-DRINK-NO
-      title: 'no'
+      transcript: You found... a brand new car!
+    - name: CLIP-DOOR-RIGHT
+      title: Right door
       scene: SCENE-MAIN
-      transcript: Next time!
-    - name: CLIP-JOKE
-      title: joke
+      transcript: You found... a television!
+    - name: CLIP-THANKS
+      title: Thanks
       scene: SCENE-MAIN
-      transcript: Why did the chicken cross the road?
+      transcript: Thanks for calling!
   triggers:
     - name: t1
       event:
@@ -61,30 +61,30 @@ content:
             response: '1'
           actions:
             - name: play_clip
-              clip_name: CLIP-DRINK
+              clip_name: CLIP-DOOR
               id: 4
           else:
             - name: play_clip
-              clip_name: CLIP-JOKE
+              clip_name: CLIP-THANKS
               id: 5
           id: 3
     - name: trigger-drink-answered
       event:
         type: clip_answered
-        clip: CLIP-DRINK
+        clip: CLIP-DOOR
       scene: SCENE-MAIN
       actions:
         - name: conditional
           if:
             op: clip_answer_is
-            response: 'yes'
+            response: left
           actions:
             - name: play_clip
-              clip_name: CLIP-DRINK-YES
+              clip_name: CLIP-DOOR-LEFT
               id: 7
           else:
             - name: play_clip
-              clip_name: CLIP-DRINK-NO
+              clip_name: CLIP-DOOR-RIGHT
               id: 8
           id: 6
   meta:
