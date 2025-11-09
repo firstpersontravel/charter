@@ -1,4 +1,21 @@
-var CLIP_VOICE_OPTIONS = ['alice', 'man', 'woman'];
+var CLIP_VOICE_OPTIONS = [
+  'alice',
+  'man',
+  'woman',
+  'Google.en-US-Chirp3-HD-Aoede',
+  'Google.en-US-Chirp3-HD-Charon',
+  'Google.en-US-Chirp3-HD-Fenrir',
+  'Google.en-US-Chirp3-HD-Kore',
+  'Google.en-US-Chirp3-HD-Leda',
+  'Google.en-US-Chirp3-HD-Orus',
+  'Google.en-US-Chirp3-HD-Puck',
+  'Google.en-US-Chirp3-HD-Zephyr',
+  'Polly.Danielle-Generative',
+  'Polly.Joanna-Generative',
+  'Polly.Matthew-Generative',
+  'Polly.Ruth-Generative',
+  'Polly.Stephen-Generative',
+];
 
 module.exports = {
   title: 'Call clip',
@@ -21,7 +38,7 @@ module.exports = {
     voice: {
       type: 'enum',
       options: CLIP_VOICE_OPTIONS,
-      default: 'alice',
+      default: 'Google.en-US-Chirp3-HD-Aoede',
       help: 'The voice used to generate audio via speech-to-text. Only required if there is not a media path.'
     },
     audio: {
