@@ -120,10 +120,18 @@ app.use('/terms', (req, res) => res.render('agency/terms', { layout: null }));
 app.use('/privacy', (req, res) => res.render('agency/privacy', { layout: null }));
 
 // Serve one-page travel2 app
-app.use('/travel2/:tripId/:playerId', (req, res) => {
+app.use('/travel2/:tripId/:playerId', async (req, res) => {
+  const trip = await models.Trip.findByPk(req.params.tripId, {
+    include: [{ model: models.Experience, as: 'experience' }]
+  });
+  if (!trip || !trip.experience) {
+    res.status(404).send('Not Found');
+    return;
+  }
   res.render('travel2/index', {
     layout: null,
     googleApiKey: config.env.FRONTEND_GOOGLE_API_KEY,
+    experienceTitle: trip.experience.title,
     envJson: JSON.stringify({
       TRAVEL2_AUTH_TOKEN: createTripToken({ id: req.params.tripId }, 86400),
       TRAVEL2_ANALYTICS_ENABLED: config.env.FRONTEND_ANALYTICS_ENABLED,
