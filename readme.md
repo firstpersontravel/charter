@@ -1,5 +1,14 @@
 # Charter
 
+## Code overview
+
+* `apps/agency/` - Administration react app
+* `apps/travel2/` - Player react app
+* `docker/` - Docker image
+* `fptcore/` - Core shared functionality
+* `headquarters/` - Node backend
+* `static/` - Static assets
+
 ## Local Setup
 
 ### Install prerequisites
