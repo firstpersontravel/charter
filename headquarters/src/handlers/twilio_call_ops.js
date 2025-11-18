@@ -59,7 +59,7 @@ class TwilioCallOps {
     const gather = twimlResponse.gather(Object.assign({
       input: 'dtmf speech',
       timeout: 10,
-      speechTimeout: 20,
+      speechTimeout: 10,
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`
