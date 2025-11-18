@@ -79,20 +79,20 @@ class KernelOpController {
     }
   }
 
-  static async initiateCall(objs, op) {
+  static async initiateCall(objs, op, gatheredTwimlOps) {
     await TripRelaysController.initiateCall(
-      objs.trip, op.toRoleName, op.asRoleName, op.detectVoicemail);
+      objs.trip, op.toRoleName, op.asRoleName, op.detectVoicemail, gatheredTwimlOps);
   }
 
   /**
    * Apply an op to database objects.
    */
-  static async applyOp(objs, op) {
+  static async applyOp(objs, op, gatheredTwimlOps) {
     const opFunction = this[op.operation];
     if (!opFunction) {
       throw new Error(`Invalid op ${op.operation}`);
     }
-    return await opFunction.call(this, objs, op);
+    return await opFunction.call(this, objs, op, gatheredTwimlOps);
   }
 }
 

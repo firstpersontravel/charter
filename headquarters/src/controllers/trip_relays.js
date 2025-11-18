@@ -66,7 +66,7 @@ class TripRelaysController {
   /**
    * Initiate a call.
    */
-  static async initiateCall(trip, toRoleName, asRoleName, detectVoicemail) {
+  static async initiateCall(trip, toRoleName, asRoleName, detectVoicemail, gatheredTwimlOps) {
     const relayFilters = { as: toRoleName, with: asRoleName };
     const relays = await this.ensureRelays(trip, relayFilters);
 
@@ -85,7 +85,7 @@ class TripRelaysController {
       logger.warn(`Relay ${relay.id} has no player.`);
       return;
     }
-    await RelayController.initiateCall(relay, player, detectVoicemail);
+    await RelayController.initiateCall(relay, player, detectVoicemail, gatheredTwimlOps);
   }
 
   /**

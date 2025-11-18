@@ -12,11 +12,11 @@ const RelaysController = require('../../src/controllers/relays');
 // Basic example for the purposes of testing twilio functionality
 const example = {
   roles: [
-    { name: 'Knight', title: 'Knight' },
-    { name: 'King', title: 'King' }
+    { name: 'Player', title: 'Player' },
+    { name: 'System', title: 'System' }
   ],
   relays: [
-    { name: 'main', for: 'Knight', with: 'King', entryway: true }
+    { name: 'main', for: 'Player', with: 'System', entryway: true }
   ],
   scenes: [
     {name: 'main', title: 'main'}
@@ -31,11 +31,24 @@ async function assertTripAndRelay(script) {
   // Test relay was created
   const relay = await models.Relay.findOne({ where: {
     tripId: trip.id,
-    forRoleName: 'Knight',
-    withRoleName: 'King'
+    forRoleName: 'Player',
+    withRoleName: 'System'
   }});
 
   return { trip: trip, relay: relay };
+}
+
+async function assignPhoneNumberToRole(trip, playerNumber, roleName) {
+  const participant = await models.Participant.create({
+    orgId: trip.orgId,
+    experienceId: trip.experienceId,
+    createdAt: mockNow,
+    phoneNumber: playerNumber
+  });
+  const player = await models.Player.findOne({
+    where: { tripId: trip.id, roleName: roleName }
+  });
+  await player.update({ participantId: participant.id });
 }
 
 describe('Twilio Integration', () => {
@@ -50,31 +63,15 @@ describe('Twilio Integration', () => {
       script = await TestUtil.createExample({ content: example });
       trip = await TestUtil.createDummyTripForScript(script);
       relayService = await TestUtil.createDummyRelayService();
-      // Create a participant with the desired phone number
-      const participant = await models.Participant.create({
-        orgId: trip.orgId,
-        experienceId: trip.experienceId,
-        createdAt: mockNow,
-        phoneNumber: playerNumber
-      });
-      // Associated it with the trip
-      const player = await models.Player.findOne({
-        where: {
-          tripId: trip.id,
-          roleName: 'Knight'
-        }
-      });
-      await player.update({
-        participantId: participant.id
-      });
+      await assignPhoneNumberToRole(trip, playerNumber, 'Player');
     });
 
     it('sends message outgoing without entryway', async () => {
       await KernelController.applyAction(trip.id, {
         name: 'send_text',
         params: {
-          from_role_name: 'King',
-          to_role_name: 'Knight',
+          from_role_name: 'System',
+          to_role_name: 'Player',
           content: 'outgoing test message',
         }
       });
@@ -259,6 +256,99 @@ describe('Twilio Integration', () => {
       // Assert another trip was created
       const trips = await models.Trip.findAll({ where: { scriptId: script.id } });
       assert.strictEqual(trips.length, 2);
+    });
+  });
+
+  describe('outgoing call', () => {
+    const callExample = Object.assign({}, example, {
+      clips: [{
+        scene: 'main',
+        name: 'call_clip',
+        title: 'Clip',
+        transcript: 'This is a test call clip.',
+        answer_expected: true,
+        answer_hints: ['yes', 'no']
+      }],
+      cues: [{
+        scene: 'main',
+        name: 'cue',
+        title: 'Cue'
+      }],
+      triggers: [{
+        scene: 'main',
+        name: 'initiate_call_on_cue',
+        event: { type: 'cue_signaled', cue: 'cue' },
+        actions: [{
+          id: 1,
+          name: 'initiate_call',
+          as_role_name: 'System',
+          to_role_name: 'Player'
+        }, {
+          id: 2,
+          name: 'play_clip',
+          clip_name: 'call_clip'
+        }]
+      }]
+    });
+
+    let script;
+    let trip;
+    let relayService;
+
+    beforeEach(async () => {
+      script = await TestUtil.createExample({ content: callExample });
+      trip = await TestUtil.createDummyTripForScript(script);
+      relayService = await TestUtil.createDummyRelayService();
+      await assignPhoneNumberToRole(trip, playerNumber, 'Player');
+    });
+
+    it('dials the player', async () => {
+      await KernelController.applyAction(trip.id, {
+        name: 'initiate_call',
+        params: {
+          as_role_name: 'System',
+          to_role_name: 'Player',
+        }
+      });
+
+      // If no twiml ops are provided, a url is passed to the call.
+      sinon.assert.calledOnce(config.getTwilioClient().calls.create);
+      assert.deepStrictEqual(config.getTwilioClient().calls.create.firstCall.args, [{
+        from: relayService.phoneNumber,
+        to: playerNumber,
+        machineDetection: 'enable',
+        method: 'POST',
+        statusCallback: 'http://twilio.test/endpoints/twilio/calls/status?trip=1&relay=1',
+        statusCallbackMethod: 'POST',
+        url: 'http://twilio.test/endpoints/twilio/calls/outgoing?trip=1&relay=1'
+      }]);
+    });
+
+    it('dials the player with a message', async () => {
+      await KernelController.applyAction(trip.id, {
+        name: 'signal_cue',
+        params: { cue_name: 'cue' }
+      });
+
+      // If twiml ops are provided, pass them in directly
+      sinon.assert.calledOnce(config.getTwilioClient().calls.create);
+      assert.deepStrictEqual(config.getTwilioClient().calls.create.firstCall.args, [{
+        from: relayService.phoneNumber,
+        to: playerNumber,
+        machineDetection: 'enable',
+        method: 'POST',
+        twiml: (
+          '<?xml version="1.0" encoding="UTF-8"?>' +
+          '<Response><Gather input="dtmf speech" timeout="10" speechTimeout="10" ' +
+          'action="http://twilio.test/endpoints/twilio/calls/response?relay=1&amp;trip=1&amp;clip=call_clip" ' + 
+          'partialResultCallback="http://twilio.test/endpoints/twilio/calls/response?relay=1&amp;trip=1&amp;clip=call_clip&amp;partial=true" ' + 
+          'hints="yes no">' + 
+          '<Say voice="alice">This is a test call clip.</Say>' + 
+          '</Gather></Response>'
+        ),
+        statusCallback: 'http://twilio.test/endpoints/twilio/calls/status?trip=1&relay=1',
+        statusCallbackMethod: 'POST',
+      }]);
     });
   });
 });

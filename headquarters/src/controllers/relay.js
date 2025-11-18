@@ -6,6 +6,7 @@ const config = require('../config.ts');
 const models = require('../models');
 const ExperienceController = require('./experience');
 const LogEntryController = require('./log_entry');
+const RelayTwimlController = require('./relay_twiml');
 
 const logger = config.logger.child({ name: 'controllers.relay' });
 
@@ -42,20 +43,6 @@ class RelayController {
   }
 
   /**
-   * Find sibling relays with the supplied 'as' and 'with' values.
-   */
-  static async findSiblings(relay, asRoleName, withRoleName) {
-    return await models.Relay.findAll({
-      where: {
-        stage: config.env.HQ_STAGE,
-        tripId: relay.tripId,
-        withRoleName: withRoleName,
-        asRoleName: asRoleName
-      }
-    });
-  }
-
-  /**
    * Get player for the "for" role for this relay and a given participant phone
    * number.
    */
@@ -83,7 +70,7 @@ class RelayController {
   /**
    * Initiate a call.
    */
-  static async initiateCall(relay, toPlayer, detectVoicemail) {
+  static async initiateCall(relay, toPlayer, detectVoicemail, gatheredTwimlOps) {
     // Only call if we have a twilio client
     if (!config.getTwilioClient()) {
       return;
@@ -106,10 +93,6 @@ class RelayController {
       to: toParticipant.phoneNumber,
       from: relay.relayPhoneNumber,
       machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
-      url: (
-        `${twilioHost}/endpoints/twilio/calls/outgoing` +
-        `?trip=${toPlayer.tripId}&relay=${relay.id}`
-      ),
       method: 'POST',
       statusCallback: (
         `${twilioHost}/endpoints/twilio/calls/status` + 
@@ -117,6 +100,17 @@ class RelayController {
       ),
       statusCallbackMethod: 'POST'
     };
+
+    if (gatheredTwimlOps && gatheredTwimlOps.length > 0) {
+      const twimlRes = await RelayTwimlController.interpretTwimlOps(toPlayer.tripId, relay, gatheredTwimlOps);
+      callOpts.twiml = twimlRes.toString();   
+    } else {
+      callOpts.url = (
+        `${twilioHost}/endpoints/twilio/calls/outgoing` +
+        `?trip=${toPlayer.tripId}&relay=${relay.id}`
+      );
+    }
+
     await config.getTwilioClient().calls.create(callOpts);
     await relay.update({
       lastActiveAt: moment.utc()
