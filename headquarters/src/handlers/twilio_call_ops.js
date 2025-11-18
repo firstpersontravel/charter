@@ -58,7 +58,7 @@ class TwilioCallOps {
     const twilioHost = config.env.HQ_TWILIO_HOST;
     const gather = twimlResponse.gather(Object.assign({
       input: 'dtmf speech',
-      timeout: 5,
+      timeout: 10,
       speechTimeout: 20,
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +

@@ -1,6 +1,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
+const TextUtil = require('fptcore/src/utils/text');
+
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
@@ -113,7 +115,8 @@ describe('TwilioUtil', () => {
       const result = await TwilioUtil.getRelayForExistingOrNewTrip(relayNum, playerNum, 'hi');
       assert.strictEqual(result, stubCreatedRelay);
 
-      sinon.assert.calledWith(EntrywayController.createTripFromEntryway, stubScript, 'Player', playerNum);
+      const expectedName = TextUtil.formatPhone('(111) 222-3333');
+      sinon.assert.calledWith(EntrywayController.createTripFromEntryway, stubScript, 'Player', playerNum, expectedName);
       sinon.assert.calledWith(TripResetHandler.resetToStart, stubTrip.id);
       sinon.assert.calledWith(RelaysController.createRelayFromIncoming, stubRelayService, stubRelayEntryway, stubScript.content.relays[0], stubTrip, playerNum);
 

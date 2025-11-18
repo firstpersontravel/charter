@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 
+const TextUtil = require('fptcore/src/utils/text');
+
 const config = require('../config.ts');
 const models = require('../models');
 
@@ -70,7 +72,8 @@ class TwilioUtil {
     }
 
     // Create trip and initialize it
-    const trip = await EntrywayController.createTripFromEntryway(script, entrywayRelaySpec.for, forNumber);
+    const participantName = TextUtil.formatPhone(forNumber);
+    const trip = await EntrywayController.createTripFromEntryway(script, entrywayRelaySpec.for, forNumber, participantName);
     await TripResetHandler.resetToStart(trip.id);
     
     // Create relay for trip

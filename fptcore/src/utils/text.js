@@ -39,7 +39,13 @@ class TextUtil {
   }
 
   static formatPhone(text) {
-    if (!text || text.length !== 10) {
+    if (!text) {
+      return null;
+    }
+    if (text.startsWith('+1')) {
+      text = text.substring(2);
+    }
+    if (text.length !== 10) {
       return text;
     }
     return '(' + text.substr(0, 3) + ') ' + text.substr(3, 3) + '-' +

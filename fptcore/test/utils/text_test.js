@@ -10,6 +10,13 @@ describe('TextUtil', () => {
     sandbox.restore();
   });
 
+  describe('#formatPhone', () => {
+    it('formats a phone number', () => {
+      assert.strictEqual(TextUtil.formatPhone('1112223333'), '(111) 222-3333');
+      assert.strictEqual(TextUtil.formatPhone('+11112223333'), '(111) 222-3333');
+    });
+  });
+
   describe('#varForText', () => {
     it('slugifies a complex name', () => {
       assert.strictEqual(TextUtil.varForText('Bob\'s friend'), 'bobs_friend');
