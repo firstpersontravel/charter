@@ -1,4 +1,3 @@
-const _ = require('lodash');
 
 const TemplateUtil = require('../../utils/template');
 
@@ -25,7 +24,7 @@ module.exports = {
       params.new_value_ref);
     return [{
       operation: 'updateTripValues',
-      values: _.fromPairs([[params.value_ref, newValue]])
+      values: Object.fromEntries([[params.value_ref, newValue]])
     }];
   }
 };

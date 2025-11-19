@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { find } = require('../utils/lodash-replacements');
 
 const coreRegistry = require('../core-registry');
 
@@ -47,7 +47,7 @@ class KernelTriggers {
    * Test if a scene is active for a given context.
    */
   static isSceneActive(sceneName, actionContext) {
-    const scene = _.find(actionContext.scriptContent.scenes, {
+    const scene = find(actionContext.scriptContent.scenes, {
       name: sceneName
     });
     if (!scene) {
@@ -88,7 +88,7 @@ class KernelTriggers {
    * Get triggers that should be set off by a given action name and params.
    */
   static triggersForEvent(event, actionContext) {
-    return _.filter(actionContext.scriptContent.triggers, (trigger) => {
+    return actionContext.scriptContent.triggers.filter((trigger) => {
       if (!trigger.event) {
         return false;
       }

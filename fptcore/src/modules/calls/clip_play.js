@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 const TemplateUtil = require('../../utils/template');
 
@@ -15,7 +15,7 @@ module.exports = {
   },
   getOps(params, actionContext) {
     // Find the clip.
-    const clip = _.find(actionContext.scriptContent.clips, { name: params.clip_name });
+    const clip = find(actionContext.scriptContent.clips, { name: params.clip_name });
     if (!clip) {
       return [{
         operation: 'log',

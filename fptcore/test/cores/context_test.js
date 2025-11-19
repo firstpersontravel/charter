@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const assert = require('assert');
 const sinon = require('sinon');
 
@@ -231,11 +230,11 @@ describe('ContextCore', () => {
       // Tests empty
       trip.waypointOptions.waypoint1 = null;
       const res3 = ContextCore.gatherEvalContext(env, trip);
-      assert.strictEqual(_.includes(Object.keys(res3), 'color'), false);
+      assert.strictEqual(Object.keys(res3).includes('color'), false);
       // Tests bad option
       trip.waypointOptions.waypoint1 = 'nonexistent';
       const res4 = ContextCore.gatherEvalContext(env, trip);
-      assert.strictEqual(_.includes(Object.keys(res4), 'color'), false);
+      assert.strictEqual(Object.keys(res4).includes('color'), false);
     });
   });
 });

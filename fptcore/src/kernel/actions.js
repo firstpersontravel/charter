@@ -1,7 +1,6 @@
-const _ = require('lodash');
-
 const coreRegistry = require('../core-registry');
 const Evaluator = require('../utils/evaluator');
+const { isPlainObject } = require('../utils/lodash-replacements');
 
 const evaluator = new Evaluator(coreRegistry);
 
@@ -13,11 +12,11 @@ class KernelActions {
     if (!actions) {
       return;
     }
-    if (!_.isArray(actions)) {
+    if (!Array.isArray(actions)) {
       throw new Error(`Expected actions to be array, was ${typeof actions}.`);
     }
     for (const [i, action] of Object.entries(actions)) {
-      if (!_.isPlainObject(action)) {
+      if (!isPlainObject(action)) {
         throw new Error(`Expected action to be object, was ${typeof action}.`);
       }
       const indexPath = path + '[' + i + ']';
@@ -87,13 +86,13 @@ class KernelActions {
     }
 
     // Ensure an array is returned
-    if (!_.isArray(actions)) {
+    if (!Array.isArray(actions)) {
       throw new Error('Expected actions to be an array.');
     }
 
     // Scan each item is and expand subclauses.
-    return _.flatten(actions.map((action) => {
-      if (!_.isPlainObject(action)) {
+    return actions.map((action) => {
+      if (!isPlainObject(action)) {
         throw new Error('Expected action to be an object.');
       }
       // Detect conditional clauses
@@ -102,7 +101,7 @@ class KernelActions {
       }
       // Otherwise it's a simple action.
       return [action];
-    }));
+    }).flat();
   }
 
   /**

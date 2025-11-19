@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../utils/lodash-replacements');
 
 class PlayerCore {
   static getInitialFields(scriptContent, roleName, variantNames) {
@@ -11,11 +11,11 @@ class PlayerCore {
 
   static getPageInfo(script, evalContext, trip, player) {
     var pageName = trip.tripState.currentPageNamesByRole[player.roleName];
-    var page = _.find(script.content.pages, { name: pageName });
+    var page = find(script.content.pages, { name: pageName });
     if (!page) {
       return null;
     }
-    var scene = _.find(script.content.scenes, { name: page.scene }) ||
+    var scene = find(script.content.scenes, { name: page.scene }) ||
       { name: 'No scene', title: 'No scene' };
     var pageTitle = page ? page.title : pageName;
     return {

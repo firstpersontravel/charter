@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const fs = require('fs');
+const { cloneDeep } = require('./utils/lodash-replacements');
 
 const coreRegistry = require('./core-registry');
 const TextUtil = require('./utils/text');
@@ -25,7 +25,7 @@ for (const file of fs.readdirSync(__dirname + '/../migrations')) {
   });
 }
 
-Migrator.Migrations = _.sortBy(migrations, 'num');
+Migrator.Migrations = migrations.sort((a, b) => a.num - b.num);
 
 Migrator.getMigrations = function(currentMigrationNum) {
   return Migrator.Migrations.filter(function(migration) {
@@ -78,7 +78,7 @@ Migrator.runMigrations = function(migrations, scriptContent, assets) {
  * Return migrated script content up to version number.
  */
 Migrator.migrateScriptContent = function(scriptContent, assets) {
-  var migrated = _.cloneDeep(scriptContent);
+  var migrated = cloneDeep(scriptContent);
   if (!migrated.meta) {
     migrated.meta = { version: 0 };
   }

@@ -1,17 +1,17 @@
-const _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   help: 'Occurs when an audio message has been received.',
   getTitle: function(scriptContent, spec) {
     const parts = ['audio'];
     if (spec.from) {
-      const fromRole = _.find(scriptContent.roles, { name: spec.from });
+      const fromRole = find(scriptContent.roles, { name: spec.from });
       if (fromRole) {
         parts.push(fromRole.title);
       }
     }
     if (spec.to) {
-      const toRole = _.find(scriptContent.roles, { name: spec.to });
+      const toRole = find(scriptContent.roles, { name: spec.to });
       if (toRole) {
         parts.push('to ' + toRole.title);
       }

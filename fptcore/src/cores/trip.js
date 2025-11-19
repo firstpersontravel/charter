@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var moment = require('moment');
 
 var TimeUtil = require('../utils/time');
@@ -9,18 +8,22 @@ class TripCore {
    * Do default ones first, then non-defaults (non-defaults override defaults).
    */
   static _getActiveVariants(scriptContent, variantNames) {
-    return _(scriptContent.variants)
+    return scriptContent.variants
       .filter(function(variant) {
         if (variant.default) {
           return true;
         }
-        if (_.includes(variantNames, variant.name)) {
+        if (variantNames.includes(variant.name)) {
           return true;
         }
         return false;
       })
-      .sortBy(['default', 'name'])
-      .value();
+      .sort((a, b) => {
+        if (a.default !== b.default) {
+          return a.default ? -1 : 1;
+        }
+        return a.name > b.name ? 1 : -1;
+      });
   }
 
   /**
@@ -40,13 +43,13 @@ class TripCore {
     var variants = this._getActiveVariants(scriptContent, variantNames);  
     variants.forEach((variant) => {
       if (variant.customizations) {
-        _.assign(fields.customizations, variant.customizations);
+        Object.assign(fields.customizations, variant.customizations);
       }
       if (variant.waypoint_options) {
-        _.assign(fields.waypointOptions, variant.waypoint_options);
+        Object.assign(fields.waypointOptions, variant.waypoint_options);
       }
       if (variant.initial_values) {
-        _.assign(fields.values, variant.initial_values);
+        Object.assign(fields.values, variant.initial_values);
       }
       if (variant.schedule) {
         var day = moment(date).format('YYYY-MM-DD');

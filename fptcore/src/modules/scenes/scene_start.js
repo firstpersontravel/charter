@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 const SceneCore = require('../../cores/scene');
 
@@ -16,7 +16,7 @@ module.exports = {
   getOps(params, actionContext) {
     const scriptContent = actionContext.scriptContent;
     var newSceneName = params.scene_name;
-    var newScene = _.find(scriptContent.scenes,
+    var newScene = find(scriptContent.scenes,
       { name: newSceneName });
     if (!newScene) {
       return [{

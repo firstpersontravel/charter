@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   icon: 'phone',
@@ -35,13 +35,13 @@ module.exports = {
   getTitle: function(scriptContent, resource) {
     var parts = [];
     if (resource.with) {
-      var withRole = _.find(scriptContent.roles, { name: resource.with });
+      var withRole = find(scriptContent.roles, { name: resource.with });
       if (withRole) {
         parts.push('with ' + withRole.title);
       }
     }
     if (resource.as && resource.as !== resource.for) {
-      var asRole = _.find(scriptContent.roles, { name: resource.as });
+      var asRole = find(scriptContent.roles, { name: resource.as });
       if (asRole) {
         parts.push('as ' + asRole.title);
       }
