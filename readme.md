@@ -57,6 +57,9 @@ npm run migrate
 # Run tests
 npm test
 
+# To run a specific test
+cd headquarters; npm run mocha -- -g PATTERN
+
 # Run tests showing all log output
 SHOW_TEST_LOGS=1 npm test
 

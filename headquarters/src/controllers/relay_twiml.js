@@ -1,14 +1,51 @@
+const _ = require('lodash');
+const twilio = require('twilio');
 const config = require('../config.ts');
 const models = require('../models');
-const RelayController = require('../controllers/relay');
-const TwilioCallUtil = require('./twilio_call_util');
+const TwilioCallUtil = require('../handlers/twilio_call_util');
 
-var logger = config.logger.child({ name: 'handlers.twilio_call_ops' });
+var logger = config.logger.child({ name: 'controllers.relay_twiml' });
 
-class TwilioCallOps {
+class RelayTwimlController {
+  /**
+   * Find sibling relays with the supplied 'as' and 'with' values.
+   */
+  static async _findSiblings(relay, asRoleName, withRoleName) {
+    return await models.Relay.findAll({
+      where: {
+        stage: config.env.HQ_STAGE,
+        tripId: relay.tripId,
+        withRoleName: withRoleName,
+        asRoleName: asRoleName
+      }
+    });
+  }
+
+  /**
+   * Interpret a single twiml event.
+   */
+  static async _interpretTwimlEvent(tripId, relay, twimlRes, twimlOp) {
+    const twimlFunc = this[twimlOp.clause];
+    if (!twimlFunc) {
+      throw new Error('Could not identify twiml op.');
+    }
+    await twimlFunc.call(this, tripId, relay, twimlRes, twimlOp);
+  }
+
+  /**
+   * Interpret multiple twiml events.
+   */
+  static async interpretTwimlOps(tripId, relay, twimlOps) {
+    const twimlRes = new twilio.twiml.VoiceResponse();
+    for (let twimlOp of twimlOps) {
+      await this._interpretTwimlEvent(tripId, relay, twimlRes, twimlOp);
+    }
+    return twimlRes;
+  }
+
   static async dial(tripId, relay, twimlResponse, twimlOp) {
     // finding the opposite relay, so "as" = to, and "with" = from
-    const dialRelays = await RelayController.findSiblings(
+    const dialRelays = await this._findSiblings(
       relay, twimlOp.toRoleName, twimlOp.fromRoleName);
     if (dialRelays.length === 0) {
       logger.warn(
@@ -59,7 +96,7 @@ class TwilioCallOps {
     const gather = twimlResponse.gather(Object.assign({
       input: 'dtmf speech',
       timeout: 10,
-      speechTimeout: 10,
+      speechTimeout: 5,
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`
@@ -76,4 +113,5 @@ class TwilioCallOps {
   }
 }
 
-module.exports = TwilioCallOps;
+module.exports = RelayTwimlController;
+

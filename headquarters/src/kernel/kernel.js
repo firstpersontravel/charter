@@ -11,13 +11,14 @@ const ActionContext = require('./action_context');
 const logger = config.logger.child({ name: 'kernel.kernel' });
 
 class KernelController {
-  static async _applyOp(actionContext, op) {
-    await KernelOpController.applyOp(actionContext._objs, op);
+  static async _applyOp(actionContext, op, gatheredTwimlOps) {
+    await KernelOpController.applyOp(actionContext._objs, op, gatheredTwimlOps);
   }
 
   static async _applyOps(actionContext, ops) {
+    const gatheredTwimlOps = this.gatherTwimlOpsFromResultOps(ops);
     for (const op of ops) {
-      await this._applyOp(actionContext, op);
+      await this._applyOp(actionContext, op, gatheredTwimlOps);
     }
   }
 
@@ -27,6 +28,10 @@ class KernelController {
       await ActionController.scheduleAction(actionContext._objs.trip, action,
         actionContext.triggeringPlayerId);
     }
+  }
+
+  static gatherTwimlOpsFromResultOps(resultOps) {
+    return _.filter(resultOps, { operation: 'twiml' });
   }
 
   /**

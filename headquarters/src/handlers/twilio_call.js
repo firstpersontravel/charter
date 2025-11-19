@@ -8,40 +8,18 @@ const KernelController = require('../kernel/kernel');
 const NotifyController = require('../controllers/notify');
 const RelayController = require('../controllers/relay');
 const TwilioUtil = require('./twilio_util');
-const TwilioCallOps = require('./twilio_call_ops');
 const TwilioCallUtil = require('./twilio_call_util');
+const RelayTwimlController = require('../controllers/relay_twiml');
 
 class TwilioCallHandler {
-  /**
-   * Interpret a single twiml event.
-   */
-  static async _interpretTwimlEvent(tripId, relay, twimlRes, twimlOp) {
-    const twimlFunc = TwilioCallOps[twimlOp.clause];
-    if (!twimlFunc) {
-      throw new Error('Could not identify twiml op.');
-    }
-    await twimlFunc.call(TwilioCallOps, tripId, relay, twimlRes, twimlOp);
-  }
-
-  /**
-   * Interpret multiple twiml events.
-   */
-  static async _interpretTwimlOps(tripId, relay, twimlOps) {
-    const twimlRes = new twilio.twiml.VoiceResponse();
-    for (let twimlOp of twimlOps) {
-      await this._interpretTwimlEvent(tripId, relay, twimlRes, twimlOp);
-    }
-    return twimlRes;
-  }
-
   /**
    * Trigger an event in the system and gather twiml from the response.
    */
   static async _triggerEventAndGatherTwiml(tripId, relay, event) {
     const result = await KernelController.applyEvent(tripId, event);
     await NotifyController.notifyEvent(tripId, event);
-    const twimlOps = _.filter(result.resultOps, { operation: 'twiml' });
-    const twimlResult = await this._interpretTwimlOps(tripId, relay, twimlOps);
+    const twimlOps = KernelController.gatherTwimlOpsFromResultOps(result.resultOps);
+    const twimlResult = await RelayTwimlController.interpretTwimlOps(tripId, relay, twimlOps);
     return twimlResult;
   }
 

@@ -26,8 +26,8 @@ const RelayEntryway = database.define('RelayEntryway', snakeCaseColumns({
   isTemporary: booleanField()
 }));
 
-RelayEntryway.belongsTo(Org, belongsToField('org'));
-RelayEntryway.belongsTo(Experience, belongsToField('experience'));
-RelayEntryway.belongsTo(RelayService, belongsToField('relayService'));
+RelayEntryway.belongsTo(Org, mutableModifier(belongsToField('org')));
+RelayEntryway.belongsTo(Experience, mutableModifier(belongsToField('experience')));
+RelayEntryway.belongsTo(RelayService, mutableModifier(belongsToField('relayService')));
 
 module.exports = RelayEntryway;

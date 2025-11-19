@@ -6,6 +6,7 @@ const { sandbox } = require('../mocks');
 const config = require('../../src/config.ts');
 const models = require('../../src/models');
 const RelayController = require('../../src/controllers/relay');
+const RelayTwimlController = require('../../src/controllers/relay_twiml');
 const KernelController = require('../../src/kernel/kernel');
 const TwilioCallHandler = require('../../src/handlers/twilio_call');
 const TwilioUtil = require('../../src/handlers/twilio_util');
@@ -25,7 +26,7 @@ describe('TwilioCallHandler', () => {
       };
       // Stub searching for opposite relay
       sandbox
-        .stub(RelayController, 'findSiblings')
+        .stub(RelayTwimlController, '_findSiblings')
         .resolves([stubOppositeRelay]);
       // Stub searching for player
       sandbox
@@ -48,9 +49,9 @@ describe('TwilioCallHandler', () => {
       );
 
       // Assert found relays by opposite
-      sinon.assert.calledOnce(RelayController.findSiblings);
+      sinon.assert.calledOnce(RelayTwimlController._findSiblings);
       assert.deepStrictEqual(
-        RelayController.findSiblings.firstCall.args,
+        RelayTwimlController._findSiblings.firstCall.args,
         [stubRelay, 'ToPerson', 'FromPerson']);
       // Assert found player by role
       sinon.assert.calledOnce(models.Player.findOne);
@@ -142,7 +143,7 @@ describe('TwilioCallHandler', () => {
       assert.strictEqual(
         twiml.toString(),
         '<?xml version="1.0" encoding="UTF-8"?>' +
-        '<Response><Gather input="dtmf speech" timeout="10" speechTimeout="10" ' +
+        '<Response><Gather input="dtmf speech" timeout="10" speechTimeout="5" ' +
         'action="http://twilio.test/endpoints/twilio/calls/response' +
         '?relay=100&amp;trip=1&amp;clip=CLIP-123" ' +
         'partialResultCallback=' +
