@@ -88,7 +88,8 @@ class KernelTriggers {
    * Get triggers that should be set off by a given action name and params.
    */
   static triggersForEvent(event, actionContext) {
-    return actionContext.scriptContent.triggers.filter((trigger) => {
+    const triggers = actionContext.scriptContent.triggers || [];
+    return triggers.filter((trigger) => {
       if (!trigger.event) {
         return false;
       }

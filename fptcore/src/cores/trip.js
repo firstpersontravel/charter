@@ -8,7 +8,8 @@ class TripCore {
    * Do default ones first, then non-defaults (non-defaults override defaults).
    */
   static _getActiveVariants(scriptContent, variantNames) {
-    return scriptContent.variants
+    const variants = scriptContent.variants || [];
+    return variants
       .filter(function(variant) {
         if (variant.default) {
           return true;
