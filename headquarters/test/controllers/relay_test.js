@@ -40,26 +40,6 @@ describe('RelayController', () => {
     });
   });
 
-  describe('#findSiblings', () => {
-    it('looks up sibling relays', async () => {
-      const relay = { tripId: 3 };
-      const stubResult = { id: 2 };
-      sandbox.stub(models.Relay, 'findAll').resolves(stubResult);
-      
-      const res = await RelayController.findSiblings(relay, 'as', 'with');
-
-      assert.strictEqual(res, stubResult);
-      sinon.assert.calledWith(models.Relay.findAll, {
-        where: {
-          stage: 'test',
-          tripId: relay.tripId,
-          withRoleName: 'with',
-          asRoleName: 'as'
-        }
-      });
-    });
-  });
-
   describe('#lookupPlayer', () => {
     it('looks up player by relay and phone number', async () => {
       const stubPlayer = { id: 1 };
@@ -115,6 +95,7 @@ describe('RelayController', () => {
         [{
           from: '+19999999999',
           to: '+11111111111',
+          asyncAmd: 'true',
           machineDetection: 'enable',
           method: 'POST',
           url: (

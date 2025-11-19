@@ -73,6 +73,7 @@ async function callResponseRoute(req, res) {
   const speechResult = req.body[speechResultKey];
   const digitsResult = req.body.Digits;
   const response = digitsResult || speechResult;
+  console.log(req.body);
   const twimlResponse = await (
     TwilioCallHandler.handleCallResponse(relayId, tripId, callSid, clipName, 
       response, isPartial)
