@@ -1,7 +1,7 @@
-const _ = require('lodash');
 const moment = require('moment');
 
 const TextUtil = require('../utils/text');
+const { find, get } = require('../utils/lodash-replacements');
 
 class ContextCore {
   /**
@@ -10,16 +10,16 @@ class ContextCore {
   static gatherPlayerEvalContext(env, trip, player) {
     const participant = player.participant || {};
     const profile = participant.profile || {};
-    const role = _.find(_.get(trip, 'script.content.roles') || [],
+    const role = find(get(trip, 'script.content.roles') || [],
       { name: player.roleName }) || {};
     const pageNamesByRole = trip.tripState.currentPageNamesByRole || {};
     const pageName = pageNamesByRole[player.roleName];
-    const page = _.find(_.get(trip, 'script.content.pages') || [],
+    const page = find(get(trip, 'script.content.pages') || [],
       { name: pageName }) || {};
     const link = (env.host || '') + '/s/' + player.id;
     const joinLink = (env.host || '') + '/entry/t/' + (trip.id || 0) + '/r/' + player.roleName;
     const contactName = role.title || participant.name || null;
-    return _.assign({}, profile.values, {
+    return Object.assign({}, profile.values, {
       link: link,
       join_link: joinLink,
       contact_name: contactName,
@@ -43,7 +43,7 @@ class ContextCore {
    */
   static gatherEvalContext(env, trip) {
     // Gather schedule including var-ized time titles.
-    const scheduleByTitle = _.fromPairs(
+    const scheduleByTitle = Object.fromEntries(
       Object.keys(trip.schedule || {})
         .map(timeName => (
           (trip.script.content.times || []).find(t => t.name === timeName)
@@ -56,7 +56,7 @@ class ContextCore {
     const schedule = Object.assign({}, trip.schedule, scheduleByTitle);
 
     // Gather core values
-    const context = _.assign({}, trip.customizations, trip.values, {
+    const context = Object.assign({}, trip.customizations, trip.values, {
       date: moment.utc(trip.date, 'YYYY-MM-DD').format('dddd, MMMM D'),
       tripState: trip.tripState,
       waypointOptions: trip.waypointOptions,
@@ -66,26 +66,26 @@ class ContextCore {
     });
     // Add waypoint values if present
     const waypointNames = Object.keys(trip.waypointOptions || {});
-    _.each(waypointNames, (waypointName) => {
+    waypointNames.forEach((waypointName) => {
       const waypoints = trip.script.content.waypoints;
-      const waypoint = _.find(waypoints, { name: waypointName });
+      const waypoint = find(waypoints, { name: waypointName });
       if (!waypoint) {
         return;
       }
       const optionName = trip.waypointOptions[waypointName];
-      const option = _.find(waypoint.options, { name: optionName });
+      const option = find(waypoint.options, { name: optionName });
       if (!option) {
         return;
       }
       if (option.values) {
-        _.assign(context, option.values);
+        Object.assign(context, option.values);
       }
     });
 
     // Add player values
-    const roles = _.get(trip, 'script.content.roles') || [];
-    _.each(trip.players, (player) => {
-      const role = _.find(roles, { name: player.roleName });
+    const roles = get(trip, 'script.content.roles') || [];
+    (trip.players || []).forEach((player) => {
+      const role = find(roles, { name: player.roleName });
       if (!role) {
         return;
       }

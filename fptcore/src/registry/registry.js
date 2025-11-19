@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { omit, merge } = require('../utils/lodash-replacements');
 
 class Registry {
   constructor(modules, components) {
@@ -78,8 +78,8 @@ class Registry {
     // TODO: all components should just use `properties` as a name.
     const varietyClass = Object.assign({
       properties: componentsRegistry[variety][componentDef.propertiesKey]
-    }, _.omit(componentsRegistry[variety], componentDef.propertiesKey));
-    const componentClass = this._cache[cacheKey] = _.merge({}, typeClass, commonClass, varietyClass);
+    }, omit(componentsRegistry[variety], componentDef.propertiesKey));
+    const componentClass = this._cache[cacheKey] = merge({}, typeClass, commonClass, varietyClass);
     return componentClass;
   }
 

@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   help: 'Occurs when a player enters a geofenced region.',
@@ -24,9 +24,9 @@ module.exports = {
     );
   },
   getTitle: function(scriptContent, resource, registry) {
-    const role = _.find(scriptContent.roles, { name: resource.role });
-    const geofence = _.find(scriptContent.geofences, { name: resource.geofence });
-    const waypoint = geofence ? _.find(scriptContent.waypoints, { name: geofence.center }) : null;
+    const role = find(scriptContent.roles, { name: resource.role });
+    const geofence = find(scriptContent.geofences, { name: resource.geofence });
+    const waypoint = geofence ? find(scriptContent.waypoints, { name: geofence.center }) : null;
     return `${role ? role.title : 'unknown' } entered "${waypoint ? waypoint.title : 'unknown'}"`;
   }
 };

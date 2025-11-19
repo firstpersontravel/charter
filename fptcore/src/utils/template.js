@@ -1,7 +1,7 @@
-const _ = require('lodash');
 const moment = require('moment-timezone');
 
 const TimeUtil = require('./time');
+const { get } = require('./lodash-replacements');
 
 const refConstants = { true: true, false: false, null: null };
 const templateRegex = /{{\s*([\w_\-.:]+)\s*}}/gi;
@@ -9,16 +9,16 @@ const ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif
 
 class TemplateUtil {
   static lookupRef(evalContext, ref, roleName=null) {
-    if (_.isBoolean(ref) || _.isNull(ref) || _.isNumber(ref)) {
+    if (typeof ref === 'boolean' || ref === null || typeof ref === 'number') {
       return ref;
     }
-    if (!_.isString(ref)) {
+    if (typeof ref !== 'string') {
       return null;
     }
     if (!isNaN(Number(ref))) {
       return Number(ref);
     }
-    if (!_.isUndefined(refConstants[ref])) {
+    if (refConstants[ref] !== undefined) {
       return refConstants[ref];
     }
     if ((ref[0] === '"' && ref[ref.length - 1] === '"') ||
@@ -29,15 +29,15 @@ class TemplateUtil {
     if (ref.startsWith('player.') && roleName) {
       ref = `roleStates.${roleName}[0].${ref.split('.')[1]}`;
     }
-    const result = _.get(evalContext, ref);
-    return _.isUndefined(result) ? null : result;
+    const result = get(evalContext, ref);
+    return result === undefined ? null : result;
   }
 
   static templateText(evalContext, text, timezone, roleName=null) {
     if (text === null || text === undefined) { return ''; }
     if (text === false) { return 'No'; }
     if (text === true) { return 'Yes'; }
-    if (_.isNumber(text)) { return text.toString(); }
+    if (typeof text === 'number') { return text.toString(); }
 
     // Is time
     if (TimeUtil.isoTimeRegex.test(text)) {

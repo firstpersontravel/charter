@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   help: 'Occurs when a player responds to a clip over the phone.',
@@ -42,7 +42,7 @@ module.exports = {
   },
   getTitle: function(scriptContent, spec) {
     if (spec.clip) {
-      var clip = _.find(scriptContent.clips, { name: spec.clip });
+      var clip = find(scriptContent.clips, { name: spec.clip });
       return `${clip.title} answered`;
     }
     return 'clip answered';

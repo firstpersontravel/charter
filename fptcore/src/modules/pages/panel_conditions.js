@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { get } = require('../../utils/lodash-replacements');
 
 module.exports = {
   submission_contains: {
@@ -12,7 +12,7 @@ module.exports = {
       }
     },
     eval: (params, actionContext) => {
-      const msg = _.get(actionContext.evalContext, 'event.submission');
+      const msg = get(actionContext.evalContext, 'event.submission');
       return (
         typeof msg === 'string' &&
         msg.toLowerCase().indexOf(params.part.toLowerCase()) > -1

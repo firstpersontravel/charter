@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const jsonschema = require('jsonschema');
 
 const TextUtil = require('../utils/text');
@@ -49,7 +48,7 @@ class ScriptCore {
     const names = new Set();
 
     // Check is array
-    if (!_.isArray(collection)) {
+    if (!Array.isArray(collection)) {
       errors.push({
         path: collectionName,
         collection: collectionName,
@@ -139,7 +138,7 @@ class ScriptCore {
     }
 
     if (errors.length > 0) {
-      const collectionNames = _.uniq(_.map(errors, 'collection'));
+      const collectionNames = [...new Set(errors.map(e => e.collection))];
       const onlyOne = errors.length === 1;
       const message = (
         'There ' +
