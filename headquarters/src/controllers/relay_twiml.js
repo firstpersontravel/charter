@@ -95,8 +95,8 @@ class RelayTwimlController {
     const twilioHost = config.env.HQ_TWILIO_HOST;
     const gather = twimlResponse.gather(Object.assign({
       input: 'dtmf speech',
-      timeout: 10,
-      speechTimeout: 10,
+      timeout: 8,
+      speechTimeout: 8,
       action: (
         `${twilioHost}/endpoints/twilio/calls/response` +
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`

@@ -93,6 +93,7 @@ class RelayController {
       to: toParticipant.phoneNumber,
       from: relay.relayPhoneNumber,
       machineDetection: detectVoicemail ? 'detectMessageEnd' : 'enable',
+      asyncAmd: 'true', // don't delay the call for machine detection.
       method: 'POST',
       statusCallback: (
         `${twilioHost}/endpoints/twilio/calls/status` + 

@@ -95,6 +95,7 @@ describe('RelayController', () => {
         [{
           from: '+19999999999',
           to: '+11111111111',
+          asyncAmd: 'true',
           machineDetection: 'enable',
           method: 'POST',
           url: (

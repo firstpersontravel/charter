@@ -316,6 +316,7 @@ describe('Twilio Integration', () => {
       assert.deepStrictEqual(config.getTwilioClient().calls.create.firstCall.args, [{
         from: relayService.phoneNumber,
         to: playerNumber,
+        asyncAmd: 'true',
         machineDetection: 'enable',
         method: 'POST',
         statusCallback: 'http://twilio.test/endpoints/twilio/calls/status?trip=1&relay=1',
@@ -335,11 +336,12 @@ describe('Twilio Integration', () => {
       assert.deepStrictEqual(config.getTwilioClient().calls.create.firstCall.args, [{
         from: relayService.phoneNumber,
         to: playerNumber,
+        asyncAmd: 'true',
         machineDetection: 'enable',
         method: 'POST',
         twiml: (
           '<?xml version="1.0" encoding="UTF-8"?>' +
-          '<Response><Gather input="dtmf speech" timeout="10" speechTimeout="10" ' +
+          '<Response><Gather input="dtmf speech" timeout="8" speechTimeout="8" ' +
           'action="http://twilio.test/endpoints/twilio/calls/response?relay=1&amp;trip=1&amp;clip=call_clip" ' + 
           'partialResultCallback="http://twilio.test/endpoints/twilio/calls/response?relay=1&amp;trip=1&amp;clip=call_clip&amp;partial=true" ' + 
           'hints="yes no">' + 
