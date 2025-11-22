@@ -343,7 +343,6 @@ describe('Twilio Integration', () => {
           '<?xml version="1.0" encoding="UTF-8"?>' +
           '<Response><Gather input="dtmf speech" timeout="10" speechTimeout="5" ' +
           'action="http://twilio.test/endpoints/twilio/calls/response?relay=1&amp;trip=1&amp;clip=call_clip" ' + 
-          'partialResultCallback="http://twilio.test/endpoints/twilio/calls/response?relay=1&amp;trip=1&amp;clip=call_clip&amp;partial=true" ' + 
           'hints="yes no">' + 
           '<Say voice="alice">This is a test call clip.</Say>' + 
           '</Gather></Response>'

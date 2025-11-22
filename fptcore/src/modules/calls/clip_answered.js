@@ -14,7 +14,8 @@ module.exports = {
     },
     allow_partial: {
       type: 'boolean',
-      hint: 'Allow partial responses.'
+      hint: 'Allow partial responses.',
+      display: { hidden: true }
     }
   },
   eventParams: {

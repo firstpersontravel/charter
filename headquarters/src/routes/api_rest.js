@@ -117,7 +117,7 @@ async function updateRecord(model, record, fields) {
   const updateFields = Object.keys(fields);
 
   // Add timestamps.
-  const now = moment.utc();
+  const now = moment.utc().clone().milliseconds(0);
   if (record.isNewRecord && model.rawAttributes.createdAt) {
     record.createdAt = now;
     updateFields.push('createdAt');
@@ -328,6 +328,11 @@ function replaceRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
+    if (req.get('If-Unmodified-Since') && model.rawAttributes.updatedAt) {
+      if (req.get('If-Unmodified-Since') !== record.updatedAt.toISOString()) {
+        throw errors.preconditionFailedError('Resource has been modified since the provided timestamp.');
+      }
+    }
     res.loggingOrgId = record.orgId ? Number(record.orgId) : null;
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);
@@ -356,6 +361,11 @@ function updateRecordRoute(model, authz, opts={}) {
   return async (req, res) => {
     const recordId = req.params.recordId;
     const record = await loadRecord(model, recordId);
+    if (req.get('If-Unmodified-Since') && model.rawAttributes.updatedAt) {
+      if (req.get('If-Unmodified-Since') !== record.updatedAt.toISOString()) {
+        throw errors.preconditionFailedError('Resource has been modified since the provided timestamp.');
+      }
+    }
     res.loggingOrgId = record.orgId ? Number(record.orgId) : null;
     authz.checkRecord(req, 'update', model, record);
     authz.checkFields(req, 'update', model, record, req.body);

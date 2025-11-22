@@ -36,7 +36,7 @@ describe('API create', () => {
           assert.deepStrictEqual(res.body, {
             data: {
               participant: {
-                createdAt: mockNow.toISOString(),
+                createdAt: mockNow.clone().milliseconds(0).toISOString(),
                 experienceId: experience.id,
                 orgId: experience.orgId,
                 deviceBattery: null,

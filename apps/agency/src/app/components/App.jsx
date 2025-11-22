@@ -113,6 +113,17 @@ export default class App extends Component {
     );
   }
 
+
+  renderConflictError() {
+    return this.renderErrorModal(
+      'exclamation-triangle',
+      'There was a conflict updating your project.',
+      'This usually happens when two people are editing a project at the same time. ' +
+      'To pull in the latest changes, please refresh the page.',
+      false
+    );
+  }
+
   renderAuthError() {
     return this.renderErrorModal(
       'lock',
@@ -144,6 +155,9 @@ export default class App extends Component {
       }
       if (err.status === 401) {
         return this.renderAuthError();
+      }
+      if (err.status === 412) {
+        return this.renderConflictError();
       }
       if (err.status === 403) {
         return this.renderForbiddenError();

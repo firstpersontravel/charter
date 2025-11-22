@@ -101,11 +101,12 @@ class RelayTwimlController {
         `${twilioHost}/endpoints/twilio/calls/response` +
         `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}`
       ),
-      partialResultCallback: (
-        `${twilioHost}/endpoints/twilio/calls/response` +
-        `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}` +
-        '&partial=true'
-      )
+      // Remove partial results to reduce callback volume
+      // partialResultCallback: (
+      //   `${twilioHost}/endpoints/twilio/calls/response` +
+      //   `?relay=${relay.id}&trip=${tripId}&clip=${twimlOp.clipName}` +
+      //   '&partial=true'
+      // )
     }, twimlOp.hints ? { hints: twimlOp.hints } : null));
     // Interpret the subclause and add it to the gather clause.
     const subOp = twimlOp.subclause.clause;

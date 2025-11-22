@@ -145,10 +145,7 @@ describe('TwilioCallHandler', () => {
         '<?xml version="1.0" encoding="UTF-8"?>' +
         '<Response><Gather input="dtmf speech" timeout="10" speechTimeout="5" ' +
         'action="http://twilio.test/endpoints/twilio/calls/response' +
-        '?relay=100&amp;trip=1&amp;clip=CLIP-123" ' +
-        'partialResultCallback=' +
-        '"http://twilio.test/endpoints/twilio/calls/response?' +
-        'relay=100&amp;trip=1&amp;clip=CLIP-123&amp;partial=true">' +
+        '?relay=100&amp;trip=1&amp;clip=CLIP-123">' +
         '<Play>http://twilio.media/test_org/test_script/audio.mp3</Play>' +
         '</Gather></Response>');
     });
