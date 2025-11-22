@@ -1,5 +1,3 @@
-const _ = require('lodash');
-
 // TODO: rename audio collection to something that can be dumbly pluralized.
 const plurals = {
   audio: 'audio',
@@ -53,14 +51,13 @@ class TextUtil {
   }
 
   static splitWords(sentence) {
-    return _(sentence)
+    return sentence
       .split('"')
       .map(function(v, i) {
         return i % 2 ? ['"' + v + '"'] : v.split(' ');
       })
-      .flatten()
-      .filter(Boolean)
-      .value();
+      .flat()
+      .filter(Boolean);
   }
 
   // Underscored var name for text - underscores and lowercase chars.

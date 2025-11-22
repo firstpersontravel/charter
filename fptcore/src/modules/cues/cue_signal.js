@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   help: 'Signal a cue. A cue does nothing on its own, but usually will have triggers attached, which fire actions.',
@@ -12,7 +12,7 @@ module.exports = {
     }
   },
   getOps(params, actionContext) {
-    var cue = _.find(actionContext.scriptContent.cues,
+    var cue = find(actionContext.scriptContent.cues,
       { name: params.cue_name });
     if (!cue) {
       return [{

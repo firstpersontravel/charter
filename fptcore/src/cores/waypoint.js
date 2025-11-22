@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../utils/lodash-replacements');
 
 class WaypointCore {
   /**
@@ -6,17 +6,16 @@ class WaypointCore {
    * of all possible waypoints
    */
   static getAllWaypointOptions(scriptContent) {
-    return _(scriptContent.waypoints || [])
+    return (scriptContent.waypoints || [])
       .map(waypoint => waypoint.options || [])
-      .flatten()
-      .value();
+      .flat();
   }
 
   /**
    * Flatten out a waypoint into a list of options.
    */
   static optionsForWaypoint(scriptContent, waypointName) {
-    var waypoint = _.find(scriptContent.waypoints || [], {
+    var waypoint = find(scriptContent.waypoints || [], {
       name: waypointName
     });
     return waypoint.options;
@@ -27,9 +26,9 @@ class WaypointCore {
    */
   static optionForWaypoint(scriptContent, waypointName,
     waypointOptions) {
-    var waypoint = _.find(scriptContent.waypoints, { name: waypointName });
+    var waypoint = find(scriptContent.waypoints, { name: waypointName });
     var waypointOptionName = (waypointOptions || {})[waypointName];
-    var waypointOption = _.find(waypoint.options, { name: waypointOptionName });
+    var waypointOption = find(waypoint.options, { name: waypointOptionName });
     return waypointOption || waypoint.options[0];
   }
 }

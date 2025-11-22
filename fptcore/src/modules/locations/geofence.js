@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   icon: 'map-pin',
@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   getTitle: function(scriptContent, resource) {
-    var waypoint = _.find(scriptContent.waypoints, { name: resource.center });
+    var waypoint = find(scriptContent.waypoints, { name: resource.center });
     return resource.distance + 'm around ' + waypoint.title;
   }
 };

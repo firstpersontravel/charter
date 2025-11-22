@@ -1,4 +1,3 @@
-var _ = require('lodash');
 
 module.exports = {
   help: 'Occurs when a player hangs up the phone.',
@@ -11,6 +10,6 @@ module.exports = {
     }
   },
   matchEvent: function(spec, event, actionContext) {
-    return _.includes(event.roles, spec.role);
+    return event.roles.includes(spec.role);
   }
 };

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment-timezone');
@@ -39,7 +38,7 @@ describe('TimeUtil', () => {
       const now = moment.utc('2017-03-23T20:34:00.000Z');
       const tz = 'US/Pacific';
       sandbox.stub(moment, 'utc').callsFake(arg => (
-        _.isUndefined(arg) ? now : origUtc(arg)
+        arg === undefined ? now : origUtc(arg)
       ));
 
       const sameTimeAsNow = '2017-03-23T20:34:00.000Z';
@@ -55,7 +54,7 @@ describe('TimeUtil', () => {
       const now = moment.utc('2017-03-23T20:34:00.000Z');
       const tz = 'US/Pacific';
       sandbox.stub(moment, 'utc').callsFake(arg => (
-        _.isUndefined(arg) ? now : origUtc(arg)
+        arg === undefined ? now : origUtc(arg)
       ));
 
       // Show day if we're yesterday in local time

@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { merge } = require('../../src/utils/lodash-replacements');
 const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
@@ -239,13 +239,13 @@ describe('Integration - Nested Triggers', () => {
     sinon.assert.calledWith(
       coreRegistry.actions.signal_cue.getOps.getCall(0),
       { cue_name: 'CUE-GREET' },
-      _.merge({}, actionContext, { evalContext: { event: null } }));
+      merge({}, actionContext, { evalContext: { event: null } }));
 
     // Second cue should have been called with the event 'cue CUE-GREET',
     sinon.assert.calledWith(
       coreRegistry.actions.signal_cue.getOps.getCall(1),
       { cue_name: 'CUE-GREET-REPLY' },
-      _.merge({}, actionContext, {
+      merge({}, actionContext, {
         evalContext: {
           event: { cue: 'CUE-GREET', type: 'cue_signaled' },
           history: { 'TRIGGER-GREET-1': now.toISOString() }
@@ -255,7 +255,7 @@ describe('Integration - Nested Triggers', () => {
     // Then send_text with event 'cue CUE-GREET-REPLY'
     sinon.assert.calledWith(coreRegistry.actions.send_text.getOps.getCall(0),
       { from_role_name: 'Cowboy', to_role_name: 'Farmer', content: 'howdy' },
-      _.merge({}, actionContext, {
+      merge({}, actionContext, {
         evalContext: {
           event: { cue: 'CUE-GREET-REPLY', type: 'cue_signaled' },
           history: {
