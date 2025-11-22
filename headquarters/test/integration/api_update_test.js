@@ -55,6 +55,32 @@ describe('API update', () => {
     });
   });
 
+  describe('PATCH /api/scripts/:id', () => {
+    it('succeeds when If-Unmodified-Since matches updatedAt', async () => {
+      const script = await trip.getScript();
+      const lastModified = trip.updatedAt.toISOString();
+      return request(app)
+        .patch(`/api/scripts/${script.id}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
+        .set('Accept', 'application/json')
+        .set('If-Unmodified-Since', lastModified)
+        .send({ content: script.content })
+        .expect(200);
+    });
+
+    it('fails when If-Unmodified-Since is earlier than updatedAt', async () => {
+      const script = await trip.getScript();
+      const oldDate = moment.utc().subtract(1, 'day').toISOString();
+      return request(app)
+        .patch(`/api/scripts/${trip.scriptId}`)
+        .set('Authorization', `Bearer ${createUserToken(user, 10)}`)
+        .set('Accept', 'application/json')
+        .set('If-Unmodified-Since', oldDate)
+        .send({ content: script.content })
+        .expect(412);
+    });
+  });
+
   describe('PATCH /api/messages/:id', () => {
     let message;
 

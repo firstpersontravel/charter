@@ -15,6 +15,10 @@ function validationError(message, data) {
   return apiError(422, 'ValidationError', message, data);
 }
 
+function preconditionFailedError(message, data) {
+  return apiError(412, 'PreconditionFailedError', message, data);
+}
+
 function badRequestError(message, data) {
   return apiError(400, 'BadRequestError', message, data);
 }
@@ -36,10 +40,11 @@ function internalError(message, data) {
 }
 
 module.exports = {
+  authenticationError,
   badRequestError,
   forbiddenError,
   internalError,
   notFoundError,
-  authenticationError,
+  preconditionFailedError,
   validationError
 };

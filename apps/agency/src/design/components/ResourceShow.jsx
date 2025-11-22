@@ -284,7 +284,7 @@ export default class ResourceShow extends Component {
     // Otherwise we're updating existing script.
     this.props.updateInstance('scripts', script.id, {
       content: newScriptContent
-    });
+    }, script.updatedAt);
 
     // Redirect always if we've made a new resource or deleted one.
     if (forceRedirect) {

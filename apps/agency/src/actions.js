@@ -128,6 +128,12 @@ function throwRequestError(url, params, response) {
           url, params, response.status, responseData
         );
       }
+      if (response.status === 412) {
+        throw new RequestError(
+          `Precondition failed on ${params.method} to ${url}: ${response.status}.`,
+          url, params, response.status, responseData
+        );
+      }
       if (response.status === 422) {
         throw new RequestError(
           `Validation error on ${params.method} to ${url}: ${response.status}.`,
@@ -438,7 +444,7 @@ export function createInstance(collectionName, fields) {
   };
 }
 
-export function updateInstance(collectionName, instanceId, fields) {
+export function updateInstance(collectionName, instanceId, fields, ifUnmodifiedSince = null) {
   if (!instanceId) {
     throw new Error('instanceId required to updateInstance');
   }
@@ -448,9 +454,13 @@ export function updateInstance(collectionName, instanceId, fields) {
     dispatch(updateInstanceFields(collectionName, instanceId, fields));
     // Then dispatch the update request.
     const url = `/api/${collectionName}/${instanceId}`;
+    const headers = { 'Content-Type': 'application/json' };
+    if (ifUnmodifiedSince) {
+      headers['If-Unmodified-Since'] = ifUnmodifiedSince;
+    }
     const params = {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify(fields)
     };
     return request(collectionName, instanceId, 'update', url, params, dispatch)
