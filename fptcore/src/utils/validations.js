@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const jsonschema = require('jsonschema');
 
 const TimeUtil = require('./time');
@@ -37,7 +36,7 @@ const Validations = {
     title: 'Text',
     help: 'Arbitrary text, usually for display to a participant.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return ['String param "' + name + '" should be a string.'];
       }
       if (spec.required && param === '') {
@@ -49,7 +48,7 @@ const Validations = {
   email: {
     help: 'An email address. For example, "agency@firstperson.travel".',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return ['Email param "' + name + '" should be a string.'];
       }
       if (spec.required && param === '') {
@@ -65,7 +64,7 @@ const Validations = {
   markdown: {
     help: 'Text styled with markdown. See https://www.markdownguide.org/basic-syntax/ for help on how to use markdown.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return ['Markdown param "' + name + '" should be a string.'];
       }
       if (spec.required && param === '') {
@@ -78,12 +77,12 @@ const Validations = {
     help: 'A field that can be a string, number, or "true" or "false".',
     title: 'Value',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param) && !_.isNumber(param) && !_.isBoolean(param)) {
+      if (typeof param !== 'string' && typeof param !== 'number' && typeof param !== 'boolean') {
         return [
           'Simple param "' + name + '" should be a string, number or boolean.'
         ];
       }
-      if (spec.required && _.isString(param) && param === '') {
+      if (spec.required && typeof param === 'string' && param === '') {
         return ['Simple param "' + name + '" should not be blank.'];
       }
     }
@@ -119,7 +118,7 @@ const Validations = {
   color: {
     help: 'A color, in hexadecimal format. (i.e. #FFFFFF)',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return [`Color param "${name}" should be a string.`];
       }
       if (param === '') {
@@ -138,7 +137,7 @@ const Validations = {
       if (!spec.options) {
         throw new Error('Invalid enum spec: missing options.');
       }
-      if (!_.includes(spec.options, param)) {
+      if (!spec.options.includes(param)) {
         return [
           'Enum param "' + name + '" is not one of ' +
           spec.options.map(function(s) { return '"' + s + '"'; }).join(', ') + '.'
@@ -161,7 +160,7 @@ const Validations = {
     title: 'Reference',
     help: 'A reference to the name of an element in the script.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return ['Name param "' + name + '" ("' + param + '") should be a string.'];
       }
       if (!/[a-zA-Z]/.test(param[0])) {
@@ -176,7 +175,7 @@ const Validations = {
   media: {
     help: 'Uploaded media: an image, video, or audio clip.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return [`Media param "${name}" should be a string.`];
       }
       if (spec.required && !param) {
@@ -195,7 +194,7 @@ const Validations = {
   coords: {
     help: 'Latitude/longitude coordinates.',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isArray(param) || param.length !== 2 ||
+      if (!Array.isArray(param) || param.length !== 2 ||
           isNaN(Number(param[0])) || isNaN(Number(param[1]))) {
         return ['Coords param "' + name + '" should be an array of two numbers.'];
       }
@@ -224,7 +223,7 @@ const Validations = {
     help: 'A machine-readable name used for naming variables. Only letters, numbers, or underscores are allowed. For example, `date`, or `num_points` are valid variable names.',
     title: 'Variable name',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return ['Simple attribute param "' + name + '" should be a string.'];
       }
       if (!param) {
@@ -243,7 +242,7 @@ const Validations = {
     help: 'A machine-readable name used for looking up variables. Only letters, numbers, dashes or underscores are allowed. For example, `date`, or `num_points`. Periods may be used to look up children of data dictionaries: for example, `inductee.link` or `current.directive`. Specific values can also be specified here by including the text in double quotes: the lookup `red` will look up the contents of the variable "red", whereas the lookup `"red"` will return the text value "red". Numbers like `1`, `400`, etc, can be used, as can the values `true` and `false`.',
     title: 'Lookup',
     validate: (scriptContent, name, spec, param) => {
-      if (!_.isString(param)) {
+      if (typeof param !== 'string') {
         return ['Lookupable param "' + name + '" ("' + param + '") should be a string.'];
       }
       if (!param) {

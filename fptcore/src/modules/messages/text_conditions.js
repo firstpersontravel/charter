@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { get } = require('../../utils/lodash-replacements');
 
 module.exports = {
   text_contains: {
@@ -12,7 +12,7 @@ module.exports = {
       }
     },
     eval: (params, actionContext) => {
-      const msg = _.get(actionContext.evalContext, 'event.content');
+      const msg = get(actionContext.evalContext, 'event.content');
       return (
         typeof msg === 'string' &&
         msg.toLowerCase().indexOf(params.part.toLowerCase()) > -1
@@ -23,13 +23,13 @@ module.exports = {
     help: 'A condition that passes if the content to the text seems affirmitive (contains \'yes\', \'ok\', \'sure\', etc.',
     properties: {},
     eval: (params, actionContext) => {
-      const msg = _.get(actionContext.evalContext, 'event.content');
+      const msg = get(actionContext.evalContext, 'event.content');
       const affirmativeParts = ['y', 'yes', 'sure', 'ok'];
       if (typeof msg !== 'string') {
         return false;
       }
       const lower = msg.toLowerCase();
-      return _.some(affirmativeParts, part => lower.indexOf(part) > -1);
+      return affirmativeParts.some(part => lower.indexOf(part) > -1);
     }
   }
 };

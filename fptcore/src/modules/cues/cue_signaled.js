@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   help: 'Occurs when a cue has been signaled.',
@@ -17,7 +17,7 @@ module.exports = {
     return spec.cue === event.cue;
   },
   getTitle: function(scriptContent, resource, registry) {
-    var cue = _.find(scriptContent.cues, { name: resource.cue });
+    var cue = find(scriptContent.cues, { name: resource.cue });
     return `cue "${cue ? cue.title : 'unknown'}"`;
   }
 };

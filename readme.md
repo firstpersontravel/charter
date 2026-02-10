@@ -140,5 +140,10 @@ docker-compose exec mysql mysql charter -ucharter -pcharterpassword
 
 ## Todo later:
 
-- https://expo.io/
-- https://reactflow.dev/
+- Native apps - https://expo.io/
+- Create linked resource within resource editor; scene-first editing
+- Visual editor - https://reactflow.dev/
+- Temporal backend
+- Public projects
+- AI integration
+- Style refresh

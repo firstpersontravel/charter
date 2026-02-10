@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 var moment = require('moment');
 
 var TimeUtil = require('../../utils/time');
@@ -44,7 +44,7 @@ module.exports = {
     return true;
   },
   getTitle: function(scriptContent, spec) {
-    var time = _.find(scriptContent.times, { name: spec.time });
+    var time = find(scriptContent.times, { name: spec.time });
     if (!time) {
       return null;
     }

@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 const TemplateUtil = require('../../utils/template');
 
@@ -35,7 +35,7 @@ module.exports = {
     const bodyMarkdown = TemplateUtil.templateText(actionContext.evalContext,
       params.body, actionContext.timezone);
 
-    const fromInbox = _.find(actionContext.scriptContent.inboxes,
+    const fromInbox = find(actionContext.scriptContent.inboxes,
       { name: params.from });
     if (!fromInbox) {
       return [{

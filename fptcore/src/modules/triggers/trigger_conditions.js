@@ -1,4 +1,3 @@
-const _ = require('lodash');
 
 module.exports = {
   and: {
@@ -14,7 +13,7 @@ module.exports = {
       }
     },
     eval: (params, actionContext, subIf) => {
-      return _.every(params.items, item => subIf(actionContext, item));
+      return params.items.every(item => subIf(actionContext, item));
     }
   },
   or: {
@@ -30,7 +29,7 @@ module.exports = {
       }
     },
     eval: (params, actionContext, subIf) => {
-      return _.some(params.items, item => subIf(actionContext, item));
+      return params.items.some(item => subIf(actionContext, item));
     }
   },
   not: {

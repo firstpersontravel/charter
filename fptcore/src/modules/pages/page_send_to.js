@@ -1,4 +1,4 @@
-var _ = require('lodash');
+const { find } = require('../../utils/lodash-replacements');
 
 module.exports = {
   help: 'Set a role to a page.',
@@ -34,7 +34,7 @@ module.exports = {
     }
     var newPageName = params.page_name !== 'null' ? params.page_name : '';
     if (newPageName !== '') {
-      var page = _.find(actionContext.scriptContent.pages,
+      var page = find(actionContext.scriptContent.pages,
         { name: newPageName });
       if (!page) {
         return [{

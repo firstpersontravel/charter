@@ -1,7 +1,6 @@
-const _ = require('lodash');
-
 const Validations = require('./validations');
 const Walker = require('./walker');
+const { isPlainObject } = require('./lodash-replacements');
 
 class Validator {
   constructor(registry) {
@@ -15,11 +14,12 @@ class Validator {
     if (!spec.values) {
       throw new Error('Invalid dictionary spec: requires values.');
     }
-    if (!_.isPlainObject(param)) {
+    if (!isPlainObject(param)) {
       return ['Dictionary param "' + name + '" should be an object.'];
     }
     const itemWarnings = [];
-    _.each(param, (value, key) => {
+    Object.keys(param).forEach(key => {
+      const value = param[key];
       // Add warnings for key
       const keyName = name + '[' + key + ']';
       itemWarnings.push.apply(itemWarnings,
@@ -38,15 +38,14 @@ class Validator {
     if (!spec.items) {
       throw new Error('Invalid list spec: requires items.');
     }
-    if (!_.isArray(param)) {
+    if (!Array.isArray(param)) {
       return ['List param "' + name + '" should be an array.'];
     }
-    return _(param)
+    return param
       .map((item, i) => (
         this.validateParam(scriptContent, `${name}[${i}]`, spec.items, item)
       ))
-      .flatten()
-      .value();
+      .flat();
   }
 
   object(scriptContent, name, spec, param) {
@@ -106,7 +105,7 @@ class Validator {
         }
       }
     }
-    if (!_.isString(param)) {
+    if (typeof param !== 'string') {
       return ['Reference param "' + name + '" ("' + param + '") should be a string.'];
     }
     if (!param) {
@@ -119,8 +118,8 @@ class Validator {
       return ['Reference param "' + name + '" ("' + param + '") should be alphanumeric with dashes or underscores.'];
     }
     const collectionName = spec.collection;
-    const resourceNames = _.map(scriptContent[collectionName] || [], 'name');
-    if (!_.includes(resourceNames, param)) {
+    const resourceNames = (scriptContent[collectionName] || []).map(item => item.name);
+    if (!resourceNames.includes(param)) {
       return ['Reference param "' + name + '" ("' + param + '") ' +
         'is not in collection "' + collectionName + '".'];
     }
@@ -152,7 +151,7 @@ class Validator {
       throw new Error(`Empty param spec for param "${paramNameWithPrefix}".`);
     }
 
-    if (_.isUndefined(param)) {
+    if (param === undefined) {
       // Required params must be present.
       if (paramSpec.required) {
         return ['Required param "' + paramNameWithPrefix + '" not present.'];
@@ -174,7 +173,7 @@ class Validator {
     // If you only have a 'self' parameter, then apply the parameter checking
     // passing through the object. Otherwise require an object and do parameter
     // checking on each key/value pair.
-    if (!_.isPlainObject(params)) {
+    if (!isPlainObject(params)) {
       return ['Parameters should be an object.'];
     }
 
