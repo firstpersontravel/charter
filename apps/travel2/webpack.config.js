@@ -40,9 +40,9 @@ module.exports = {
     './vendor/sweetalert.min.js'
   ],
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      fptcore: path.resolve(__dirname, '../../fptcore/src/index.js')
+      fptcore: path.resolve(__dirname, '../../fptcore/src/index.ts')
     },
     fallback: {
       fs: false,
@@ -61,16 +61,18 @@ module.exports = {
   plugins: plugins,
   module: {
     rules: [{
-      test: /\.jsx?$/,
+      test: /\.(js|ts)x?$/,
       loader: 'babel-loader',
       options: {
         presets: [
           '@babel/preset-env',
-          '@babel/preset-react'
+          '@babel/preset-react',
+          '@babel/preset-typescript'
         ]
       },
       include: [
         path.join(__dirname, 'src'),
+        path.resolve(__dirname, '../../fptcore/src'),
         // Shouldn't need this -- just need it since react-leaflet and react-phone-number-input
         // use nullish coalescing operator. Maybe can remove node_modules from babel later.
         path.join(__dirname, 'node_modules/leaflet'),
