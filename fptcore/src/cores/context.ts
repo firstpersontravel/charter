@@ -2,12 +2,13 @@ const moment = require('moment');
 
 const TextUtil = require('../utils/text');
 import { find, get } from '../utils/lodash-replacements';
+import type { Env, Trip, Player, PlayerEvalContext, EvalContext } from '../types';
 
 class ContextCore {
   /**
    * Gather context for a player.
    */
-  static gatherPlayerEvalContext(env: any, trip: any, player: any): any {
+  static gatherPlayerEvalContext(env: Env, trip: Trip, player: Player): PlayerEvalContext {
     const participant = player.participant || {};
     const profile = participant.profile || {};
     const role = find(get(trip, 'script.content.roles') || [],
@@ -41,28 +42,28 @@ class ContextCore {
   /**
    * Gather all context for a trip.
    */
-  static gatherEvalContext(env: any, trip: any): any {
+  static gatherEvalContext(env: Env, trip: Trip): EvalContext {
     // Gather schedule including var-ized time titles.
     const scheduleByTitle = Object.fromEntries(
       Object.keys(trip.schedule || {})
         .map((timeName: string) => (
-          (trip.script.content.times || []).find((t: any) => t.name === timeName)
+          (trip.script.content.times || []).find(t => t.name === timeName)
         ))
         .filter(Boolean)
-        .filter((time: any) => !!time.title)
-        .map((time: any) => (
-          [TextUtil.varForText(time.title), trip.schedule[time.name]]
+        .filter((time) => !!time!.title)
+        .map((time) => (
+          [TextUtil.varForText(time!.title), trip.schedule![time!.name]]
         )));
     const schedule = Object.assign({}, trip.schedule, scheduleByTitle);
 
     // Gather core values
-    const context: any = Object.assign({}, trip.customizations, trip.values, {
+    const context: EvalContext = Object.assign({}, trip.customizations, trip.values, {
       date: moment.utc(trip.date, 'YYYY-MM-DD').format('dddd, MMMM D'),
       tripState: trip.tripState,
       waypointOptions: trip.waypointOptions,
       schedule: schedule,
       history: trip.history,
-      roleStates: {}
+      roleStates: {} as Record<string, PlayerEvalContext[]>
     });
     // Add waypoint values if present
     const waypointNames = Object.keys(trip.waypointOptions || {});
@@ -72,7 +73,7 @@ class ContextCore {
       if (!waypoint) {
         return;
       }
-      const optionName = trip.waypointOptions[waypointName];
+      const optionName = trip.waypointOptions![waypointName];
       const option = find(waypoint.options, { name: optionName });
       if (!option) {
         return;
@@ -84,7 +85,7 @@ class ContextCore {
 
     // Add player values
     const roles = get(trip, 'script.content.roles') || [];
-    (trip.players || []).forEach((player: any) => {
+    (trip.players || []).forEach((player: Player) => {
       const role = find(roles, { name: player.roleName });
       if (!role) {
         return;
@@ -103,10 +104,10 @@ class ContextCore {
       }
       // Fill in role states by name -- if multiple players, choose one
       // arbitrarily.
-      if (!context.roleStates[player.roleName]) {
-        context.roleStates[player.roleName] = [];
+      if (!context.roleStates![player.roleName]) {
+        context.roleStates![player.roleName] = [];
       }
-      context.roleStates[player.roleName].push(playerContext);
+      context.roleStates![player.roleName].push(playerContext);
     });
     return context;
   }

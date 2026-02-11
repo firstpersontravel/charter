@@ -1,6 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Send an email from one player to another.',
@@ -29,7 +30,7 @@ module.exports = {
       help: 'Body of the email.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const subject = TemplateUtil.templateText(actionContext.evalContext,
       params.subject, actionContext.timezone);
     const bodyMarkdown = TemplateUtil.templateText(actionContext.evalContext,

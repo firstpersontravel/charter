@@ -1,3 +1,4 @@
+import type { ScriptContent } from '../../types';
 module.exports = {
   icon: 'space-shuttle',
   help: 'A variation in trip values, including timing, values, and waypoint options.',
@@ -49,7 +50,7 @@ module.exports = {
       }
     }
   },
-  validateResource: function(script, resource) {
+  validateResource: function(script: ScriptContent, resource: Record<string, any>) {
     if (resource.default && resource.section) {
       return ['Default variants cannot have a section.'];
     }

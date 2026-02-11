@@ -1,4 +1,5 @@
 import { find } from '../../utils/lodash-replacements';
+import type { ActionContext, Event, ScriptContent } from '../../types';
 
 module.exports = {
   help: 'Occurs when a player enters a geofenced region.',
@@ -17,13 +18,13 @@ module.exports = {
       help: 'The geofence being entered.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     return (
       spec.geofence === event.geofence &&
       spec.role === event.role
     );
   },
-  getTitle: function(scriptContent, resource, registry) {
+  getTitle: function(scriptContent: ScriptContent, resource: Record<string, any>, registry: any) {
     const role = find(scriptContent.roles, { name: resource.role });
     const geofence = find(scriptContent.geofences, { name: resource.geofence });
     const waypoint = geofence ? find(scriptContent.waypoints, { name: geofence.center }) : null;

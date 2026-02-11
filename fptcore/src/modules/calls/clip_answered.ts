@@ -1,4 +1,5 @@
 import { find } from '../../utils/lodash-replacements';
+import type { ActionContext, Event, ScriptContent } from '../../types';
 
 module.exports = {
   help: 'Occurs when a player responds to a clip over the phone.',
@@ -35,13 +36,13 @@ module.exports = {
       hint: 'Is the response partial.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     if (event.partial && !spec.allow_partial) {
       return false;
     }
     return spec.clip === event.clip;
   },
-  getTitle: function(scriptContent: any, spec: any) {
+  getTitle: function(scriptContent: ScriptContent, spec: Record<string, any>) {
     if (spec.clip) {
       var clip = find(scriptContent.clips, { name: spec.clip });
       return `${clip.title} answered`;

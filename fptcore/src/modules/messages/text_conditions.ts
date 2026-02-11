@@ -1,4 +1,5 @@
 import { get } from '../../utils/lodash-replacements';
+import type { ActionContext } from '../../types';
 
 module.exports = {
   text_contains: {
@@ -11,7 +12,7 @@ module.exports = {
         help: 'A fragment of text to look for in the text response.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const msg = get(actionContext.evalContext, 'event.content');
       return (
         typeof msg === 'string' &&
@@ -22,7 +23,7 @@ module.exports = {
   text_is_affirmative: {
     help: 'A condition that passes if the content to the text seems affirmitive (contains \'yes\', \'ok\', \'sure\', etc.',
     properties: {},
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const msg = get(actionContext.evalContext, 'event.content');
       const affirmativeParts = ['y', 'yes', 'sure', 'ok'];
       if (typeof msg !== 'string') {

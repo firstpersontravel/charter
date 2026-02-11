@@ -1,7 +1,8 @@
 import { find } from '../utils/lodash-replacements';
+import type { ScriptContent, Script, EvalContext, Trip, Player, PageInfo } from '../types';
 
 class PlayerCore {
-  static getInitialFields(scriptContent: any, roleName: string, variantNames: string[]): any {
+  static getInitialFields(scriptContent: ScriptContent, roleName: string, variantNames: string[]): Pick<Player, 'roleName' | 'acknowledgedPageName' | 'acknowledgedPageAt'> {
     return {
       roleName: roleName,
       acknowledgedPageName: '',
@@ -9,7 +10,7 @@ class PlayerCore {
     };
   }
 
-  static getPageInfo(script: any, evalContext: any, trip: any, player: any): any {
+  static getPageInfo(script: Script, evalContext: EvalContext, trip: Trip, player: Player): PageInfo | null {
     const pageName = trip.tripState.currentPageNamesByRole[player.roleName];
     const page = find(script.content.pages, { name: pageName });
     if (!page) {
@@ -22,17 +23,17 @@ class PlayerCore {
       page: page,
       scene: scene,
       statusClass: '',
-      status: pageTitle
+      status: pageTitle || ''
     };
   }
 
-  static getSceneSort(script: any, evalContext: any, trip: any, player: any): any {
+  static getSceneSort(script: Script, evalContext: EvalContext, trip: Trip, player: Player): string | number {
     const curSceneName = trip.tripState.currentSceneName;
-    const curScene = script.content.scenes.find((s: any) => s.name === curSceneName);
+    const curScene = (script.content.scenes || []).find(s => s.name === curSceneName);
     if (!curScene) {
       return 0;
     }
-    return curScene.title;
+    return curScene.title || '';
   }
 }
 

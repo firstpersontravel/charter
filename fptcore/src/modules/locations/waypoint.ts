@@ -1,3 +1,4 @@
+import type { ScriptContent } from '../../types';
 function defaultWaypointOptionName() {
   return 'waypt-opt-' + Math.floor(Math.random() * 100000);
 }
@@ -49,7 +50,7 @@ module.exports = {
       help: 'A list of locations that this place could refer to.'
     }
   },
-  validateResource: function(script, resource) {
+  validateResource: function(script: ScriptContent, resource: Record<string, any>) {
     if (!resource.options || !resource.options.length) {
       return ['A place must have at least one option.'];
     }

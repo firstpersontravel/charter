@@ -1,7 +1,9 @@
-class ScriptValidationError extends Error {
-  fieldErrors: any[];
+import type { FieldError } from './types';
 
-  constructor(message: string, fieldErrors: any[]) {
+class ScriptValidationError extends Error {
+  fieldErrors: FieldError[];
+
+  constructor(message: string, fieldErrors: FieldError[]) {
     super(message);
     this.name = 'ScriptValidationError';
     this.fieldErrors = fieldErrors;

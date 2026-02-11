@@ -1,3 +1,4 @@
+import type { ScriptContent } from '../../types';
 module.exports = {
   icon: 'sticky-note',
   help: 'A user interface that can be displayed to a player when the corresponding scene and state is active.',
@@ -47,7 +48,7 @@ module.exports = {
       help: 'List of user interface panels.',
     }
   },
-  validateResource: function(script, resource) {
+  validateResource: function(script: ScriptContent, resource: Record<string, any>) {
     if (resource.route && resource.waypoint) {
       return ['Page resource cannot have both a route and a waypoint.'];
     }

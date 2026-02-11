@@ -1,4 +1,5 @@
 const set_value = require('./value_set');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   title: 'Increment variable',
@@ -12,7 +13,7 @@ module.exports = {
     },
     delta: { required: false, type: 'number' }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const valueRef = params.value_ref;
     const existingValue = Number(actionContext.evalContext[valueRef] || 0);
     const newValue = existingValue + (parseFloat(params.delta) || 1);

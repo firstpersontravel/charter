@@ -1,11 +1,13 @@
 import { find } from '../utils/lodash-replacements';
 const coreRegistry = require('../core-registry');
 
+import type { ActionContext, Event, ScriptTrigger } from '../types';
+
 class KernelTriggers {
   /**
    * Test if a single trigger event spec is set off by an event.
    */
-  static doesEventFireTriggerEvent(spec: any, event: any, actionContext: any): boolean {
+  static doesEventFireTriggerEvent(spec: Record<string, unknown>, event: Event, actionContext: ActionContext): boolean {
     // event type should equal trigger event clause
     if (spec.type !== event.type) {
       return false;
@@ -18,7 +20,7 @@ class KernelTriggers {
   /**
    * Test if a trigger is set off by an event.
    */
-  static doesEventFireTrigger(trigger: any, event: any, actionContext: any): boolean {
+  static doesEventFireTrigger(trigger: ScriptTrigger, event: Event, actionContext: ActionContext): boolean {
     // Triggers with no events can't fire.
     if (!trigger.event) {
       return false;
@@ -39,13 +41,13 @@ class KernelTriggers {
       return false;
     }
 
-    return this.doesEventFireTriggerEvent(trigger.event, event, actionContext);
+    return this.doesEventFireTriggerEvent(trigger.event as Record<string, unknown>, event, actionContext);
   }
 
   /**
    * Test if a scene is active for a given context.
    */
-  static isSceneActive(sceneName: string, actionContext: any): boolean {
+  static isSceneActive(sceneName: string, actionContext: ActionContext): boolean {
     const scene = find(actionContext.scriptContent.scenes, {
       name: sceneName
     });
@@ -72,7 +74,7 @@ class KernelTriggers {
   /**
    * Test if a trigger is active for a given context.
    */
-  static isTriggerActive(trigger: any, actionContext: any): boolean {
+  static isTriggerActive(trigger: ScriptTrigger, actionContext: ActionContext): boolean {
     // Skip triggers that don't match the current scene
     if (trigger.scene) {
       if (!this.isSceneActive(trigger.scene, actionContext)) {
@@ -86,9 +88,9 @@ class KernelTriggers {
   /**
    * Get triggers that should be set off by a given action name and params.
    */
-  static triggersForEvent(event: any, actionContext: any): any[] {
-    const triggers = actionContext.scriptContent.triggers || [];
-    return triggers.filter((trigger: any) => {
+  static triggersForEvent(event: Event, actionContext: ActionContext): ScriptTrigger[] {
+    const triggers: ScriptTrigger[] = actionContext.scriptContent.triggers || [];
+    return triggers.filter((trigger) => {
       if (!trigger.event) {
         return false;
       }

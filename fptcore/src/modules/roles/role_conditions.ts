@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   current_role_is: {
     help: 'A condition that passes if the current player has a specific role.',
@@ -10,7 +11,7 @@ module.exports = {
         help: 'The role to check against the current player.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       return actionContext.triggeringRoleName === params.role_name;
     }
   },
@@ -31,7 +32,7 @@ module.exports = {
         help: 'The page that this role must be on.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const tripState = actionContext.evalContext.tripState;
       const curPages = tripState.currentPageNamesByRole || {};
       const curPageName = curPages[params.role_name];

@@ -1,4 +1,5 @@
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext } from '../../types';
 
 const COMPARISON_FUNCTIONS: Record<string, (a: number, b: number) => boolean> = {
   '<': function(a, b) { return a < b; },
@@ -21,7 +22,7 @@ module.exports = {
         help: 'A value to look up and see if it contains any non-false value.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       return !!TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref, actionContext.triggeringRoleName);
     }
@@ -43,7 +44,7 @@ module.exports = {
         help: 'Another value to look up and compare against the first. In cases of a specific string, surround it with double quotes.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const val1 = TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref1, actionContext.triggeringRoleName);
       const val2 = TemplateUtil.lookupRef(actionContext.evalContext,
@@ -71,7 +72,7 @@ module.exports = {
         help: 'A variable to look up which should contain the fragment to check for. In cases of a specific string, surround it with double quotes.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const a = TemplateUtil.lookupRef(actionContext.evalContext,
         params.string_ref, actionContext.triggeringRoleName);
       const b = TemplateUtil.lookupRef(actionContext.evalContext,
@@ -107,7 +108,7 @@ module.exports = {
         help: 'Another numeric value to look up and compare against the first.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const num1 = Number(TemplateUtil.lookupRef(actionContext.evalContext,
         params.ref1, actionContext.currentRoleName));
       const num2 = Number(TemplateUtil.lookupRef(actionContext.evalContext,

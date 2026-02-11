@@ -1,6 +1,7 @@
 const moment = require('moment');
 
 const TimeUtil = require('../../utils/time');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   title: 'Wait before moment',
@@ -19,7 +20,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const untilTimestamp = actionContext.evalContext.schedule[params.until];
     const beforeSecs = TimeUtil.secondsForOffsetShorthand(params.before);
     if (!untilTimestamp) {

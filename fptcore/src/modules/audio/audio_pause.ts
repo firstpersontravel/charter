@@ -1,4 +1,5 @@
 const moment = require('moment');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   title: 'Pause background audio',
@@ -13,7 +14,7 @@ module.exports = {
       help: 'The role to pause the audio for.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     let roleName = params.role_name;
     if (roleName === 'current') {
       const curRoleName = actionContext.triggeringRoleName;

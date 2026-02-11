@@ -1,20 +1,21 @@
 import { find } from '../utils/lodash-replacements';
+import type { ScriptContent, WaypointOption } from '../types';
 
 class WaypointCore {
   /**
    * Flatten out the list of waypoints and options into one list
    * of all possible waypoints
    */
-  static getAllWaypointOptions(scriptContent: any): any[] {
+  static getAllWaypointOptions(scriptContent: ScriptContent): WaypointOption[] {
     return (scriptContent.waypoints || [])
-      .map((waypoint: any) => waypoint.options || [])
+      .map(waypoint => waypoint.options || [])
       .flat();
   }
 
   /**
    * Flatten out a waypoint into a list of options.
    */
-  static optionsForWaypoint(scriptContent: any, waypointName: string): any[] {
+  static optionsForWaypoint(scriptContent: ScriptContent, waypointName: string): WaypointOption[] {
     const waypoint = find(scriptContent.waypoints || [], {
       name: waypointName
     });
@@ -24,8 +25,8 @@ class WaypointCore {
   /**
    * Look up a waypoint name and get the chosen option.
    */
-  static optionForWaypoint(scriptContent: any, waypointName: string,
-    waypointOptions: any): any {
+  static optionForWaypoint(scriptContent: ScriptContent, waypointName: string,
+    waypointOptions: Record<string, string>): WaypointOption {
     const waypoint = find(scriptContent.waypoints, { name: waypointName });
     const waypointOptionName = (waypointOptions || {})[waypointName];
     const waypointOption = find(waypoint.options, { name: waypointOptionName });

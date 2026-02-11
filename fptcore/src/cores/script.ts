@@ -6,6 +6,8 @@ const Validator = require('../utils/validator');
 const Walker = require('../utils/walker');
 const Errors = require('../errors');
 
+import type { ScriptContent, NamedResource, FieldError } from '../types';
+
 const CURRENT_VERSION = 44;
 
 const metaSchema = {
@@ -23,7 +25,7 @@ const walker = new Walker(coreRegistry);
 class ScriptCore {
   static CURRENT_VERSION = CURRENT_VERSION;
 
-  static getResourceErrors(scriptContent: any, collectionName: string, resource: any): any[] {
+  static getResourceErrors(scriptContent: ScriptContent, collectionName: string, resource: NamedResource): FieldError[] {
     const resourceType = TextUtil.singularize(collectionName);
     const resourceName = resource.name || '<unknown>';
     const resourceClass = coreRegistry.resources[resourceType];
@@ -44,10 +46,10 @@ class ScriptCore {
     }));
   }
 
-  static validateCollection(scriptContent: any, collectionName: string): any[] {
-    const collection = scriptContent[collectionName];
-    const errors: any[] = [];
-    const names = new Set();
+  static validateCollection(scriptContent: ScriptContent, collectionName: string): FieldError[] {
+    const collection = scriptContent[collectionName] as NamedResource[] | undefined;
+    const errors: FieldError[] = [];
+    const names = new Set<string>();
 
     // Check is array
     if (!Array.isArray(collection)) {
@@ -79,7 +81,7 @@ class ScriptCore {
     return errors;
   }
 
-  static validateComponents(scriptContent: any, componentType: string): any[] {
+  static validateComponents(scriptContent: ScriptContent, componentType: string): FieldError[] {
     const validateUniqueNames: Record<string, string> = {
       actions: 'id',
       panels: 'id'
@@ -88,15 +90,15 @@ class ScriptCore {
     if (!validateUniqueParam) {
       return [];
     }
-    const errors: any[] = [];
-    const names = new Set();
+    const errors: FieldError[] = [];
+    const names = new Set<number>();
     walker.walkAllFields(scriptContent, componentType,
-      (collectionName: string, resource: any, obj: any, spec: any) => {
+      (collectionName: string, resource: NamedResource, obj: Record<string, unknown>) => {
         // Check no overlapping names for any components with a name type
         if (!obj[validateUniqueParam]) {
           return;
         }
-        if (names.has(obj[validateUniqueParam])) {
+        if (names.has(obj[validateUniqueParam] as number)) {
           errors.push({
             path: `${collectionName}[name=${resource.name}]`,
             collection: collectionName,
@@ -104,17 +106,17 @@ class ScriptCore {
               `Duplicate id in ${componentType}: ${obj[validateUniqueParam]}`
           });
         }
-        names.add(obj[validateUniqueParam]);
+        names.add(obj[validateUniqueParam] as number);
       });
     return errors;
   }
 
-  static validateScriptContent(scriptContent: any): void {
+  static validateScriptContent(scriptContent: ScriptContent): void {
     // Check meta block
     const metaValidator = new jsonschema.Validator();
     const metaResult = metaValidator.validate(scriptContent.meta || null, metaSchema);
     if (!metaResult.valid) {
-      const metaErrors = metaResult.errors.map(function(e: any) {
+      const metaErrors: FieldError[] = metaResult.errors.map(function(e: { property: string; message: string }) {
         return {
           message: e.property + ' ' + e.message,
           path: 'meta',
@@ -126,7 +128,7 @@ class ScriptCore {
     }
 
     // Check resources
-    const errors: any[] = [];
+    const errors: FieldError[] = [];
     for (const collectionName of Object.keys(scriptContent)) {
       if (collectionName === 'meta') {
         continue;
@@ -140,7 +142,7 @@ class ScriptCore {
     }
 
     if (errors.length > 0) {
-      const collectionNames = [...new Set(errors.map((e: any) => e.collection))];
+      const collectionNames = [...new Set(errors.map(e => e.collection))];
       const onlyOne = errors.length === 1;
       const message = (
         'There ' +

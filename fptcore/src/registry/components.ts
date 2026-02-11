@@ -1,4 +1,6 @@
-const components: Record<string, any> = {
+import type { ComponentDefs } from '../types';
+
+const components: ComponentDefs = {
   actions: {
     typeKey: 'name',
     propertiesKey: 'params',

@@ -1,3 +1,4 @@
+import type { ActionContext, Event } from '../../types';
 
 module.exports = {
   help: 'Occurs when a player hangs up the phone.',
@@ -9,8 +10,8 @@ module.exports = {
       help: 'Any of the players involved in the call.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
-    return event.roles.includes(spec.role);
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
+    return (event.roles as string[]).includes(spec.role);
   }
 };
 

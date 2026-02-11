@@ -2,13 +2,16 @@ const moment = require('moment-timezone');
 
 const TimeUtil = require('./time');
 import { get } from './lodash-replacements';
+import type { EvalContext } from '../types';
 
-const refConstants: Record<string, any> = { true: true, false: false, null: null };
+const refConstants: Record<string, boolean | null> = { true: true, false: false, null: null };
 const templateRegex = /{{\s*([\w_\-.:]+)\s*}}/gi;
 const ifElseRegex = /{%\s*if\s+(.+?)\s*%}(.*?)(?:{%\s*else\s*%}(.*?))?{%\s*endif\s*%}/gi;
 
+type RefValue = string | number | boolean | null;
+
 class TemplateUtil {
-  static lookupRef(evalContext: any, ref: any, roleName: string | null = null): any {
+  static lookupRef(evalContext: EvalContext, ref: RefValue, roleName: string | null = null): RefValue {
     if (typeof ref === 'boolean' || ref === null || typeof ref === 'number') {
       return ref;
     }
@@ -33,7 +36,7 @@ class TemplateUtil {
     return result === undefined ? null : result;
   }
 
-  static templateText(evalContext: any, text: any, timezone: string, roleName: string | null = null): string {
+  static templateText(evalContext: EvalContext, text: RefValue, timezone: string, roleName: string | null = null): string {
     if (text === null || text === undefined) { return ''; }
     if (text === false) { return 'No'; }
     if (text === true) { return 'Yes'; }

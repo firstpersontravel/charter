@@ -1,4 +1,5 @@
 const TimeUtil = require('../../utils/time');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Wait a fixed period of time.',
@@ -10,7 +11,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const durationSecs = TimeUtil.secondsForOffsetShorthand(params.duration);
     return [{ operation: 'wait', seconds: durationSecs }];
   }

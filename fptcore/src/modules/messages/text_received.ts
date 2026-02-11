@@ -1,8 +1,9 @@
 import { find } from '../../utils/lodash-replacements';
+import type { ActionContext, Event, ScriptContent } from '../../types';
 
 module.exports = {
   help: 'Occurs when a text has been received.',
-  getTitle: function(scriptContent: any, spec: any) {
+  getTitle: function(scriptContent: ScriptContent, spec: Record<string, any>) {
     const parts = ['text'];
     if (spec.from) {
       const fromRole = find(scriptContent.roles, { name: spec.from });
@@ -32,7 +33,7 @@ module.exports = {
       help: 'The recipient of the message.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     if (spec.from && spec.from !== event.from) {
       return false;
     }

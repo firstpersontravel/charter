@@ -1,6 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   title: 'Play call clip',
@@ -13,7 +14,7 @@ module.exports = {
       help: 'The clip to play.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     // Find the clip.
     const clip = find(actionContext.scriptContent.clips, { name: params.clip_name });
     if (!clip) {

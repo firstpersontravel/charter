@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   help: 'Add a player to a conference call.',
   params: {
@@ -8,8 +9,8 @@ module.exports = {
       help: 'The role to add to the call.'
     }
   },
-  getOps(params: any, actionContext: any) {
-    var evt = actionContext.evalContext.event || {};
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
+    var evt = actionContext.evalContext.event || {} as Record<string, unknown>;
     // If triggered by an incoming call
     if (evt.type === 'call_received') {
       return [{

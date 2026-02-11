@@ -1,17 +1,19 @@
-class Evaluator {
-  registry: any;
+import type { Registry, ActionContext, ComponentValue } from '../types';
 
-  constructor(registry: any) {
+class Evaluator {
+  registry: Registry;
+
+  constructor(registry: Registry) {
     this.registry = registry;
   }
 
-  if(actionContext: any, ifStatement: any): boolean {
+  if(actionContext: ActionContext, ifStatement: ComponentValue): boolean {
     // Null if statements resolve to true.
     if (!ifStatement) {
       return true;
     }
     // Call eval statement on individual condition class.
-    const ifClass = this.registry.conditions[ifStatement.op];
+    const ifClass = this.registry.conditions[ifStatement.op as string];
     if (!ifClass) {
       throw new Error(`Invalid if operation: "${ifStatement.op}": should be one of: ${Object.keys(this.registry.conditions).join(', ')}.`);
     }

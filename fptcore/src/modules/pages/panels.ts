@@ -1,4 +1,5 @@
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext, ScriptContent, NamedResource } from '../../types';
 
 const PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
 const PANEL_IMAGE_STYLE_OPTIONS = ['float-right'];
@@ -26,7 +27,7 @@ panels.audio_foreground = {
       help: 'The audio file to play.'
     }
   },
-  export(panel: any, actionContext: any) {
+  export(panel: Record<string, any>, actionContext: ActionContext) {
     return { audio: panel.audio };
   }
 };
@@ -45,10 +46,10 @@ panels.button = {
       options: PANEL_BUTTON_STYLE_OPTIONS
     }
   },
-  getTitle(resource, component, scriptContent) {
+  getTitle(resource: NamedResource, component: Record<string, any>, scriptContent: ScriptContent) {
     return truncate(component.text, titleLen);
   },
-  export(panel: any, actionContext: any) {
+  export(panel: Record<string, any>, actionContext: ActionContext) {
     return { text: actionContext.templateText(panel.text) };
   }
 };
@@ -79,7 +80,7 @@ panels.choice = {
       }
     }
   },
-  export(panel: any, actionContext: any) {
+  export(panel: Record<string, any>, actionContext: ActionContext) {
     return {
       text: actionContext.templateText(panel.text),
       value_ref: panel.value_ref,
@@ -96,15 +97,15 @@ panels.content_browse = {
     title: { type: 'string', required: true },
     section: { type: 'string', required: true }
   },
-  export(panel: any, actionContext: any) {
-    const contentPages = (actionContext.scriptContent.content_pages || [])
+  export(panel: Record<string, any>, actionContext: ActionContext) {
+    const contentPages = ((actionContext.scriptContent.content_pages || []) as any[])
       .filter(contentPage => contentPage.section === panel.section)
-      .filter(contentPage => actionContext.if(contentPage.visible_if));
+      .filter(contentPage => actionContext.if!(contentPage.visible_if));
     return {
       subpages: contentPages.map(contentPage => ({
         panels: (contentPage.panels || []).map(subpanel => ({
           type: subpanel.type,
-          data: actionContext.registry.panels[subpanel.type].export(subpanel, actionContext)
+          data: actionContext.registry!.panels[subpanel.type].export!(subpanel, actionContext)
         }))
       }))
     };
@@ -115,7 +116,7 @@ panels.current_page = {
   icon: 'sticky-note',
   help: 'The current page for this player. Should only be used as part of an interface.',
   properties: {},
-  export(panel: any, actionContext: any) {
+  export(panel: Record<string, any>, actionContext: ActionContext) {
     // should never be returned as the api_view should replace this with the current page.
     return null;
   }
@@ -130,25 +131,25 @@ panels.directions = {
     geofence: { type: 'reference', collection: 'geofences' },
     destination_name: { type: 'string' }
   },
-  validateResource: function(script, resource) {
+  validateResource: function(script: ScriptContent, resource: Record<string, any>) {
     if (!resource.route && !resource.waypoint) {
       return ['Directions panel requires either a route or a waypoint.'];
     }
   },
-  getTitle(resource, component, scriptContent) {
+  getTitle(resource: NamedResource, component: Record<string, any>, scriptContent: ScriptContent) {
     if (component.route) {
-      const route = scriptContent.routes
+      const route = (scriptContent.routes || [])
         .find(r => r.name === component.route);
-      return `directions along "${route.title}"`;
+      return `directions along "${route!.title}"`;
     }
     if (component.waypoint) {
-      const waypoint = scriptContent.waypoints
+      const waypoint = (scriptContent.waypoints || [])
         .find(r => r.name === component.waypoint);
-      return `directions at "${waypoint.title}"`;
+      return `directions at "${waypoint!.title}"`;
     }
     return `directions to ${component.destination_name || 'unknown'}`;
   },
-  export(panel: any, actionContext: any) {
+  export(panel: Record<string, any>, actionContext: ActionContext) {
     return {};
   }
 };
@@ -217,7 +218,7 @@ panels.numberpad = {
       type: 'string'
     }
   },
-  getTitle(resource, component, scriptContent) {
+  getTitle(resource: NamedResource, component: Record<string, any>, scriptContent: ScriptContent) {
     return truncate(component.placeholder || '<no placeholder>', titleLen);
   }
 };
@@ -233,7 +234,7 @@ panels.text = {
       help: 'Choose centered to center your text, or banner to give it a highlighted background.'
     }
   },
-  export(panel: any, actionContext: any) {
+  export(panel: Record<string, any>, actionContext: ActionContext) {
     return {
       text: TemplateUtil.templateText(actionContext.evalContext, panel.text,
         actionContext.timezone, actionContext.triggeringRoleName)
@@ -255,7 +256,7 @@ panels.text_entry = {
       type: 'string'
     }
   },
-  getTitle(resource, component, scriptContent) {
+  getTitle(resource: NamedResource, component: Record<string, any>, scriptContent: ScriptContent) {
     return truncate(component.placeholder || '<no placeholder>', titleLen);
   }
 };

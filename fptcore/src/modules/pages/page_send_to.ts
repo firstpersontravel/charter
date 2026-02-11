@@ -1,4 +1,5 @@
 import { find } from '../../utils/lodash-replacements';
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Set a role to a page.',
@@ -19,7 +20,7 @@ module.exports = {
       help: 'The page to send the matching players to.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     let roleName = params.role_name;
     if (roleName === 'current') {
       const curRoleName = actionContext.triggeringRoleName;

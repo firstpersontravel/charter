@@ -1,6 +1,7 @@
 const coreRegistry = require('../core-registry');
 const Evaluator = require('../utils/evaluator');
 import { isPlainObject } from '../utils/lodash-replacements';
+import type { ActionContext, TriggerAction, ScriptTrigger } from '../types';
 
 const evaluator = new Evaluator(coreRegistry);
 
@@ -8,7 +9,7 @@ class KernelActions {
   /**
    * Walk the trigger actions and call the iterees for each child.
    */
-  static walkActions(actions: any[], path: string, actionIteree: Function, ifIteree: Function): void {
+  static walkActions(actions: TriggerAction[], path: string, actionIteree: (action: TriggerAction, path: string) => void, ifIteree: (condition: unknown, path: string) => void): void {
     if (!actions) {
       return;
     }
@@ -32,7 +33,7 @@ class KernelActions {
           actionIteree, ifIteree);
       }
       if (action.elseifs) {
-        for (const [j, elseif] of Object.entries(action.elseifs) as [string, any][]) {
+        for (const [j, elseif] of Object.entries(action.elseifs)) {
           const elseifPath = indexPath + '.elseifs[' + j + ']';
           ifIteree(elseif.if, elseifPath + '.if');
           this.walkActions(elseif.actions, elseifPath + '.actions',
@@ -49,14 +50,14 @@ class KernelActions {
   /**
    * Get the right set of actions for a conditional clause
    */
-  static actionsForConditional(clause: any, actionContext: any): any[] {
+  static actionsForConditional(clause: TriggerAction | ScriptTrigger, actionContext: ActionContext): TriggerAction[] {
     // If no if statement, then pick from actions.
     if (!clause.if) {
-      return clause.actions;
+      return clause.actions || [];
     }
     // If .if is true, use normal actions.
     if (evaluator.if(actionContext, clause.if)) {
-      return clause.actions;
+      return clause.actions || [];
     }
     // Check for elseifs and iterate in order.
     if (clause.elseifs) {
@@ -77,7 +78,7 @@ class KernelActions {
   /**
    * Get executable actions for a given trigger or subclause.
    */
-  static actionsForClause(clause: any, actionContext: any): any[] {
+  static actionsForClause(clause: TriggerAction | ScriptTrigger, actionContext: ActionContext): TriggerAction[] {
     // Figure out which if clause is active
     const actions = this.actionsForConditional(clause, actionContext);
 
@@ -91,7 +92,7 @@ class KernelActions {
     }
 
     // Scan each item is and expand subclauses.
-    return actions.map((action: any) => {
+    return actions.map((action: TriggerAction) => {
       if (!isPlainObject(action)) {
         throw new Error('Expected action to be an object.');
       }
@@ -107,7 +108,7 @@ class KernelActions {
   /**
    * Get executable actions for a given trigger.
    */
-  static actionsForTrigger(trigger: any, actionContext: any): any[] {
+  static actionsForTrigger(trigger: ScriptTrigger, actionContext: ActionContext): TriggerAction[] {
     return this.actionsForClause(trigger, actionContext);
   }
 }

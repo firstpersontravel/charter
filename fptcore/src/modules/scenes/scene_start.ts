@@ -1,6 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 
 const SceneCore = require('../../cores/scene');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Start a new scene.',
@@ -13,7 +14,7 @@ module.exports = {
       help: 'The scene to start.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const scriptContent = actionContext.scriptContent;
     var newSceneName = params.scene_name;
     var newScene = find(scriptContent.scenes,

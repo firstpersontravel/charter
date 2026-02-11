@@ -1,13 +1,18 @@
 const TextUtil = require('./text');
 
-class Walker {
-  registry: any;
+import type { Registry, ScriptContent, ParamSpec, NamedResource } from '../types';
 
-  constructor(registry: any) {
+type WalkIteree = (obj: unknown, paramSpec: ParamSpec, parent: unknown, key: string | number) => void;
+type WalkAllIteree = (collectionName: string, resource: NamedResource, obj: unknown, paramSpec: ParamSpec) => void;
+
+class Walker {
+  registry: Registry;
+
+  constructor(registry: Registry) {
     this.registry = registry;
   }
 
-  walkParam(parent: any, key: any, obj: any, paramSpec: any, paramType: string | null, iteree: Function): void {
+  walkParam(parent: unknown, key: string | number, obj: unknown, paramSpec: ParamSpec, paramType: string | null, iteree: WalkIteree): void {
     if (!paramSpec.type) {
       throw new Error('Param spec with no type.');
     }
@@ -18,7 +23,7 @@ class Walker {
         iteree(obj, paramSpec, parent, key);
       }
       // Create the compoment class and iterate over all of its params.
-      const variety = this.registry.getComponentVariety(paramSpec, obj);
+      const variety = this.registry.getComponentVariety(paramSpec, obj as any);
       const varietyClass = this.registry.getComponentClass(paramSpec,
         variety);
       this.walkParams(parent, key, obj, varietyClass.properties, paramType,
@@ -26,7 +31,7 @@ class Walker {
       return;
     }
     if (paramSpec.type === 'object') {
-      this.walkParams(parent, key, obj, paramSpec.properties, paramType,
+      this.walkParams(parent, key, obj, paramSpec.properties!, paramType,
         iteree);
       return;
     }
@@ -34,8 +39,8 @@ class Walker {
       if (!obj) {
         return;
       }
-      obj.forEach((item: any, i: number) => {
-        this.walkParam(obj, i, item, paramSpec.items, paramType, iteree);
+      (obj as unknown[]).forEach((item: unknown, i: number) => {
+        this.walkParam(obj, i, item, paramSpec.items!, paramType, iteree);
       });
       return;
     }
@@ -43,9 +48,9 @@ class Walker {
       if (!obj) {
         return;
       }
-      for (const key of Object.keys(obj)) {
-        this.walkParam(obj, 'keys', key, paramSpec.keys, paramType, iteree);
-        this.walkParam(obj, key, obj[key], paramSpec.values, paramType,
+      for (const key of Object.keys(obj as Record<string, unknown>)) {
+        this.walkParam(obj, 'keys', key, paramSpec.keys!, paramType, iteree);
+        this.walkParam(obj, key, (obj as Record<string, unknown>)[key], paramSpec.values!, paramType,
           iteree);
       }
       return;
@@ -57,12 +62,12 @@ class Walker {
     }
   }
 
-  walkParams(parent: any, key: any, obj: any, spec: any, paramType: string | null, iteree: Function): void {
+  walkParams(parent: unknown, key: string | number, obj: unknown, spec: Record<string, ParamSpec>, paramType: string | null, iteree: WalkIteree): void {
     if (!obj) {
       return;
     }
     for (const paramName of Object.keys(spec)) {
-      this.walkParam(obj, paramName, obj[paramName], spec[paramName],
+      this.walkParam(obj, paramName, (obj as Record<string, unknown>)[paramName], spec[paramName],
         paramType, iteree);
     }
   }
@@ -70,59 +75,59 @@ class Walker {
   /**
    * Walk over all params in a resource.
    */
-  walkResource(resourceType: string, resource: any, paramType: string | null, iteree: Function): void {
+  walkResource(resourceType: string, resource: NamedResource, paramType: string | null, iteree: WalkIteree): void {
     const resourceClass = this.registry.resources[resourceType];
     if (!resourceClass) {
       return;
     }
-    this.walkParams(null, null, resource, resourceClass.properties,
+    this.walkParams(null, null as unknown as string, resource, resourceClass.properties,
       paramType, iteree);
   }
 
   /**
    * Walk over all params in a resource.
    */
-  walkComponent(componentType: string, component: any, paramType: string | null, iteree: Function): void {
+  walkComponent(componentType: string, component: Record<string, unknown>, paramType: string | null, iteree: WalkIteree): void {
     const variety = this.registry.getComponentVarietyByType(
-      componentType, component);
+      componentType, component as any);
     const varietyClass = this.registry.getComponentClassByType(componentType,
       variety);
-    this.walkParams(null, null, component, varietyClass.properties, paramType,
+    this.walkParams(null, null as unknown as string, component, varietyClass.properties, paramType,
       iteree);
   }
 
   /*
    * Walk all resources in the script to iterate over all params
    */
-  walkAllFields(scriptContent: any, paramType: string | null, iteree: Function): void {
+  walkAllFields(scriptContent: ScriptContent, paramType: string | null, iteree: WalkAllIteree): void {
     for (const collectionName of Object.keys(scriptContent)) {
       if (collectionName === 'meta') {
         continue;
       }
-      const collection = scriptContent[collectionName];
+      const collection = scriptContent[collectionName] as NamedResource[] | undefined;
       if (!collection) {
         continue;
       }
       const resourceType = TextUtil.singularize(collectionName);
       for (const resource of collection) {
         this.walkResource(resourceType, resource, paramType,
-          (obj: any, paramSpec: any) => iteree(collectionName, resource, obj,
+          (obj: unknown, paramSpec: ParamSpec) => iteree(collectionName, resource, obj,
             paramSpec));
       }
     }
   }
 
-  walkComponents(scriptContent: any, componentType: string, iteree: Function): void {
+  walkComponents(scriptContent: ScriptContent, componentType: string, iteree: WalkAllIteree): void {
     this.walkAllFields(scriptContent, componentType, iteree);
   }
 
   /**
    * Walk all components to get one by id.
    */
-  getResourcesAndComponentsByComponentType(scriptContent: any, componentType: string): any[] {
-    const components: any[] = [];
+  getResourcesAndComponentsByComponentType(scriptContent: ScriptContent, componentType: string): [string, NamedResource, unknown][] {
+    const components: [string, NamedResource, unknown][] = [];
     this.walkComponents(scriptContent, componentType,
-      (collectionName: string, resource: any, obj: any, paramSpec: any) => {
+      (collectionName: string, resource: NamedResource, obj: unknown, paramSpec: ParamSpec) => {
         components.push([collectionName, resource, obj]);
       });
     return components;
@@ -131,22 +136,22 @@ class Walker {
   /**
    * Walk all components to get one by id.
    */
-  getResourceAndComponentById(scriptContent: any, componentType: string, componentId: number): [string | null, any, any] {
+  getResourceAndComponentById(scriptContent: ScriptContent, componentType: string, componentId: number): [string | null, NamedResource | null, Record<string, unknown> | null] {
     let matchingCollectionName: string | null = null;
-    let matchingResource: any = null;
-    let matchingComponent: any = null;
+    let matchingResource: NamedResource | null = null;
+    let matchingComponent: Record<string, unknown> | null = null;
     this.walkComponents(scriptContent, componentType,
-      (collectionName: string, resource: any, obj: any, paramSpec: any) => {
-        if (obj.id === componentId) {
+      (collectionName: string, resource: NamedResource, obj: unknown, paramSpec: ParamSpec) => {
+        if ((obj as Record<string, unknown>).id === componentId) {
           matchingCollectionName = collectionName;
           matchingResource = resource;
-          matchingComponent = obj;
+          matchingComponent = obj as Record<string, unknown>;
         }
       });
     return [matchingCollectionName, matchingResource, matchingComponent];
   }
 
-  getComponentById(scriptContent: any, componentType: string, componentId: number): any {
+  getComponentById(scriptContent: ScriptContent, componentType: string, componentId: number): Record<string, unknown> | null {
     return this.getResourceAndComponentById(scriptContent, componentType,
       componentId)[2];
   }
@@ -154,10 +159,10 @@ class Walker {
   /**
    * Walk all resources to get any referencing a specific component.
    */
-  getResourcesReferencingComponent(scriptContent: any, componentType: string, componentId: number): any[] {
-    const refs: any[] = [];
+  getResourcesReferencingComponent(scriptContent: ScriptContent, componentType: string, componentId: number): [string, NamedResource][] {
+    const refs: [string, NamedResource][] = [];
     this.walkAllFields(scriptContent, 'componentReference',
-      (collectionName: string, resource: any, obj: any, paramSpec: any) => {
+      (collectionName: string, resource: NamedResource, obj: unknown, paramSpec: ParamSpec) => {
         if (paramSpec.componentType !== componentType) {
           return;
         }

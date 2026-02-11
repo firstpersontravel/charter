@@ -1,3 +1,4 @@
+import type { ActionContext, Event } from '../../types';
 module.exports = {
   title: 'Number entry submitted',
   help: 'Occurs when a user confirms a number on a number entry.',
@@ -29,7 +30,7 @@ module.exports = {
       type: 'string'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     return spec.numberpad === event.numberpad_id;
   },
   getTitle: function(scriptContent, resource, registry, walker) {

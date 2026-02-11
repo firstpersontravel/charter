@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   title: 'Stop background audio',
   help: 'Stop audio and reset audio state.',
@@ -11,7 +12,7 @@ module.exports = {
       help: 'The role to stop the audio for.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     let roleName = params.role_name;
     if (roleName === 'current') {
       const curRoleName = actionContext.triggeringRoleName;

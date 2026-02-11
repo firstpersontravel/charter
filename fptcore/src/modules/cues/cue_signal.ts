@@ -1,4 +1,5 @@
 import { find } from '../../utils/lodash-replacements';
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Signal a cue. A cue does nothing on its own, but usually will have triggers attached, which fire actions.',
@@ -11,7 +12,7 @@ module.exports = {
       help: 'The cue to signal.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     var cue = find(actionContext.scriptContent.cues,
       { name: params.cue_name });
     if (!cue) {

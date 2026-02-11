@@ -6,15 +6,21 @@ const KernelResult = require('./result');
 const KernelActions = require('./actions');
 const KernelTriggers = require('./triggers');
 
+import type {
+  ActionContext, ActionClass, Event, KernelAction,
+  KernelResult as KernelResultType, ResultOp,
+  ScriptTrigger, ScheduledAction
+} from '../types';
+
 class Kernel {
-  static getActionClass(name: string): any {
+  static getActionClass(name: string): ActionClass {
     return coreRegistry.actions[name];
   }
 
   /**
    * Merge event into action context.
    */
-  static addEventToContext(event: any, actionContext: any): any {
+  static addEventToContext(event: Event | null, actionContext: ActionContext): ActionContext {
     return Object.assign({}, actionContext, {
       evalContext: Object.assign({}, actionContext.evalContext, {
         event: event || null
@@ -25,8 +31,8 @@ class Kernel {
   /**
    * Get the results for a given action.
    */
-  static opsForImmediateAction(action: any, actionContext: any): any[] {
-    const contextWithEvent = this.addEventToContext(action.event,
+  static opsForImmediateAction(action: KernelAction, actionContext: ActionContext): ResultOp[] {
+    const contextWithEvent = this.addEventToContext(action.event || null,
       actionContext);
     const actionClass = this.getActionClass(action.name);
     if (!actionClass) {
@@ -38,15 +44,15 @@ class Kernel {
   /**
    * Apply an action, including any triggers started by a resulting events.
    */
-  static resultForImmediateAction(action: any, actionContext: any, triggerHistory: string[] | null = null): any {
+  static resultForImmediateAction(action: KernelAction, actionContext: ActionContext, triggerHistory: string[] | null = null): KernelResultType {
     // Apply simple action
     const actionOps = this.opsForImmediateAction(action, actionContext);
-    let latestResult = KernelResult.resultForOps(actionOps, actionContext);
+    let latestResult: KernelResultType = KernelResult.resultForOps(actionOps, actionContext);
 
     // Apply any events from the action.
-    const evts = latestResult.resultOps.filter((op: any) => op.operation === 'event');
+    const evts = latestResult.resultOps.filter((op: ResultOp) => op.operation === 'event');
     for (const eventOp of evts) {
-      const event = eventOp.event;
+      const event = eventOp.event as Event;
       const eventResult = this.resultForEvent(event, latestResult.nextContext, triggerHistory);
       latestResult = KernelResult.concatResult(latestResult, eventResult);
     }
@@ -56,16 +62,16 @@ class Kernel {
   /**
    * Trigger any triggers applied by an event.
    */
-  static resultForEvent(event: any, actionContext: any, triggerHistory: string[] | null = null): any {
+  static resultForEvent(event: Event, actionContext: ActionContext, triggerHistory: string[] | null = null): KernelResultType {
     // Get blank result.
-    let latestResult = KernelResult.initialResult(actionContext);
+    let latestResult: KernelResultType = KernelResult.initialResult(actionContext);
 
     // Assemble all triggers. Include event with context because if statements
     // on the triggers may include the event context. This will filter out
     // non-repeatable triggers, or ones with failing if statements, or ones
     // in the wrong scene or page.
     const contextWithEvent = this.addEventToContext(event, actionContext);
-    const nextTriggers = KernelTriggers.triggersForEvent(event,
+    const nextTriggers: ScriptTrigger[] = KernelTriggers.triggersForEvent(event,
       contextWithEvent);
 
     // Apply each trigger with original context
@@ -86,17 +92,17 @@ class Kernel {
   /**
    * Apply a trigger, including subsequent actions.
    */
-  static resultForTrigger(trigger: any, event: any, actionContext: any,
-    actionContextWhenTriggered: any, triggerHistory: string[] | null = null): any {
+  static resultForTrigger(trigger: ScriptTrigger, event: Event, actionContext: ActionContext,
+    actionContextWhenTriggered: ActionContext, triggerHistory: string[] | null = null): KernelResultType {
     // History op to update history in db. This is required because some
     // scripts check the history.
-    const historyOps = [{
+    const historyOps: ResultOp[] = [{
       operation: 'updateTripHistory',
       history: { [trigger.name]: actionContext.evaluateAt.toISOString() }
     }];
     // Create an initial result with this history update, so that subsequent
     // events can register that this was triggered.
-    let latestResult = KernelResult.resultForOps(historyOps, actionContext);
+    let latestResult: KernelResultType = KernelResult.resultForOps(historyOps, actionContext);
     const latestTriggerHistory = (triggerHistory || []).concat([trigger.name]);
 
     // Add event to context for consideration for if logic. Figure out which
@@ -107,17 +113,17 @@ class Kernel {
     // Either call or schedule each action.
     let waitingUntil = actionContext.evaluateAt;
     for (const action of nextActions) {
-      const name = action.name;
+      const name = action.name!;
       const params = omit(action, 'name', 'id');
-      const unpackedAction = { name: name, params: params, event: event };
+      const unpackedAction: KernelAction = { name: name, params: params, event: event };
       // Get results immediately -- to test if this is a wait or not.
       const actionResult = this.resultForImmediateAction(unpackedAction,
         latestResult.nextContext, latestTriggerHistory);
 
       // If we have waits, increment the waitingUntil counter.
-      const waits = actionResult.resultOps.filter((o: any) => o.operation === 'wait');
+      const waits = actionResult.resultOps.filter((o: ResultOp) => o.operation === 'wait');
       if (waits.length > 0) {
-        waits.forEach((op: any) => {
+        waits.forEach((op: ResultOp) => {
           const opUntil = op.until ?
             op.until :
             waitingUntil.clone().add(op.seconds, 'seconds');

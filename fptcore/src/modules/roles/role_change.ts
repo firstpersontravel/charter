@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   help: 'Change the current player from one role to another.',
   params: {
@@ -8,7 +9,7 @@ module.exports = {
       help: 'The role to change the player to.'
     },
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     return [{
       operation: 'updatePlayerFields',
       playerId: actionContext.triggeringPlayerId,

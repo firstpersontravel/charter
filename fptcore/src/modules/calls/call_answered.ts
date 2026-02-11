@@ -1,3 +1,4 @@
+import type { ActionContext, Event } from '../../types';
 module.exports = {
   help: 'Occurs when a users answers a call initiated by Charter.',
   specParams: {
@@ -28,7 +29,7 @@ module.exports = {
       help: 'The player who answered the call.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     return spec.from === event.from && spec.to === event.to;
   }
 };

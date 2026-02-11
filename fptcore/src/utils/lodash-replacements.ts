@@ -104,7 +104,7 @@ function cloneDeep(obj: any): any {
 /**
  * Find an item in an array matching an object pattern
  */
-function find(arr: any[] | null | undefined, predicate: any): any {
+function find(arr: unknown, predicate: any): any {
   if (!arr || !Array.isArray(arr)) {
     return undefined;
   }

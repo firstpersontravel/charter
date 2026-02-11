@@ -1,4 +1,6 @@
-const resultOpTempUpdateFunctions: Record<string, (resultOp: any, actionContext: any) => any> = {
+import type { ActionContext, ResultOp, KernelResult as KernelResultType } from '../types';
+
+const resultOpTempUpdateFunctions: Record<string, (resultOp: ResultOp, actionContext: ActionContext) => ActionContext> = {
   updateTripFields(resultOp, actionContext) {
     return Object.assign({}, actionContext, {
       evalContext: Object.assign({}, actionContext.evalContext,
@@ -28,7 +30,7 @@ class KernelResult {
    * to allow processing to continue... the real update will happen after the
    * whole order processing is complete by resultOps handling.
    */
-  static _tempUpdateContextForOp(resultOp: any, actionContext: any): any {
+  static _tempUpdateContextForOp(resultOp: ResultOp, actionContext: ActionContext): ActionContext {
     const resultOpFunc = resultOpTempUpdateFunctions[resultOp.operation];
     if (!resultOpFunc) {
       return actionContext;
@@ -38,11 +40,9 @@ class KernelResult {
 
   /**
    * Go through result ops from a given action, and update the context with the
-   * results. This is a temporary stub designed to update the context in order
-   * to allow processing to continue... the real update will happen after the
-   * whole order processing is complete by resultOps handling.
+   * results.
    */
-  static tempUpdateContext(resultOps: any[], actionContext: any): any {
+  static tempUpdateContext(resultOps: ResultOp[], actionContext: ActionContext): ActionContext {
     let nextContext = actionContext;
     for (const resultOp of resultOps) {
       nextContext = this._tempUpdateContextForOp(resultOp, nextContext);
@@ -53,7 +53,7 @@ class KernelResult {
   /**
    * Get an object representing a blank action result.
    */
-  static initialResult(actionContext: any): any {
+  static initialResult(actionContext: ActionContext): KernelResultType {
     return {
       nextContext: actionContext,
       resultOps: [],
@@ -65,7 +65,7 @@ class KernelResult {
    * Get an object representing a simple application of ops to a context.
    * Calculate waitingUntil based on any `wait` operations in the ops list.
    */
-  static resultForOps(ops: any[], actionContext: any): any {
+  static resultForOps(ops: ResultOp[], actionContext: ActionContext): KernelResultType {
     const nextContext = this.tempUpdateContext(ops, actionContext);
     return {
       nextContext: nextContext,
@@ -77,7 +77,7 @@ class KernelResult {
   /**
    * Concatenate two action result objects.
    */
-  static concatResult(existing: any, next: any): any {
+  static concatResult(existing: KernelResultType, next: KernelResultType): KernelResultType {
     return {
       nextContext: next.nextContext,
       resultOps: existing.resultOps.concat(next.resultOps),

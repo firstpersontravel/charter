@@ -5,11 +5,22 @@ const coreRegistry = require('./core-registry');
 const TextUtil = require('./utils/text');
 const Walker = require('./utils/walker');
 
+import type { ScriptContent, Migration, MigrationFn, MigrationFns } from './types';
+
 const walker = new Walker(coreRegistry);
 
-const Migrator: any = {};
+interface MigratorInterface {
+  Migrations: Migration[];
+  getMigrations(currentMigrationNum: number): Migration[];
+  runMigration(collectionName: string, migrateFn: MigrationFn, scriptContent: ScriptContent, assets: unknown): void;
+  getMigrationFns(migrations: MigrationFns): Array<[string, MigrationFn]>;
+  runMigrations(migrations: MigrationFns, scriptContent: ScriptContent, assets: unknown): void;
+  migrateScriptContent(scriptContent: ScriptContent, assets: unknown): ScriptContent;
+}
 
-const migrations: any[] = [];
+const Migrator: MigratorInterface = {} as MigratorInterface;
+
+const migrations: Migration[] = [];
 
 for (const file of fs.readdirSync(__dirname + '/../migrations')) {
   if (file.match(/\.(js|ts)$/) === null) {
@@ -25,16 +36,16 @@ for (const file of fs.readdirSync(__dirname + '/../migrations')) {
   });
 }
 
-Migrator.Migrations = migrations.sort((a: any, b: any) => a.num - b.num);
+Migrator.Migrations = migrations.sort((a, b) => a.num - b.num);
 
-Migrator.getMigrations = function(currentMigrationNum: number): any[] {
-  return Migrator.Migrations.filter(function(migration: any) {
+Migrator.getMigrations = function(currentMigrationNum: number): Migration[] {
+  return Migrator.Migrations.filter(function(migration) {
     return migration.num > currentMigrationNum;
   });
 };
 
-Migrator.runMigration = function(collectionName: string, migrateFn: Function, scriptContent: any,
-  assets: any): void {
+Migrator.runMigration = function(collectionName: string, migrateFn: MigrationFn, scriptContent: ScriptContent,
+  assets: unknown): void {
   if (collectionName === 'scriptContent') {
     migrateFn(scriptContent, assets);
     return;
@@ -42,32 +53,31 @@ Migrator.runMigration = function(collectionName: string, migrateFn: Function, sc
   if (coreRegistry.components[collectionName]) {
     const componentType = collectionName;
     walker.walkAllFields(scriptContent, componentType,
-      (collectionName: string, resource: any, value: any, spec: any) => (
+      (collectionName: string, resource: unknown, value: unknown, spec: unknown) => (
         migrateFn(value, scriptContent, resource, assets)
       ));
     return;
   }
   const resourceType = TextUtil.singularize(collectionName);
   if (!coreRegistry.resources[resourceType]) {
-    // throw new Error('Illegal collection name ' + collectionName);
     return;
   }
   if (!scriptContent[collectionName]) {
     return;
   }
-  for (const item of scriptContent[collectionName].slice()) {
+  for (const item of (scriptContent[collectionName] as unknown[]).slice()) {
     migrateFn(item, scriptContent, assets);
   }
 };
 
-Migrator.getMigrationFns = function(migrations: any): any[] {
+Migrator.getMigrationFns = function(migrations: MigrationFns): Array<[string, MigrationFn]> {
   if (Array.isArray(migrations)) {
-    return migrations;
+    return migrations as Array<[string, MigrationFn]>;
   }
   return Object.entries(migrations);
 };
 
-Migrator.runMigrations = function(migrations: any, scriptContent: any, assets: any): void {
+Migrator.runMigrations = function(migrations: MigrationFns, scriptContent: ScriptContent, assets: unknown): void {
   const migrateFns = Migrator.getMigrationFns(migrations);
   for (const [collectionName, migrateFn] of migrateFns) {
     Migrator.runMigration(collectionName, migrateFn, scriptContent, assets);
@@ -77,8 +87,8 @@ Migrator.runMigrations = function(migrations: any, scriptContent: any, assets: a
 /**
  * Return migrated script content up to version number.
  */
-Migrator.migrateScriptContent = function(scriptContent: any, assets: any): any {
-  const migrated = cloneDeep(scriptContent);
+Migrator.migrateScriptContent = function(scriptContent: ScriptContent, assets: unknown): ScriptContent {
+  const migrated = cloneDeep(scriptContent) as ScriptContent;
   if (!migrated.meta) {
     migrated.meta = { version: 0 };
   }

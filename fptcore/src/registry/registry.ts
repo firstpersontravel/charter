@@ -1,13 +1,16 @@
 import { omit, merge } from '../utils/lodash-replacements';
+import type {
+  ModuleDef, ComponentDefs, ResourceClass, ParamSpec, ComponentValue
+} from '../types';
 
 class Registry {
-  modules: Record<string, any>;
-  resources: Record<string, any>;
-  components: Record<string, any>;
-  _cache: Record<string, any>;
-  [key: string]: any;
+  modules: Record<string, ModuleDef>;
+  resources: Record<string, ResourceClass>;
+  components: ComponentDefs;
+  _cache: Record<string, ResourceClass>;
+  [key: string]: unknown;
 
-  constructor(modules: any[], components: Record<string, any>) {
+  constructor(modules: ModuleDef[], components: ComponentDefs) {
     this.modules = {};
     this.resources = {};
     this.components = components;
@@ -20,13 +23,19 @@ class Registry {
     // Load modules
     for (const mod of modules) {
       for (const componentType of Object.keys(components)) {
-        mod[componentType] = {};
+        (mod as any)[componentType] = {};
       }
       for (const resourceType of Object.keys(mod.resources || {})) {
-        const resourceDef = mod.resources[resourceType];
+        const resourceDef = mod.resources![resourceType];
         for (const componentType of Object.keys(components)) {
-          Object.assign(mod[componentType], resourceDef[componentType]);
-          Object.assign(this[componentType], resourceDef[componentType]);
+          Object.assign(
+            (mod as any)[componentType],
+            (resourceDef as any)[componentType]
+          );
+          Object.assign(
+            this[componentType] as object,
+            (resourceDef as any)[componentType]
+          );
         }
         if (resourceDef.resource) {
           this.resources[resourceType] = resourceDef.resource;
@@ -36,23 +45,23 @@ class Registry {
     }
   }
 
-  getComponentVarietyByType(componentType: string, value: any): string | null {
+  getComponentVarietyByType(componentType: string, value: ComponentValue | null): string | null {
     const componentDef = this.components[componentType];
     if (!componentDef) {
       throw new Error(`Invalid component type "${componentType}".`);
     }
-    return value ? value[componentDef.typeKey] : null;
+    return value ? value[componentDef.typeKey] as string : null;
   }
 
-  getComponentVariety(spec: any, value: any): string | null {
-    const componentType = spec.component;
+  getComponentVariety(spec: ParamSpec, value: ComponentValue | null): string | null {
+    const componentType = spec.component!;
     return this.getComponentVarietyByType(componentType, value);
   }
 
   /**
    * Get resource class of a component property, merging common and variety.
    */
-  getComponentClassByType(componentType: string, variety: string | null): any {
+  getComponentClassByType(componentType: string, variety: string | null): ResourceClass {
     const cacheKey = `${componentType}-${variety}`;
     if (this._cache[cacheKey]) {
       return this._cache[cacheKey];
@@ -61,8 +70,8 @@ class Registry {
     if (!componentDef) {
       throw new Error(`Invalid component type "${componentType}".`);
     }
-    const componentsRegistry = this[componentType];
-    const typeClass = {
+    const componentsRegistry = this[componentType] as Record<string, Record<string, unknown>>;
+    const typeClass: ResourceClass = {
       properties: {
         [componentDef.typeKey]: {
           type: 'enum',
@@ -89,8 +98,8 @@ class Registry {
     return componentClass;
   }
 
-  getComponentClass(spec: any, variety: string | null): any {
-    const componentType = spec.component;
+  getComponentClass(spec: ParamSpec, variety: string | null): ResourceClass {
+    const componentType = spec.component!;
     return this.getComponentClassByType(componentType, variety);
   }
 }

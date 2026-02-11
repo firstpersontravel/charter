@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   title: 'Play background audio',
   help: 'Start playing audio for a certain role.',
@@ -20,7 +21,7 @@ module.exports = {
       help: 'The title to display.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     if (!params.audio) {
       return [{
         operation: 'log',

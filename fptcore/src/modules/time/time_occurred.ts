@@ -2,6 +2,7 @@ import { find } from '../../utils/lodash-replacements';
 const moment = require('moment');
 
 const TimeUtil = require('../../utils/time');
+import type { ActionContext, Event, ScriptContent } from '../../types';
 
 function timeForSpec(spec: any, evalContext: any) {
   var offset = spec.offset ? TimeUtil.secondsForOffsetShorthand(spec.offset) :
@@ -31,7 +32,7 @@ module.exports = {
     }
   },
   timeForSpec: timeForSpec,
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     var specTime = timeForSpec(spec, actionContext.evalContext);
     if (!specTime) {
       return false;
@@ -43,7 +44,7 @@ module.exports = {
     // Otherwise, we're in the range!
     return true;
   },
-  getTitle: function(scriptContent: any, spec: any) {
+  getTitle: function(scriptContent: ScriptContent, spec: Record<string, any>) {
     var time = find(scriptContent.times, { name: spec.time });
     if (!time) {
       return null;

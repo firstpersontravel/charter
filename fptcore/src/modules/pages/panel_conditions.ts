@@ -1,4 +1,5 @@
 import { get } from '../../utils/lodash-replacements';
+import type { ActionContext } from '../../types';
 
 module.exports = {
   submission_contains: {
@@ -11,7 +12,7 @@ module.exports = {
         help: 'A text fragment which must be contained by the submission.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const msg = get(actionContext.evalContext, 'event.submission');
       return (
         typeof msg === 'string' &&

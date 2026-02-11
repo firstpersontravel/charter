@@ -1,3 +1,4 @@
+import type { ActionContext, SubIfFn } from '../../types';
 
 module.exports = {
   and: {
@@ -12,7 +13,7 @@ module.exports = {
         help: 'A list of subconditions, all of which must be true.'
       }
     },
-    eval: (params, actionContext, subIf) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext, subIf: SubIfFn) => {
       return params.items.every(item => subIf(actionContext, item));
     }
   },
@@ -28,7 +29,7 @@ module.exports = {
         help: 'A list of subconditions, one of which must be true.'
       }
     },
-    eval: (params, actionContext, subIf) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext, subIf: SubIfFn) => {
       return params.items.some(item => subIf(actionContext, item));
     }
   },
@@ -43,7 +44,7 @@ module.exports = {
         help: 'A subcondition, which must be false.'
       }
     },
-    eval: (params, actionContext, subIf) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext, subIf: SubIfFn) => {
       return !params.item || !subIf(actionContext, params.item);
     }
   },

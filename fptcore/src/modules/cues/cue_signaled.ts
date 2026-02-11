@@ -1,4 +1,5 @@
 import { find } from '../../utils/lodash-replacements';
+import type { ActionContext, Event, ScriptContent } from '../../types';
 
 module.exports = {
   help: 'Occurs when a cue has been signaled.',
@@ -13,10 +14,10 @@ module.exports = {
       help: 'The cue that was signaled.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     return spec.cue === event.cue;
   },
-  getTitle: function(scriptContent, resource, registry) {
+  getTitle: function(scriptContent: ScriptContent, resource: Record<string, any>, registry: any) {
     var cue = find(scriptContent.cues, { name: resource.cue });
     return `cue "${cue ? cue.title : 'unknown'}"`;
   }

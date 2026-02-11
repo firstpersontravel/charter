@@ -1,4 +1,5 @@
 const GeofenceCore = require('../../cores/geofence');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   role_in_geofence: {
@@ -18,7 +19,7 @@ module.exports = {
         help: 'The geofence that a player with this role must be within.'
       }
     },
-    eval: (params, actionContext) => {
+    eval: (params: Record<string, any>, actionContext: ActionContext) => {
       const allRoleStates = actionContext.evalContext.roleStates;
       const roleStates = allRoleStates[params.role] || [];
       const geofence = (actionContext.scriptContent.geofences || [])

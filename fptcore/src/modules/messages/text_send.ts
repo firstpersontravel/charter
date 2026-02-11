@@ -1,4 +1,5 @@
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Send a text message from one player to another.',
@@ -30,7 +31,7 @@ module.exports = {
     },
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const content = TemplateUtil.templateText(actionContext.evalContext,
       params.content, actionContext.timezone);
     const isReplyNeeded = !!params.reply_needed;

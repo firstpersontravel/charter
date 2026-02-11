@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   title: 'Branch',
   help: 'A branch performs certain actions if an associated condition passes, and others if it does not.',
@@ -43,7 +44,7 @@ module.exports = {
   },
   // Stub, since conditionals are never executed -- instead they are
   // collapsed at trigger execute time.
-  getOps(params: any, actionContext: any) {}
+  getOps(params: Record<string, any>, actionContext: ActionContext) {}
 };
 
 export {};

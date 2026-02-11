@@ -1,3 +1,4 @@
+import type { ActionContext, Event } from '../../types';
 module.exports = {
   help: 'Occurs when a button has been pressed.',
   parentComponentType: 'panels',
@@ -23,7 +24,7 @@ module.exports = {
       help: 'The button that was pressed.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     return spec.button === event.button_id;
   },
   getTitle: function(scriptContent, resource, registry, walker) {

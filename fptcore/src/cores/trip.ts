@@ -2,15 +2,17 @@ const moment = require('moment');
 
 const TimeUtil = require('../utils/time');
 
+import type { ScriptContent, ScriptVariant, TripFields } from '../types';
+
 class TripCore {
   /**
    * Get variants are active given a list of variant names.
    * Do default ones first, then non-defaults (non-defaults override defaults).
    */
-  static _getActiveVariants(scriptContent: any, variantNames: string[]): any[] {
+  static _getActiveVariants(scriptContent: ScriptContent, variantNames: string[]): ScriptVariant[] {
     const variants = scriptContent.variants || [];
     return variants
-      .filter(function(variant: any) {
+      .filter(function(variant) {
         if (variant.default) {
           return true;
         }
@@ -19,7 +21,7 @@ class TripCore {
         }
         return false;
       })
-      .sort((a: any, b: any) => {
+      .sort((a, b) => {
         if (a.default !== b.default) {
           return a.default ? -1 : 1;
         }
@@ -30,8 +32,8 @@ class TripCore {
   /**
    * Get initial fields for a trip from variants.
    */
-  static getInitialFields(scriptContent: any, date: string, timezone: string, variantNames: string[]): any {
-    const fields: any = {
+  static getInitialFields(scriptContent: ScriptContent, date: string, timezone: string, variantNames: string[]): TripFields {
+    const fields: TripFields = {
       tripState: {
         currentSceneName: '',
         currentPageNamesByRole: {}
@@ -39,10 +41,10 @@ class TripCore {
       customizations: {},
       values: {},
       waypointOptions: {},
-      schedule: {} as Record<string, string>
+      schedule: {}
     };
     const variants = this._getActiveVariants(scriptContent, variantNames);
-    variants.forEach((variant: any) => {
+    variants.forEach((variant) => {
       if (variant.customizations) {
         Object.assign(fields.customizations, variant.customizations);
       }
@@ -56,7 +58,7 @@ class TripCore {
         const day = moment(date).format('YYYY-MM-DD');
         Object.keys(variant.schedule).forEach((key: string) => {
           fields.schedule[key] = TimeUtil.convertTimeShorthandToIso(
-            variant.schedule[key], day, timezone);
+            variant.schedule![key], day, timezone);
         });
       }
     });

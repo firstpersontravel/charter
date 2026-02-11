@@ -1,3 +1,4 @@
+import type { ActionContext, Event } from '../../types';
 module.exports = {
   help: 'Occurs when a user confirms arrival at a destination.',
   parentComponentType: 'panels',
@@ -28,7 +29,7 @@ module.exports = {
       help: 'The directions that were completed.'
     }
   },
-  matchEvent: function(spec: any, event: any, actionContext: any) {
+  matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
     return spec.directions === event.directions_id;
   },
   getTitle: function(scriptContent, resource, registry, walker) {

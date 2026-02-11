@@ -1,3 +1,4 @@
+import type { ScriptContent } from '../../types';
 module.exports = {
   icon: 'envelope',
   help: 'An email account that you have access to. (This requires some custom setup.)',
@@ -19,7 +20,7 @@ module.exports = {
       help: 'Email address to send from. Currently must be charter@firstperson.travel.'
     }
   },
-  getTitle: function(scriptContent: any, spec: any) {
+  getTitle: function(scriptContent: ScriptContent, spec: Record<string, any>) {
     return spec.address;
   }
 };

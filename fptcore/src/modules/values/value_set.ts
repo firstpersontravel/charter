@@ -1,5 +1,6 @@
 
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   title: 'Set variable',
@@ -19,7 +20,7 @@ module.exports = {
       help: 'The name of a variable, the value of which we want to look up and use for the value to set. Or a specific number, true, false, or text surrounded by double quotes.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const newValue = TemplateUtil.lookupRef(actionContext.evalContext,
       params.new_value_ref);
     return [{

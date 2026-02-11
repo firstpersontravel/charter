@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   title: 'Focus tab',
   help: 'Bring up a specific tab on an interface.',
@@ -15,7 +16,7 @@ module.exports = {
       help: 'The title of the tab to focus.'
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     return [{
       operation: 'updateUi',
       roleName: params.role_name,

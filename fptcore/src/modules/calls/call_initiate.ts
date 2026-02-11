@@ -1,3 +1,4 @@
+import type { ActionContext } from '../../types';
 module.exports = {
   help: 'Initiate a call from Charter to a user.',
   params: {
@@ -20,7 +21,7 @@ module.exports = {
       display: { hidden: true }
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     return [{
       operation: 'initiateCall',
       toRoleName: params.to_role_name,

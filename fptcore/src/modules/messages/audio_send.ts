@@ -1,4 +1,5 @@
 const TemplateUtil = require('../../utils/template');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Send an audio message from one player to another.',
@@ -29,7 +30,7 @@ module.exports = {
     },
     from_relay_id: { required: false, type: 'number', display: { hidden: true } }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     if (!params.audio) {
       return [{
         operation: 'log',

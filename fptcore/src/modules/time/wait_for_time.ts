@@ -1,4 +1,5 @@
 const moment = require('moment');
+import type { ActionContext } from '../../types';
 
 module.exports = {
   help: 'Wait for a moment to arrive.',
@@ -11,7 +12,7 @@ module.exports = {
       display: { label: false }
     }
   },
-  getOps(params: any, actionContext: any) {
+  getOps(params: Record<string, any>, actionContext: ActionContext) {
     const untilTimestamp = actionContext.evalContext.schedule[params.until];
     if (!untilTimestamp) {
       return [{
