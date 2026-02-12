@@ -14,8 +14,9 @@
 ### Install prerequisites
 
 ```sh
-# Install basics with homebrew
-brew install node awscli
+# Install basics
+brew install pyenv awscli
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 
 # Set up python (needed for node-gyp)
 pyenv install 3.13.1

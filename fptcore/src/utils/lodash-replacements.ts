@@ -12,7 +12,7 @@ function get(obj: any, path: string, defaultValue: any = undefined): any {
   }
 
   // First try to get the path as a literal key (for keys with dots in them)
-  if (obj.hasOwnProperty(path)) {
+  if (Object.prototype.hasOwnProperty.call(obj, path)) {
     return obj[path];
   }
 
@@ -51,7 +51,7 @@ function merge(target: any, ...sources: any[]): any {
     if (!source || typeof source !== 'object') continue;
 
     for (const key in source) {
-      if (source.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
         const sourceValue = source[key];
         // Check if it's a plain object that should be merged recursively
         // Exclude Date, RegExp, and other special objects (like moment objects)
@@ -93,7 +93,7 @@ function cloneDeep(obj: any): any {
   if (obj instanceof Object) {
     const clonedObj: any = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clonedObj[key] = cloneDeep(obj[key]);
       }
     }

@@ -9,7 +9,7 @@ const KernelTriggers = require('./triggers');
 import type {
   ActionContext, ActionClass, Event, KernelAction,
   KernelResult as KernelResultType, ResultOp,
-  ScriptTrigger, ScheduledAction
+  ScriptTrigger
 } from '../types';
 
 class Kernel {

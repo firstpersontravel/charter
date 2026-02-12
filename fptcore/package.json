@@ -5,7 +5,7 @@
   "scripts": {
     "watch-docs": "nodemon cmd/dump-reference.ts",
     "build-docs": "ts-node cmd/dump-reference.ts",
-    "pretest": "tsc -p tsconfig.check.json --noEmit && eslint . || echo 'Lint failed.'",
+    "pretest": "tsc -p tsconfig.check.json --noEmit && eslint --ext .ts src test cmd migrations || echo 'Lint failed.'",
     "test": "mocha --require ts-node/register --recursive 'test/**/*.ts'"
   },
   "main": "./src/index.ts",
@@ -19,7 +19,9 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "eslint": "^5.1.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
     "mocha": "^4.1.0",
     "nodemon": "^2.0.3",
     "sinon": "^4.1.5"
