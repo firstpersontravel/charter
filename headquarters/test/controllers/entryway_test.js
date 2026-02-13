@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 
-const RoleCore = require('fptcore/src/cores/role');
+const RoleCore = require('fptcore/src/cores/role').default;
 
 const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');

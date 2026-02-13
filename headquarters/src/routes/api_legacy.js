@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const coreWalker = require('fptcore/src/core-walker');
+const coreWalker = require('fptcore/src/core-walker').default;
 
 const models = require('../models');
 const { createTripToken } = require('./auth');

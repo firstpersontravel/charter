@@ -2,9 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import {
-  coreRegistry, coreWalker, TextUtil, SceneCore
-} from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { urlForResource } from '../../utils/section-utils';
 import { titleForResource } from '../../utils/text-utils';
@@ -12,10 +10,10 @@ import BaseEmpty from './BaseEmpty';
 import BaseEnum from './BaseEnum';
 
 function titleForComponent(scriptContent, componentType, referringTo) {
-  const componentClass = coreRegistry.components[componentType];
-  const componentTypeSingular = TextUtil.singularize(componentType);
+  const componentClass = FptCore.coreRegistry.components[componentType];
+  const componentTypeSingular = FptCore.TextUtil.singularize(componentType);
   const variant = referringTo[2][componentClass.typeKey];
-  const variantClass = coreRegistry[componentType][variant];
+  const variantClass = FptCore.coreRegistry[componentType][variant];
 
   const resourceTitle = titleForResource(scriptContent, referringTo[0],
     referringTo[1]);
@@ -44,9 +42,9 @@ function labelForValue(script, spec, referringTo) {
 }
 
 function choicesForSpec(script, spec) {
-  const componentClass = coreRegistry.components[spec.componentType];
+  const componentClass = FptCore.coreRegistry.components[spec.componentType];
   const { typeKey } = componentClass;
-  const resAndComponents = coreWalker
+  const resAndComponents = FptCore.coreWalker
     .getResourcesAndComponentsByComponentType(script.content,
       spec.componentType)
     .filter(([col, res, obj]) => obj[typeKey] === spec.componentVariant);
@@ -66,7 +64,7 @@ function ComponentReferenceField({
   opts, onPropUpdate
 }) {
   const { componentType } = spec;
-  const referringTo = coreWalker.getResourceAndComponentById(script.content,
+  const referringTo = FptCore.coreWalker.getResourceAndComponentById(script.content,
     componentType, value);
 
   const label = labelForValue(script, spec, referringTo);

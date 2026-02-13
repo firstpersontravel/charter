@@ -1,10 +1,10 @@
 const _ = require('lodash');
 const moment = require('moment-timezone');
 
-const coreEvaluator = require('fptcore/src/core-evaluator');
-const coreRegistry = require('fptcore/src/core-registry');
-const ContextCore = require('fptcore/src/cores/context');
-const TemplateUtil = require('fptcore/src/utils/template');
+const coreEvaluator = require('fptcore/src/core-evaluator').default;
+const coreRegistry = require('fptcore/src/core-registry').default;
+const ContextCore = require('fptcore/src/cores/context').default;
+const TemplateUtil = require('fptcore/src/utils/template').default;
 
 const config = require('../config.ts');
 const models = require('../models');

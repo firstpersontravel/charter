@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-const RoleCore = require('fptcore/src/cores/role');
+const RoleCore = require('fptcore/src/cores/role').default;
 
 const models = require('../models');
 

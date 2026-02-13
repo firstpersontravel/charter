@@ -1,6 +1,6 @@
-const SceneCore = require('fptcore/src/cores/scene');
-const TripCore = require('fptcore/src/cores/trip');
-const PlayerCore = require('fptcore/src/cores/player');
+const SceneCore = require('fptcore/src/cores/scene').default;
+const TripCore = require('fptcore/src/cores/trip').default;
+const PlayerCore = require('fptcore/src/cores/player').default;
 
 const NotifyController = require('../controllers/notify');
 const Kernel = require('../kernel/kernel');

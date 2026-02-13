@@ -1,0 +1,41 @@
+const assert = require('assert');
+
+const textConditions = require('../../../src/modules/messages/text_conditions').default;
+
+describe('#text_contains', () => {
+  function assertIfEq(ctx, stmt, val) {
+    assert.strictEqual(textConditions.text_contains.eval(
+      stmt, { evalContext: ctx }), val);
+  }
+
+  it('finds text in middle', () => {
+    const stmt = { op: 'text_contains', part: 'gabe' };
+    const context = { event: { content: 'hi there gabe!' } };
+    assertIfEq(context, stmt, true);
+  });
+
+  it('is case insensitive', () => {
+    const stmt = { op: 'text_contains', part: 'gabe' };
+    const context = { event: { content: 'hi there GABE!' } };
+    assertIfEq(context, stmt, true);
+  });
+});
+
+describe('#text_is_affirmative', () => {
+  function assertIfEq(ctx, stmt, val) {
+    assert.strictEqual(textConditions.text_is_affirmative.eval(stmt,
+      { evalContext: ctx }), val);
+  }
+
+  it('finds yes', () => {
+    const stmt = { op: 'text_is_affirmative' };
+    const context = { event: { content: 'yes' } };
+    assertIfEq(context, stmt, true);
+  });
+
+  it('finds no', () => {
+    const stmt = { op: 'text_is_affirmative' };
+    const context = { event: { content: 'NO' } };
+    assertIfEq(context, stmt, false);
+  });
+});

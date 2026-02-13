@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { RoleCore, SceneCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ActiveTripsMap from '../partials/ActiveTripsMap';
 import { renderActorLink, renderJoinLink, renderPlayLink } from '../../partials/links';
@@ -104,8 +104,8 @@ export default class ActiveTripsOverview extends Component {
 
     const { script } = this.props;
     const roles = _(script.content.roles)
-      .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
-      .sort(SceneCore.sortResource)
+      .filter(role => FptCore.RoleCore.canRoleHaveParticipant(script.content, role))
+      .sort(FptCore.SceneCore.sortResource)
       .value();
     const allPlayers = getAllPlayers(this.props.trips);
 

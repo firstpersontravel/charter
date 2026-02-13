@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Validations } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import BaseString from './BaseString';
 
@@ -20,7 +20,7 @@ function SimpleAttributeField({
       path={path}
       opts={opts}
       validate={val => (
-        isEmpty(Validations.simpleAttribute.validate(script, name, spec, val))
+        isEmpty(FptCore.Validations.simpleAttribute.validate(script, name, spec, val))
       )}
       onPropUpdate={onPropUpdate} />
   );

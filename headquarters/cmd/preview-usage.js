@@ -3,8 +3,8 @@ const program = require('commander');
 
 const models = require('../src/models');
 
-const coreRegistry = require('fptcore/src/core-registry');
-const TextUtil = require('fptcore/src/utils/text');
+const coreRegistry = require('fptcore/src/core-registry').default;
+const TextUtil = require('fptcore/src/utils/text').default;
 
 program
   .arguments('<resource-type> <property>')

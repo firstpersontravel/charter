@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { coreRegistry } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { titleForResourceType } from '../design/utils/text-utils';
 
@@ -33,14 +33,14 @@ const colors = [
   '#e57e88'
 ];
 
-const COLORS = _(coreRegistry.resources)
+const COLORS = _(FptCore.coreRegistry.resources)
   .keys()
   .map((key, i) => [key, colors[i % colors.length]])
   .fromPairs()
   .value();
 
 export function iconForResource(resourceType, resource) {
-  const resourceClass = coreRegistry.resources[resourceType];
+  const resourceClass = FptCore.coreRegistry.resources[resourceType];
   if (!resourceClass || !resourceClass.icon) {
     return null;
   }

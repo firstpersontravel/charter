@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { RoleCore, SceneCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ResponsiveTabs from '../../partials/ResponsiveTabs';
 
@@ -77,8 +77,8 @@ export default function ActiveTripsAll({
   }
   const { script } = trips[0];
   const roles = _(script.content.roles)
-    .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
-    .sort(SceneCore.sortResource)
+    .filter(role => FptCore.RoleCore.canRoleHaveParticipant(script.content, role))
+    .sort(FptCore.SceneCore.sortResource)
     .value();
   const allPlayers = getAllPlayers(trips);
   const allParticipants = _(allPlayers).map('participant').uniq().value();

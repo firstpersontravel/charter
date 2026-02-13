@@ -3,7 +3,7 @@ const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 const twilio = require('twilio');
 
-const ScriptCore = require('fptcore/src/cores/script');
+const ScriptCore = require('fptcore/src/cores/script').default;
 
 const { mockNow, sandbox } = require('../mocks');
 const twilioRoutes = require('../../src/routes/twilio');

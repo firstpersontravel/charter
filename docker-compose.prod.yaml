@@ -4,4 +4,4 @@ services:
   server:
     image: fpt:latest
     env_file: [./secrets/prod.env]
-    command: node bin/server.js
+    command: node -r ts-node/register bin/server.js

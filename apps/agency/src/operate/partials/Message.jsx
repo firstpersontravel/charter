@@ -3,16 +3,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { fullMediaUrl } from '../utils';
 
 function renderMessageContent(message) {
   if (message.medium === 'image' && message.name) {
-    return `[Image: ${TextUtil.titleForTypedKey(message.name)}]`;
+    return `[Image: ${FptCore.TextUtil.titleForTypedKey(message.name)}]`;
   }
   if (message.medium === 'audio' && message.name) {
-    return `[Audio: ${TextUtil.titleForTypedKey(message.name)}]`;
+    return `[Audio: ${FptCore.TextUtil.titleForTypedKey(message.name)}]`;
   }
   if (message.medium === 'image') {
     const imageUrl = fullMediaUrl(message.trip.org, message.trip.experience,

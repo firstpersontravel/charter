@@ -3,19 +3,25 @@
   "version": "0.1.0",
   "license": "UNLICENSED",
   "scripts": {
-    "watch-docs": "nodemon cmd/dump-reference.js",
-    "build-docs": "node cmd/dump-reference.js",
-    "pretest": "eslint . || echo 'Lint failed.'",
-    "test": "mocha --recursive test"
+    "watch-docs": "nodemon cmd/dump-reference.ts",
+    "build-docs": "ts-node cmd/dump-reference.ts",
+    "pretest": "tsc -p tsconfig.check.json --noEmit && eslint --ext .ts src test cmd migrations || echo 'Lint failed.'",
+    "test": "mocha --require ts-node/register --recursive 'test/**/*.ts'"
   },
-  "main": "./src/index.js",
+  "main": "./src/index.ts",
   "dependencies": {
+    "@types/node": "^22.13.10",
     "jsonschema": "^1.5.0",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.25"
+    "moment-timezone": "^0.5.25",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
-    "eslint": "^5.1.0",
+    "@types/mocha": "^10.0.10",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/parser": "^8.19.1",
+    "@typescript-eslint/eslint-plugin": "^8.19.1",
     "mocha": "^4.1.0",
     "nodemon": "^2.0.3",
     "sinon": "^4.1.5"

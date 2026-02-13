@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const TextUtil = require('fptcore/src/utils/text');
+const TextUtil = require('fptcore/src/utils/text').default;
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');

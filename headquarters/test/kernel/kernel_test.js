@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const Kernel = require('fptcore/src/kernel/kernel');
+const Kernel = require('fptcore/src/kernel/kernel').default;
 
 const { sandbox, mockNow } = require('../mocks');
 const models = require('../../src/models');

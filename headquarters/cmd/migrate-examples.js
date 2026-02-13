@@ -6,8 +6,8 @@ const fs = require('fs');
 const program = require('commander');
 const yaml = require('js-yaml');
 
-const ScriptCore = require('fptcore/src/cores/script');
-const Migrator = require('fptcore/src/migrator');
+const ScriptCore = require('fptcore/src/cores/script').default;
+const Migrator = require('fptcore/src/migrator').default;
 
 const examplesPath = path.join(path.dirname(__dirname), 'examples');
 

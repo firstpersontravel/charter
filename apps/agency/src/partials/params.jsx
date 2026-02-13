@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { coreRegistry, coreWalker } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { labelForSpec } from '../design/utils/spec-utils';
 import { titleForResource } from '../design/utils/text-utils';
@@ -31,8 +31,8 @@ export function renderParam(script, key, spec, param) {
   }
   if (spec.type === 'componentReference') {
     const { componentType } = spec;
-    const variantClass = coreRegistry[componentType][spec.componentVariant];
-    const component = coreWalker.getComponentById(script.content,
+    const variantClass = FptCore.coreRegistry[componentType][spec.componentVariant];
+    const component = FptCore.coreWalker.getComponentById(script.content,
       spec.componentType, param);
     if (variantClass.getTitle) {
       return variantClass.getTitle(component, script.content);

@@ -8,6 +8,9 @@
      "erasableSyntaxOnly": true,
      "verbatimModuleSyntax": true
   },
+  "ts-node": {
+    "transpileOnly": true
+  },
   "include": [
     "./src/**/*",
     "./config/**/*",

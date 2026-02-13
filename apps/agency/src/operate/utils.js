@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { PlayerCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import config from '../config';
 
@@ -13,7 +13,7 @@ export function fullMediaUrl(org, experience, url) {
 }
 
 export function getPlayerPageInfo(trip, player) {
-  return PlayerCore.getPageInfo(trip.script, trip.evalContext, trip, player);
+  return FptCore.PlayerCore.getPageInfo(trip.script, trip.evalContext, trip, player);
 }
 
 export default {

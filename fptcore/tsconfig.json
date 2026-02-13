@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "strict": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "include": [
+    "src/**/*",
+    "test/**/*",
+    "migrations/**/*",
+    "cmd/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

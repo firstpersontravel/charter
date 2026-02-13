@@ -1,12 +1,12 @@
-import { TextUtil, Validations } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 export function typeTitleForSpec(spec) {
-  if (Validations[spec.type] && Validations[spec.type].title) {
-    return Validations[spec.type].title;
+  if (FptCore.Validations[spec.type] && FptCore.Validations[spec.type].title) {
+    return FptCore.Validations[spec.type].title;
   }
-  return TextUtil.titleForKey(spec.type);
+  return FptCore.TextUtil.titleForKey(spec.type);
 }
 
 export function labelForSpec(spec, key) {
-  return TextUtil.titleForSpec(spec, key);
+  return FptCore.TextUtil.titleForSpec(spec, key);
 }

@@ -12,7 +12,9 @@ jobs:
       with:
         node-version: 23.x
     - name: Install dependencies
-      run: cd apps/agency && npm -q install
+      run: |
+        (cd fptcore && npm -q install)
+        (cd apps/agency && npm -q install)
     - name: Run lint
       run: cd apps/agency && CI=true npm run test
 
@@ -27,7 +29,9 @@ jobs:
       with:
         node-version: 23.x
     - name: Install dependencies
-      run: cd apps/travel2 && npm -q install
+      run: |
+        (cd fptcore && npm -q install)
+        (cd apps/travel2 && npm -q install)
     - name: Run lint
       run: cd apps/travel2 && CI=true npm run test
 

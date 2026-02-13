@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { coreWalker, coreRegistry } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 export const sections = [
   ['roles', 'Roles', 'user'],
@@ -43,7 +43,7 @@ function isTriggerOnResources(trigger, collectionName, resources) {
   if (!trigger.event) {
     return false;
   }
-  const eventClass = coreRegistry.events[trigger.event.type];
+  const eventClass = FptCore.coreRegistry.events[trigger.event.type];
   if (eventClass.parentCollectionName !== collectionName) {
     return false;
   }
@@ -63,11 +63,11 @@ function isTriggerOnPages(trigger, pages) {
   const panelIds = new Set();
   // eslint-disable-next-line no-restricted-syntax
   for (const page of pages) {
-    coreWalker.walkResource('page', page, 'panels', (panel) => {
+    FptCore.coreWalker.walkResource('page', page, 'panels', (panel) => {
       panelIds.add(panel.id);
     });
   }
-  const eventClass = coreRegistry.events[trigger.event.type];
+  const eventClass = FptCore.coreRegistry.events[trigger.event.type];
   if (eventClass.parentComponentType !== 'panels') {
     return false;
   }

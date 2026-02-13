@@ -3,8 +3,8 @@ const program = require('commander');
 
 const models = require('../src/models');
 
-const ScriptCore = require('fptcore/src/cores/script');
-const Migrator = require('fptcore/src/migrator');
+const ScriptCore = require('fptcore/src/cores/script').default;
+const Migrator = require('fptcore/src/migrator').default;
 
 program
   .option('--dry-run', 'Dry run mode: do not save models.')

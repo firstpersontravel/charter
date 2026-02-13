@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TimeUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import PopoverControl from '../../partials/PopoverControl';
 
@@ -17,7 +17,7 @@ export default class TripSchedule extends Component {
     const { trip } = this.props;
     const { timezone } = trip.experience;
     const oldDate = moment.utc(oldTimestamp).tz(timezone).format('YYYY-MM-DD');
-    const newTimestamp = TimeUtil.convertTimeShorthandToIso(
+    const newTimestamp = FptCore.TimeUtil.convertTimeShorthandToIso(
       newTimeShorthand, oldDate, timezone
     );
     this.props.updateInstance('trips', trip.id, {
@@ -46,7 +46,7 @@ export default class TripSchedule extends Component {
               timeName, timestamp
             )}
             value={timeString}
-            validate={TimeUtil.validateTimeShorthand}
+            validate={FptCore.TimeUtil.validateTimeShorthand}
             label={timeString} />
         </td>
       </tr>

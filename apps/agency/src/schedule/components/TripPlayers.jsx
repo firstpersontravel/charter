@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { PlayerCore, RoleCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import PopoverControl from '../../partials/PopoverControl';
 import ScheduleUtils from '../utils';
@@ -25,7 +25,7 @@ export default class TripPlayers extends Component {
   handleAssignParticipant(roleName, trip, player, participantId) {
     const participant = _.find(this.props.participants, { id: Number(participantId) });
     if (!player) {
-      const initialFields = PlayerCore.getInitialFields(trip.script.content,
+      const initialFields = FptCore.PlayerCore.getInitialFields(trip.script.content,
         roleName, trip.variantNames.split(','));
       const fields = Object.assign({
         orgId: trip.orgId,
@@ -219,7 +219,7 @@ export default class TripPlayers extends Component {
       return null;
     }
     return (script.content.roles || [])
-      .filter(role => RoleCore.canRoleHaveParticipant(script.content, role))
+      .filter(role => FptCore.RoleCore.canRoleHaveParticipant(script.content, role))
       .map(role => this.renderRoleRow(trips, role));
   }
 

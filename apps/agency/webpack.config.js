@@ -36,9 +36,9 @@ module.exports = {
     './node_modules/react-phone-number-input/style.css'
   ],
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
     alias: {
-      fptcore: path.resolve(__dirname, '../../fptcore/src/index.js')
+      fptcore: path.resolve(__dirname, '../../fptcore/src/index.ts')
     },
     fallback: {
       // Webpack 5 no longer polyfills Node.js core modules automatically
@@ -74,6 +74,7 @@ module.exports = {
       }],
       include: [
         path.join(__dirname, 'src'),
+        path.resolve(__dirname, '../../fptcore/src'),
         // Shouldn't need this -- just need it since react-leaflet and react-phone-number-input
         // use nullish coalescing operator. Maybe can remove node_modules from babel later.
         path.join(__dirname, 'node_modules/leaflet'),

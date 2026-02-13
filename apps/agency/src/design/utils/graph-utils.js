@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { coreRegistry, TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 const walkers = {
   reference: (spec, value, iteree) => {
@@ -39,15 +39,15 @@ const walkers = {
     });
   },
   component: (spec, value, iteree) => {
-    const variety = coreRegistry.getComponentVariety(spec, value);
-    const mergedClass = coreRegistry.getComponentClass(spec, variety);
+    const variety = FptCore.coreRegistry.getComponentVariety(spec, value);
+    const mergedClass = FptCore.coreRegistry.getComponentClass(spec, variety);
     walkers.object(mergedClass.properties, value, iteree);
   }
 };
 
 function walkReferences(collectionName, resource) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = coreRegistry.resources[resourceType];
+  const resourceType = FptCore.TextUtil.singularize(collectionName);
+  const resourceClass = FptCore.coreRegistry.resources[resourceType];
   if (!resourceClass) {
     return [];
   }
@@ -84,18 +84,18 @@ export function assembleReverseReferences(scriptContent) {
 
 function getParentKey(resourceType) {
   return Object
-    .keys(coreRegistry.resources[resourceType].properties)
+    .keys(FptCore.coreRegistry.resources[resourceType].properties)
     .find((key) => {
-      const property = coreRegistry.resources[resourceType].properties[key];
+      const property = FptCore.coreRegistry.resources[resourceType].properties[key];
       return property.type === 'reference' && property.parent;
     });
 }
 
 export function getChildResourceTypes(collectionName) {
-  return _(coreRegistry.resources)
+  return _(FptCore.coreRegistry.resources)
     .keys()
     .filter(childResourceType => (
-      _.some(coreRegistry.resources[childResourceType].properties, property => (
+      _.some(FptCore.coreRegistry.resources[childResourceType].properties, property => (
         property.type === 'reference'
         && property.collection === collectionName
         && property.parent
@@ -105,7 +105,7 @@ export function getChildResourceTypes(collectionName) {
 }
 
 export function getChildren(scriptContent, resource, childCollectionName) {
-  const childResourceType = TextUtil.singularize(childCollectionName);
+  const childResourceType = FptCore.TextUtil.singularize(childCollectionName);
   const parentKey = getParentKey(childResourceType);
   return _.filter(scriptContent[childCollectionName], {
     [parentKey]: resource.name
