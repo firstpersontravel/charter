@@ -1,6 +1,6 @@
 import { find } from '../../utils/lodash-replacements';
 
-module.exports = {
+export default {
   icon: 'map-pin',
   help: 'A circular region around a waypoint. It can be used to trigger events when players enter or leave a region, or when messages are sent from within that region.',
   properties: {

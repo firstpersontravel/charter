@@ -1,7 +1,7 @@
 const moment = require('moment');
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   help: 'Wait for a moment to arrive.',
   title: 'Wait until moment',
   params: {
@@ -36,4 +36,3 @@ module.exports = {
   }
 };
 
-export {};

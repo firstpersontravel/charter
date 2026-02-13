@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   title: 'Focus tab',
   help: 'Bring up a specific tab on an interface.',
   params: {
@@ -25,4 +25,3 @@ module.exports = {
   }
 };
 
-export {};

@@ -1,7 +1,7 @@
 const assert = require('assert');
 
 const update_interface = require(
-  '../../../src/modules/pages/interface_update');
+  '../../../src/modules/pages/interface_update').default;
 
 describe('#update_interface', () => {
   it('updates UI state', () => {

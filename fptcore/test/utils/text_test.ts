@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const TextUtil = require('../../src/utils/text');
+const TextUtil = require('../../src/utils/text').default;
 
 const sandbox = sinon.sandbox.create();
 

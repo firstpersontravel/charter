@@ -1,6 +1,6 @@
 let num = 1;
 
-module.exports = {
+export default {
   migrations: {
     panels: function(panel, scriptContent) {
       panel.id = num++;

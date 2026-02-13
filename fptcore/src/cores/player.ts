@@ -37,4 +37,4 @@ class PlayerCore {
   }
 }
 
-module.exports = PlayerCore;
+export default PlayerCore;

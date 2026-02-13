@@ -27,6 +27,5 @@ class SceneCore {
   }
 }
 
-module.exports = SceneCore;
+export default SceneCore;
 
-export {};

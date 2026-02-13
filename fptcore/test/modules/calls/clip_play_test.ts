@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const play_clip = require('../../../src/modules/calls/clip_play');
+const play_clip = require('../../../src/modules/calls/clip_play').default;
 
 describe('#play_clip', () => {
   it('logs error if cannot find clip', () => {

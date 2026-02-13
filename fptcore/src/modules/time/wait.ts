@@ -1,7 +1,7 @@
-const TimeUtil = require('../../utils/time');
+const TimeUtil = require('../../utils/time').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   help: 'Wait a fixed period of time.',
   params: {
     duration: {
@@ -17,4 +17,3 @@ module.exports = {
   }
 };
 
-export {};

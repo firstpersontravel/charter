@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const send_email = require('../../../src/modules/email/email_send');
+const send_email = require('../../../src/modules/email/email_send').default;
 
 describe('#send_email', () => {
   const actionContext = {

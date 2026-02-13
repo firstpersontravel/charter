@@ -48,7 +48,7 @@ function migrateTrigger(trigger) {
   delete trigger.repeatable;
 }
 
-module.exports = {
+export default {
   migrations: {
     triggers: function(trigger) {
       migrateTrigger(trigger);

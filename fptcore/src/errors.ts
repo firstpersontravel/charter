@@ -14,6 +14,5 @@ const Errors = {
   ScriptValidationError
 };
 
-module.exports = Errors;
+export default Errors;
 
-export {};

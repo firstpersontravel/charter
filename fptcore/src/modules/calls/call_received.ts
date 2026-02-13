@@ -1,5 +1,5 @@
 import type { ActionContext, Event } from '../../types';
-module.exports = {
+export default {
   help: 'Occurs when Charter receives a call initiated by a user.',
   specParams: {
     from: {
@@ -20,4 +20,3 @@ module.exports = {
   }
 };
 
-export {};

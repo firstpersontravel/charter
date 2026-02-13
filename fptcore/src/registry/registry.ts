@@ -104,4 +104,4 @@ class Registry {
   }
 }
 
-module.exports = Registry;
+export default Registry;

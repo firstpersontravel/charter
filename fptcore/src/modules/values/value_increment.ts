@@ -1,7 +1,7 @@
-const set_value = require('./value_set');
+const set_value = require('./value_set').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   title: 'Increment variable',
   help: 'Increment the numerical value of a value by reference.',
   params: {
@@ -22,4 +22,3 @@ module.exports = {
   }
 };
 
-export {};

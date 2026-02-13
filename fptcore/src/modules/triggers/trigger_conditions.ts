@@ -1,6 +1,6 @@
 import type { ActionContext, SubIfFn } from '../../types';
 
-module.exports = {
+export default {
   and: {
     title: 'All',
     help: 'A condition that passes only if all of its subconditions pass.',
@@ -50,4 +50,3 @@ module.exports = {
   },
 };
 
-export {};

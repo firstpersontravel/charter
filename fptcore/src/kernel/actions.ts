@@ -1,5 +1,5 @@
-const coreRegistry = require('../core-registry');
-const Evaluator = require('../utils/evaluator');
+const coreRegistry = require('../core-registry').default;
+const Evaluator = require('../utils/evaluator').default;
 import { isPlainObject } from '../utils/lodash-replacements';
 import type { ActionContext, TriggerAction, ScriptTrigger } from '../types';
 
@@ -113,4 +113,4 @@ class KernelActions {
   }
 }
 
-module.exports = KernelActions;
+export default KernelActions;

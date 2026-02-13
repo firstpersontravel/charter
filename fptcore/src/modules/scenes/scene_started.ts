@@ -1,5 +1,5 @@
 import type { ActionContext, Event } from '../../types';
-module.exports = {
+export default {
   help: 'Occurs when a scene has been started.',
   specParams: {},
   matchEvent: function(spec: Record<string, any>, event: Event, actionContext: ActionContext) {
@@ -9,4 +9,3 @@ module.exports = {
   }
 };
 
-export {};

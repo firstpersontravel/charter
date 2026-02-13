@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const call_received = require('../../../src/modules/calls/call_received');
+const call_received = require('../../../src/modules/calls/call_received').default;
 
 describe('#call_received', () => {
   it('fires on matching call', () => {

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import BaseClear from '../fields/BaseClear';
 import { newItemsForSpecType } from './utils';
@@ -60,7 +60,7 @@ function DictionaryField({
         spec={spec.keys}
         value="New item"
         name={
-          `New entry for ${TextUtil.titleForSpec(spec, name).toLowerCase()}`}
+          `New entry for ${FptCore.TextUtil.titleForSpec(spec, name).toLowerCase()}`}
         path="INVALID"
         opts={{
           onConfirm: val => onPropUpdate(`${path}[${val}]`, newItem)

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment-timezone');
 
-const TripCore = require('../../src/cores/trip');
+const TripCore = require('../../src/cores/trip').default;
 
 describe('TripCore', () => {
   describe('#getInitialFields', () => {

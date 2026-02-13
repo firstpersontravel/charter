@@ -14,6 +14,5 @@ class RoleCore {
   }
 }
 
-module.exports = RoleCore;
+export default RoleCore;
 
-export {};

@@ -42,7 +42,7 @@ function getUrlFromAssets(assets, val) {
   return asset.data.url;
 }
 
-module.exports = {
+export default {
   migrations: {
     actions: function(action, scriptContent, resource, assets) {
       if (!ACTION_FIELDS[action.name]) {

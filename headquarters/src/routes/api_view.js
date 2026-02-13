@@ -1,9 +1,9 @@
 const moment = require('moment-timezone');
 
-const Interface = require('fptcore/src/modules/pages/interface');
-const coreRegistry = require('fptcore/src/core-registry');
-const coreEvaluator = require('fptcore/src/core-evaluator');
-const TemplateUtil = require('fptcore/src/utils/template');
+const Interface = require('fptcore/src/modules/pages/interface').default;
+const coreRegistry = require('fptcore/src/core-registry').default;
+const coreEvaluator = require('fptcore/src/core-evaluator').default;
+const TemplateUtil = require('fptcore/src/utils/template').default;
 
 const models = require('../models');
 const ActionContext = require('../kernel/action_context');

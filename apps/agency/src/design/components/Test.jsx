@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import TripTestHarness from '../partials/TripTestHarness';
 
@@ -75,7 +75,7 @@ export default class Test extends Component {
     return (
       <div className="form-group" key={section}>
         <label htmlFor={`variant_${section}`}>
-          {TextUtil.titleForKey(section)}
+          {FptCore.TextUtil.titleForKey(section)}
         </label>
         <select
           className="form-control"

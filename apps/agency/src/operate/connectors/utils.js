@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import { ContextCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import {
   instanceIncluder,
@@ -39,7 +39,7 @@ function getTripEvalContext(state, instance) {
   const env = {
     host: `${window.location.protocol}//${window.location.hostname}`
   };
-  return ContextCore.gatherEvalContext(env, instance);
+  return FptCore.ContextCore.gatherEvalContext(env, instance);
 }
 
 function getTripActionContext(state, instance) {

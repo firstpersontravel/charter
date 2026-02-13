@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   title: 'Resume background audio',
   help: 'Resume currently paused audio.',
   params: {
@@ -74,4 +74,3 @@ module.exports = {
   }
 };
 
-export {};

@@ -1,5 +1,5 @@
 import type { ActionContext, Event } from '../../types';
-module.exports = {
+export default {
   help: 'Occurs when a user confirms arrival at a destination.',
   parentComponentType: 'panels',
   parentComponentSpecProperty: 'directions',
@@ -55,4 +55,3 @@ module.exports = {
   }
 };
 
-export {};

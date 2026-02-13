@@ -2,15 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { coreRegistry, TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ResourceBadge from '../../partials/ResourceBadge';
 import { getSliceFilters } from '../utils/section-utils';
 import { titleForResourceType } from '../utils/text-utils';
 
 function renderCreateResource(script, sliceType, sliceName, collectionName) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = coreRegistry.resources[resourceType];
+  const resourceType = FptCore.TextUtil.singularize(collectionName);
+  const resourceClass = FptCore.coreRegistry.resources[resourceType];
   const query = sliceType === 'scene' ? `?scene=${sliceName}` : '';
   return (
     <p key={collectionName} className="mb-3">

@@ -2,7 +2,7 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const sinon = require('sinon');
 
-const panels = require('fptcore/src/modules/pages/panels');
+const panels = require('fptcore/src/modules/pages/panels').default;
 
 const { sandbox } = require('../mocks');
 const models = require('../../src/models');

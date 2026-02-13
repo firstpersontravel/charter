@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   icon: 'user',
   help: 'A participant in the experience. This participant can be a player, an actor, or a scripted automaton.',
   properties: {
@@ -17,4 +17,3 @@ module.exports = {
   }
 };
 
-export {};

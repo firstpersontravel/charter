@@ -1,6 +1,4 @@
-const Evaluator = require('./utils/evaluator');
-const coreRegistry = require('./core-registry');
+const Evaluator = require('./utils/evaluator').default;
+const coreRegistry = require('./core-registry').default;
 
-module.exports = new Evaluator(coreRegistry);
-
-export {};
+export default new Evaluator(coreRegistry);

@@ -2,9 +2,9 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const Kernel = require('../../src/kernel/kernel');
-const KernelActions = require('../../src/kernel/actions');
-const KernelTriggers = require('../../src/kernel/triggers');
+const Kernel = require('../../src/kernel/kernel').default;
+const KernelActions = require('../../src/kernel/actions').default;
+const KernelTriggers = require('../../src/kernel/triggers').default;
 
 const sandbox = sinon.sandbox.create();
 

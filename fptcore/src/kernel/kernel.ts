@@ -1,10 +1,10 @@
 const moment = require('moment');
 import { omit } from '../utils/lodash-replacements';
 
-const coreRegistry = require('../core-registry');
-const KernelResult = require('./result');
-const KernelActions = require('./actions');
-const KernelTriggers = require('./triggers');
+const coreRegistry = require('../core-registry').default;
+const KernelResult = require('./result').default;
+const KernelActions = require('./actions').default;
+const KernelTriggers = require('./triggers').default;
 
 import type {
   ActionContext, ActionClass, Event, KernelAction,
@@ -157,4 +157,4 @@ class Kernel {
   }
 }
 
-module.exports = Kernel;
+export default Kernel;

@@ -1,9 +1,9 @@
 import { find } from '../../utils/lodash-replacements';
 
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   title: 'Play call clip',
   help: 'Play a call clip on an active phone call.',
   params: {

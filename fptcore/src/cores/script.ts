@@ -1,10 +1,10 @@
 const jsonschema = require('jsonschema');
 
-const TextUtil = require('../utils/text');
-const coreRegistry = require('../core-registry');
-const Validator = require('../utils/validator');
-const Walker = require('../utils/walker');
-const Errors = require('../errors');
+const TextUtil = require('../utils/text').default;
+const coreRegistry = require('../core-registry').default;
+const Validator = require('../utils/validator').default;
+const Walker = require('../utils/walker').default;
+const Errors = require('../errors').default;
 
 import type { ScriptContent, NamedResource, FieldError } from '../types';
 
@@ -158,6 +158,5 @@ class ScriptCore {
   }
 }
 
-module.exports = ScriptCore;
+export default ScriptCore;
 
-export {};

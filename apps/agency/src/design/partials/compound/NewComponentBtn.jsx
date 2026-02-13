@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import PopoverControl from '../../../partials/PopoverControl';
 import {
@@ -13,7 +13,7 @@ function NewComponentBtn({ componentSpec, onConfirm, label }) {
   const componentType = componentSpec.component;
   const variantOptions = getComponentVariantOptions(componentType);
   const title = componentSpec.title
-    || `New ${TextUtil.singularize(componentType).toLowerCase()}`;
+    || `New ${FptCore.TextUtil.singularize(componentType).toLowerCase()}`;
   return (
     <PopoverControl
       title={title}

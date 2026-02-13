@@ -1,6 +1,4 @@
-const Walker = require('./utils/walker');
-const coreRegistry = require('./core-registry');
+const Walker = require('./utils/walker').default;
+const coreRegistry = require('./core-registry').default;
 
-module.exports = new Walker(coreRegistry);
-
-export {};
+export default new Walker(coreRegistry);

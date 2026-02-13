@@ -1,6 +1,6 @@
 import type { ActionContext, Event } from '../../types';
 
-module.exports = {
+export default {
   help: 'Occurs when a player hangs up the phone.',
   specParams: {
     role: {
@@ -15,4 +15,3 @@ module.exports = {
   }
 };
 
-export {};

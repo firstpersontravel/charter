@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const time_occurred = require('../../../src/modules/time/time_occurred');
+const time_occurred = require('../../../src/modules/time/time_occurred').default;
 
 describe('#time_occurred', () => {
 

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     actions: function(action) {
       if (action.name === 'send_email') {

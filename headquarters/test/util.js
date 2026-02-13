@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment-timezone');
 
-const ScriptCore = require('fptcore/src/cores/script');
+const ScriptCore = require('fptcore/src/cores/script').default;
 
 const TripsController = require('../src/controllers/trips');
 const TripResetHandler = require('../src/handlers/trip_reset');

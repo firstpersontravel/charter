@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   icon: scene => (scene && scene.global) ? 'globe' : 'puzzle-piece',
   help: 'A temporal unit of experience. Usually only one scene is active at a time.',
   properties: {
@@ -13,4 +13,3 @@ module.exports = {
   }
 };
 
-export {};

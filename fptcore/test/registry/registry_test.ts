@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const Registry = require('../../src/registry/registry');
+const Registry = require('../../src/registry/registry').default;
 
 const fakeModules = [{ conditions: { fake: { eval: () => true } } }];
 const fakeComponents = { widgets: { typeKey: 'model' } };

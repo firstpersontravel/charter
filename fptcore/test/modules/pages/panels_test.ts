@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const panels = require('../../../src/modules/pages/panels');
+const panels = require('../../../src/modules/pages/panels').default;
 
 describe('panels', () => {
   describe('audio_foreground', () => {

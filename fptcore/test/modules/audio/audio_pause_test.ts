@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const pause_audio = require('../../../src/modules/audio/audio_pause');
+const pause_audio = require('../../../src/modules/audio/audio_pause').default;
 
 describe('#pause_audio', () => {
   it('logs info if no audio', () => {

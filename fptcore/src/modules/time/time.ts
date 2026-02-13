@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   title: 'Moment',
   icon: 'hourglass',
   help: 'A time at which things happen over the trip. The specific schedule is determined by a variant.',
@@ -8,4 +8,3 @@ module.exports = {
   }
 };
 
-export {};

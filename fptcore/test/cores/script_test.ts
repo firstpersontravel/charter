@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const ScriptCore = require('../../src/cores/script');
+const ScriptCore = require('../../src/cores/script').default;
 
 describe('ScriptCore', () => {
   describe('#getResourceErrors', () => {

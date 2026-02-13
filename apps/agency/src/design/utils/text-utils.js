@@ -1,16 +1,16 @@
-import { TextUtil, coreRegistry, coreWalker } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 export function titleForResourceType(resourceType) {
-  const resourceClass = coreRegistry.resources[resourceType];
-  return resourceClass.title || TextUtil.titleForKey(resourceType);
+  const resourceClass = FptCore.coreRegistry.resources[resourceType];
+  return resourceClass.title || FptCore.TextUtil.titleForKey(resourceType);
 }
 
 export function titleForResource(scriptContent, collectionName, resource) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = coreRegistry.resources[resourceType];
+  const resourceType = FptCore.TextUtil.singularize(collectionName);
+  const resourceClass = FptCore.coreRegistry.resources[resourceType];
   if (resourceClass && resourceClass.getTitle) {
-    return resourceClass.getTitle(scriptContent, resource, coreRegistry,
-      coreWalker);
+    return resourceClass.getTitle(scriptContent, resource, FptCore.coreRegistry,
+      FptCore.coreWalker);
   }
   return resource.title || 'No title';
 }

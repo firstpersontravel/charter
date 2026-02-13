@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const signal_cue = require('../../../src/modules/cues/cue_signal');
+const signal_cue = require('../../../src/modules/cues/cue_signal').default;
 
 describe('#signal_cue', () => {
   it('generates an event', () => {

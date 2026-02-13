@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const add_to_call = require('../../../src/modules/calls/call_add_to');
+const add_to_call = require('../../../src/modules/calls/call_add_to').default;
 
 describe('#add_to_call', () => {
   it('starts a conference from incoming call', () => {

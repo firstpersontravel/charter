@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { SceneCore, TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import {
   titleForResource,
@@ -19,7 +19,7 @@ function labelForValue(script, spec, value) {
   const referringToResource = _.find(collection, { name: value });
 
   if (referringToResource) {
-    const resourceType = TextUtil.singularize(spec.collection);
+    const resourceType = FptCore.TextUtil.singularize(spec.collection);
     const title = titleForResource(script.content, spec.collection,
       referringToResource);
     return (
@@ -63,7 +63,7 @@ function choicesForSpec(script, resource, spec) {
     specialChoices.push(...spec.specialValues);
   }
   const choices = specialChoices.concat(filtered
-    .sort(SceneCore.sortResource)
+    .sort(FptCore.SceneCore.sortResource)
     .map(rel => ({
       value: rel.name,
       label: titleForResource(script.content, spec.collection, rel)
@@ -81,7 +81,7 @@ function ReferenceField({
 
   if (!value) {
     const collectionName = spec.collection;
-    const resourceType = TextUtil.singularize(collectionName);
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
     const collection = script.content[collectionName];
     if (!collection || !collection.length) {
       return (

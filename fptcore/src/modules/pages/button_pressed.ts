@@ -1,5 +1,5 @@
 import type { ActionContext, Event } from '../../types';
-module.exports = {
+export default {
   help: 'Occurs when a button has been pressed.',
   parentComponentType: 'panels',
   parentComponentSpecProperty: 'button',
@@ -42,4 +42,3 @@ module.exports = {
   }
 };
 
-export {};

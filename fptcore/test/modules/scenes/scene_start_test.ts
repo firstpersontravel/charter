@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const start_scene = require('../../../src/modules/scenes/scene_start');
+const start_scene = require('../../../src/modules/scenes/scene_start').default;
 
 describe('#start_scene', () => {
   it('starts a scene', () => {

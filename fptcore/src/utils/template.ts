@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-const TimeUtil = require('./time');
+const TimeUtil = require('./time').default;
 import { get } from './lodash-replacements';
 import type { EvalContext } from '../types';
 
@@ -74,4 +74,4 @@ class TemplateUtil {
   }
 }
 
-module.exports = TemplateUtil;
+export default TemplateUtil;

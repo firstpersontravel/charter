@@ -1,7 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 import type { ActionContext, Event, ScriptContent } from '../../types';
 
-module.exports = {
+export default {
   help: 'Occurs when an audio message has been received.',
   getTitle: function(scriptContent: ScriptContent, spec: Record<string, any>) {
     const parts = ['audio'];

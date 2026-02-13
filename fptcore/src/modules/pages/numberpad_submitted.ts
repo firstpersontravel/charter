@@ -1,5 +1,5 @@
 import type { ActionContext, Event } from '../../types';
-module.exports = {
+export default {
   title: 'Number entry submitted',
   help: 'Occurs when a user confirms a number on a number entry.',
   parentComponentType: 'panels',
@@ -47,4 +47,3 @@ module.exports = {
   }
 };
 
-export {};

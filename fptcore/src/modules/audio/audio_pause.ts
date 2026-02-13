@@ -1,7 +1,7 @@
 const moment = require('moment');
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   title: 'Pause background audio',
   help: 'Pause currently playing audio.',
   params: {
@@ -64,4 +64,3 @@ module.exports = {
   }
 };
 
-export {};

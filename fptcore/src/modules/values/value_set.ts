@@ -1,8 +1,8 @@
 
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   title: 'Set variable',
   help: 'Update a variable in the trip state to either a constant number or string, or to match another variable by reference.',
   params: {
@@ -29,5 +29,3 @@ module.exports = {
     }];
   }
 };
-
-export {};

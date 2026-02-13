@@ -9,7 +9,7 @@ import {
 import L from 'leaflet';
 import PolylineEncoded from 'polyline-encoded';
 
-import { WaypointCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import Constants from '../../constants.ts';
 import RouterForwarder from './RouterForwarder';
@@ -59,7 +59,7 @@ function renderGeofenceOptions(script, geofence) {
   if (!waypoint) {
     return null;
   }
-  const waypointOptions = WaypointCore.optionsForWaypoint(
+  const waypointOptions = FptCore.WaypointCore.optionsForWaypoint(
     script.content, geofence.center
   );
   return waypointOptions.map(waypointOption => (
@@ -145,7 +145,7 @@ function getPolylineRemaining(coords, currentCoords) {
 export default class ActiveTripsMap extends Component {
   getWaypointLatLngs() {
     const { script } = this.props.trips[0];
-    const waypoints = WaypointCore.getAllWaypointOptions(script.content);
+    const waypoints = FptCore.WaypointCore.getAllWaypointOptions(script.content);
     return waypoints
       .map(waypoint => (
         L.latLng(waypoint.location.coords[0], waypoint.location.coords[1])
@@ -194,7 +194,7 @@ export default class ActiveTripsMap extends Component {
           return null;
         }
         if (page.waypoint) {
-          const waypointOption = WaypointCore.optionForWaypoint(
+          const waypointOption = FptCore.WaypointCore.optionForWaypoint(
             script.content, page.waypoint,
             trip.waypointOptions
           );
@@ -223,9 +223,9 @@ export default class ActiveTripsMap extends Component {
         if (!route) {
           return null;
         }
-        const fromOption = WaypointCore.optionForWaypoint(script.content,
+        const fromOption = FptCore.WaypointCore.optionForWaypoint(script.content,
           route.from, trip.waypointOptions);
-        const toOption = WaypointCore.optionForWaypoint(script.content,
+        const toOption = FptCore.WaypointCore.optionForWaypoint(script.content,
           route.to, trip.waypointOptions);
         const directions = _.find(this.props.directions, {
           data: {

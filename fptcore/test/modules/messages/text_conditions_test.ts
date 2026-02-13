@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const textConditions = require('../../../src/modules/messages/text_conditions');
+const textConditions = require('../../../src/modules/messages/text_conditions').default;
 
 describe('#text_contains', () => {
   function assertIfEq(ctx, stmt, val) {

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { TextUtil, coreRegistry, coreWalker } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { titleForResourceType } from './text-utils';
 
@@ -39,9 +39,9 @@ function newComponentId() {
 const componentTypesWithId = ['panels', 'actions'];
 
 export function getNewComponent(componentType, variant) {
-  const componentClass = coreRegistry.components[componentType];
+  const componentClass = FptCore.coreRegistry.components[componentType];
   const componentTypeKey = componentClass.typeKey;
-  const variantClass = coreRegistry.getComponentClassByType(componentType,
+  const variantClass = FptCore.coreRegistry.getComponentClassByType(componentType,
     variant);
   const defaults = defaultFieldsForSpecs(variantClass.properties);
   const fields = Object.assign(defaults, { [componentTypeKey]: variant });
@@ -52,12 +52,12 @@ export function getNewComponent(componentType, variant) {
 }
 
 export function getComponentVariantOptions(componentType) {
-  const componentRegistry = coreRegistry[componentType];
+  const componentRegistry = FptCore.coreRegistry[componentType];
   return [{ value: '', label: '---' }].concat(Object
     .keys(componentRegistry)
     .map(key => ({
       value: key,
-      label: componentRegistry[key].title || TextUtil.titleForKey(key)
+      label: componentRegistry[key].title || FptCore.TextUtil.titleForKey(key)
     })))
     .sort((a, b) => (a.label > b.label ? 1 : -1));
 }
@@ -71,7 +71,7 @@ export function duplicateComponent(componentType, existingComponent) {
   // Generate new panel/action IDs by random number. Hacky!
   // eslint-disable-next-line no-restricted-syntax
   for (const subtype of componentTypesWithId) {
-    coreWalker.walkComponent(componentType, newComponent, subtype, (obj) => {
+    FptCore.coreWalker.walkComponent(componentType, newComponent, subtype, (obj) => {
       // eslint-disable-next-line no-param-reassign
       obj.id = newComponentId();
     });
@@ -95,7 +95,7 @@ export function newResourceNameForType(resourceType) {
 }
 
 export function duplicateResource(collectionName, existingResource) {
-  const resType = TextUtil.singularize(collectionName);
+  const resType = FptCore.TextUtil.singularize(collectionName);
   const newName = newResourceNameForType(resType);
   const clonedResource = _.cloneDeep(existingResource);
   const newResource = Object.assign({}, clonedResource, { name: newName });
@@ -103,7 +103,7 @@ export function duplicateResource(collectionName, existingResource) {
   // Generate new panel/action IDs by random number. Hacky!
   // eslint-disable-next-line no-restricted-syntax
   for (const componentType of componentTypesWithId) {
-    coreWalker.walkResource(resType, newResource, componentType, (obj) => {
+    FptCore.coreWalker.walkResource(resType, newResource, componentType, (obj) => {
       // eslint-disable-next-line no-param-reassign
       obj.id = newComponentId();
     });
@@ -114,8 +114,8 @@ export function duplicateResource(collectionName, existingResource) {
 
 
 export function createNewResource(collectionName, defaults) {
-  const resourceType = TextUtil.singularize(collectionName);
-  const resourceClass = coreRegistry.resources[resourceType];
+  const resourceType = FptCore.TextUtil.singularize(collectionName);
+  const resourceClass = FptCore.coreRegistry.resources[resourceType];
   const defaultFields = defaultFieldsForClass(resourceClass);
 
   if (resourceClass.properties.title) {

@@ -4,7 +4,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { coreEvaluator, TemplateUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { urlForResource } from '../../design/utils/section-utils';
 import { fullMediaUrl } from '../utils';
@@ -29,7 +29,7 @@ function isBtnDisabled(trip, player, page) {
 
 function renderText(trip, player, page, panel) {
   const maxLength = 80;
-  let humanized = TemplateUtil.templateText(trip.evalContext,
+  let humanized = FptCore.TemplateUtil.templateText(trip.evalContext,
     panel.text, trip.experience.timezone, player.roleName);
   if (humanized.length > maxLength) {
     humanized = `${humanized.slice(0, maxLength)}...`;
@@ -54,7 +54,7 @@ function renderImage(trip, player, page, panel) {
 }
 
 function renderButton(trip, player, page, panel, onEvent) {
-  const panelText = TemplateUtil.templateText(trip.evalContext,
+  const panelText = FptCore.TemplateUtil.templateText(trip.evalContext,
     panel.text || panel.placeholder, trip.experience.timezone,
     player.roleName);
   const btnEvent = { type: 'button_pressed', button_id: panel.id };
@@ -246,7 +246,7 @@ function renderHeader(trip, player, page, onAction) {
     return 'No page';
   }
   const headerText = truncateMsg(_.trim(page.directive
-    ? TemplateUtil.templateText(trip.evalContext, page.directive,
+    ? FptCore.TemplateUtil.templateText(trip.evalContext, page.directive,
       trip.experience.timezone, player.roleName) : ''), 100);
   const header = headerText ? (<span className="ms-1">{headerText}</span>) : null;
 
@@ -300,7 +300,7 @@ function renderHeader(trip, player, page, onAction) {
   );
 }
 function isPanelVisible(trip, player, panel) {
-  return coreEvaluator.if(trip.actionContext, panel.visible_if);
+  return FptCore.coreEvaluator.if(trip.actionContext, panel.visible_if);
 }
 
 function renderPage(trip, player, page, onEvent, onAction) {

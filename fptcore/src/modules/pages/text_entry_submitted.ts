@@ -1,5 +1,5 @@
 import type { ActionContext, Event } from '../../types';
-module.exports = {
+export default {
   help: 'Occurs when a user confirms text on a text entry field.',
   parentComponentType: 'panels',
   parentComponentSpecProperty: 'text_entry',
@@ -44,4 +44,3 @@ module.exports = {
   }
 };
 
-export {};

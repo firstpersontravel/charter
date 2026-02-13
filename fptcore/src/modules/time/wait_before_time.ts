@@ -1,9 +1,9 @@
 const moment = require('moment');
 
-const TimeUtil = require('../../utils/time');
+const TimeUtil = require('../../utils/time').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   title: 'Wait before moment',
   help: 'Wait a fixed period of time before a scheduled moment.',
   params: {
@@ -43,4 +43,3 @@ module.exports = {
   }
 };
 
-export {};

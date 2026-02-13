@@ -5,7 +5,7 @@ import {
   Button, Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 
-import { TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 function getVariantSections(script) {
   if (!script || !script.content) {
@@ -110,7 +110,7 @@ export default class TripModal extends Component {
       return (
         <div className="form-group row" key={htmlName}>
           <label className="col-sm-3 col-form-label" htmlFor={htmlName}>
-            {TextUtil.titleForKey(section)}
+            {FptCore.TextUtil.titleForKey(section)}
           </label>
           <div className="col-sm-9">
             <select

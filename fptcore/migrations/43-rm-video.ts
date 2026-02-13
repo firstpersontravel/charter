@@ -9,7 +9,7 @@ function filterPanels(panels) {
   return panels.filter(p => p.type !== 'room');
 }
 
-module.exports = {
+export default {
   migrations: {
     interfaces: function(iface: any) {
       if (iface.tabs) {

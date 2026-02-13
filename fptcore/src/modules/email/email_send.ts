@@ -1,9 +1,9 @@
 import { find } from '../../utils/lodash-replacements';
 
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   help: 'Send an email from one player to another.',
   params: {
     from: {

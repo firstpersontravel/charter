@@ -1,7 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 const moment = require('moment');
 
-const TimeUtil = require('../../utils/time');
+const TimeUtil = require('../../utils/time').default;
 import type { ActionContext, Event, ScriptContent } from '../../types';
 
 function timeForSpec(spec: any, evalContext: any) {
@@ -14,7 +14,7 @@ function timeForSpec(spec: any, evalContext: any) {
   return moment.utc(timestring).add(offset, 'seconds');
 }
 
-module.exports = {
+export default {
   title: 'Moment occurred',
   help: 'Occurs when the current clock time reaches a scheduled moment.',
   specParams: {

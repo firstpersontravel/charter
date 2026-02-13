@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const TextUtil = require('fptcore/src/utils/text');
+const TextUtil = require('fptcore/src/utils/text').default;
 
 const config = require('../config.ts');
 const models = require('../models');

@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const send_to_page = require('../../../src/modules/pages/page_send_to');
+const send_to_page = require('../../../src/modules/pages/page_send_to').default;
 
 const actionContext = {
   scriptContent: {

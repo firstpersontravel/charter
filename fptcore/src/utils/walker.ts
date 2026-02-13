@@ -1,4 +1,4 @@
-const TextUtil = require('./text');
+const TextUtil = require('./text').default;
 
 import type { Registry, ScriptContent, ParamSpec, NamedResource } from '../types';
 
@@ -175,6 +175,4 @@ class Walker {
   }
 }
 
-module.exports = Walker;
-
-export {};
+export default Walker;

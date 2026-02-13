@@ -1,7 +1,7 @@
 import { get } from '../../utils/lodash-replacements';
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   submission_contains: {
     help: 'A condition that passes if the submission contains any part of the \'part\' parameter.',
     properties: {

@@ -1,9 +1,9 @@
 import { find } from '../../utils/lodash-replacements';
 
-const SceneCore = require('../../cores/scene');
+const SceneCore = require('../../cores/scene').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   help: 'Start a new scene.',
   params: {
     scene_name: {

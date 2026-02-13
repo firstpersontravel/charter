@@ -1,7 +1,7 @@
 const assert = require('assert');
 
-const coreRegistry = require('../../src/core-registry');
-const Evaluator = require('../../src/utils/evaluator');
+const coreRegistry = require('../../src/core-registry').default;
+const Evaluator = require('../../src/utils/evaluator').default;
 
 const evaluator = new Evaluator(coreRegistry);
 

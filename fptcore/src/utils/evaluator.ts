@@ -23,6 +23,4 @@ class Evaluator {
   }
 }
 
-module.exports = Evaluator;
-
-export {};
+export default Evaluator;

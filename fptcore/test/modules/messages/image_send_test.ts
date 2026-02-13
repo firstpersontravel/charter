@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const send_image = require('../../../src/modules/messages/image_send');
+const send_image = require('../../../src/modules/messages/image_send').default;
 
 describe('#send_image', () => {
   const now = moment.utc();

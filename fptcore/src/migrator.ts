@@ -1,9 +1,9 @@
 const fs = require('fs');
 import { cloneDeep } from './utils/lodash-replacements';
 
-const coreRegistry = require('./core-registry');
-const TextUtil = require('./utils/text');
-const Walker = require('./utils/walker');
+const coreRegistry = require('./core-registry').default;
+const TextUtil = require('./utils/text').default;
+const Walker = require('./utils/walker').default;
 
 import type { ScriptContent, Migration, MigrationFn, MigrationFns } from './types';
 
@@ -26,7 +26,7 @@ for (const file of fs.readdirSync(__dirname + '/../migrations')) {
   if (file.match(/\.(js|ts)$/) === null) {
     continue;
   }
-  const migration = require('../migrations/' + file);
+  const migration = require('../migrations/' + file).default;
   const num = Number(file.split('-')[0]);
   migrations.push({
     num: num,
@@ -100,4 +100,4 @@ Migrator.migrateScriptContent = function(scriptContent: ScriptContent, assets: u
   return migrated;
 };
 
-module.exports = Migrator;
+export default Migrator;

@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import fptCore from 'fptcore';
+const fptCore = require('fptcore').default;
 
 export default class Evaluator {
   constructor(state, playerId) {

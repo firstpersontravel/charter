@@ -3,7 +3,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { coreRegistry, KernelTriggers } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { renderParams } from '../../partials/params';
 
@@ -11,7 +11,7 @@ function getScheduledTripTriggers(trip) {
   const now = moment.utc();
   const inOneHour = now.clone().add(1, 'hour');
   const event = { type: 'time_occurred', timestamp: inOneHour };
-  const triggers = KernelTriggers.triggersForEvent(event,
+  const triggers = FptCore.KernelTriggers.triggersForEvent(event,
     trip.actionContext);
   return triggers.map(trigger => ({
     id: trigger.name,
@@ -67,7 +67,7 @@ export default class ActiveTripsUpcoming extends Component {
       .utc(action.scheduledAt)
       .tz(trip.experience.timezone)
       .format('ddd h:mm:ssa');
-    const actionResourceClass = coreRegistry.actions[action.name];
+    const actionResourceClass = FptCore.coreRegistry.actions[action.name];
     const values = renderParams(trip.script, actionResourceClass.params,
       action.params);
     const cellClass = action.isArchived

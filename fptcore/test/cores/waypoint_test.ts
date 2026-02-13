@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const WaypointCore = require('../../src/cores/waypoint');
+const WaypointCore = require('../../src/cores/waypoint').default;
 
 var sandbox = sinon.sandbox.create();
 

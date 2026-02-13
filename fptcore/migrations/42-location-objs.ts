@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     waypoints: function(waypoint) {
       for (const opt of waypoint.options) {

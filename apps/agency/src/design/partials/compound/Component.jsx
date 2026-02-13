@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { coreRegistry, TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ObjectKey from './ObjectKey';
 import NewComponentBtn from './NewComponentBtn';
@@ -27,11 +27,11 @@ function ComponentField({
   }
 
   const componentType = spec.component;
-  const componentClass = coreRegistry.components[componentType];
+  const componentClass = FptCore.coreRegistry.components[componentType];
   const componentTypeKey = componentClass.typeKey;
 
-  const variety = coreRegistry.getComponentVariety(spec, value);
-  const varietyClass = coreRegistry.getComponentClass(spec, variety);
+  const variety = FptCore.coreRegistry.getComponentVariety(spec, value);
+  const varietyClass = FptCore.coreRegistry.getComponentClass(spec, variety);
 
   const objectFields = Object
     .keys(varietyClass.properties)
@@ -52,7 +52,7 @@ function ComponentField({
         renderAny={renderAny} />
     ));
 
-  const varietyTitle = varietyClass.title || TextUtil.titleForKey(variety);
+  const varietyTitle = varietyClass.title || FptCore.TextUtil.titleForKey(variety);
   const titleStyle = {
     fontWeight: 'bold',
     display: 'inline-block',

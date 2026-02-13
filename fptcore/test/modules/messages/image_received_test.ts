@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const image_received = require('../../../src/modules/messages/image_received');
+const image_received = require('../../../src/modules/messages/image_received').default;
 
 describe('#image_received', () => {
   const imageClause = { from: 'Gabe', to: 'Cat', medium: 'image' };

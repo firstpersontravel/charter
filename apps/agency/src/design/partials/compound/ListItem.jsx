@@ -5,7 +5,7 @@ import {
   Dropdown, DropdownToggle, DropdownMenu, DropdownItem
 } from 'reactstrap';
 
-import { coreWalker } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import {
   duplicateComponent,
@@ -16,7 +16,7 @@ import { newItemForSpec } from './utils';
 
 function canRemove(script, itemSpec, item) {
   if (itemSpec.type === 'component') {
-    const refs = coreWalker.getResourcesReferencingComponent(
+    const refs = FptCore.coreWalker.getResourcesReferencingComponent(
       script.content, itemSpec.component, item.id
     );
     if (refs.length > 0) {

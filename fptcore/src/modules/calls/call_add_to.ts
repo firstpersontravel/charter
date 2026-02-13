@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   help: 'Add a player to a conference call.',
   params: {
     role_name: {
@@ -37,4 +37,3 @@ module.exports = {
   }
 };
 
-export {};

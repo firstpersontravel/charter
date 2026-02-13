@@ -1,5 +1,5 @@
-const Validations = require('./validations');
-const Walker = require('./walker');
+const Validations = require('./validations').default;
+const Walker = require('./walker').default;
 import { isPlainObject } from './lodash-replacements';
 import type { Registry, ScriptContent, ParamSpec, ParamSpecs, ResourceClass } from '../types';
 
@@ -227,4 +227,4 @@ class Validator {
   }
 }
 
-module.exports = Validator;
+export default Validator;

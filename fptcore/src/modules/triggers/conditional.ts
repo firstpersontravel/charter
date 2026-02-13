@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   title: 'Branch',
   help: 'A branch performs certain actions if an associated condition passes, and others if it does not.',
   display: { form: 'block' }, // override general action form: 'inline'
@@ -47,4 +47,3 @@ module.exports = {
   getOps(params: Record<string, any>, actionContext: ActionContext) {}
 };
 
-export {};

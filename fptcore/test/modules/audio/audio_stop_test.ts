@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const stop_audio = require('../../../src/modules/audio/audio_stop');
+const stop_audio = require('../../../src/modules/audio/audio_stop').default;
 
 describe('#stop_audio', () => {
   it('stops audio', () => {

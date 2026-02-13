@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { TextUtil, coreRegistry } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ResourceContainer from '../partials/ResourceContainer';
 import ResourceBadge from '../../partials/ResourceBadge';
@@ -72,8 +72,8 @@ export default class ResourceShow extends Component {
       if (curChildStr && curChildStr.split('.')[1] === 'new') {
         const childCollectionName = curChildStr.split('.')[0];
         const { collectionName } = props.match.params;
-        const childResourceType = TextUtil.singularize(childCollectionName);
-        const resourceClass = coreRegistry.resources[childResourceType];
+        const childResourceType = FptCore.TextUtil.singularize(childCollectionName);
+        const resourceClass = FptCore.coreRegistry.resources[childResourceType];
         const childParentField = _(resourceClass.properties)
           .keys()
           .find(key => (
@@ -328,8 +328,8 @@ export default class ResourceShow extends Component {
   renderChildResource(collectionName, childResource, isNew, canDelete) {
     const mainCollectionName = this.props.match.params.collectionName;
     const mainResourceName = this.props.match.params.resourceName;
-    const childResourceType = TextUtil.singularize(collectionName);
-    const childResourceClass = coreRegistry.resources[childResourceType];
+    const childResourceType = FptCore.TextUtil.singularize(collectionName);
+    const childResourceClass = FptCore.coreRegistry.resources[childResourceType];
     const excludeFields = _(childResourceClass.properties)
       .keys()
       .filter(key => (
@@ -377,7 +377,7 @@ export default class ResourceShow extends Component {
   }
 
   renderChildStub(collectionName, childResource) {
-    const resourceType = TextUtil.singularize(collectionName);
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
     const title = childResource.title || titleForResource(
       this.props.script.content, collectionName, childResource
     );
@@ -421,7 +421,7 @@ export default class ResourceShow extends Component {
   }
 
   renderCreateChildResourceBtn(childCollectionName) {
-    const childResourceType = TextUtil.singularize(childCollectionName);
+    const childResourceType = FptCore.TextUtil.singularize(childCollectionName);
     return (
       <Link
         key={childResourceType}
@@ -486,8 +486,8 @@ export default class ResourceShow extends Component {
   render() {
     const { script } = this.props;
     const { collectionName } = this.props.match.params;
-    const resourceType = TextUtil.singularize(collectionName);
-    if (!coreRegistry.resources[resourceType]) {
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
+    if (!FptCore.coreRegistry.resources[resourceType]) {
       return (
         <div className="alert alert-warning">
           Invalid collection.

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const TemplateUtil = require('../../src/utils/template');
+const TemplateUtil = require('../../src/utils/template').default;
 
 const sandbox = sinon.sandbox.create();
 

@@ -1,9 +1,9 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const Registry = require('../../src/registry/registry');
-const refValidator = require('../../src/utils/validations');
-const Validator = require('../../src/utils/validator');
+const Registry = require('../../src/registry/registry').default;
+const refValidator = require('../../src/utils/validations').default;
+const Validator = require('../../src/utils/validator').default;
 
 const eq = assert.deepStrictEqual;
 const ok = (res) => eq(res === undefined ? [] : res, []);

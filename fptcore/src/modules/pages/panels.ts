@@ -1,4 +1,4 @@
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 import type { ActionContext, ScriptContent, NamedResource } from '../../types';
 
 const PANEL_BUTTON_STYLE_OPTIONS = ['solo'];
@@ -286,6 +286,5 @@ panels.yesno = {
   }
 };
 
-module.exports = panels;
+export default panels;
 
-export {};

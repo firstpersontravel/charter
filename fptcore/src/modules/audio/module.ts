@@ -1,16 +1,15 @@
-module.exports = {
+export default {
   name: 'audio',
   resources: {
     audio: {
       resource: null,
       actions: {
-        play_audio: require('./audio_play'),
-        pause_audio: require('./audio_pause'),
-        resume_audio: require('./audio_resume'),
-        stop_audio: require('./audio_stop')
+        play_audio: require('./audio_play').default,
+        pause_audio: require('./audio_pause').default,
+        resume_audio: require('./audio_resume').default,
+        stop_audio: require('./audio_stop').default
       }
     }
   }
 };
 
-export {};

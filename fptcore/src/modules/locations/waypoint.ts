@@ -35,7 +35,7 @@ var waypointOptionSpec = {
   }
 };
 
-module.exports = {
+export default {
   icon: 'map-pin',
   title: 'Place',
   help: 'A place used by the trip. Each place can have multiple locations that can be set for each trip. For instance, a "lunch" place can have two locations, each a different restaurant.',
@@ -57,4 +57,3 @@ module.exports = {
   }
 };
 
-export {};

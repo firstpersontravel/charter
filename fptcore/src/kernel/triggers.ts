@@ -1,5 +1,5 @@
 import { find } from '../utils/lodash-replacements';
-const coreRegistry = require('../core-registry');
+const coreRegistry = require('../core-registry').default;
 
 import type { ActionContext, Event, ScriptTrigger } from '../types';
 
@@ -107,4 +107,4 @@ class KernelTriggers {
   }
 }
 
-module.exports = KernelTriggers;
+export default KernelTriggers;

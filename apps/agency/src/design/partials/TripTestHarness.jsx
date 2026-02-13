@@ -3,14 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import {
-  Kernel,
-  ContextCore,
-  PlayerCore,
-  SceneCore,
-  TripCore,
-  coreRegistry
-} from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import SceneGrid from '../../scenegrid/SceneGrid';
 import { renderParams, renderMessageContent } from '../../partials/params';
@@ -23,7 +16,7 @@ function truncateMsg(msg, maxLength) {
 
 function getInitialTripFields(script, variantNames) {
   const date = moment.utc().format('YYYY-MM-DD');
-  const tripFields = TripCore.getInitialFields(script.content, date,
+  const tripFields = FptCore.TripCore.getInitialFields(script.content, date,
     script.experience.timezone, variantNames);
   return Object.assign({
     title: 'Test',
@@ -32,7 +25,7 @@ function getInitialTripFields(script, variantNames) {
 }
 
 function getInitialPlayerFields(script, variantNames, roleName) {
-  const playerFields = PlayerCore.getInitialFields(script.content, roleName,
+  const playerFields = FptCore.PlayerCore.getInitialFields(script.content, roleName,
     variantNames);
   return Object.assign({}, playerFields, { roleName: roleName });
 }
@@ -187,7 +180,7 @@ export default class TripTestHarness extends Component {
   getEvalContext() {
     const trip = this.getBaseTripObject();
     const env = { host: '' };
-    return ContextCore.gatherEvalContext(env, trip);
+    return FptCore.ContextCore.gatherEvalContext(env, trip);
   }
 
   getActionContext(playerId) {
@@ -258,27 +251,27 @@ export default class TripTestHarness extends Component {
 
   handleAction(name, params, playerId) {
     const { script } = this.props;
-    const actionResourceClass = coreRegistry.actions[name];
+    const actionResourceClass = FptCore.coreRegistry.actions[name];
     const actionInfo = renderParams(script, actionResourceClass.params,
       params);
     this.log('info', `Action: ${name}`, actionInfo);
     const action = { name: name, params: params };
     const actionContext = this.getActionContext(playerId);
-    const result = Kernel.resultForImmediateAction(action, actionContext);
+    const result = FptCore.Kernel.resultForImmediateAction(action, actionContext);
     this.processResult(result);
     this.trackPreviewEvent(name);
   }
 
   handleEvent(event, playerId) {
     const { script } = this.props;
-    const eventResourceClass = coreRegistry.events[event.type];
+    const eventResourceClass = FptCore.coreRegistry.events[event.type];
     if (eventResourceClass.eventParams) {
       const eventInfo = renderParams(script, eventResourceClass.eventParams,
         event);
       this.log('info', `Event: ${event.type}`, eventInfo);
     }
     const actionContext = this.getActionContext(playerId);
-    const result = Kernel.resultForEvent(event, actionContext);
+    const result = FptCore.Kernel.resultForEvent(event, actionContext);
     this.processResult(result);
     this.trackPreviewEvent(event.type);
   }
@@ -287,7 +280,7 @@ export default class TripTestHarness extends Component {
     // this.log('info', `Trigger: ${name}`);
     const trigger = _.find(this.props.script.content.triggers, { name: name });
     const actionContext = this.getActionContext(playerId);
-    const result = Kernel.resultForTrigger(trigger, event, actionContext,
+    const result = FptCore.Kernel.resultForTrigger(trigger, event, actionContext,
       actionContext);
     this.processResult(result);
     this.trackPreviewEvent('trigger');
@@ -311,7 +304,7 @@ export default class TripTestHarness extends Component {
     }
     actionsToRun.forEach((action) => {
       const actionContext = this.getActionContext();
-      const result = Kernel.resultForImmediateAction(action, actionContext);
+      const result = FptCore.Kernel.resultForImmediateAction(action, actionContext);
       this.processResult(result);
     });
     this.setState(prevState => ({
@@ -324,7 +317,7 @@ export default class TripTestHarness extends Component {
   runAllScheduled() {
     this.state.scheduledActions.forEach((action) => {
       const actionContext = this.getActionContext();
-      const result = Kernel.resultForImmediateAction(action, actionContext);
+      const result = FptCore.Kernel.resultForImmediateAction(action, actionContext);
       this.processResult(result);
     });
     this.setState({ scheduledActions: [] });
@@ -332,7 +325,7 @@ export default class TripTestHarness extends Component {
 
   startTrip() {
     const actionContext = this.getActionContext();
-    const firstSceneName = SceneCore.getStartingSceneName(
+    const firstSceneName = FptCore.SceneCore.getStartingSceneName(
       this.props.script.content, actionContext
     );
     if (firstSceneName) {

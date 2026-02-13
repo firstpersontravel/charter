@@ -1,16 +1,15 @@
-module.exports = {
+export default {
   name: 'cues',
   resources: {
     cue: {
-      resource: require('./cue'),
+      resource: require('./cue').default,
       actions: {
-        signal_cue: require('./cue_signal')
+        signal_cue: require('./cue_signal').default
       },
       events: {
-        cue_signaled: require('./cue_signaled')
+        cue_signaled: require('./cue_signaled').default
       }
     }
   }
 };
 
-export {};

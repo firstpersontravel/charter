@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const roleConditions = require('../../../src/modules/roles/role_conditions');
+const roleConditions = require('../../../src/modules/roles/role_conditions').default;
 
 describe('#current_role_is', () => {
   function assertIfEq(ctx, stmt, val) {

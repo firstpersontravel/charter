@@ -1,8 +1,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const coreRegistry = require('../../src/core-registry');
-const KernelTriggers = require('../../src/kernel/triggers');
+const coreRegistry = require('../../src/core-registry').default;
+const KernelTriggers = require('../../src/kernel/triggers').default;
 
 var sandbox = sinon.sandbox.create();
 

@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const audio_received = require('../../../src/modules/messages/audio_received');
+const audio_received = require('../../../src/modules/messages/audio_received').default;
 
 describe('#audio_received', () => {
   const audioClause = { from: 'Gabe', to: 'Cat', medium: 'audio' };

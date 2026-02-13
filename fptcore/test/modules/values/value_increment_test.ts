@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const increment_value = require('../../../src/modules/values/value_increment');
+const increment_value = require('../../../src/modules/values/value_increment').default;
 
 describe('#increment_value', () => {
   it('increments absent trip value', () => {

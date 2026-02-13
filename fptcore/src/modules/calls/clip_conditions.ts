@@ -1,6 +1,6 @@
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 
-module.exports = {
+export default {
   clip_answer_is: {
     help: 'A condition that passes if the response to the clip being answered contains any part of the \'response\' parameter.',
     properties: {
@@ -22,4 +22,3 @@ module.exports = {
   }
 };
 
-export {};

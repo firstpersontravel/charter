@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const play_audio = require('../../../src/modules/audio/audio_play');
+const play_audio = require('../../../src/modules/audio/audio_play').default;
 
 describe('#play_audio', () => {
   const now = moment.utc();

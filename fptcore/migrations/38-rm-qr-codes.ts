@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     scriptContent: function(scriptContent) {
       delete scriptContent.qr_codes;

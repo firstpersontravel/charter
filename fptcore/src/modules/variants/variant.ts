@@ -1,5 +1,5 @@
 import type { ScriptContent } from '../../types';
-module.exports = {
+export default {
   icon: 'space-shuttle',
   help: 'A variation in trip values, including timing, values, and waypoint options.',
   properties: {
@@ -60,4 +60,3 @@ module.exports = {
   }
 };
 
-export {};

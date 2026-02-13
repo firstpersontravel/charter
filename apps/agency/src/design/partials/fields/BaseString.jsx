@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Validations } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import BaseEmpty from './BaseEmpty';
 import PopoverControl from '../../../partials/PopoverControl';
 import { typeTitleForSpec, labelForSpec } from '../../utils/spec-utils';
 
 export function bottomHelpForSpec(spec) {
-  const validation = Validations[spec.type];
+  const validation = FptCore.Validations[spec.type];
   if (!validation || !validation.help) {
     return null;
   }

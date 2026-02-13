@@ -93,6 +93,4 @@ class TextUtil {
   }
 }
 
-module.exports = TextUtil;
-
-export {};
+export default TextUtil;

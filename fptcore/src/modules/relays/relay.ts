@@ -1,6 +1,6 @@
 import { find } from '../../utils/lodash-replacements';
 
-module.exports = {
+export default {
   icon: 'phone',
   title: 'Phone line',
   help: 'A phone number by which one player can contact another via text or phone calls.',

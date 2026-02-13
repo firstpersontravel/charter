@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   current_role_is: {
     help: 'A condition that passes if the current player has a specific role.',
     properties: {
@@ -41,4 +41,3 @@ module.exports = {
   }
 };
 
-export {};

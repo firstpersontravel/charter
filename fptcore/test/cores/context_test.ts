@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const ContextCore = require('../../src/cores/context');
+const ContextCore = require('../../src/cores/context').default;
 
 const sandbox = sinon.sandbox.create();
 

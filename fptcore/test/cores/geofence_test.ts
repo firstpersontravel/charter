@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const GeofenceCore = require('../../src/cores/geofence');
+const GeofenceCore = require('../../src/cores/geofence').default;
 
 describe('GeofenceCore', () => {
   describe('#geofencesInArea', () => {

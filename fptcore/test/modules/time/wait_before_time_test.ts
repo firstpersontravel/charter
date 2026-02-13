@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const wait_before_time = require('../../../src/modules/time/wait_before_time');
+const wait_before_time = require('../../../src/modules/time/wait_before_time').default;
 
 describe('#wait_before_time', () => {
   it('waits for a period before a time', () => {

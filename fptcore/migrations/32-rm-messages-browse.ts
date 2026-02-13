@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     panels: function(panel) {
       if (panel.type === 'messages_browse') {

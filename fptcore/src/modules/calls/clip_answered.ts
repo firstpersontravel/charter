@@ -1,7 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 import type { ActionContext, Event, ScriptContent } from '../../types';
 
-module.exports = {
+export default {
   help: 'Occurs when a player responds to a clip over the phone.',
   title: 'Call clip answered',
   parentCollectionName: 'clips',

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { formatPhoneNumberIntl } from 'react-phone-number-input';
 
-import { PlayerCore, TextUtil, TripCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import Loader from '../../partials/Loader';
 import { withLoader } from '../../loader-utils';
@@ -107,7 +107,7 @@ function renderEntrywayWebpage(org, experience, script) {
     const roles = _.filter(script.content.roles, { interface: i.name });
     return roles.map((role) => {
       const roleUrl = `${window.location.origin}/entry/${org.name}/`
-        + `${experience.name}/${TextUtil.dashVarForText(role.title)}`;
+        + `${experience.name}/${FptCore.TextUtil.dashVarForText(role.title)}`;
       return (
         <div className="constrain-text" key={`${i.name}-${role.name}`}>
           <i className="fa fa-file me-1" />
@@ -195,7 +195,7 @@ class Schedule extends Component {
       orgId: experience.orgId,
       experienceId: experience.id,
       participantId: participantId
-    }, PlayerCore.getInitialFields(script.content, role.name, variantNames));
+    }, FptCore.PlayerCore.getInitialFields(script.content, role.name, variantNames));
     return fields;
   }
 
@@ -212,7 +212,7 @@ class Schedule extends Component {
 
   handleCreateTrip(script, fields) {
     const date = moment().format('YYYY-MM-DD');
-    const initialFields = TripCore.getInitialFields(
+    const initialFields = FptCore.TripCore.getInitialFields(
       script.content, date,
       script.experience.timezone, fields.variantNames
     );

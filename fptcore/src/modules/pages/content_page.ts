@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   icon: 'sticky-note',
   title: 'Subpage',
   help: 'A page that can be displayed in a list inside a Content Browse page.',
@@ -32,4 +32,3 @@ module.exports = {
   }
 };
 
-export {};

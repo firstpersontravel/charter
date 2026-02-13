@@ -1,23 +1,21 @@
-const Registry = require('./registry/registry');
-const components = require('./registry/components');
+const Registry = require('./registry/registry').default;
+const components = require('./registry/components').default;
 
 const modules = [
-  require('./modules/audio/module'),
-  require('./modules/calls/module'),
-  require('./modules/cues/module'),
-  require('./modules/email/module'),
-  require('./modules/locations/module'),
-  require('./modules/messages/module'),
-  require('./modules/pages/module'),
-  require('./modules/relays/module'),
-  require('./modules/roles/module'),
-  require('./modules/scenes/module'),
-  require('./modules/time/module'),
-  require('./modules/triggers/module'),
-  require('./modules/values/module'),
-  require('./modules/variants/module'),
+  require('./modules/audio/module').default,
+  require('./modules/calls/module').default,
+  require('./modules/cues/module').default,
+  require('./modules/email/module').default,
+  require('./modules/locations/module').default,
+  require('./modules/messages/module').default,
+  require('./modules/pages/module').default,
+  require('./modules/relays/module').default,
+  require('./modules/roles/module').default,
+  require('./modules/scenes/module').default,
+  require('./modules/time/module').default,
+  require('./modules/triggers/module').default,
+  require('./modules/values/module').default,
+  require('./modules/variants/module').default,
 ];
 
-module.exports = new Registry(modules, components);
-
-export {};
+export default new Registry(modules, components);

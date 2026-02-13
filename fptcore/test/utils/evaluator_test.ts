@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const Evaluator = require('../../src/utils/evaluator');
+const Evaluator = require('../../src/utils/evaluator').default;
 
 const sandbox = sinon.sandbox.create();
 

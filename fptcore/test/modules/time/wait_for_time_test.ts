@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const wait_for_time = require('../../../src/modules/time/wait_for_time');
+const wait_for_time = require('../../../src/modules/time/wait_for_time').default;
 
 describe('#wait_for_time', () => {
   it('waits for a time', () => {

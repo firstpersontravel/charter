@@ -1,8 +1,8 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const coreRegistry = require('../../src/core-registry');
-const Walker = require('../../src/utils/walker');
+const coreRegistry = require('../../src/core-registry').default;
+const Walker = require('../../src/utils/walker').default;
 
 describe('Walker', () => {
   describe('#walkAllFields', () => {

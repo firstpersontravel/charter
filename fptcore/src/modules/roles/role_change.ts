@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   help: 'Change the current player from one role to another.',
   params: {
     to_role_name: {
@@ -27,4 +27,3 @@ module.exports = {
   }
 };
 
-export {};

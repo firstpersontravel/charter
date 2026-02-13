@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     roles: function(role) {
       delete role.type;

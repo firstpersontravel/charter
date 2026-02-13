@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const TextUtil = require('../utils/text');
+const TextUtil = require('../utils/text').default;
 import { find, get } from '../utils/lodash-replacements';
 import type { Env, Trip, Player, PlayerEvalContext, EvalContext } from '../types';
 
@@ -113,4 +113,4 @@ class ContextCore {
   }
 }
 
-module.exports = ContextCore;
+export default ContextCore;

@@ -1,5 +1,5 @@
 import type { ScriptContent } from '../../types';
-module.exports = {
+export default {
   icon: 'sticky-note',
   help: 'A user interface that can be displayed to a player when the corresponding scene and state is active.',
   properties: {
@@ -55,4 +55,3 @@ module.exports = {
   }
 };
 
-export {};

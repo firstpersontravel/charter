@@ -1,10 +1,9 @@
-module.exports = {
+export default {
   name: 'relays',
   resources: {
     relay: {
-      resource: require('./relay')
+      resource: require('./relay').default
     }
   }
 };
 
-export {};

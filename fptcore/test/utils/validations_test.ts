@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const assert = require('assert');
 
-const Validations = require('../../src/utils/validations');
+const Validations = require('../../src/utils/validations').default;
 
 const eq = assert.deepStrictEqual;
 const ok = (res) => eq(res === undefined ? [] : res, []);

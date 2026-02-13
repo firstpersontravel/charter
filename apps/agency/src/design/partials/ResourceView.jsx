@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { TextUtil, coreRegistry, coreValidator } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { titleForResource, titleForResourceType } from '../utils/text-utils';
 import PopoverControl from '../../partials/PopoverControl';
@@ -19,8 +19,8 @@ export default class ResourceView extends Component {
     this.state = {
       hasUnsavableChanges: false,
       pendingResource: pendingResource,
-      errors: coreValidator.validateResource(props.script.content,
-        coreRegistry.resources[TextUtil.singularize(props.collectionName)],
+      errors: FptCore.coreValidator.validateResource(props.script.content,
+        FptCore.coreRegistry.resources[FptCore.TextUtil.singularize(props.collectionName)],
         pendingResource, '')
     };
     this.handleDelete = this.handleDelete.bind(this);
@@ -32,19 +32,19 @@ export default class ResourceView extends Component {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.resource !== this.props.resource) {
       const pendingResource = _.cloneDeep(nextProps.resource);
-      const resourceType = TextUtil.singularize(nextProps.collectionName);
+      const resourceType = FptCore.TextUtil.singularize(nextProps.collectionName);
       this.setState({
         hasUnsavableChanges: false,
         pendingResource: pendingResource,
-        errors: coreValidator.validateResource(nextProps.script.content,
-          coreRegistry.resources[resourceType], pendingResource, '')
+        errors: FptCore.coreValidator.validateResource(nextProps.script.content,
+          FptCore.coreRegistry.resources[resourceType], pendingResource, '')
       });
     }
   }
 
   getResourceClass() {
-    const resourceType = TextUtil.singularize(this.props.collectionName);
-    return coreRegistry.resources[resourceType];
+    const resourceType = FptCore.TextUtil.singularize(this.props.collectionName);
+    return FptCore.coreRegistry.resources[resourceType];
   }
 
   getFieldNames() {
@@ -74,9 +74,9 @@ export default class ResourceView extends Component {
   }
 
   handleResourceUpdate(newResource) {
-    const resourceType = TextUtil.singularize(this.props.collectionName);
-    const errors = coreValidator.validateResource(this.props.script.content,
-      coreRegistry.resources[resourceType], newResource, '');
+    const resourceType = FptCore.TextUtil.singularize(this.props.collectionName);
+    const errors = FptCore.coreValidator.validateResource(this.props.script.content,
+      FptCore.coreRegistry.resources[resourceType], newResource, '');
     // If there are errors, set the pending state so we can correct them.
     const hasErrors = errors && errors.length > 0;
     if (hasErrors) {
@@ -106,7 +106,7 @@ export default class ResourceView extends Component {
   }
 
   renderHeader() {
-    const resourceType = TextUtil.singularize(this.props.collectionName);
+    const resourceType = FptCore.TextUtil.singularize(this.props.collectionName);
     const { resource } = this.props;
 
     const { isNew } = this.props;
@@ -174,7 +174,7 @@ export default class ResourceView extends Component {
   renderTitle() {
     const { script } = this.props;
     const { collectionName } = this.props;
-    const resourceType = TextUtil.singularize(collectionName);
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
     const resourceClass = this.getResourceClass();
     const resource = this.state.pendingResource;
     const emptyTitle = (

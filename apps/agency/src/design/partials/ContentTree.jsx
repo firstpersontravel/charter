@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { SceneCore, TextUtil } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import { titleForResource, titleForResourceType } from '../utils/text-utils';
 import ResourceBadge from '../../partials/ResourceBadge';
@@ -19,7 +19,7 @@ function makeQueryString(params) {
 
 export default class ContentTree extends Component {
   renderResource(collectionName, resource, isNested) {
-    const resourceType = TextUtil.singularize(collectionName);
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
     const { script } = this.props;
     const title = titleForResource(script.content, collectionName, resource);
     return ({
@@ -65,7 +65,7 @@ export default class ContentTree extends Component {
   renderNewItem(contentSection) {
     const collectionName = contentSection.collection;
     const { script } = this.props;
-    const resourceType = TextUtil.singularize(collectionName);
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
     const queryString = makeQueryString(contentSection.filter);
     const title = contentSection.title
       ? contentSection.title
@@ -104,10 +104,10 @@ export default class ContentTree extends Component {
 
   renderContentSection(contentSection) {
     const collectionName = contentSection.collection;
-    const resourceType = TextUtil.singularize(collectionName);
+    const resourceType = FptCore.TextUtil.singularize(collectionName);
     const title = contentSection.title
-      ? TextUtil.pluralize(contentSection.title)
-      : TextUtil.pluralize(titleForResourceType(resourceType));
+      ? FptCore.TextUtil.pluralize(contentSection.title)
+      : FptCore.TextUtil.pluralize(titleForResourceType(resourceType));
     const headerItem = {
       key: `${contentSection.key || collectionName}-header`,
       url: '',
@@ -116,7 +116,7 @@ export default class ContentTree extends Component {
       disabled: true
     };
     const items = _(contentSection.items)
-      .sort((a, b) => SceneCore.sortResource(a.resource, b.resource))
+      .sort((a, b) => FptCore.SceneCore.sortResource(a.resource, b.resource))
       .map(item => (
         this.renderItem(contentSection.collection, item)
       ))

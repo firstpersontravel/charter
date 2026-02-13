@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const set_value = require('../../../src/modules/values/value_set');
+const set_value = require('../../../src/modules/values/value_set').default;
 
 describe('#set_value', () => {
   it('sets trip value to number', () => {

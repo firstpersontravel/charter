@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const SceneCore = require('../../src/cores/scene');
+const SceneCore = require('../../src/cores/scene').default;
 
 const sandbox = sinon.sandbox.create();
 

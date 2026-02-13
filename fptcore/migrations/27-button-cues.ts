@@ -7,7 +7,7 @@ const getPanelActivationEvent = {
   directions: panel => ({ type: 'directions_arrived', directions: panel.id }),
 };
 
-module.exports = {
+export default {
   migrations: [
     ['scriptContent', () => {
       cuesUsed = new Set();

@@ -3,8 +3,8 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment');
 
-const coreRegistry = require('../../src/core-registry');
-const Kernel = require('../../src/kernel/kernel');
+const coreRegistry = require('../../src/core-registry').default;
+const Kernel = require('../../src/kernel/kernel').default;
 
 var sandbox = sinon.sandbox.create();
 

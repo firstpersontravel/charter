@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const KernelResult = require('../../src/kernel/result');
+const KernelResult = require('../../src/kernel/result').default;
 
 describe('KernelResult', () => {
 

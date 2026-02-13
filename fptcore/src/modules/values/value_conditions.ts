@@ -1,4 +1,4 @@
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 import type { ActionContext } from '../../types';
 
 const COMPARISON_FUNCTIONS: Record<string, (a: number, b: number) => boolean> = {
@@ -9,7 +9,7 @@ const COMPARISON_FUNCTIONS: Record<string, (a: number, b: number) => boolean> = 
   '>': function(a, b) { return a > b; }
 };
 
-module.exports = {
+export default {
   value_is_true: {
     title: 'Variable is present',
     help: 'A condition that passes if the variable has any value that is not false.',
@@ -122,4 +122,3 @@ module.exports = {
   }
 };
 
-export {};

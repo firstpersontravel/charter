@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const send_audio = require('../../../src/modules/messages/audio_send');
+const send_audio = require('../../../src/modules/messages/audio_send').default;
 
 describe('#send_audio', () => {
   const now = moment.utc();

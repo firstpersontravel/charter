@@ -86,6 +86,5 @@ class KernelResult {
   }
 }
 
-module.exports = KernelResult;
+export default KernelResult;
 
-export {};

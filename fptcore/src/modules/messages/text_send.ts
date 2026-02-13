@@ -1,7 +1,7 @@
-const TemplateUtil = require('../../utils/template');
+const TemplateUtil = require('../../utils/template').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   help: 'Send a text message from one player to another.',
   params: {
     from_role_name: {
@@ -59,4 +59,3 @@ module.exports = {
   }
 };
 
-export {};

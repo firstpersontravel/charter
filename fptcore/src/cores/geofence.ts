@@ -1,5 +1,5 @@
-const distance = require('../utils/distance');
-const WaypointCore = require('./waypoint');
+const distance = require('../utils/distance').default;
+const WaypointCore = require('./waypoint').default;
 
 import type { ScriptContent, ScriptGeofence } from '../types';
 
@@ -29,6 +29,5 @@ class GeofenceCore {
   }
 }
 
-module.exports = GeofenceCore;
+export default GeofenceCore;
 
-export {};

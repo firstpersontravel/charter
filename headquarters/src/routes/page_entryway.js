@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 const models = require('../models');
 
-const TextUtil = require('fptcore/src/utils/text');
+const TextUtil = require('fptcore/src/utils/text').default;
 
 const TripResetHandler = require('../handlers/trip_reset');
 const ExperienceController = require('../controllers/experience');

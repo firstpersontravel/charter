@@ -14,7 +14,7 @@ const INTERFACE_TYPEFACE_OPTIONS = [
   'Work Sans'
 ];
 
-module.exports = {
+export default {
   icon: 'mobile',
   help: 'A combination of panels that create a user interface for a tablet, phone, or device.',
   properties: {
@@ -90,4 +90,3 @@ module.exports = {
   }
 };
 
-export {};

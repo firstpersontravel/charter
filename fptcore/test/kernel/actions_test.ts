@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const KernelActions = require('../../src/kernel/actions');
+const KernelActions = require('../../src/kernel/actions').default;
 
 const sandbox = sinon.sandbox.create();
 

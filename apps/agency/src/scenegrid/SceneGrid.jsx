@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Tooltip } from 'reactstrap';
 
-import { coreRegistry, coreWalker, SceneCore } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ResourceBadge from '../partials/ResourceBadge';
 import Preview from '../operate/partials/Preview';
@@ -41,7 +41,7 @@ export default class SceneGrid extends Component {
           scene: scene.name
         })
       ))
-      .sort((a, b) => SceneCore.sortResource(a.role, b.role))
+      .sort((a, b) => FptCore.SceneCore.sortResource(a.role, b.role))
       .value();
   }
 
@@ -55,9 +55,9 @@ export default class SceneGrid extends Component {
     if (this.cachedTriggerNames[key]) {
       return this.cachedTriggerNames[key];
     }
-    const triggerResourceClass = coreRegistry.resources.trigger;
+    const triggerResourceClass = FptCore.coreRegistry.resources.trigger;
     const triggerTitle = triggerResourceClass.getEventTitle(
-      script.content, trigger, coreRegistry, coreWalker
+      script.content, trigger, FptCore.coreRegistry, FptCore.coreWalker
     );
     this.cachedTriggerNames[key] = triggerTitle;
     return triggerTitle;
@@ -103,7 +103,7 @@ export default class SceneGrid extends Component {
       scene: scene.name
     });
     const renderedPages = pages
-      .sort(SceneCore.sortResource)
+      .sort(FptCore.SceneCore.sortResource)
       .map(page => this.renderPlayerPage(player, page));
     const iframeLink = trip.id ? (
       <a
@@ -255,7 +255,7 @@ export default class SceneGrid extends Component {
   render() {
     const { trip } = this.props;
     const scenes = _.get(trip, 'script.content.scenes') || [];
-    const sortedScenes = scenes.sort(SceneCore.sortResource);
+    const sortedScenes = scenes.sort(FptCore.SceneCore.sortResource);
     const maxPlayersInScene = Math.max(...sortedScenes
       .map(scene => this.getPlayersForScene(scene).length)) || 1;
     const colWidth = Math.floor(12 / maxPlayersInScene);

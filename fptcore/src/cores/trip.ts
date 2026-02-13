@@ -1,6 +1,6 @@
 const moment = require('moment');
 
-const TimeUtil = require('../utils/time');
+const TimeUtil = require('../utils/time').default;
 
 import type { ScriptContent, ScriptVariant, TripFields } from '../types';
 
@@ -66,6 +66,5 @@ class TripCore {
   }
 }
 
-module.exports = TripCore;
+export default TripCore;
 
-export {};

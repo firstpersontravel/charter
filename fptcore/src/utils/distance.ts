@@ -15,6 +15,4 @@ function latLngDistance(lat1: number, lng1: number, lat2: number, lng2: number):
   return d * 1000; // in meters
 }
 
-module.exports = latLngDistance;
-
-export {};
+export default latLngDistance;

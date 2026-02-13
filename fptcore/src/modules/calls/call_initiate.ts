@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   help: 'Initiate a call from Charter to a user.',
   params: {
     to_role_name: {
@@ -31,4 +31,3 @@ module.exports = {
   }
 };
 
-export {};

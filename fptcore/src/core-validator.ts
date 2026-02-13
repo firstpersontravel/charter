@@ -1,6 +1,4 @@
-const Validator = require('./utils/validator');
-const coreRegistry = require('./core-registry');
+const Validator = require('./utils/validator').default;
+const coreRegistry = require('./core-registry').default;
 
-module.exports = new Validator(coreRegistry);
-
-export {};
+export default new Validator(coreRegistry);

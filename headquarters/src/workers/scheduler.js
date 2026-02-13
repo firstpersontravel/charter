@@ -3,8 +3,8 @@ const moment = require('moment');
 const Sequelize = require('sequelize');
 const Sentry = require('@sentry/node');
 
-const coreRegistry = require('fptcore/src/core-registry');
-const KernelTriggers = require('fptcore/src/kernel/triggers');
+const coreRegistry = require('fptcore/src/core-registry').default;
+const KernelTriggers = require('fptcore/src/kernel/triggers').default;
 
 const config = require('../config.ts');
 const models = require('../models');

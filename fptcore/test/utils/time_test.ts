@@ -2,7 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const moment = require('moment-timezone');
 
-const TimeUtil = require('../../src/utils/time');
+const TimeUtil = require('../../src/utils/time').default;
 
 const sandbox = sinon.sandbox.create();
 

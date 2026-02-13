@@ -8,7 +8,7 @@ function newTab(contentPage) {
   }
   return tab;
 }
-module.exports = {
+export default {
   migrations: {
     interfaces: function(iface, scriptContent) {
       // Move content pages into tab interfaces

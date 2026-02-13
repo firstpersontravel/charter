@@ -17,7 +17,7 @@ var CLIP_VOICE_OPTIONS = [
   'Polly.Stephen-Generative',
 ];
 
-module.exports = {
+export default {
   title: 'Call clip',
   icon: 'phone',
   help: 'A snippet of audio that can be played as part of phone calls.',
@@ -58,4 +58,3 @@ module.exports = {
   }
 };
 
-export {};

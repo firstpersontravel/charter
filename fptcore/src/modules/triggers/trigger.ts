@@ -1,6 +1,6 @@
-const TextUtil = require('../../utils/text');
+const TextUtil = require('../../utils/text').default;
 
-module.exports = {
+export default {
   title: 'Behavior',
   icon: 'certificate',
   help: 'A fires when a defined event occurs. Once fired, it will apply a set of actions, which change the trip state.',
@@ -36,4 +36,3 @@ module.exports = {
   }
 };
 
-export {};

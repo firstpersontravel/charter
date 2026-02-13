@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     scenes: function(scene) {
       delete scene.active_if;

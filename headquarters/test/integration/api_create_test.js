@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
-const ScriptCore = require('fptcore/src/cores/script');
+const ScriptCore = require('fptcore/src/cores/script').default;
 
 const { createUserToken } = require('../../src/routes/auth');
 const { mockNow } = require('../mocks');

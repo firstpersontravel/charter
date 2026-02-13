@@ -2,7 +2,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 
-const Migrator = require('../src/migrator');
+const Migrator = require('../src/migrator').default;
 
 const sandbox = sinon.sandbox.create();
 

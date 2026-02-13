@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { SceneCore, coreRegistry } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import ContentTree from '../partials/ContentTree';
 import ResponsiveListGroup from '../../partials/ResponsiveListGroup';
@@ -12,7 +12,7 @@ export default class Slice extends Component {
   renderSidenav() {
     const { script } = this.props;
     const sceneLinks = (script.content.scenes || [])
-      .sort(SceneCore.sortResource)
+      .sort(FptCore.SceneCore.sortResource)
       .map(scene => ({
         key: scene.name,
         url: `/${script.org.name}/${script.experience.name}/script/${script.revision}/design/scene/${scene.name}`,
@@ -22,7 +22,7 @@ export default class Slice extends Component {
               style={{ width: '1.5em' }}
               className={
                 'd-none d-md-inline-block fa '
-                + `fa-${coreRegistry.resources.scene.icon(scene)}`
+                + `fa-${FptCore.coreRegistry.resources.scene.icon(scene)}`
               } />
             &nbsp;
             {scene.title}

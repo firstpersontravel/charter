@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   title: 'Stop background audio',
   help: 'Stop audio and reset audio state.',
   params: {
@@ -39,4 +39,3 @@ module.exports = {
   }
 };
 
-export {};

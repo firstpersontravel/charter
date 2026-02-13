@@ -1,7 +1,7 @@
 const assert = require('assert');
 
 const geofenceConditions =
-  require('../../../src/modules/locations/geofence_conditions');
+  require('../../../src/modules/locations/geofence_conditions').default;
 
 const scriptContent = {
   waypoints: [{

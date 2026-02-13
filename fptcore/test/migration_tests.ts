@@ -1,8 +1,8 @@
 import { cloneDeep } from '../src/utils/lodash-replacements';
 const assert = require('assert');
 
-const ScriptCore = require('../src/cores/script');
-const Migrator = require('../src/migrator');
+const ScriptCore = require('../src/cores/script').default;
+const Migrator = require('../src/migrator').default;
 
 describe('Migrations', () => {
   for (const migration of Migrator.Migrations) {

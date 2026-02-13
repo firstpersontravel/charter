@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   icon: 'bell',
   help: 'A signal that can be fired by button presses or other game actions. In and of itself, a cue does nothing, but most commonly it will be used to fire triggers that launch other game actions.',
   properties: {
@@ -13,4 +13,3 @@ module.exports = {
   }
 };
 
-export {};

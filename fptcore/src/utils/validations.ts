@@ -1,6 +1,6 @@
 const jsonschema = require('jsonschema');
 
-const TimeUtil = require('./time');
+const TimeUtil = require('./time').default;
 
 import type { ScriptContent, ParamSpec, Validations as ValidationsType } from '../types';
 
@@ -263,6 +263,4 @@ const Validations: ValidationsType = {
   }
 };
 
-module.exports = Validations;
-
-export {};
+export default Validations;

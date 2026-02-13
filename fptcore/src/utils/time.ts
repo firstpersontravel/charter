@@ -93,6 +93,4 @@ class TimeUtil {
   }
 }
 
-module.exports = TimeUtil;
-
-export {};
+export default TimeUtil;

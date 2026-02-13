@@ -1,7 +1,7 @@
 const moment = require('moment-timezone');
 
-const TripCore = require('fptcore/src/cores/trip');
-const PlayerCore = require('fptcore/src/cores/player');
+const TripCore = require('fptcore/src/cores/trip').default;
+const PlayerCore = require('fptcore/src/cores/player').default;
 
 const models = require('../models');
 

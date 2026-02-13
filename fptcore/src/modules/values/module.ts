@@ -1,15 +1,14 @@
-module.exports = {
+export default {
   name: 'values',
   resources: {
     value: {
       resource: null,  // implicit
       actions: {
-        set_value: require('./value_set'),
-        increment_value: require('./value_increment')
+        set_value: require('./value_set').default,
+        increment_value: require('./value_increment').default
       },
-      conditions: require('./value_conditions')
+      conditions: require('./value_conditions').default
     }
   }
 };
 
-export {};

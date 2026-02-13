@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   migrations: {
     relays: function(relay) {
       if (relay.as && relay.as === relay.for) {

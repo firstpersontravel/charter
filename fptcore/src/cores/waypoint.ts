@@ -34,4 +34,4 @@ class WaypointCore {
   }
 }
 
-module.exports = WaypointCore;
+export default WaypointCore;

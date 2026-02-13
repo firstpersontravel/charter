@@ -1,7 +1,7 @@
 const assert = require('assert');
 const moment = require('moment');
 
-const send_text = require('../../../src/modules/messages/text_send');
+const send_text = require('../../../src/modules/messages/text_send').default;
 
 describe('#send_text', () => {
   const now = moment.utc();

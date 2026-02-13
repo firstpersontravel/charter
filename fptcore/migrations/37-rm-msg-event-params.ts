@@ -1,6 +1,6 @@
 let counter = 110000;
 
-module.exports = {
+export default {
   migrations: {
     triggers: function(trigger) {
       if (!trigger.event) {

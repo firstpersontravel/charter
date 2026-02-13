@@ -1,5 +1,5 @@
 import type { ActionContext } from '../../types';
-module.exports = {
+export default {
   title: 'Play background audio',
   help: 'Start playing audio for a certain role.',
   params: {
@@ -67,4 +67,3 @@ module.exports = {
   }
 };
 
-export {};

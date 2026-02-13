@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const Kernel = require('fptcore/src/kernel/kernel');
+const Kernel = require('fptcore/src/kernel/kernel').default;
 
 const { instrumentAsync } = require('../sentry');
 const config = require('../config.ts');

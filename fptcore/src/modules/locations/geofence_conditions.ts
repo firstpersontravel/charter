@@ -1,7 +1,7 @@
-const GeofenceCore = require('../../cores/geofence');
+const GeofenceCore = require('../../cores/geofence').default;
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   role_in_geofence: {
     help: 'A condition that passes if a role is within a geofence.',
     properties: {
@@ -46,4 +46,3 @@ module.exports = {
   }
 };
 
-export {};

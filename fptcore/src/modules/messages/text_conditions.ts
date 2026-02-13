@@ -1,7 +1,7 @@
 import { get } from '../../utils/lodash-replacements';
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   text_contains: {
     help: 'A condition that passes if the content to the text contains any part of the \'part\' parameter.',
     properties: {

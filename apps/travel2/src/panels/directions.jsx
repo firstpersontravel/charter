@@ -9,12 +9,12 @@ import L from 'leaflet';
 
 // eslint-disable-next-line no-unused-vars
 import PolylineEncoded from 'polyline-encoded';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import fptCore from 'fptcore';
 import distance from '../util/distance';
 
 import 'leaflet/dist/leaflet.css';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+const fptCore = require('fptcore').default;
 
 L.Icon.Default.imagePath = '/static/images/';
 
@@ -29,7 +29,7 @@ const participantIcon = L.icon({
   shadowAnchor: [12, 41]
 });
 
-const MAPBOX_TILE_URL = 'https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZ2FiZXNtZWQiLCJhIjoiY2lxcGhsZjBjMDI2eGZubm5pa2RkZ2M3aSJ9.e_3OxrkDEvTfRx6HrbUPmg';
+const MAPBOX_TILE_URL = `https://api.mapbox.com/styles/v1/mapbox/outdoors-v9/tiles/256/{z}/{x}/{y}?access_token=${window.config.TRAVEL2_MAPBOX_TOKEN}`;
 
 export default class DirectionsPanel extends React.Component {
   constructor(props) {

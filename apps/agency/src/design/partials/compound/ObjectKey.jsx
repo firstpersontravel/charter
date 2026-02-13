@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { coreValidator } from 'fptcore';
+const FptCore = require('fptcore').default;
 
 import BaseClear from '../fields/BaseClear';
 import Label from './Label';
@@ -31,7 +31,7 @@ function invalidWarningForSpec(script, name, keySpec, value, itemValue) {
   }
 
   // If item is not null, call the validator functions.
-  const validatorErrors = coreValidator.validateParam(script.content,
+  const validatorErrors = FptCore.coreValidator.validateParam(script.content,
     name, keySpec, itemValue);
   if (validatorErrors && validatorErrors.length > 0) {
     return (

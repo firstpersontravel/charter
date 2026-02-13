@@ -1,7 +1,7 @@
 import { find } from '../../utils/lodash-replacements';
 import type { ActionContext } from '../../types';
 
-module.exports = {
+export default {
   help: 'Set a role to a page.',
   params: {
     role_name: {

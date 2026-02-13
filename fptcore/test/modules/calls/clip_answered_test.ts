@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const clip_answered = require('../../../src/modules/calls/clip_answered');
+const clip_answered = require('../../../src/modules/calls/clip_answered').default;
 
 describe('#clip_answered', () => {
   it('fires on matching response', () => {

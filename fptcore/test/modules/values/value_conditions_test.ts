@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-const valueConditions = require('../../../src/modules/values/value_conditions');
+const valueConditions = require('../../../src/modules/values/value_conditions').default;
 describe('#value_is_true', () => {
   function assertIfEq(ctx, stmt, val) {
     assert.strictEqual(

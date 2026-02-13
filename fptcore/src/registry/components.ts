@@ -49,6 +49,4 @@ const components: ComponentDefs = {
   }
 };
 
-module.exports = components;
-
-export {};
+export default components;
